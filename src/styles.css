@@ -1,0 +1,17 @@
+.App {
+  text-align: center;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.app-parent-height {
+  height: 100%;
+}
+
+* {
+  font-family: "Karla", sans-serif;
+}

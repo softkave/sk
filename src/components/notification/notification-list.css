@@ -1,0 +1,16 @@
+.notifications-list-item {
+  padding: 1em;
+  cursor: pointer;
+  color: black;
+}
+
+.notifications-list-item h5 {
+  font-size: 1em;
+  color: inherit;
+}
+
+.notifications-list-list {
+  border-right: 1px solid grey;
+  height: 100%;
+  box-sizing: border-box;
+}
