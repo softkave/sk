@@ -5,7 +5,10 @@ import { Provider } from "react-redux";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import "./styles.css";
-import "antd/dist/antd.css";
+
+if (process.env.NODE_ENV === "development") {
+  require("antd/dist/antd.css");
+}
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(
