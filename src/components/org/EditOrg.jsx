@@ -5,6 +5,7 @@ import { orgDescriptor as blockDescriptor } from "../../models/block/descriptor"
 import Empty from "../Empty.jsx";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
+import AccessControl from "../acl/AccessControl.jsx";
 
 const TextArea = Input.TextArea;
 

@@ -5,7 +5,6 @@ let storeData = {};
 
 if (process.env.NODE_ENV === "development") {
   let storeDataStr = sessionStorage.getItem("store");
-  console.log(storeDataStr);
   try {
     storeData = storeDataStr ? JSON.parse(storeDataStr) : {};
   } catch (error) {

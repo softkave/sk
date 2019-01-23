@@ -9,13 +9,12 @@ class OrgsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: !props.orgs,
       error: null
     };
   }
 
   async componentDidMount() {
-    if (this.state.loading) {
+    if (!this.props.orgs) {
       try {
         await this.props.fetchOrgs();
       } catch (error) {
@@ -28,9 +27,9 @@ class OrgsContainer extends React.Component {
 
   render() {
     const { orgs, blockHandlers } = this.props;
-    const { loading, error } = this.state;
+    const { error } = this.state;
 
-    if (loading) {
+    if (!orgs) {
       return "Loading";
     } else if (error) {
       return "An error occurred";

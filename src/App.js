@@ -92,14 +92,12 @@ class App extends React.Component {
         return true;
       }
     } else if (window.location.pathname.indexOf("app") > -1) {
-      console.log("routed");
       history.push("/");
       return true;
     }
   }
 
   render() {
-    console.log(this.props);
     if (this.state.skipRender) {
       return null;
     }
