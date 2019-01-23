@@ -12,6 +12,7 @@ body,
   height: 100%;
 }
 
-* {
-  font-family: "Karla", sans-serif;
+*,
+.ant-input {
+  font-family: "Karla", sans-serif !important;
 }

@@ -1,18 +1,18 @@
 import React from "react";
-import { Row, Col } from "antd";
+import Thumbnail from "../thumbnail/Thumbnail.jsx";
+import "./project-thumbnail.css";
 
 export default function ProjectThumbnail(props) {
-  const { project } = props;
+  const { project, onClick, className, style } = props;
   return (
-    <div>
-      <Row>
-        <Col>
-          <span style={{ backgroundColor: project.color }} />
-        </Col>
-        <Col>
-          <h5>{project.name}</h5>
-        </Col>
-      </Row>
-    </div>
+    <Thumbnail
+      data={project}
+      onClick={onClick}
+      renderInfo={() => {
+        return <h3>{project.name}</h3>;
+      }}
+      className={className}
+      style={style}
+    />
   );
 }

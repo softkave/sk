@@ -37,7 +37,7 @@ class Login extends React.Component {
         props: {
           type: "primary",
           children: "Login",
-          block: "true",
+          block: true,
           htmlType: "submit"
         },
         labelCol: null,

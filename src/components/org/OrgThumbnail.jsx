@@ -1,18 +1,17 @@
 import React from "react";
-import { Row, Col } from "antd";
+import Thumbnail from "../thumbnail/Thumbnail.jsx";
 
 export default function OrgThumbnail(props) {
-  const { org } = props;
+  const { org, className, style, onClick } = props;
   return (
-    <div>
-      <Row>
-        <Col>
-          <span style={{ backgroundColor: org.color }} />
-        </Col>
-        <Col>
-          <h5>{org.name}</h5>
-        </Col>
-      </Row>
-    </div>
+    <Thumbnail
+      className={className}
+      style={style}
+      data={org}
+      onClick={onClick}
+      renderInfo={() => {
+        return <h3>{org.name}</h3>;
+      }}
+    />
   );
 }

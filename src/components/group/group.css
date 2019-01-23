@@ -1,0 +1,16 @@
+.sk-group {
+  width: 100%;
+  max-width: 300px;
+  display: inline-block;
+  white-space: normal;
+  margin-left: 2em;
+  vertical-align: top;
+}
+
+.sk-group:first-of-type {
+  margin-left: 0;
+}
+
+.sk-group-children {
+  margin: 1em 0;
+}

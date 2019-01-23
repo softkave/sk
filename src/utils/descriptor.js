@@ -1,9 +1,10 @@
 export function makeDescriptorFieldsRequired(descriptor, fields = []) {
+  descriptor = { ...descriptor };
   fields.forEach(field => {
     let rule = descriptor[field];
 
     if (rule) {
-      let replaceRule = [{ required: true }];
+      let replaceRule = [{ required: true, message: `${field} is required` }];
 
       if (Array.isArray(rule)) {
         replaceRule = replaceRule.concat(rule);
@@ -38,7 +39,7 @@ export function makeConfirmValidator(
 
 export function makeNameExistsValidator(
   existingNames,
-  msg = "Name already exist"
+  msg = "name already exist"
 ) {
   return function validatePassword(rule, value, cb, source) {
     value = value.toLowerCase();

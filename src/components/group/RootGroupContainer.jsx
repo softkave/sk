@@ -11,13 +11,12 @@ class RootGroupContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: !props.rootBlock,
       error: null
     };
   }
 
   async componentDidMount() {
-    if (this.state.loading) {
+    if (!this.props.rootBlock) {
       try {
         await this.props.fetchRootData();
       } catch (error) {
@@ -27,10 +26,10 @@ class RootGroupContainer extends React.Component {
   }
 
   render() {
-    const { rootBlock, blockHandlers, assignedTasks } = this.props;
-    const { loading, error } = this.state;
+    const { rootBlock, blockHandlers, assignedTasks, user } = this.props;
+    const { error } = this.state;
 
-    if (loading) {
+    if (!rootBlock) {
       return "Loading";
     } else if (error) {
       return "An error occurred";
@@ -41,6 +40,7 @@ class RootGroupContainer extends React.Component {
         rootBlock={rootBlock}
         blockHandlers={blockHandlers}
         assignedTasks={assignedTasks}
+        user={user}
       />
     );
   }
@@ -82,6 +82,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     })(),
 
     async fetchRootData() {
+      console.log("fetching root data");
       const rootBlockId = user.permissions.find(
         permission => permission.type === "root"
       ).blockId;
@@ -94,6 +95,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         standingOrgs: state.orgs
       });
 
+      console.log(assignedTasks, rootBlock, orgs);
       let actions = [
         mergeDataByPath(rootBlock.path, rootBlock),
         mergeDataByPath("assignedTasks", assignedTasks)
@@ -103,6 +105,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         actions.push(mergeDataByPath("orgs", orgs));
       }
 
+      console.log(actions);
       dispatch(makeMultiple(actions));
     }
   };

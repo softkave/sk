@@ -87,7 +87,7 @@ class Signup extends React.Component {
           props: {
             type: "primary",
             children: "Signup",
-            block: "true",
+            block: true,
             htmlType: "submit"
           },
           labelCol: null,

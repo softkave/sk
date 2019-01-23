@@ -9,11 +9,11 @@ import { generatePermission } from "../../models/user/permission";
 //const uuid = require("uuid/v4");
 const nanoid = require("nanoid");
 const randomColor = require("randomcolor");
-const {
-  //generateError,
-  //makeShouldRespondWithError,
-  devShare
-} = require("./utils");
+// const {
+//   //generateError,
+//   //makeShouldRespondWithError,
+//   devShare
+// } = require("./utils");
 //const shouldRespondWithError = makeShouldRespondWithError();
 let rootBlock = null;
 
@@ -52,8 +52,11 @@ module.exports = {
       permissions: [generatePermission(rootBlock, rootBlock.roles[0], userId)]
     };
 
-    devShare("user", { token, rootBlock, user: generatedUserData });
-    console.log(devShare("user"));
+    // devShare("user", { token, rootBlock, user: generatedUserData });
+    // console.log(devShare("user"));
+
+    // sessionStorage.setItem("user", JSON.stringify({ user: generatedUserData, token }));
+    sessionStorage.setItem("rootBlock", JSON.stringify(rootBlock));
 
     return {
       //rootBlock,

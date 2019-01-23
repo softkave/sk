@@ -22,7 +22,7 @@ export const roleDescriptor = {
   }
 };
 
-const blockDescriptor = {
+export const blockDescriptor = {
   name: [
     {
       type: "string",

@@ -1,15 +1,26 @@
 import React from "react";
 import EditPriority from "./EditPriority.jsx";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
-import { Input, Button, Checkbox, DatePicker, Form } from "antd";
-import { blockDescriptor } from "../../models/block/descriptor";
+import { Input, Button, DatePicker, Form } from "antd";
+import { taskDescriptor as blockDescriptor } from "../../models/block/descriptor";
 import Empty from "../Empty.jsx";
+import modalWrap from "../modalWrap.jsx";
 
 const TextArea = Input.TextArea;
 
 class EditTask extends React.Component {
+  static defaultProps = {
+    data: {}
+  };
+
   constructor(props) {
     super(props);
+    const self = this;
+    const data = props.data || {};
+    // const priorityPath = `data[${
+    //   data.data ? data.data.findIndex(d => d.dataType === "priority") : 0
+    // }].data`;
+
     this.model = {
       fields: {
         error: {
@@ -21,14 +32,18 @@ class EditTask extends React.Component {
           label: "Description",
           labelCol: null,
           wrapperCol: null,
-          rules: blockDescriptor.description
+          rules: blockDescriptor.description,
+          initialValue: data.description
         },
         priority: {
           component: EditPriority,
           props: {},
           label: "Priority",
           labelCol: null,
-          wrapperCol: null
+          wrapperCol: null,
+          initialValue: data.data
+            ? data.data.find(d => d.dataType === "priority")
+            : "not important"
         },
         // collaborators
         completeAt: {
@@ -40,14 +55,15 @@ class EditTask extends React.Component {
           },
           label: "Complete At",
           labelCol: null,
-          wrapperCol: null
+          wrapperCol: null,
+          initialValue: data.completeAt
         },
         submit: {
           component: Button,
           props: {
             type: "primary",
             children: "Submit",
-            block: "true",
+            block: true,
             htmlType: "submit"
           },
           labelCol: null,
@@ -58,15 +74,41 @@ class EditTask extends React.Component {
       formProps: {
         hideRequiredMark: true
       },
-      onSubmit: this.onSubmit
+      onSubmit: self.onSubmit
     };
   }
 
-  onSubmit = data => {};
+  onSubmit = submittedData => {
+    // const { data } = this.props;
+    // delete submittedData.error;
+    // submittedData.data = data && data.data ? [...data.data] : null;
+    // if (submittedData.data) {
+    //   let priorityData = submittedData.data.find(
+    //     d => d.dataType === "priority"
+    //   );
+
+    //   if (priorityData) {
+    //     priorityData.data = submittedData.priority;
+    //   } else {
+    //     submittedData.data.push({
+    //       dataType: "priority",
+    //       data: submittedData.priority
+    //     });
+    //   }
+    // } else {
+    //   submittedData.data = [
+    //     { dataType: "priority", data: submittedData.priority }
+    //   ];
+    // }
+
+    // delete submittedData.priority;
+    submittedData.type = "task";
+    this.props.onSubmit(submittedData);
+  };
 
   render() {
     return <ComputeForm model={this.model} form={this.props.form} />;
   }
 }
 
-export default Form.create()(EditTask);
+export default modalWrap(Form.create()(EditTask));

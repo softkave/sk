@@ -47,7 +47,7 @@ class ChangePassword extends React.Component {
           props: {
             type: "primary",
             children: "Submit",
-            block: "true",
+            block: true,
             htmlType: "submit"
           },
           labelCol: null,

@@ -1,6 +1,7 @@
 import get from "lodash/get";
 import { mergeDataByPath, deleteDataByPath } from "../redux/actions/data";
 import netInterface from "../net";
+import randomColor from "randomcolor";
 
 //const uuid = require("uuid/v4");
 const nanoid = require("nanoid");
@@ -17,10 +18,10 @@ export function getBlockParent(block, state) {
 
 export function makeBlockHandlers({ dispatch, user }) {
   function prepareTaskFromEditData(task) {
-    if (task.priority) {
-      task.data = [{ dataType: "priority", data: task.priority }];
-      delete task.priority;
-    }
+    // if (task.priority) {
+    //   task.data = [{ dataType: "priority", data: task.priority }];
+    //   delete task.priority;
+    // }
 
     if (task.expectedEndAt) {
       task.expectedEndAt = task.expectedEndAt.valueOf();
@@ -31,6 +32,7 @@ export function makeBlockHandlers({ dispatch, user }) {
 
   return {
     async onAdd(task, parent) {
+      console.log(task, parent);
       //task.type = "task";
       task.createdAt = Date.now();
       task.createdBy = user.id;
@@ -44,9 +46,15 @@ export function makeBlockHandlers({ dispatch, user }) {
 
       // would be assigned by server
       task.id = nanoid();
+      task.color = randomColor();
       if (parent) {
         task.path = `${parent.path}.${task.type}s.${task.id}`;
-        task.parents = [...parent.parents].push(parent.id);
+        task.parents = [];
+        if (parent.parents) {
+          task.parents = task.parents.concat(parent.parents);
+        }
+
+        task.parents.push(parent.id);
         task.owner = parent.owner;
       } else {
         task.path = `${task.type}s.${task.id}`;
@@ -171,7 +179,7 @@ export function sortBlocks({
   });*/
 
   if (rootBlock) {
-    rootBlock = assignPath(rootBlock, childrenFields, null, replaceWithPath);
+    assignPath(rootBlock, childrenFields, null, replaceWithPath);
   }
 
   Object.keys(orgs).forEach(orgId =>

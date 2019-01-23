@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import { generateBlockPermission } from "../../models/acl";
+import "./group.css";
 
 class Group extends React.Component {
   render() {
@@ -11,35 +12,49 @@ class Group extends React.Component {
       blockHandlers,
       childrenTypes,
       onClickAddChild,
-      fallbackPermission,
+      permission,
       name,
       user,
       onEdit
     } = this.props;
-    const permission =
+    const groupPermission =
       group && group.acl
         ? generateBlockPermission(group.acl, user.permissions)
-        : fallbackPermission;
+        : permission || {};
 
-    const permittedChildrenTypes = childrenTypes.filter(
-      type => type !== "group" && permission[type] && permission[type].create
+    const permittedChildrenTypes = childrenTypes
+      ? childrenTypes.filter(type => {
+          return (
+            type !== "group" &&
+            groupPermission[type] &&
+            groupPermission[type].create
+          );
+        })
+      : null;
+
+    console.log(
+      "group",
+      this.props,
+      permittedChildrenTypes,
+      childrenTypes,
+      groupPermission
     );
 
     return (
-      <div>
+      <div className="sk-group">
         <Row>
-          <Col span={18}>{group.name || name}</Col>
-          <Col span={6}>
-            {permittedChildrenTypes.length > 0 && (
+          <Col span={16}>{group ? group.name : name}</Col>
+          <Col span={8}>
+            {permittedChildrenTypes && permittedChildrenTypes.length > 0 && (
               <AddDropdownButton
                 types={permittedChildrenTypes}
                 onClick={type => onClickAddChild(type, group)}
               />
             )}
-            {permission.group.update && (
+            {groupPermission.group && groupPermission.group.update && (
               <Button icon="edit" onClick={() => onEdit(group)} />
             )}
-            {permission.group["delete"] && (
+            {groupPermission.group && groupPermission.group["delete"] && (
               <Button
                 icon="close"
                 onClick={() => blockHandlers.onDelete(group)}
@@ -47,7 +62,7 @@ class Group extends React.Component {
             )}
           </Col>
         </Row>
-        <div>{children}</div>
+        <div className="sk-group-children">{children}</div>
       </div>
     );
   }

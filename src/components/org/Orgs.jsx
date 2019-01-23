@@ -2,7 +2,8 @@ import React from "react";
 import OrgThumbnail from "./OrgThumbnail.jsx";
 import RootGroup from "../group/RootGroup.jsx";
 import EditOrg from "./EditOrg.jsx";
-import { Row, Col } from "antd";
+import { Row, Col, Button } from "antd";
+import "./orgs.css";
 
 class Orgs extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Orgs extends React.Component {
   }
 
   setCurrentOrg = id => {
+    console.log("org clicked", id);
     this.setState({ currentOrg: id });
   };
 
@@ -25,9 +27,15 @@ class Orgs extends React.Component {
     });
   };
 
+  onCreateOrg = org => {
+    this.props.blockHandlers.onAdd(org);
+    this.toggleNewOrgForm();
+  };
+
   render() {
     const { orgs, blockHandlers, user } = this.props;
     const { currentOrg, showNewOrgForm } = this.state;
+    console.log("orgs", this.props, this.state);
 
     if (currentOrg) {
       return (
@@ -41,22 +49,31 @@ class Orgs extends React.Component {
     }
 
     return (
-      <div>
+      <div className="sk-orgs">
         <EditOrg
           visible={showNewOrgForm}
-          onSubmit={blockHandlers.onAdd}
+          onSubmit={this.onCreateOrg}
           onClose={this.toggleNewOrgForm}
-          existingOrgs={Object.keys(orgs).map(org => org.name)}
+          existingOrgs={Object.keys(orgs).map(orgId => orgs[orgId].name)}
         />
-        <Row gutter={16}>
-          {orgs.map(org => {
+        <div className="sk-orgs-header">
+          <Button onClick={this.toggleNewOrgForm} icon="plus">
+            Create Org
+          </Button>
+        </div>
+        <div className="sk-orgs-content">
+          {Object.keys(orgs).map(orgId => {
+            const org = orgs[orgId];
             return (
-              <Col key={org.id} sm={24} md={8} lg={6}>
-                <OrgThumbnail org={org} onClick={this.setCurrentOrg} />
-              </Col>
+              <OrgThumbnail
+                key={org.id}
+                org={org}
+                onClick={() => this.setCurrentOrg(orgId)}
+                className="sk-orgs-thumbnail"
+              />
             );
           })}
-        </Row>
+        </div>
       </div>
     );
   }

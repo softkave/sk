@@ -28,7 +28,9 @@ export default function reducer(state, action, recursive) {
       });
 
     case DELETE:
-      return unset(getNewState(), action.path);
+      state = getNewState();
+      unset(state, action.path);
+      return state;
 
     case MULTIPLE:
       return action.actions.reduce(

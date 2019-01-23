@@ -26,7 +26,7 @@ class NotificationsContainer extends React.Component {
   render() {
     const { notifications, onRespond, onClickNotification } = this.props;
     const { error } = this.state;
-    console.log(this.props, this.state);
+    // console.log(this.props, this.state);
 
     if (!notifications) {
       return "Loading";
@@ -86,7 +86,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         notificationsObj[notification.id] = notification;
       });
 
-      console.log(notifications, notificationsObj);
+      // console.log(notifications, notificationsObj);
       dispatch(mergeDataByPath("notifications", notificationsObj));
     }
   };

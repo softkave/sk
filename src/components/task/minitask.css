@@ -1,0 +1,27 @@
+.sk-minitask {
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 1em 0;
+  background-color: white;
+}
+
+.sk-minitask-top-extra {
+  text-align: right;
+}
+
+.sk-minitask-desc {
+  margin: 0.5em 0;
+}
+
+.sk-minitask-desc p {
+  margin: 0;
+}
+
+.sk-minitask-footer-right {
+  text-align: right;
+}
+
+.sk-minitask-priority {
+  padding: 0 1em !important;
+}

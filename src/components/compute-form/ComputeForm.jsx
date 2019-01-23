@@ -18,7 +18,8 @@ class ComputeForm extends React.Component {
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
         if (model.onSubmit) {
-          model.onSubmit(form.getFieldsValue(), form);
+          delete values.error;
+          model.onSubmit(values, form);
         }
       }
     });
@@ -43,7 +44,7 @@ class ComputeForm extends React.Component {
             ? renderedFieldComponent
             : form.getFieldDecorator(key, {
                 rules: field.rules,
-                firstFields: true,
+                validateFirst: true,
                 initialValue: get(data, key) || field.initialValue,
                 valuePropName: field.valuePropName || "value"
               })(renderedFieldComponent)}
@@ -65,6 +66,7 @@ class ComputeForm extends React.Component {
 
   render() {
     const { model } = this.props;
+    console.log("compute form", this.props);
     const renderedForm = (
       <Form {...model.formProps} onSubmit={this.onSubmit}>
         {this.renderFields()}

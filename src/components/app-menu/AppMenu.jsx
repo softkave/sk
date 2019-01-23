@@ -2,6 +2,7 @@ import React from "react";
 //import throttle from "lodash/throttle";
 import { getWindowWidth } from "../../utils/window";
 import { Menu, Drawer, Icon, Button } from "antd";
+import "./app-menu.css";
 
 const MenuItem = Menu.Item;
 const appMenuDefaultProps = {
@@ -89,19 +90,13 @@ class AppMenu extends React.Component {
             ))}
           </Menu>
         </Drawer>
-        <div
-          style={{
-            padding: "1em",
-            height: "10%",
-            borderBottom: "1px solid grey"
-          }}
-        >
+        <div className="app-menu-header">
           <Button
             icon={collapsed ? "menu-unfold" : "menu-fold"}
             onClick={this.onToggleMenu}
           />
         </div>
-        <div style={{ height: "90%" }}>
+        <div className="app-menu-content">
           {CurrentComponent && <CurrentComponent {...currentItem.props} />}
         </div>
       </div>

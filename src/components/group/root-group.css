@@ -1,0 +1,22 @@
+.sk-root-group-content {
+  padding: 2em 1em;
+  padding-bottom: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  height: 90%;
+  box-sizing: border-box;
+}
+
+.sk-root-group-header {
+  white-space: normal;
+  height: 10%;
+  padding: 1em;
+}
+
+.sk-root-group {
+  height: 100%;
+}
+
+.sk-root-group-thumbnail {
+  margin: 1em 0;
+}

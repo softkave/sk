@@ -15,3 +15,7 @@
 13. change expectedEndAt to completeAt
 14. check if email is available for signup
 15. split descriptors into logical fields
+16. use updatedAt to correlate updates in the server to avoid overwritting
+17. allow updating exact data in arrays, rather than updating everything
+    you can convert the arrays into object-like paths, mongodb can query and maybe update with them
+18. change priority from data to it's own field

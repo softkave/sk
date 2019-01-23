@@ -101,7 +101,7 @@ class NotificationList extends React.Component {
 
   render() {
     const { renderType, currentNotification } = this.state;
-    console.log(this.state, this.props);
+    // console.log(this.state, this.props);
     if (renderType === "mobile") {
       if (currentNotification) {
         return this.renderCurrentNotification();

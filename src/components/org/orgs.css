@@ -1,0 +1,21 @@
+.sk-orgs-content {
+  padding: 2em 0;
+  height: 90%;
+  box-sizing: border-box;
+}
+
+.sk-orgs-header {
+  white-space: normal;
+  height: 10%;
+  padding: 1em;
+}
+
+.sk-orgs-group {
+  height: 100%;
+}
+
+.sk-orgs-thumbnail {
+  max-width: 300px;
+  display: inline-block;
+  margin: 1em;
+}
