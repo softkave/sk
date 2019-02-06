@@ -12,7 +12,9 @@ body,
   height: 100%;
 }
 
-*,
-.ant-input {
+body,
+.ant-input,
+.ant-dropdown-menu-item {
   font-family: "Karla", sans-serif !important;
+  color: rgba(0, 0, 0, 0.85) !important;
 }

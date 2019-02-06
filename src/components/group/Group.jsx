@@ -1,8 +1,10 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import { generateBlockPermission } from "../../models/acl";
+import { generateBlockPermission, canPerformAction } from "../../models/acl";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import "./group.css";
+import "react-perfect-scrollbar/dist/css/styles.css";
 
 class Group extends React.Component {
   render() {
@@ -19,50 +21,56 @@ class Group extends React.Component {
     } = this.props;
     const groupPermission =
       group && group.acl
-        ? generateBlockPermission(group.acl, user.permissions)
+        ? generateBlockPermission(group, user.permissions)
         : permission || {};
+
+    console.log("group", this.props, childrenTypes, groupPermission);
 
     const permittedChildrenTypes = childrenTypes
       ? childrenTypes.filter(type => {
           return (
             type !== "group" &&
-            groupPermission[type] &&
-            groupPermission[type].create
+            canPerformAction(groupPermission, type, "create")
           );
         })
       : null;
 
-    console.log(
-      "group",
-      this.props,
-      permittedChildrenTypes,
-      childrenTypes,
-      groupPermission
-    );
+    console.log(permittedChildrenTypes);
 
     return (
       <div className="sk-group">
-        <Row>
-          <Col span={16}>{group ? group.name : name}</Col>
-          <Col span={8}>
+        <Row className="sk-group-head">
+          <Col span={12} style={{ minHeight: "32px" }}>
+            <span style={{ fontWeight: "bold" }}>
+              {group ? group.name : name}
+            </span>
+          </Col>
+          <Col span={12} style={{ textAlign: "right" }}>
             {permittedChildrenTypes && permittedChildrenTypes.length > 0 && (
               <AddDropdownButton
                 types={permittedChildrenTypes}
                 onClick={type => onClickAddChild(type, group)}
               />
             )}
-            {groupPermission.group && groupPermission.group.update && (
-              <Button icon="edit" onClick={() => onEdit(group)} />
+            {canPerformAction(groupPermission, "group", "update") && (
+              <Button
+                icon="edit"
+                onClick={() => onEdit(group)}
+                style={{ marginLeft: "2px" }}
+              />
             )}
-            {groupPermission.group && groupPermission.group["delete"] && (
+            {canPerformAction(groupPermission, "group", "delete") && (
               <Button
                 icon="close"
                 onClick={() => blockHandlers.onDelete(group)}
+                style={{ marginLeft: "2px" }}
               />
             )}
           </Col>
         </Row>
-        <div className="sk-group-children">{children}</div>
+        <PerfectScrollbar className="sk-group-children">
+          {children}
+        </PerfectScrollbar>
       </div>
     );
   }

@@ -28,7 +28,7 @@ export default class ManagedRoleLabelInput extends React.Component {
   };
 
   render() {
-    const { editing, value } = this.state;
+    const { editing, value, form, path } = this.state;
 
     if (editing) {
       return (
@@ -37,6 +37,8 @@ export default class ManagedRoleLabelInput extends React.Component {
           onSubmit={this.onSubmit}
           onCancel={this.toggleEditing}
           value={value}
+          form={form}
+          path={path}
         />
       );
     }

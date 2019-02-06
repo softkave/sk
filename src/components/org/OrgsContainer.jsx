@@ -26,7 +26,7 @@ class OrgsContainer extends React.Component {
   async fetchOrgs() {}
 
   render() {
-    const { orgs, blockHandlers } = this.props;
+    const { orgs } = this.props;
     const { error } = this.state;
 
     if (!orgs) {
@@ -35,7 +35,7 @@ class OrgsContainer extends React.Component {
       return "An error occurred";
     }
 
-    return <Orgs orgs={orgs} blockHandlers={blockHandlers} />;
+    return <Orgs {...this.props} />;
   }
 }
 
@@ -53,8 +53,11 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     user: state.user.user
   });
 
+  console.log(state);
+
   return {
     blockHandlers,
+    user: state.user.user,
     orgs: state.orgs,
     async fetchOrgs() {
       let blocks = await netInterface("block.getPermissionBlocks");

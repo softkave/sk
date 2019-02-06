@@ -3,8 +3,8 @@ import EditPriority from "./EditPriority.jsx";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, DatePicker, Form } from "antd";
 import { taskDescriptor as blockDescriptor } from "../../models/block/descriptor";
-import Empty from "../Empty.jsx";
 import modalWrap from "../modalWrap.jsx";
+import AssignTask from "./AssignTask.jsx";
 
 const TextArea = Input.TextArea;
 
@@ -23,12 +23,9 @@ class EditTask extends React.Component {
 
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         description: {
           component: TextArea,
-          props: { autosize: true },
+          props: { autosize: { minRows: 3, maxRows: 7 } },
           label: "Description",
           labelCol: null,
           wrapperCol: null,
@@ -45,7 +42,23 @@ class EditTask extends React.Component {
             ? data.data.find(d => d.dataType === "priority")
             : "not important"
         },
-        // collaborators
+        collaborators: {
+          render(form) {
+            return (
+              <Form.Item label="Collaborators" key="collaborators">
+                <AssignTask
+                  key="assignTasks"
+                  form={form}
+                  collaborators={props.collaborators}
+                  defaultTaskCollaborators={
+                    data.collaborators || props.autoAssignTo
+                  }
+                  user={props.user}
+                />
+              </Form.Item>
+            );
+          }
+        },
         completeAt: {
           component: DatePicker,
           props: {
@@ -111,4 +124,4 @@ class EditTask extends React.Component {
   }
 }
 
-export default modalWrap(Form.create()(EditTask));
+export default modalWrap(Form.create()(EditTask), "Task");

@@ -1,24 +1,63 @@
 import React from "react";
 import { Drawer } from "antd";
 import { getWindowWidth } from "../utils/window";
+import throttle from "lodash/throttle";
 
-export default function modalWrap(component) {
-  function ModalWrappedComponent(props) {
-    const WrappedComponent = component;
-    const { visible, onClose } = props;
-    const windowWidth = getWindowWidth();
-    let drawerWidth =
-      windowWidth / (windowWidth < 500 ? 1 : windowWidth < 900 ? 2 : 3);
+export default function modalWrap(component, defaultTitle) {
+  class ModalWrappedComponent extends React.Component {
+    constructor(props) {
+      super(props);
+      this.updateWindowData();
+      this.updateWindowData = throttle(this.updateWindowData, 300);
 
-    if (!visible) {
-      return null;
+      this.state = {
+        currentDeviceWidth: getWindowWidth()
+      };
     }
 
-    return (
-      <Drawer visible={visible} onClose={onClose} width={drawerWidth}>
-        <WrappedComponent {...props} />
-      </Drawer>
-    );
+    componentDidMount() {
+      window.addEventListener("resize", this.updateWindowData);
+      this.modalIsMounted = true;
+    }
+
+    componentWillUnmount() {
+      window.removeEventListener("resize", this.updateWindowData);
+      this.modalIsMounted = false;
+    }
+
+    updateWindowData = () => {
+      if (this.modalIsMounted) {
+        this.setState({ currentDeviceWidth: getWindowWidth() });
+      }
+    };
+
+    render() {
+      const WrappedComponent = component;
+      const { visible, onClose, title } = this.props;
+      const { currentDeviceWidth } = this.state;
+      // const windowWidth = getWindowWidth();
+      const windowWidth = currentDeviceWidth;
+      const divider = windowWidth <= 500 ? 1 : windowWidth <= 700 ? 3 / 2 : 2;
+      // : windowWidth <= 1020
+      // ? 2
+      // : 3;
+      let drawerWidth = windowWidth / divider;
+
+      if (!visible) {
+        return null;
+      }
+
+      return (
+        <Drawer
+          visible={visible}
+          onClose={onClose}
+          width={drawerWidth}
+          title={title || defaultTitle}
+        >
+          <WrappedComponent {...this.props} />
+        </Drawer>
+      );
+    }
   }
 
   ModalWrappedComponent.displayName = `modalWrap(${component.displayName ||

@@ -3,7 +3,6 @@ import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
 import { makeConfirmValidator } from "../../utils/descriptor";
-import Empty from "../Empty.jsx";
 
 class ChangePassword extends React.Component {
   constructor(props) {
@@ -17,11 +16,8 @@ class ChangePassword extends React.Component {
 
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         password: {
-          component: Input,
+          component: Input.Password,
           props: { type: "password" },
           label: "Password",
           labelCol: null,
@@ -32,7 +28,7 @@ class ChangePassword extends React.Component {
           ]
         },
         confirmPassword: {
-          component: Input,
+          component: Input.Password,
           props: { type: "password" },
           label: "Confirm Password",
           labelCol: null,

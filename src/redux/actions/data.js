@@ -1,4 +1,4 @@
-import { makeMultiple, makeMerge, makeDelete } from "./make";
+import { makeMultiple, makeMerge, makeDelete, makeSet } from "./make";
 
 export function updateId(data, newId, prevId) {
   const action1 = makeDelete(data.path);
@@ -16,4 +16,8 @@ export function mergeDataByPath(path, data) {
 
 export function deleteDataByPath(path) {
   return makeDelete(path);
+}
+
+export function setDataByPath(path, data) {
+  return makeSet(path, data);
 }

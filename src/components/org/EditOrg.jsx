@@ -2,10 +2,18 @@ import React from "react";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { orgDescriptor as blockDescriptor } from "../../models/block/descriptor";
-import Empty from "../Empty.jsx";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
-import AccessControl from "../acl/AccessControl.jsx";
+import Roles from "../role/Roles.jsx";
+import Acl from "../acl/Acl.jsx";
+import {
+  generateACL,
+  generateRolesActions,
+  generateBlockPermission,
+  generateACLArrayFromObj,
+  blockActionTypes
+} from "../../models/acl";
+import { getDefaultRolesArr } from "../../models/roles";
 
 const TextArea = Input.TextArea;
 
@@ -18,11 +26,11 @@ class EditOrg extends React.Component {
     super(props);
     const self = this;
     const data = props.data || {};
+    const defaultRoles = getDefaultRolesArr();
+    const actions = generateACL(blockActionTypes);
+    const defaultAcl = generateBlockPermission({ acl: actions });
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         name: {
           component: Input,
           props: { autoComplete: "off" },
@@ -42,14 +50,31 @@ class EditOrg extends React.Component {
         },
         description: {
           component: TextArea,
-          props: { autosize: true },
+          props: { autosize: { minRows: 2, maxRows: 6 } },
           label: "Description",
-          labelCol: null,
-          wrapperCol: null,
+          // labelCol: null,
+          // wrapperCol: null,
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        // acl
+        roles: {
+          render(form, data) {
+            return (
+              <Form.Item key="roles" label="Roles">
+                <Roles form={form} roles={defaultRoles} />
+              </Form.Item>
+            );
+          }
+        },
+        acl: {
+          render(form, data) {
+            return (
+              <Form.Item key="acl" label="Access Control">
+                <Acl form={form} defaultAcl={defaultAcl} />
+              </Form.Item>
+            );
+          }
+        },
         submit: {
           component: Button,
           props: {
@@ -72,6 +97,8 @@ class EditOrg extends React.Component {
 
   onSubmit = data => {
     data.type = "org";
+    data.acl = generateACLArrayFromObj(data.acl);
+    delete data.roleKeys;
     this.props.onSubmit(data);
   };
 
@@ -80,4 +107,4 @@ class EditOrg extends React.Component {
   }
 }
 
-export default modalWrap(Form.create()(EditOrg));
+export default modalWrap(Form.create()(EditOrg), "Org");

@@ -3,7 +3,6 @@ import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
 import { makeConfirmValidator } from "../../utils/descriptor";
-import Empty from "../Empty.jsx";
 import netInterface from "../../net";
 import { applyErrors } from "../compute-form/utils";
 import { mergeDataByPath } from "../../redux/actions/data";
@@ -28,9 +27,6 @@ class Signup extends React.Component {
 
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         name: {
           component: Input,
           label: "Name",

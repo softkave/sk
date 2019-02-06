@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 function MainApp() {
   return (
     <AppMenu
-      currentItemKey="orgs"
+      currentItemKey="personal"
       menuItems={[
         {
           key: "notifications",
@@ -79,7 +79,8 @@ class App extends React.Component {
     } else {
       notification.error({
         title: "Error",
-        description: "An error ocurred"
+        description: "An error ocurred",
+        duration: null
       });
     }
   }

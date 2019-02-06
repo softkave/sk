@@ -2,9 +2,13 @@ import React from "react";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { groupDescriptor as blockDescriptor } from "../../models/block/descriptor";
-import Empty from "../Empty.jsx";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
+import Acl from "../acl/Acl.jsx";
+import {
+  generateBlockPermission,
+  generateACLArrayFromObj
+} from "../../models/acl";
 
 const TextArea = Input.TextArea;
 
@@ -20,9 +24,6 @@ class EditGroup extends React.Component {
     const self = this;
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         name: {
           component: Input,
           props: { autoComplete: "off" },
@@ -42,14 +43,28 @@ class EditGroup extends React.Component {
         },
         description: {
           component: TextArea,
-          props: { autosize: true },
+          props: { autosize: { minRows: 2, maxRows: 6 } },
           label: "Description",
           labelCol: null,
           wrapperCol: null,
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        // acl, check noAcl
+        acl: {
+          render(form, data) {
+            return props.noAcl ? null : (
+              <Form.Item key="acl" label="Access Control">
+                <Acl
+                  form={form}
+                  defaultAcl={generateBlockPermission({
+                    acl: data.acl || props.parentAcl
+                  })}
+                  roles={props.roles}
+                />
+              </Form.Item>
+            );
+          }
+        },
         submit: {
           component: Button,
           props: {
@@ -72,6 +87,10 @@ class EditGroup extends React.Component {
 
   onSubmit = data => {
     data.type = "group";
+    if (data.acl) {
+      data.acl = generateACLArrayFromObj(data.acl);
+    }
+
     this.props.onSubmit(data);
   };
 
@@ -80,4 +99,4 @@ class EditGroup extends React.Component {
   }
 }
 
-export default modalWrap(Form.create()(EditGroup));
+export default modalWrap(Form.create()(EditGroup), "Group");

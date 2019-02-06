@@ -1,15 +1,15 @@
 .sk-root-group-content {
-  padding: 2em 1em;
-  padding-bottom: 0;
+  padding: 1em;
   overflow-x: auto;
   white-space: nowrap;
-  height: 90%;
+  height: 92%;
   box-sizing: border-box;
+  overflow-y: hidden;
 }
 
 .sk-root-group-header {
   white-space: normal;
-  height: 10%;
+  height: 8%;
   padding: 1em;
 }
 

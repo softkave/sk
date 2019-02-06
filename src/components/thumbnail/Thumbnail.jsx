@@ -3,23 +3,40 @@ import { Row, Col } from "antd";
 import "./thumbnail.css";
 
 export default function Thumbnail(props) {
-  const { data, renderInfo, onClick, className, style } = props;
+  const {
+    data,
+    renderInfo,
+    onClick,
+    className,
+    style,
+    colorStyle,
+    colorClassName,
+    colorSpan,
+    hoverable
+  } = props;
   console.log("thumbnail", data);
+  const cSpan = colorSpan || 8;
+  const hov = typeof hoverable !== "boolean" ? true : hoverable;
+
   return (
     <div
-      className={"sk-thumbnail " + className}
+      className={
+        "sk-thumbnail " +
+        (hov ? "sk-thumbnail-hoverable " : "") +
+        (className || "")
+      }
       style={style}
       onClick={onClick}
     >
       <Row gutter={16} style={{ height: "100%" }}>
-        <Col span={8} style={{ height: "100%" }}>
+        <Col span={cSpan} style={{ height: "100%" }}>
           <span
-            style={{ backgroundColor: data.color }}
-            className="sk-thumbnail-color"
+            style={{ backgroundColor: data.color, ...colorStyle }}
+            className={"sk-thumbnail-color " + (colorClassName || "")}
           />
         </Col>
-        <Col span={16} style={{ height: "100%" }}>
-          {renderInfo(data)}
+        <Col span={24 - cSpan} style={{ height: "100%" }}>
+          {renderInfo(data, props)}
         </Col>
       </Row>
     </div>

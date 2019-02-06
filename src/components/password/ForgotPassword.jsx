@@ -3,7 +3,6 @@ import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
 import { makeConfirmValidator } from "../../utils/descriptor";
-import Empty from "../Empty.jsx";
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -17,11 +16,8 @@ class ForgotPassword extends React.Component {
 
     this.model = {
       fields: {
-        error: {
-          component: Empty
-        },
         email: {
-          component: Input,
+          component: Input.Password,
           label: "Email",
           labelCol: null,
           wrapperCol: null,

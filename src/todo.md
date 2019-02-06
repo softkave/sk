@@ -19,3 +19,4 @@
 17. allow updating exact data in arrays, rather than updating everything
     you can convert the arrays into object-like paths, mongodb can query and maybe update with them
 18. change priority from data to it's own field
+19. fix autosize in description

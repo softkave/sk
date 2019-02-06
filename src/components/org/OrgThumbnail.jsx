@@ -6,12 +6,17 @@ export default function OrgThumbnail(props) {
   return (
     <Thumbnail
       className={className}
-      style={style}
       data={org}
       onClick={onClick}
       renderInfo={() => {
         return <h3>{org.name}</h3>;
       }}
+      style={{
+        height: "70px",
+        padding: "4px",
+        ...style
+      }}
+      colorSpan={5}
     />
   );
 }

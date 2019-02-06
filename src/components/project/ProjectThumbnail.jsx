@@ -12,7 +12,12 @@ export default function ProjectThumbnail(props) {
         return <h3>{project.name}</h3>;
       }}
       className={className}
-      style={style}
+      style={{
+        height: "70px",
+        padding: "4px",
+        ...style
+      }}
+      colorSpan={5}
     />
   );
 }

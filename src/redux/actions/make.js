@@ -1,4 +1,4 @@
-import { MERGE, DELETE, MULTIPLE } from "../constants/reducer";
+import { MERGE, DELETE, MULTIPLE, SET } from "../constants/reducer";
 
 export function makeMerge(path, data) {
   return {
@@ -19,5 +19,13 @@ export function makeMultiple(actions) {
   return {
     actions,
     type: MULTIPLE
+  };
+}
+
+export function makeSet(path, data) {
+  return {
+    path,
+    data,
+    type: SET
   };
 }

@@ -3,8 +3,8 @@ import "./priority.css";
 
 export const priorityToColorMap = {
   "not important": "#EACA2C",
-  important: "green",
-  "very important": "red"
+  important: "#7ED321",
+  "very important": "#EB5424"
 };
 
 export default function Priority(props) {

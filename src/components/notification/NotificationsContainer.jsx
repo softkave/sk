@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import netInterface from "../../net";
-import { mergeDataByPath } from "../../redux/actions/data";
+import { setDataByPath, mergeDataByPath } from "../../redux/actions/data";
 import NotificationList from "./NotificationList.jsx";
 
 class NotificationsContainer extends React.Component {
@@ -59,17 +59,19 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     onClickNotification(notification) {
       if (!notification.readAt) {
         dispatch(
-          mergeDataByPath(`notifications.${notification.id}.readAt`, Date.now())
+          setDataByPath(`notifications.${notification.id}.readAt`, Date.now())
         );
         netInterface("user.updateReadNotification", { request: notification });
       }
     },
 
     onRespond(notification, response) {
-      dispatch(`notifications.${notification.id}`, {
-        response,
-        respondedAt: Date.now()
-      });
+      dispatch(
+        mergeDataByPath(`notifications.${notification.id}`, {
+          response,
+          respondedAt: Date.now()
+        })
+      );
 
       netInterface("user.respondToCollaborationRequest", {
         response,

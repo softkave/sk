@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
-import ManagedRoleLabelInput from "./ManagedRoleLabelInput.jsx";
 import "./role.css";
 
 export default class Role extends React.Component {
@@ -16,30 +15,42 @@ export default class Role extends React.Component {
       onUpVote,
       onDownVote,
       onDelete,
-      onUpdateRoleLabel
+      onToggleEdit,
+      disabled,
+      className,
+      style
     } = this.props;
 
     return (
-      <ManagedRoleLabelInput
-        onSubmit={onUpdateRoleLabel}
-        render={({ toggleEditing }) => {
-          return (
-            <div className="sk-role">
-              <Row>
-                <Col span={14}>{role.label}</Col>
-                <Col span={10}>
-                  {onUpVote && <Button icon="caret-up" onClick={onUpVote} />}
-                  {onDownVote && (
-                    <Button icon="caret-down" onClick={onDownVote} />
-                  )}
-                  <Button icon="edit" onClick={toggleEditing} />
-                  <Button icon="delete" onClick={onDelete} />
-                </Col>
-              </Row>
-            </div>
-          );
-        }}
-      />
+      <div style={style} className={"sk-role " + (className || "")}>
+        <Row>
+          <Col span={10}>{role.label}</Col>
+          {!disabled && (
+            <Col span={14} style={{ textAlign: "right" }}>
+              {onUpVote && (
+                <Button
+                  icon="caret-up"
+                  onClick={onUpVote}
+                  style={{ marginRight: "2px" }}
+                />
+              )}
+              {onDownVote && (
+                <Button
+                  icon="caret-down"
+                  onClick={onDownVote}
+                  style={{ marginRight: "2px" }}
+                />
+              )}
+              <Button
+                icon="edit"
+                onClick={onToggleEdit}
+                style={{ marginRight: "2px" }}
+              />
+              <Button icon="delete" onClick={onDelete} />
+            </Col>
+          )}
+        </Row>
+      </div>
     );
   }
 }

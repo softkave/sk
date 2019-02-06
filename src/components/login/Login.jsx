@@ -2,14 +2,10 @@ import React from "react";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Checkbox, Form } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
-import Empty from "../Empty.jsx";
 
 class Login extends React.Component {
   model = {
     fields: {
-      error: {
-        component: Empty
-      },
       email: {
         component: Input,
         props: { autocomplete: "email" },

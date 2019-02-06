@@ -1,7 +1,12 @@
 import get from "lodash/get";
-import { mergeDataByPath, deleteDataByPath } from "../redux/actions/data";
+import {
+  mergeDataByPath,
+  deleteDataByPath,
+  setDataByPath
+} from "../redux/actions/data";
 import netInterface from "../net";
 import randomColor from "randomcolor";
+import { generatePermission } from "../models/user/permission";
 
 //const uuid = require("uuid/v4");
 const nanoid = require("nanoid");
@@ -62,7 +67,21 @@ export function makeBlockHandlers({ dispatch, user }) {
       }
 
       task = prepareTaskFromEditData(task);
-      dispatch(mergeDataByPath(task.path, task));
+      if (task.type === "org") {
+        task.collaborators = [user];
+        let userPermissions = [...user.permissions];
+        userPermissions.push(
+          generatePermission(task, task.roles[task.roles.length - 1])
+        );
+
+        dispatch(setDataByPath("user.user.permissions", userPermissions));
+      } else if (task.type === "task") {
+        if (!task.collaborators) {
+          task.collaborators = [];
+        }
+      }
+
+      dispatch(setDataByPath(task.path, task));
       netInterface("block.createBlock", task);
     },
 
@@ -74,11 +93,19 @@ export function makeBlockHandlers({ dispatch, user }) {
 
     onToggle(task) {
       const collaboratorIndex = task.collaborators.findIndex(
-        c => c.userId === user.id
+        c => c.id === user.id
       );
+
+      console.log(task, user, collaboratorIndex);
       const collaborator = task.collaborators[collaboratorIndex];
-      const path = `${task.path}.collaborators.${collaboratorIndex}.data`;
-      dispatch(mergeDataByPath(path, collaborator.data ? null : Date.now()));
+      const path = `${
+        task.path
+      }.collaborators.${collaboratorIndex}.completedAt`;
+
+      dispatch(
+        setDataByPath(path, collaborator.completedAt ? null : Date.now())
+      );
+
       netInterface("block.toggleTask", { task });
     },
 
@@ -217,4 +244,13 @@ export function assignPath(block, childrenPath, parent, replaceWithPath) {
       }
     });
   }
+}
+
+export function assignTask(collaborator, by) {
+  return {
+    id: collaborator.id,
+    assignedAt: Date.now(),
+    assignedBy: by ? by.id : null,
+    completedAt: null
+  };
 }

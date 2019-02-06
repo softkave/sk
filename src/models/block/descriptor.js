@@ -1,22 +1,34 @@
 import { makeDescriptorFieldsRequired } from "../../utils/descriptor";
+import trim from "../../utils/trim";
+
+const textPattern = {
+  pattern: /\w+/,
+  message: "only alphanumeric characters allowed"
+};
 
 export const aclDescriptor = {
-  action: {
-    type: "string",
-    max: 50,
-    pattern: /\w/
-  },
+  action: [
+    {
+      type: "string",
+      max: 50,
+      transform: trim
+    },
+    textPattern
+  ],
   level: {
     type: "number"
   }
 };
 
 export const roleDescriptor = {
-  role: {
-    type: "string",
-    max: 50,
-    pattern: /\w/
-  },
+  role: [
+    {
+      type: "string",
+      max: 50,
+      transform: trim
+    },
+    textPattern
+  ],
   level: {
     type: "number"
   }
@@ -27,14 +39,18 @@ export const blockDescriptor = {
     {
       type: "string",
       max: 50,
-      pattern: /\w/
-    }
+      transform: trim
+    },
+    textPattern
   ],
   description: [
     {
       type: "string",
-      max: 250,
-      pattern: /\w/
+      max: 250
+    },
+    {
+      pattern: /[\w\s]+/,
+      message: "only alphanumeric characters allowed"
     }
   ],
   expectedEndAt: [
