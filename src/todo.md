@@ -20,3 +20,8 @@
     you can convert the arrays into object-like paths, mongodb can query and maybe update with them
 18. change priority from data to it's own field
 19. fix autosize in description
+20. use custom scrollbar only in desktop
+21. embed version
+22. external link for issues and requests
+23. use role attribute for assistive technologies
+24. validate some input onBlur, not onChange

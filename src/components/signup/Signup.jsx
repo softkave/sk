@@ -117,10 +117,6 @@ class Signup extends React.Component {
 function mapDispatchToProps(dispatch) {
   return {
     onSignup: data => {
-      if (process.env.NODE_ENV === "development") {
-        localStorage.setItem("user", JSON.stringify(data));
-      }
-
       dispatch(mergeDataByPath("user", data));
     }
   };

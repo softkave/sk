@@ -7,7 +7,8 @@ import modalWrap from "../modalWrap.jsx";
 import Acl from "../acl/Acl.jsx";
 import {
   generateBlockPermission,
-  generateACLArrayFromObj
+  generateACLArrayFromObj,
+  canPerformAction
 } from "../../models/acl";
 
 const TextArea = Input.TextArea;
@@ -21,6 +22,7 @@ class EditProject extends React.Component {
     super(props);
     const self = this;
     const data = props.data || {};
+    console.log(props);
     this.model = {
       fields: {
         name: {
@@ -49,21 +51,6 @@ class EditProject extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        acl: {
-          render(form, data) {
-            return props.noAcl ? null : (
-              <Form.Item key="acl" label="Access Control">
-                <Acl
-                  form={form}
-                  defaultAcl={generateBlockPermission({
-                    acl: data.acl || props.parentAcl
-                  })}
-                  roles={props.roles}
-                />
-              </Form.Item>
-            );
-          }
-        },
         submit: {
           component: Button,
           props: {
@@ -82,6 +69,24 @@ class EditProject extends React.Component {
       },
       onSubmit: self.onSubmit
     };
+
+    if (canPerformAction(props.permission, "acl", "update")) {
+      this.model.fields["acl"] = {
+        render(form, data) {
+          return props.noAcl ? null : (
+            <Form.Item key="acl" label="Access Control">
+              <Acl
+                form={form}
+                defaultAcl={generateBlockPermission({
+                  acl: data.acl || props.defaultAcl
+                })}
+                roles={props.roles}
+              />
+            </Form.Item>
+          );
+        }
+      };
+    }
   }
 
   onSubmit = data => {
@@ -90,6 +95,7 @@ class EditProject extends React.Component {
       data.acl = generateACLArrayFromObj(data.acl);
     }
 
+    console.log(data);
     this.props.onSubmit(data);
   };
 

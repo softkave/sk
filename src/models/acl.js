@@ -2,31 +2,38 @@ import { defaultRolesMap } from "./roles";
 import dotProp from "dot-prop-immutable";
 
 const basicPrefixList = [
-  { action: "create", level: defaultRolesMap.lead },
+  // { action: "create", level: defaultRolesMap.lead },
   { action: "update", level: defaultRolesMap.lead },
   { action: "read", level: defaultRolesMap.collaborator },
   { action: "delete", level: defaultRolesMap.lead }
 ];
 
+const createPrefixList = [{ action: "create", level: defaultRolesMap.lead }];
+
 export const blockActionTypes = [
+  {
+    type: "",
+    prefixList: basicPrefixList
+  },
   {
     type: "task",
     prefixList: [
-      ...basicPrefixList,
+      ...createPrefixList,
       { action: "toggle", level: defaultRolesMap.collaborator },
       { action: "assign", level: defaultRolesMap.lead },
       { action: "unassign", level: defaultRolesMap.lead }
     ]
   },
-  { type: "group", prefixList: basicPrefixList },
-  { type: "project", prefixList: basicPrefixList },
-  { type: "org", prefixList: basicPrefixList },
+  { type: "group", prefixList: createPrefixList },
+  { type: "project", prefixList: createPrefixList },
+  { type: "org", prefixList: createPrefixList },
   {
-    type: "collaboration",
+    type: "request",
     prefixList: [
-      { action: "read-requests", level: defaultRolesMap.lead },
-      { action: "send-request", level: defaultRolesMap.admin },
-      { action: "update-user-role", level: defaultRolesMap.admin }
+      { action: "read", level: defaultRolesMap.admin },
+      { action: "send", level: defaultRolesMap.admin },
+      { action: "update", level: defaultRolesMap.admin },
+      { action: "revoke", level: defaultRolesMap.admin }
     ]
   },
   {
@@ -150,6 +157,20 @@ const resourceHierachy = {
   task: 0
 };
 
+const resourceHierachyArr = ["task", "project", "org"];
+
+export function getPermittedChildren(res) {
+  return resourceHierachyArr.filter((type, index) => {
+    return resourceHierachy[res.type] > index;
+  });
+}
+
+export function getForbiddenChildren(res) {
+  return resourceHierachyArr.filter((type, index) => {
+    return resourceHierachy[res.type] <= index;
+  });
+}
+
 export function makeHierachyFilter(resourceType, groupParentType) {
   return function filterHierachy({ type, action, level }) {
     if (
@@ -169,6 +190,33 @@ export function makeHierachyFilter(resourceType, groupParentType) {
   };
 }
 
+export function filterAclArr(acl, remove, isString) {
+  let result = acl.filter(item => {
+    return !remove.some(rm => {
+      if (isString) {
+        rm = new RegExp(rm, "ig");
+      }
+
+      const testResult = rm.test(item.action);
+      return testResult;
+    });
+  });
+
+  return result;
+}
+
+// export function filterAclObj(acl, remove) {
+
+// }
+
 export function canPerformAction(permission, resourceType, action) {
-  return dotProp.get(permission, `${resourceType}.${action}.canPerformAction`);
+  let path = null;
+
+  if (resourceType) {
+    path = `${resourceType}.${action}.canPerformAction`;
+  } else {
+    path = `${action}.canPerformAction`;
+  }
+
+  return dotProp.get(permission, path);
 }

@@ -7,7 +7,11 @@ export default function(props) {
   return (
     <Select value={value} onChange={onChange}>
       {roles.map(role => {
-        return <Select.Option value={role.level}>{role.label}</Select.Option>;
+        return (
+          <Select.Option key={value} value={role.level}>
+            {role.label}
+          </Select.Option>
+        );
       })}
     </Select>
   );

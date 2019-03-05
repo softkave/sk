@@ -15,7 +15,7 @@ export default function Thumbnail(props) {
     hoverable
   } = props;
   console.log("thumbnail", data);
-  const cSpan = colorSpan || 8;
+  const cSpan = colorSpan;
   const hov = typeof hoverable !== "boolean" ? true : hoverable;
 
   return (
@@ -32,7 +32,7 @@ export default function Thumbnail(props) {
         <Col span={cSpan} style={{ height: "100%" }}>
           <span
             style={{ backgroundColor: data.color, ...colorStyle }}
-            className={"sk-thumbnail-color " + (colorClassName || "")}
+            className={"sk-thumbnail-color " + colorClassName}
           />
         </Col>
         <Col span={24 - cSpan} style={{ height: "100%" }}>
@@ -44,5 +44,7 @@ export default function Thumbnail(props) {
 }
 
 Thumbnail.defaultProps = {
-  className: ""
+  className: "",
+  colorSpan: 8,
+  colorClassName: ""
 };

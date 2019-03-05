@@ -56,7 +56,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
   return {
     notifications: state.notifications,
     currentNotification: state.currentNotification,
-    onClickNotification(notification) {
+    async onClickNotification(notification) {
       if (!notification.readAt) {
         dispatch(
           setDataByPath(`notifications.${notification.id}.readAt`, Date.now())
@@ -65,7 +65,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
       }
     },
 
-    onRespond(notification, response) {
+    async onRespond(notification, response) {
       dispatch(
         mergeDataByPath(`notifications.${notification.id}`, {
           response,
@@ -73,10 +73,18 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         })
       );
 
-      netInterface("user.respondToCollaborationRequest", {
+      let result = await netInterface("user.respondToCollaborationRequest", {
         response,
         request: notification
       });
+
+      if (result) {
+        console.log(result);
+        const { block, permission } = result;
+        block.path = `orgs.${block.id}`;
+        dispatch(setDataByPath(block.path, block));
+        dispatch(mergeDataByPath(`user.user.permissions`, permission));
+      }
     },
 
     async fetchNotifications() {

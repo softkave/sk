@@ -7,7 +7,8 @@ import modalWrap from "../modalWrap.jsx";
 import Acl from "../acl/Acl.jsx";
 import {
   generateBlockPermission,
-  generateACLArrayFromObj
+  generateACLArrayFromObj,
+  canPerformAction
 } from "../../models/acl";
 
 const TextArea = Input.TextArea;
@@ -50,21 +51,6 @@ class EditGroup extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        acl: {
-          render(form, data) {
-            return props.noAcl ? null : (
-              <Form.Item key="acl" label="Access Control">
-                <Acl
-                  form={form}
-                  defaultAcl={generateBlockPermission({
-                    acl: data.acl || props.parentAcl
-                  })}
-                  roles={props.roles}
-                />
-              </Form.Item>
-            );
-          }
-        },
         submit: {
           component: Button,
           props: {
@@ -83,6 +69,24 @@ class EditGroup extends React.Component {
       },
       onSubmit: self.onSubmit
     };
+
+    if (canPerformAction(props.permission, "acl", "update")) {
+      this.model.fields["acl"] = {
+        render(form, data) {
+          return props.noAcl ? null : (
+            <Form.Item key="acl" label="Access Control">
+              <Acl
+                form={form}
+                defaultAcl={generateBlockPermission({
+                  acl: data.acl || props.defaultAcl
+                })}
+                roles={props.roles}
+              />
+            </Form.Item>
+          );
+        }
+      };
+    }
   }
 
   onSubmit = data => {

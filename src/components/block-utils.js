@@ -23,11 +23,6 @@ export function getBlockParent(block, state) {
 
 export function makeBlockHandlers({ dispatch, user }) {
   function prepareTaskFromEditData(task) {
-    // if (task.priority) {
-    //   task.data = [{ dataType: "priority", data: task.priority }];
-    //   delete task.priority;
-    // }
-
     if (task.expectedEndAt) {
       task.expectedEndAt = task.expectedEndAt.valueOf();
     }
@@ -37,19 +32,8 @@ export function makeBlockHandlers({ dispatch, user }) {
 
   return {
     async onAdd(task, parent) {
-      console.log(task, parent);
-      //task.type = "task";
       task.createdAt = Date.now();
       task.createdBy = user.id;
-      /*task.collaborators = [];
-      if (autoAssign) {
-        task.collaborators.push({
-          userId: user.id,
-          data: [{ dataType: "completedAt", data: null }]
-        });
-      }*/
-
-      // would be assigned by server
       task.id = nanoid();
       task.color = randomColor();
       if (parent) {
@@ -93,10 +77,9 @@ export function makeBlockHandlers({ dispatch, user }) {
 
     onToggle(task) {
       const collaboratorIndex = task.collaborators.findIndex(
-        c => c.id === user.id
+        c => c.userId === user.id
       );
 
-      console.log(task, user, collaboratorIndex);
       const collaborator = task.collaborators[collaboratorIndex];
       const path = `${
         task.path
@@ -112,6 +95,12 @@ export function makeBlockHandlers({ dispatch, user }) {
     onDelete(task) {
       dispatch(deleteDataByPath(task.path));
       netInterface("block.deleteBlock", task);
+    },
+
+    onAddCollaborators(block, collaborators) {
+      dispatch(
+        mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
+      );
     }
   };
 }
@@ -248,7 +237,7 @@ export function assignPath(block, childrenPath, parent, replaceWithPath) {
 
 export function assignTask(collaborator, by) {
   return {
-    id: collaborator.id,
+    userId: collaborator.id,
     assignedAt: Date.now(),
     assignedBy: by ? by.id : null,
     completedAt: null

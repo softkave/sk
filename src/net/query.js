@@ -1,5 +1,6 @@
 import NetError from "./NetError";
 import get from "lodash/get";
+import { devLog, devError } from "../utils/log";
 
 const serverAddr =
   process.env.NODE_ENV === "development"
@@ -18,6 +19,8 @@ export default async function query(headers, netQuery, variables, process) {
 
     if (result.ok()) {
       let resultBody = await result.json();
+      devLog(resultBody);
+
       resultBody =
         typeof process === "string"
           ? get(resultBody, process)
@@ -32,6 +35,8 @@ export default async function query(headers, netQuery, variables, process) {
 
     throw new NetError(result.statusText || "an error occurred");
   } catch (error) {
+    devError(error);
+
     if (error.name === "NetError") {
       throw error;
     }
