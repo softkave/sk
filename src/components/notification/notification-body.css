@@ -1,5 +1,7 @@
 .notification-body {
   padding: 1em;
+  background-color: white;
+  height: 100%;
 }
 
 .notification-body-head {

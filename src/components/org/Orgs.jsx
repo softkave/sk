@@ -15,7 +15,6 @@ class Orgs extends React.Component {
   }
 
   setCurrentOrg = id => {
-    console.log("org clicked", id);
     this.setState({ currentOrg: id });
   };
 

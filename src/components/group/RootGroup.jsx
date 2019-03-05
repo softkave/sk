@@ -4,13 +4,18 @@ import EditGroup from "./EditGroup.jsx";
 import EditTask from "../task/EditTask.jsx";
 import MiniTask from "../task/MiniTask.jsx";
 import EditProject from "../project/EditProject.jsx";
-//import Project from "../project/Project.jsx";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import { generateBlockPermission, canPerformAction } from "../../models/acl";
+import {
+  generateBlockPermission,
+  canPerformAction,
+  filterAclArr,
+  getForbiddenChildren
+} from "../../models/acl";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { Button } from "antd";
 import { assignTask } from "../block-utils";
 import RootGroupGenericContainer from "./RootGroupGenericContainer.jsx";
+import Collaborators from "../collaborator/Collaborators.jsx";
 import "./root-group.css";
 
 class RootGroup extends React.Component {
@@ -24,7 +29,8 @@ class RootGroup extends React.Component {
       },
       project: null,
       block: null,
-      parent: null
+      parent: null,
+      showCollaborators: false
     };
   }
 
@@ -52,6 +58,14 @@ class RootGroup extends React.Component {
 
   setCurrentProject = project => {
     this.setState({ project });
+  };
+
+  toggleShowCollaborators = () => {
+    this.setState(prevState => {
+      return {
+        showCollaborators: !prevState.showCollaborators
+      };
+    });
   };
 
   hasChildren(obj) {
@@ -116,7 +130,7 @@ class RootGroup extends React.Component {
       // parentBlock - not supported yet, for self updating
     } = this.props;
     console.log("root group", this.props, this.state);
-    const { form, project, block } = this.state;
+    const { form, project, block, showCollaborators } = this.state;
     const blockTypes = ["project", "group", "task"];
     const collaborators = this.getCollaborators();
     const roles = rootBlock.roles || ownerRoles;
@@ -124,7 +138,20 @@ class RootGroup extends React.Component {
       ? generateBlockPermission(rootBlock, user.permissions)
       : parentPermission;
 
-    console.log(permission);
+    if (showCollaborators) {
+      return (
+        <Collaborators
+          onBack={this.toggleShowCollaborators}
+          collaborators={rootBlock.collaborators}
+          permissions={permission}
+          roles={roles}
+          onAddCollaborators={collaborators => {
+            blockHandlers.onAddCollaborators(rootBlock, collaborators);
+          }}
+          collaborationRequests={rootBlock.collaborationRequests}
+        />
+      );
+    }
 
     if (project) {
       return (
@@ -143,6 +170,7 @@ class RootGroup extends React.Component {
     }
 
     const isUserRootBlock = rootBlock.type === "root" ? true : false;
+    const allowAcl = isUserRootBlock ? false : rootBlock.acl;
     const permittedChildrenTypes = blockTypes.filter(
       type =>
         type !== rootBlock.type && canPerformAction(permission, type, "create")
@@ -153,11 +181,20 @@ class RootGroup extends React.Component {
         toggle: true
       }
     };
-    console.log(roles);
+
+    const orgOnlyAcl = ["roles", "collaboration"];
+    const childrenDefaultAcl = allowAcl
+      ? filterAclArr(
+          rootBlock.acl,
+          getForbiddenChildren(rootBlock).concat(orgOnlyAcl),
+          true
+        )
+      : null;
+
     return (
       <div className="sk-root-group">
         <EditProject
-          noAcl={isUserRootBlock}
+          noAcl={!allowAcl}
           visible={form.project}
           onSubmit={data => this.onSubmitData(data, "project")}
           onClose={() => this.toggleForm("project")}
@@ -165,27 +202,32 @@ class RootGroup extends React.Component {
           existingProjects={
             form.project && this.getExistingNames(rootBlock.projects)
           }
-          parentAcl={rootBlock.acl}
+          // parentAcl={rootBlock.acl}
           roles={roles}
+          defaultAcl={childrenDefaultAcl}
+          permission={permission}
         />
         <EditGroup
-          noAcl={isUserRootBlock || !rootBlock.acl}
+          noAcl={!allowAcl}
           visible={form.group}
           onSubmit={data => this.onSubmitData(data, "group")}
           onClose={() => this.toggleForm("group")}
           data={block}
           existingGroups={form.group && this.getExistingNames(rootBlock.groups)}
-          parentAcl={rootBlock.acl}
+          // parentAcl={rootBlock.acl}
           roles={roles}
+          defaultAcl={childrenDefaultAcl}
+          permission={permission}
         />
         <EditTask
-          autoAssignTo={isUserRootBlock && [assignTask(user)]}
+          autoAssignTo={!allowAcl && [assignTask(user)]}
           collaborators={collaborators}
           visible={form.task}
           onSubmit={data => this.onSubmitData(data, "task")}
           onClose={() => this.toggleForm("task")}
           data={block}
           user={user}
+          permission={permission}
         />
         <div className="sk-root-group-header">
           {onBack && (
@@ -201,6 +243,14 @@ class RootGroup extends React.Component {
               label="Create"
               onClick={type => this.toggleForm(type, rootBlock)}
             />
+          )}
+          {rootBlock.collaborators && !isUserRootBlock && (
+            <Button
+              style={{ marginLeft: "1em" }}
+              onClick={this.toggleShowCollaborators}
+            >
+              Collaborators
+            </Button>
           )}
         </div>
         <div className="sk-root-group-content">

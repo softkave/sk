@@ -13,19 +13,36 @@ class NotificationBody extends React.Component {
         </div>
         <p className="notification-body-body">{notification.body}</p>
         <div className="notification-body-btns">
-          <Button
-            type="primary"
-            onClick={() => onRespond(notification, "Accepted")}
-          >
-            Accept
-          </Button>
-          <Button
-            type="danger"
-            onClick={() => onRespond(notification, "Declined")}
-            style={{ margin: "0 1em" }}
-          >
-            Decline
-          </Button>
+          {!notification.response ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => onRespond(notification, "accepted")}
+              >
+                Accept
+              </Button>
+              <Button
+                type="danger"
+                onClick={() => onRespond(notification, "declined")}
+                style={{ margin: "0 1em" }}
+              >
+                Decline
+              </Button>
+            </>
+          ) : (
+            <p>
+              You -{" "}
+              <span
+                style={{
+                  backgroundColor: "#ccc",
+                  padding: "8px",
+                  borderRadius: "4px"
+                }}
+              >
+                {notification.response}
+              </span>
+            </p>
+          )}
         </div>
       </div>
     );

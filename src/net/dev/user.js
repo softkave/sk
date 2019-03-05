@@ -16,6 +16,7 @@ const randomColor = require("randomcolor");
 // } = require("./utils");
 //const shouldRespondWithError = makeShouldRespondWithError();
 let rootBlock = null;
+let userCache = null;
 
 module.exports = {
   signup(user) {
@@ -51,6 +52,8 @@ module.exports = {
       lastNotificationCheckTime: Date.now(),
       permissions: [generatePermission(rootBlock, rootBlock.roles[0], userId)]
     };
+
+    userCache = generatedUserData;
 
     // devShare("user", { token, rootBlock, user: generatedUserData });
     // console.log(devShare("user"));
@@ -89,6 +92,7 @@ module.exports = {
         from: {
           blockName: "Abayomi",
           blockId: nanoid(),
+          blockType: "org",
           userId: nanoid(),
           userName: "Abayomi Akintomide"
         },
@@ -96,9 +100,9 @@ module.exports = {
           email: "ywordk@gmail.com"
         },
         createdAt: Date.now(),
-        permission: {
+        role: {
           level: 3,
-          role: "admin"
+          label: "admin"
         }
       },
       {
@@ -107,15 +111,16 @@ module.exports = {
           blockName: "Yomi",
           blockId: nanoid(),
           userId: nanoid(),
-          userName: "Abayomi Akintomide"
+          userName: "Abayomi Akintomide",
+          blockType: "org"
         },
         to: {
           email: "ywordk@gmail.com"
         },
         createdAt: Date.now(),
-        permission: {
+        role: {
           level: 3,
-          role: "admin"
+          label: "admin"
         }
       },
       {
@@ -124,20 +129,54 @@ module.exports = {
           blockName: "Yomi S",
           blockId: nanoid(),
           userId: nanoid(),
-          userName: "Abayomi Akintomide"
+          userName: "Abayomi Akintomide",
+          blockType: "org"
         },
         to: {
           email: "ywordk@gmail.com"
         },
         createdAt: Date.now(),
-        permission: {
+        role: {
           level: 3,
-          role: "admin"
+          label: "admin"
         }
       }
     ];
   },
 
-  respondToCollaborationRequest() {},
+  respondToCollaborationRequest({ request, response }) {
+    if (response.toLowerCase() === "accepted") {
+      const rootBlockRoles = getPersonalRolesArr();
+      const rootBlockAcl = blockActionTypes.concat(
+        generateRolesActions(rootBlockRoles)
+      );
+
+      let org = {
+        id: request.from.blockId,
+        type: request.from.blockType,
+        name: request.from.blockName,
+        color: randomColor(),
+        owner: request.from.blockId,
+        createdBy: request.from.userId,
+        acl: generateACL(rootBlockAcl),
+        roles: rootBlockRoles,
+        collaborators: [
+          {
+            id: request.from.userId,
+            name: request.from.userName,
+            color: randomColor(),
+            email: "yy@xx.zz"
+          },
+          userCache
+        ]
+      };
+
+      return {
+        block: org,
+        permission: generatePermission(org, request.role, request.from.userId)
+      };
+    }
+  },
+
   updateCollaborationRequest() {}
 };

@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 function MainApp() {
   return (
     <AppMenu
-      currentItemKey="personal"
+      currentItemKey="notifications"
       menuItems={[
         {
           key: "notifications",

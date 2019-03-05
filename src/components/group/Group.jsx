@@ -2,9 +2,10 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import { generateBlockPermission, canPerformAction } from "../../models/acl";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import "./group.css";
-import "react-perfect-scrollbar/dist/css/styles.css";
+import SimpleBar from "simplebar-react";
+
+import "simplebar/dist/simplebar.min.css";
 
 class Group extends React.Component {
   render() {
@@ -52,14 +53,14 @@ class Group extends React.Component {
                 onClick={type => onClickAddChild(type, group)}
               />
             )}
-            {canPerformAction(groupPermission, "group", "update") && (
+            {canPerformAction(groupPermission, "", "update") && (
               <Button
                 icon="edit"
                 onClick={() => onEdit(group)}
                 style={{ marginLeft: "2px" }}
               />
             )}
-            {canPerformAction(groupPermission, "group", "delete") && (
+            {canPerformAction(groupPermission, "", "delete") && (
               <Button
                 icon="close"
                 onClick={() => blockHandlers.onDelete(group)}
@@ -68,9 +69,7 @@ class Group extends React.Component {
             )}
           </Col>
         </Row>
-        <PerfectScrollbar className="sk-group-children">
-          {children}
-        </PerfectScrollbar>
+        <SimpleBar className="sk-group-children">{children}</SimpleBar>
       </div>
     );
   }

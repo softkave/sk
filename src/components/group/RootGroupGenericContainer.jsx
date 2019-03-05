@@ -1,12 +1,17 @@
+import React from "react";
 import { connect } from "react-redux";
-import RootGroup from "./RootGroup.jsx";
 import dotProp from "dot-prop-immutable";
+import RootGroup from "./RootGroup.jsx";
 
 function mapStateToProps(state, props) {
   return {
     ...props,
-    rootBlock: dotProp.get(props.path) || props.rootBlock
+    rootBlock: dotProp.get(state, props.path) || props.rootBlock
   };
 }
 
-export default connect(mapStateToProps)(RootGroup);
+function G(props) {
+  return <RootGroup {...props} />;
+}
+
+export default connect(mapStateToProps)(G);

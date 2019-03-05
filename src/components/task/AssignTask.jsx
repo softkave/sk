@@ -1,6 +1,6 @@
 import React from "react";
 import TaskCollaborator from "./TaskCollaborator.jsx";
-import { Form, Button, Select } from "antd";
+import { Form, Select } from "antd";
 import dotProp from "dot-prop-immutable";
 import CollaboratorThumbnail from "../collaborator/Thumnail.jsx";
 
@@ -11,7 +11,7 @@ export default class AssignTask extends React.Component {
     this.collaboratorsIdMap = {};
     const defaultTaskCollaborators = props.defaultTaskCollaborators || [];
     defaultTaskCollaborators.forEach(c => {
-      this.existingTaskCollaboratorsIdMap[c.id] = c;
+      this.existingTaskCollaboratorsIdMap[c.userId] = c;
     });
 
     const collaborators = props.collaborators || [];
@@ -31,7 +31,7 @@ export default class AssignTask extends React.Component {
 
     let collaborators = form.getFieldValue("collaborators");
     collaborators.push({
-      id: collaborator.id,
+      userId: collaborator.id,
       assignedAt: Date.now(),
       completedAt: null,
       assignedBy: user.id
@@ -45,7 +45,7 @@ export default class AssignTask extends React.Component {
   onUnassignCollaborator = (collaborator, index) => {
     const { form } = this.props;
 
-    if (!this.existingTaskCollaboratorsIdMap[collaborator.id]) {
+    if (!this.existingTaskCollaboratorsIdMap[collaborator.userId]) {
       this.error = "collaborator is not assigned";
       return;
     }
@@ -53,7 +53,7 @@ export default class AssignTask extends React.Component {
     let collaborators = form.getFieldValue("collaborators");
     collaborators = dotProp.delete(collaborators, `${index}`);
     this.error = null;
-    delete this.existingTaskCollaboratorsIdMap[collaborator.id];
+    delete this.existingTaskCollaboratorsIdMap[collaborator.userId];
     form.setFieldsValue({ collaborators });
   };
 
@@ -63,7 +63,7 @@ export default class AssignTask extends React.Component {
     collaborators.forEach((c, index) => {
       if (!this.existingTaskCollaboratorsIdMap[c.id]) {
         options.push(
-          <Select.Option value={index}>
+          <Select.Option value={index} key={c.id}>
             <CollaboratorThumbnail collaborator={c} />
           </Select.Option>
         );
@@ -88,7 +88,8 @@ export default class AssignTask extends React.Component {
     return taskCollaborators.map((c, i) => {
       return (
         <TaskCollaborator
-          collaborator={this.collaboratorsIdMap[c.id]}
+          key={c.userId}
+          collaborator={this.collaboratorsIdMap[c.userId]}
           collaboratorTaskData={c}
           onToggle={null}
           onUnassign={() => this.onUnassignCollaborator(c, i)}
