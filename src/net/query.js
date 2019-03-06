@@ -1,11 +1,16 @@
 import NetError from "./NetError";
 import get from "lodash/get";
 import { devLog, devError } from "../utils/log";
+// import dotProp from "dot-prop-immutable";
 
 const serverAddr =
   process.env.NODE_ENV === "development"
-    ? `localhost:${process.env.DEV_SERVER_PORT || 5000}`
+    ? `192.168.1.73:${process.env.DEV_SERVER_PORT || 5000}`
     : "";
+
+// function getDataFromResult(result, path) {
+//   return dotProp.get(result, path);
+// }
 
 export default async function query(headers, netQuery, variables, process) {
   try {

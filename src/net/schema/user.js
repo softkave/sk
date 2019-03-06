@@ -1,6 +1,4 @@
-// const {
-//   blockFragment
-// } = require("./block");
+const { blockFragment } = require("./block");
 
 const userExistsQuery = `
   query UserExistsQuery (email: String!) {
@@ -171,7 +169,7 @@ const updateCollaborationRequestMutation = `
 `;
 
 const respondToCollaborationRequestMutation = `
-  ${getBlockFragment()}
+  ${blockFragment}
   mutation RespondToCollaborationRequestMutation (
     $id: String!, $response: String!
   ) {
@@ -189,19 +187,17 @@ const respondToCollaborationRequestMutation = `
   }
 `;
 
-// if (module && module.exports) {
-//   module.exports = {
-//     userSignupMutation,
-//     userLoginFragement,
-//     userLoginMutation,
-//     updateUserMutation,
-//     changePasswordMutation,
-//     forgotPasswordMutation,
-//     userPermissionFragment,
-//     userExistsQuery,
-//     updateCollaborationRequestMutation,
-//     changePasswordWithTokenMutation,
-//     respondToCollaborationRequestMutation,
-//     getCollaborationRequestsQuery
-//   };
-// }
+module.exports = {
+  userSignupMutation,
+  userLoginFragement,
+  userLoginMutation,
+  updateUserMutation,
+  changePasswordMutation,
+  forgotPasswordMutation,
+  userPermissionFragment,
+  userExistsQuery,
+  updateCollaborationRequestMutation,
+  changePasswordWithTokenMutation,
+  respondToCollaborationRequestMutation,
+  getCollaborationRequestsQuery
+};
