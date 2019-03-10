@@ -1,13 +1,15 @@
-// import from production
 import get from "lodash/get";
 
 let netRoutes = null;
-if (process.env.NODE_ENV === "development") {
-  netRoutes = {
-    block: require("./dev/block"),
-    user: require("./dev/user")
-  };
-}
+// netRoutes = {
+//   block: require("./dev/block"),
+//   user: require("./dev/user")
+// };
+
+netRoutes = {
+  block: require("./block"),
+  user: require("./user")
+};
 
 export default async function netInterface(path, data) {
   let route = get(netRoutes, path);
