@@ -9,7 +9,8 @@ import {
   generateBlockPermission,
   canPerformAction,
   filterAclArr,
-  getForbiddenChildren
+  getForbiddenChildren,
+  getClosestPermissionToBlock
 } from "../../models/acl";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { Button } from "antd";
@@ -133,10 +134,11 @@ class RootGroup extends React.Component {
     const { form, project, block, showCollaborators } = this.state;
     const blockTypes = ["project", "group", "task"];
     const collaborators = this.getCollaborators();
-    const roles = rootBlock.roles || ownerRoles;
-    const permission = rootBlock.acl
-      ? generateBlockPermission(rootBlock, user.permissions)
-      : parentPermission;
+    // const roles = rootBlock.roles || ownerRoles;
+    const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
+    // const permission = rootBlock.acl
+    //   ? generateBlockPermission(rootBlock, user.permissions)
+    //   : parentPermission;
 
     if (showCollaborators) {
       return (
@@ -173,7 +175,7 @@ class RootGroup extends React.Component {
     const allowAcl = isUserRootBlock ? false : rootBlock.acl;
     const permittedChildrenTypes = blockTypes.filter(
       type =>
-        type !== rootBlock.type && canPerformAction(permission, type, "create")
+        type !== rootBlock.type && canPerformAction(rootBlock, permission, `CREATE_${type}`)
     );
 
     const assignedTasksPermission = {

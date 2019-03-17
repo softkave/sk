@@ -14,6 +14,7 @@ import {
   blockActionTypes
 } from "../../models/acl";
 import { getDefaultRolesArr } from "../../models/roles";
+import { orgActions } from "../../models/actions";
 
 const TextArea = Input.TextArea;
 
@@ -27,8 +28,8 @@ class EditOrg extends React.Component {
     const self = this;
     const data = props.data || {};
     const defaultRoles = getDefaultRolesArr();
-    const actions = generateACL(blockActionTypes);
-    const defaultAcl = generateBlockPermission({ acl: actions });
+    // const actions = generateACL(blockActionTypes);
+    // const defaultAcl = generateBlockPermission({ acl: actions });
     this.model = {
       fields: {
         name: {
@@ -57,20 +58,24 @@ class EditOrg extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        roles: {
-          render(form, data) {
-            return (
-              <Form.Item key="roles" label="Roles">
-                <Roles form={form} roles={defaultRoles} />
-              </Form.Item>
-            );
-          }
-        },
+        // roles: {
+        //   render(form, data) {
+        //     return (
+        //       <Form.Item key="roles" label="Roles">
+        //         <Roles form={form} roles={defaultRoles} />
+        //       </Form.Item>
+        //     );
+        //   }
+        // },
         acl: {
           render(form, data) {
             return (
               <Form.Item key="acl" label="Access Control">
-                <Acl form={form} defaultAcl={defaultAcl} />
+                <Acl
+                  form={form}
+                  defaultAcl={data.acl || orgActions}
+                  roles={data.roles || defaultRoles}
+                />
               </Form.Item>
             );
           }
@@ -97,8 +102,6 @@ class EditOrg extends React.Component {
 
   onSubmit = data => {
     data.type = "org";
-    data.acl = generateACLArrayFromObj(data.acl);
-    delete data.roleKeys;
     this.props.onSubmit(data);
   };
 

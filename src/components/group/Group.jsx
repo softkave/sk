@@ -1,7 +1,11 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import { generateBlockPermission, canPerformAction } from "../../models/acl";
+import {
+  generateBlockPermission,
+  canPerformAction,
+  getClosestPermissionToBlock
+} from "../../models/acl";
 import "./group.css";
 import SimpleBar from "simplebar-react";
 
@@ -20,10 +24,15 @@ class Group extends React.Component {
       user,
       onEdit
     } = this.props;
-    const groupPermission =
-      group && group.acl
-        ? generateBlockPermission(group, user.permissions)
-        : permission || {};
+    // const groupPermission =
+    //   group && group.acl
+    //     ? generateBlockPermission(group, user.permissions)
+    //     : permission || {};
+
+    const groupPermission = getClosestPermissionToBlock(
+      user.permissions,
+      group
+    );
 
     console.log("group", this.props, childrenTypes, groupPermission);
 
@@ -31,7 +40,7 @@ class Group extends React.Component {
       ? childrenTypes.filter(type => {
           return (
             type !== "group" &&
-            canPerformAction(groupPermission, type, "create")
+            canPerformAction(group, groupPermission, `CREATE_${type}`)
           );
         })
       : null;
@@ -53,14 +62,14 @@ class Group extends React.Component {
                 onClick={type => onClickAddChild(type, group)}
               />
             )}
-            {canPerformAction(groupPermission, "", "update") && (
+            {canPerformAction(group, groupPermission, "UPDATE_GROUP") && (
               <Button
                 icon="edit"
                 onClick={() => onEdit(group)}
                 style={{ marginLeft: "2px" }}
               />
             )}
-            {canPerformAction(groupPermission, "", "delete") && (
+            {canPerformAction(group, groupPermission, "DELETE_GROUP") && (
               <Button
                 icon="close"
                 onClick={() => blockHandlers.onDelete(group)}

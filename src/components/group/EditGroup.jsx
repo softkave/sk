@@ -10,6 +10,7 @@ import {
   generateACLArrayFromObj,
   canPerformAction
 } from "../../models/acl";
+import { groupActions } from "../../models/actions";
 
 const TextArea = Input.TextArea;
 
@@ -70,17 +71,21 @@ class EditGroup extends React.Component {
       onSubmit: self.onSubmit
     };
 
-    if (canPerformAction(props.permission, "acl", "update")) {
+    if (
+      canPerformAction(
+        data || { acl: props.acl },
+        props.permission,
+        "UPDATE_ACL"
+      )
+    ) {
       this.model.fields["acl"] = {
         render(form, data) {
           return props.noAcl ? null : (
             <Form.Item key="acl" label="Access Control">
               <Acl
                 form={form}
-                defaultAcl={generateBlockPermission({
-                  acl: data.acl || props.defaultAcl
-                })}
-                roles={props.roles}
+                defaultAcl={data.acl || props.acl}
+                roles={data.roles || props.roles}
               />
             </Form.Item>
           );
@@ -91,10 +96,6 @@ class EditGroup extends React.Component {
 
   onSubmit = data => {
     data.type = "group";
-    if (data.acl) {
-      data.acl = generateACLArrayFromObj(data.acl);
-    }
-
     this.props.onSubmit(data);
   };
 

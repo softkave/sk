@@ -17,9 +17,6 @@ class EditTask extends React.Component {
     super(props);
     const self = this;
     const data = props.data || {};
-    // const priorityPath = `data[${
-    //   data.data ? data.data.findIndex(d => d.dataType === "priority") : 0
-    // }].data`;
 
     this.model = {
       fields: {
@@ -92,29 +89,6 @@ class EditTask extends React.Component {
   }
 
   onSubmit = submittedData => {
-    // const { data } = this.props;
-    // delete submittedData.error;
-    // submittedData.data = data && data.data ? [...data.data] : null;
-    // if (submittedData.data) {
-    //   let priorityData = submittedData.data.find(
-    //     d => d.dataType === "priority"
-    //   );
-
-    //   if (priorityData) {
-    //     priorityData.data = submittedData.priority;
-    //   } else {
-    //     submittedData.data.push({
-    //       dataType: "priority",
-    //       data: submittedData.priority
-    //     });
-    //   }
-    // } else {
-    //   submittedData.data = [
-    //     { dataType: "priority", data: submittedData.priority }
-    //   ];
-    // }
-
-    // delete submittedData.priority;
     submittedData.type = "task";
     this.props.onSubmit(submittedData);
   };

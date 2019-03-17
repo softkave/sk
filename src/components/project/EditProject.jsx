@@ -70,17 +70,15 @@ class EditProject extends React.Component {
       onSubmit: self.onSubmit
     };
 
-    if (canPerformAction(props.permission, "acl", "update")) {
+    if (canPerformAction(data, props.permission, "UPDATE_ACL")) {
       this.model.fields["acl"] = {
         render(form, data) {
           return props.noAcl ? null : (
             <Form.Item key="acl" label="Access Control">
               <Acl
                 form={form}
-                defaultAcl={generateBlockPermission({
-                  acl: data.acl || props.defaultAcl
-                })}
-                roles={props.roles}
+                defaultAcl={data.acl || props.acl}
+                roles={data.roles || props.roles}
               />
             </Form.Item>
           );

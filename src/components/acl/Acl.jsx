@@ -1,6 +1,5 @@
 import React from "react";
-import { Form, Collapse } from "antd";
-import SelectRole from "./SelectRole.jsx";
+import { Form, Collapse, Select } from "antd";
 import dotProp from "dot-prop-immutable";
 
 const Panel = Collapse.Panel;
@@ -12,18 +11,15 @@ export default class Acl extends React.Component {
   //   }
   // }
 
-  onUpdateAcl = (resourceType, action, level) => {
-    console.log(resourceType, action, level);
+  onUpdateAcl = (index, roles) => {
     const { form } = this.props;
-    let acl = form.getFieldValue("acl");
-    acl = dotProp.set(acl, `${resourceType}.${action}.level`, level);
-    form.setFieldsValue({ acl });
+    const acl = form.getFieldValue("acl");
+    let updatedAcl = dotProp.set(acl, `${index}.roles`, roles);
+    form.setFieldsValue({ acl: updatedAcl });
   };
 
   render() {
-    const { defaultAcl, form } = this.props;
-    const ownerRoles = this.props.roles;
-    const roles = form.getFieldValue("roles") || ownerRoles;
+    const { defaultAcl, form, roles } = this.props;
     form.getFieldDecorator("acl", {
       initialValue: defaultAcl
     });
@@ -33,35 +29,30 @@ export default class Acl extends React.Component {
 
     return (
       <Collapse>
-        {Object.keys(acl).map(resourceType => {
-          const actions = acl[resourceType];
-          return (
-            <Panel header={resourceType} key={resourceType}>
-              {Object.keys(actions).map(action => {
-                const actionData = actions[action];
-                return (
-                  <Form.Item
-                    key={action}
-                    label={action}
-                    // labelCol={{
-                    //   span: 8
-                    // }}
-                    // wrapperCol={{ span: 16 }}
-                  >
-                    <SelectRole
-                      roles={roles}
-                      value={actionData.level}
-                      onChange={roleLevel => {
-                        console.log(roleLevel);
-                        this.onUpdateAcl(resourceType, action, roleLevel);
-                      }}
-                    />
-                  </Form.Item>
-                );
-              })}
-            </Panel>
-          );
-        })}
+        <Panel header="Actions">
+          {acl.map((item, index) => {
+            return (
+              <Form.Item
+                key={item.action}
+                label={item.action}
+                // labelCol={{
+                //   span: 8
+                // }}
+                // wrapperCol={{ span: 16 }}
+              >
+                <Select
+                  mode="multiple"
+                  onChange={value => this.onUpdateAcl(index, value)}
+                  defaultValue={acl.roles}
+                >
+                  {roles.map(role => {
+                    return <Select.Option value={role}>{role}</Select.Option>;
+                  })}
+                </Select>
+              </Form.Item>
+            );
+          })}
+        </Panel>
       </Collapse>
     );
   }
