@@ -5,7 +5,7 @@ import { MERGE, DELETE, MULTIPLE, SET } from "../constants/reducer";
 import dotProp from "dot-prop-immutable";
 
 export default function reducer(state, action, recursive) {
-  console.log(arguments);
+  console.log(action);
   function getNewState() {
     if (recursive) {
       return state;

@@ -1,6 +1,4 @@
-import {
-  defaultRolesMap
-} from "./roles";
+import { defaultRolesMap } from "./roles";
 import dotProp from "dot-prop-immutable";
 
 const basicPrefixList = [
@@ -19,12 +17,15 @@ const basicPrefixList = [
   }
 ];
 
-const createPrefixList = [{
-  action: "create",
-  level: defaultRolesMap.lead
-}];
+const createPrefixList = [
+  {
+    action: "create",
+    level: defaultRolesMap.lead
+  }
+];
 
-export const blockActionTypes = [{
+export const blockActionTypes = [
+  {
     type: "",
     prefixList: basicPrefixList
   },
@@ -60,7 +61,8 @@ export const blockActionTypes = [{
   },
   {
     type: "request",
-    prefixList: [{
+    prefixList: [
+      {
         action: "read",
         level: defaultRolesMap.admin
       },
@@ -80,7 +82,8 @@ export const blockActionTypes = [{
   },
   {
     type: "roles",
-    prefixList: [{
+    prefixList: [
+      {
         action: "create",
         level: defaultRolesMap.admin
       },
@@ -96,22 +99,22 @@ export const blockActionTypes = [{
   },
   {
     type: "acl",
-    prefixList: [{
-      action: "update",
-      level: defaultRolesMap.admin
-    }]
+    prefixList: [
+      {
+        action: "update",
+        level: defaultRolesMap.admin
+      }
+    ]
   }
 ];
 
 export function generateRolesActions(roles) {
-  return roles.map(({
-    label,
-    level
-  }, i) => {
+  return roles.map(({ label, level }, i) => {
     const actionMinLevel = i === roles.length - 1 ? level : level + 1;
     return {
       type: `collaborator_${label}`,
-      prefixList: [{
+      prefixList: [
+        {
           action: "add",
           level: actionMinLevel
         },
@@ -125,19 +128,15 @@ export function generateRolesActions(roles) {
 }
 
 export function generateACL(types, actionsOnly, filter = () => true) {
-  return types.reduce((actions, {
-    type,
-    prefixList
-  }) => {
-    prefixList.forEach(({
-      action,
-      level
-    }) => {
-      if (filter({
+  return types.reduce((actions, { type, prefixList }) => {
+    prefixList.forEach(({ action, level }) => {
+      if (
+        filter({
           action,
           level,
           type
-        })) {
+        })
+      ) {
         let prefixedAction = `${action}_${type}`.toUpperCase();
         if (actionsOnly) {
           actions.push(prefixedAction);
@@ -197,16 +196,17 @@ export function generateBlockPermission(block, userPermissions) {
     let crudType = actionPath[0].toLowerCase();
     let actionCategory = actionPath[1].toLowerCase();
     let params =
-      actionPath.length > 2 ?
-      actionPath.slice(2).map(p => p.toLowerCase()) :
-      null;
+      actionPath.length > 2
+        ? actionPath.slice(2).map(p => p.toLowerCase())
+        : null;
 
     let actionCategoryObj = permission[actionCategory];
     let entry = {
       params,
       level: action.level,
-      canPerformAction: blockPermission ?
-        blockPermission.level >= action.level : null
+      canPerformAction: blockPermission
+        ? blockPermission.level >= action.level
+        : null
     };
 
     if (actionCategoryObj) {
@@ -242,11 +242,7 @@ export function getForbiddenChildren(res) {
 }
 
 export function makeHierachyFilter(resourceType, groupParentType) {
-  return function filterHierachy({
-    type,
-    action,
-    level
-  }) {
+  return function filterHierachy({ type, action, level }) {
     if (
       (resourceHierachy[resourceType] || resourceHierachy[groupParentType]) <
       resourceHierachy[type]
@@ -280,15 +276,24 @@ export function filterAclArr(acl, remove, isString) {
 }
 
 export function canPerformAction(block, permission, action) {
-  const acl = block.acl;
-  const actionData = acl.find(item => {
-    return item.action === action;
-  });
+  if (block) {
+    action = action.toUpperCase();
+    console.log(block, permission, action);
+    const acl = block.acl;
 
-  if (actionData && permission) {
-    return !!actionData.roles.find(role => {
-      return role === permission.role;
-    });
+    if (acl) {
+      const actionData = acl.find(item => {
+        return item.action === action;
+      });
+
+      console.log(actionData);
+
+      if (actionData && permission) {
+        return !!actionData.roles.find(role => {
+          return role === permission.role;
+        });
+      }
+    }
   }
 
   return false;
@@ -296,9 +301,14 @@ export function canPerformAction(block, permission, action) {
 
 export function getClosestPermissionToBlock(permissions, block) {
   if (block) {
-    const blockId = block._id;
+    const blockId = block._id || block.id;
     let permission = permissions.find(permission => {
-      return permission.blockId === blockId
+      let parents = block.parents || [];
+      let ids = [blockId].concat([...parents].reverse());
+      return !!ids.find(id => {
+        return permission.blockId === id;
+      });
+      // return permission.blockId === blockId;
     });
 
     return permission;

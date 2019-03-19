@@ -1,6 +1,14 @@
-const roles = ["admin", "lead", "collaborator"];
+export const roles = ["admin", "lead", "collaborator"];
 
-const collaborationActions = [{
+const aclActions = [
+  {
+    action: "UPDATE_ACL",
+    roles: [...roles]
+  }
+];
+
+const collaborationActions = [
+  {
     action: "SEND_REQUEST",
     roles: [...roles]
   },
@@ -25,10 +33,6 @@ const collaborationActions = [{
     roles: [...roles]
   },
   {
-    action: "UPDATE_ACL",
-    roles: [...roles]
-  },
-  {
     action: "UPDATE_ROLES",
     roles: [...roles]
   },
@@ -39,10 +43,12 @@ const collaborationActions = [{
   {
     action: "REVOKE_ROLE",
     roles: [...roles]
-  },
+  }
 ];
 
-export const taskActions = [{
+export const taskActions = [
+  ...aclActions,
+  {
     action: "TOGGLE_TASK",
     roles: [...roles]
   },
@@ -65,7 +71,7 @@ export const taskActions = [{
   {
     action: "DELETE_TASK",
     roles: [...roles]
-  },
+  }
 ];
 
 export const projectActions = [
@@ -101,7 +107,7 @@ export const projectActions = [
   {
     action: "UPDATE_PROJECT",
     roles: [...roles]
-  },
+  }
 ];
 
 export const groupActions = [
@@ -137,7 +143,7 @@ export const groupActions = [
   {
     action: "UPDATE_GROUP",
     roles: [...roles]
-  },
+  }
 ];
 
 export const orgActions = [
@@ -158,5 +164,5 @@ export const orgActions = [
   {
     action: "READ_ORG",
     roles: [...roles]
-  },
+  }
 ];

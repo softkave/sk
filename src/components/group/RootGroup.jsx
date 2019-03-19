@@ -127,15 +127,17 @@ class RootGroup extends React.Component {
       user,
       parentPermission,
       onBack,
-      ownerRoles
+      ownerRoles,
+      ownerAcl
       // parentBlock - not supported yet, for self updating
     } = this.props;
     console.log("root group", this.props, this.state);
     const { form, project, block, showCollaborators } = this.state;
     const blockTypes = ["project", "group", "task"];
     const collaborators = this.getCollaborators();
-    // const roles = rootBlock.roles || ownerRoles;
+    const roles = rootBlock.roles || ownerRoles;
     const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
+    const acl = rootBlock.acl || ownerAcl;
     // const permission = rootBlock.acl
     //   ? generateBlockPermission(rootBlock, user.permissions)
     //   : parentPermission;
@@ -172,10 +174,11 @@ class RootGroup extends React.Component {
     }
 
     const isUserRootBlock = rootBlock.type === "root" ? true : false;
-    const allowAcl = isUserRootBlock ? false : rootBlock.acl;
+    const allowAcl = !isUserRootBlock;
     const permittedChildrenTypes = blockTypes.filter(
       type =>
-        type !== rootBlock.type && canPerformAction(rootBlock, permission, `CREATE_${type}`)
+        type !== rootBlock.type &&
+        canPerformAction(rootBlock, permission, `CREATE_${type}`)
     );
 
     const assignedTasksPermission = {
@@ -208,6 +211,7 @@ class RootGroup extends React.Component {
           roles={roles}
           defaultAcl={childrenDefaultAcl}
           permission={permission}
+          // acl={acl}
         />
         <EditGroup
           noAcl={!allowAcl}
@@ -230,6 +234,9 @@ class RootGroup extends React.Component {
           data={block}
           user={user}
           permission={permission}
+          noAcl={!allowAcl}
+          roles={roles}
+          defaultAcl={childrenDefaultAcl}
         />
         <div className="sk-root-group-header">
           {onBack && (

@@ -9,14 +9,14 @@ export function generateRolesArr(rolesParam) {
   if (Array.isArray(rolesParam)) {
     return rolesParam.map((role, index) => {
       return {
-        role,
-        level: index
+        role
+        // level: index
       };
     });
   } else if (typeof rolesParam === "object") {
     return Object.keys(rolesParam).map(key => ({
-      role: key,
-      level: rolesParam[key]
+      role: key
+      // level: rolesParam[key]
     }));
   }
 }
@@ -26,8 +26,10 @@ export function getDefaultRolesArr() {
 }
 
 export function getPersonalRolesArr() {
-  return [{
-    role: "admin",
-    level: defaultRolesMap.admin
-  }];
+  return [
+    {
+      role: "admin"
+      // level: defaultRolesMap.admin
+    }
+  ];
 }

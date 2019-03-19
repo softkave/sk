@@ -10,7 +10,7 @@ const {
   respondToCollaborationRequestMutation,
   getCollaborationRequestsQuery
 } = require("./schema/user");
-const query = require("query");
+const query = require("./query");
 const auth = require("./auth");
 const { getDataFromObj } = require("../utils/object");
 

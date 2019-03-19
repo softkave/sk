@@ -52,6 +52,22 @@ class EditGroup extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
+        acl:
+          !props.data || canPerformAction(data, props.permission, "UPDATE_ACL")
+            ? {
+                render(form, data) {
+                  return props.noAcl ? null : (
+                    <Form.Item key="acl" label="Access Control">
+                      <Acl
+                        form={form}
+                        defaultAcl={data.acl || props.defaultAcl}
+                        roles={data.roles || props.roles}
+                      />
+                    </Form.Item>
+                  );
+                }
+              }
+            : undefined,
         submit: {
           component: Button,
           props: {
@@ -71,27 +87,27 @@ class EditGroup extends React.Component {
       onSubmit: self.onSubmit
     };
 
-    if (
-      canPerformAction(
-        data || { acl: props.acl },
-        props.permission,
-        "UPDATE_ACL"
-      )
-    ) {
-      this.model.fields["acl"] = {
-        render(form, data) {
-          return props.noAcl ? null : (
-            <Form.Item key="acl" label="Access Control">
-              <Acl
-                form={form}
-                defaultAcl={data.acl || props.acl}
-                roles={data.roles || props.roles}
-              />
-            </Form.Item>
-          );
-        }
-      };
-    }
+    // if (
+    //   canPerformAction(
+    //     data || { acl: props.acl },
+    //     props.permission,
+    //     "UPDATE_ACL"
+    //   )
+    // ) {
+    //   this.model.fields["acl"] = {
+    //     render(form, data) {
+    //       return props.noAcl ? null : (
+    //         <Form.Item key="acl" label="Access Control">
+    //           <Acl
+    //             form={form}
+    //             defaultAcl={data.acl || props.acl}
+    //             roles={data.roles || props.roles}
+    //           />
+    //         </Form.Item>
+    //       );
+    //     }
+    //   };
+    // }
   }
 
   onSubmit = data => {

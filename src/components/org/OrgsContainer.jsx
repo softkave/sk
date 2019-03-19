@@ -53,8 +53,6 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     user: state.user.user
   });
 
-  console.log(state);
-
   return {
     blockHandlers,
     user: state.user.user,

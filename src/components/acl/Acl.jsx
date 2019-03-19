@@ -25,7 +25,10 @@ export default class Acl extends React.Component {
     });
 
     const acl = form.getFieldValue("acl");
-    console.log(acl);
+    console.log({
+      acl,
+      roles
+    });
 
     return (
       <Collapse>
@@ -33,8 +36,12 @@ export default class Acl extends React.Component {
           {acl.map((item, index) => {
             return (
               <Form.Item
+                label={
+                  <span style={{ textTransform: "lowercase" }}>
+                    {item.action.replace("_", " ")}
+                  </span>
+                }
                 key={item.action}
-                label={item.action}
                 // labelCol={{
                 //   span: 8
                 // }}
@@ -43,10 +50,14 @@ export default class Acl extends React.Component {
                 <Select
                   mode="multiple"
                   onChange={value => this.onUpdateAcl(index, value)}
-                  defaultValue={acl.roles}
+                  defaultValue={item.roles}
                 >
                   {roles.map(role => {
-                    return <Select.Option value={role}>{role}</Select.Option>;
+                    return (
+                      <Select.Option value={role.role}>
+                        {role.role}
+                      </Select.Option>
+                    );
                   })}
                 </Select>
               </Form.Item>

@@ -128,7 +128,6 @@ class ComputeForm extends React.Component {
   }
 
   render() {
-    console.log("compute form", this.props);
     const { title, model, children } = this.props;
     const { formError } = this.state;
     return (
