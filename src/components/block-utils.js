@@ -7,9 +7,15 @@ import {
 import netInterface from "../net";
 import randomColor from "randomcolor";
 import { generatePermission } from "../models/user/permission";
+import {
+  projectActions,
+  groupActions,
+  taskActions,
+  orgActions
+} from "../models/actions";
 
-//const uuid = require("uuid/v4");
-const nanoid = require("nanoid");
+const getId = require("uuid/v4");
+// const getId = require("nanoid");
 
 export function getBlockParent(block, state) {
   return get(
@@ -22,79 +28,98 @@ export function getBlockParent(block, state) {
 }
 
 export function makeBlockHandlers({ dispatch, user }) {
-  function prepareTaskFromEditData(task) {
-    if (task.expectedEndAt) {
-      task.expectedEndAt = task.expectedEndAt.valueOf();
+  function prepareBlockFromEditData(block) {
+    if (block.expectedEndAt) {
+      block.expectedEndAt = block.expectedEndAt.valueOf();
     }
 
-    return task;
+    return block;
   }
 
   return {
-    async onAdd(task, parent) {
-      task.createdAt = Date.now();
-      task.createdBy = user.id;
-      task.id = nanoid();
-      task.color = randomColor();
+    async onAdd(block, parent) {
+      block.createdAt = Date.now();
+      block.createdBy = user.id;
+      block.id = getId();
+      block.color = randomColor();
       if (parent) {
-        task.path = `${parent.path}.${task.type}s.${task.id}`;
-        task.parents = [];
+        block.path = `${parent.path}.${block.type}s.${block.id}`;
+        block.parents = [];
         if (parent.parents) {
-          task.parents = task.parents.concat(parent.parents);
+          block.parents = block.parents.concat(parent.parents);
         }
 
-        task.parents.push(parent.id);
-        task.owner = parent.owner;
+        block.parents.push(parent.id);
+        block.owner = parent.owner;
+
+        if (!block.acl) {
+          let typeActions =
+            block.type === "project"
+              ? projectActions
+              : block.type === "group"
+              ? groupActions
+              : block.type === "task"
+              ? taskActions
+              : orgActions;
+          let actions = typeActions.reduce((actions, item) => {
+            actions[item.action] = true;
+            return actions;
+          }, {});
+
+          block.acl = parent.acl.filter(item => {
+            return actions[item.action];
+          });
+        }
       } else {
-        task.path = `${task.type}s.${task.id}`;
-        task.owner = task.id;
+        block.path = `${block.type}s.${block.id}`;
+        block.owner = block.id;
       }
 
-      task = prepareTaskFromEditData(task);
-      if (task.type === "org") {
-        task.collaborators = [user];
+      block = prepareBlockFromEditData(block);
+      if (block.type === "org") {
+        block.collaborators = [user];
         let userPermissions = [...user.permissions];
         userPermissions.push(
-          generatePermission(task, task.roles[task.roles.length - 1])
+          generatePermission(block, block.roles[block.roles.length - 1])
         );
 
         dispatch(setDataByPath("user.user.permissions", userPermissions));
-      } else if (task.type === "task") {
-        if (!task.collaborators) {
-          task.collaborators = [];
+      } else if (block.type === "task") {
+        if (!block.collaborators) {
+          block.collaborators = [];
         }
       }
 
-      dispatch(setDataByPath(task.path, task));
-      netInterface("block.createBlock", task);
+      dispatch(setDataByPath(block.path, block));
+      netInterface("block.createBlock", block);
     },
 
-    onUpdate(task, data) {
-      data = prepareTaskFromEditData(data);
-      dispatch(mergeDataByPath(task.path, data));
-      netInterface("block.updateBlock", task, data);
+    onUpdate(block, data) {
+      data = prepareBlockFromEditData(data);
+      dispatch(mergeDataByPath(block.path, data));
+      netInterface("block.updateBlock", block, data);
     },
 
-    onToggle(task) {
-      const collaboratorIndex = task.collaborators.findIndex(
+    onToggle(block) {
+      const collaboratorIndex = block.collaborators.findIndex(
         c => c.userId === user.id
       );
 
-      const collaborator = task.collaborators[collaboratorIndex];
+      const collaborator = block.collaborators[collaboratorIndex];
       const path = `${
-        task.path
+        block.path
       }.collaborators.${collaboratorIndex}.completedAt`;
 
       dispatch(
         setDataByPath(path, collaborator.completedAt ? null : Date.now())
       );
 
-      netInterface("block.toggleTask", { task });
+      netInterface("block.toggleTask", { block });
     },
 
-    onDelete(task) {
-      dispatch(deleteDataByPath(task.path));
-      netInterface("block.deleteBlock", task);
+    onDelete(block) {
+      dispatch(deleteDataByPath(block.path));
+      netInterface("block.deleteBlock", block);
     },
 
     onAddCollaborators(block, collaborators) {

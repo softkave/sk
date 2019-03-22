@@ -5,6 +5,7 @@ import {
 } from "../../models/acl";
 import { getPersonalRolesArr } from "../../models/roles";
 import { generatePermission } from "../../models/user/permission";
+import { orgActions } from "../../models/actions";
 
 //const uuid = require("uuid/v4");
 const nanoid = require("nanoid");
@@ -27,9 +28,7 @@ module.exports = {
     const userId = nanoid();
     const rootBlockId = nanoid();
     const rootBlockRoles = getPersonalRolesArr();
-    const rootBlockAcl = blockActionTypes.concat(
-      generateRolesActions(rootBlockRoles)
-    );
+    const rootBlockAcl = orgActions;
 
     rootBlock = {
       id: rootBlockId,
@@ -38,7 +37,7 @@ module.exports = {
       color: randomColor(),
       owner: rootBlockId,
       createdBy: userId,
-      acl: generateACL(rootBlockAcl),
+      acl: rootBlockAcl,
       roles: rootBlockRoles
     };
 

@@ -60,7 +60,14 @@ class Signup extends React.Component {
           label: "Password",
           labelCol: null,
           wrapperCol: null,
-          rules: [...userDescriptor.password],
+          rules: [
+            ...userDescriptor.password,
+            {
+              required: true,
+              type: "string",
+              validator: confirmPasswordValidator
+            }
+          ],
           extra: "min of 5 chars including an alphabet, a number, and a symbol"
         },
         confirmPassword: {

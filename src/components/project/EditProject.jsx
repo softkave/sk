@@ -104,9 +104,14 @@ class EditProject extends React.Component {
   }
 
   onSubmit = data => {
+    // const { noAcl } = this.props;
     data.type = "project";
     // if (data.acl) {
     //   data.acl = generateACLArrayFromObj(data.acl);
+    // }
+
+    // if (noAcl) {
+    //   data.acl =
     // }
 
     console.log(data);

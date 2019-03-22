@@ -25,3 +25,5 @@
 22. external link for issues and requests
 23. use role attribute for assistive technologies
 24. validate some input onBlur, not onChange
+
+- add logout button

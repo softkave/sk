@@ -128,7 +128,8 @@ class RootGroup extends React.Component {
       parentPermission,
       onBack,
       ownerRoles,
-      ownerAcl
+      ownerAcl,
+      isFromRoot
       // parentBlock - not supported yet, for self updating
     } = this.props;
     console.log("root group", this.props, this.state);
@@ -141,6 +142,15 @@ class RootGroup extends React.Component {
     // const permission = rootBlock.acl
     //   ? generateBlockPermission(rootBlock, user.permissions)
     //   : parentPermission;
+
+    const isUserRootBlock =
+      isFromRoot !== undefined
+        ? isFromRoot
+        : rootBlock.type === "root"
+        ? true
+        : false;
+    const allowAcl = !isUserRootBlock;
+    console.log(allowAcl);
 
     if (showCollaborators) {
       return (
@@ -169,12 +179,11 @@ class RootGroup extends React.Component {
           blockHandlers={blockHandlers}
           parentBlock={rootBlock}
           ownerRoles={roles}
+          isFromRoot={isUserRootBlock}
         />
       );
     }
 
-    const isUserRootBlock = rootBlock.type === "root" ? true : false;
-    const allowAcl = !isUserRootBlock;
     const permittedChildrenTypes = blockTypes.filter(
       type =>
         type !== rootBlock.type &&
