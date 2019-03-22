@@ -22,7 +22,7 @@ class Task extends React.Component {
       <div className="sk-minitask">
         <Row>
           <Col span={4}>
-            {canPerformAction(permission, "task", "toggle") && (
+            {canPerformAction(task, permission, "TOGGLE_TASK") && (
               <Switch
                 checked={collaborator && !!collaborator.completedAt}
                 onChange={() => blockHandlers.onToggle(task)}
@@ -37,7 +37,7 @@ class Task extends React.Component {
             <Priority level={task.priority} cover />
           </Col>
           <Col span={4} className="sk-minitask-top-extra">
-            {canPerformAction(permission, "", "delete") && (
+            {canPerformAction(task, permission, "DELETE_TASK") && (
               <Button
                 icon="close"
                 className="sk-minitask-close"
@@ -54,7 +54,7 @@ class Task extends React.Component {
         </Row>
         <Row>
           <Col span={24} className="sk-minitask-footer-right">
-            {canPerformAction(permission, "", "update") && (
+            {canPerformAction(task, permission, "UPDATE_TASK") && (
               <Button
                 icon="edit"
                 onClick={() => onEdit(task)}

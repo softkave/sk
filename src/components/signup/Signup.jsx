@@ -100,11 +100,13 @@ class Signup extends React.Component {
 
   onSubmit = async (data, form) => {
     try {
+      console.log(data);
       let result = await netInterface("user.signup", data);
+      console.log(result);
       //console.log(result);
       this.props.onSignup(result);
     } catch (error) {
-      //console.log(error);
+      console.log(error);
       applyErrors(error, form);
     }
   };
@@ -116,7 +118,8 @@ class Signup extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    onSignup: data => {
+    onSignup: async data => {
+      // let user = await netInterface("user.signup", data);
       dispatch(mergeDataByPath("user", data));
     }
   };

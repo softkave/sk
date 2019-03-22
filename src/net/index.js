@@ -8,11 +8,12 @@ netRoutes = {
 
 // netRoutes = {
 //   block: require("./block"),
-//   user: require("./user")
+//   user: require("./user").default
 // };
 
 export default async function netInterface(path, data) {
   let route = get(netRoutes, path);
+  console.log(route, netRoutes, path, data);
   if (route) {
     return await route(data);
   }

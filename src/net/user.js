@@ -1,4 +1,4 @@
-const {
+import {
   userSignupMutation,
   userLoginMutation,
   updateUserMutation,
@@ -9,13 +9,13 @@ const {
   changePasswordWithTokenMutation,
   respondToCollaborationRequestMutation,
   getCollaborationRequestsQuery
-} = require("./schema/user");
-const query = require("./query");
-const auth = require("./auth");
-const { getDataFromObj } = require("../utils/object");
+} from "./schema/user";
+import query from "./query";
+import auth from "./auth";
+import { getDataFromObj } from "../utils/object";
 
-module.exports = {
-  userSignupMutation(user) {
+const user = {
+  signup(user) {
     const userFields = ["name", "password", "email"];
 
     return query(
@@ -26,7 +26,7 @@ module.exports = {
     );
   },
 
-  userLoginMutation(user) {
+  login(user) {
     return query(
       null,
       userLoginMutation,
@@ -35,7 +35,7 @@ module.exports = {
     );
   },
 
-  updateUserMutation(user) {
+  updateUser(user) {
     const updateUserFields = ["name", "lastNotificationCheckTime"];
 
     return auth(
@@ -46,7 +46,7 @@ module.exports = {
     );
   },
 
-  changePasswordMutation(password) {
+  changePassword(password) {
     return auth(
       null,
       changePasswordMutation,
@@ -55,7 +55,7 @@ module.exports = {
     );
   },
 
-  forgotPasswordMutation(email) {
+  forgotPassword(email) {
     return query(
       null,
       forgotPasswordMutation,
@@ -64,11 +64,11 @@ module.exports = {
     );
   },
 
-  userExistsQuery(email) {
+  userExists(email) {
     return query(null, userExistsQuery, { email }, "data.user.userExists");
   },
 
-  updateCollaborationRequestMutation(request, data) {
+  updateCollaborationRequest(request, data) {
     const updateRequestFields = ["readAt"];
 
     return auth(
@@ -79,7 +79,7 @@ module.exports = {
     );
   },
 
-  changePasswordWithTokenMutation(token) {
+  changePasswordWithToken(token) {
     return query(
       null,
       changePasswordWithTokenMutation,
@@ -88,7 +88,7 @@ module.exports = {
     );
   },
 
-  respondToCollaborationRequestMutation(request, response) {
+  respondToCollaborationRequest(request, response) {
     return auth(
       null,
       respondToCollaborationRequestMutation,
@@ -97,7 +97,7 @@ module.exports = {
     );
   },
 
-  getCollaborationRequestsQuery() {
+  getCollaborationRequests() {
     return auth(
       null,
       getCollaborationRequestsQuery,
@@ -106,3 +106,5 @@ module.exports = {
     );
   }
 };
+
+export default user;

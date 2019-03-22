@@ -1,6 +1,6 @@
-const { blockFragment } = require("./block");
+import { blockFragment } from "./block";
 
-const userExistsQuery = `
+export const userExistsQuery = `
   query UserExistsQuery (email: String!) {
     user {
       userExists(email: $email) {
@@ -14,7 +14,7 @@ const userExistsQuery = `
   }
 `;
 
-const updateUserMutation = `
+export const updateUserMutation = `
   mutation UpdateUserMutation($data: UpdateUserInput!) {
     user {
       updateUser(user: $user) {
@@ -27,7 +27,7 @@ const updateUserMutation = `
   }
 `;
 
-const userPermissionFragment = `
+export const userPermissionFragment = `
   fragment userPermissionFragment {
     role
     level
@@ -38,7 +38,7 @@ const userPermissionFragment = `
   }
 `;
 
-const userLoginFragement = `
+export const userLoginFragement = `
   ${userPermissionFragment}
   fragment userQueryResult on UserQueryResult {
     errors {
@@ -60,7 +60,7 @@ const userLoginFragement = `
   }
 `;
 
-const userSignupMutation = `
+export const userSignupMutation = `
   ${userLoginFragement}
   mutation UserSignupMutation ($user: UserSignupInput!) {
     user {
@@ -71,7 +71,7 @@ const userSignupMutation = `
   }
 `;
 
-const userLoginMutation = `
+export const userLoginMutation = `
   ${userLoginFragement}
   mutation UserLoginMutation ($user: UserLoginInput!) {
     user {
@@ -82,7 +82,7 @@ const userLoginMutation = `
   }
 `;
 
-const forgotPasswordMutation = `
+export const forgotPasswordMutation = `
   mutation UserForgotPasswordMutation ($email: String!) {
     user {
       forgotPassword {
@@ -95,7 +95,7 @@ const forgotPasswordMutation = `
   }
 `;
 
-const changePasswordMutation = `
+export const changePasswordMutation = `
   ${userLoginFragement}
   mutation UserChangePasswordMutation ($password: String!) {
     user {
@@ -106,7 +106,7 @@ const changePasswordMutation = `
   }
 `;
 
-const changePasswordWithTokenMutation = `
+export const changePasswordWithTokenMutation = `
   ${userLoginFragement}
   mutation UserChangeWithTokenPasswordMutation (
     $password: String!
@@ -119,7 +119,7 @@ const changePasswordWithTokenMutation = `
   }
 `;
 
-const getCollaborationRequestsQuery = `
+export const getCollaborationRequestsQuery = `
   query GetCollaborationRequestsQuery {
     user {
       getCollaborationRequests {
@@ -152,7 +152,7 @@ const getCollaborationRequestsQuery = `
   }
 `;
 
-const updateCollaborationRequestMutation = `
+export const updateCollaborationRequestMutation = `
   ${userLoginFragement}
   mutation UpdateCollaborationRequestMutation (
     $id: String!, $data: UpdateCollabRequestInput!
@@ -168,7 +168,7 @@ const updateCollaborationRequestMutation = `
   }
 `;
 
-const respondToCollaborationRequestMutation = `
+export const respondToCollaborationRequestMutation = `
   ${blockFragment}
   mutation RespondToCollaborationRequestMutation (
     $id: String!, $response: String!
@@ -186,18 +186,3 @@ const respondToCollaborationRequestMutation = `
     }
   }
 `;
-
-module.exports = {
-  userSignupMutation,
-  userLoginFragement,
-  userLoginMutation,
-  updateUserMutation,
-  changePasswordMutation,
-  forgotPasswordMutation,
-  userPermissionFragment,
-  userExistsQuery,
-  updateCollaborationRequestMutation,
-  changePasswordWithTokenMutation,
-  respondToCollaborationRequestMutation,
-  getCollaborationRequestsQuery
-};

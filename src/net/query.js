@@ -5,21 +5,26 @@ import { devLog, devError } from "../utils/log";
 
 const serverAddr =
   process.env.NODE_ENV === "development"
-    ? `192.168.1.73:${process.env.DEV_SERVER_PORT || 5000}`
-    : "";
+    ? `http://192.168.1.73:5000/graphql`
+    : "/graphql";
 
 // function getDataFromResult(result, path) {
 //   return dotProp.get(result, path);
 // }
 
 export default async function query(headers, netQuery, variables, process) {
+  console.log(arguments);
   try {
+    let hd = {
+      "Content-Type": "application/json",
+      ...headers
+    };
+
     const result = await fetch(serverAddr, {
-      headers,
-      body: JSON.stringify({ netQuery, variables }),
-      contentType: "application/json",
-      accept: "application/json",
-      method: "POST"
+      headers: hd,
+      body: JSON.stringify({ query: netQuery, variables }),
+      method: "POST",
+      mode: "cors"
     });
 
     if (result.ok()) {

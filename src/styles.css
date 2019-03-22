@@ -6,6 +6,11 @@ html,
 body,
 #root {
   height: 100%;
+  font-family: "Lato", sans-serif !important;
+  /* font-family: "Laila", serif; */
+  /* font-family: "Karla", sans-serif; */
+  color: black !important;
+  font-weight: 500;
 }
 
 .app-parent-height {
@@ -15,6 +20,5 @@ body,
 body,
 .ant-input,
 .ant-dropdown-menu-item {
-  font-family: "Karla", sans-serif !important;
   color: rgba(0, 0, 0, 0.85) !important;
 }
