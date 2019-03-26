@@ -11,7 +11,8 @@ import {
   projectActions,
   groupActions,
   taskActions,
-  orgActions
+  orgActions,
+  getBlockActionsFromParent
 } from "../models/actions";
 
 const getId = require("uuid/v4");
@@ -53,22 +54,7 @@ export function makeBlockHandlers({ dispatch, user }) {
         block.owner = parent.owner;
 
         if (!block.acl) {
-          let typeActions =
-            block.type === "project"
-              ? projectActions
-              : block.type === "group"
-              ? groupActions
-              : block.type === "task"
-              ? taskActions
-              : orgActions;
-          let actions = typeActions.reduce((actions, item) => {
-            actions[item.action] = true;
-            return actions;
-          }, {});
-
-          block.acl = parent.acl.filter(item => {
-            return actions[item.action];
-          });
+          block.acl = getBlockActionsFromParent(block, parent);
         }
       } else {
         block.path = `${block.type}s.${block.id}`;

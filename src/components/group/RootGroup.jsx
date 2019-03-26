@@ -6,10 +6,7 @@ import MiniTask from "../task/MiniTask.jsx";
 import EditProject from "../project/EditProject.jsx";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import {
-  generateBlockPermission,
   canPerformAction,
-  filterAclArr,
-  getForbiddenChildren,
   getClosestPermissionToBlock
 } from "../../models/acl";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
@@ -17,6 +14,7 @@ import { Button } from "antd";
 import { assignTask } from "../block-utils";
 import RootGroupGenericContainer from "./RootGroupGenericContainer.jsx";
 import Collaborators from "../collaborator/Collaborators.jsx";
+import { getBlockActionsFromParent } from "../../models/actions";
 import "./root-group.css";
 
 class RootGroup extends React.Component {
@@ -196,15 +194,6 @@ class RootGroup extends React.Component {
       }
     };
 
-    const orgOnlyAcl = ["roles", "collaboration"];
-    const childrenDefaultAcl = allowAcl
-      ? filterAclArr(
-          rootBlock.acl,
-          getForbiddenChildren(rootBlock).concat(orgOnlyAcl),
-          true
-        )
-      : null;
-
     return (
       <div className="sk-root-group">
         <EditProject
@@ -216,11 +205,12 @@ class RootGroup extends React.Component {
           existingProjects={
             form.project && this.getExistingNames(rootBlock.projects)
           }
-          // parentAcl={rootBlock.acl}
           roles={roles}
-          defaultAcl={childrenDefaultAcl}
+          defaultAcl={
+            form.project &&
+            getBlockActionsFromParent({ type: "project" }, rootBlock)
+          }
           permission={permission}
-          // acl={acl}
         />
         <EditGroup
           noAcl={!allowAcl}
@@ -229,9 +219,11 @@ class RootGroup extends React.Component {
           onClose={() => this.toggleForm("group")}
           data={block}
           existingGroups={form.group && this.getExistingNames(rootBlock.groups)}
-          // parentAcl={rootBlock.acl}
           roles={roles}
-          defaultAcl={childrenDefaultAcl}
+          defaultAcl={
+            form.group &&
+            getBlockActionsFromParent({ type: "group" }, rootBlock)
+          }
           permission={permission}
         />
         <EditTask
@@ -245,7 +237,9 @@ class RootGroup extends React.Component {
           permission={permission}
           noAcl={!allowAcl}
           roles={roles}
-          defaultAcl={childrenDefaultAcl}
+          defaultAcl={
+            form.task && getBlockActionsFromParent({ type: "task" }, rootBlock)
+          }
         />
         <div className="sk-root-group-header">
           {onBack && (
