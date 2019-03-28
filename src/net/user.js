@@ -13,26 +13,47 @@ import {
 import query from "./query";
 import auth from "./auth";
 import { getDataFromObj } from "../utils/object";
+import { setItem, getItem, removeItem } from "../utils/storage";
+
+const tokenStorageName = "t";
 
 const user = {
-  signup(user) {
+  async signup(user) {
     const userFields = ["name", "password", "email"];
 
-    return query(
+    let result = await query(
       null,
       userSignupMutation,
       { user: getDataFromObj(user, userFields) },
       "data.user.signup"
     );
+
+    if (user.remember) {
+      setItem(tokenStorageName, result.token, "local");
+    }
+
+    return result;
   },
 
   login(user) {
-    return query(
+    let result = query(
       null,
       userLoginMutation,
       { user: user.email, password: user.password },
       "data.user.login"
     );
+
+    let prevToken = getItem(tokenStorageName, "local");
+
+    if (prevToken) {
+      setItem(tokenStorageName, result.token, "local");
+    }
+
+    return result;
+  },
+
+  logout() {
+    removeItem(tokenStorageName, "local");
   },
 
   updateUser(user) {
@@ -47,12 +68,20 @@ const user = {
   },
 
   changePassword(password) {
-    return auth(
+    let result = auth(
       null,
       changePasswordMutation,
       { password },
       "data.user.changePassword"
     );
+
+    let prevToken = getItem(tokenStorageName);
+
+    if (prevToken) {
+      setItem(tokenStorageName, result.token, "local");
+    }
+
+    return result;
   },
 
   forgotPassword(email) {
@@ -104,6 +133,16 @@ const user = {
       {},
       "data.user.getCollaborationRequests"
     );
+  },
+
+  getDataWithToken() {},
+
+  getSavedUserData() {
+    let userToken = getItem(tokenStorageName, "local");
+
+    if (userToken) {
+      return this.getDataWithToken(userToken);
+    }
   }
 };
 

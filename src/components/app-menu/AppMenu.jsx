@@ -28,10 +28,19 @@ class AppMenu extends React.Component {
   };
 
   onSelectMenu = event => {
-    this.setState({
-      currentItemKey: event.key,
-      collapsed: true
-    });
+    const { onSelectMenu } = this.props;
+
+    this.setState(
+      {
+        currentItemKey: event.key,
+        collapsed: true
+      },
+      () => {
+        if (onSelectMenu) {
+          onSelectMenu(event.key);
+        }
+      }
+    );
   };
 
   /*componentDidMount() {
@@ -67,7 +76,6 @@ class AppMenu extends React.Component {
     const windowWidth = getWindowWidth();
     let menuDrawerWidth = windowWidth / (windowWidth < 300 ? 1 : 2);
     // menuDrawerWidth = menuDrawerWidth < 300 ? windowWidth : menuDrawerWidth;
-    // console.log(this.props, this.state);
 
     return (
       <div style={{ height: "100%" }}>
@@ -82,7 +90,7 @@ class AppMenu extends React.Component {
             onClick={this.onSelectMenu}
             style={{ marginTop: "2em" }}
           >
-            {menuItems.map((item, i) => (
+            {menuItems.map(item => (
               <MenuItem key={item.key}>
                 {item.icon && <Icon type={item.icon} theme={item.iconTheme} />}
                 <span>{item.label}</span>

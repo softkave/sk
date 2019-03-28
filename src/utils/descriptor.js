@@ -26,13 +26,11 @@ export function makeConfirmValidator(
   msg = "values do not match"
 ) {
   return function validatePassword(rule, value, cb, source) {
-    // console.log("validating", arguments);
     const value0 = form.getFieldValue(field0);
     const value1 = form.getFieldValue(field1);
     let fieldToUpdate = null;
     let fieldValue = null;
     let error = null;
-    // console.log(value0, value1);
 
     if (value0 && value1 && value0 === value1) {
       cb();

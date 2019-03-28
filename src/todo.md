@@ -27,3 +27,4 @@
 24. validate some input onBlur, not onChange
 
 - add logout button
+- ability to create custom tags for task priority

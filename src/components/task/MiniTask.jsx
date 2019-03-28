@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Switch, Row, Col } from "antd";
 import Priority from "./Priority.jsx";
-import { canPerformAction } from "../../models/acl";
+import { canPerformAction } from "../../models/block/acl";
 import "./minitask.css";
 
 class Task extends React.Component {

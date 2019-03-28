@@ -1,6 +1,6 @@
 import React from "react";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, message } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
 import { makeConfirmValidator } from "../../utils/descriptor";
 
@@ -50,7 +50,10 @@ class ForgotPassword extends React.Component {
     };
   }
 
-  onSubmit = async (data, form) => {};
+  onSubmit = async data => {
+    await this.props.onSubmit(data);
+    message.success("request successful");
+  };
 
   render() {
     return <ComputeForm model={this.model} form={this.props.form} />;

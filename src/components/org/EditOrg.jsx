@@ -4,17 +4,9 @@ import { Input, Button, Form } from "antd";
 import { orgDescriptor as blockDescriptor } from "../../models/block/descriptor";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
-import Roles from "../role/Roles.jsx";
 import Acl from "../acl/Acl.jsx";
-import {
-  generateACL,
-  generateRolesActions,
-  generateBlockPermission,
-  generateACLArrayFromObj,
-  blockActionTypes
-} from "../../models/acl";
-import { getDefaultRolesArr } from "../../models/roles";
-import { orgActions } from "../../models/actions";
+import { getDefaultRolesArr } from "../../models/block/roles";
+import { orgActions } from "../../models/block/actions";
 
 const TextArea = Input.TextArea;
 
@@ -28,8 +20,7 @@ class EditOrg extends React.Component {
     const self = this;
     const data = props.data || {};
     const defaultRoles = getDefaultRolesArr();
-    // const actions = generateACL(blockActionTypes);
-    // const defaultAcl = generateBlockPermission({ acl: actions });
+
     this.model = {
       fields: {
         name: {
@@ -53,20 +44,9 @@ class EditOrg extends React.Component {
           component: TextArea,
           props: { autosize: { minRows: 2, maxRows: 6 } },
           label: "Description",
-          // labelCol: null,
-          // wrapperCol: null,
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        // roles: {
-        //   render(form, data) {
-        //     return (
-        //       <Form.Item key="roles" label="Roles">
-        //         <Roles form={form} roles={defaultRoles} />
-        //       </Form.Item>
-        //     );
-        //   }
-        // },
         acl: {
           render(form, data) {
             return (

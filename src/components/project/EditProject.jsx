@@ -9,7 +9,7 @@ import {
   generateBlockPermission,
   generateACLArrayFromObj,
   canPerformAction
-} from "../../models/acl";
+} from "../../models/block/acl";
 
 const TextArea = Input.TextArea;
 

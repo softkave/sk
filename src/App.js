@@ -5,14 +5,19 @@ import AppMenu from "./components/app-menu/AppMenu.jsx";
 import RootGroupContainer from "./components/group/RootGroupContainer.jsx";
 import OrgsContainer from "./components/org/OrgsContainer.jsx";
 import NotificationsContainer from "./components/notification/NotificationsContainer.jsx";
-import Signup from "./components/signup/Signup.jsx";
-import Login from "./components/login/Login.jsx";
-import ForgotPassword from "./components/password/ForgotPassword.jsx";
-import ChangePasswordWithToken from "./components/password/ChangePasswordWithToken.jsx";
+import SignupContainer from "./components/signup/SignupContainer.jsx";
+import LoginContainer from "./components/login/LoginContainer.jsx";
+import ForgotPasswordContainer from "./components/password/ForgotPsContainer.jsx";
+import ChangePasswordWithTokenContainer from "./components/password/ChangePsWithTokenContainer.jsx";
 import { Col, Row, notification } from "antd";
 import { connect } from "react-redux";
+import { deleteDataByPath, mergeDataByPath } from "./redux/actions/data";
+import netInterface from "./net/index";
 
-function MainApp() {
+function MainApp(props) {
+  console.log(props);
+  const { onLogout } = props;
+
   return (
     <AppMenu
       currentItemKey="notifications"
@@ -31,11 +36,42 @@ function MainApp() {
           key: "orgs",
           label: "Orgs",
           component: OrgsContainer
+        },
+        {
+          key: "logout",
+          label: "Logout",
+          component: null
         }
       ]}
+      onSelectMenu={key => {
+        if (key === "logout" && onLogout) {
+          onLogout();
+        }
+      }}
     />
   );
 }
+
+function mainAppMapStateToProps(state, props) {
+  console.log(state);
+  return {
+    ...props
+  };
+}
+
+function mainAppMapDispatchToProps(dispatch) {
+  return {
+    onLogout() {
+      dispatch(deleteDataByPath("user"));
+      netInterface("user.logout");
+    }
+  };
+}
+
+const MainAppContainer = connect(
+  mainAppMapStateToProps,
+  mainAppMapDispatchToProps
+)(MainApp);
 
 function renderComponent(component) {
   return function() {
@@ -60,6 +96,7 @@ class App extends React.Component {
 
   componentDidMount() {
     let skipRender = this.route();
+
     if (this.state.skipRender !== skipRender) {
       this.setState({ skipRender });
     }
@@ -73,28 +110,30 @@ class App extends React.Component {
   }
 
   componentDidCatch(error) {
-    if (process.env.NODE_ENV === "development") {
-      this.props.saveState();
-      throw error;
-    } else {
-      notification.error({
-        title: "Error",
-        description: "An error ocurred",
-        duration: null
-      });
-    }
+    notification.error({
+      title: "Error",
+      message: "An error ocurred"
+    });
+
+    throw error;
   }
 
   route() {
-    const { userIsLoggedIn, history } = this.props;
+    const { userIsLoggedIn, history, getSavedUserData } = this.props;
+    console.log(this.props);
+
     if (userIsLoggedIn) {
+      console.log(this.props);
       if (window.location.pathname.indexOf("app") === -1) {
         history.push("/app");
+        return false;
+      }
+    } else {
+      if (window.location.pathname.indexOf("app") > -1) {
+        getSavedUserData();
+        history.push("/");
         return true;
       }
-    } else if (window.location.pathname.indexOf("app") > -1) {
-      history.push("/");
-      return true;
     }
   }
 
@@ -104,19 +143,19 @@ class App extends React.Component {
     }
 
     return (
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%" }} className="app">
         <Switch>
-          <Route path="/signup" render={renderComponent(Signup)} />
-          <Route path="/login" component={renderComponent(Login)} />
+          <Route path="/signup" render={renderComponent(SignupContainer)} />
+          <Route path="/login" render={renderComponent(LoginContainer)} />
           <Route
             path="/forgot-password"
-            component={renderComponent(ForgotPassword)}
+            render={renderComponent(ForgotPasswordContainer)}
           />
           <Route
             path="/change-password"
-            component={renderComponent(ChangePasswordWithToken)}
+            render={renderComponent(ChangePasswordWithTokenContainer)}
           />
-          <Route path="/app" component={MainApp} />
+          <Route path="/app" render={MainAppContainer} />
           <Route path="/" exact component={Web} />
         </Switch>
       </div>
@@ -124,14 +163,28 @@ class App extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  console.log(state);
+function mapStateToProps(state, props) {
   return {
-    userIsLoggedIn: state.user && !!state.user.token,
-    saveState() {
-      sessionStorage.setItem("store", JSON.stringify(state));
+    ...props,
+    userIsLoggedIn: state.user && !!state.user.token
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    async getSavedUserData() {
+      let result = await netInterface("user.getSavedUserData");
+
+      if (result) {
+        dispatch(mergeDataByPath("user", result));
+      }
     }
   };
 }
 
-export default withRouter(connect(mapStateToProps)(App));
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

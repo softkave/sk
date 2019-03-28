@@ -50,42 +50,12 @@ export default class CollaboratorForm extends React.Component {
     super(props);
     this.editingIndex = null;
     this.errors = {};
-    const emailDescriptor = [
-      { type: "email", required: true }
-      // {
-      //   validator: (rule, value, cb) => {
-      //     value = value.toLowerCase();
-      //     let existingReq = props.form
-      //       .getFieldValue("collaborators")
-      //       .find((c, index) => {
-      //         if (
-      //           index !== this.editingIndex &&
-      //           value === c.email.toLowerCase()
-      //         ) {
-      //           return true;
-      //         }
-
-      //         return false;
-      //       });
-
-      //     if (existingReq) {
-      //       cb("email has been entered already");
-      //     } else {
-      //       cb();
-      //     }
-      //   }
-      // }
-    ];
+    const emailDescriptor = [{ type: "email", required: true }];
 
     const roleDescriptor = [
       {
         type: "object",
         required: true
-        // options: { single: true, first: true },
-        // fields: {
-        //   label: { type: "string" },
-        //   level: { type: "number" }
-        // }
       }
     ];
 
@@ -124,11 +94,9 @@ export default class CollaboratorForm extends React.Component {
 
   clearHelpers = (index, type) => {
     this.editingIndex = null;
-    console.log(index, type);
     if (type) {
       if (this.errors[index]) {
         this.errors[index][type] = null;
-        console.log(this.errors[index]);
       }
     } else {
       delete this.errors[index];
@@ -199,18 +167,14 @@ export default class CollaboratorForm extends React.Component {
     const { form } = this.props;
     let collaborators = form.getFieldValue("collaborators");
     this.emailValidator.validate({ email }, errors => {
-      console.log(errors, email);
       if (errors) {
-        console.log("setting email error");
         this.setError(index, errors[0].message);
       } else {
-        console.log("clearing email error");
         this.clearHelpers(index, "email");
       }
 
       collaborators = dotProp.set(collaborators, `${index}.email`, email);
       this.editingIndex = index;
-      console.log(this.errors);
       form.setFieldsValue({ collaborators });
     });
   };

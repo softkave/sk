@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers, sortBlocks } from "../block-utils";
+import { makeBlockHandlers, sortBlocks } from "../../models/block/block-utils";
 import RootGroup from "./RootGroup.jsx";
 import netInterface from "../../net";
 import { makeMultiple } from "../../redux/actions/make";
@@ -82,20 +82,17 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     })(),
 
     async fetchRootData() {
-      console.log("fetching root data");
       const rootBlockId = user.permissions.find(
         permission => permission.type === "root"
       ).blockId;
 
       const blocks = await netInterface("block.getInitBlocks");
-      console.log(blocks);
       let { assignedTasks, rootBlock, orgs } = sortBlocks({
         blocks,
         rootBlockId,
         standingOrgs: state.orgs
       });
 
-      console.log(assignedTasks, rootBlock, orgs);
       let actions = [
         mergeDataByPath(rootBlock.path, rootBlock),
         mergeDataByPath("assignedTasks", assignedTasks)
@@ -105,7 +102,6 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         actions.push(mergeDataByPath("orgs", orgs));
       }
 
-      console.log(actions);
       dispatch(makeMultiple(actions));
     }
   };

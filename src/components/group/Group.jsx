@@ -2,10 +2,9 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import {
-  generateBlockPermission,
   canPerformAction,
   getClosestPermissionToBlock
-} from "../../models/acl";
+} from "../../models/block/acl";
 import "./group.css";
 import SimpleBar from "simplebar-react";
 
@@ -19,22 +18,15 @@ class Group extends React.Component {
       blockHandlers,
       childrenTypes,
       onClickAddChild,
-      permission,
       name,
       user,
       onEdit
     } = this.props;
-    // const groupPermission =
-    //   group && group.acl
-    //     ? generateBlockPermission(group, user.permissions)
-    //     : permission || {};
 
     const groupPermission = getClosestPermissionToBlock(
       user.permissions,
       group
     );
-
-    console.log("group", this.props, childrenTypes, groupPermission);
 
     const permittedChildrenTypes = childrenTypes
       ? childrenTypes.filter(type => {
@@ -44,8 +36,6 @@ class Group extends React.Component {
           );
         })
       : null;
-
-    console.log(permittedChildrenTypes);
 
     return (
       <div className="sk-group">

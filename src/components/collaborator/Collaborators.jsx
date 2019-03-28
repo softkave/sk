@@ -2,7 +2,7 @@ import React from "react";
 import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
 import AddCollaborator from "./AddCollaborator.jsx";
-import { canPerformAction } from "../../models/acl";
+import { canPerformAction } from "../../models/block/acl";
 import "./collaborators.css";
 
 export default class Collaborators extends React.Component {

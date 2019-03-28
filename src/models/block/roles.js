@@ -5,18 +5,18 @@ export const defaultRolesMap = {
   admin: 3
 };
 
+export const defaultRoles = ["public", "collaborator", "lead", "admin"];
+
 export function generateRolesArr(rolesParam) {
   if (Array.isArray(rolesParam)) {
-    return rolesParam.map((role, index) => {
+    return rolesParam.map(role => {
       return {
         role
-        // level: index
       };
     });
   } else if (typeof rolesParam === "object") {
     return Object.keys(rolesParam).map(key => ({
       role: key
-      // level: rolesParam[key]
     }));
   }
 }
@@ -29,7 +29,6 @@ export function getPersonalRolesArr() {
   return [
     {
       role: "admin"
-      // level: defaultRolesMap.admin
     }
   ];
 }

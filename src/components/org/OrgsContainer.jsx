@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers } from "../block-utils";
+import { makeBlockHandlers } from "../../models/block/block-utils";
 import Orgs from "./Orgs.jsx";
 import netInterface from "../../net";
 import { mergeDataByPath } from "../../redux/actions/data";

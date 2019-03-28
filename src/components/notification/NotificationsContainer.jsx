@@ -8,7 +8,6 @@ class NotificationsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //loading: !props.notifications,
       error: null
     };
   }
@@ -26,7 +25,6 @@ class NotificationsContainer extends React.Component {
   render() {
     const { notifications, onRespond, onClickNotification } = this.props;
     const { error } = this.state;
-    // console.log(this.props, this.state);
 
     if (!notifications) {
       return "Loading";
@@ -79,7 +77,6 @@ function mergeProps({ state }, { dispatch }, ownProps) {
       });
 
       if (result) {
-        console.log(result);
         const { block, permission } = result;
         block.path = `orgs.${block.id}`;
         dispatch(setDataByPath(block.path, block));
@@ -92,11 +89,9 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         (await netInterface("user.getCollaborationRequests")) || [];
       let notificationsObj = {};
       notifications.forEach(notification => {
-        //notification.path = `notifications.${notification.id}`;
         notificationsObj[notification.id] = notification;
       });
 
-      // console.log(notifications, notificationsObj);
       dispatch(mergeDataByPath("notifications", notificationsObj));
     }
   };

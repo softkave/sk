@@ -5,12 +5,7 @@ import { groupDescriptor as blockDescriptor } from "../../models/block/descripto
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
 import Acl from "../acl/Acl.jsx";
-import {
-  generateBlockPermission,
-  generateACLArrayFromObj,
-  canPerformAction
-} from "../../models/acl";
-import { groupActions } from "../../models/actions";
+import { canPerformAction } from "../../models/block/acl";
 
 const TextArea = Input.TextArea;
 
@@ -21,7 +16,6 @@ class EditGroup extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props, blockDescriptor);
     const data = props.data || {};
     const self = this;
     this.model = {
@@ -86,28 +80,6 @@ class EditGroup extends React.Component {
       },
       onSubmit: self.onSubmit
     };
-
-    // if (
-    //   canPerformAction(
-    //     data || { acl: props.acl },
-    //     props.permission,
-    //     "UPDATE_ACL"
-    //   )
-    // ) {
-    //   this.model.fields["acl"] = {
-    //     render(form, data) {
-    //       return props.noAcl ? null : (
-    //         <Form.Item key="acl" label="Access Control">
-    //           <Acl
-    //             form={form}
-    //             defaultAcl={data.acl || props.acl}
-    //             roles={data.roles || props.roles}
-    //           />
-    //         </Form.Item>
-    //       );
-    //     }
-    //   };
-    // }
   }
 
   onSubmit = data => {

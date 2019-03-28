@@ -13,7 +13,6 @@ const serverAddr =
 // }
 
 export default async function query(headers, netQuery, variables, process) {
-  console.log(arguments);
   try {
     let hd = {
       "Content-Type": "application/json",

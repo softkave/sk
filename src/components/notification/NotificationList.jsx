@@ -7,7 +7,6 @@ import "./notification-list.css";
 
 function NotificationListItem(props) {
   const { notification, isSelected, onClick } = props;
-  //console.log(notification);
   const style = isSelected
     ? {
         backgroundColor: "rgb(66,133,244)",
@@ -16,7 +15,6 @@ function NotificationListItem(props) {
     : notification.readAt > 0
     ? {
         color: "grey"
-        //backgroundColor: "#dedede"
       }
     : null;
 
@@ -68,7 +66,7 @@ class NotificationList extends React.Component {
   renderCurrentNotification() {
     const { notifications, onRespond } = this.props;
     const { currentNotification } = this.state;
-    //return null;
+
     return (
       <NotificationBody
         notification={notifications[currentNotification]}
@@ -101,7 +99,7 @@ class NotificationList extends React.Component {
 
   render() {
     const { renderType, currentNotification } = this.state;
-    // console.log(this.state, this.props);
+
     if (renderType === "mobile") {
       if (currentNotification) {
         return this.renderCurrentNotification();
