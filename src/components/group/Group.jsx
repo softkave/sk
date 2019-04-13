@@ -2,7 +2,6 @@ import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import {
-  generateBlockPermission,
   canPerformAction,
   getClosestPermissionToBlock
 } from "../../models/acl";
@@ -19,7 +18,6 @@ class Group extends React.Component {
       blockHandlers,
       childrenTypes,
       onClickAddChild,
-      permission,
       name,
       user,
       onEdit

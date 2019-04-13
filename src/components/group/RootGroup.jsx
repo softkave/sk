@@ -6,7 +6,6 @@ import MiniTask from "../task/MiniTask.jsx";
 import EditProject from "../project/EditProject.jsx";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import {
-  generateBlockPermission,
   canPerformAction,
   filterAclArr,
   getForbiddenChildren,
@@ -125,10 +124,8 @@ class RootGroup extends React.Component {
       rootBlock,
       blockHandlers,
       user,
-      parentPermission,
       onBack,
       ownerRoles,
-      ownerAcl,
       isFromRoot
       // parentBlock - not supported yet, for self updating
     } = this.props;
@@ -138,7 +135,6 @@ class RootGroup extends React.Component {
     const collaborators = this.getCollaborators();
     const roles = rootBlock.roles || ownerRoles;
     const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
-    const acl = rootBlock.acl || ownerAcl;
     // const permission = rootBlock.acl
     //   ? generateBlockPermission(rootBlock, user.permissions)
     //   : parentPermission;

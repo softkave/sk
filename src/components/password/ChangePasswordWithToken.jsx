@@ -1,3 +1,5 @@
 import React from "react";
 
-export default function ChangePasswordWithToken() {}
+export default function ChangePasswordWithToken() {
+  return <span />;
+}

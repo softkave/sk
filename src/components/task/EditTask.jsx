@@ -7,8 +7,6 @@ import modalWrap from "../modalWrap.jsx";
 import AssignTask from "./AssignTask.jsx";
 import Acl from "../acl/Acl.jsx";
 import {
-  generateBlockPermission,
-  generateACLArrayFromObj,
   canPerformAction
 } from "../../models/acl";
 

@@ -2,7 +2,7 @@ import React from "react";
 import OrgThumbnail from "./OrgThumbnail.jsx";
 import RootGroup from "../group/RootGroup.jsx";
 import EditOrg from "./EditOrg.jsx";
-import { Row, Col, Button } from "antd";
+import { Button } from "antd";
 import "./orgs.css";
 
 class Orgs extends React.Component {

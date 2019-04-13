@@ -1,5 +1,5 @@
 export function makeSubmitHandler(form, onSubmit, onError) {
-  return function(event) {
+  return function (event) {
     if (event) {
       event.preventDefault();
     }
@@ -25,24 +25,26 @@ export function makeSubmitHandler(form, onSubmit, onError) {
 }
 
 export function applyErrors(form, errors) {
-  let formValuesObj = {};
-  if (Array.isArray(errors)) {
-    errors.forEach(error => {
-      formValuesObj[error.fieldName] = {
-        value: error.value || form.getFieldsValue(error.fieldName),
-        errors: error.errors
-      };
-    });
+  // let formValuesObj = {};
+  console.log(form, errors)
+  return;
+  // if (Array.isArray(errors)) {
+  //   errors.forEach(error => {
+  //     formValuesObj[error.fieldName] = {
+  //       value: error.value || form.getFieldsValue(error.fieldName),
+  //       errors: error.errors
+  //     };
+  //   });
 
-    form.setFields(formValuesObj);
-  } else if (typeof errors === "object") {
-    Object.keys(errors).forEach(fieldName => {
-      let error = errors[fieldName];
-      if (!error.value) {
-        error.value = form.getFieldsValue(fieldName);
-      }
-    });
+  //   form.setFields(formValuesObj);
+  // } else if (typeof errors === "object") {
+  //   Object.keys(errors).forEach(fieldName => {
+  //     let error = errors[fieldName];
+  //     // if (!error.value) {
+  //     //   error.value = form.getFieldsValue(fieldName);
+  //     // }
+  //   });
 
-    form.setFields(errors);
-  }
+  //   form.setFields(errors);
+  // }
 }

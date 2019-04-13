@@ -4,12 +4,7 @@ import Thumbnail from "../thumbnail/Thumbnail.jsx";
 
 export default class TaskCollaborator extends React.Component {
   render() {
-    const {
-      collaborator,
-      collaboratorTaskData,
-      onToggle,
-      onUnassign
-    } = this.props;
+    const { collaborator, collaboratorTaskData, onUnassign } = this.props;
 
     return (
       <Thumbnail
