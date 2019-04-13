@@ -166,3 +166,30 @@ export const orgActions = [
     roles: [...roles]
   }
 ];
+
+export function getBlockActionsObject(block) {
+  let typeActions =
+    block.type === "project"
+      ? projectActions
+      : block.type === "group"
+      ? groupActions
+      : block.type === "task"
+      ? taskActions
+      : orgActions;
+
+  let actions = typeActions.reduce((actions, item) => {
+    actions[item.action] = true;
+    return actions;
+  }, {});
+
+  return actions;
+}
+
+export function getBlockActionsFromParent(block, parent) {
+  let actions = getBlockActionsObject(block);
+  let acl = parent.acl.filter(item => {
+    return actions[item.action];
+  });
+
+  return acl;
+}

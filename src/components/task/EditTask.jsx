@@ -6,9 +6,13 @@ import { taskDescriptor as blockDescriptor } from "../../models/block/descriptor
 import modalWrap from "../modalWrap.jsx";
 import AssignTask from "./AssignTask.jsx";
 import Acl from "../acl/Acl.jsx";
+<<<<<<< HEAD
 import {
   canPerformAction
 } from "../../models/acl";
+=======
+import { canPerformAction } from "../../models/block/acl";
+>>>>>>> cb76368d304ef130b5864922dd098d1785bda3cf
 
 const TextArea = Input.TextArea;
 
@@ -52,7 +56,7 @@ class EditTask extends React.Component {
                   form={form}
                   collaborators={props.collaborators}
                   defaultTaskCollaborators={
-                    data.collaborators || props.autoAssignTo
+                    data.collaborators || props.defaultAssignedTo
                   }
                   user={props.user}
                 />

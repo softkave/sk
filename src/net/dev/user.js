@@ -2,29 +2,19 @@ import {
   generateACL,
   blockActionTypes,
   generateRolesActions
-} from "../../models/acl";
-import { getPersonalRolesArr } from "../../models/roles";
-import { generatePermission } from "../../models/user/permission";
-import { orgActions } from "../../models/actions";
+} from "../../models/block/acl";
+import { getPersonalRolesArr } from "../../models/block/roles";
+import { generatePermission } from "../../models/block/permission";
+import { orgActions } from "../../models/block/actions";
 
 //const uuid = require("uuid/v4");
 const nanoid = require("nanoid");
 const randomColor = require("randomcolor");
-// const {
-//   //generateError,
-//   //makeShouldRespondWithError,
-//   devShare
-// } = require("./utils");
-//const shouldRespondWithError = makeShouldRespondWithError();
 let rootBlock = null;
 let userCache = null;
 
 module.exports = {
   signup(user) {
-    /*if (shouldRespondWithError("signup")) {
-      throw generateError(user);
-    }*/
-
     const userId = nanoid();
     const rootBlockId = nanoid();
     const rootBlockRoles = getPersonalRolesArr();
@@ -53,29 +43,25 @@ module.exports = {
     };
 
     userCache = generatedUserData;
-
-    // devShare("user", { token, rootBlock, user: generatedUserData });
-    // console.log(devShare("user"));
-
-    // sessionStorage.setItem("user", JSON.stringify({ user: generatedUserData, token }));
-    sessionStorage.setItem("rootBlock", JSON.stringify(rootBlock));
+    sessionStorage.setItem("rootBlock-dev", JSON.stringify(rootBlock));
+    sessionStorage.setItem("user-data-dev", JSON.stringify(generatedUserData));
+    sessionStorage.setItem("user-token-dev", JSON.stringify(token));
 
     return {
-      //rootBlock,
       token,
       user: generatedUserData
     };
   },
 
   login(user) {
-    /*if (shouldRespondWithError("login")) {
-      throw generateError(user);
-    }*/
+    return this.signup({
+      ...user,
+      name: "Abayomi Akintomide"
+    });
+  },
 
-    return {
-      token: "abcd",
-      user: null
-    };
+  logout() {
+    sessionStorage.removeItem("user-token-dev");
   },
 
   forgotPassword() {},
@@ -177,5 +163,16 @@ module.exports = {
     }
   },
 
-  updateCollaborationRequest() {}
+  updateCollaborationRequest() {},
+
+  getDataWithToken() {},
+
+  getSavedUserData() {
+    let user = sessionStorage.getItem("user-data-dev");
+    let token = sessionStorage.getItem("user-token-dev");
+
+    if (user && token) {
+      return { token, user: JSON.parse(user) };
+    }
+  }
 };

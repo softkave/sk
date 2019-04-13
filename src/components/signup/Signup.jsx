@@ -3,10 +3,6 @@ import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Input, Button, Form } from "antd";
 import { userDescriptor } from "../../models/user/descriptor";
 import { makeConfirmValidator } from "../../utils/descriptor";
-import netInterface from "../../net";
-import { applyErrors } from "../compute-form/utils";
-import { mergeDataByPath } from "../../redux/actions/data";
-import { connect } from "react-redux";
 
 class Signup extends React.Component {
   constructor(props) {
@@ -105,17 +101,8 @@ class Signup extends React.Component {
     };
   }
 
-  onSubmit = async (data, form) => {
-    try {
-      console.log(data);
-      let result = await netInterface("user.signup", data);
-      console.log(result);
-      //console.log(result);
-      this.props.onSignup(result);
-    } catch (error) {
-      console.log(error);
-      applyErrors(error, form);
-    }
+  onSubmit = async data => {
+    return this.props.onSubmit(data);
   };
 
   render() {
@@ -123,16 +110,4 @@ class Signup extends React.Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    onSignup: async data => {
-      // let user = await netInterface("user.signup", data);
-      dispatch(mergeDataByPath("user", data));
-    }
-  };
-}
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(Form.create()(Signup));
+export default Form.create()(Signup);

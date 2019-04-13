@@ -30,8 +30,6 @@ export default class EditPriority extends React.Component {
         >
           {value}
         </span>
-
-        {/*<Priority key="va" level={value} />*/}
       </Dropdown>
     );
   }

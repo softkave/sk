@@ -34,7 +34,6 @@ class Orgs extends React.Component {
   render() {
     const { orgs, blockHandlers, user } = this.props;
     const { currentOrg, showNewOrgForm } = this.state;
-    console.log("orgs", this.props, this.state);
 
     if (currentOrg) {
       return (

@@ -5,12 +5,6 @@ import dotProp from "dot-prop-immutable";
 const Panel = Collapse.Panel;
 
 export default class Acl extends React.Component {
-  // shouldComponentUpdate(nextProps) {
-  //   if (nextProps.acl === this.props.acl) {
-  //     return false;
-  //   }
-  // }
-
   onUpdateAcl = (index, roles) => {
     const { form } = this.props;
     const acl = form.getFieldValue("acl");

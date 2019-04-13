@@ -13,7 +13,11 @@ netRoutes = {
 
 export default async function netInterface(path, data) {
   let route = get(netRoutes, path);
+<<<<<<< HEAD
   console.log(netRoutes, path, data);
+=======
+
+>>>>>>> cb76368d304ef130b5864922dd098d1785bda3cf
   if (route) {
     return await route(data);
   }
