@@ -11,16 +11,15 @@ import ForgotPasswordContainer from "./components/password/ForgotPsContainer.jsx
 import ChangePasswordWithTokenContainer from "./components/password/ChangePsWithTokenContainer.jsx";
 import { Col, Row, notification } from "antd";
 import { connect } from "react-redux";
-import { deleteDataByPath, mergeDataByPath } from "./redux/actions/data";
+import { mergeDataByPath, clearState } from "./redux/actions/data";
 import netInterface from "./net/index";
 
 function MainApp(props) {
-  console.log(props);
   const { onLogout } = props;
 
   return (
     <AppMenu
-      currentItemKey="notifications"
+      currentItemKey="orgs"
       menuItems={[
         {
           key: "notifications",
@@ -53,7 +52,6 @@ function MainApp(props) {
 }
 
 function mainAppMapStateToProps(state, props) {
-  console.log(state);
   return {
     ...props
   };
@@ -62,7 +60,7 @@ function mainAppMapStateToProps(state, props) {
 function mainAppMapDispatchToProps(dispatch) {
   return {
     onLogout() {
-      dispatch(deleteDataByPath("user"));
+      dispatch(clearState());
       netInterface("user.logout");
     }
   };
@@ -78,7 +76,7 @@ function renderComponent(component) {
     const ComponentX = component;
     return (
       <Row type="flex" justify="center">
-        <Col sm={24} md={8}>
+        <Col sm={24} md={12} lg={8} style={{ padding: "1em" }}>
           <ComponentX />
         </Col>
       </Row>
@@ -115,15 +113,15 @@ class App extends React.Component {
       message: "An error ocurred"
     });
 
-    throw error;
+    if (process.env.NODE_ENV === "development") {
+      throw error;
+    }
   }
 
   route() {
     const { userIsLoggedIn, history, getSavedUserData } = this.props;
-    console.log(this.props);
 
     if (userIsLoggedIn) {
-      console.log(this.props);
       if (window.location.pathname.indexOf("app") === -1) {
         history.push("/app");
         return false;
@@ -155,7 +153,7 @@ class App extends React.Component {
             path="/change-password"
             render={renderComponent(ChangePasswordWithTokenContainer)}
           />
-          <Route path="/app" render={MainAppContainer} />
+          <Route path="/app" component={MainAppContainer} />
           <Route path="/" exact component={Web} />
         </Switch>
       </div>

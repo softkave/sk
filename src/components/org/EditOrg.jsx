@@ -88,7 +88,7 @@ class EditOrg extends React.Component {
   onSubmit = data => {
     data.type = "org";
     data.roles = getDefaultRolesArr();
-    this.props.onSubmit(data);
+    return this.props.onSubmit(data);
   };
 
   render() {

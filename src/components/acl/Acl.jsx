@@ -19,10 +19,6 @@ export default class Acl extends React.Component {
     });
 
     const acl = form.getFieldValue("acl");
-    console.log({
-      acl,
-      roles
-    });
 
     return (
       <Collapse>
@@ -48,7 +44,7 @@ export default class Acl extends React.Component {
                 >
                   {roles.map(role => {
                     return (
-                      <Select.Option value={role.role}>
+                      <Select.Option key={role.role} value={role.role}>
                         {role.role}
                       </Select.Option>
                     );

@@ -2,14 +2,15 @@ import React from "react";
 import ComputeForm from "../compute-form/ComputeForm.jsx";
 import { Button, Form } from "antd";
 import modalWrap from "../modalWrap.jsx";
-import CollaboratorForm from "./CollaboratorForm.jsx";
-
-let collaboratorsFormHelpers = null;
+import CollaboratorForm from "./AddCollaboratorForm.jsx";
+import moment from "moment";
 
 class AddCollaborator extends React.Component {
   static defaultProps = {
     data: {}
   };
+
+  formRef = React.createRef();
 
   constructor(props) {
     super(props);
@@ -20,18 +21,22 @@ class AddCollaborator extends React.Component {
         collaborators: {
           render(form) {
             return (
-              <Form.Item label="Collaborators" key="collaborators">
-                <CollaboratorForm
-                  form={form}
-                  roles={props.roles}
-                  getHelpers={helpers => {
-                    collaboratorsFormHelpers = helpers;
-                  }}
-                  clearHelpers={() => {
-                    collaboratorsFormHelpers = null;
-                  }}
-                />
-              </Form.Item>
+              <div key="add-collaborator">
+                <p>
+                  If request expiration date is not provided, the default
+                  expiration duration is 1 month.
+                </p>
+                <Form.Item>
+                  <CollaboratorForm
+                    ref={self.formRef}
+                    form={form}
+                    existingCollaborators={props.existingCollaborators}
+                    existingCollaborationRequests={
+                      props.existingCollaborationRequests
+                    }
+                  />
+                </Form.Item>
+              </div>
             );
           }
         },
@@ -55,13 +60,18 @@ class AddCollaborator extends React.Component {
     };
   }
 
-  onSubmit = submittedData => {
-    if (collaboratorsFormHelpers) {
-      collaboratorsFormHelpers.validate((error, success) => {
-        if (!error) {
-          this.props.onSubmit(submittedData.collaborators);
-        }
-      });
+  onSubmit = async submittedData => {
+    if (this.formRef.current) {
+      let success = await this.formRef.current.validate();
+
+      if (success) {
+        submittedData.message = null;
+        submittedData.expiresAt = moment()
+          .add(1, "months")
+          .valueOf();
+
+        this.props.onSubmit(submittedData);
+      }
     }
   };
 

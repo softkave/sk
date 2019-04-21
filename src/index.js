@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import "./styles.css";
+import "./sk-global.css";
 
 if (process.env.NODE_ENV === "development") {
   require("antd/dist/antd.css");

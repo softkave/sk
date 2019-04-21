@@ -15,8 +15,9 @@ export const aclDescriptor = {
     },
     textPattern
   ],
-  level: {
-    type: "number"
+  roles: {
+    type: "array",
+    max: 50
   }
 };
 
@@ -28,10 +29,7 @@ export const roleDescriptor = {
       transform: trim
     },
     textPattern
-  ],
-  level: {
-    type: "number"
-  }
+  ]
 };
 
 export const blockDescriptor = {
@@ -61,30 +59,6 @@ export const blockDescriptor = {
   completedAt: [
     {
       type: "number"
-    }
-  ],
-  roles: [
-    {
-      type: "array",
-      max: 10,
-      validator: function(rule, value, cb) {
-        let existingRoles = {};
-        let errorExist = false;
-        value.some((role, i) => {
-          if (existingRoles[role.role]) {
-            cb("role with the same name already exist.");
-            errorExist = true;
-            return true;
-          }
-
-          existingRoles[role.role] = role;
-          return errorExist;
-        });
-
-        if (!errorExist) {
-          cb();
-        }
-      }
     }
   ]
 };

@@ -26,7 +26,7 @@ class EditProject extends React.Component {
     super(props);
     const self = this;
     const data = props.data || {};
-    console.log(props);
+
     this.model = {
       fields: {
         name: {
@@ -89,37 +89,11 @@ class EditProject extends React.Component {
       },
       onSubmit: self.onSubmit
     };
-
-    // if (!props.data || canPerformAction(data, props.permission, "UPDATE_ACL")) {
-    //   this.model.fields["acl"] = {
-    //     render(form, data) {
-    //       return props.noAcl ? null : (
-    //         <Form.Item key="acl" label="Access Control">
-    //           <Acl
-    //             form={form}
-    //             defaultAcl={data.acl || props.defaultAcl}
-    //             roles={data.roles || props.roles}
-    //           />
-    //         </Form.Item>
-    //       );
-    //     }
-    //   };
-    // }
   }
 
   onSubmit = data => {
-    // const { noAcl } = this.props;
     data.type = "project";
-    // if (data.acl) {
-    //   data.acl = generateACLArrayFromObj(data.acl);
-    // }
-
-    // if (noAcl) {
-    //   data.acl =
-    // }
-
-    console.log(data);
-    this.props.onSubmit(data);
+    return this.props.onSubmit(data);
   };
 
   render() {

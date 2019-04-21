@@ -88,7 +88,7 @@ class EditGroup extends React.Component {
 
   onSubmit = data => {
     data.type = "group";
-    this.props.onSubmit(data);
+    return this.props.onSubmit(data);
   };
 
   render() {
