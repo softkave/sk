@@ -68,3 +68,17 @@ export function makeNameExistsValidator(
     }
   };
 }
+
+export function promisifyAsyncValidator(v) {
+  return function(data) {
+    return new Promise(function(success, reject) {
+      v(data, function(errors, fields) {
+        if (errors) {
+          reject({ errors, fields });
+        } else {
+          success(fields);
+        }
+      });
+    });
+  };
+}

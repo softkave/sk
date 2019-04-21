@@ -1,274 +1,69 @@
 import React from "react";
-import { Select, Input, Form, Button, Divider, Row, Col } from "antd";
-import dotProp from "dot-prop-immutable";
-import asyncValidator from "async-validator";
+import ExtFormWrapper from "../ExtFormWrapper";
+import { Form } from "antd";
+import modalWrap from "../modalWrap";
 
-function promisifyAsyncValidator(v) {
-  return function(data) {
-    return new Promise(function(success, reject) {
-      v(data, function(errors, fields) {
-        if (errors) {
-          reject({ errors, fields });
-        } else {
-          success(fields);
-        }
-      });
-    });
-  };
-}
+class CollaboratorForm extends React.Component {
+  renderForm = ({ renderField, data }) => {
+    const { roles, collaborator, block } = this.props;
 
-function waitForPromises(promises) {
-  return new Promise(function(resolve, reject) {
-    function reportPromise(p) {
-      p.then(data => {
-        result.push({ data, success: true });
-        nextPromise();
-      }).catch(error => {
-        result.push({ error, failed: true });
-        nextPromise();
-      });
-    }
-
-    function nextPromise() {
-      if (index === promises.length) {
-        resolve(result);
-      } else {
-        let p = promises[index];
-        index += 1;
-        reportPromise(p);
-      }
-    }
-
-    let result = [];
-    let index = 0;
-    nextPromise();
-  });
-}
-
-export default class CollaboratorForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.editingIndex = null;
-    this.errors = {};
-    const emailDescriptor = [{ type: "email", required: true }];
-
-    const roleDescriptor = [
-      {
-        type: "object",
-        required: true
-      }
-    ];
-
-    const descriptor = {
-      email: emailDescriptor,
-      role: roleDescriptor
-    };
-
-    this.validateCollaborator = new asyncValidator(descriptor);
-    this.emailValidator = new asyncValidator({ email: emailDescriptor });
-    this.roleValidator = new asyncValidator({ role: roleDescriptor });
-    this.pEmailValidator = promisifyAsyncValidator(
-      this.emailValidator.validate.bind(this.emailValidator)
+    return (
+      <React.Fragment>
+        {renderField({
+          fieldName: "name",
+          labelName: "Name",
+          type: "input",
+          value: collaborator.name,
+          immutable: true,
+          block: true
+        })}
+        {renderField({
+          fieldName: "email",
+          labelName: "Email address",
+          type: "input",
+          value: collaborator.email,
+          immutable: true,
+          block: true
+        })}
+        {renderField({
+          fieldName: "role",
+          labelName: "Role",
+          type: "select",
+          value: (
+            collaborator.permissions.find(role => {
+              return role.blockId === Array.isArray(block.parents) &&
+                block.parents.length > 1
+                ? block.parents[0]
+                : block.id;
+            }) || {}
+          ).role,
+          options: roles
+            .filter(role => {
+              return role.role !== "public";
+            })
+            .map(role => {
+              return role.role;
+            }),
+          placeholder: "Select role",
+          block: true
+        })}
+      </React.Fragment>
     );
-
-    this.pRoleValidator = promisifyAsyncValidator(
-      this.roleValidator.validate.bind(this.roleValidator)
-    );
-
-    this.pValidator = promisifyAsyncValidator(
-      this.validateCollaborator.validate.bind(this.validateCollaborator)
-    );
-  }
-
-  componentDidMount() {
-    if (this.props.getHelpers) {
-      this.props.getHelpers({ validate: this.validate });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.props.clearHelpers) {
-      this.props.clearHelpers();
-    }
-  }
-
-  clearHelpers = (index, type) => {
-    this.editingIndex = null;
-    if (type) {
-      if (this.errors[index]) {
-        this.errors[index][type] = null;
-      }
-    } else {
-      delete this.errors[index];
-    }
-  };
-
-  clearErrors = () => {
-    this.errors = {};
-  };
-
-  setError = (index, emailError, roleError) => {
-    this.errors[index] = { email: emailError, role: roleError };
-  };
-
-  hasError = () => {
-    return !!Object.keys(this.errors).length;
-  };
-
-  getError = (index, type = "email") => {
-    return dotProp.get(this.errors, `${index}.${type}`);
-  };
-
-  validate = cb => {
-    const { form } = this.props;
-    let collaborators = form.getFieldValue("collaborators");
-    let validationPromises = [];
-    collaborators.forEach((c, index) => {
-      validationPromises.push(this.pValidator(c));
-    });
-
-    waitForPromises(validationPromises).then(result => {
-      result.forEach((r, index) => {
-        if (r.failed) {
-          this.setError(
-            index,
-            dotProp.get(r.error.fields, `email.0.message`),
-            dotProp.get(r.error.fields, `role.0.message`)
-          );
-        }
-      });
-
-      const hasError = this.hasError();
-      if (hasError) {
-        form.setFieldsValue({ collaborators });
-      }
-
-      cb(null, true);
-    });
-  };
-
-  onAddField = () => {
-    const { form } = this.props;
-    let collaborators = form.getFieldValue("collaborators");
-    collaborators = collaborators.concat([{ email: "", role: null }]);
-    this.editingIndex = collaborators.length - 1;
-    form.setFieldsValue({ collaborators });
-  };
-
-  onDeleteField = index => {
-    const { form } = this.props;
-    let collaborators = form.getFieldValue("collaborators");
-    collaborators = dotProp.delete(collaborators, index);
-    this.clearHelpers(index);
-    form.setFieldsValue({ collaborators });
-  };
-
-  onUpdateEmail = (index, email) => {
-    const { form } = this.props;
-    let collaborators = form.getFieldValue("collaborators");
-    this.emailValidator.validate({ email }, errors => {
-      if (errors) {
-        this.setError(index, errors[0].message);
-      } else {
-        this.clearHelpers(index, "email");
-      }
-
-      collaborators = dotProp.set(collaborators, `${index}.email`, email);
-      this.editingIndex = index;
-      form.setFieldsValue({ collaborators });
-    });
-  };
-
-  onUpdateRole = (index, roleLabel) => {
-    const { form, roles } = this.props;
-    let collaborators = form.getFieldValue("collaborators");
-    const role = roles.find(r => r.label === roleLabel);
-    collaborators = dotProp.set(collaborators, `${index}.role`, role);
-    this.clearHelpers(index, "role");
-    form.setFieldsValue({ collaborators });
   };
 
   render() {
-    const { form, roles } = this.props;
-    form.getFieldDecorator("collaborators", {
-      initialValue: [],
-      rules: [
-        {
-          type: "array",
-          required: true
-        }
-      ]
-    });
-
-    const collaborators = form.getFieldValue("collaborators");
-    const error = form.getFieldError("collaborators");
+    const { form, onSubmit } = this.props;
 
     return (
-      <div>
-        {collaborators.map((c, index) => {
-          return (
-            <div key={index}>
-              <Row gutter={16}>
-                <Col span={20}>
-                  <Form.Item
-                    label="Email address"
-                    help={
-                      <span style={{ color: "red" }}>
-                        {this.getError(index, "email")}
-                      </span>
-                    }
-                    style={{ marginBottom: "4px" }}
-                  >
-                    <Input
-                      value={c.email}
-                      onChange={event => {
-                        this.onUpdateEmail(index, event.target.value);
-                      }}
-                      autoComplete="email"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Role"
-                    help={
-                      <span style={{ color: "red" }}>
-                        {this.getError(index, "role")}
-                      </span>
-                    }
-                  >
-                    <Select
-                      placeholder="Select a role"
-                      value={c.role ? c.role.label : null}
-                      onChange={roleLabel =>
-                        this.onUpdateRole(index, roleLabel)
-                      }
-                    >
-                      {roles.map((r, index) => {
-                        return (
-                          <Select.Option key={r.label} value={r.label}>
-                            {r.label}
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={4}>
-                  <Button
-                    icon="close"
-                    onClick={() => this.onDeleteField(index)}
-                    type="danger"
-                  />
-                </Col>
-              </Row>
-              {index !== collaborators.length - 1 && <Divider />}
-            </div>
-          );
-        })}
-        <span style={{ color: "red" }}>{error}</span>
-        <Button block icon="plus" onClick={this.onAddField}>
-          Add Collaborator
-        </Button>
-      </div>
+      <ExtFormWrapper
+        editing
+        render={this.renderForm}
+        onSubmit={onSubmit}
+        form={form}
+      />
     );
   }
 }
+
+// TODO: change "Collaborator to collaborator name"
+export default modalWrap(Form.create()(CollaboratorForm), "Collaborator");

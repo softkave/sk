@@ -1,4 +1,18 @@
+import values from "lodash/values";
+
 export const roles = ["admin", "lead", "collaborator"];
+
+function mergeActions(...actions) {
+  let cache = {};
+
+  actions.forEach((acts = []) => {
+    acts.forEach(action => {
+      cache[action.action] = action;
+    });
+  });
+
+  return values(cache);
+}
 
 const aclActions = [
   {
@@ -46,8 +60,11 @@ const collaborationActions = [
   }
 ];
 
-export const taskActions = [
-  ...aclActions,
+const taskOwnActions = [
+  {
+    action: "CREATE_TASK",
+    roles: [...roles]
+  },
   {
     action: "TOGGLE_TASK",
     roles: [...roles]
@@ -74,12 +91,9 @@ export const taskActions = [
   }
 ];
 
-export const projectActions = [
-  ...taskActions,
-  {
-    action: "CREATE_TASK",
-    roles: [...roles]
-  },
+export const taskActions = mergeActions(aclActions, taskOwnActions);
+
+const projectOwnActions = [
   {
     action: "CREATE_GROUP",
     roles: [...roles]
@@ -94,26 +108,6 @@ export const projectActions = [
   },
   {
     action: "UPDATE_GROUP",
-    roles: [...roles]
-  },
-  {
-    action: "READ_PROJECT",
-    roles: [...roles]
-  },
-  {
-    action: "DELETE_PROJECT",
-    roles: [...roles]
-  },
-  {
-    action: "UPDATE_PROJECT",
-    roles: [...roles]
-  }
-];
-
-export const groupActions = [
-  ...taskActions,
-  {
-    action: "CREATE_TASK",
     roles: [...roles]
   },
   {
@@ -131,26 +125,15 @@ export const groupActions = [
   {
     action: "UPDATE_PROJECT",
     roles: [...roles]
-  },
-  {
-    action: "READ_GROUP",
-    roles: [...roles]
-  },
-  {
-    action: "DELETE_GROUP",
-    roles: [...roles]
-  },
-  {
-    action: "UPDATE_GROUP",
-    roles: [...roles]
   }
 ];
 
-export const orgActions = [
-  ...groupActions,
-  ...collaborationActions,
+export const projectActions = mergeActions(taskActions, projectOwnActions);
+export const groupActions = projectActions;
+
+const orgOwnActions = [
   {
-    action: "CREATE_GROUP",
+    action: "CREATE_ORG",
     roles: [...roles]
   },
   {
@@ -166,6 +149,12 @@ export const orgActions = [
     roles: [...roles]
   }
 ];
+
+export const orgActions = mergeActions(
+  groupActions,
+  collaborationActions,
+  orgOwnActions
+);
 
 export function getBlockActionsObject(block) {
   let typeActions =

@@ -7,6 +7,7 @@ import {
 } from "../../models/block/acl";
 import "./group.css";
 import SimpleBar from "simplebar-react";
+import { getPermittedChildrenTypes } from "../../models/block/block-utils";
 
 import "simplebar/dist/simplebar.min.css";
 
@@ -28,14 +29,10 @@ class Group extends React.Component {
       group
     );
 
-    const permittedChildrenTypes = childrenTypes
-      ? childrenTypes.filter(type => {
-          return (
-            type !== "group" &&
-            canPerformAction(group, groupPermission, `CREATE_${type}`)
-          );
-        })
-      : null;
+    const permittedChildrenTypes = getPermittedChildrenTypes(
+      group,
+      groupPermission
+    );
 
     return (
       <div className="sk-group">
@@ -61,7 +58,8 @@ class Group extends React.Component {
             )}
             {canPerformAction(group, groupPermission, "DELETE_GROUP") && (
               <Button
-                icon="close"
+                icon="delete"
+                type="danger"
                 onClick={() => blockHandlers.onDelete(group)}
                 style={{ marginLeft: "2px" }}
               />

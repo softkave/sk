@@ -1,15 +1,12 @@
 export function canPerformAction(block, permission, action) {
   if (block) {
     action = action.toUpperCase();
-    console.log(block, permission, action);
     const acl = block.acl;
 
     if (acl) {
       const actionData = acl.find(item => {
         return item.action === action;
       });
-
-      console.log(actionData);
 
       if (actionData && permission) {
         return !!actionData.roles.find(role => {

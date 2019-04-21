@@ -1,6 +1,7 @@
-export function devConsole(type) {
+export function devConsole(type, location = "--") {
   return function(...args) {
     if (process.env.NODE_ENV === "development") {
+      console.log(`-- ${location} --`);
       console[type](...args);
     }
   };

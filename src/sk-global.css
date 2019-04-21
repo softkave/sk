@@ -1,0 +1,12 @@
+.sk-gl-block-name {
+  display: inline-block;
+  margin-left: 1em;
+  font-weight: bold;
+}
+
+.sk-gl-thumbnail-text {
+  display: inline-block;
+  width: 100%;
+  margin: 2px 0;
+  line-height: 1.25;
+}
