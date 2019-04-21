@@ -5,13 +5,13 @@ import EditTask from "../task/EditTask.jsx";
 import MiniTask from "../task/MiniTask.jsx";
 import EditProject from "../project/EditProject.jsx";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import {
-  canPerformAction,
-  getClosestPermissionToBlock
-} from "../../models/block/acl";
+import { getClosestPermissionToBlock } from "../../models/block/acl";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { Button } from "antd";
-import { assignTask } from "../../models/block/block-utils";
+import {
+  assignTask,
+  getPermittedChildrenTypes
+} from "../../models/block/block-utils";
 import RootGroupGenericContainer from "./RootGroupGenericContainer.jsx";
 import Collaborators from "../collaborator/Collaborators.jsx";
 import { getBlockActionsFromParent } from "../../models/block/actions";
@@ -45,11 +45,11 @@ class RootGroup extends React.Component {
     this.toggleForm(formType);
   };
 
-  toggleForm = (type, parent, block) => {
+  toggleForm = (type, parent = null, block = null) => {
     this.setState(prevState => {
       return {
-        parent: parent || null,
-        block: block || null,
+        parent: parent,
+        block: block,
         form: { ...prevState.form, [type]: !prevState.form[type] }
       };
     });
@@ -128,8 +128,7 @@ class RootGroup extends React.Component {
       isFromRoot
     } = this.props;
 
-    const { form, project, block, showCollaborators } = this.state;
-    const blockTypes = ["project", "group", "task"];
+    const { form, project, block, showCollaborators, parent } = this.state;
     const collaborators = this.getCollaborators();
     const roles = rootBlock.roles || ownerRoles;
     const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
@@ -145,15 +144,19 @@ class RootGroup extends React.Component {
     if (showCollaborators) {
       return (
         <Collaborators
+          block={rootBlock}
           onBack={this.toggleShowCollaborators}
           collaborators={rootBlock.collaborators}
           permissions={permission}
           roles={roles}
-          onAddCollaborators={collaborators => {
-            blockHandlers.onAddCollaborators(rootBlock, collaborators);
+          onAddCollaborators={data => {
+            blockHandlers.onAddCollaborators(rootBlock, data);
           }}
           collaborationRequests={rootBlock.collaborationRequests}
           bench={rootBlock.bench}
+          onUpdateCollaborator={(collaborator, data) => {
+            blockHandlers.onUpdateCollaborator(rootBlock, collaborator, data);
+          }}
         />
       );
     }
@@ -174,12 +177,10 @@ class RootGroup extends React.Component {
       );
     }
 
-    const permittedChildrenTypes = blockTypes.filter(
-      type =>
-        type !== rootBlock.type &&
-        canPerformAction(rootBlock, permission, `CREATE_${type}`)
+    const permittedChildrenTypes = getPermittedChildrenTypes(
+      rootBlock,
+      permission
     );
-
     const assignedTasksPermission = {
       task: {
         toggle: true
@@ -195,7 +196,7 @@ class RootGroup extends React.Component {
           onClose={() => this.toggleForm("project")}
           data={block}
           existingProjects={
-            form.project && this.getExistingNames(rootBlock.projects)
+            form.project && this.getExistingNames(parent.projects)
           }
           roles={roles}
           defaultAcl={
@@ -210,7 +211,7 @@ class RootGroup extends React.Component {
           onSubmit={data => this.onSubmitData(data, "group")}
           onClose={() => this.toggleForm("group")}
           data={block}
-          existingGroups={form.group && this.getExistingNames(rootBlock.groups)}
+          existingGroups={form.group && this.getExistingNames(parent.groups)}
           roles={roles}
           defaultAcl={
             form.group &&
@@ -256,6 +257,7 @@ class RootGroup extends React.Component {
               Collaborators
             </Button>
           )}
+          <span className="sk-root-group-name">{rootBlock.name}</span>
         </div>
         <div className="sk-root-group-content">
           {this.hasChildren(assignedTasks) && (

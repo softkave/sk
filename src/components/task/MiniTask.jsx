@@ -16,8 +16,8 @@ class Task extends React.Component {
 
   render() {
     const { task, blockHandlers, onEdit, permission } = this.props;
-    console.log("mini task", this.props);
     const collaborator = this.getCollaborator();
+
     return (
       <div className="sk-minitask">
         <Row>
@@ -39,7 +39,8 @@ class Task extends React.Component {
           <Col span={4} className="sk-minitask-top-extra">
             {canPerformAction(task, permission, "DELETE_TASK") && (
               <Button
-                icon="close"
+                icon="delete"
+                type="danger"
                 className="sk-minitask-close"
                 onClick={() => blockHandlers.onDelete(task)}
                 title="delete task"

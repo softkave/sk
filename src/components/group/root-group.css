@@ -2,19 +2,30 @@
   padding: 1em;
   overflow-x: auto;
   white-space: nowrap;
-  height: 92%;
+  /* height: 92%; */
   box-sizing: border-box;
   overflow-y: hidden;
+  flex: 1;
 }
 
 .sk-root-group-header {
   white-space: normal;
-  height: 8%;
+  /* height: 8%; */
   padding: 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sk-root-group-name {
+  display: inline-block;
+  margin-left: 1em;
+  font-weight: bold;
 }
 
 .sk-root-group {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .sk-root-group-thumbnail {

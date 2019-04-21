@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers, sortBlocks } from "../../models/block/block-utils";
+import { sortBlocks } from "../../models/block/block-utils";
+import { makeBlockHandlers } from "../../models/block/block-handlers";
 import RootGroup from "./RootGroup.jsx";
 import netInterface from "../../net";
 import { makeMultiple } from "../../redux/actions/make";

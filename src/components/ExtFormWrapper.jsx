@@ -4,7 +4,7 @@ import FormWrapper from "./FormWrapper.jsx";
 import BitSwitch from "./BitSwitch";
 import moment from "moment";
 
-class Profile extends React.Component {
+class ExtFormWrapper extends React.Component {
   renderField = ({
     fieldName,
     labelName,
@@ -17,10 +17,10 @@ class Profile extends React.Component {
     min,
     max,
     block,
-    rule
+    rule,
+    props
   }) => {
-    const { form } = this.props;
-    const { editing } = this.state;
+    const { form, editing } = this.props;
     let field = null;
     let span = block
       ? {
@@ -36,30 +36,39 @@ class Profile extends React.Component {
 
     if (editing && !immutable) {
       if (type === "text") {
-        field = <Input placeholder={placeholder} />;
+        field = <Input {...props} placeholder={placeholder} />;
       } else if (type === "textarea") {
-        field = <Input.TextArea placeholder={placeholder} />;
+        field = <Input.TextArea {...props} placeholder={placeholder} />;
       } else if (type === "select") {
         field = (
-          <Select placeholder={placeholder}>
-            {options.map((option, i) => {
-              return (
-                <Select.Option key={option.key || i}>
-                  {option.value}
-                </Select.Option>
-              );
+          <Select {...props} placeholder={placeholder}>
+            {options.map(option => {
+              return <Select.Option key={option}>{option}</Select.Option>;
             })}
           </Select>
         );
       } else if (type === "datepicker") {
-        field = <DatePicker format={dateFormat} placeholder={placeholder} />;
+        field = (
+          <DatePicker
+            {...props}
+            format={dateFormat}
+            placeholder={placeholder}
+          />
+        );
         value = moment(value);
       } else if (type === "switch") {
-        field = <BitSwitch options={options} />;
+        field = <BitSwitch {...props} options={options} />;
       } else if (type === "number") {
-        field = <InputNumber min={min} max={max} placeholder={placeholder} />;
+        field = (
+          <InputNumber
+            {...props}
+            min={min}
+            max={max}
+            placeholder={placeholder}
+          />
+        );
       } else {
-        field = <Input placeholder={placeholder} />;
+        field = <Input {...props} placeholder={placeholder} />;
       }
 
       field = (
@@ -74,16 +83,7 @@ class Profile extends React.Component {
         value = <BitSwitch disabled options={options} defaultValue={value} />;
       }
 
-      let divStyles = {};
-      let fieldStyles = {};
-      let valueStyles = {};
-
-      field = (
-        <div style={divStyles}>
-          <div style={fieldStyles}>{labelName}:</div>
-          <div style={valueStyles}>{value}</div>
-        </div>
-      );
+      field = <Form.Item label={labelName}>{value}</Form.Item>;
     }
 
     if (type === "textarea") {
@@ -96,7 +96,7 @@ class Profile extends React.Component {
   renderForm() {
     const { form, render, editing, onSubmit } = this.props;
     let data = form.getFieldsValue();
-    let content = render(this.renderField, { data, editing });
+    let content = render({ renderField: this.renderField, data, editing });
 
     if (editing) {
       content = (
@@ -114,4 +114,4 @@ class Profile extends React.Component {
   }
 }
 
-export default Form.create()(Profile);
+export default Form.create()(ExtFormWrapper);

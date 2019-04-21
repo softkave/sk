@@ -5,8 +5,8 @@ import {
 } from "../../redux/actions/data";
 import netInterface from "../../net/index";
 import randomColor from "randomcolor";
-import { generatePermission } from "../models/user/permission";
-import { getBlockActionsFromParent } from "../models/actions";
+import { generatePermission } from "./permission";
+import { getBlockActionsFromParent } from "./actions";
 
 const getId = require("uuid/v4");
 // const getId = require("nanoid");
@@ -91,10 +91,57 @@ export function makeBlockHandlers({ dispatch, user }) {
       netInterface("block.deleteBlock", block);
     },
 
-    onAddCollaborators(block, collaborators) {
+    onAddCollaborators(block, { collaborators, message, expiresAt }) {
+      collaborators = collaborators.map(c => {
+        if (!c.message) {
+          c.message = message;
+        }
+
+        if (!c.expiresAt) {
+          c.expiresAt = expiresAt;
+        }
+
+        c.id = getId();
+        c.statusHistory = [{ status: "pending", date: Date.now() }];
+        return c;
+      });
+
       dispatch(
         mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
       );
+
+      netInterface("block.addCollaborators", { collaborators });
+    },
+
+    onUpdateCollaborator(block, collaborator, data) {
+      let updatedRole = data.role;
+      delete data.role;
+      collaborator = { ...collaborator, ...data };
+      let orgId =
+        Array.isArray(block.parents) && block.parents.length > 1
+          ? block.parents[0]
+          : block.id;
+
+      if (updatedRole) {
+        let blockRole = block.roles.find(role => {
+          return role.role === updatedRole;
+        });
+
+        if (blockRole) {
+          updatedRole = generatePermission(block, blockRole, user);
+          let existingRoleIndex = collaborator.permissions.findIndex(role => {
+            return role.blockId === block.id;
+          });
+
+          if (existingRoleIndex) {
+            collaborator.permissions.splice(existingRoleIndex, 1, updatedRole);
+          } else {
+            collaborator.permissions.push(updatedRole);
+          }
+        }
+      }
+
+      dispatch(setDataByPath(`orgs.${orgId}.collaborators`));
     }
   };
 }

@@ -14,7 +14,6 @@ export default function Thumbnail(props) {
     colorSpan,
     hoverable
   } = props;
-  console.log("thumbnail", data);
   const cSpan = colorSpan;
   const hov = typeof hoverable !== "boolean" ? true : hoverable;
 
