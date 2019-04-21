@@ -1,4 +1,10 @@
-import { MERGE, DELETE, MULTIPLE, SET } from "../constants/reducer";
+import {
+  MERGE,
+  DELETE,
+  MULTIPLE,
+  SET,
+  CLEAR_STATE
+} from "../constants/reducer";
 
 export function makeMerge(path, data) {
   return {
@@ -27,5 +33,11 @@ export function makeSet(path, data) {
     path,
     data,
     type: SET
+  };
+}
+
+export function makeClearState() {
+  return {
+    type: CLEAR_STATE
   };
 }

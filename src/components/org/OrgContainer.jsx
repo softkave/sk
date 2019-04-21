@@ -1,9 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers, sortBlocks } from "../../models/block/block-utils";
+import { sortBlocks } from "../../models/block/block-utils";
 import Org from "./Org.jsx";
 import netInterface from "../../net";
 import { mergeDataByPath } from "../../redux/actions/data";
+import { makeBlockHandlers } from "../../models/block/block-handlers";
 
 class OrgContainer extends React.Component {
   constructor(props) {

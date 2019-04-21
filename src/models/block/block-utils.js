@@ -1,4 +1,5 @@
 import get from "lodash/get";
+import { canPerformAction } from "./acl";
 
 export function getBlockParent(block, state) {
   return get(
@@ -141,4 +142,18 @@ export function assignTask(collaborator, by) {
     assignedBy: by ? by.id : null,
     completedAt: null
   };
+}
+
+const blockTypes = ["org", "project", "group", "task"];
+
+export function getPermittedChildrenTypes(block, permission) {
+  if (block) {
+    return blockTypes.filter(
+      type =>
+        type !== block.type &&
+        canPerformAction(block, permission, `CREATE_${type}`)
+    );
+  }
+
+  return [];
 }

@@ -3,17 +3,19 @@ import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
 import AddCollaborator from "./AddCollaborator.jsx";
 import { canPerformAction } from "../../models/block/acl";
+import CollaboratorForm from "./CollaboratorForm";
 import "./collaborators.css";
 
 export default class Collaborators extends React.Component {
   state = {
-    showForm: false
+    showAddCollaboratorForm: false,
+    showCollaborator: null
   };
 
   toggleCollaboratorForm = () => {
     this.setState(prevState => {
       return {
-        showForm: !prevState.showForm
+        showAddCollaboratorForm: !prevState.showAddCollaboratorForm
       };
     });
   };
@@ -30,6 +32,7 @@ export default class Collaborators extends React.Component {
           md: 3,
           lg: 4
         }}
+        style={{ alignItems: "flex-start" }}
       />
     );
   }
@@ -38,7 +41,12 @@ export default class Collaborators extends React.Component {
     return this.renderList(collaborators, c => {
       return (
         <List.Item key={c.id}>
-          <CollaboratorThumbnail collaborator={c} />
+          <CollaboratorThumbnail
+            collaborator={c}
+            onClick={() => {
+              this.setState({ showCollaborator: c });
+            }}
+          />
         </List.Item>
       );
     });
@@ -48,7 +56,7 @@ export default class Collaborators extends React.Component {
     return this.renderList(collaborationRequests, c => {
       return (
         <List.Item key={c.id}>
-          <CollaboratorThumbnail collaborator={c} labelPropName="email" />
+          <CollaboratorThumbnail collaborator={c} />
         </List.Item>
       );
     });
@@ -59,26 +67,40 @@ export default class Collaborators extends React.Component {
       collaborators,
       permissions,
       onBack,
-      roles,
       onAddCollaborators,
-      collaborationRequests
+      collaborationRequests,
+      block,
+      roles,
+      onUpdateCollaborator
     } = this.props;
-    const { showForm } = this.state;
+    const { showAddCollaboratorForm, showCollaborator } = this.state;
 
     return (
       <div className="sk-collaborators">
-        <AddCollaborator
+        <CollaboratorForm
+          visible={!!showCollaborator}
+          onClose={this.toggleBenchForm}
+          collaborator={showCollaborator}
+          onSubmit={data => {
+            onUpdateCollaborator(showCollaborator, data);
+            this.setState({ showCollaborator: null });
+          }}
           roles={roles}
-          onSubmit={collaborators => {
-            onAddCollaborators(collaborators);
+          block={block}
+        />
+        <AddCollaborator
+          onSubmit={data => {
+            onAddCollaborators(data);
             this.toggleCollaboratorForm();
           }}
-          visible={showForm}
+          visible={showAddCollaboratorForm}
           onClose={this.toggleCollaboratorForm}
+          existingCollaborators={collaborators}
+          existingCollaborationRequests={collaborationRequests}
         />
-        <div className="sk-collaborators-btns">
+        <div className="sk-collaborators-header">
           <Button icon="arrow-left" onClick={onBack} />
-          {canPerformAction(permissions, "collaboration", "send-request") && (
+          {canPerformAction(block, permissions, "SEND_REQUEST") && (
             <Button
               icon="plus"
               onClick={this.toggleCollaboratorForm}
@@ -87,6 +109,7 @@ export default class Collaborators extends React.Component {
               Add collaborator
             </Button>
           )}
+          <span className="sk-gl-block-name">{block.name}</span>
         </div>
         <div className="sk-collaborators-content">
           <Tabs>

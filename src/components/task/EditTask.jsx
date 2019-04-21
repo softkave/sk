@@ -24,7 +24,7 @@ class EditTask extends React.Component {
       fields: {
         description: {
           component: TextArea,
-          props: { autosize: { minRows: 3, maxRows: 7 } },
+          props: { autosize: { minRows: 2, maxRows: 6 } },
           label: "Description",
           labelCol: null,
           wrapperCol: null,
@@ -108,7 +108,7 @@ class EditTask extends React.Component {
 
   onSubmit = submittedData => {
     submittedData.type = "task";
-    this.props.onSubmit(submittedData);
+    return this.props.onSubmit(submittedData);
   };
 
   render() {
