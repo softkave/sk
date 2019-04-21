@@ -47,7 +47,7 @@ function mapDispatchToProps(dispatch) {
   return { dispatch };
 }
 
-function mergeProps({ state }, { dispatch }, ownProps) {
+function mergeProps({ state }, { dispatch }) {
   const blockHandlers = makeBlockHandlers({
     dispatch,
     user: state.user.user
@@ -59,12 +59,10 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     orgs: state.orgs,
     async fetchOrgs() {
       let blocks = await netInterface("block.getPermissionBlocks");
-      let rootBlock = null;
       let orgs = {};
       blocks.forEach(block => {
         if (block.type === "root") {
           block.path = "rootBlock";
-          rootBlock = block;
         } else {
           block.path = `orgs.${block.id}`;
           orgs[block.id] = block;

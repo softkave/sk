@@ -1,4 +1,6 @@
-import { blockFragment } from "./block";
+import {
+  blockFragment
+} from "./block";
 
 export const userExistsQuery = `
   query UserExistsQuery (email: String!) {
@@ -28,9 +30,8 @@ export const updateUserMutation = `
 `;
 
 export const userPermissionFragment = `
-  fragment userPermissionFragment {
+  fragment userPermissionFragment on UserRole {
     role
-    level
     assignedAt
     assignedBy
     type
@@ -52,7 +53,7 @@ export const userLoginFragement = `
       id
       createdAt
       lastNotificationCheckTime
-      permissions {
+      roles {
         ...userPermissionFragment
       }
     }

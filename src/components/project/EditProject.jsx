@@ -5,11 +5,15 @@ import { projectDescriptor as blockDescriptor } from "../../models/block/descrip
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
 import Acl from "../acl/Acl.jsx";
+<<<<<<< HEAD
+import { canPerformAction } from "../../models/acl";
+=======
 import {
   generateBlockPermission,
   generateACLArrayFromObj,
   canPerformAction
 } from "../../models/block/acl";
+>>>>>>> cb76368d304ef130b5864922dd098d1785bda3cf
 
 const TextArea = Input.TextArea;
 

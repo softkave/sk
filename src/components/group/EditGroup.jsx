@@ -5,7 +5,11 @@ import { groupDescriptor as blockDescriptor } from "../../models/block/descripto
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
 import Acl from "../acl/Acl.jsx";
+<<<<<<< HEAD
+import { canPerformAction } from "../../models/acl";
+=======
 import { canPerformAction } from "../../models/block/acl";
+>>>>>>> cb76368d304ef130b5864922dd098d1785bda3cf
 
 const TextArea = Input.TextArea;
 

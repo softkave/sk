@@ -132,6 +132,12 @@ class RootGroup extends React.Component {
     const collaborators = this.getCollaborators();
     const roles = rootBlock.roles || ownerRoles;
     const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
+<<<<<<< HEAD
+    // const permission = rootBlock.acl
+    //   ? generateBlockPermission(rootBlock, user.permissions)
+    //   : parentPermission;
+=======
+>>>>>>> cb76368d304ef130b5864922dd098d1785bda3cf
 
     const isUserRootBlock =
       isFromRoot !== undefined
