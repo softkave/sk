@@ -1,8 +1,8 @@
-import {
-  generateACL,
-  blockActionTypes,
-  generateRolesActions
-} from "../../models/block/acl";
+// import {
+//   generateACL,
+//   blockActionTypes,
+//   generateRolesActions
+// } from "../../models/block/acl";
 import { getPersonalRolesArr } from "../../models/block/roles";
 import { generatePermission } from "../../models/block/permission";
 import { orgActions } from "../../models/block/actions";
@@ -130,37 +130,35 @@ module.exports = {
   },
 
   respondToCollaborationRequest({ request, response }) {
-    if (response.toLowerCase() === "accepted") {
-      const rootBlockRoles = getPersonalRolesArr();
-      const rootBlockAcl = blockActionTypes.concat(
-        generateRolesActions(rootBlockRoles)
-      );
-
-      let org = {
-        id: request.from.blockId,
-        type: request.from.blockType,
-        name: request.from.blockName,
-        color: randomColor(),
-        owner: request.from.blockId,
-        createdBy: request.from.userId,
-        acl: generateACL(rootBlockAcl),
-        roles: rootBlockRoles,
-        collaborators: [
-          {
-            id: request.from.userId,
-            name: request.from.userName,
-            color: randomColor(),
-            email: "yy@xx.zz"
-          },
-          userCache
-        ]
-      };
-
-      return {
-        block: org,
-        permission: generatePermission(org, request.role, request.from.userId)
-      };
-    }
+    // if (response.toLowerCase() === "accepted") {
+    //   const rootBlockRoles = getPersonalRolesArr();
+    //   const rootBlockAcl = blockActionTypes.concat(
+    //     generateRolesActions(rootBlockRoles)
+    //   );
+    //   let org = {
+    //     id: request.from.blockId,
+    //     type: request.from.blockType,
+    //     name: request.from.blockName,
+    //     color: randomColor(),
+    //     owner: request.from.blockId,
+    //     createdBy: request.from.userId,
+    //     acl: generateACL(rootBlockAcl),
+    //     roles: rootBlockRoles,
+    //     collaborators: [
+    //       {
+    //         id: request.from.userId,
+    //         name: request.from.userName,
+    //         color: randomColor(),
+    //         email: "yy@xx.zz"
+    //       },
+    //       userCache
+    //     ]
+    //   };
+    //   return {
+    //     block: org,
+    //     permission: generatePermission(org, request.role, request.from.userId)
+    //   };
+    // }
   },
 
   updateCollaborationRequest() {},
