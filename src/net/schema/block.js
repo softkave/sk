@@ -1,39 +1,23 @@
 const { errorFragment } = require("./error");
-const { userPermissionFragment } = require("./user");
 
 const blockFragment = `
   fragment blockFragment on Block {
-    _id
-    id
+    customId
     name
     description
     priority
     expectedEndAt
-    completedAt
     createdAt
     color
     updatedAt
     type
     parents
-    data {
-      dataType
-      data
-    }
     createdBy
-    collaborators {
+    taskCollaborators {
       userId
-      data
-      addedAt
       assignedAt
       assignedBy
-    }
-    acl {
-      action
-      level
-    }
-    roles {
-      role
-      level
+      completedAt
     }
   }
 `;
@@ -77,29 +61,12 @@ const deleteBlockMutation = `
   }
 `;
 
-const getBlocksQuery = `
+const getRoleBlocksQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlocksQuery ($blocks: [BlockParamInput!]!) {
+  query GetRoleBlocksQuery {
     block {
-      getBlock (blocks: $blocks) {
-        errors {
-          ...errorFragment
-        }
-        blocks {
-          ...blockFragment
-        }
-      }
-    }
-  }
-`;
-
-const getPermissionBlocksQuery = `
-  ${blockFragment}
-  ${errorFragment}
-  query GetPermissionBlocksQuery {
-    block {
-      getPermissionBlocks {
+      getRoleBlocks {
         errors {
           ...errorFragment
         }
@@ -114,7 +81,7 @@ const getPermissionBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  Query GetBlockChildrenQuery ($block: BlockParamInput!, $types: [String!]) {
+  query GetBlockChildrenQuery ($block: BlockParamInput!, $types: [String!]) {
     block {
       getBlockChildren (block: $block, types: $types) {
         errors {
@@ -133,7 +100,7 @@ const addCollaboratorsMutation = `
     $block: BlockParamInput!, 
     $collaborators: [AddCollaboratorInput!]!,
     $body: String,
-      $expiresAt: Float
+    $expiresAt: Float
   ) {
     block {
       addCollaborators (block: $block, collaborators: $collaborators, body: $body, expiresAt: $expiresAt) {
@@ -148,8 +115,7 @@ const addCollaboratorsMutation = `
 
 const getCollaboratorsQuery = `
   ${errorFragment}
-  ${userPermissionFragment}
-  Query GetCollaboratorsQuery ($block: BlockParamInput!) {
+  query GetCollaboratorsQuery ($block: BlockParamInput!) {
     block {
       getCollaborators (block: $block) {
         errors {
@@ -158,11 +124,7 @@ const getCollaboratorsQuery = `
         collaborators {
           name
           email
-          id
-          _id
-          permissions {
-            ...userPermissionFragment
-          }
+          customId
         }
       }
     }
@@ -171,21 +133,20 @@ const getCollaboratorsQuery = `
 
 const getCollabRequestsQuery = `
   ${errorFragment}
-  ${userPermissionFragment}
-  Query GetCollabRequestsQuery ($block: BlockParamInput!) {
+  query GetCollabRequestsQuery ($block: BlockParamInput!) {
     block {
       getCollabRequests (block: $block) {
         errors {
           ...errorFragment
         }
         requests {
-          _id
-          id
+          customId
           from {
             userId
             name
             blockId
             blockName
+            blockType
           }
           createdAt
           body
@@ -194,9 +155,15 @@ const getCollabRequestsQuery = `
             email
             userId
           }
-          response
-          respondedAt
+          statusHistory {
+            status
+            date
+          }
+          sentEmailHistory {
+            date
+          }
           type
+          root
         }
       }
     }
@@ -204,8 +171,7 @@ const getCollabRequestsQuery = `
 `;
 
 const removeCollaboratorMutation = `
-    ${errorFragment}
-
+  ${errorFragment}
   mutation RemoveCollaboratorsMutation ($block: BlockParamInput!, $collaborator: String!) {
     block {
       removeCollaborator (block: $block, collaborator: $collaborator) {
@@ -219,7 +185,6 @@ const removeCollaboratorMutation = `
 
 const toggleTaskMutation = `
   ${errorFragment}
-
   mutation ToggleTaskMutation ($block: BlockParamInput!,  $data: Boolean!) {
     block {
        toggleTask (block: $block, data: $data) {
@@ -231,37 +196,8 @@ const toggleTaskMutation = `
   }
 `;
 
-const updateRolesMutation = `
-  ${errorFragment}
-
-  mutation UpdateRolesMutation ($block: BlockParamInput!,  $roles: [RoleInput!]!) {
-    block {
-       updateRoles (block: $block, roles: $roles) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
-const updateAclMutation = `
-  ${errorFragment}
-
-  mutation UpdateAclMutation ($block: BlockParamInput!, $acl: [AclItemInput!]!) {
-    block {
-       updateAcl (block: $block, acl: $acl) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
 const revokeRequestMutation = `
-${errorFragment}
-
+  ${errorFragment}
   mutation RevokeRequestMutation ($block: BlockParamInput!, $request: String!) {
     block {
        revokeRequest (block: $block, request: $request) {
@@ -273,35 +209,17 @@ ${errorFragment}
   }
   `;
 
-const assignRoleMutation = `
-  ${errorFragment}
-
-  mutation AssignRoleMutation ($block: BlockParamInput!, $collaborator: String!, $role: RoleInput!) {
-    block {
-       assignRole (block: $block, collaborator: $collaborator, role: $role) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
 module.exports = {
   addBlockMutation,
   updateBlockMutation,
   deleteBlockMutation,
   getBlockChildrenQuery,
-  getBlocksQuery,
   blockFragment,
   addCollaboratorsMutation,
   getCollabRequestsQuery,
   getCollaboratorsQuery,
-  getPermissionBlocksQuery,
+  getRoleBlocksQuery,
   removeCollaboratorMutation,
   toggleTaskMutation,
-  updateRolesMutation,
-  updateAclMutation,
-  revokeRequestMutation,
-  assignRoleMutation
+  revokeRequestMutation
 };

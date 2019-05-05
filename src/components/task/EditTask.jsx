@@ -5,8 +5,6 @@ import { Input, Button, DatePicker, Form } from "antd";
 import { taskDescriptor as blockDescriptor } from "../../models/block/descriptor";
 import modalWrap from "../modalWrap.jsx";
 import AssignTask from "./AssignTask.jsx";
-import Acl from "../acl/Acl.jsx";
-import { canPerformAction } from "../../models/block/acl";
 
 const TextArea = Input.TextArea;
 
@@ -41,16 +39,16 @@ class EditTask extends React.Component {
             ? data.data.find(d => d.dataType === "priority")
             : "not important"
         },
-        collaborators: {
+        taskCollaborators: {
           render(form) {
             return (
-              <Form.Item label="Collaborators" key="collaborators">
+              <Form.Item label="Collaborators" key="taskCollaborators">
                 <AssignTask
                   key="assignTasks"
                   form={form}
                   collaborators={props.collaborators}
                   defaultTaskCollaborators={
-                    data.collaborators || props.defaultAssignedTo
+                    data.taskCollaborators || props.defaultAssignedTo
                   }
                   user={props.user}
                 />
@@ -58,7 +56,7 @@ class EditTask extends React.Component {
             );
           }
         },
-        completeAt: {
+        expectedEndAt: {
           component: DatePicker,
           props: {
             showTime: true,
@@ -70,22 +68,6 @@ class EditTask extends React.Component {
           wrapperCol: null,
           initialValue: data.completeAt
         },
-        acl:
-          !props.data || canPerformAction(data, props.permission, "UPDATE_ACL")
-            ? {
-                render(form, data) {
-                  return props.noAcl ? null : (
-                    <Form.Item key="acl" label="Access Control">
-                      <Acl
-                        form={form}
-                        defaultAcl={data.acl || props.defaultAcl}
-                        roles={data.roles || props.roles}
-                      />
-                    </Form.Item>
-                  );
-                }
-              }
-            : undefined,
         submit: {
           component: Button,
           props: {

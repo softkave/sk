@@ -70,7 +70,7 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         replaceWithPath: state.assignedTasks
       });
 
-      org = orgs[org.id];
+      org = orgs[org.customId];
       dispatch(mergeDataByPath(org.path, org));
     }
   };

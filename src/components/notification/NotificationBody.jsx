@@ -2,9 +2,29 @@ import React from "react";
 import { Button } from "antd";
 import "./notification-body.css";
 
+const accepted = "accepted";
+const declined = "declined";
+
 class NotificationBody extends React.Component {
+  getUserResponse(notification) {
+    if (Array.isArray(notification.statusHistory)) {
+      const possibleUserResponses = {
+        [accepted]: true,
+        [declined]: true
+      };
+
+      return notification.statusHistory.find(({ status }) => {
+        return possibleUserResponses[status];
+      });
+    }
+
+    return null;
+  }
+
   render() {
     const { notification, onRespond } = this.props;
+    const response = this.getUserResponse(notification);
+
     return (
       <div className="notification-body">
         <div className="notification-body-head">
@@ -13,17 +33,17 @@ class NotificationBody extends React.Component {
         </div>
         <p className="notification-body-body">{notification.body}</p>
         <div className="notification-body-btns">
-          {!notification.response ? (
+          {!response ? (
             <>
               <Button
                 type="primary"
-                onClick={() => onRespond(notification, "accepted")}
+                onClick={() => onRespond(notification, accepted)}
               >
                 Accept
               </Button>
               <Button
                 type="danger"
-                onClick={() => onRespond(notification, "declined")}
+                onClick={() => onRespond(notification, accepted)}
                 style={{ margin: "0 1em" }}
               >
                 Decline
@@ -39,7 +59,7 @@ class NotificationBody extends React.Component {
                   borderRadius: "4px"
                 }}
               >
-                {notification.response}
+                {response.status}
               </span>
             </p>
           )}

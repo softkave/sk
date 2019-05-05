@@ -5,7 +5,7 @@ import modalWrap from "../modalWrap";
 
 class CollaboratorForm extends React.Component {
   renderForm = ({ renderField, data }) => {
-    const { roles, collaborator, block } = this.props;
+    const { collaborator } = this.props;
 
     return (
       <React.Fragment>
@@ -23,28 +23,6 @@ class CollaboratorForm extends React.Component {
           type: "input",
           value: collaborator.email,
           immutable: true,
-          block: true
-        })}
-        {renderField({
-          fieldName: "role",
-          labelName: "Role",
-          type: "select",
-          value: (
-            collaborator.permissions.find(role => {
-              return role.blockId === Array.isArray(block.parents) &&
-                block.parents.length > 1
-                ? block.parents[0]
-                : block.id;
-            }) || {}
-          ).role,
-          options: roles
-            .filter(role => {
-              return role.role !== "public";
-            })
-            .map(role => {
-              return role.role;
-            }),
-          placeholder: "Select role",
           block: true
         })}
       </React.Fragment>

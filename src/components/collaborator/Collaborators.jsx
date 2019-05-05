@@ -2,7 +2,6 @@ import React from "react";
 import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
 import AddCollaborator from "./AddCollaborator.jsx";
-import { canPerformAction } from "../../models/block/acl";
 import CollaboratorForm from "./CollaboratorForm";
 import "./collaborators.css";
 
@@ -40,7 +39,7 @@ export default class Collaborators extends React.Component {
   renderCollaborators(collaborators = []) {
     return this.renderList(collaborators, c => {
       return (
-        <List.Item key={c.id}>
+        <List.Item key={c.customId}>
           <CollaboratorThumbnail
             collaborator={c}
             onClick={() => {
@@ -55,7 +54,7 @@ export default class Collaborators extends React.Component {
   renderCollaborationRequests(collaborationRequests = []) {
     return this.renderList(collaborationRequests, c => {
       return (
-        <List.Item key={c.id}>
+        <List.Item key={c.customId}>
           <CollaboratorThumbnail collaborator={c} />
         </List.Item>
       );
@@ -65,12 +64,10 @@ export default class Collaborators extends React.Component {
   render() {
     const {
       collaborators,
-      permissions,
       onBack,
       onAddCollaborators,
       collaborationRequests,
       block,
-      roles,
       onUpdateCollaborator
     } = this.props;
     const { showAddCollaboratorForm, showCollaborator } = this.state;
@@ -79,13 +76,12 @@ export default class Collaborators extends React.Component {
       <div className="sk-collaborators">
         <CollaboratorForm
           visible={!!showCollaborator}
-          onClose={this.toggleBenchForm}
+          onClose={() => this.setState({ showCollaborator: null })}
           collaborator={showCollaborator}
           onSubmit={data => {
             onUpdateCollaborator(showCollaborator, data);
             this.setState({ showCollaborator: null });
           }}
-          roles={roles}
           block={block}
         />
         <AddCollaborator
@@ -100,15 +96,13 @@ export default class Collaborators extends React.Component {
         />
         <div className="sk-collaborators-header">
           <Button icon="arrow-left" onClick={onBack} />
-          {canPerformAction(block, permissions, "SEND_REQUEST") && (
-            <Button
-              icon="plus"
-              onClick={this.toggleCollaboratorForm}
-              style={{ marginLeft: "1em" }}
-            >
-              Add collaborator
-            </Button>
-          )}
+          <Button
+            icon="plus"
+            onClick={this.toggleCollaboratorForm}
+            style={{ marginLeft: "1em" }}
+          >
+            Add collaborator
+          </Button>
           <span className="sk-gl-block-name">{block.name}</span>
         </div>
         <div className="sk-collaborators-content">

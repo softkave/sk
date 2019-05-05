@@ -1,18 +1,14 @@
 .app {
-  background-color: #fafafa;
-}
-
-.app .anticon {
-  font-size: 16px;
+  background-color: white;
 }
 
 html,
 body,
 #root {
   height: 100%;
-  font-family: "Lato", sans-serif !important;
+  /* font-family: "Lato", sans-serif !important; */
   /* font-family: "Laila", serif; */
-  /* font-family: "Karla", sans-serif; */
+  font-family: "Karla", sans-serif;
   color: black !important;
   font-weight: 500;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import netInterface from "../../net";
 import { setDataByPath, mergeDataByPath } from "../../redux/actions/data";
+import { makeMultiple } from "../../redux/actions/make";
 import NotificationList from "./NotificationList.jsx";
 
 class NotificationsContainer extends React.Component {
@@ -53,43 +54,72 @@ function mapDispatchToProps(dispatch) {
 function mergeProps({ state }, { dispatch }, ownProps) {
   return {
     notifications: state.notifications,
-    currentNotification: state.currentNotification,
     async onClickNotification(notification) {
       if (!notification.readAt) {
+        let update = { readAt: Date.now() };
         dispatch(
-          setDataByPath(`notifications.${notification.id}.readAt`, Date.now())
+          mergeDataByPath(`notifications.${notification.customId}`, update)
         );
-        netInterface("user.updateReadNotification", { request: notification });
+        netInterface("user.updateCollaborationRequest", notification, update);
       }
     },
 
     async onRespond(notification, response) {
-      dispatch(
-        mergeDataByPath(`notifications.${notification.id}`, {
-          response,
-          respondedAt: Date.now()
-        })
-      );
+      function requestIsValid(statusHistory) {
+        const invalidStatuses = {
+          accepted: true,
+          declined: true,
+          revoked: true
+        };
 
-      let result = await netInterface("user.respondToCollaborationRequest", {
-        response,
-        request: notification
-      });
+        if (Array.isArray(statusHistory)) {
+          return !!!statusHistory.find(({ status }) => {
+            return invalidStatuses[status];
+          });
+        }
 
-      if (result) {
-        const { block, permission } = result;
-        block.path = `orgs.${block.id}`;
-        dispatch(setDataByPath(block.path, block));
-        dispatch(mergeDataByPath(`user.user.permissions`, permission));
+        return false;
+      }
+
+      let statusHistory = notification.statusHistory;
+
+      if (requestIsValid(statusHistory)) {
+        statusHistory.push({
+          status: response,
+          date: Date.now()
+        });
+
+        let update = { statusHistory };
+        dispatch(
+          mergeDataByPath(`notifications.${notification.customId}`, update)
+        );
+
+        let result = await netInterface(
+          "user.respondToCollaborationRequest",
+          notification,
+          response
+        );
+
+        if (response === "accepted" && result && result.block) {
+          const { block } = result;
+          block.path = `orgs.${block.customId}`;
+          dispatch(
+            makeMultiple([
+              setDataByPath(block.path, block),
+              mergeDataByPath(`user.user.orgs`, [block.customId])
+            ])
+          );
+        }
       }
     },
 
     async fetchNotifications() {
-      let notifications =
-        (await netInterface("user.getCollaborationRequests")) || [];
+      let result = await netInterface("user.getCollaborationRequests");
+      let { requests: notifications } = result;
+      notifications = notifications || [];
       let notificationsObj = {};
       notifications.forEach(notification => {
-        notificationsObj[notification.id] = notification;
+        notificationsObj[notification.customId] = notification;
       });
 
       dispatch(mergeDataByPath("notifications", notificationsObj));

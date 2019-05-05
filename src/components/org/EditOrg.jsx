@@ -4,9 +4,6 @@ import { Input, Button, Form } from "antd";
 import { orgDescriptor as blockDescriptor } from "../../models/block/descriptor";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
-import Acl from "../acl/Acl.jsx";
-import { getDefaultRolesArr } from "../../models/block/roles";
-import { orgActions } from "../../models/block/actions";
 
 const TextArea = Input.TextArea;
 
@@ -19,7 +16,6 @@ class EditOrg extends React.Component {
     super(props);
     const self = this;
     const data = props.data || {};
-    const defaultRoles = getDefaultRolesArr();
 
     this.model = {
       fields: {
@@ -47,19 +43,6 @@ class EditOrg extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        acl: {
-          render(form, data) {
-            return (
-              <Form.Item key="acl" label="Access Control">
-                <Acl
-                  form={form}
-                  defaultAcl={data.acl || orgActions}
-                  roles={data.roles || defaultRoles}
-                />
-              </Form.Item>
-            );
-          }
-        },
         submit: {
           component: Button,
           props: {
@@ -82,7 +65,6 @@ class EditOrg extends React.Component {
 
   onSubmit = data => {
     data.type = "org";
-    data.roles = getDefaultRolesArr();
     return this.props.onSubmit(data);
   };
 

@@ -64,7 +64,7 @@ class Orgs extends React.Component {
             const org = orgs[orgId];
             return (
               <OrgThumbnail
-                key={org.id}
+                key={org.customId}
                 org={org}
                 onClick={() => this.setCurrentOrg(orgId)}
                 className="sk-orgs-thumbnail"

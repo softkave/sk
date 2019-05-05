@@ -8,7 +8,7 @@ function mapDispatchToProps(dispatch) {
     onSubmit: async data => {
       let result = await netInterface("user.login", data);
 
-      if (result.user && result.token) {
+      if (result && result.user && result.token) {
         dispatch(mergeDataByPath("user", result));
       } else {
         throw new Error("an error occurred");

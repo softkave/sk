@@ -5,8 +5,8 @@ import {
 } from "../../redux/actions/data";
 import netInterface from "../../net/index";
 import randomColor from "randomcolor";
-import { generatePermission } from "./permission";
-import { getBlockActionsFromParent } from "./actions";
+import { permittedChildrenTypes } from "./block-utils";
+import { getCollaborationRequests } from "../../net/user";
 
 const getId = require("uuid/v4");
 // const getId = require("nanoid");
@@ -23,44 +23,42 @@ export function makeBlockHandlers({ dispatch, user }) {
   return {
     async onAdd(block, parent) {
       block.createdAt = Date.now();
-      block.createdBy = user.id;
-      block.id = getId();
+      block.createdBy = user.customId;
+      block.customId = getId();
       block.color = randomColor();
+
       if (parent) {
-        block.path = `${parent.path}.${block.type}s.${block.id}`;
+        block.path = `${parent.path}.${block.type}.${block.customId}`;
         block.parents = [];
         if (parent.parents) {
           block.parents = block.parents.concat(parent.parents);
         }
 
-        block.parents.push(parent.id);
-        block.owner = parent.owner;
-
-        if (!block.acl) {
-          block.acl = getBlockActionsFromParent(block, parent);
-        }
+        block.parents.push(parent.customId);
       } else {
-        block.path = `${block.type}s.${block.id}`;
-        block.owner = block.id;
+        block.path = `${block.type}.${block.customId}`;
       }
 
       block = prepareBlockFromEditData(block);
+
       if (block.type === "org") {
         block.collaborators = [user];
-        let userPermissions = [...user.permissions];
-        userPermissions.push(
-          generatePermission(block, block.roles[block.roles.length - 1])
-        );
-
-        dispatch(setDataByPath("user.user.permissions", userPermissions));
+        block.path = `orgs.${block.customId}`;
+        dispatch(setDataByPath("user.user.orgs", [block.customId]));
       } else if (block.type === "task") {
-        if (!block.collaborators) {
-          block.collaborators = [];
+        if (!block.taskCollaborators) {
+          block.taskCollaborators = [];
         }
       }
 
+      if (permittedChildrenTypes[block.type]) {
+        permittedChildrenTypes[block.type].forEach(type => {
+          block[type] = {};
+        });
+      }
+
       dispatch(setDataByPath(block.path, block));
-      netInterface("block.createBlock", block);
+      netInterface("block.addBlock", block);
     },
 
     onUpdate(block, data) {
@@ -70,20 +68,20 @@ export function makeBlockHandlers({ dispatch, user }) {
     },
 
     onToggle(block) {
-      const collaboratorIndex = block.collaborators.findIndex(
-        c => c.userId === user.id
+      const collaboratorIndex = block.taskCollaborators.findIndex(
+        c => c.userId === user.customId
       );
 
-      const collaborator = block.collaborators[collaboratorIndex];
+      const collaborator = block.taskCollaborators[collaboratorIndex];
       const path = `${
         block.path
-      }.collaborators.${collaboratorIndex}.completedAt`;
+      }.taskCollaborators.${collaboratorIndex}.completedAt`;
 
       dispatch(
         setDataByPath(path, collaborator.completedAt ? null : Date.now())
       );
 
-      netInterface("block.toggleTask", { block });
+      netInterface("block.toggleTask", block, true);
     },
 
     onDelete(block) {
@@ -99,9 +97,11 @@ export function makeBlockHandlers({ dispatch, user }) {
 
         if (!c.expiresAt) {
           c.expiresAt = expiresAt;
+        } else if (c.expiresAt.valueOf) {
+          c.expiresAt = c.expiresAt.valueOf();
         }
 
-        c.id = getId();
+        c.customId = getId();
         c.statusHistory = [{ status: "pending", date: Date.now() }];
         return c;
       });
@@ -110,38 +110,59 @@ export function makeBlockHandlers({ dispatch, user }) {
         mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
       );
 
-      netInterface("block.addCollaborators", { collaborators });
+      netInterface(
+        "block.addCollaborators",
+        block,
+        collaborators,
+        message,
+        expiresAt
+      );
     },
 
     onUpdateCollaborator(block, collaborator, data) {
-      let updatedRole = data.role;
-      delete data.role;
       collaborator = { ...collaborator, ...data };
       let orgId =
         Array.isArray(block.parents) && block.parents.length > 1
           ? block.parents[0]
-          : block.id;
-
-      if (updatedRole) {
-        let blockRole = block.roles.find(role => {
-          return role.role === updatedRole;
-        });
-
-        if (blockRole) {
-          updatedRole = generatePermission(block, blockRole, user);
-          let existingRoleIndex = collaborator.permissions.findIndex(role => {
-            return role.blockId === block.id;
-          });
-
-          if (existingRoleIndex) {
-            collaborator.permissions.splice(existingRoleIndex, 1, updatedRole);
-          } else {
-            collaborator.permissions.push(updatedRole);
-          }
-        }
-      }
+          : block.customId;
 
       dispatch(setDataByPath(`orgs.${orgId}.collaborators`));
+    },
+
+    async getBlockChildren(block) {
+      const { blocks } = await netInterface("block.getBlockChildren", block);
+      let blockMappedToType = {};
+
+      if (permittedChildrenTypes[block.type]) {
+        permittedChildrenTypes[block.type].forEach(type => {
+          blockMappedToType[type] = {};
+        });
+      }
+
+      blocks.forEach(blk => {
+        blk.path = `${block.path}.${blk.type}.${blk.customId}`;
+        let typeMap = blockMappedToType[blk.type] || {};
+        typeMap[blk.customId] = blk;
+        blockMappedToType[blk.type] = typeMap;
+      });
+
+      dispatch(mergeDataByPath(block.path, blockMappedToType));
+    },
+
+    async getCollaborators(block) {
+      const { collaborators } = await netInterface(
+        "block.getCollaborators",
+        block
+      );
+
+      dispatch(mergeDataByPath(`${block.path}.collaborators`, collaborators));
+    },
+
+    async getCollaborationRequests(block) {
+      const { requests } = await netInterface("block.getCollabRequests", block);
+      dispatch(
+        mergeDataByPath(`${block.path}.collaborationRequests`, requests)
+      );
     }
   };
 }

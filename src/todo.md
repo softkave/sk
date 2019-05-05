@@ -34,3 +34,45 @@
 - change "Collaborator" to collaborator name in CollaboratorForm
 - update server, all inputs carry their own ids
 - when moving projects between groups, check if project with same name doesn't exist in destination group
+- fix root block dashboard header (with back btn, collaborators, and create, and rootblock name)
+- fix error display, and include new error types (system. , etc)
+- there are some API calls that we should wait for, and some to return immediately, differentiate
+- add user setting for async or sync
+- maybe cache data in client, in case it's async and call fails
+- includes games
+- org | group wide games, with highest score
+- split screens for displaying other stuffs
+- tabs and windows, with an absolute button that can be placed anywhere based on user config (for quick access)
+  and tabbing, etc
+- consider making any block that can house something inherit from group
+- landing page, and wall (where users write stuffs, can be overwritten, and cleaned, use canvas, can position)
+  users can make it their background picture
+- notifications on the client side
+- show better loading UI when loading block children
+- notes
+- emoji support
+- mentioning
+- comments
+- better notifications
+- Agile
+- new types - note, sprint, table etc
+- filtering
+- searching
+- different sprint group in the UI maybe
+- sorting types & importance
+- notification on new data (based on user config, auto, prompt)
+- user configs page
+- user avatar, provide defaults (maybe use the colors)
+- refactoring functions to make them reuseable
+- handle errors better in query (it doesn't catch them)
+- redesign async loading, maybe use redux, not state
+- some API calls rely on others, make sure those ones are finished first before making new calls, like
+  toggleTask relies on adding a collaborator in update
+- maybe merge toggleTask with updateTask
+
+* AI embedded, can play games with users
+* Can auto create task and other things based on user messages, like "i'll get back to you" should become a task
+* whether AI can doi stuffs based on user action is based on settings, no - prompt - auto
+* know user usage pattern and craft a personal UI, like auto tabbing stuffs that are used frequestly
+* log render times, API call repsonse time, etc
+* log use to better design product

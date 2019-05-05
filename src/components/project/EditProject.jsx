@@ -4,12 +4,6 @@ import { Input, Button, Form } from "antd";
 import { projectDescriptor as blockDescriptor } from "../../models/block/descriptor";
 import { makeNameExistsValidator } from "../../utils/descriptor";
 import modalWrap from "../modalWrap.jsx";
-import Acl from "../acl/Acl.jsx";
-import {
-  generateBlockPermission,
-  generateACLArrayFromObj,
-  canPerformAction
-} from "../../models/block/acl";
 
 const TextArea = Input.TextArea;
 
@@ -51,22 +45,6 @@ class EditProject extends React.Component {
           rules: blockDescriptor.description,
           initialValue: data.description
         },
-        acl:
-          !props.data || canPerformAction(data, props.permission, "UPDATE_ACL")
-            ? {
-                render(form, data) {
-                  return props.noAcl ? null : (
-                    <Form.Item key="acl" label="Access Control">
-                      <Acl
-                        form={form}
-                        defaultAcl={data.acl || props.defaultAcl}
-                        roles={data.roles || props.roles}
-                      />
-                    </Form.Item>
-                  );
-                }
-              }
-            : undefined,
         submit: {
           component: Button,
           props: {

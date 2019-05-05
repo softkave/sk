@@ -1,5 +1,3 @@
-//const isMobilePhone = require('validator/lib/isMobilePhone');
-
 function trim(value) {
   if (value.trim) {
     return value.trim();

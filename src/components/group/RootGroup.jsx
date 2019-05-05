@@ -5,16 +5,14 @@ import EditTask from "../task/EditTask.jsx";
 import MiniTask from "../task/MiniTask.jsx";
 import EditProject from "../project/EditProject.jsx";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import { getClosestPermissionToBlock } from "../../models/block/acl";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { Button } from "antd";
 import {
   assignTask,
-  getPermittedChildrenTypes
+  permittedChildrenTypes
 } from "../../models/block/block-utils";
 import RootGroupGenericContainer from "./RootGroupGenericContainer.jsx";
 import Collaborators from "../collaborator/Collaborators.jsx";
-import { getBlockActionsFromParent } from "../../models/block/actions";
 import "./root-group.css";
 
 class RootGroup extends React.Component {
@@ -29,8 +27,135 @@ class RootGroup extends React.Component {
       project: null,
       block: null,
       parent: null,
-      showCollaborators: false
+      showCollaborators: false,
+      fetchingChildren: true,
+      fetchingCollaborators: true,
+      fetchingCollaborationRequests: true
     };
+  }
+
+  componentDidMount() {
+    this.loadBlockData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.rootBlock.customId !== prevProps.rootBlock.customId) {
+      this.loadBlockData();
+    } else {
+      this.updateFetchingState();
+    }
+  }
+
+  updateFetchingState() {
+    const {
+      fetchingChildren,
+      fetchingCollaborators,
+      fetchingCollaborationRequests
+    } = this.state;
+    let newState = {};
+
+    if (this.areBlockChildrenLoaded() && fetchingChildren) {
+      newState.fetchingChildren = false;
+    }
+
+    if (this.areBlockCollaboratorsLoaded() && fetchingCollaborators) {
+      newState.fetchingCollaborators = false;
+    }
+
+    if (
+      this.areBlockCollaborationRequestsLoaded() &&
+      fetchingCollaborationRequests
+    ) {
+      newState.fetchingCollaborationRequests = false;
+    }
+
+    if (Object.keys(newState).length > 0) {
+      this.setState(newState);
+    }
+  }
+
+  loadBlockData() {
+    const {
+      fetchingChildren,
+      fetchingCollaborators,
+      fetchingCollaborationRequests
+    } = this.state;
+    let newState = {};
+
+    if (!this.areBlockChildrenLoaded()) {
+      this.fetchChildren();
+    } else if (fetchingChildren) {
+      newState.fetchingChildren = false;
+    }
+
+    if (!this.areBlockCollaboratorsLoaded()) {
+      this.fetchCollaborators();
+    } else if (fetchingCollaborators) {
+      newState.fetchingCollaborators = false;
+    }
+
+    if (!this.areBlockCollaborationRequestsLoaded()) {
+      this.fetchCollaborationRequests();
+    } else if (fetchingCollaborationRequests) {
+      newState.fetchingCollaborationRequests = false;
+    }
+
+    if (Object.keys(newState).length > 0) {
+      this.setState(newState);
+    }
+  }
+
+  areBlockChildrenLoaded() {
+    const { rootBlock } = this.props;
+
+    if (permittedChildrenTypes[rootBlock.type]) {
+      const typeNotLoaded = permittedChildrenTypes[rootBlock.type].find(
+        type => {
+          if (!rootBlock[type]) {
+            return true;
+          }
+        }
+      );
+
+      if (typeNotLoaded) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  areBlockCollaboratorsLoaded() {
+    const { rootBlock } = this.props;
+    if (rootBlock.type === "org" && !rootBlock.collaborators) {
+      return false;
+    }
+
+    return true;
+  }
+
+  areBlockCollaborationRequestsLoaded() {
+    const { rootBlock } = this.props;
+    if (rootBlock.type === "org" && !rootBlock.collaborationRequests) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async fetchChildren() {
+    const { rootBlock, blockHandlers } = this.props;
+    await blockHandlers.getBlockChildren(rootBlock);
+  }
+
+  async fetchCollaborators() {
+    const { rootBlock, blockHandlers } = this.props;
+    await blockHandlers.getCollaborators(rootBlock);
+  }
+
+  async fetchCollaborationRequests() {
+    const { rootBlock, blockHandlers } = this.props;
+    await blockHandlers.getCollaborationRequests(rootBlock);
   }
 
   onSubmitData = (data, formType) => {
@@ -81,23 +206,22 @@ class RootGroup extends React.Component {
   }
 
   getExistingNames(blocks = {}) {
-    return Object.keys(blocks).map(id => blocks[id].name);
+    return Object.keys(blocks).map(customId => blocks[customId].name);
   }
 
-  renderTasks(tasks = {}, permission) {
-    const { blockHandlers, user } = this.props;
+  renderTasks(tasks = {}, parent) {
+    const { blockHandlers, user, rootBlock } = this.props;
     const collaborators = this.getCollaborators();
     return Object.keys(tasks).map(taskId => {
       const task = tasks[taskId];
       return (
         <MiniTask
           user={user}
-          key={task.id}
+          key={task.customId}
           task={task}
-          permission={permission}
           collaborators={collaborators}
           blockHandlers={blockHandlers}
-          onEdit={task => this.toggleForm("task", null, task)}
+          onEdit={task => this.toggleForm("task", parent || rootBlock, task)}
         />
       );
     });
@@ -108,7 +232,7 @@ class RootGroup extends React.Component {
       const project = projects[projectId];
       return (
         <ProjectThumbnail
-          key={project.id}
+          key={project.customId}
           project={project}
           onClick={() => this.setCurrentProject(project)}
           className="sk-root-group-thumbnail"
@@ -118,28 +242,25 @@ class RootGroup extends React.Component {
   }
 
   render() {
+    const { rootBlock, blockHandlers, user, onBack, isFromRoot } = this.props;
     const {
-      assignedTasks,
-      rootBlock,
-      blockHandlers,
-      user,
-      onBack,
-      ownerRoles,
-      isFromRoot
-    } = this.props;
-
-    const { form, project, block, showCollaborators, parent } = this.state;
+      form,
+      project,
+      block,
+      showCollaborators,
+      parent,
+      fetchingChildren,
+      fetchingCollaborators,
+      fetchingCollaborationRequests
+    } = this.state;
     const collaborators = this.getCollaborators();
-    const roles = rootBlock.roles || ownerRoles;
-    const permission = getClosestPermissionToBlock(user.permissions, rootBlock);
-
+    const childrenTypes = permittedChildrenTypes[rootBlock.type];
     const isUserRootBlock =
       isFromRoot !== undefined
         ? isFromRoot
         : rootBlock.type === "root"
         ? true
         : false;
-    const allowAcl = !isUserRootBlock;
 
     if (showCollaborators) {
       return (
@@ -147,8 +268,6 @@ class RootGroup extends React.Component {
           block={rootBlock}
           onBack={this.toggleShowCollaborators}
           collaborators={rootBlock.collaborators}
-          permissions={permission}
-          roles={roles}
           onAddCollaborators={data => {
             blockHandlers.onAddCollaborators(rootBlock, data);
           }}
@@ -165,74 +284,42 @@ class RootGroup extends React.Component {
       return (
         <RootGroupGenericContainer
           path={project.path}
-          parentPermission={permission}
           collaborators={collaborators}
           user={user}
           onBack={() => this.setCurrentProject(null)}
           blockHandlers={blockHandlers}
           parentBlock={rootBlock}
-          ownerRoles={roles}
-          isFromRoot={isUserRootBlock}
+          isFromRoot={isUserRootBlock || isFromRoot}
         />
       );
     }
 
-    const permittedChildrenTypes = getPermittedChildrenTypes(
-      rootBlock,
-      permission
-    );
-    const assignedTasksPermission = {
-      task: {
-        toggle: true
-      }
-    };
-
     return (
       <div className="sk-root-group">
         <EditProject
-          noAcl={!allowAcl}
           visible={form.project}
           onSubmit={data => this.onSubmitData(data, "project")}
           onClose={() => this.toggleForm("project")}
           data={block}
           existingProjects={
-            form.project && this.getExistingNames(parent.projects)
+            form.project && this.getExistingNames(parent.project)
           }
-          roles={roles}
-          defaultAcl={
-            form.project &&
-            getBlockActionsFromParent({ type: "project" }, rootBlock)
-          }
-          permission={permission}
         />
         <EditGroup
-          noAcl={!allowAcl}
           visible={form.group}
           onSubmit={data => this.onSubmitData(data, "group")}
           onClose={() => this.toggleForm("group")}
           data={block}
-          existingGroups={form.group && this.getExistingNames(parent.groups)}
-          roles={roles}
-          defaultAcl={
-            form.group &&
-            getBlockActionsFromParent({ type: "group" }, rootBlock)
-          }
-          permission={permission}
+          existingGroups={form.group && this.getExistingNames(parent.group)}
         />
         <EditTask
-          defaultAssignedTo={!allowAcl && [assignTask(user)]}
+          defaultAssignedTo={isFromRoot && [assignTask(user)]}
           collaborators={collaborators}
           visible={form.task}
           onSubmit={data => this.onSubmitData(data, "task")}
           onClose={() => this.toggleForm("task")}
           data={block}
           user={user}
-          permission={permission}
-          noAcl={!allowAcl}
-          roles={roles}
-          defaultAcl={
-            form.task && getBlockActionsFromParent({ type: "task" }, rootBlock)
-          }
         />
         <div className="sk-root-group-header">
           {onBack && (
@@ -242,55 +329,61 @@ class RootGroup extends React.Component {
               style={{ marginRight: "1em" }}
             />
           )}
-          {permittedChildrenTypes.length > 0 && (
+          {childrenTypes.length > 0 && (
             <AddDropdownButton
-              types={permittedChildrenTypes}
+              types={childrenTypes}
               label="Create"
               onClick={type => this.toggleForm(type, rootBlock)}
             />
           )}
-          {rootBlock.collaborators && !isUserRootBlock && (
-            <Button
-              style={{ marginLeft: "1em" }}
-              onClick={this.toggleShowCollaborators}
-            >
-              Collaborators
-            </Button>
-          )}
-          <span className="sk-root-group-name">{rootBlock.name}</span>
+          {rootBlock.type === "org" &&
+            (fetchingCollaborators && fetchingCollaborationRequests ? (
+              "Loading"
+            ) : (
+              <Button
+                style={{ marginLeft: "1em" }}
+                onClick={this.toggleShowCollaborators}
+              >
+                Collaborators
+              </Button>
+            ))}
+          <span className="sk-root-group-name">
+            {isUserRootBlock ? "Root" : rootBlock.name}
+          </span>
         </div>
         <div className="sk-root-group-content">
-          {this.hasChildren(assignedTasks) && (
-            <Group name="Assigned Tasks" key="assignedTasks" user={user}>
-              {this.renderTasks(assignedTasks, assignedTasksPermission)}
-            </Group>
-          )}
-          {(this.hasChildren(rootBlock.tasks) ||
-            this.hasChildren(rootBlock.projects)) && (
-            <Group name="Ungrouped" key="ungrouped" user={user}>
-              {this.renderTasks(rootBlock.tasks, permission)}
-              {this.renderProjects(rootBlock.projects)}
-            </Group>
-          )}
-          {this.hasChildren(rootBlock.groups) &&
-            Object.keys(rootBlock.groups).map(groupId => {
-              let group = rootBlock.groups[groupId];
-              return (
-                <Group
-                  key={groupId}
-                  group={group}
-                  onClickAddChild={this.toggleForm}
-                  permission={permission}
-                  childrenTypes={permittedChildrenTypes}
-                  blockHandlers={blockHandlers}
-                  onEdit={group => this.toggleForm("group", null, group)}
-                  user={user}
-                >
-                  {this.renderTasks(group.tasks, permission)}
-                  {this.renderProjects(group.projects)}
+          <div className="sk-root-group-content-inner">
+            {fetchingChildren && "Loading"}
+            {(this.hasChildren(rootBlock.task) ||
+              this.hasChildren(rootBlock.project)) && (
+              <div className="sk-root-group-content-group" key="ungrouped">
+                <Group name="Ungrouped" user={user}>
+                  {this.renderTasks(rootBlock.task, rootBlock)}
+                  {this.renderProjects(rootBlock.project)}
                 </Group>
-              );
-            })}
+              </div>
+            )}
+            {this.hasChildren(rootBlock.group) &&
+              Object.keys(rootBlock.group).map(groupId => {
+                let group = rootBlock.group[groupId];
+                return (
+                  <div className="sk-root-group-content-group" key={groupId}>
+                    <Group
+                      group={group}
+                      onClickAddChild={this.toggleForm}
+                      blockHandlers={blockHandlers}
+                      onEdit={group =>
+                        this.toggleForm("group", rootBlock, group)
+                      }
+                      user={user}
+                    >
+                      {this.renderTasks(group.task, group)}
+                      {this.renderProjects(group.project)}
+                    </Group>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     );

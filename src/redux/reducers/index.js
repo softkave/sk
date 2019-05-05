@@ -7,9 +7,7 @@ import {
 } from "../constants/reducer";
 import dotProp from "dot-prop-immutable";
 
-export default function reducer(state = {}, action, recursive) {
-  console.log(action);
-
+export default function reducer(state = {}, action) {
   switch (action.type) {
     case MERGE:
       return dotProp.merge(state, action.path, action.data);

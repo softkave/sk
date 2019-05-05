@@ -8,7 +8,7 @@ import {
 
 export function updateId(data, newId, prevId) {
   const action1 = makeDelete(data.path);
-  data.id = newId;
+  data.customId = newId;
   let prevPath = data.path.split(".");
   prevPath.pop();
   prevPath.push(newId);

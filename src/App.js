@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, withRouter } from "react-router-dom";
+import { Switch, Route, withRouter, Redirect } from "react-router-dom";
 import Web from "./Web.jsx";
 import AppMenu from "./components/app-menu/AppMenu.jsx";
 import RootGroupContainer from "./components/group/RootGroupContainer.jsx";
@@ -85,25 +85,30 @@ function renderComponent(component) {
 }
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      skipRender: this.route()
-    };
-  }
+  async componentDidMount() {
+    const { userIsLoggedIn, history, getSavedUserData } = this.props;
 
-  componentDidMount() {
-    let skipRender = this.route();
+    if (!userIsLoggedIn) {
+      if (window.location.pathname.indexOf("app") !== -1) {
+        console.log("/");
+        history.push("/");
+      }
 
-    if (this.state.skipRender !== skipRender) {
-      this.setState({ skipRender });
+      getSavedUserData();
+    } else {
+      if (window.location.pathname === "/") {
+        history.push("/app");
+      }
     }
   }
 
   componentDidUpdate() {
-    let skipRender = this.route();
-    if (this.state.skipRender !== skipRender) {
-      this.setState({ skipRender });
+    const { userIsLoggedIn, history } = this.props;
+
+    if (userIsLoggedIn) {
+      if (window.location.pathname.indexOf("app") === -1) {
+        history.push("/app");
+      }
     }
   }
 
@@ -113,31 +118,16 @@ class App extends React.Component {
       message: "An error ocurred"
     });
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV !== "production") {
       throw error;
     }
   }
 
-  route() {
-    const { userIsLoggedIn, history, getSavedUserData } = this.props;
-
-    if (userIsLoggedIn) {
-      if (window.location.pathname.indexOf("app") === -1) {
-        history.push("/app");
-        return false;
-      }
-    } else {
-      if (window.location.pathname.indexOf("app") > -1) {
-        getSavedUserData();
-        history.push("/");
-        return true;
-      }
-    }
-  }
-
   render() {
-    if (this.state.skipRender) {
-      return null;
+    const { userIsLoggedIn } = this.props;
+
+    if (!userIsLoggedIn && window.location.pathname.indexOf("app") !== -1) {
+      return <Redirect to="/" />;
     }
 
     return (

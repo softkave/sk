@@ -86,9 +86,9 @@ class NotificationList extends React.Component {
             <NotificationListItem
               key={notificationId}
               notification={notification}
-              onClick={() => this.onClickNotication(notification.id)}
+              onClick={() => this.onClickNotication(notification.customId)}
               isSelected={
-                currentNotification === notification.id ? true : false
+                currentNotification === notification.customId ? true : false
               }
             />
           );

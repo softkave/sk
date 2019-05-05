@@ -1,38 +1,102 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
-import {
-  canPerformAction,
-  getClosestPermissionToBlock
-} from "../../models/block/acl";
 import "./group.css";
 import SimpleBar from "simplebar-react";
-import { getPermittedChildrenTypes } from "../../models/block/block-utils";
+import { permittedChildrenTypes } from "../../models/block/block-utils";
 
 import "simplebar/dist/simplebar.min.css";
 
 class Group extends React.Component {
+  state = {
+    fetchingChildren: true
+  };
+
+  componentDidMount() {
+    this.loadBlockData();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { group } = this.props;
+
+    if (
+      group &&
+      prevProps.group &&
+      group.customId !== prevProps.group.customId
+    ) {
+      this.loadBlockData();
+    } else {
+      this.updateFetchingState();
+    }
+  }
+
+  updateFetchingState() {
+    const { fetchingChildren } = this.state;
+    let newState = {};
+
+    if (this.areBlockChildrenLoaded() && fetchingChildren) {
+      newState.fetchingChildren = false;
+    }
+
+    if (Object.keys(newState).length > 0) {
+      this.setState(newState);
+    }
+  }
+
+  loadBlockData() {
+    const { fetchingChildren } = this.state;
+    let newState = {};
+
+    if (!this.areBlockChildrenLoaded()) {
+      this.fetchChildren();
+    } else if (fetchingChildren) {
+      newState.fetchingChildren = false;
+    }
+
+    if (Object.keys(newState).length > 0) {
+      this.setState(newState);
+    }
+  }
+
+  areBlockChildrenLoaded() {
+    const { group } = this.props;
+
+    if (!group) {
+      return true;
+    }
+
+    if (permittedChildrenTypes[group.type]) {
+      const typeNotLoaded = permittedChildrenTypes[group.type].find(type => {
+        if (!group[type]) {
+          return true;
+        }
+      });
+
+      if (typeNotLoaded) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async fetchChildren() {
+    const { group, blockHandlers } = this.props;
+    await blockHandlers.getBlockChildren(group);
+  }
+
   render() {
     const {
       group,
       children,
       blockHandlers,
-      childrenTypes,
       onClickAddChild,
       name,
-      user,
       onEdit
     } = this.props;
+    const { fetchingChildren } = this.state;
 
-    const groupPermission = getClosestPermissionToBlock(
-      user.permissions,
-      group
-    );
-
-    const permittedChildrenTypes = getPermittedChildrenTypes(
-      group,
-      groupPermission
-    );
+    const childrenTypes = group ? permittedChildrenTypes[group.type] : null;
 
     return (
       <div className="sk-group">
@@ -42,31 +106,33 @@ class Group extends React.Component {
               {group ? group.name : name}
             </span>
           </Col>
-          <Col span={12} style={{ textAlign: "right" }}>
-            {permittedChildrenTypes && permittedChildrenTypes.length > 0 && (
-              <AddDropdownButton
-                types={permittedChildrenTypes}
-                onClick={type => onClickAddChild(type, group)}
-              />
-            )}
-            {canPerformAction(group, groupPermission, "UPDATE_GROUP") && (
+          {group ? (
+            <Col span={12} style={{ textAlign: "right" }}>
+              {childrenTypes && childrenTypes.length > 0 && (
+                <AddDropdownButton
+                  types={childrenTypes}
+                  onClick={type => onClickAddChild(type, group)}
+                />
+              )}
               <Button
                 icon="edit"
                 onClick={() => onEdit(group)}
                 style={{ marginLeft: "2px" }}
               />
-            )}
-            {canPerformAction(group, groupPermission, "DELETE_GROUP") && (
               <Button
                 icon="delete"
                 type="danger"
                 onClick={() => blockHandlers.onDelete(group)}
                 style={{ marginLeft: "2px" }}
               />
-            )}
-          </Col>
+            </Col>
+          ) : null}
         </Row>
-        <SimpleBar className="sk-group-children">{children}</SimpleBar>
+        {fetchingChildren ? (
+          "Loading"
+        ) : (
+          <SimpleBar className="sk-group-children">{children}</SimpleBar>
+        )}
       </div>
     );
   }

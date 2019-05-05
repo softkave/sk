@@ -1,6 +1,4 @@
-import {
-  blockFragment
-} from "./block";
+import { blockFragment } from "./block";
 
 export const userExistsQuery = `
   query UserExistsQuery (email: String!) {
@@ -29,18 +27,7 @@ export const updateUserMutation = `
   }
 `;
 
-export const userPermissionFragment = `
-  fragment userPermissionFragment on UserRole {
-    role
-    assignedAt
-    assignedBy
-    type
-    blockId
-  }
-`;
-
 export const userLoginFragement = `
-  ${userPermissionFragment}
   fragment userQueryResult on UserQueryResult {
     errors {
       field
@@ -49,13 +36,9 @@ export const userLoginFragement = `
     user {
       name
       email
-      _id
-      id
+      customId
       createdAt
       lastNotificationCheckTime
-      roles {
-        ...userPermissionFragment
-      }
     }
     token
   }
@@ -74,9 +57,9 @@ export const userSignupMutation = `
 
 export const userLoginMutation = `
   ${userLoginFragement}
-  mutation UserLoginMutation ($user: UserLoginInput!) {
+  mutation UserLoginMutation ($email: String!, $password: String!) {
     user {
-      login (user: $user) {
+      login (email: $email, password: $password) {
         ...userQueryResult
       }
     }
@@ -125,41 +108,57 @@ export const getCollaborationRequestsQuery = `
     user {
       getCollaborationRequests {
         errors {
-          ...errorFragment
+          field
+          message
         }
         requests {
-          _id
-          id
+          customId
           from {
             userId
             name
             blockId
             blockName
+            blockType
           }
           createdAt
           body
           readAt
           to {
             email
+            userId
           }
-          response
-          respondedAt
-          permission {
-            ...userPermissionFragment
+          statusHistory {
+            status
+            date
           }
+          sentEmailHistory {
+            date
+          }
+          type
+          root
         }
       }
     }
   }
 `;
 
-export const updateCollaborationRequestMutation = `
+export const getUserDataQuery = `
   ${userLoginFragement}
+  query GetUserDataQuery {
+    user {
+      getUserData {
+        ...userQueryResult
+      }
+    }
+  }
+`;
+
+export const updateCollaborationRequestMutation = `
   mutation UpdateCollaborationRequestMutation (
-    $id: String!, $data: UpdateCollabRequestInput!
+    $customId: String!, $data: UpdateCollaborationRequestInput!
   ) {
     user {
-      updateCollaborationRequest (id: $id, data: $data) {
+      updateCollaborationRequest (customId: $customId, data: $data) {
         errors {
           field
           message
@@ -172,10 +171,10 @@ export const updateCollaborationRequestMutation = `
 export const respondToCollaborationRequestMutation = `
   ${blockFragment}
   mutation RespondToCollaborationRequestMutation (
-    $id: String!, $response: String!
+    $customId: String!, $response: String!
   ) {
     user {
-      respondToCollaborationRequest (id: $id, response: $response) {
+      respondToCollaborationRequest (customId: $customId, response: $response) {
         errors {
           field
           message

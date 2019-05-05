@@ -16,7 +16,7 @@ export default class AssignTask extends React.Component {
 
     const collaborators = props.collaborators || [];
     collaborators.forEach(c => {
-      this.collaboratorsIdMap[c.id] = c;
+      this.collaboratorsIdMap[c.customId] = c;
     });
 
     this.error = null;
@@ -24,22 +24,22 @@ export default class AssignTask extends React.Component {
 
   onAddCollaborator = collaborator => {
     const { form, user } = this.props;
-    if (this.existingTaskCollaboratorsIdMap[collaborator.id]) {
+    if (this.existingTaskCollaboratorsIdMap[collaborator.customId]) {
       this.error = "collaborator is already assigned";
       return;
     }
 
-    let collaborators = form.getFieldValue("collaborators");
+    let collaborators = form.getFieldValue("taskCollaborators");
     collaborators.push({
-      userId: collaborator.id,
+      userId: collaborator.customId,
       assignedAt: Date.now(),
-      completedAt: null,
-      assignedBy: user.id
+      completedAt: 0,
+      assignedBy: user.customId
     });
 
     this.error = null;
-    this.existingTaskCollaboratorsIdMap[collaborator.id] = collaborator;
-    form.setFieldsValue({ collaborators });
+    this.existingTaskCollaboratorsIdMap[collaborator.customId] = collaborator;
+    form.setFieldsValue({ taskCollaborators: collaborators });
   };
 
   onUnassignCollaborator = (collaborator, index) => {
@@ -50,20 +50,20 @@ export default class AssignTask extends React.Component {
       return;
     }
 
-    let collaborators = form.getFieldValue("collaborators");
+    let collaborators = form.getFieldValue("taskCollaborators");
     collaborators = dotProp.delete(collaborators, `${index}`);
     this.error = null;
     delete this.existingTaskCollaboratorsIdMap[collaborator.userId];
-    form.setFieldsValue({ collaborators });
+    form.setFieldsValue({ taskCollaborators: collaborators });
   };
 
   renderSelectCollaborators(collaborators) {
     let options = [];
 
     collaborators.forEach((c, index) => {
-      if (!this.existingTaskCollaboratorsIdMap[c.id]) {
+      if (!this.existingTaskCollaboratorsIdMap[c.customId]) {
         options.push(
-          <Select.Option value={index} key={c.id}>
+          <Select.Option value={index} key={c.customId}>
             <CollaboratorThumbnail collaborator={c} />
           </Select.Option>
         );
@@ -101,11 +101,11 @@ export default class AssignTask extends React.Component {
   render() {
     const { form, collaborators, defaultTaskCollaborators } = this.props;
 
-    form.getFieldDecorator("collaborators", {
+    form.getFieldDecorator("taskCollaborators", {
       initialValue: defaultTaskCollaborators || []
     });
 
-    const taskCollaborators = form.getFieldValue("collaborators");
+    const taskCollaborators = form.getFieldValue("taskCollaborators");
     return (
       <div>
         {this.renderCollaborators(taskCollaborators)}

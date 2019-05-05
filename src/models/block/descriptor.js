@@ -6,32 +6,6 @@ const textPattern = {
   message: "only alphanumeric characters allowed"
 };
 
-export const aclDescriptor = {
-  action: [
-    {
-      type: "string",
-      max: 50,
-      transform: trim
-    },
-    textPattern
-  ],
-  roles: {
-    type: "array",
-    max: 50
-  }
-};
-
-export const roleDescriptor = {
-  role: [
-    {
-      type: "string",
-      max: 50,
-      transform: trim
-    },
-    textPattern
-  ]
-};
-
 export const blockDescriptor = {
   name: [
     {
@@ -81,7 +55,7 @@ export const projectDescriptor = makeDescriptorFieldsRequired(
   requiredProjectFields
 );
 
-const requiredOrgFields = ["name", "roles"];
+const requiredOrgFields = ["name"];
 
 export const orgDescriptor = makeDescriptorFieldsRequired(
   blockDescriptor,

@@ -78,7 +78,7 @@ class AppMenu extends React.Component {
     // menuDrawerWidth = menuDrawerWidth < 300 ? windowWidth : menuDrawerWidth;
 
     return (
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Drawer
           width={menuDrawerWidth}
           onClose={this.onToggleMenu}

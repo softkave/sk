@@ -27,7 +27,7 @@ class RootGroupContainer extends React.Component {
   }
 
   render() {
-    const { rootBlock, blockHandlers, assignedTasks, user } = this.props;
+    const { rootBlock, blockHandlers, user } = this.props;
     const { error } = this.state;
 
     if (!rootBlock) {
@@ -40,7 +40,6 @@ class RootGroupContainer extends React.Component {
       <RootGroup
         rootBlock={rootBlock}
         blockHandlers={blockHandlers}
-        assignedTasks={assignedTasks}
         user={user}
       />
     );
@@ -67,41 +66,25 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     blockHandlers,
     user,
     rootBlock: state.rootBlock,
-    assignedTasks: (function() {
-      if (state.assignedTasks) {
-        let tasks = {};
-        Object.keys(state.assignedTasks).forEach(task => {
-          if (typeof task === "string") {
-            task = get(state, task);
-          }
-
-          tasks[task.id] = task;
-        });
-
-        return tasks;
-      }
-    })(),
-
     async fetchRootData() {
-      const rootBlockId = user.permissions.find(
-        permission => permission.type === "root"
-      ).blockId;
+      const { blocks } = await netInterface("block.getRoleBlocks");
 
-      const blocks = await netInterface("block.getInitBlocks");
-      let { assignedTasks, rootBlock, orgs } = sortBlocks({
-        blocks,
-        rootBlockId,
-        standingOrgs: state.orgs
+      let rootBlock = null;
+      let orgs = {};
+      blocks.forEach(blk => {
+        if (blk.type === "root") {
+          rootBlock = blk;
+          rootBlock.path = `rootBlock`;
+        } else if (blk.type === "orgs") {
+          orgs[blk.customId] = blk;
+          blk.path = `orgs.${blk.customId}`;
+        }
       });
 
       let actions = [
         mergeDataByPath(rootBlock.path, rootBlock),
-        mergeDataByPath("assignedTasks", assignedTasks)
+        mergeDataByPath("orgs", orgs)
       ];
-
-      if (!state.orgs) {
-        actions.push(mergeDataByPath("orgs", orgs));
-      }
 
       dispatch(makeMultiple(actions));
     }

@@ -4,6 +4,7 @@ import { makeBlockHandlers } from "../../models/block/block-handlers";
 import Orgs from "./Orgs.jsx";
 import netInterface from "../../net";
 import { mergeDataByPath } from "../../redux/actions/data";
+import { makeMultiple } from "../../redux/actions/make";
 
 class OrgsContainer extends React.Component {
   constructor(props) {
@@ -14,16 +15,14 @@ class OrgsContainer extends React.Component {
   }
 
   async componentDidMount() {
-    if (!this.props.orgs) {
+    if (!this.props.rootBlock) {
       try {
-        await this.props.fetchOrgs();
+        await this.props.fetchRootData();
       } catch (error) {
         this.setState({ error });
       }
     }
   }
-
-  async fetchOrgs() {}
 
   render() {
     const { orgs } = this.props;
@@ -55,21 +54,30 @@ function mergeProps({ state }, { dispatch }) {
 
   return {
     blockHandlers,
+    rootBlock: state.rootBlock,
     user: state.user.user,
     orgs: state.orgs,
-    async fetchOrgs() {
-      let blocks = await netInterface("block.getPermissionBlocks");
+    async fetchRootData() {
+      const { blocks } = await netInterface("block.getRoleBlocks");
+
+      let rootBlock = null;
       let orgs = {};
-      blocks.forEach(block => {
-        if (block.type === "root") {
-          block.path = "rootBlock";
-        } else {
-          block.path = `orgs.${block.id}`;
-          orgs[block.id] = block;
+      blocks.forEach(blk => {
+        if (blk.type === "root") {
+          rootBlock = blk;
+          rootBlock.path = `rootBlock`;
+        } else if (blk.type === "org") {
+          orgs[blk.customId] = blk;
+          blk.path = `orgs.${blk.customId}`;
         }
       });
 
-      dispatch(mergeDataByPath("orgs", orgs));
+      let actions = [
+        mergeDataByPath(rootBlock.path, rootBlock),
+        mergeDataByPath("orgs", orgs)
+      ];
+
+      dispatch(makeMultiple(actions));
     }
   };
 }
