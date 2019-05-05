@@ -18,6 +18,10 @@ export default function reducer(state = {}, action) {
     case DELETE:
       return dotProp.delete(state, action.path);
 
+    /**
+     * TODO:
+     * If multiple is getting slow, convert it into sessions
+     */
     case MULTIPLE:
       return action.actions.reduce(
         (accumulator, todo) => reducer(accumulator, todo, true),

@@ -6,7 +6,6 @@ import {
 import netInterface from "../../net/index";
 import randomColor from "randomcolor";
 import { permittedChildrenTypes } from "./block-utils";
-import { getCollaborationRequests } from "../../net/user";
 
 const getId = require("uuid/v4");
 // const getId = require("nanoid");

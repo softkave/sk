@@ -1,20 +1,4 @@
-import {
-  makeMultiple,
-  makeMerge,
-  makeDelete,
-  makeSet,
-  makeClearState
-} from "./make";
-
-export function updateId(data, newId, prevId) {
-  const action1 = makeDelete(data.path);
-  data.customId = newId;
-  let prevPath = data.path.split(".");
-  prevPath.pop();
-  prevPath.push(newId);
-  data.path = prevPath.join(".");
-  return makeMultiple([action1, makeMerge(data.path, data)]);
-}
+import { makeMerge, makeDelete, makeSet, makeClearState } from "./make";
 
 export function mergeDataByPath(path, data) {
   return makeMerge(path, data);

@@ -6,8 +6,6 @@ html,
 body,
 #root {
   height: 100%;
-  /* font-family: "Lato", sans-serif !important; */
-  /* font-family: "Laila", serif; */
   font-family: "Karla", sans-serif;
   color: black !important;
   font-weight: 500;
