@@ -1,9 +1,15 @@
 import React from "react";
-import { Button, Switch, Row, Col } from "antd";
+import { Button, Switch, Row, Col, Spin, Icon, Tooltip } from "antd";
 import Priority from "./Priority.jsx";
+import DeleteButton from "../DeleteButton";
 import "./minitask.css";
 
 class Task extends React.Component {
+  state = {
+    toggleLoading: false,
+    toggleLoadingError: null
+  };
+
   getCollaborator() {
     const { task, user } = this.props;
     if (task.taskCollaborators) {
@@ -13,36 +19,59 @@ class Task extends React.Component {
     }
   }
 
+  toggleChecked = async () => {
+    try {
+      const { task, blockHandlers } = this.props;
+      this.setState({ toggleLoading: true });
+      await blockHandlers.onToggle(task);
+      this.setState({ toggleLoading: false });
+    } catch (error) {
+      this.setState({
+        toggleLoading: false,
+        toggleLoadingError: error
+      });
+    }
+  };
+
   render() {
     const { task, blockHandlers, onEdit } = this.props;
+    const { toggleLoading, toggleLoadingError } = this.state;
     const collaborator = this.getCollaborator();
 
     return (
       <div className="sk-minitask">
         <Row>
           <Col span={4}>
-            <Switch
-              checked={collaborator && !!collaborator.completedAt}
-              onChange={() => blockHandlers.onToggle(task)}
-              disabled={collaborator ? false : true}
-              title={collaborator ? "toggle task" : "task is not yet assigned"}
-            />
+            {!toggleLoadingError ? (
+              <Spin spinning={toggleLoading}>
+                <Switch
+                  checked={collaborator && !!collaborator.completedAt}
+                  onChange={this.toggleChecked}
+                  disabled={collaborator ? false : true}
+                  title={collaborator ? "toggle task" : null}
+                />
+              </Spin>
+            ) : (
+              <Tooltip
+                title={
+                  <React.Fragment>
+                    <p style={{ color: "red" }}>
+                      {toggleLoadingError.message || "An error occurred"}
+                    </p>
+                    <p>Please reload the page</p>
+                  </React.Fragment>
+                }
+              >
+                <Icon type="close" />
+              </Tooltip>
+            )}
           </Col>
-          <Col span={16} className="sk-minitask-priority">
+          <Col span={20} className="sk-minitask-priority">
             <Priority level={task.priority} cover />
-          </Col>
-          <Col span={4} className="sk-minitask-top-extra">
-            <Button
-              icon="delete"
-              type="danger"
-              className="sk-minitask-close"
-              onClick={() => blockHandlers.onDelete(task)}
-              title="delete task"
-            />
           </Col>
         </Row>
         <Row className="sk-minitask-desc">
-          <Col span={16} offset={4}>
+          <Col span={24} offset={0}>
             <p>{task.description}</p>
           </Col>
         </Row>
@@ -53,6 +82,19 @@ class Task extends React.Component {
               onClick={() => onEdit(task)}
               title="edit task"
             />
+            <span style={{ marginLeft: "4px" }}>
+              <DeleteButton
+                deleteButton={
+                  <Button
+                    icon="delete"
+                    type="danger"
+                    className="sk-minitask-close"
+                  />
+                }
+                onDelete={() => blockHandlers.onDelete(task)}
+                title="Are you sure you want to delete this task?"
+              />
+            </span>
           </Col>
         </Row>
       </div>

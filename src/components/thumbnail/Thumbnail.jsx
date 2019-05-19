@@ -2,6 +2,9 @@ import React from "react";
 import { Row, Col } from "antd";
 import "./thumbnail.css";
 
+const defaultThumbnailColor = "#aaa";
+const defaultColorSpan = 4;
+
 export default function Thumbnail(props) {
   const {
     data,
@@ -12,25 +15,26 @@ export default function Thumbnail(props) {
     colorStyle,
     colorClassName,
     colorSpan,
-    hoverable
+    // hoverable,
+    color
   } = props;
   const cSpan = colorSpan;
-  const hov = typeof hoverable !== "boolean" ? true : hoverable;
+  const thumbnailColor = data.color || color;
 
   return (
     <div
       className={
         "sk-thumbnail " +
-        (hov ? "sk-thumbnail-hoverable " : "") +
+        // (hoverable ? "sk-thumbnail-hoverable " : "") +
         (className || "")
       }
       style={style}
       onClick={onClick}
     >
       <Row gutter={16} style={{ height: "100%" }}>
-        <Col span={cSpan} style={{ height: "100%" }}>
-          <span
-            style={{ backgroundColor: data.color, ...colorStyle }}
+        <Col span={cSpan} style={{ height: "60px" }}>
+          <div
+            style={{ backgroundColor: thumbnailColor, ...colorStyle }}
             className={"sk-thumbnail-color " + colorClassName}
           />
         </Col>
@@ -44,6 +48,7 @@ export default function Thumbnail(props) {
 
 Thumbnail.defaultProps = {
   className: "",
-  colorSpan: 8,
-  colorClassName: ""
+  colorSpan: defaultColorSpan,
+  colorClassName: "",
+  color: defaultThumbnailColor
 };

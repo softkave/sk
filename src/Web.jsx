@@ -1,14 +1,8 @@
 import React from "react";
-import { Redirect, Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import "./web.css";
 
-function Web(props) {
-  const { user } = props;
-  if (user) {
-    return <Redirect to="/app" />;
-  }
-
+export default function Web() {
   return (
     <div className="web">
       <Link to="/signup">Signup</Link>
@@ -18,11 +12,3 @@ function Web(props) {
     </div>
   );
 }
-
-function mapStateToProps(state) {
-  return {
-    user: state.user
-  };
-}
-
-export default connect(mapStateToProps)(Web);

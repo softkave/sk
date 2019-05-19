@@ -14,6 +14,7 @@ export default function OrgThumbnail(props) {
       style={{
         height: "70px",
         padding: "4px",
+        cursor: "pointer",
         ...style
       }}
       colorSpan={5}

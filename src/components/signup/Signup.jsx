@@ -64,7 +64,7 @@ class Signup extends React.Component {
               validator: confirmPasswordValidator
             }
           ],
-          extra: "min of 5 chars including an alphabet, a number, and a symbol"
+          extra: "min of 5 chars"
         },
         confirmPassword: {
           hasFeedback: true,
@@ -74,6 +74,7 @@ class Signup extends React.Component {
           labelCol: null,
           wrapperCol: null,
           rules: [
+            ...userDescriptor.password,
             {
               required: true,
               type: "string",

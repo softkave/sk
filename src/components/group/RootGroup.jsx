@@ -9,9 +9,9 @@ import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { Button } from "antd";
 import {
   assignTask,
-  permittedChildrenTypes
-} from "../../models/block/block-utils";
-import RootGroupGenericContainer from "./RootGroupGenericContainer.jsx";
+  getBlockValidChildrenTypes
+} from "../../models/block/utils";
+import RootGroupContainer from "./RootGroupContainer";
 import Collaborators from "../collaborator/Collaborators.jsx";
 import "./root-group.css";
 
@@ -30,7 +30,10 @@ class RootGroup extends React.Component {
       showCollaborators: false,
       fetchingChildren: true,
       fetchingCollaborators: true,
-      fetchingCollaborationRequests: true
+      fetchingCollaborationRequests: true,
+      fetchChildrenError: null,
+      fetchCollaboratorsError: null,
+      fetchCollaborationRequestsError: null
     };
   }
 
@@ -74,28 +77,45 @@ class RootGroup extends React.Component {
     }
   }
 
-  loadBlockData() {
+  async loadBlockData() {
     const {
       fetchingChildren,
       fetchingCollaborators,
       fetchingCollaborationRequests
     } = this.state;
-    let newState = {};
+
+    let newState = {
+      fetchChildrenError: null,
+      fetchCollaboratorsError: null,
+      fetchCollaborationRequestsError: null
+    };
 
     if (!this.areBlockChildrenLoaded()) {
-      this.fetchChildren();
+      try {
+        await this.fetchChildren();
+      } catch (error) {
+        newState.fetchChildrenError = error;
+      }
     } else if (fetchingChildren) {
       newState.fetchingChildren = false;
     }
 
     if (!this.areBlockCollaboratorsLoaded()) {
-      this.fetchCollaborators();
+      try {
+        await this.fetchCollaborators();
+      } catch (error) {
+        newState.fetchCollaboratorsError = error;
+      }
     } else if (fetchingCollaborators) {
       newState.fetchingCollaborators = false;
     }
 
     if (!this.areBlockCollaborationRequestsLoaded()) {
-      this.fetchCollaborationRequests();
+      try {
+        await this.fetchCollaborationRequests();
+      } catch (error) {
+        newState.fetchCollaborationRequestsError = error;
+      }
     } else if (fetchingCollaborationRequests) {
       newState.fetchingCollaborationRequests = false;
     }
@@ -107,15 +127,16 @@ class RootGroup extends React.Component {
 
   areBlockChildrenLoaded() {
     const { rootBlock } = this.props;
+    const permittedChildrenTypes = getBlockValidChildrenTypes(rootBlock);
 
-    if (permittedChildrenTypes[rootBlock.type]) {
-      const typeNotLoaded = permittedChildrenTypes[rootBlock.type].find(
-        type => {
-          if (!rootBlock[type]) {
-            return true;
-          }
+    if (permittedChildrenTypes) {
+      const typeNotLoaded = permittedChildrenTypes.find(type => {
+        if (!rootBlock[type]) {
+          return true;
+        } else {
+          return false;
         }
-      );
+      });
 
       if (typeNotLoaded) {
         return false;
@@ -251,20 +272,33 @@ class RootGroup extends React.Component {
       parent,
       fetchingChildren,
       fetchingCollaborators,
-      fetchingCollaborationRequests
+      fetchingCollaborationRequests,
+      fetchChildrenError,
+      fetchCollaboratorsError,
+      fetchCollaborationRequestsError
     } = this.state;
+
+    if (fetchChildrenError) {
+      return (
+        <React.Fragment>
+          <p style={{ color: "red" }}>
+            {fetchChildrenError.message || "An error occurred"}
+          </p>
+          <p>Please reload the page</p>
+        </React.Fragment>
+      );
+    }
+
     const collaborators = this.getCollaborators();
-    const childrenTypes = permittedChildrenTypes[rootBlock.type];
-    const isUserRootBlock =
-      isFromRoot !== undefined
-        ? isFromRoot
-        : rootBlock.type === "root"
-        ? true
-        : false;
+    const childrenTypes = getBlockValidChildrenTypes(rootBlock);
+    const isUserRootBlock = rootBlock.type === "root";
+    const actLikeRootBlock =
+      isFromRoot !== undefined ? isFromRoot : isUserRootBlock ? true : false;
 
     if (showCollaborators) {
       return (
         <Collaborators
+          error={fetchCollaboratorsError || fetchCollaborationRequestsError}
           block={rootBlock}
           onBack={this.toggleShowCollaborators}
           collaborators={rootBlock.collaborators}
@@ -282,14 +316,14 @@ class RootGroup extends React.Component {
 
     if (project) {
       return (
-        <RootGroupGenericContainer
+        <RootGroupContainer
           path={project.path}
           collaborators={collaborators}
           user={user}
           onBack={() => this.setCurrentProject(null)}
           blockHandlers={blockHandlers}
           parentBlock={rootBlock}
-          isFromRoot={isUserRootBlock || isFromRoot}
+          isFromRoot={actLikeRootBlock || isFromRoot}
         />
       );
     }
@@ -313,7 +347,7 @@ class RootGroup extends React.Component {
           existingGroups={form.group && this.getExistingNames(parent.group)}
         />
         <EditTask
-          defaultAssignedTo={isFromRoot && [assignTask(user)]}
+          defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
           collaborators={collaborators}
           visible={form.task}
           onSubmit={data => this.onSubmitData(data, "task")}
