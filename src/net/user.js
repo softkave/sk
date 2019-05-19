@@ -17,7 +17,6 @@ import { getDataFromObj } from "../utils/object";
 import { setItem, getItem, removeItem } from "../utils/storage";
 
 const tokenStorageName = "t";
-const userStorageName = "user";
 
 export async function signup(user) {
   const userFields = ["name", "password", "email"];

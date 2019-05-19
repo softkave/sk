@@ -1,6 +1,6 @@
 import React from "react";
-import TaskCollaborator from "./TaskCollaborator.jsx";
-import { Form, Select } from "antd";
+import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
+import { Form, Select, Button } from "antd";
 import dotProp from "dot-prop-immutable";
 import CollaboratorThumbnail from "../collaborator/Thumnail.jsx";
 
@@ -24,6 +24,7 @@ export default class AssignTask extends React.Component {
 
   onAddCollaborator = collaborator => {
     const { form, user } = this.props;
+
     if (this.existingTaskCollaboratorsIdMap[collaborator.customId]) {
       this.error = "collaborator is already assigned";
       return;
@@ -58,10 +59,16 @@ export default class AssignTask extends React.Component {
   };
 
   renderSelectCollaborators(collaborators) {
+    const { user } = this.props;
     let options = [];
+    let showAssignToMeButton = false;
 
     collaborators.forEach((c, index) => {
       if (!this.existingTaskCollaboratorsIdMap[c.customId]) {
+        if (c.customId === user.customId) {
+          showAssignToMeButton = true;
+        }
+
         options.push(
           <Select.Option value={index} key={c.customId}>
             <CollaboratorThumbnail collaborator={c} />
@@ -71,23 +78,36 @@ export default class AssignTask extends React.Component {
     });
 
     return options.length > 0 ? (
-      <Form.Item>
-        <Select
-          placeholder="Assign collaborator"
-          onChange={i => {
-            this.onAddCollaborator(collaborators[i]);
+      <React.Fragment>
+        <Form.Item
+          style={{
+            marginBottom: showAssignToMeButton ? "8px" : undefined
           }}
         >
-          {options}
-        </Select>
-      </Form.Item>
+          <Select
+            placeholder="Assign collaborator"
+            onChange={i => {
+              this.onAddCollaborator(collaborators[i]);
+            }}
+          >
+            {options}
+          </Select>
+        </Form.Item>
+        {showAssignToMeButton && (
+          <div>
+            <Button onClick={() => this.onAddCollaborator(user)}>
+              Assign to me
+            </Button>
+          </div>
+        )}
+      </React.Fragment>
     ) : null;
   }
 
   renderCollaborators(taskCollaborators) {
     return taskCollaborators.map((c, i) => {
       return (
-        <TaskCollaborator
+        <TaskCollaboratorThumbnail
           key={c.userId}
           collaborator={this.collaboratorsIdMap[c.userId]}
           collaboratorTaskData={c}

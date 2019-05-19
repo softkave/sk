@@ -10,10 +10,17 @@
   text-align: right;
 }
 
+.sk-minitask-desc {
+  margin: 16px 0;
+}
+
 .sk-minitask-desc p {
   margin: 0;
   padding: 0 8px !important;
   white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .sk-minitask-footer-right {

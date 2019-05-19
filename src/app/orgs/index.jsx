@@ -1,10 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers } from "../../models/block/block-handlers";
-import Orgs from "./Orgs.jsx";
-import netInterface from "../../net";
-import { mergeDataByPath } from "../../redux/actions/data";
-import { makeMultiple } from "../../redux/actions/make";
+import { makeBlockHandlers } from "../../models/block/handlers";
+import Orgs from "../../components/org/Orgs.jsx";
 
 class OrgsContainer extends React.Component {
   constructor(props) {
@@ -15,9 +12,9 @@ class OrgsContainer extends React.Component {
   }
 
   async componentDidMount() {
-    if (!this.props.rootBlock) {
+    if (!this.props.orgs) {
       try {
-        await this.props.fetchRootData();
+        await this.props.blockHandlers.fetchRootData();
       } catch (error) {
         this.setState({ error });
       }
@@ -54,31 +51,9 @@ function mergeProps({ state }, { dispatch }) {
 
   return {
     blockHandlers,
-    rootBlock: state.rootBlock,
+    // rootBlock: state.rootBlock,
     user: state.user.user,
-    orgs: state.orgs,
-    async fetchRootData() {
-      const { blocks } = await netInterface("block.getRoleBlocks");
-
-      let rootBlock = null;
-      let orgs = {};
-      blocks.forEach(blk => {
-        if (blk.type === "root") {
-          rootBlock = blk;
-          rootBlock.path = `rootBlock`;
-        } else if (blk.type === "org") {
-          orgs[blk.customId] = blk;
-          blk.path = `orgs.${blk.customId}`;
-        }
-      });
-
-      let actions = [
-        mergeDataByPath(rootBlock.path, rootBlock),
-        mergeDataByPath("orgs", orgs)
-      ];
-
-      dispatch(makeMultiple(actions));
-    }
+    orgs: state.orgs
   };
 }
 

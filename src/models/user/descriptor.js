@@ -10,7 +10,7 @@ const textPattern = {
 };
 
 // const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{5,}$/;
-const passwordPattern = /^[A-Za-z\d$@$!%*#?&]$/;
+const passwordPattern = /[A-Za-z0-9!()?_`~#$^&*+=]/;
 const userDescriptor = {
   name: [
     { type: "string", required: true, max: 50, transform: trim },
@@ -23,7 +23,11 @@ const userDescriptor = {
       type: "string"
     },
     {
-      max: 50,
+      min: 5,
+      message: "password is too short"
+    },
+    {
+      max: 20,
       message: "password is too long"
     },
     {

@@ -9,20 +9,25 @@ export default class CollaboratorThumbnail extends React.Component {
 
   render() {
     const { collaborator, style, onClick } = this.props;
-    let headerValue = collaborator.name || collaborator.email;
+    let headerValue = collaborator.name;
     let latestStatus = this.getLatestStatus(collaborator.statusHistory);
+    const collaboratorEmail =
+      collaborator.email || (collaborator.to ? collaborator.to.email : null);
 
     return (
       <Thumbnail
         data={collaborator}
         onClick={onClick}
+        colorSpan={6}
         renderInfo={() => {
           return (
             <React.Fragment>
-              <h5>{headerValue}</h5>
-              {collaborator.name && (
+              {headerValue && (
+                <h4 style={{ marginBottom: "0px" }}>{headerValue}</h4>
+              )}
+              {collaboratorEmail && (
                 <span className="sk-gl-thumbnail-text">
-                  {collaborator.email}
+                  {collaboratorEmail}
                 </span>
               )}
               {collaborator.expiresAt && (
@@ -41,10 +46,8 @@ export default class CollaboratorThumbnail extends React.Component {
         style={{
           padding: "4px",
           maxWidth: "300px",
-          height: "80px",
           ...style
         }}
-        colorSpan={collaborator.color ? 4 : 0}
         hoverable={!!onClick}
       />
     );

@@ -3,7 +3,7 @@ import { Row, Col, Button } from "antd";
 import AddDropdownButton from "../AddDropdownButton.jsx";
 import "./group.css";
 import SimpleBar from "simplebar-react";
-import { permittedChildrenTypes } from "../../models/block/block-utils";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 
 import "simplebar/dist/simplebar.min.css";
 
@@ -65,10 +65,14 @@ class Group extends React.Component {
       return true;
     }
 
-    if (permittedChildrenTypes[group.type]) {
-      const typeNotLoaded = permittedChildrenTypes[group.type].find(type => {
+    const permittedChildrenTypes = getBlockValidChildrenTypes(group);
+
+    if (permittedChildrenTypes) {
+      const typeNotLoaded = permittedChildrenTypes.find(type => {
         if (!group[type]) {
           return true;
+        } else {
+          return false;
         }
       });
 
@@ -94,9 +98,9 @@ class Group extends React.Component {
       name,
       onEdit
     } = this.props;
-    const { fetchingChildren } = this.state;
 
-    const childrenTypes = group ? permittedChildrenTypes[group.type] : null;
+    const { fetchingChildren } = this.state;
+    const childrenTypes = group ? getBlockValidChildrenTypes(group) : null;
 
     return (
       <div className="sk-group">
