@@ -81,14 +81,12 @@ export function getBlockChildren(block, types) {
   );
 }
 
-export function addCollaborators(block, collaborators, body, expiresAt) {
+export function addCollaborators(block, collaborators) {
   const collaboratorFields = ["email", "body", "expiresAt", "customId"];
   return auth(
     null,
     addCollaboratorsMutation,
     {
-      body,
-      expiresAt,
       block: getDataFromObj(block, blockParamFields),
       collaborators: collaborators.map(c =>
         getDataFromObj(c, collaboratorFields)

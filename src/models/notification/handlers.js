@@ -1,66 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import netInterface from "../../net";
-import { setDataByPath, mergeDataByPath } from "../../redux/actions/data";
+import { mergeDataByPath, setDataByPath } from "../../redux/actions/data";
+import netInterface from "../../net/index";
 import { makeMultiple } from "../../redux/actions/make";
-import NotificationList from "./NotificationList.jsx";
 
-class NotificationsContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null
-    };
-  }
-
-  async componentDidMount() {
-    if (!this.props.notifications) {
-      try {
-        await this.props.fetchNotifications();
-      } catch (error) {
-        this.setState({ error });
-      }
-    }
-  }
-
-  render() {
-    const { notifications, onRespond, onClickNotification } = this.props;
-    const { error } = this.state;
-
-    if (!notifications) {
-      return "Loading";
-    } else if (error) {
-      return error.message || "An error occurred";
-    }
-
-    return (
-      <NotificationList
-        notifications={notifications}
-        onRespond={onRespond}
-        onClickNotification={onClickNotification}
-      />
-    );
-  }
-}
-
-function mapStateToProps(state) {
-  return { state };
-}
-
-function mapDispatchToProps(dispatch) {
-  return { dispatch };
-}
-
-function mergeProps({ state }, { dispatch }, ownProps) {
+export function makeNotificationHandlers({ dispatch }) {
   return {
-    notifications: state.notifications,
     async onClickNotification(notification) {
       if (!notification.readAt) {
         let update = { readAt: Date.now() };
+
+        await netInterface(
+          "user.updateCollaborationRequest",
+          notification,
+          update
+        );
+
         dispatch(
           mergeDataByPath(`notifications.${notification.customId}`, update)
         );
-        netInterface("user.updateCollaborationRequest", notification, update);
       }
     },
 
@@ -90,14 +46,14 @@ function mergeProps({ state }, { dispatch }, ownProps) {
         });
 
         let update = { statusHistory };
-        dispatch(
-          mergeDataByPath(`notifications.${notification.customId}`, update)
-        );
-
         let result = await netInterface(
           "user.respondToCollaborationRequest",
           notification,
           response
+        );
+
+        dispatch(
+          mergeDataByPath(`notifications.${notification.customId}`, update)
         );
 
         if (response === "accepted" && result && result.block) {
@@ -126,9 +82,3 @@ function mergeProps({ state }, { dispatch }, ownProps) {
     }
   };
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
-)(NotificationsContainer);

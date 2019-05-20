@@ -1,7 +1,3 @@
-.app {
-  background-color: white;
-}
-
 html,
 body,
 #root {
@@ -11,12 +7,12 @@ body,
   font-weight: 500;
 }
 
-.app-parent-height {
-  height: 100%;
-}
-
 body,
 .ant-input,
 .ant-dropdown-menu-item {
   color: rgba(0, 0, 0, 0.85) !important;
+}
+
+* {
+  font-family: "Karla", sans-serif !important;
 }

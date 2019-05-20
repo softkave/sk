@@ -98,12 +98,10 @@ const getBlockChildrenQuery = `
 const addCollaboratorsMutation = `
   mutation AddCollaborators (
     $block: BlockParamInput!, 
-    $collaborators: [AddCollaboratorInput!]!,
-    $body: String,
-    $expiresAt: Float
+    $collaborators: [AddCollaboratorInput!]!
   ) {
     block {
-      addCollaborators (block: $block, collaborators: $collaborators, body: $body, expiresAt: $expiresAt) {
+      addCollaborators (block: $block, collaborators: $collaborators) {
         errors {
           field
           message

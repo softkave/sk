@@ -2,13 +2,11 @@ import React from "react";
 import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
 import AddCollaborator from "./AddCollaborator.jsx";
-import CollaboratorForm from "./CollaboratorForm";
 import "./collaborators.css";
 
 export default class Collaborators extends React.Component {
   state = {
-    showAddCollaboratorForm: false,
-    showCollaborator: null
+    showAddCollaboratorForm: false
   };
 
   toggleCollaboratorForm = () => {
@@ -40,12 +38,7 @@ export default class Collaborators extends React.Component {
     return this.renderList(collaborators, c => {
       return (
         <List.Item key={c.customId}>
-          <CollaboratorThumbnail
-            collaborator={c}
-            onClick={() => {
-              this.setState({ showCollaborator: c });
-            }}
-          />
+          <CollaboratorThumbnail collaborator={c} />
         </List.Item>
       );
     });
@@ -68,22 +61,21 @@ export default class Collaborators extends React.Component {
       onAddCollaborators,
       collaborationRequests,
       block,
-      onUpdateCollaborator
+      error
     } = this.props;
-    const { showAddCollaboratorForm, showCollaborator } = this.state;
+    const { showAddCollaboratorForm } = this.state;
+
+    if (error) {
+      return (
+        <React.Fragment>
+          <p style={{ color: "red" }}>{error.message || "An error occurred"}</p>
+          <p>Please reload the page</p>
+        </React.Fragment>
+      );
+    }
 
     return (
       <div className="sk-collaborators">
-        <CollaboratorForm
-          visible={!!showCollaborator}
-          onClose={() => this.setState({ showCollaborator: null })}
-          collaborator={showCollaborator}
-          onSubmit={data => {
-            onUpdateCollaborator(showCollaborator, data);
-            this.setState({ showCollaborator: null });
-          }}
-          block={block}
-        />
         <AddCollaborator
           onSubmit={data => {
             onAddCollaborators(data);

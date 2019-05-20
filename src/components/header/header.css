@@ -1,0 +1,10 @@
+.app-header {
+  padding: 1em;
+  border-bottom: 1px solid #ddd;
+}
+
+.app-content {
+  background-color: #f0f0f0;
+  height: 90%;
+  flex: 2;
+}
