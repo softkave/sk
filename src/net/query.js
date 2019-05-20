@@ -6,7 +6,7 @@ import { devError } from "../utils/log";
 const serverAddr =
   process.env.NODE_ENV === "development"
     ? `http://localhost:5000/graphql`
-    : "/graphql";
+    : "https://api.softkave.com/graphql";
 
 // function getDataFromResult(result, path) {
 //   return dotProp.get(result, path);

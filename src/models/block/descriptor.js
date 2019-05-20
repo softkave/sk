@@ -1,5 +1,5 @@
 import { makeDescriptorFieldsRequired } from "../../utils/descriptor";
-import trim from "../../utils/trim";
+import trim from "validator/lib/trim";
 
 const textPattern = {
   pattern: /\w+/,
