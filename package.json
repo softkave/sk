@@ -18,6 +18,7 @@
     "react-router-dom": "4.3.1",
     "react-scripts": "3.0.0",
     "redux": "4.0.1",
+    "serve": "^11.0.0",
     "simplebar-react": "0.1.4",
     "uuid": "3.3.2",
     "validator": "^10.11.0"
@@ -31,8 +32,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "./deploy.bat"
+    "eject": "react-scripts eject"
   },
   "browserslist": [
     ">0.2%",
