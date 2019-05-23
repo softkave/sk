@@ -17,7 +17,7 @@ class ForgotPassword extends React.Component {
     this.model = {
       fields: {
         email: {
-          component: Input.Password,
+          component: Input,
           label: "Email",
           labelCol: null,
           wrapperCol: null,

@@ -7,8 +7,8 @@ export default function Web() {
     <div className="web">
       <Link to="/signup">Signup</Link>
       <Link to="/login">Login</Link>
-      {/* <Link to="/forgot-password">Forgot Password</Link>
-      <Link to="/change-password">Change Password</Link> */}
+      <Link to="/forgot-password">Forgot Password</Link>
+      <Link to="/change-password">Change Password</Link>
     </div>
   );
 }

@@ -110,12 +110,13 @@ export function updateCollaborationRequest(request, data) {
   );
 }
 
-export function changePasswordWithToken(token) {
-  return query(
+export function changePasswordWithToken(password, token) {
+  return auth(
     null,
     changePasswordWithTokenMutation,
-    { password: token },
-    "data.user.changePasswordWithToken"
+    { password },
+    "data.user.changePasswordWithToken",
+    token
   );
 }
 

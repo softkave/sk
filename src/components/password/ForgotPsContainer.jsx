@@ -5,7 +5,7 @@ import ForgotPassword from "./ForgotPassword";
 function mapDispatchToProps(dispatch) {
   return {
     onSubmit: async data => {
-      await netInterface("user.forgotPassword", data);
+      await netInterface("user.forgotPassword", data.email);
     }
   };
 }

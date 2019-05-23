@@ -69,7 +69,7 @@ export const userLoginMutation = `
 export const forgotPasswordMutation = `
   mutation UserForgotPasswordMutation ($email: String!) {
     user {
-      forgotPassword {
+      forgotPassword(email: $email) {
         errors {
           field
           message

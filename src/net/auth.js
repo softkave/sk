@@ -16,7 +16,7 @@ export default async function queryWithAuth(
   process,
   token
 ) {
-  const requestToken = (user && user.token) || token;
+  const requestToken = token || (user && user.token);
 
   if (!requestToken) {
     throw new NetError("error, please try again");

@@ -6,7 +6,12 @@ import ChangePassword from "./ChangePassword";
 function mapDispatchToProps(dispatch) {
   return {
     onSubmit: async data => {
-      let result = await netInterface("user.changePasswordWithToken", data);
+      const q = new URLSearchParams(window.location.search);
+      let result = await netInterface(
+        "user.changePasswordWithToken",
+        data.password,
+        q.get("t")
+      );
 
       if (result.user && result.token) {
         dispatch(mergeDataByPath("user", result));
