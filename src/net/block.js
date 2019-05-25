@@ -50,8 +50,6 @@ export function updateBlock(block, data) {
     "taskCollaborators"
   ];
 
-  console.log(data, getDataFromObj(data, dataFields));
-
   return auth(
     null,
     updateBlockMutation,

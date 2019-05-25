@@ -4,6 +4,7 @@ import AddDropdownButton from "../AddDropdownButton.jsx";
 import "./group.css";
 import SimpleBar from "simplebar-react";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import DeleteButton from "../DeleteButton";
 
 import "simplebar/dist/simplebar.min.css";
 
@@ -123,11 +124,16 @@ class Group extends React.Component {
                 onClick={() => onEdit(group)}
                 style={{ marginLeft: "2px" }}
               />
-              <Button
-                icon="delete"
-                type="danger"
-                onClick={() => blockHandlers.onDelete(group)}
-                style={{ marginLeft: "2px" }}
+              <DeleteButton
+                deleteButton={
+                  <Button
+                    icon="delete"
+                    type="danger"
+                    style={{ marginLeft: "2px" }}
+                  />
+                }
+                onDelete={() => blockHandlers.onDelete(group)}
+                title="Are you sure you want to delete this group?"
               />
             </Col>
           ) : null}

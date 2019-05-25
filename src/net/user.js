@@ -41,7 +41,6 @@ export async function login(user) {
     "data.user.login"
   );
 
-  console.log(result);
   const prevToken = getItem(tokenStorageName);
 
   if (user.remember || prevToken) {
