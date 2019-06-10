@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { makeBlockHandlers } from "../../models/block/handlers";
-import Orgs from "../../components/org/Orgs.jsx";
+import Orgs from "../../components/block/org/Orgs.jsx";
 
 class OrgsContainer extends React.Component {
   constructor(props) {

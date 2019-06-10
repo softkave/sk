@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import RootGroup from "../../components/group/RootGroup.jsx";
+import Board from "../../components/block/group/Board";
 import { makeBlockHandlers } from "../../models/block/handlers";
 
 class Personal extends React.Component {
@@ -32,7 +32,8 @@ class Personal extends React.Component {
     }
 
     return (
-      <RootGroup
+      <Board
+        isUserRootBlock
         rootBlock={rootBlock}
         blockHandlers={blockHandlers}
         user={user}

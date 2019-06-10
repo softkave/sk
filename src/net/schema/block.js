@@ -13,6 +13,8 @@ const blockFragment = `
     type
     parents
     createdBy
+    position
+    positionTimestamp
     taskCollaborators {
       userId
       assignedAt

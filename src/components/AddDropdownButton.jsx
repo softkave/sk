@@ -4,7 +4,7 @@ import { Menu, Dropdown, Icon, Button } from "antd";
 const MenuItem = Menu.Item;
 
 export default function AddDropdownButton(props) {
-  const { types, onClick, label } = props;
+  const { types, onClick, label, className } = props;
   const menu = (
     <Menu onClick={event => onClick(event.key)}>
       {types.map(type => {
@@ -21,7 +21,9 @@ export default function AddDropdownButton(props) {
 
   return (
     <Dropdown overlay={menu} trigger={["click"]}>
-      <Button icon="plus">{label}</Button>
+      <Button className={className} icon="plus">
+        {label}
+      </Button>
     </Dropdown>
   );
 }

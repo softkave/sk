@@ -28,8 +28,11 @@ export function addBlock(block) {
     "parents",
     "data",
     "priority",
-    "taskCollaborators"
+    "taskCollaborators",
+    "position",
+    "positionTimestamp"
   ];
+
   return auth(
     null,
     addBlockMutation,
@@ -47,7 +50,10 @@ export function updateBlock(block, data) {
     "color",
     "priority",
     "data",
-    "taskCollaborators"
+    "taskCollaborators",
+    "position",
+    "positionTimestamp",
+    "parents"
   ];
 
   return auth(

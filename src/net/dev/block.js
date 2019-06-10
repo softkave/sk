@@ -1,10 +1,20 @@
 module.exports = {
-  getInitBlocks() {
+  getRoleBlocks() {
     let rootBlock = JSON.parse(sessionStorage.getItem("rootBlock-dev"));
-    return [rootBlock];
+    return { blocks: [rootBlock] };
   },
 
-  getPermissionBlocks() {
-    return [];
+  getBlockChildren() {
+    return { blocks: [] };
+  },
+
+  getCollaborators() {
+    return {
+      collaborators: [JSON.parse(sessionStorage.getItem("user-data-dev"))]
+    };
+  },
+
+  getCollabRequests() {
+    return { requests: [] };
   }
 };
