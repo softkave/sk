@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "antd";
-import styled from "styled-components";
+// import styled from "styled-components";
+import styled from "@emotion/styled";
 import EditGroup from "./EditGroup.jsx";
 import EditTask from "../task/EditTask.jsx";
 import EditProject from "../project/EditProject.jsx";
@@ -27,7 +28,10 @@ class Board extends React.Component {
       project: null,
       block: null,
       parent: null,
-      showCollaborators: false
+      showCollaborators: false,
+      // showTaskContext: true,
+      // showProjectContext: false,
+      boardContext: "task"
     };
   }
 
@@ -105,6 +109,17 @@ class Board extends React.Component {
     });
   };
 
+  toggleContext = context => {
+    // const contexts = { task: "showTaskContext", project: "showProjectContext" };
+    // this.setState(
+    //   Object.keys(contexts).reduce((total, next) => {
+    //     total[next] = context === next ? true : false;
+    //   }, {})
+    // );
+
+    this.setState({ boardContext: context });
+  };
+
   getCollaborators() {
     const { user, rootBlock, collaborators } = this.props;
     return rootBlock.collaborators || collaborators || [user];
@@ -112,6 +127,20 @@ class Board extends React.Component {
 
   getExistingNames(blocks = {}) {
     return Object.keys(blocks).map(customId => blocks[customId].name);
+  }
+
+  getChildrenTypes(block) {
+    const { boardContext } = this.state;
+
+    const remove = boardContext === "task" ? "project" : "task";
+    const childrenTypes = getBlockValidChildrenTypes(block);
+    const typeIndex = childrenTypes.indexOf(remove);
+
+    if (typeIndex !== -1) {
+      childrenTypes.splice(typeIndex, 1);
+    }
+
+    return childrenTypes;
   }
 
   renderCollaborators = () => {
@@ -143,10 +172,18 @@ class Board extends React.Component {
       isFromRoot,
       isUserRootBlock
     } = this.props;
-    const { form, project, block, showCollaborators, parent } = this.state;
+    const {
+      form,
+      project,
+      block,
+      showCollaborators,
+      parent,
+      boardContext
+    } = this.state;
 
     const collaborators = this.getCollaborators();
-    const childrenTypes = getBlockValidChildrenTypes(rootBlock);
+    // const childrenTypes = getBlockValidChildrenTypes(rootBlock);
+    const childrenTypes = this.getChildrenTypes(rootBlock);
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
 
     /**
@@ -175,9 +212,12 @@ class Board extends React.Component {
           blockHandlers={blockHandlers}
           parentBlock={rootBlock}
           isFromRoot={actLikeRootBlock}
+          type={boardContext}
         />
       );
     }
+
+    console.log(rootBlock);
 
     return (
       <Content>
@@ -215,6 +255,22 @@ class Board extends React.Component {
               onClick={type => this.toggleForm(type, rootBlock)}
             />
           )}
+          <ContextButtons>
+            <Button.Group>
+              <Button
+                onClick={() => this.toggleContext("task")}
+                type={boardContext === "task" ? "primary" : "default"}
+              >
+                Task
+              </Button>
+              <Button
+                onClick={() => this.toggleContext("project")}
+                type={boardContext === "project" ? "primary" : "default"}
+              >
+                Project
+              </Button>
+            </Button.Group>
+          </ContextButtons>
           {rootBlock.type === "org" && (
             <CollaboratorsButton onClick={this.toggleShowCollaborators}>
               Collaborators
@@ -222,17 +278,20 @@ class Board extends React.Component {
           )}
           <BlockName>{isUserRootBlock ? "Root" : rootBlock.name}</BlockName>
         </Header>
-        <KanbanBoard
-          blockHandlers={blockHandlers}
-          rootBlock={rootBlock}
-          onEdit={group => {
-            this.toggleForm("group", rootBlock, group);
-          }}
-          onClickAddChild={this.toggleForm}
-          user={user}
-          collaborators={collaborators}
-          setCurrentProject={this.setCurrentProject}
-        />
+        <BoardContent>
+          <KanbanBoard
+            blockHandlers={blockHandlers}
+            rootBlock={rootBlock}
+            onEdit={group => {
+              this.toggleForm("group", rootBlock, group);
+            }}
+            onClickAddChild={this.toggleForm}
+            user={user}
+            collaborators={collaborators}
+            setCurrentProject={this.setCurrentProject}
+            type={boardContext}
+          />
+        </BoardContent>
         {/* <Brd
           withScrollableColumns
           initial={rootBlock.group}
@@ -251,6 +310,12 @@ const Content = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+`;
+
+const BoardContent = styled.div`
+  flex: 1;
+  display: inline-flex;
+  overflow-x: hidden;
 `;
 
 const Header = styled.div`
@@ -272,6 +337,11 @@ const CreateButton = styled(AddDropdownButton)`
 `;
 
 const CollaboratorsButton = styled(Button)`
+  margin-left: 16px;
+`;
+
+const ContextButtons = styled.div`
+  display: inline-block;
   margin-left: 16px;
 `;
 

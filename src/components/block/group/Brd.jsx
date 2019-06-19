@@ -23,18 +23,22 @@ export default class Board extends Component {
     isCombineEnabled: false
   };
 
-  state = {
-    columns: this.props.initial,
-    ordered: Object.keys(this.props.initial)
-  };
+  constructor(props) {
+    super(props);
+    console.log(props);
+    this.state = {
+      columns: this.props.initial || {},
+      ordered: Object.keys(this.props.initial || {})
+    };
+  }
 
   componentDidUpdate() {
     const { initial } = this.props;
 
     if (initial !== this.state.columns) {
       this.setState({
-        columns: this.props.initial,
-        ordered: Object.keys(this.props.initial)
+        columns: this.props.initial || {},
+        ordered: Object.keys(this.props.initial || {})
       });
     }
   }

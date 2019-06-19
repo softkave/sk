@@ -39,6 +39,7 @@ export const userLoginFragement = `
       customId
       createdAt
       lastNotificationCheckTime
+      color
     }
     token
   }

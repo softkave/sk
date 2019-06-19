@@ -10,7 +10,8 @@ import {
   getRoleBlocksQuery,
   removeCollaboratorMutation,
   toggleTaskMutation,
-  revokeRequestMutation
+  revokeRequestMutation,
+  dragAndDropMutation
 } from "./schema/block";
 import { getDataFromObj } from "../utils/object";
 
@@ -30,7 +31,12 @@ export function addBlock(block) {
     "priority",
     "taskCollaborators",
     "position",
-    "positionTimestamp"
+    "positionTimestamp",
+    "tasks",
+    "groups",
+    "projects",
+    "groupTaskContext",
+    "groupProjectContext"
   ];
 
   return auth(
@@ -53,7 +59,12 @@ export function updateBlock(block, data) {
     "taskCollaborators",
     "position",
     "positionTimestamp",
-    "parents"
+    "parents",
+    "tasks",
+    "groups",
+    "projects",
+    "groupTaskContext",
+    "groupProjectContext"
   ];
 
   return auth(
@@ -159,5 +170,30 @@ export function revokeRequest(block, request) {
       block: getDataFromObj(block, blockParamFields)
     },
     "data.block.revokeRequest"
+  );
+}
+
+export function dragAndDrop(
+  sourceBlock,
+  draggedBlock,
+  destinationBlock,
+  dropPosition,
+  blockPosition,
+  draggedBlockType,
+  groupContext
+) {
+  return auth(
+    null,
+    dragAndDropMutation,
+    {
+      dropPosition,
+      blockPosition,
+      draggedBlockType,
+      groupContext,
+      sourceBlock: getDataFromObj(sourceBlock, blockParamFields),
+      draggedBlock: getDataFromObj(draggedBlock, blockParamFields),
+      destinationBlock: getDataFromObj(destinationBlock, blockParamFields)
+    },
+    "data.block.dragAndDrop"
   );
 }

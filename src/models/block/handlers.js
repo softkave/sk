@@ -24,8 +24,13 @@ export function makeBlockHandlers({ dispatch, user }) {
       block.customId = newId();
       block.color = randomColor();
       block.expectedEndAt = convertDateToTimestamp(block.expectedEndAt);
-      block.position = 0;
-      block.positionTimestamp = Date.now();
+      // block.position = 0;
+      // block.positionTimestamp = Date.now();
+      block.groupTaskContext = [];
+      block.groupProjectContext = [];
+
+      const actions = [];
+      const childrenTypes = getBlockValidChildrenTypes(block);
 
       if (parent) {
         block.path = `${parent.path}.${block.type}.${block.customId}`;
@@ -37,17 +42,21 @@ export function makeBlockHandlers({ dispatch, user }) {
 
         block.parents.push(parent.customId);
 
-        // const parentChildrenLength = parent.sorted[type].length;
+        const type = `${block.type}s`;
+        // const parentChildrenLength = parent[type].length;
         // block.position = parentChildrenLength;
         // block.positionTimestamp = Date.now();
-        // parent.sorted[type].push(block.customId);
-        // actions.push(setDataByPath(parent.customId, parent));
+        parent[type].push(block.customId);
+
+        if (block.type === "group") {
+          parent.groupTaskContext.push(block.customId);
+          parent.groupProjectContext.push(block.customId);
+        }
+
+        actions.push(setDataByPath(parent.path, parent));
       } else {
         block.path = `${block.type}.${block.customId}`;
       }
-
-      const actions = [];
-      const childrenTypes = getBlockValidChildrenTypes(block);
 
       if (block.type === "org") {
         block.collaborators = [user];
@@ -61,11 +70,18 @@ export function makeBlockHandlers({ dispatch, user }) {
 
       if (childrenTypes.length > 0) {
         childrenTypes.forEach(type => {
+          const pluralizedType = `${type}s`;
           block[type] = {};
+          block[pluralizedType] = [];
         });
       }
 
       actions.push(setDataByPath(block.path, block));
+
+      // if (parent) {
+      //   await netInterface("block.updateBlock", parent, parent);
+      // }
+
       await netInterface("block.addBlock", block);
       dispatch(makeMultiple(actions));
     },
@@ -135,7 +151,23 @@ export function makeBlockHandlers({ dispatch, user }) {
       const { blocks } = await netInterface("block.getBlockChildren", block);
       let blockMappedToType = {};
       const childrenTypes = getBlockValidChildrenTypes(block);
-      // let hasChildrenArray = false;
+      let children = {
+        tasks: [],
+        groups: [],
+        projects: [],
+        groupTaskContext: [],
+        groupProjectContext: []
+      };
+
+      const groupTaskContext = "groupTaskContext";
+      const groupProjectContext = "groupProjectContext";
+      const prefill = [
+        "tasks",
+        "groups",
+        "projects",
+        groupTaskContext,
+        groupProjectContext
+      ];
 
       if (childrenTypes.length > 0) {
         childrenTypes.forEach(type => {
@@ -143,11 +175,21 @@ export function makeBlockHandlers({ dispatch, user }) {
         });
       }
 
-      // if (!Array.isArray(block.children)) {
-      //   block.children = [];
-      // } else {
-      //   hasChildrenArray = true;
-      // }
+      const existingChildrenIds = {
+        tasks: {},
+        groups: {},
+        projects: {},
+        groupTaskContext: {},
+        groupProjectContext: {}
+      };
+
+      Object.keys(existingChildrenIds).forEach(key => {
+        if (Array.isArray(block[key])) {
+          block[key].forEach(id => {
+            existingChildrenIds[key][id] = true;
+          });
+        }
+      });
 
       blocks.forEach(data => {
         data.path = `${block.path}.${data.type}.${data.customId}`;
@@ -155,24 +197,82 @@ export function makeBlockHandlers({ dispatch, user }) {
         typeMap[data.customId] = data;
         blockMappedToType[data.type] = typeMap;
 
-        if (!data.position) {
-          data.position = 0;
-        }
-
-        if (!data.positionTimestamp) {
-          data.positionTimestamp = Date.now();
-        }
-
-        // if (!hasChildrenArray) {
-        //   block.children.push(data.customId);
+        // if (!data.position) {
+        //   data.position = 0;
         // }
+
+        // if (!data.positionTimestamp) {
+        //   data.positionTimestamp = Date.now();
+        // }
+
+        if (data.type === "group") {
+          if (!existingChildrenIds[groupTaskContext][data.customId]) {
+            children[groupTaskContext].push(data.customId);
+          }
+
+          if (!existingChildrenIds[groupProjectContext][data.customId]) {
+            children[groupProjectContext].push(data.customId);
+          }
+
+          // if (!Array.isArray(block[groupTaskContext])) {
+          //   children[groupTaskContext].push(data.customId);
+          // }
+
+          // if (!Array.isArray(block[groupProjectContext])) {
+          //   children[groupProjectContext].push(data.customId);
+          // }
+        }
+        // else {
+        //   const pluralizedType = `${data.type}s`;
+
+        //   if (!existingChildrenIds[pluralizedType][data.customId]) {
+        //     children[pluralizedType].push(data.customId);
+        //   }
+
+        //   // if (!Array.isArray(block[pluralizedType])) {
+        //   //   children[pluralizedType].push(data.customId);
+        //   // }
+        // }
+
+        const pluralizedType = `${data.type}s`;
+
+        if (!existingChildrenIds[pluralizedType][data.customId]) {
+          children[pluralizedType].push(data.customId);
+        }
+
+        prefill.forEach(key => {
+          if (!Array.isArray(data[key])) {
+            data.key = [];
+          }
+        });
       });
 
-      dispatch(mergeDataByPath(block.path, blockMappedToType));
+      let updateParentBlock = false;
 
-      // if (!hasChildrenArray) {
-      //   this.onUpdate(block, block);
+      // if (childrenTypes.length > 0) {
+      //   childrenTypes.forEach(type => {
+      //     const pluralizedType = `${type}s`;
+
+      //     if (children[pluralizedType].length > 0) {
+      //       updateParentBlock = true;
+      //       block[pluralizedType] = children[pluralizedType];
+      //     }
+      //   });
       // }
+
+      console.log(children);
+      Object.keys(children).forEach(key => {
+        if (!Array.isArray(block[key]) || children[key].length > 0) {
+          updateParentBlock = true;
+          block[key] = children[key];
+        }
+      });
+
+      if (updateParentBlock) {
+        await this.onUpdate(block, block);
+      }
+
+      dispatch(mergeDataByPath(block.path, blockMappedToType));
     },
 
     async getCollaborators(block) {
@@ -219,101 +319,78 @@ export function makeBlockHandlers({ dispatch, user }) {
       draggedBlock,
       sourceBlock,
       destinationBlock,
-      dragInformation
+      dragInformation,
+      groupContext
     ) {
       const actions = [];
       const dropPosition = dragInformation.destination.index;
+      const pluralizedType = `${draggedBlock.type}s`;
+      let draggedBlockPosition = null;
       console.log({
         draggedBlock,
         sourceBlock,
         destinationBlock,
-        dragInformation
+        dragInformation,
+        groupContext
       });
 
-      // function updatePosition(blocks, draggedBlock, dropPosition, increment) {
-      //   const updatedBlocks = {};
+      // const draggedBlockImmediateParentId =
+      //   draggedBlock.parents[draggedBlock.parents.length - 1];
 
-      //   for (const id in blocks) {
-      //     let block = blocks[id];
-
-      //     if (increment && id === draggedBlock.customId) {
-      //       block = dotProp.set(block, "position", dropPosition);
-      //     } else if (block.position >= dropPosition) {
-      //       const positionInfo = ``;
-      //       block = dotProp.set(
-      //         block,
-      //         "position",
-      //         increment ? block.position + 1 : block.position - 1
-      //       );
-      //     }
-
-      //     updatedBlocks[id] = block;
-      //   }
-
-      //   return updatedBlocks;
+      // if (
+      //   draggedBlockImmediateParentId === destinationBlock.customId &&
+      //   draggedBlock.position === dropPosition
+      // ) {
+      //   return;
       // }
 
-      if (
-        draggedBlock.type === "GROUP" ||
-        sourceBlock.customId === destinationBlock.customId
-      ) {
-        // const positionInfo = `${dropPosition}-${Date.now()}`;
-        // draggedBlock = dotProp.set(draggedBlock, "position", positionInfo);
-        // draggedBlock = dotProp.merge(draggedBlock, "", {
-        //   position: dropPosition,
-        //   positionTimestamp: Date.now()
-        // });
+      if (draggedBlock.type === "group") {
+        if (groupContext) {
+          const children = sourceBlock[groupContext];
+          const draggedBlockIndex = children.indexOf(draggedBlock.customId);
+          children.splice(draggedBlockIndex, 1);
+          children.splice(dropPosition, 0, draggedBlock.customId);
+          sourceBlock = dotProp.set(sourceBlock, groupContext, children);
+        } else {
+          const groupTaskContext = sourceBlock["groupTaskContext"];
+          const groupTaskIndex = groupTaskContext.indexOf(
+            draggedBlock.customId
+          );
+          groupTaskContext.splice(groupTaskIndex, 1);
+          groupTaskContext.splice(dropPosition, 0, draggedBlock.customId);
+          sourceBlock = dotProp.set(
+            sourceBlock,
+            "groupTaskContext",
+            groupTaskContext
+          );
 
+          const groupProjectContext = sourceBlock["groupProjectContext"];
+          const groupProjectIndex = groupProjectContext.indexOf(
+            draggedBlock.customId
+          );
+          groupProjectContext.splice(groupProjectIndex, 1);
+          groupProjectContext.splice(dropPosition, 0, draggedBlock.customId);
+          sourceBlock.groupProjectContext = groupProjectContext;
+        }
+
+        const children = sourceBlock[pluralizedType];
+        const draggedBlockIndex = children.indexOf(draggedBlock.customId);
+        draggedBlockPosition = draggedBlockIndex;
+        children.splice(draggedBlockIndex, 1);
+        children.splice(dropPosition, 0, draggedBlock.customId);
+        sourceBlock[pluralizedType] = children;
+        actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+      } else if (sourceBlock.customId === destinationBlock.customId) {
+        const children = sourceBlock[pluralizedType];
+        const draggedBlockIndex = children.indexOf(draggedBlock.customId);
+        draggedBlockPosition = draggedBlockIndex;
+        children.splice(draggedBlockIndex, 1);
+        children.splice(dropPosition, 0, draggedBlock.customId);
+        sourceBlock = dotProp.set(sourceBlock, pluralizedType, children);
+        actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+      } else {
         draggedBlock = {
-          ...draggedBlock,
-          position: dropPosition,
-          positionTimestamp: Date.now()
-        };
-
-        // sourceBlock = dotProp.set(
-        //   sourceBlock,
-        //   "group",
-        //   updatePosition(
-        //     sourceBlock.group,
-        //     draggedBlock,
-        //     dragInformation.destination.index,
-        //     true
-        //   )
-        // );
-
-        // actions.push(setDataByPath(sourceBlock.path, sourceBlock));
-        actions.push(setDataByPath(draggedBlock.path, draggedBlock));
-
-        // const children = [...sourceBlock.children];
-        // const draggedBlockIndex = children.indexOf(draggedBlock.customId);
-        // children.splice(draggedBlockIndex, 1);
-        // children.splice(dropPosition, 0, draggedBlock.customId);
-        // sourceBlock = dotProp.set(sourceBlock, "children", children);
-        // actions.push(setDataByPath(sourceBlock.path, sourceBlock));
-      }
-      // else if (sourceBlock.customId === destinationBlock.customId) {
-      //   const draggedBlockType = draggedBlock.type;
-      //   const update = updatePosition(
-      //     sourceBlock[draggedBlockType],
-      //     draggedBlock,
-      //     dragInformation.destination.index,
-      //     true
-      //   );
-
-      //   sourceBlock = dotProp.set(sourceBlock, draggedBlockType, update);
-      //   actions.push(setDataByPath(sourceBlock.path, sourceBlock));
-      // }
-      else {
-        // const positionInfo = `${dropPosition}-${Date.now()}`;
-        // draggedBlock = dotProp.merge(draggedBlock, "", {
-        //   position: dropPosition,
-        //   positionTimestamp: Date.now()
-        // });
-
-        draggedBlock = {
-          ...draggedBlock,
-          position: dropPosition,
-          positionTimestamp: Date.now()
+          ...draggedBlock
         };
 
         let parentIds = draggedBlock.parents;
@@ -325,7 +402,12 @@ export function makeBlockHandlers({ dispatch, user }) {
         );
 
         draggedBlock.parents = parentIds;
-        // draggedBlock = dotProp.set(draggedBlock, "parents", parentIds);
+        const draggedBlockChildrenTypes = getBlockValidChildrenTypes(
+          draggedBlock
+        );
+        draggedBlockChildrenTypes.forEach(type => {
+          draggedBlock[type] = undefined;
+        });
 
         const draggedBlockType = draggedBlock.type;
         const draggedBlockPath = `${draggedBlockType}.${draggedBlock.customId}`;
@@ -337,39 +419,34 @@ export function makeBlockHandlers({ dispatch, user }) {
           draggedBlock
         );
 
-        // const sourceBlockChildren = [...sourceBlock.children];
-        // const destinationBlockChildren = [...destinationBlock.children];
-        // const draggedBlockIndex = sourceBlockChildren.indexOf(draggedBlock.customId);
-        // sourceBlockChildren.splice(draggedBlockIndex, 1);
-        // destinationBlockChildren.splice(dropPosition, 0, draggedBlock.customId);
-        // sourceBlock.children = sourceBlockChildren;
-        // destinationBlock.children = destinationBlockChildren;
-        // actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+        const sourceBlockChildren = sourceBlock[pluralizedType];
+        const destinationBlockChildren = destinationBlock[pluralizedType];
+        const draggedBlockIndex = sourceBlockChildren.indexOf(
+          draggedBlock.customId
+        );
 
-        // const sourceBlockUpdate = updatePosition(
-        //   sourceBlock[draggedBlockType],
-        //   draggedBlock,
-        //   dragInformation.destination.index,
-        //   false
-        // );
+        draggedBlockPosition = draggedBlockIndex;
+        sourceBlockChildren.splice(draggedBlockIndex, 1);
+        destinationBlockChildren.splice(dropPosition, 0, draggedBlock.customId);
+        sourceBlock[pluralizedType] = sourceBlockChildren;
+        destinationBlock[pluralizedType] = destinationBlockChildren;
 
-        // const destinationBlockUpdate = updatePosition(
-        //   destinationBlock[draggedBlockType],
-        //   draggedBlock,
-        //   dragInformation.destination.index,
-        //   true
-        // );
-
-        // sourceBlock[draggedBlockType] = sourceBlockUpdate;
-        // destinationBlock[draggedBlockType] = destinationBlockUpdate;
         actions.push(setDataByPath(draggedBlock.path, draggedBlock));
         actions.push(setDataByPath(sourceBlock.path, sourceBlock));
         actions.push(setDataByPath(destinationBlock.path, destinationBlock));
       }
 
       dispatch(makeMultiple(actions));
-      // await netInterface("block.updateBlock", draggedBlock, draggedBlock);
-      netInterface("block.updateBlock", draggedBlock, draggedBlock);
+      await netInterface(
+        "block.dragAndDrop",
+        sourceBlock,
+        draggedBlock,
+        destinationBlock,
+        dropPosition,
+        draggedBlockPosition,
+        draggedBlock.type,
+        groupContext
+      );
     }
   };
 }
