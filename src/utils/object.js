@@ -6,7 +6,7 @@ export function getDataFromObj(obj, dataArr, addEmpty) {
   dataArr.forEach(field => {
     let data = dotProp.get(obj, field);
 
-    if (data || addEmpty) {
+    if ((data !== null && data !== undefined) || addEmpty) {
       result[field] = data;
     }
   });

@@ -1,10 +1,10 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import Web from "./Web.jsx";
-import SignupContainer from "./components/signup/SignupContainer.jsx";
-import LoginContainer from "./components/login/LoginContainer.jsx";
-import ForgotPasswordContainer from "./components/password/ForgotPsContainer.jsx";
-import ChangePasswordWithTokenContainer from "./components/password/ChangePsWithTokenContainer.jsx";
+import SignupContainer from "./components/account/signup/SignupContainer.jsx";
+import LoginContainer from "./components/account/login/LoginContainer.jsx";
+import ForgotPasswordContainer from "./components/account/password/ForgotPsContainer.jsx";
+import ChangePasswordWithTokenContainer from "./components/account/password/ChangePsWithTokenContainer.jsx";
 import App from "./app";
 import { Col, Row } from "antd";
 

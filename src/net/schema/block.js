@@ -13,6 +13,13 @@ const blockFragment = `
     type
     parents
     createdBy
+    position
+    positionTimestamp
+    tasks
+    groups
+    projects
+    groupTaskContext
+    groupProjectContext
     taskCollaborators {
       userId
       assignedAt
@@ -205,7 +212,36 @@ const revokeRequestMutation = `
       }
     }
   }
-  `;
+`;
+
+const transferBlockMutation = `
+  ${errorFragment}
+  mutation DragAndDropMutation (
+    $sourceBlock: BlockParamInput!,
+    $draggedBlock: BlockParamInput!,
+    $destinationBlock: BlockParamInput,
+    $dropPosition: Float!,
+    $blockPosition: Float!,
+    $draggedBlockType: String!,
+    $groupContext: String
+  ) {
+    block {
+      transferBlock (
+        sourceBlock: $sourceBlock,
+        draggedBlock: $draggedBlock,
+        destinationBlock: $destinationBlock,
+        dropPosition: $dropPosition,
+        blockPosition: $blockPosition,
+        draggedBlockType: $draggedBlockType,
+        groupContext: $groupContext
+      ) {
+        errors {
+          ...errorFragment
+        }
+      }
+    }
+  }
+`;
 
 module.exports = {
   addBlockMutation,
@@ -219,5 +255,6 @@ module.exports = {
   getRoleBlocksQuery,
   removeCollaboratorMutation,
   toggleTaskMutation,
-  revokeRequestMutation
+  revokeRequestMutation,
+  transferBlockMutation
 };

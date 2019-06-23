@@ -1,0 +1,36 @@
+.sk-minitask {
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  /* margin-bottom: 1em; */
+  background-color: white;
+}
+
+/* .sk-minitask:first-of-type {
+  margin-top: 1em;
+} */
+
+.sk-minitask-top-extra {
+  text-align: right;
+}
+
+.sk-minitask-desc {
+  margin: 16px 0;
+}
+
+.sk-minitask-desc p {
+  margin: 0;
+  padding: 0 8px !important;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.sk-minitask-footer-right {
+  text-align: right;
+}
+
+.sk-minitask-priority {
+  padding: 0 8px !important;
+}
