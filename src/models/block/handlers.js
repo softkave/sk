@@ -232,15 +232,13 @@ export function makeBlockHandlers({ dispatch, user }) {
         block
       );
 
-      dispatch(mergeDataByPath(`${block.path}.collaborators`, collaborators));
+      dispatch(setDataByPath(`${block.path}.collaborators`, collaborators));
     },
 
     async getCollaborationRequests(block) {
       const { requests } = await netInterface("block.getCollabRequests", block);
 
-      dispatch(
-        mergeDataByPath(`${block.path}.collaborationRequests`, requests)
-      );
+      dispatch(setDataByPath(`${block.path}.collaborationRequests`, requests));
     },
 
     async fetchRootData() {
