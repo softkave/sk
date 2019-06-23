@@ -62,7 +62,6 @@ export default class DataLoader extends React.Component {
   render() {
     const { data, render } = this.props;
     const { fetchingData, error } = this.state;
-    console.log("L");
 
     if (fetchingData) {
       return "Loading";

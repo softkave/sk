@@ -11,7 +11,7 @@ import {
   removeCollaboratorMutation,
   toggleTaskMutation,
   revokeRequestMutation,
-  dragAndDropMutation
+  transferBlockMutation
 } from "./schema/block";
 import { getDataFromObj } from "../utils/object";
 
@@ -173,7 +173,7 @@ export function revokeRequest(block, request) {
   );
 }
 
-export function dragAndDrop(
+export function transferBlock(
   sourceBlock,
   draggedBlock,
   destinationBlock,
@@ -184,7 +184,7 @@ export function dragAndDrop(
 ) {
   return auth(
     null,
-    dragAndDropMutation,
+    transferBlockMutation,
     {
       dropPosition,
       blockPosition,
@@ -194,6 +194,6 @@ export function dragAndDrop(
       draggedBlock: getDataFromObj(draggedBlock, blockParamFields),
       destinationBlock: getDataFromObj(destinationBlock, blockParamFields)
     },
-    "data.block.dragAndDrop"
+    "data.block.transferBlock"
   );
 }

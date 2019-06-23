@@ -1,14 +1,13 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
 import SimpleBar from "simplebar-react";
-// import styled from "styled-components";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import AddDropdownButton from "../../AddDropdownButton.jsx";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import DeleteButton from "../../DeleteButton";
 import styled from "@emotion/styled";
 
-import "simplebar/dist/simplebar.min.css";
+// import "simplebar/dist/simplebar.min.css";
 
 function getChildrenTypes(block, type) {
   const remove = type === "task" ? "project" : "task";
@@ -57,19 +56,25 @@ const GroupHeader = React.memo(function GroupHeader(props) {
 });
 
 const GroupBody = React.memo(function GroupBody(props) {
-  const { render, droppableId } = props;
+  const { render, droppableId, type } = props;
 
-  // return render();
+  // return (
+  //   <GroupScrollContainer>
+  //     <Droppable droppableId={droppableId} type={type.toUpperCase()}>
+  //       {(provided, snapshot) => (
+  //         <GroupDroppable ref={provided.innerRef} {...provided.droppableProps}>
+  //           {render()}
+  //           {provided.placeholder}
+  //         </GroupDroppable>
+  //       )}
+  //     </Droppable>
+  //   </GroupScrollContainer>
+  // );
 
   return (
-    <Droppable droppableId={droppableId} type="TASKS">
-      {(provided, snapshot) => (
-        <GroupDroppable ref={provided.innerRef} {...provided.droppableProps}>
-          <GroupScrollContainer>{render()}</GroupScrollContainer>
-          {provided.placeholder}
-        </GroupDroppable>
-      )}
-    </Droppable>
+    <GroupScrollContainer>
+      <GroupScrollContainerInner>{render()}</GroupScrollContainerInner>
+    </GroupScrollContainer>
   );
 });
 
@@ -83,24 +88,18 @@ class Group extends React.PureComponent {
       draggableId,
       index,
       droppableId,
-      children,
       disabled,
-      tasks,
-      projects,
       render,
       type
     } = this.props;
 
-    return (
+    const rendered = (
       <Draggable
-        // key={draggableId}
         index={index}
         draggableId={draggableId}
-        // isDragDisabled={disabled}
+        isDragDisabled={disabled}
       >
         {(provided, snapshot) => {
-          console.log(snapshot.isDragging);
-
           return (
             <GroupContainer
               ref={provided.innerRef}
@@ -117,13 +116,19 @@ class Group extends React.PureComponent {
                     type={type}
                   />
                 </div>
-                <GroupBody droppableId={droppableId} render={render} />
+                <GroupBody
+                  droppableId={droppableId}
+                  render={render}
+                  type={type}
+                />
               </GroupContainerInner>
             </GroupContainer>
           );
         }}
       </Draggable>
     );
+
+    return rendered;
   }
 }
 
@@ -132,6 +137,8 @@ const GroupContainer = styled.div`
   height: 100%;
   margin-right: 16px;
   width: 300px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 
   &:last-of-type {
     margin-right: 0;
@@ -144,11 +151,10 @@ const GroupContainerInner = styled.div`
   vertical-align: top;
   background-color: #fff;
   box-sizing: border-box;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 4px;
 `;
 
 const Header = styled(Row)`
@@ -158,6 +164,7 @@ const Header = styled(Row)`
 
 const GroupName = styled(Col)`
   font-weight: bold;
+  min-height: 32px;
 `;
 
 const GroupHeaderButtons = styled(Col)`
@@ -173,16 +180,28 @@ const GroupScrollContainer = styled(SimpleBar)`
   height: 100%;
 `;
 
+const GroupScrollContainerInner = styled.div`
+  margin: 12px;
+`;
+
+// const GroupScrollContainer = styled(SimpleBar)`
+//   overflow-x: hidden;
+//   height: 100%;
+//   width: 100%;
+//   flex: 2 1;
+// `;
+
 // const GroupScrollContainer = styled.div`
 //   overflow-x: hidden;
 //   height: 100%;
 // `;
 
 const GroupDroppable = styled.div`
-  width: 100%;
-  flex: 2 1;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  // width: 100%;
+  // flex: 2 1;
+  // overflow-x: hidden;
+  // overflow-y: hidden;
+  // height: 100%;
 `;
 
 export default Group;

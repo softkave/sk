@@ -86,8 +86,7 @@ export default function BlockList(props) {
     listType,
     style,
     blocks,
-    title,
-    isDragging
+    title
   } = props;
 
   return (

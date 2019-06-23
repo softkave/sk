@@ -1,6 +1,5 @@
 import React from "react";
 import { Button } from "antd";
-// import styled from "styled-components";
 import styled from "@emotion/styled";
 import EditGroup from "./EditGroup.jsx";
 import EditTask from "../task/EditTask.jsx";
@@ -14,7 +13,6 @@ import BoardContainer from "./BoardContainer";
 import Collaborators from "../../collaborator/Collaborators.jsx";
 import KanbanBoard from "./KanbanBoard";
 import DataLoader from "./DataLoader.jsx";
-import Brd from "./Brd";
 
 class Board extends React.Component {
   constructor(props) {
@@ -29,8 +27,6 @@ class Board extends React.Component {
       block: null,
       parent: null,
       showCollaborators: false,
-      // showTaskContext: true,
-      // showProjectContext: false,
       boardContext: "task"
     };
   }
@@ -110,13 +106,6 @@ class Board extends React.Component {
   };
 
   toggleContext = context => {
-    // const contexts = { task: "showTaskContext", project: "showProjectContext" };
-    // this.setState(
-    //   Object.keys(contexts).reduce((total, next) => {
-    //     total[next] = context === next ? true : false;
-    //   }, {})
-    // );
-
     this.setState({ boardContext: context });
   };
 
@@ -187,8 +176,8 @@ class Board extends React.Component {
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
 
     /**
-     * This should be only for collaboration requests, cause we need collaborators
-     * throughout the block, not only here.
+     * This should be only for collaboration requests,
+     * cause we need collaborators throughout the block, not only here.
      *
      * TODO: move fetching collaborators upward
      */
@@ -216,8 +205,6 @@ class Board extends React.Component {
         />
       );
     }
-
-    console.log(rootBlock);
 
     return (
       <Content>
@@ -292,15 +279,6 @@ class Board extends React.Component {
             type={boardContext}
           />
         </BoardContent>
-        {/* <Brd
-          withScrollableColumns
-          initial={rootBlock.group}
-          handlers={blockHandlers}
-          onEdit={group => {
-            this.toggleForm("group", rootBlock, group);
-          }}
-          onClickAddChild={this.toggleForm}
-        /> */}
       </Content>
     );
   }
@@ -315,7 +293,7 @@ const Content = styled.div`
 const BoardContent = styled.div`
   flex: 1;
   display: inline-flex;
-  overflow-x: hidden;
+  // overflow-x: hidden;
 `;
 
 const Header = styled.div`

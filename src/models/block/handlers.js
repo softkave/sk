@@ -24,8 +24,6 @@ export function makeBlockHandlers({ dispatch, user }) {
       block.customId = newId();
       block.color = randomColor();
       block.expectedEndAt = convertDateToTimestamp(block.expectedEndAt);
-      // block.position = 0;
-      // block.positionTimestamp = Date.now();
       block.groupTaskContext = [];
       block.groupProjectContext = [];
 
@@ -40,12 +38,8 @@ export function makeBlockHandlers({ dispatch, user }) {
           block.parents = block.parents.concat(parent.parents);
         }
 
-        block.parents.push(parent.customId);
-
         const type = `${block.type}s`;
-        // const parentChildrenLength = parent[type].length;
-        // block.position = parentChildrenLength;
-        // block.positionTimestamp = Date.now();
+        block.parents.push(parent.customId);
         parent[type].push(block.customId);
 
         if (block.type === "group") {
@@ -77,10 +71,6 @@ export function makeBlockHandlers({ dispatch, user }) {
       }
 
       actions.push(setDataByPath(block.path, block));
-
-      // if (parent) {
-      //   await netInterface("block.updateBlock", parent, parent);
-      // }
 
       await netInterface("block.addBlock", block);
       dispatch(makeMultiple(actions));
@@ -197,14 +187,6 @@ export function makeBlockHandlers({ dispatch, user }) {
         typeMap[data.customId] = data;
         blockMappedToType[data.type] = typeMap;
 
-        // if (!data.position) {
-        //   data.position = 0;
-        // }
-
-        // if (!data.positionTimestamp) {
-        //   data.positionTimestamp = Date.now();
-        // }
-
         if (data.type === "group") {
           if (!existingChildrenIds[groupTaskContext][data.customId]) {
             children[groupTaskContext].push(data.customId);
@@ -213,26 +195,7 @@ export function makeBlockHandlers({ dispatch, user }) {
           if (!existingChildrenIds[groupProjectContext][data.customId]) {
             children[groupProjectContext].push(data.customId);
           }
-
-          // if (!Array.isArray(block[groupTaskContext])) {
-          //   children[groupTaskContext].push(data.customId);
-          // }
-
-          // if (!Array.isArray(block[groupProjectContext])) {
-          //   children[groupProjectContext].push(data.customId);
-          // }
         }
-        // else {
-        //   const pluralizedType = `${data.type}s`;
-
-        //   if (!existingChildrenIds[pluralizedType][data.customId]) {
-        //     children[pluralizedType].push(data.customId);
-        //   }
-
-        //   // if (!Array.isArray(block[pluralizedType])) {
-        //   //   children[pluralizedType].push(data.customId);
-        //   // }
-        // }
 
         const pluralizedType = `${data.type}s`;
 
@@ -249,18 +212,6 @@ export function makeBlockHandlers({ dispatch, user }) {
 
       let updateParentBlock = false;
 
-      // if (childrenTypes.length > 0) {
-      //   childrenTypes.forEach(type => {
-      //     const pluralizedType = `${type}s`;
-
-      //     if (children[pluralizedType].length > 0) {
-      //       updateParentBlock = true;
-      //       block[pluralizedType] = children[pluralizedType];
-      //     }
-      //   });
-      // }
-
-      console.log(children);
       Object.keys(children).forEach(key => {
         if (!Array.isArray(block[key]) || children[key].length > 0) {
           updateParentBlock = true;
@@ -315,96 +266,128 @@ export function makeBlockHandlers({ dispatch, user }) {
       dispatch(makeMultiple(actions));
     },
 
-    async onDragAndDropBlock(
+    async onTransferBlock(
       draggedBlock,
       sourceBlock,
       destinationBlock,
       dragInformation,
       groupContext
     ) {
+      function move(list, id, dropPosition) {
+        const idIndex = list.indexOf(id);
+        list = [...list];
+        list.splice(idIndex, 1);
+        list.splice(dropPosition, 0, id);
+        return list;
+      }
+
+      // function update(list, id, updateId) {
+      //   const idIndex = list.indexOf(id);
+      // list = [...list];
+      //   list[idIndex] = updateId;
+      //   return list;
+      // }
+
+      function remove(list, id) {
+        const idIndex = list.indexOf(id);
+        list = [...list];
+        list.splice(idIndex, 1);
+        return list;
+      }
+
+      function add(list, id, dropPosition) {
+        list = [...list];
+        list.splice(dropPosition, 0, id);
+        return list;
+      }
+
+      function getIndex(list, id) {
+        const idIndex = list.indexOf(id);
+        return idIndex;
+      }
+
       const actions = [];
       const dropPosition = dragInformation.destination.index;
       const pluralizedType = `${draggedBlock.type}s`;
-      let draggedBlockPosition = null;
-      console.log({
-        draggedBlock,
-        sourceBlock,
-        destinationBlock,
-        dragInformation,
-        groupContext
-      });
+      let draggedBlockPosition = getIndex(
+        sourceBlock[pluralizedType],
+        draggedBlock.customId
+      );
 
-      // const draggedBlockImmediateParentId =
-      //   draggedBlock.parents[draggedBlock.parents.length - 1];
-
-      // if (
-      //   draggedBlockImmediateParentId === destinationBlock.customId &&
-      //   draggedBlock.position === dropPosition
-      // ) {
-      //   return;
-      // }
+      // console.log({
+      //   draggedBlock,
+      //   sourceBlock,
+      //   destinationBlock,
+      //   dragInformation,
+      //   groupContext
+      // });
 
       if (draggedBlock.type === "group") {
         if (groupContext) {
-          const children = sourceBlock[groupContext];
-          const draggedBlockIndex = children.indexOf(draggedBlock.customId);
-          children.splice(draggedBlockIndex, 1);
-          children.splice(dropPosition, 0, draggedBlock.customId);
-          sourceBlock = dotProp.set(sourceBlock, groupContext, children);
-        } else {
-          const groupTaskContext = sourceBlock["groupTaskContext"];
-          const groupTaskIndex = groupTaskContext.indexOf(
-            draggedBlock.customId
-          );
-          groupTaskContext.splice(groupTaskIndex, 1);
-          groupTaskContext.splice(dropPosition, 0, draggedBlock.customId);
-          sourceBlock = dotProp.set(
-            sourceBlock,
-            "groupTaskContext",
-            groupTaskContext
+          const children = move(
+            sourceBlock[groupContext],
+            draggedBlock.customId,
+            dropPosition
           );
 
-          const groupProjectContext = sourceBlock["groupProjectContext"];
-          const groupProjectIndex = groupProjectContext.indexOf(
-            draggedBlock.customId
+          sourceBlock[groupContext] = children;
+        } else {
+          const groupTaskContext = `groupTaskContext`;
+          const groupProjectContext = `groupProjectContext`;
+          const groupTaskContextChildren = move(
+            sourceBlock[groupTaskContext],
+            draggedBlock.customId,
+            dropPosition
           );
-          groupProjectContext.splice(groupProjectIndex, 1);
-          groupProjectContext.splice(dropPosition, 0, draggedBlock.customId);
-          sourceBlock.groupProjectContext = groupProjectContext;
+
+          const groupProjectContextChildren = move(
+            sourceBlock[groupProjectContext],
+            draggedBlock.customId,
+            dropPosition
+          );
+
+          sourceBlock[groupTaskContext] = groupTaskContextChildren;
+          sourceBlock[groupProjectContext] = groupProjectContextChildren;
         }
 
-        const children = sourceBlock[pluralizedType];
-        const draggedBlockIndex = children.indexOf(draggedBlock.customId);
-        draggedBlockPosition = draggedBlockIndex;
-        children.splice(draggedBlockIndex, 1);
-        children.splice(dropPosition, 0, draggedBlock.customId);
+        const children = move(
+          sourceBlock[pluralizedType],
+          draggedBlock.customId,
+          dropPosition
+        );
+
         sourceBlock[pluralizedType] = children;
         actions.push(setDataByPath(sourceBlock.path, sourceBlock));
       } else if (sourceBlock.customId === destinationBlock.customId) {
-        const children = sourceBlock[pluralizedType];
-        const draggedBlockIndex = children.indexOf(draggedBlock.customId);
-        draggedBlockPosition = draggedBlockIndex;
-        children.splice(draggedBlockIndex, 1);
-        children.splice(dropPosition, 0, draggedBlock.customId);
-        sourceBlock = dotProp.set(sourceBlock, pluralizedType, children);
-        actions.push(setDataByPath(sourceBlock.path, sourceBlock));
-      } else {
-        draggedBlock = {
-          ...draggedBlock
-        };
-
-        let parentIds = draggedBlock.parents;
-        const sourceBlockIdIndex = parentIds.indexOf(sourceBlock.customId);
-        parentIds = dotProp.set(
-          parentIds,
-          sourceBlockIdIndex,
-          destinationBlock.customId
+        const children = move(
+          sourceBlock[pluralizedType],
+          draggedBlock.customId,
+          dropPosition
         );
 
-        draggedBlock.parents = parentIds;
+        sourceBlock[pluralizedType] = children;
+        actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+      } else {
+        sourceBlock[pluralizedType] = remove(
+          sourceBlock[pluralizedType],
+          draggedBlock.customId
+        );
+
+        destinationBlock[pluralizedType] = add(
+          destinationBlock[pluralizedType],
+          draggedBlock.customId,
+          dropPosition
+        );
+
+        const draggedBlockParentUpdate = [...(destinationBlock.parents || [])];
+        draggedBlockParentUpdate.push(destinationBlock.customId);
+        draggedBlock.parents = draggedBlockParentUpdate;
+
+        // clear children data so that they can be loaded with updated parents
         const draggedBlockChildrenTypes = getBlockValidChildrenTypes(
           draggedBlock
         );
+
         draggedBlockChildrenTypes.forEach(type => {
           draggedBlock[type] = undefined;
         });
@@ -419,26 +402,21 @@ export function makeBlockHandlers({ dispatch, user }) {
           draggedBlock
         );
 
-        const sourceBlockChildren = sourceBlock[pluralizedType];
-        const destinationBlockChildren = destinationBlock[pluralizedType];
-        const draggedBlockIndex = sourceBlockChildren.indexOf(
-          draggedBlock.customId
-        );
-
-        draggedBlockPosition = draggedBlockIndex;
-        sourceBlockChildren.splice(draggedBlockIndex, 1);
-        destinationBlockChildren.splice(dropPosition, 0, draggedBlock.customId);
-        sourceBlock[pluralizedType] = sourceBlockChildren;
-        destinationBlock[pluralizedType] = destinationBlockChildren;
-
         actions.push(setDataByPath(draggedBlock.path, draggedBlock));
         actions.push(setDataByPath(sourceBlock.path, sourceBlock));
         actions.push(setDataByPath(destinationBlock.path, destinationBlock));
       }
 
+      if (
+        sourceBlock.customId === destinationBlock.customId &&
+        dropPosition === draggedBlockPosition
+      ) {
+        return;
+      }
+
       dispatch(makeMultiple(actions));
       await netInterface(
-        "block.dragAndDrop",
+        "block.transferBlock",
         sourceBlock,
         draggedBlock,
         destinationBlock,
@@ -447,6 +425,9 @@ export function makeBlockHandlers({ dispatch, user }) {
         draggedBlock.type,
         groupContext
       );
+
+      // console.log(actions);
+      // dispatch(makeMultiple(actions));
     }
   };
 }

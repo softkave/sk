@@ -4,7 +4,7 @@ import Priority from "./Priority.jsx";
 import DeleteButton from "../../DeleteButton";
 import "./minitask.css";
 
-class Task extends React.Component {
+class Task extends React.PureComponent {
   state = {
     toggleLoading: false,
     toggleLoadingError: null

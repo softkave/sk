@@ -214,7 +214,7 @@ const revokeRequestMutation = `
   }
 `;
 
-const dragAndDropMutation = `
+const transferBlockMutation = `
   ${errorFragment}
   mutation DragAndDropMutation (
     $sourceBlock: BlockParamInput!,
@@ -223,10 +223,10 @@ const dragAndDropMutation = `
     $dropPosition: Float!,
     $blockPosition: Float!,
     $draggedBlockType: String!,
-    $groupContext: String!
+    $groupContext: String
   ) {
     block {
-       dragAndDrop (
+      transferBlock (
         sourceBlock: $sourceBlock,
         draggedBlock: $draggedBlock,
         destinationBlock: $destinationBlock,
@@ -234,7 +234,7 @@ const dragAndDropMutation = `
         blockPosition: $blockPosition,
         draggedBlockType: $draggedBlockType,
         groupContext: $groupContext
-       ) {
+      ) {
         errors {
           ...errorFragment
         }
@@ -256,5 +256,5 @@ module.exports = {
   removeCollaboratorMutation,
   toggleTaskMutation,
   revokeRequestMutation,
-  dragAndDropMutation
+  transferBlockMutation
 };
