@@ -134,7 +134,13 @@ class KanbanBoard extends React.PureComponent {
   }
 
   renderTasks(tasks, parent) {
-    const { blockHandlers, user, rootBlock, collaborators } = this.props;
+    const {
+      blockHandlers,
+      user,
+      rootBlock,
+      collaborators,
+      toggleForm
+    } = this.props;
     const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
 
     const renderedTasks = tasksToRender.map((task, index) => {
@@ -164,7 +170,7 @@ class KanbanBoard extends React.PureComponent {
             task={task}
             collaborators={collaborators}
             blockHandlers={blockHandlers}
-            onEdit={task => this.toggleForm("task", parent || rootBlock, task)}
+            onEdit={task => toggleForm("task", parent || rootBlock, task)}
           />
         </BlockThumbnailContainer>
       );

@@ -266,17 +266,26 @@ class Board extends React.Component {
           <BlockName>{isUserRootBlock ? "Root" : rootBlock.name}</BlockName>
         </Header>
         <BoardContent>
-          <KanbanBoard
-            blockHandlers={blockHandlers}
-            rootBlock={rootBlock}
-            onEdit={group => {
-              this.toggleForm("group", rootBlock, group);
+          <DataLoader
+            isDataLoaded={this.isCollaboratorDataLoaded}
+            loadData={this.fetchCollaborationData}
+            render={() => {
+              return (
+                <KanbanBoard
+                  blockHandlers={blockHandlers}
+                  rootBlock={rootBlock}
+                  onEdit={group => {
+                    this.toggleForm("group", rootBlock, group);
+                  }}
+                  onClickAddChild={this.toggleForm}
+                  user={user}
+                  collaborators={collaborators}
+                  setCurrentProject={this.setCurrentProject}
+                  type={boardContext}
+                  toggleForm={this.toggleForm}
+                />
+              );
             }}
-            onClickAddChild={this.toggleForm}
-            user={user}
-            collaborators={collaborators}
-            setCurrentProject={this.setCurrentProject}
-            type={boardContext}
           />
         </BoardContent>
       </Content>
