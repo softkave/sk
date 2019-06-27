@@ -216,6 +216,7 @@ class Board extends React.Component {
           existingProjects={
             form.project && this.getExistingNames(parent.project)
           }
+          submitLabel={block && "Update Project"}
         />
         <EditGroup
           visible={form.group}
@@ -223,6 +224,7 @@ class Board extends React.Component {
           onClose={() => this.toggleForm("group")}
           data={block}
           existingGroups={form.group && this.getExistingNames(parent.group)}
+          submitLabel={block && "Update Group"}
         />
         <EditTask
           defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
@@ -232,6 +234,7 @@ class Board extends React.Component {
           onClose={() => this.toggleForm("task")}
           data={block}
           user={user}
+          submitLabel={block && "Update Task"}
         />
         <Header>
           {onBack && <OnBackButton onClick={onBack} icon="arrow-left" />}

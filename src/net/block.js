@@ -13,7 +13,7 @@ import {
   revokeRequestMutation,
   transferBlockMutation
 } from "./schema/block";
-import { getDataFromObj } from "../utils/object";
+import { getDataFromObject } from "../utils/object";
 
 const blockParamFields = ["customId"];
 
@@ -42,7 +42,7 @@ export function addBlock(block) {
   return auth(
     null,
     addBlockMutation,
-    { block: getDataFromObj(block, fields) },
+    { block: getDataFromObject(block, fields) },
     "data.block.addBlock"
   );
 }
@@ -71,8 +71,8 @@ export function updateBlock(block, data) {
     null,
     updateBlockMutation,
     {
-      block: getDataFromObj(block, blockParamFields),
-      data: getDataFromObj(data, dataFields)
+      block: getDataFromObject(block, blockParamFields),
+      data: getDataFromObject(data, dataFields)
     },
     "data.block.updateBlock"
   );
@@ -82,7 +82,7 @@ export function deleteBlock(block) {
   return auth(
     null,
     deleteBlockMutation,
-    { block: getDataFromObj(block, blockParamFields) },
+    { block: getDataFromObject(block, blockParamFields) },
     "data.block.deleteBlock"
   );
 }
@@ -91,7 +91,7 @@ export function getBlockChildren(block, types) {
   return auth(
     null,
     getBlockChildrenQuery,
-    { types, block: getDataFromObj(block, blockParamFields) },
+    { types, block: getDataFromObject(block, blockParamFields) },
     "data.block.getBlockChildren"
   );
 }
@@ -102,9 +102,9 @@ export function addCollaborators(block, collaborators) {
     null,
     addCollaboratorsMutation,
     {
-      block: getDataFromObj(block, blockParamFields),
+      block: getDataFromObject(block, blockParamFields),
       collaborators: collaborators.map(c =>
-        getDataFromObj(c, collaboratorFields)
+        getDataFromObject(c, collaboratorFields)
       )
     },
     "data.block.addCollaborators"
@@ -116,7 +116,7 @@ export function removeCollaborator(block, collaborator) {
     null,
     removeCollaboratorMutation,
     {
-      block: getDataFromObj(block, blockParamFields),
+      block: getDataFromObject(block, blockParamFields),
       collaborator: collaborator.customId
     },
     "data.block.removeCollaborator"
@@ -128,7 +128,7 @@ export function getCollaborators(block) {
     null,
     getCollaboratorsQuery,
     {
-      block: getDataFromObj(block, blockParamFields)
+      block: getDataFromObject(block, blockParamFields)
     },
     "data.block.getCollaborators"
   );
@@ -139,7 +139,7 @@ export function getCollabRequests(block) {
     null,
     getCollabRequestsQuery,
     {
-      block: getDataFromObj(block, blockParamFields)
+      block: getDataFromObject(block, blockParamFields)
     },
     "data.block.getCollabRequests"
   );
@@ -155,7 +155,7 @@ export function toggleTask(block, data) {
     toggleTaskMutation,
     {
       data,
-      block: getDataFromObj(block, blockParamFields)
+      block: getDataFromObject(block, blockParamFields)
     },
     "data.block.toggleTask"
   );
@@ -167,7 +167,7 @@ export function revokeRequest(block, request) {
     revokeRequestMutation,
     {
       request: request.customId,
-      block: getDataFromObj(block, blockParamFields)
+      block: getDataFromObject(block, blockParamFields)
     },
     "data.block.revokeRequest"
   );
@@ -190,9 +190,9 @@ export function transferBlock(
       blockPosition,
       draggedBlockType,
       groupContext,
-      sourceBlock: getDataFromObj(sourceBlock, blockParamFields),
-      draggedBlock: getDataFromObj(draggedBlock, blockParamFields),
-      destinationBlock: getDataFromObj(destinationBlock, blockParamFields)
+      sourceBlock: getDataFromObject(sourceBlock, blockParamFields),
+      draggedBlock: getDataFromObject(draggedBlock, blockParamFields),
+      destinationBlock: getDataFromObject(destinationBlock, blockParamFields)
     },
     "data.block.transferBlock"
   );

@@ -13,7 +13,7 @@ import {
 } from "./schema/user";
 import query from "./query";
 import auth from "./auth";
-import { getDataFromObj } from "../utils/object";
+import { getDataFromObject } from "../utils/object";
 import { setItem, getItem, removeItem } from "../utils/storage";
 
 const tokenStorageName = "t";
@@ -24,7 +24,7 @@ export async function signup(user) {
   let result = await query(
     null,
     userSignupMutation,
-    { user: getDataFromObj(user, userFields) },
+    { user: getDataFromObject(user, userFields) },
     "data.user.signup"
   );
 
@@ -60,7 +60,7 @@ export function updateUser(user) {
   return auth(
     null,
     updateUserMutation,
-    { user: getDataFromObj(user, updateUserFields) },
+    { user: getDataFromObject(user, updateUserFields) },
     "data.user.updateUser"
   );
 }
@@ -103,7 +103,7 @@ export function updateCollaborationRequest(request, data) {
     updateCollaborationRequestMutation,
     {
       customId: request.customId,
-      data: getDataFromObj(data, updateRequestFields)
+      data: getDataFromObject(data, updateRequestFields)
     },
     "data.user.updateCollaborationRequest"
   );

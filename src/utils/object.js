@@ -1,6 +1,6 @@
 import dotProp from "dot-prop-immutable";
 
-export function getDataFromObj(obj, dataArr, addEmpty) {
+export function getDataFromObject(obj, dataArr, addEmpty) {
   let result = {};
 
   dataArr.forEach(field => {
@@ -22,7 +22,15 @@ function defaultIndexer(data, path) {
   return JSON.stringify(data);
 }
 
-export function indexArray(arr = [], { path, indexer = defaultIndexer } = {}) {
+export function indexArray(arr = [], { path, indexer } = {}) {
+  if (typeof indexer !== "function") {
+    if (typeof path !== "string") {
+      throw new Error("path must be provided if an indexer is not provided");
+    }
+
+    indexer = defaultIndexer;
+  }
+
   let result = arr.reduce((accumulator, current) => {
     accumulator[indexer(current, path, arr)] = current;
     return accumulator;

@@ -3,6 +3,7 @@ import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
 import AddCollaborator from "./AddCollaborator.jsx";
 import "./collaborators.css";
+import AC from "./AC.jsx";
 
 export default class Collaborators extends React.Component {
   state = {
@@ -76,7 +77,17 @@ export default class Collaborators extends React.Component {
 
     return (
       <div className="sk-collaborators">
-        <AddCollaborator
+        <AC
+          visible={showAddCollaboratorForm}
+          onClose={this.toggleCollaboratorForm}
+          existingCollaborators={collaborators}
+          existingCollaborationRequests={collaborationRequests}
+          onSendRequests={data => {
+            onAddCollaborators(data);
+            this.toggleCollaboratorForm();
+          }}
+        />
+        {/* <AddCollaborator
           onSubmit={data => {
             onAddCollaborators(data);
             this.toggleCollaboratorForm();
@@ -85,7 +96,7 @@ export default class Collaborators extends React.Component {
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}
           existingCollaborationRequests={collaborationRequests}
-        />
+        /> */}
         <div className="sk-collaborators-header">
           <Button icon="arrow-left" onClick={onBack} />
           <Button
