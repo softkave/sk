@@ -4,6 +4,8 @@ import ComputeForm from "../../compute-form/ComputeForm.jsx";
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
 import appInfo from "../../../info/app-info";
+import { constructSubmitHandler } from "../../form-utils.js";
+import FormError from "../../FormError.jsx";
 
 const forgotPasswordRequestSuccessMessage = `
   Request successful, if you have an account with ${appInfo.appName}, 
@@ -75,10 +77,10 @@ class ForgotPassword extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true }),
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (indexedErrors.error) {
-          this.setState({ error: indexedErrors.error });
+        if (Array.isArray(indexedErrors.error)) {
+          this.setState({ error: indexedErrors.error[0].message });
         }
       },
       successfulProcess: () =>

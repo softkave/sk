@@ -1,3 +1,5 @@
+import { devLog } from "../utils/log";
+
 export function makeSubmitHandler(form, onSubmit, onError) {
   return function(event) {
     if (event) {
@@ -56,11 +58,12 @@ function getPrimaryFieldName(fieldName) {
 }
 
 function defaultProcessData(data) {
-  return data;
+  return { hasError: false, values: data };
 }
 
 function defaultProcessFieldError(id, value, errors) {
-  return { value, error: Array.isArray(errors) ? errors[0].message : null };
+  // return { value, errors: Array.isArray(errors) ? errors[0].message : null };
+  return { value, errors: Array.isArray(errors) ? errors : null };
 }
 
 export function constructSubmitHandler({
@@ -96,30 +99,40 @@ export function constructSubmitHandler({
     }
 
     form.validateFieldsAndScroll(async (errors, values) => {
+      console.log({ errors, values });
       if (!errors) {
         beforeProcess();
         const { hasError, values: processedValues } = process(values);
+        // const result = process(values);
+        // const hasError = result.hasError;
+        // const processedValues = result.values;
+        console.log({ hasError, processedValues });
 
         if (!hasError) {
           try {
             await submitCallback(processedValues);
             successfulProcess();
           } catch (error) {
+            devLog(error);
             beforeErrorProcess(error);
             let fields = {};
+            let indexedErrors = {};
             const values = form.getFieldsValue();
 
             if (Array.isArray(error)) {
-              const indexedErrors = error.reduce((indexedErrors, err) => {
-                const primaryFieldName = getPrimaryFieldName(err.fieldName);
+              indexedErrors = error.reduce((accumulator, err) => {
+                const primaryFieldName = getPrimaryFieldName(err.field);
 
-                if (indexedErrors[primaryFieldName]) {
-                  indexedErrors[primaryFieldName].push(err);
+                if (accumulator[primaryFieldName]) {
+                  accumulator[primaryFieldName].push(err);
                 } else {
-                  indexedErrors[primaryFieldName] = [err];
+                  accumulator[primaryFieldName] = [err];
                 }
+
+                return accumulator;
               }, {});
 
+              console.log(indexedErrors);
               Object.keys(values).forEach(id => {
                 const fieldValue = values[id];
                 const processedFieldData = processFieldError(
@@ -132,6 +145,7 @@ export function constructSubmitHandler({
               });
             }
 
+            console.log(fields);
             form.setFields(fields);
             afterErrorProcess(indexedErrors);
           }

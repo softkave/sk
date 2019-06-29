@@ -6,7 +6,7 @@ function trim(value) {
 
 const textPattern = {
   pattern: /\w+/,
-  message: "only alphanumeric characters allowed"
+  message: "Only alphanumeric characters allowed"
 };
 
 // const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{5,}$/;
@@ -24,15 +24,15 @@ const userDescriptor = {
     },
     {
       min: 5,
-      message: "password is too short"
+      message: "Password is too short"
     },
     {
       max: 20,
-      message: "password is too long"
+      message: "Password is too long"
     },
     {
       pattern: passwordPattern,
-      message: "password is invalid"
+      message: "Password is invalid"
     }
   ]
 };

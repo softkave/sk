@@ -8,6 +8,9 @@ import FormError from "../../FormError.jsx";
 
 const passwordExtraInfo = "Minimum of 5 characters";
 
+const emailMismatchErrorMessage = "Email does not match";
+const passwordMismatchErrorMessage = "Password do not match";
+
 class Signup extends React.Component {
   constructor(props) {
     super(props);
@@ -15,14 +18,14 @@ class Signup extends React.Component {
       "password",
       "confirmPassword",
       props.form,
-      "password do not match"
+      passwordMismatchErrorMessage
     );
 
     this.confirmEmailValidator = makeConfirmValidator(
       "email",
       "confirmEmail",
       props.form,
-      "email does not match"
+      emailMismatchErrorMessage
     );
 
     this.state = {
@@ -125,10 +128,10 @@ class Signup extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true }),
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (indexedErrors.error) {
-          this.setState({ error: indexedErrors.error });
+        if (Array.isArray(indexedErrors.error)) {
+          this.setState({ error: indexedErrors.error[0].message });
         }
       },
       completedProcess: () => this.setState({ isLoading: false })
@@ -142,7 +145,7 @@ class Signup extends React.Component {
 
     return (
       <Spin spinning={isLoading}>
-        <Form hideRequiredMark onSubmit={onSubmit}>
+        <Form onSubmit={onSubmit}>
           {error && <FormError>{error}</FormError>}
           <Form.Item label="Name">
             {form.getFieldDecorator("name", {
@@ -165,12 +168,12 @@ class Signup extends React.Component {
               ]
             })(<Input autoComplete="email" />)}
           </Form.Item>
-          <Form.Item hasFeedback label="Password" extra={passwordExtraInfo}>
+          <Form.Item label="Password" extra={passwordExtraInfo}>
             {form.getFieldDecorator("password", {
               rules: userDescriptor.password
             })(<Input.Password visibilityToggle autoComplete="new-password" />)}
           </Form.Item>
-          <Form.Item hasFeedback label="Confirm Password">
+          <Form.Item label="Confirm Password">
             {form.getFieldDecorator("confirmPassword", {
               rules: [
                 {

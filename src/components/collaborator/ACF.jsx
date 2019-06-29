@@ -1,6 +1,17 @@
 import React from "react";
 import { Button } from "antd";
+import isEmail from "validator/lib/isEmail";
 import ACFItem from "./ACFItem";
+import { indexArray } from "../../utils/object";
+
+const invalidEmailError = "Invalid email address";
+const emailExistsError = "Email addresss has been entered already";
+const userExistsError = "Collaborator with email address exists";
+const requestExistsError =
+  "A request with this email address has been sent before";
+
+const maxMessageLength = 500;
+const messageLengthError = "Message length is more than 500 characters";
 
 export default class ACF extends React.PureComponent {
   validateRequests = value => {

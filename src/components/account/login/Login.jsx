@@ -3,6 +3,7 @@ import ComputeForm from "../../compute-form/ComputeForm.jsx";
 import { Input, Button, Checkbox, Form, Spin } from "antd";
 import { userDescriptor } from "../../../models/user/descriptor";
 import FormError from "../../FormError.jsx";
+import { constructSubmitHandler } from "../../form-utils.js";
 
 class Login extends React.Component {
   constructor(props) {
@@ -71,10 +72,10 @@ class Login extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true }),
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (indexedErrors.error) {
-          this.setState({ error: indexedErrors.error });
+        if (Array.isArray(indexedErrors.error)) {
+          this.setState({ error: indexedErrors.error[0].message });
         }
       },
       completedProcess: () => this.setState({ isLoading: false })

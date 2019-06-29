@@ -1,6 +1,6 @@
 import React from "react";
 import ComputeForm from "../../compute-form/ComputeForm.jsx";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, Spin } from "antd";
 import { orgDescriptor as blockDescriptor } from "../../../models/block/descriptor";
 import { makeNameExistsValidator } from "../../../utils/descriptor";
 import modalWrap from "../../modalWrap.jsx";
@@ -90,10 +90,10 @@ class EditOrg extends React.Component {
         data.type = "org";
         return data;
       },
-      beforeProcess: () => this.setState({ isLoading: true }),
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (indexedErrors.error) {
-          this.setState({ error: indexedErrors.error });
+        if (Array.isArray(indexedErrors.error)) {
+          this.setState({ error: indexedErrors.error[0].message });
         }
       },
       completedProcess: () => this.setState({ isLoading: false })

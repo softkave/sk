@@ -7,10 +7,14 @@ import Signup from "./Signup";
 function mapDispatchToProps(dispatch) {
   return {
     onSubmit: async data => {
+      data.color = randomColor();
       let result = await netInterface("user.signup", data);
 
+      if (result.errors) {
+        throw result.errors;
+      }
+
       if (result.user && result.token) {
-        result.user.color = randomColor();
         dispatch(mergeDataByPath("user", result));
       } else {
         throw new Error("an error occurred");

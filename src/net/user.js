@@ -19,7 +19,7 @@ import { setItem, getItem, removeItem } from "../utils/storage";
 const tokenStorageName = "t";
 
 export async function signup(user) {
-  const userFields = ["name", "password", "email"];
+  const userFields = ["name", "password", "email", "color"];
 
   let result = await query(
     null,

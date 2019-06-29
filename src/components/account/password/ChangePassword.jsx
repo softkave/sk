@@ -82,10 +82,10 @@ class ChangePassword extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true }),
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (indexedErrors.error) {
-          this.setState({ error: indexedErrors.error });
+        if (Array.isArray(indexedErrors.error)) {
+          this.setState({ error: indexedErrors.error[0].message });
         }
       },
       successfulProcess: () => message.success(changePasswordSuccessMessage),
