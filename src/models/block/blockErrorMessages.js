@@ -23,7 +23,12 @@ const errorFields = {
     "system.block.transferDestinationBlockMissing",
   transferDraggedBlockNotFoundInParent:
     "system.block.transferDraggedBlockNotFoundInParent",
-  blockNotFound: "system.block.blockNotFound"
+  blockNotFound: "system.block.blockNotFound",
+  orgExists: "system.block.orgExists",
+  groupExists: "system.block.groupExists",
+  taskExists: "system.block.taskExists",
+  rootExists: "system.block.rootExists",
+  projectExists: "system.block.projectExists"
 };
 
-export { errorFields, errorMessages };
+export { errorFields as blockErrorFields, errorMessages as blockErrorMessages };

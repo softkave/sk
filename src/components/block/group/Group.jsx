@@ -1,7 +1,8 @@
 import React from "react";
 import { Row, Col, Button } from "antd";
 import SimpleBar from "simplebar-react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
+// import { Draggable, Droppable } from "react-beautiful-dnd";
 import AddDropdownButton from "../../AddDropdownButton.jsx";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import DeleteButton from "../../DeleteButton";
@@ -56,7 +57,8 @@ const GroupHeader = React.memo(function GroupHeader(props) {
 });
 
 const GroupBody = React.memo(function GroupBody(props) {
-  const { render, droppableId, type } = props;
+  const { render,  } = props;
+  // const { render, droppableId, type } = props;
 
   // return (
   //   <GroupScrollContainer>
@@ -196,12 +198,12 @@ const GroupScrollContainerInner = styled.div`
 //   height: 100%;
 // `;
 
-const GroupDroppable = styled.div`
-  // width: 100%;
-  // flex: 2 1;
-  // overflow-x: hidden;
-  // overflow-y: hidden;
-  // height: 100%;
-`;
+// const GroupDroppable = styled.div`
+//   // width: 100%;
+//   // flex: 2 1;
+//   // overflow-x: hidden;
+//   // overflow-y: hidden;
+//   // height: 100%;
+// `;
 
 export default Group;

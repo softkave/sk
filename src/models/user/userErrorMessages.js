@@ -25,4 +25,4 @@ const errorFields = {
   collaboratorDoesNotExist: "system.user.collaboratorDoesNotExist"
 };
 
-export { errorFields, errorMessages };
+export { errorFields as userErrorFields, errorMessages as userErrorMessages };

@@ -1,7 +1,7 @@
 import React from "react";
 import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
-import AddCollaborator from "./AddCollaborator.jsx";
+// import AddCollaborator from "./AddCollaborator.jsx";
 import "./collaborators.css";
 import AC from "./AC.jsx";
 

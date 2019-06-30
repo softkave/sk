@@ -19,4 +19,7 @@ const errorFields = {
     "system.notification.sendingRequestToAnExistingCollaborator"
 };
 
-export { errorFields, errorMessages };
+export {
+  errorFields as notificationErrorFields,
+  errorMessages as notificationErrorMessages
+};

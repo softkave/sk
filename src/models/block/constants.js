@@ -83,8 +83,8 @@ const blockFieldNames = {
   groupProjectContext: "groupProjectContext"
 };
 
-module.exports = {
-  constants,
+export {
+  constants as blockConstants,
   blockFieldNames,
   blockTaskCollaboratorFieldNames
 };

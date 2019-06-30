@@ -16,4 +16,4 @@ const userFieldNames = {
   color: "color"
 };
 
-module.exports = { constants, userFieldNames };
+export { constants as userConstants, userFieldNames };

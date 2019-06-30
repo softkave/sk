@@ -11,15 +11,15 @@ import ACFMessage from "./ACFMessage.jsx";
 import ACFExpiresAt from "./ACFExpiresAt.jsx";
 import { constructSubmitHandler } from "../form-utils.js";
 import {
-  errorMessages as validationErrorMessages,
+  validationErrorMessages,
   getErrorMessageWithMax
 } from "../../models/validationErrorMessages";
-import { errorMessages as userErrorMessages } from "../../models/user/userErrorMessages";
+import { userErrorMessages } from "../../models/user/userErrorMessages";
 import {
-  errorMessages as notificationErrorMessages,
-  errorFields as notificationErrorFields
+  notificationErrorMessages,
+  notificationErrorFields
 } from "../../models/notification/notificationErrorMessages";
-import { constants as notificationConstants } from "../../models/notification/constants";
+import { notificationConstants } from "../../models/notification/constants";
 
 const emailExistsError = "Email addresss has been entered already";
 
@@ -130,6 +130,10 @@ class AC extends React.PureComponent {
             case notificationErrorFields.requestHasBeenSentBefore:
             case notificationErrorFields.sendingRequestToAnExistingCollaborator:
               otherEmailErrors[emailAddress] = error;
+              break;
+
+            default:
+              return;
           }
         });
       }
@@ -178,6 +182,9 @@ class AC extends React.PureComponent {
 
       case "requests":
         return this.processRequestError(value, fieldErrors, indexedErrors);
+
+      default:
+        return { value };
     }
   };
 
@@ -196,6 +203,13 @@ class AC extends React.PureComponent {
         }
       },
       completedProcess: () => this.setState({ isLoading: false })
+      // transformErrorField: error => {
+      //   const mapArray = [
+      //     notificationErrorFields.requestHasBeenSentBefore,
+      //     notificationErrorFields.sendingRequestToAnExistingCollaborator
+      //   ];
+
+      // }
     });
   };
 

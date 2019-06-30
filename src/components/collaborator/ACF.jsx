@@ -45,7 +45,7 @@ export default class ACF extends React.PureComponent {
     let request = value[index];
     request = { ...request, ...data };
     // onChange(this.validateRequests(value));
-    onChange(value);
+    onChange(request);
   };
 
   onDelete = index => {

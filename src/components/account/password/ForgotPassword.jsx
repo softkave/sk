@@ -1,11 +1,12 @@
 import React from "react";
 import { Input, Button, Form, message, Spin } from "antd";
-import ComputeForm from "../../compute-form/ComputeForm.jsx";
+
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
 import appInfo from "../../../info/app-info";
 import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
+import { userErrorFields } from "../../../models/user/userErrorMessages";
 
 const forgotPasswordRequestSuccessMessage = `
   Request successful, if you have an account with ${appInfo.appName}, 
@@ -25,51 +26,7 @@ class ForgotPassword extends React.Component {
       isLoading: false,
       error: null
     };
-
-    // this.model = {
-    //   fields: {
-    //     email: {
-    //       component: Input,
-    //       label: "Email",
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       rules: [...userDescriptor.email, { validator: confirmEmailValidator }]
-    //     },
-    //     confirmEmail: {
-    //       component: Input,
-    //       label: "Confirm Email",
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       rules: [...userDescriptor.email, { validator: confirmEmailValidator }]
-    //     },
-    //     submit: {
-    //       component: Button,
-    //       props: {
-    //         type: "primary",
-    //         children: "Submit",
-    //         block: true,
-    //         htmlType: "submit"
-    //       },
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       noDecorate: true
-    //     }
-    //   },
-    //   formProps: {
-    //     hideRequiredMark: true
-    //   },
-    //   onSubmit: this.onSubmit
-    // };
   }
-
-  // onSubmit = async data => {
-  //   await this.props.onSubmit(data);
-  //   message.success("request successful");
-  // };
-
-  // render() {
-  //   return <ComputeForm model={this.model} form={this.props.form} />;
-  // }
 
   getSubmitHandler = () => {
     const { form, onSubmit } = this.props;
@@ -80,12 +37,20 @@ class ForgotPassword extends React.Component {
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
         if (Array.isArray(indexedErrors.error)) {
-          this.setState({ error: indexedErrors.error[0].message });
+          this.setState({
+            error: indexedErrors.error[0].message,
+            loading: false
+          });
         }
       },
       successfulProcess: () =>
         message.success(forgotPasswordRequestSuccessMessage),
-      completedProcess: () => this.setState({ isLoading: false })
+      transformErrorMap: [
+        {
+          field: userErrorFields.userDoesNotExist,
+          toField: "email"
+        }
+      ]
     });
   };
 

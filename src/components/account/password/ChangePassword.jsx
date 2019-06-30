@@ -1,10 +1,11 @@
 import React from "react";
-import ComputeForm from "../../compute-form/ComputeForm.jsx";
 import { Input, Button, Form, message, Spin } from "antd";
+
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
 import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
+import { userErrorFields } from "../../../models/user/userErrorMessages";
 
 const changePasswordSuccessMessage = "Password changed successfully";
 
@@ -22,59 +23,7 @@ class ChangePassword extends React.Component {
       isLoading: false,
       error: null
     };
-
-    // this.model = {
-    //   fields: {
-    //     password: {
-    //       component: Input.Password,
-    //       props: { type: "password" },
-    //       label: "Password",
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       rules: [
-    //         ...userDescriptor.password,
-    //         { validator: confirmPasswordValidator }
-    //       ]
-    //     },
-    //     confirmPassword: {
-    //       component: Input.Password,
-    //       props: { type: "password" },
-    //       label: "Confirm Password",
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       rules: [
-    //         ...userDescriptor.password,
-    //         { validator: confirmPasswordValidator }
-    //       ]
-    //     },
-    //     submit: {
-    //       component: Button,
-    //       props: {
-    //         type: "primary",
-    //         children: "Submit",
-    //         block: true,
-    //         htmlType: "submit"
-    //       },
-    //       labelCol: null,
-    //       wrapperCol: null,
-    //       noDecorate: true
-    //     }
-    //   },
-    //   formProps: {
-    //     hideRequiredMark: true
-    //   },
-    //   onSubmit: this.onSubmit
-    // };
   }
-
-  // onSubmit = async data => {
-  //   await this.props.onSubmit(data);
-  //   message.success("change password succeeded");
-  // };
-
-  // render() {
-  //   return <ComputeForm model={this.model} form={this.props.form} />;
-  // }
 
   getSubmitHandler = () => {
     const { form, onSubmit } = this.props;
@@ -85,11 +34,19 @@ class ChangePassword extends React.Component {
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
         if (Array.isArray(indexedErrors.error)) {
-          this.setState({ error: indexedErrors.error[0].message });
+          this.setState({
+            error: indexedErrors.error[0].message,
+            loading: false
+          });
         }
       },
       successfulProcess: () => message.success(changePasswordSuccessMessage),
-      completedProcess: () => this.setState({ isLoading: false })
+      transformErrorMap: [
+        {
+          field: userErrorFields.userDoesNotExist,
+          toField: "email"
+        }
+      ]
     });
   };
 

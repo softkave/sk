@@ -40,6 +40,7 @@ export function applyErrors(form, errors) {
   } else if (typeof errors === "object") {
     Object.keys(errors).forEach(fieldName => {
       let error = errors[fieldName];
+
       if (!error.value) {
         error.value = form.getFieldsValue(fieldName);
       }
@@ -50,6 +51,7 @@ export function applyErrors(form, errors) {
 }
 
 const noop = () => {};
+const returnDataAsIs = data => data;
 
 function getPrimaryFieldName(fieldName) {
   const fieldArray = fieldName.split(".");
@@ -57,18 +59,43 @@ function getPrimaryFieldName(fieldName) {
   return primaryField;
 }
 
-function defaultProcessData(data) {
+export function defaultProcessData(data) {
   return { hasError: false, values: data };
 }
 
-function defaultProcessFieldError(id, value, errors) {
+export function defaultProcessFieldError(id, value, errors) {
   return { value, errors: Array.isArray(errors) ? errors : null };
+}
+
+export function defaultTransformErrorField(error, mapArray) {
+  const mapTo = mapArray.find(map => {
+    return error.field.search(map.field) !== -1;
+  });
+
+  if (mapTo) {
+    error.field = map.toField;
+  }
+
+  return error;
+}
+
+export function defaultTransformErrors(errors, mapArray, transformField) {
+  if (Array.isArray(errors) && Array.isArray(mapArray)) {
+    return errors.map(error => {
+      return transformField(error, mapArray);
+    });
+  }
+
+  return errors;
 }
 
 export function constructSubmitHandler({
   form,
   process,
   submitCallback,
+  transformErrors,
+  transformErrorField,
+  transformErrorMap,
   processFieldError,
   beforeProcess,
   successfulProcess,
@@ -85,6 +112,8 @@ export function constructSubmitHandler({
   }
 
   process = process || defaultProcessData;
+  transformErrors = transformErrors || defaultTransformErrors;
+  transformErrorField = transformErrorField || defaultTransformErrorField;
   processFieldError = processFieldError || defaultProcessFieldError;
   beforeProcess = beforeProcess || noop;
   successfulProcess = successfulProcess || noop;
@@ -97,48 +126,94 @@ export function constructSubmitHandler({
       event.preventDefault();
     }
 
-    form.validateFieldsAndScroll(async (errors, values) => {
-      console.log({ errors, values });
-      if (!errors) {
-        beforeProcess();
-        const { hasError, values: processedValues } = process(values);
-        console.log({ hasError, processedValues });
-
-        if (!hasError) {
-          try {
-            await submitCallback(processedValues);
-            successfulProcess();
-          } catch (error) {
-            submitHandlerOnError({
-              error,
-              beforeErrorProcess,
-              form,
-              processFieldError,
-              afterErrorProcess
-            });
-          }
-        }
-
-        completedProcess();
-      }
-    });
+    form.validateFieldsAndScroll(
+      onValidateForm({
+        beforeProcess,
+        process,
+        submitCallback,
+        successfulProcess,
+        beforeErrorProcess,
+        form,
+        processFieldError,
+        afterErrorProcess,
+        transformErrors,
+        transformErrorMap,
+        transformErrorField,
+        completedProcess
+      })
+    );
   };
 }
+
+function onValidateForm({
+  beforeProcess,
+  process,
+  submitCallback,
+  successfulProcess,
+  beforeErrorProcess,
+  form,
+  processFieldError,
+  afterErrorProcess,
+  transformErrors,
+  transformErrorMap,
+  transformErrorField,
+  completedProcess
+}) {
+  return async (errors, values) => {
+    console.log({ errors, values });
+
+    if (errors) {
+      return;
+    }
+
+    beforeProcess();
+    const { hasError, values: processedValues } = process(values);
+    console.log({ hasError, processedValues });
+
+    if (!hasError) {
+      try {
+        await submitCallback(processedValues);
+        successfulProcess();
+      } catch (error) {
+        submitHandlerOnError({
+          error,
+          beforeErrorProcess,
+          form,
+          processFieldError,
+          afterErrorProcess,
+          transformErrors,
+          transformErrorMap,
+          transformErrorField
+        });
+      }
+    }
+
+    completedProcess();
+  };
+}
+
 function submitHandlerOnError({
   error,
   beforeErrorProcess,
   form,
   processFieldError,
-  afterErrorProcess
+  afterErrorProcess,
+  transformErrors,
+  transformErrorMap,
+  transformErrorField
 }) {
-  devLog(error);
+  devLog({ error });
   beforeErrorProcess(error);
+  error = transformErrors(error);
+  devLog({ transformedErrors: error });
+
   let fields = {};
   let indexedErrors = {};
   const values = form.getFieldsValue();
 
   if (Array.isArray(error)) {
-    indexedErrors = error.reduce((accumulator, err) => {
+    error = transformErrors(error, transformErrorMap, transformErrorField);
+    error = indexedErrors = error.reduce((accumulator, err) => {
       const primaryFieldName = getPrimaryFieldName(err.field);
 
       if (accumulator[primaryFieldName]) {

@@ -1,7 +1,7 @@
 import React from "react";
-import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import { Form, Select, Button } from "antd";
-import dotProp from "dot-prop-immutable";
+
+import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import CollaboratorThumbnail from "../../collaborator/Thumnail.jsx";
 import { indexArray } from "../../../utils/object";
 
