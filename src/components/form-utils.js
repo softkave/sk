@@ -62,7 +62,6 @@ function defaultProcessData(data) {
 }
 
 function defaultProcessFieldError(id, value, errors) {
-  // return { value, errors: Array.isArray(errors) ? errors[0].message : null };
   return { value, errors: Array.isArray(errors) ? errors : null };
 }
 
@@ -103,9 +102,6 @@ export function constructSubmitHandler({
       if (!errors) {
         beforeProcess();
         const { hasError, values: processedValues } = process(values);
-        // const result = process(values);
-        // const hasError = result.hasError;
-        // const processedValues = result.values;
         console.log({ hasError, processedValues });
 
         if (!hasError) {
@@ -113,41 +109,13 @@ export function constructSubmitHandler({
             await submitCallback(processedValues);
             successfulProcess();
           } catch (error) {
-            devLog(error);
-            beforeErrorProcess(error);
-            let fields = {};
-            let indexedErrors = {};
-            const values = form.getFieldsValue();
-
-            if (Array.isArray(error)) {
-              indexedErrors = error.reduce((accumulator, err) => {
-                const primaryFieldName = getPrimaryFieldName(err.field);
-
-                if (accumulator[primaryFieldName]) {
-                  accumulator[primaryFieldName].push(err);
-                } else {
-                  accumulator[primaryFieldName] = [err];
-                }
-
-                return accumulator;
-              }, {});
-
-              console.log(indexedErrors);
-              Object.keys(values).forEach(id => {
-                const fieldValue = values[id];
-                const processedFieldData = processFieldError(
-                  id,
-                  fieldValue,
-                  indexedErrors[id]
-                );
-
-                fields[id] = processedFieldData;
-              });
-            }
-
-            console.log(fields);
-            form.setFields(fields);
-            afterErrorProcess(indexedErrors);
+            submitHandlerOnError({
+              error,
+              beforeErrorProcess,
+              form,
+              processFieldError,
+              afterErrorProcess
+            });
           }
         }
 
@@ -155,4 +123,48 @@ export function constructSubmitHandler({
       }
     });
   };
+}
+function submitHandlerOnError({
+  error,
+  beforeErrorProcess,
+  form,
+  processFieldError,
+  afterErrorProcess
+}) {
+  devLog(error);
+  beforeErrorProcess(error);
+  let fields = {};
+  let indexedErrors = {};
+  const values = form.getFieldsValue();
+
+  if (Array.isArray(error)) {
+    indexedErrors = error.reduce((accumulator, err) => {
+      const primaryFieldName = getPrimaryFieldName(err.field);
+
+      if (accumulator[primaryFieldName]) {
+        accumulator[primaryFieldName].push(err);
+      } else {
+        accumulator[primaryFieldName] = [err];
+      }
+
+      return accumulator;
+    }, {});
+
+    console.log(indexedErrors);
+    Object.keys(values).forEach(id => {
+      const fieldValue = values[id];
+      const processedFieldData = processFieldError(
+        id,
+        fieldValue,
+        indexedErrors[id],
+        indexedErrors
+      );
+
+      fields[id] = processedFieldData;
+    });
+  }
+
+  console.log(fields);
+  form.setFields(fields);
+  afterErrorProcess(indexedErrors);
 }

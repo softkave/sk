@@ -41,7 +41,7 @@ export default async function query(headers, netQuery, variables, process) {
     });
 
     const resultBody = processQueryResult(await result.json(), process);
-    console.log(resultBody);
+    devLog(resultBody);
 
     if (result.ok) {
       return resultBody;

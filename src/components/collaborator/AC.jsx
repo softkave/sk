@@ -1,23 +1,27 @@
 import React from "react";
 import { Button, Form } from "antd";
 import PropTypes from "prop-types";
-import modalWrap from "../modalWrap.jsx";
 import moment from "moment";
 import isEmail from "validator/lib/isEmail";
+
+import modalWrap from "../modalWrap.jsx";
 import ACF from "./ACF";
 import { indexArray } from "../../utils/object.js";
 import ACFMessage from "./ACFMessage.jsx";
 import ACFExpiresAt from "./ACFExpiresAt.jsx";
 import { constructSubmitHandler } from "../form-utils.js";
+import {
+  errorMessages as validationErrorMessages,
+  getErrorMessageWithMax
+} from "../../models/validationErrorMessages";
+import { errorMessages as userErrorMessages } from "../../models/user/userErrorMessages";
+import {
+  errorMessages as notificationErrorMessages,
+  errorFields as notificationErrorFields
+} from "../../models/notification/notificationErrorMessages";
+import { constants as notificationConstants } from "../../models/notification/constants";
 
-const invalidEmailError = "Invalid email address";
 const emailExistsError = "Email addresss has been entered already";
-const userExistsError = "Collaborator with email address exists";
-const requestExistsError =
-  "A request with this email address has been sent before";
-
-const maxMessageLength = 500;
-const messageLengthError = "Message length is more than 500 characters";
 
 const defaultExpirationDate = moment()
   .add(1, "months")
@@ -58,35 +62,42 @@ class AC extends React.PureComponent {
     }
   }
 
-  // validateRequests = value => {
-  //   const indexedEmails = indexArray(value, { path: "email" });
+  validateRequests = value => {
+    const indexedEmails = indexArray(value, { path: "email" });
 
-  //   value.forEach(request => {
-  //     if (!isEmail(request.email)) {
-  //       request.emailError = invalidEmailError;
-  //     } else if (indexedEmails[request.email]) {
-  //       request.emailError = emailExistsError;
-  //     } else if (this.indexedExistingUsersEmail[request.email]) {
-  //       request.emailError = userExistsError;
-  //     } else if (this.indexedExistingRequestsEmail[request.email]) {
-  //       request.emailError = requestExistsError;
-  //     } else {
-  //       request.emailError = null;
-  //     }
+    value.forEach(request => {
+      if (typeof request.email !== "string" || request.email.length === 0) {
+        request.emailError = validationErrorMessages.requiredError;
+      } else if (!isEmail(request.email)) {
+        request.emailError = userErrorMessages.invalidEmail;
+      } else if (indexedEmails[request.email]) {
+        request.emailError = emailExistsError;
+      } else if (this.indexedExistingUsersEmail[request.email]) {
+        request.emailError =
+          notificationErrorMessages.sendingRequestToAnExistingCollaborator;
+      } else if (this.indexedExistingRequestsEmail[request.email]) {
+        request.emailError = notificationErrorMessages.requestHasBeenSentBefore;
+      } else {
+        request.emailError = null;
+      }
 
-  //     if (request.message && request.message.length > maxMessageLength) {
-  //       request.messageError = messageLengthError;
-  //     } else {
-  //       request.messageError = null;
-  //     }
-  //   });
+      if (request.body && request.body.length > notificationConstants) {
+        request.bodyError = getErrorMessageWithMax(
+          notificationConstants.maxAddCollaboratorBodyMessageLength,
+          "string"
+        );
+      } else {
+        request.bodyError = null;
+      }
+    });
 
-  //   return value;
-  // };
+    return value;
+  };
 
   processValues = values => {
+    values = this.validateRequests(values);
     const hasError = !!values.requests.find(request => {
-      return request.emailError || request.messageError;
+      return request.emailError || request.bodyError;
     });
 
     if (hasError) {
@@ -96,7 +107,7 @@ class AC extends React.PureComponent {
     values.requests = values.requests.map(request => {
       return {
         email: request.email,
-        message: request.message,
+        body: request.body,
         expiresAt: request.expiresAt
       };
     });
@@ -104,34 +115,69 @@ class AC extends React.PureComponent {
     return { values };
   };
 
-  processRequestError = (requests, errors) => {
-    errors.forEach(error => {
-      const fieldNameArray = error.field.split(".");
-      const requestIndex = Number(fieldNameArray[1]);
-      const requestErrorFieldName = fieldNameArray[2];
+  processRequestError = (requests, fieldErrors, indexedErrors) => {
+    function getOtherRequestEmailErrors(indexedErrors) {
+      const systemErrors = indexedErrors["system"];
+      const otherEmailErrors = {};
 
-      if (typeof requestIndex === "number") {
-        const request = requests[requestIndex];
+      if (Array.isArray(systemErrors)) {
+        systemErrors.forEach(error => {
+          const fieldNameArray = error.field.split(".");
+          const emailErrorType = fieldNameArray[2];
+          const emailAddress = fieldNameArray[3];
 
-        if (typeof requestErrorFieldName === "string") {
-          request[`${requestErrorFieldName}Error`] = error.message;
-        } else {
-          request.error = error.message;
-        }
+          switch (emailErrorType) {
+            case notificationErrorFields.requestHasBeenSentBefore:
+            case notificationErrorFields.sendingRequestToAnExistingCollaborator:
+              otherEmailErrors[emailAddress] = error;
+          }
+        });
       }
-    });
+
+      return otherEmailErrors;
+    }
+
+    if (Array.isArray(fieldErrors)) {
+      fieldErrors.forEach(error => {
+        const fieldNameArray = error.field.split(".");
+        const requestIndex = Number(fieldNameArray[1]);
+        const requestErrorFieldName = fieldNameArray[2];
+
+        if (typeof requestIndex === "number") {
+          const request = requests[requestIndex];
+
+          if (typeof requestErrorFieldName === "string") {
+            request[`${requestErrorFieldName}Error`] = error.message;
+          } else {
+            request.error = error.message;
+          }
+        }
+      });
+    } else {
+      const otherEmailErrors = getOtherRequestEmailErrors(indexedErrors);
+
+      if (Object.keys(otherEmailErrors).length > 0) {
+        requests.forEach(request => {
+          const error = otherEmailErrors[request.email];
+
+          if (error) {
+            request.emailError = error.message;
+          }
+        });
+      }
+    }
 
     return { value: requests };
   };
 
-  processFieldError = (fieldName, value, errors) => {
+  processFieldError = (fieldName, value, fieldErrors, indexedErrors) => {
     switch (fieldName) {
-      case "message":
+      case "body":
       case "expiresAt":
-        return Array.isArray(errors) ? errors[0].message : null;
+        return { value, errors: fieldErrors };
 
       case "requests":
-        return this.processRequestError(value, errors);
+        return this.processRequestError(value, fieldErrors, indexedErrors);
     }
   };
 
@@ -159,9 +205,14 @@ class AC extends React.PureComponent {
     return (
       <Form hideRequiredMark onSubmit={this.getSubmitHandler()}>
         <Form.Item>
-          {form.getFieldDecorator("message", {
+          {form.getFieldDecorator("body", {
             getValueFromEvent: data => data,
-            rules: [{ type: "string", max: maxMessageLength }],
+            rules: [
+              {
+                type: "string",
+                max: notificationConstants.maxAddCollaboratorBodyMessageLength
+              }
+            ],
             initialValue: ""
           })(<ACFMessage />)}
         </Form.Item>
@@ -179,8 +230,8 @@ class AC extends React.PureComponent {
         </Form.Item>
         <Form.Item label="Requests">
           {form.getFieldDecorator("requests", {
-            // getValueFromEvent: data => this.validateRequests(data),
-            getValueFromEvent: data => data,
+            getValueFromEvent: data => this.validateRequests(data),
+            // getValueFromEvent: data => data,
             initialValue: [],
             rules: [{ required: true }]
           })(<ACF />)}
