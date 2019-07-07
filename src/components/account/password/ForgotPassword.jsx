@@ -1,14 +1,13 @@
 import React from "react";
-import { Input, Button, Form, message, Spin, notification } from "antd";
+import { Input, Button, Form, Spin, notification } from "antd";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
-import { constructSubmitHandler, clearForm } from "../../form-utils.js";
+import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
 import { serverErrorFields } from "../../../models/serverErrorMessages";
 
-const messageDuration = 10;
 const successMessage = `
   Request was successful,
   a change password link will been sent to your email address.`;

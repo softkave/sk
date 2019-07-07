@@ -2,8 +2,8 @@ export function assignTask(collaborator, by) {
   return {
     userId: collaborator.customId,
     assignedAt: Date.now(),
-    assignedBy: by ? by.customId : null,
-    completedAt: null
+    assignedBy: by ? by.customId : collaborator.customId,
+    completedAt: undefined
   };
 }
 
