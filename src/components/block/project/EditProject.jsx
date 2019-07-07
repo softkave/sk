@@ -6,6 +6,8 @@ import { makeNameExistsValidator } from "../../../utils/descriptor";
 import modalWrap from "../../modalWrap.jsx";
 import FormError from "../../FormError.jsx";
 import { constructSubmitHandler } from "../../form-utils.js";
+import { blockErrorFields } from "../../../models/block/blockErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
 const projectExistsErrorMessage = "Project with the same name exists";
 
@@ -29,17 +31,30 @@ class EditProject extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      proccess: data => {
+      process: data => {
         data.type = "project";
-        return data;
+        return { values: data, hasError: false };
       },
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({ error: indexedErrors.error[0].message });
+        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
+          this.setState({
+            error: indexedErrors.error[0].message,
+            isLoading: false
+          });
         }
       },
-      completedProcess: () => this.setState({ isLoading: false })
+      // completedProcess: () => this.setState({ isLoading: false }),
+      transformErrorMap: [
+        {
+          field: blockErrorFields.orgExists,
+          toField: "name"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
+        }
+      ]
     });
   };
 

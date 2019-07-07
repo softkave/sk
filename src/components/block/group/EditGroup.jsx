@@ -6,6 +6,8 @@ import { makeNameExistsValidator } from "../../../utils/descriptor";
 import modalWrap from "../../modalWrap.jsx";
 import FormError from "../../FormError.jsx";
 import { constructSubmitHandler } from "../../form-utils.js";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
+import { blockErrorFields } from "../../../models/block/blockErrorMessages";
 
 const groupExistsErrorMessage = "Group with the same name exists";
 
@@ -29,17 +31,30 @@ class EditGroup extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      proccess: data => {
+      process: data => {
         data.type = "group";
-        return data;
+        return { values: data, hasError: false };
       },
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({ error: indexedErrors.error[0].message });
+        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
+          this.setState({
+            error: indexedErrors.error[0].message,
+            isLoading: false
+          });
         }
       },
-      completedProcess: () => this.setState({ isLoading: false })
+      // completedProcess: () => this.setState({ isLoading: false }),
+      transformErrorMap: [
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
+        },
+        {
+          field: blockErrorFields.groupExists,
+          toField: "name"
+        }
+      ]
     });
   };
 
@@ -47,6 +62,7 @@ class EditGroup extends React.Component {
     const { form, data, submitLabel, existingGroups } = this.props;
     const { isLoading, error } = this.state;
     const onSubmit = this.getSubmitHandler();
+    console.log(this.props);
 
     return (
       <Spin spinning={isLoading}>

@@ -1,16 +1,17 @@
 import React from "react";
-import { Input, Button, Form, message, Spin } from "antd";
+import { Input, Button, Form, message, Spin, notification } from "antd";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
-import appInfo from "../../../info/app-info";
-import { constructSubmitHandler } from "../../form-utils.js";
+import { constructSubmitHandler, clearForm } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
-const forgotPasswordRequestSuccessMessage = `
-  Request successful, if you have an account with ${appInfo.appName}, 
-  a change password link will been sent to your email address`;
+const messageDuration = 10;
+const successMessage = `
+  Request was successful,
+  a change password link will been sent to your email address.`;
 
 class ForgotPassword extends React.Component {
   constructor(props) {
@@ -34,23 +35,40 @@ class ForgotPassword extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true, error: null }),
-      afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({
-            error: indexedErrors.error[0].message,
-            loading: false
-          });
-        }
-      },
-      successfulProcess: () =>
-        message.success(forgotPasswordRequestSuccessMessage),
       transformErrorMap: [
         {
           field: userErrorFields.userDoesNotExist,
           toField: "email"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
         }
-      ]
+      ],
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
+      afterErrorProcess: indexedErrors => {
+        const formError =
+          Array.isArray(indexedErrors.error) && indexedErrors.error[0]
+            ? indexedErrors.error[0].message
+            : null;
+
+        this.setState({
+          error: formError,
+          isLoading: false
+        });
+      },
+      successfulProcess: () => {
+        // message.success(successMessage, messageDuration)
+        // clearForm(this.props.form);
+        notification.success({
+          message: "Forgot Password",
+          description: successMessage,
+          duration: 0
+        });
+      },
+      completedProcess: () => {
+        this.setState({ isLoading: false });
+      }
     });
   };
 

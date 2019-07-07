@@ -6,6 +6,7 @@ import { makeConfirmValidator } from "../../../utils/descriptor";
 import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
 const changePasswordSuccessMessage = "Password changed successfully";
 
@@ -31,22 +32,28 @@ class ChangePassword extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      beforeProcess: () => this.setState({ isLoading: true, error: null }),
-      afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({
-            error: indexedErrors.error[0].message,
-            loading: false
-          });
-        }
-      },
-      successfulProcess: () => message.success(changePasswordSuccessMessage),
       transformErrorMap: [
         {
           field: userErrorFields.userDoesNotExist,
           toField: "email"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
         }
-      ]
+      ],
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
+      afterErrorProcess: indexedErrors => {
+        const formError =
+          Array.isArray(indexedErrors.error) && indexedErrors.error[0]
+            ? indexedErrors.error[0].message
+            : null;
+        this.setState({
+          error: formError,
+          isLoading: false
+        });
+      },
+      successfulProcess: () => message.success(changePasswordSuccessMessage)
     });
   };
 

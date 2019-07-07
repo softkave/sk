@@ -5,9 +5,10 @@ import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import CollaboratorThumbnail from "../../collaborator/Thumnail.jsx";
 import { indexArray } from "../../../utils/object";
 
-export default class AssignTask extends React.Component {
+export default class AssignTask extends React.PureComponent {
   static defaultProps = {
-    collaborators: []
+    collaborators: [],
+    value: []
   };
 
   constructor(props) {
@@ -42,7 +43,7 @@ export default class AssignTask extends React.Component {
     onChange(value);
   };
 
-  renderCollaboratorOptions(collaborators) {
+  renderCollaboratorOptions(collaborators = [], user) {
     let options = collaborators.map((collaborator, index) => {
       return (
         <Select.Option value={index} key={collaborator.customId}>
@@ -52,20 +53,24 @@ export default class AssignTask extends React.Component {
     });
 
     return (
-      <Form.Item>
+      <Form.Item label="Select Collaborator">
         <Select
-          placeholder="Assign collaborator"
+          placeholder="Assign Collaborator"
+          value={undefined}
           onChange={i => {
             this.onAssignCollaborator(collaborators[i]);
           }}
         >
           {options}
         </Select>
+        <Button block onClick={() => this.onAssignCollaborator(user)}>
+          Assign To Me
+        </Button>
       </Form.Item>
     );
   }
 
-  renderTaskCollaborators(taskCollaborators) {
+  renderTaskCollaborators(taskCollaborators = []) {
     return taskCollaborators.map((taskCollaborator, index) => {
       return (
         <TaskCollaboratorThumbnail
@@ -83,16 +88,17 @@ export default class AssignTask extends React.Component {
 
   render() {
     const { collaborators, value, user } = this.props;
+    console.log(this);
 
     return (
       <div>
         {this.renderTaskCollaborators(value)}
-        {this.renderCollaboratorOptions(collaborators)}
-        <Form.Item>
+        {this.renderCollaboratorOptions(collaborators, user)}
+        {/* <Form.Item>
           <Button block onClick={() => this.onAssignCollaborator(user)}>
             Assign To Me
           </Button>
-        </Form.Item>
+        </Form.Item> */}
       </div>
     );
   }

@@ -5,7 +5,11 @@ import ForgotPassword from "./ForgotPassword";
 function mapDispatchToProps(dispatch) {
   return {
     onSubmit: async data => {
-      await netInterface("user.forgotPassword", data.email);
+      const result = await netInterface("user.forgotPassword", data.email);
+
+      if (result && result.errors) {
+        throw result.errors;
+      }
     }
   };
 }

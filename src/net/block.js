@@ -103,8 +103,8 @@ export function addCollaborators(block, collaborators) {
     addCollaboratorsMutation,
     {
       block: getDataFromObject(block, blockParamFields),
-      collaborators: collaborators.map(c =>
-        getDataFromObject(c, collaboratorFields)
+      collaborators: collaborators.map(request =>
+        getDataFromObject(request, collaboratorFields)
       )
     },
     "data.block.addCollaborators"

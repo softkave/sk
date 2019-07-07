@@ -5,6 +5,7 @@ import { userDescriptor } from "../../../models/user/descriptor";
 import FormError from "../../FormError.jsx";
 import { constructSubmitHandler } from "../../form-utils.js";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
 class Login extends React.Component {
   constructor(props) {
@@ -24,16 +25,22 @@ class Login extends React.Component {
       submitCallback: onSubmit,
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({
-            error: indexedErrors.error[0].message,
-            loading: false
-          });
-        }
+        const formError =
+          Array.isArray(indexedErrors.error) && indexedErrors.error[0]
+            ? indexedErrors.error[0].message
+            : null;
+        this.setState({
+          error: formError,
+          isLoading: false
+        });
       },
       transformErrorMap: [
         {
           field: userErrorFields.invalidLoginCredentials,
+          toField: "error"
+        },
+        {
+          field: serverErrorFields.serverError,
           toField: "error"
         }
       ]

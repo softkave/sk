@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Form } from "antd";
 
-const StyledFormError = styled(Form.Item)({
-  color: "red"
+const StyledFormError = styled.div({
+  color: "red",
+  lineHeight: "24px",
+  padding: "8px 0"
 });
 
 export default function FormError(props) {

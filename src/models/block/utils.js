@@ -19,5 +19,6 @@ const validChildrenTypesMap = {
 };
 
 export function getBlockValidChildrenTypes(block) {
-  return validChildrenTypesMap[block.type] || [];
+  const types = validChildrenTypesMap[block.type] || [];
+  return [...types];
 }

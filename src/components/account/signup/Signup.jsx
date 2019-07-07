@@ -6,6 +6,7 @@ import { makeConfirmValidator } from "../../../utils/descriptor";
 import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
 const passwordExtraInfo = "Minimum of 5 characters";
 
@@ -43,17 +44,23 @@ class Signup extends React.Component {
       submitCallback: onSubmit,
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({
-            error: indexedErrors.error[0].message,
-            loading: false
-          });
-        }
+        const formError =
+          Array.isArray(indexedErrors.error) && indexedErrors.error[0]
+            ? indexedErrors.error[0].message
+            : null;
+        this.setState({
+          error: formError,
+          isLoading: false
+        });
       },
       transformErrorMap: [
         {
           field: userErrorFields.emailAddressNotAvailable,
           toField: "email"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
         }
       ]
     });

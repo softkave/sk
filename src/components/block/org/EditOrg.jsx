@@ -6,6 +6,7 @@ import modalWrap from "../../modalWrap.jsx";
 import FormError from "../../FormError.jsx";
 import { constructSubmitHandler } from "../../form-utils.js";
 import { blockErrorFields } from "../../../models/block/blockErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
 class EditOrg extends React.Component {
   static defaultProps = {
@@ -27,21 +28,30 @@ class EditOrg extends React.Component {
     return constructSubmitHandler({
       form,
       submitCallback: onSubmit,
-      proccess: data => {
+      process: data => {
+        console.log(data);
         data.type = "org";
-        return data;
+        console.log(data);
+        return { values: data, hasError: false };
       },
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
-          this.setState({ error: indexedErrors.error[0].message });
+        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
+          this.setState({
+            error: indexedErrors.error[0].message,
+            isLoading: false
+          });
         }
       },
-      completedProcess: () => this.setState({ isLoading: false }),
+      // completedProcess: () => this.setState({ isLoading: false }),
       transformErrorMap: [
         {
           field: blockErrorFields.orgExists,
           toField: "name"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
         }
       ]
     });

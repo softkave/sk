@@ -13,6 +13,7 @@ import BoardContainer from "./BoardContainer";
 import Collaborators from "../../collaborator/Collaborators.jsx";
 import KanbanBoard from "./KanbanBoard";
 import DataLoader from "./DataLoader.jsx";
+import withForm from "../../form/withForm.jsx";
 
 class Board extends React.Component {
   constructor(props) {
@@ -71,19 +72,19 @@ class Board extends React.Component {
     await this.fetchCollaborationRequests();
   };
 
-  onSubmitData = (data, formType) => {
+  onSubmitData = async (data, formType) => {
     const { parent, block } = this.state;
 
     if (block) {
-      this.props.blockHandlers.onUpdate(block, data);
+      await this.props.blockHandlers.onUpdate(block, data);
     } else {
-      this.props.blockHandlers.onAdd(data, parent);
+      await this.props.blockHandlers.onAdd(data, parent);
     }
 
     this.toggleForm(formType);
   };
 
-  toggleForm = (type, parent = null, block = null) => {
+  toggleForm = (type, parent, block) => {
     this.setState(prevState => {
       return {
         parent: parent,
@@ -123,6 +124,7 @@ class Board extends React.Component {
 
     const remove = boardContext === "task" ? "project" : "task";
     const childrenTypes = getBlockValidChildrenTypes(block);
+    console.log(childrenTypes, remove, block);
     const typeIndex = childrenTypes.indexOf(remove);
 
     if (typeIndex !== -1) {
@@ -140,8 +142,9 @@ class Board extends React.Component {
         block={rootBlock}
         onBack={this.toggleShowCollaborators}
         collaborators={rootBlock.collaborators}
-        onAddCollaborators={data => {
-          blockHandlers.onAddCollaborators(rootBlock, data);
+        onAddCollaborators={async data => {
+          console.log(data);
+          return blockHandlers.onAddCollaborators(rootBlock, data);
         }}
         collaborationRequests={rootBlock.collaborationRequests}
         bench={rootBlock.bench}
@@ -174,6 +177,8 @@ class Board extends React.Component {
     // const childrenTypes = getBlockValidChildrenTypes(rootBlock);
     const childrenTypes = this.getChildrenTypes(rootBlock);
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
+    // const InternalEditTask = withForm(EditTask);
+    console.log(this);
 
     /**
      * This should be only for collaboration requests,
@@ -208,34 +213,40 @@ class Board extends React.Component {
 
     return (
       <Content>
-        <EditProject
-          visible={form.project}
-          onSubmit={data => this.onSubmitData(data, "project")}
-          onClose={() => this.toggleForm("project")}
-          data={block}
-          existingProjects={
-            form.project && this.getExistingNames(parent.project)
-          }
-          submitLabel={block && "Update Project"}
-        />
-        <EditGroup
-          visible={form.group}
-          onSubmit={data => this.onSubmitData(data, "group")}
-          onClose={() => this.toggleForm("group")}
-          data={block}
-          existingGroups={form.group && this.getExistingNames(parent.group)}
-          submitLabel={block && "Update Group"}
-        />
-        <EditTask
-          defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
-          collaborators={collaborators}
-          visible={form.task}
-          onSubmit={data => this.onSubmitData(data, "task")}
-          onClose={() => this.toggleForm("task")}
-          data={block}
-          user={user}
-          submitLabel={block && "Update Task"}
-        />
+        {form.project && (
+          <EditProject
+            visible={form.project}
+            onSubmit={data => this.onSubmitData(data, "project")}
+            onClose={() => this.toggleForm("project")}
+            data={block}
+            existingProjects={
+              form.project && this.getExistingNames(parent.project)
+            }
+            submitLabel={block && "Update Project"}
+          />
+        )}
+        {form.group && (
+          <EditGroup
+            visible={form.group}
+            onSubmit={data => this.onSubmitData(data, "group")}
+            onClose={() => this.toggleForm("group")}
+            data={block}
+            existingGroups={form.group && this.getExistingNames(parent.group)}
+            submitLabel={block && "Update Group"}
+          />
+        )}
+        {form.task && (
+          <EditTask
+            defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
+            collaborators={collaborators}
+            visible={form.task}
+            onSubmit={data => this.onSubmitData(data, "task")}
+            onClose={() => this.toggleForm("task")}
+            data={block}
+            user={user}
+            submitLabel={block && "Update Task"}
+          />
+        )}
         <Header>
           {onBack && <OnBackButton onClick={onBack} icon="arrow-left" />}
           {childrenTypes.length > 0 && (

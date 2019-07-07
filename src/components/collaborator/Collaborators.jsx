@@ -82,8 +82,8 @@ export default class Collaborators extends React.Component {
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}
           existingCollaborationRequests={collaborationRequests}
-          onSendRequests={data => {
-            onAddCollaborators(data);
+          onSendRequests={async data => {
+            await onAddCollaborators(data);
             this.toggleCollaboratorForm();
           }}
         />
@@ -104,7 +104,7 @@ export default class Collaborators extends React.Component {
             onClick={this.toggleCollaboratorForm}
             style={{ marginLeft: "1em" }}
           >
-            Add collaborator
+            Add Collaborator
           </Button>
           <span className="sk-gl-block-name">{block.name}</span>
         </div>

@@ -15,8 +15,8 @@ function mapDispatchToProps(dispatch) {
 
       if (result.user && result.token) {
         dispatch(mergeDataByPath("user", result));
-      } else {
-        throw new Error("an error occurred");
+      } else if (result.errors) {
+        throw result.errors;
       }
     }
   };

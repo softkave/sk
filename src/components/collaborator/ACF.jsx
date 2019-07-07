@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import isEmail from "validator/lib/isEmail";
 import ACFItem from "./ACFItem";
 import { indexArray } from "../../utils/object";
@@ -15,6 +15,7 @@ const messageLengthError = "Message length is more than 500 characters";
 
 export default class ACF extends React.PureComponent {
   validateRequests = value => {
+    console.log(...value, "L");
     const indexedEmails = indexArray(value, { path: "email" });
 
     value.forEach(request => {
@@ -30,10 +31,10 @@ export default class ACF extends React.PureComponent {
         request.emailError = null;
       }
 
-      if (request.message && request.message.length > maxMessageLength) {
-        request.messageError = messageLengthError;
+      if (request.body && request.body.length > maxMessageLength) {
+        request.bodyError = messageLengthError;
       } else {
-        request.messageError = null;
+        request.bodyError = null;
       }
     });
 
@@ -44,8 +45,9 @@ export default class ACF extends React.PureComponent {
     const { onChange, value } = this.props;
     let request = value[index];
     request = { ...request, ...data };
+    value[index] = request;
     // onChange(this.validateRequests(value));
-    onChange(request);
+    onChange(value);
   };
 
   onDelete = index => {
@@ -56,14 +58,16 @@ export default class ACF extends React.PureComponent {
 
   onAdd = () => {
     const { onChange, value, maxRequests } = this.props;
+    console.log(value);
 
     if (value.length < maxRequests) {
+      console.log("yay");
       value.push({
         email: null,
-        message: null,
+        body: null,
         expiresAt: null,
         emailError: null,
-        messageError: null
+        bodyError: null
       });
 
       onChange(value);
@@ -72,22 +76,25 @@ export default class ACF extends React.PureComponent {
 
   render() {
     const { value } = this.props;
+    console.log(this);
 
     return (
       <React.Fragment>
         {value.map((request, index) => {
           return (
-            <ACFItem
-              key={request.email}
-              email={request.email}
-              message={request.message}
-              expiresAt={request.expiresAt}
-              error={request.error}
-              emailError={request.emailError}
-              messageError={request.messageError}
-              onUpdate={data => this.onUpdate(index, data)}
-              onDelete={() => this.onDelete(index)}
-            />
+            <React.Fragment key={index}>
+              <ACFItem
+                email={request.email}
+                body={request.body}
+                expiresAt={request.expiresAt}
+                error={request.error}
+                emailError={request.emailError}
+                bodyError={request.bodyError}
+                onChange={data => this.onUpdate(index, data)}
+                onDelete={() => this.onDelete(index)}
+              />
+              {index < value.length - 1 && <Divider />}
+            </React.Fragment>
           );
         })}
         <Button block icon="plus" onClick={this.onAdd}>

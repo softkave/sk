@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form } from "antd";
+import { Button, Form, Spin } from "antd";
 import PropTypes from "prop-types";
 import moment from "moment";
 import isEmail from "validator/lib/isEmail";
@@ -20,12 +20,13 @@ import {
   notificationErrorFields
 } from "../../models/notification/notificationErrorMessages";
 import { notificationConstants } from "../../models/notification/constants";
+import { serverErrorFields } from "../../models/serverErrorMessages.js";
+import { blockConstants } from "../../models/block/constants.js";
+import FormError from "../FormError.jsx";
 
 const emailExistsError = "Email addresss has been entered already";
 
-const defaultExpirationDate = moment()
-  .add(1, "months")
-  .valueOf();
+const defaultExpirationDate = moment().add(1, "M");
 
 const ACPropTypes = {
   existingCollaborators: PropTypes.array,
@@ -63,14 +64,21 @@ class AC extends React.PureComponent {
   }
 
   validateRequests = value => {
-    const indexedEmails = indexArray(value, { path: "email" });
+    console.log(value, "L");
+    // const indexedEmails = indexArray(value, { path: "email" });
 
-    value.forEach(request => {
+    function findRequest(requests, request, excludeIndex) {
+      return requests.find((next, index) => {
+        return next.email === request.email && index !== excludeIndex;
+      });
+    }
+
+    value.forEach((request, index) => {
       if (typeof request.email !== "string" || request.email.length === 0) {
         request.emailError = validationErrorMessages.requiredError;
       } else if (!isEmail(request.email)) {
         request.emailError = userErrorMessages.invalidEmail;
-      } else if (indexedEmails[request.email]) {
+      } else if (findRequest(value, request, index)) {
         request.emailError = emailExistsError;
       } else if (this.indexedExistingUsersEmail[request.email]) {
         request.emailError =
@@ -83,7 +91,7 @@ class AC extends React.PureComponent {
 
       if (request.body && request.body.length > notificationConstants) {
         request.bodyError = getErrorMessageWithMax(
-          notificationConstants.maxAddCollaboratorBodyMessageLength,
+          notificationConstants.maxAddCollaboratorMessageLength,
           "string"
         );
       } else {
@@ -95,8 +103,8 @@ class AC extends React.PureComponent {
   };
 
   processValues = values => {
-    values = this.validateRequests(values);
-    const hasError = !!values.requests.find(request => {
+    values.collaborators = this.validateRequests(values.collaborators);
+    const hasError = !!values.collaborators.find(request => {
       return request.emailError || request.bodyError;
     });
 
@@ -104,11 +112,14 @@ class AC extends React.PureComponent {
       return { hasError, values };
     }
 
-    values.requests = values.requests.map(request => {
+    values.expiresAt = values.expiresAt.valueOf();
+    values.collaborators = values.collaborators.map(request => {
       return {
         email: request.email,
         body: request.body,
         expiresAt: request.expiresAt
+          ? moment(request.expiresAt).valueOf()
+          : undefined
       };
     });
 
@@ -151,7 +162,7 @@ class AC extends React.PureComponent {
           const request = requests[requestIndex];
 
           if (typeof requestErrorFieldName === "string") {
-            request[`${requestErrorFieldName}Error`] = error.message;
+            request[`${requestErrorFieldName}Error`] = error.body;
           } else {
             request.error = error.message;
           }
@@ -198,11 +209,17 @@ class AC extends React.PureComponent {
       processFieldError: this.processFieldError,
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
       afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error)) {
+        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
           this.setState({ error: indexedErrors.error[0].message });
         }
       },
-      completedProcess: () => this.setState({ isLoading: false })
+      completedProcess: () => this.setState({ isLoading: false }),
+      transformErrorMap: [
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
+        }
+      ]
       // transformErrorField: error => {
       //   const mapArray = [
       //     notificationErrorFields.requestHasBeenSentBefore,
@@ -215,45 +232,55 @@ class AC extends React.PureComponent {
 
   render() {
     const { form } = this.props;
+    const { isLoading, error } = this.state;
 
     return (
-      <Form hideRequiredMark onSubmit={this.getSubmitHandler()}>
-        <Form.Item>
-          {form.getFieldDecorator("body", {
-            getValueFromEvent: data => data,
-            rules: [
-              {
-                type: "string",
-                max: notificationConstants.maxAddCollaboratorBodyMessageLength
+      <Spin spinning={isLoading}>
+        <Form hideRequiredMark onSubmit={this.getSubmitHandler()}>
+          {error && <FormError>{error}</FormError>}
+          <Form.Item label="Default Message">
+            {form.getFieldDecorator("body", {
+              getValueFromEvent: data => data,
+              rules: [
+                {
+                  type: "string",
+                  max: notificationConstants.maxAddCollaboratorMessageLength
+                }
+              ],
+              initialValue: ""
+            })(<ACFMessage />)}
+          </Form.Item>
+          <Form.Item label="Default Expiration Date">
+            {form.getFieldDecorator("expiresAt", {
+              getValueFromEvent: data => data,
+              initialValue: defaultExpirationDate
+            })(
+              <ACFExpiresAt
+                minDate={moment()
+                  .subtract(1, "day")
+                  .endOf("day")}
+              />
+            )}
+          </Form.Item>
+          <Form.Item label="Requests">
+            {form.getFieldDecorator("collaborators", {
+              getValueFromEvent: data => this.validateRequests(data),
+              // getValueFromEvent: data => data,
+              initialValue: [],
+              rules: [{ required: true }],
+              getValueProps: value => {
+                return {
+                  value,
+                  maxRequests: blockConstants.maxAddCollaboratorValuesLength
+                };
               }
-            ],
-            initialValue: ""
-          })(<ACFMessage />)}
-        </Form.Item>
-        <Form.Item>
-          {form.getFieldDecorator("expiresAt", {
-            getValueFromEvent: data => data,
-            initialValue: defaultExpirationDate
-          })(
-            <ACFExpiresAt
-              minDate={moment()
-                .subtract(1, "day")
-                .endOf("day")}
-            />
-          )}
-        </Form.Item>
-        <Form.Item label="Requests">
-          {form.getFieldDecorator("requests", {
-            getValueFromEvent: data => this.validateRequests(data),
-            // getValueFromEvent: data => data,
-            initialValue: [],
-            rules: [{ required: true }]
-          })(<ACF />)}
-        </Form.Item>
-        <Button block type="primary" onClick={this.onSendRequests}>
-          Send Requests
-        </Button>
-      </Form>
+            })(<ACF />)}
+          </Form.Item>
+          <Button block type="primary" htmlType="submit">
+            Send Requests
+          </Button>
+        </Form>
+      </Spin>
     );
   }
 }

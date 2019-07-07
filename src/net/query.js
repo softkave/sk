@@ -44,6 +44,7 @@ export default async function query(headers, netQuery, variables, process) {
     devLog(resultBody);
 
     if (result.ok) {
+      console.log("result was okay");
       return resultBody;
     } else {
       if (result.status === 500) {
@@ -55,7 +56,7 @@ export default async function query(headers, netQuery, variables, process) {
 
     throw makeSingleQueryError(result.statusText || errorOccurredMessage);
   } catch (error) {
-    devLog(error);
+    devLog(__filename, error);
 
     if (Array.isArray(error)) {
       throw error;

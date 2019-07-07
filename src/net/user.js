@@ -41,10 +41,12 @@ export async function login(user) {
     "data.user.login"
   );
 
-  const prevToken = getItem(tokenStorageName);
+  if (!result.errors) {
+    const prevToken = getItem(tokenStorageName);
 
-  if (user.remember || prevToken) {
-    setItem(tokenStorageName, result.token, "local");
+    if (user.remember || prevToken) {
+      setItem(tokenStorageName, result.token, "local");
+    }
   }
 
   return result;
@@ -145,7 +147,13 @@ export async function getSavedUserData() {
   let userToken = getItem(tokenStorageName);
 
   if (userToken) {
-    let { user, token } = await getUserData(userToken);
+    let result = await getUserData(userToken);
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    let { user, token } = result;
     setItem(tokenStorageName, token);
     return { user, token };
   }

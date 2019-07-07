@@ -1,4 +1,16 @@
 import { devLog } from "../utils/log";
+import { serverErrorMessages } from "../models/serverErrorMessages";
+
+export function clearForm(form) {
+  let values = form.getFieldsValue();
+
+  values = Object.keys(values).reduce((accumulator, valueName) => {
+    accumulator[valueName] = { value: null, error: null };
+    return accumulator;
+  }, {});
+
+  form.setFields(values);
+}
 
 export function makeSubmitHandler(form, onSubmit, onError) {
   return function(event) {
@@ -51,7 +63,6 @@ export function applyErrors(form, errors) {
 }
 
 const noop = () => {};
-const returnDataAsIs = data => data;
 
 function getPrimaryFieldName(fieldName) {
   const fieldArray = fieldName.split(".");
@@ -73,7 +84,7 @@ export function defaultTransformErrorField(error, mapArray) {
   });
 
   if (mapTo) {
-    error.field = map.toField;
+    error.field = mapTo.toField;
   }
 
   return error;
@@ -167,14 +178,19 @@ function onValidateForm({
     }
 
     beforeProcess();
-    const { hasError, values: processedValues } = process(values);
-    console.log({ hasError, processedValues });
+    console.log({ values: { ...values } });
+    const result = process(values);
+    const processedValues = result.values;
+    const hasError = result.hasError;
+    console.log({ hasError, processedValues: { ...processedValues } });
 
     if (!hasError) {
       try {
         await submitCallback(processedValues);
         successfulProcess();
       } catch (error) {
+        console.log({ error }, "caught error");
+        console.error(error);
         submitHandlerOnError({
           error,
           beforeErrorProcess,
@@ -202,44 +218,58 @@ function submitHandlerOnError({
   transformErrorMap,
   transformErrorField
 }) {
-  devLog({ error });
+  devLog({ error }, "first");
   beforeErrorProcess(error);
-  error = transformErrors(error);
-  devLog({ transformedErrors: error });
-
+  // error = transformErrors(error);
+  // devLog({ transformedErrors: error }, "second");
+  console.log("not here 1");
   let fields = {};
   let indexedErrors = {};
   const values = form.getFieldsValue();
+  console.log("not here 1");
 
-  if (Array.isArray(error)) {
-    error = transformErrors(error, transformErrorMap, transformErrorField);
-    error = indexedErrors = error.reduce((accumulator, err) => {
-      const primaryFieldName = getPrimaryFieldName(err.field);
-
-      if (accumulator[primaryFieldName]) {
-        accumulator[primaryFieldName].push(err);
-      } else {
-        accumulator[primaryFieldName] = [err];
+  if (!Array.isArray(error)) {
+    error = [
+      {
+        field: "error",
+        message:
+          (error && error.message) || serverErrorMessages.defaultErrorMessage
       }
-
-      return accumulator;
-    }, {});
-
-    console.log(indexedErrors);
-    Object.keys(values).forEach(id => {
-      const fieldValue = values[id];
-      const processedFieldData = processFieldError(
-        id,
-        fieldValue,
-        indexedErrors[id],
-        indexedErrors
-      );
-
-      fields[id] = processedFieldData;
-    });
+    ];
   }
 
-  console.log(fields);
+  try {
+    error = transformErrors(error, transformErrorMap, transformErrorField);
+  } catch (error) {
+    console.log(error);
+  }
+  console.log({ error }, "third");
+  error = indexedErrors = error.reduce((accumulator, err) => {
+    const primaryFieldName = getPrimaryFieldName(err.field);
+
+    if (accumulator[primaryFieldName]) {
+      accumulator[primaryFieldName].push(err);
+    } else {
+      accumulator[primaryFieldName] = [err];
+    }
+
+    return accumulator;
+  }, {});
+
+  console.log({ indexedErrors }, "4th");
+  Object.keys(values).forEach(id => {
+    const fieldValue = values[id];
+    const processedFieldData = processFieldError(
+      id,
+      fieldValue,
+      indexedErrors[id],
+      indexedErrors
+    );
+
+    fields[id] = processedFieldData;
+  });
+
+  console.log({ fields });
   form.setFields(fields);
   afterErrorProcess(indexedErrors);
 }

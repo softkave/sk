@@ -1,5 +1,5 @@
 function trim(value) {
-  if (value.trim) {
+  if (value && value.trim) {
     return value.trim();
   }
 }
