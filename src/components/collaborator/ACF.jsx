@@ -15,7 +15,6 @@ const messageLengthError = "Message length is more than 500 characters";
 
 export default class ACF extends React.PureComponent {
   validateRequests = value => {
-    console.log(...value, "L");
     const indexedEmails = indexArray(value, { path: "email" });
 
     value.forEach(request => {
@@ -46,7 +45,6 @@ export default class ACF extends React.PureComponent {
     let request = value[index];
     request = { ...request, ...data };
     value[index] = request;
-    // onChange(this.validateRequests(value));
     onChange(value);
   };
 
@@ -58,10 +56,8 @@ export default class ACF extends React.PureComponent {
 
   onAdd = () => {
     const { onChange, value, maxRequests } = this.props;
-    console.log(value);
 
     if (value.length < maxRequests) {
-      console.log("yay");
       value.push({
         email: null,
         body: null,
@@ -76,7 +72,6 @@ export default class ACF extends React.PureComponent {
 
   render() {
     const { value } = this.props;
-    console.log(this);
 
     return (
       <React.Fragment>

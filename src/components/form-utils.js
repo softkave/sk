@@ -171,26 +171,21 @@ function onValidateForm({
   completedProcess
 }) {
   return async (errors, values) => {
-    console.log({ errors, values });
-
     if (errors) {
       return;
     }
 
     beforeProcess();
-    console.log({ values: { ...values } });
+
     const result = process(values);
     const processedValues = result.values;
     const hasError = result.hasError;
-    console.log({ hasError, processedValues: { ...processedValues } });
 
     if (!hasError) {
       try {
         await submitCallback(processedValues);
         successfulProcess();
       } catch (error) {
-        console.log({ error }, "caught error");
-        console.error(error);
         submitHandlerOnError({
           error,
           beforeErrorProcess,
@@ -220,13 +215,10 @@ function submitHandlerOnError({
 }) {
   devLog({ error }, "first");
   beforeErrorProcess(error);
-  // error = transformErrors(error);
-  // devLog({ transformedErrors: error }, "second");
-  console.log("not here 1");
+
   let fields = {};
   let indexedErrors = {};
   const values = form.getFieldsValue();
-  console.log("not here 1");
 
   if (!Array.isArray(error)) {
     error = [
@@ -241,9 +233,11 @@ function submitHandlerOnError({
   try {
     error = transformErrors(error, transformErrorMap, transformErrorField);
   } catch (error) {
-    console.log(error);
+    if (process.env.NODE_ENV === "development") {
+      console.error(error);
+    }
   }
-  console.log({ error }, "third");
+
   error = indexedErrors = error.reduce((accumulator, err) => {
     const primaryFieldName = getPrimaryFieldName(err.field);
 
@@ -256,7 +250,6 @@ function submitHandlerOnError({
     return accumulator;
   }, {});
 
-  console.log({ indexedErrors }, "4th");
   Object.keys(values).forEach(id => {
     const fieldValue = values[id];
     const processedFieldData = processFieldError(
@@ -269,7 +262,6 @@ function submitHandlerOnError({
     fields[id] = processedFieldData;
   });
 
-  console.log({ fields });
   form.setFields(fields);
   afterErrorProcess(indexedErrors);
 }

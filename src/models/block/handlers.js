@@ -27,7 +27,6 @@ function throwOnError(result) {
 export function makeBlockHandlers({ dispatch, user }) {
   return {
     async onAdd(block, parent) {
-      console.log({ block, parent });
       block.createdAt = Date.now();
       block.createdBy = user.customId;
       block.customId = newId();
@@ -117,15 +116,10 @@ export function makeBlockHandlers({ dispatch, user }) {
     },
 
     async onAddCollaborators(block, { collaborators, body, expiresAt }) {
-      console.log(body);
       collaborators = collaborators.map(request => {
-        console.log(request);
         if (!request.body) {
-          console.log("LOL_");
           request.body = body;
         }
-
-        console.log(request);
 
         if (!request.expiresAt) {
           request.expiresAt = expiresAt;

@@ -40,7 +40,6 @@ class KanbanBoard extends React.PureComponent {
     const { destination, type, draggableId, source } = result;
 
     if (!destination || draggableId === rootBlock.customId) {
-      console.log({ result });
       return;
     }
 

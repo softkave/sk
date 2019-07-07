@@ -88,17 +88,11 @@ export default class AssignTask extends React.PureComponent {
 
   render() {
     const { collaborators, value, user } = this.props;
-    console.log(this);
 
     return (
       <div>
         {this.renderTaskCollaborators(value)}
         {this.renderCollaboratorOptions(collaborators, user)}
-        {/* <Form.Item>
-          <Button block onClick={() => this.onAssignCollaborator(user)}>
-            Assign To Me
-          </Button>
-        </Form.Item> */}
       </div>
     );
   }

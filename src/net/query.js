@@ -44,7 +44,6 @@ export default async function query(headers, netQuery, variables, process) {
     devLog(resultBody);
 
     if (result.ok) {
-      console.log("result was okay");
       return resultBody;
     } else {
       if (result.status === 500) {

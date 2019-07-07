@@ -4,9 +4,8 @@ import moment from "moment";
 
 import { taskDescriptor as blockDescriptor } from "../../../models/block/descriptor";
 import modalWrap from "../../modalWrap.jsx";
-import AssignTask from "./AssignTask.jsx";
 import FormError from "../../FormError.jsx";
-import { constructSubmitHandler, clearForm } from "../../form-utils.js";
+import { constructSubmitHandler } from "../../form-utils.js";
 import EditPriority from "./EditPriority.jsx";
 import { blockErrorFields } from "../../../models/block/blockErrorMessages";
 import { serverErrorFields } from "../../../models/serverErrorMessages";
@@ -32,11 +31,6 @@ class EditTask extends React.Component {
     });
   }
 
-  componentWillUnmount() {
-    // console.log("holla");
-    // clearForm(this.props.form);
-  }
-
   getSubmitHandler = () => {
     const { form, onSubmit } = this.props;
 
@@ -56,7 +50,6 @@ class EditTask extends React.Component {
           });
         }
       },
-      // completedProcess: () => this.setState({ isLoading: false }),
       transformErrorMap: [
         {
           field: blockErrorFields.orgExists,
@@ -77,10 +70,7 @@ class EditTask extends React.Component {
       return collaborator.customId === next.userId;
     });
 
-    console.log(collaborator, value);
-
     if (!collaboratorExists) {
-      console.log("yes");
       value.push({
         userId: collaborator.customId,
         assignedAt: Date.now(),
@@ -116,10 +106,7 @@ class EditTask extends React.Component {
     } = this.props;
     const { isLoading, error } = this.state;
     const onSubmit = this.getSubmitHandler();
-    console.log(this);
-    // console.log(form.getFieldsValue());
     const formValue = form.getFieldsValue();
-    console.log({ ...formValue });
 
     return (
       <Spin spinning={isLoading}>
@@ -188,59 +175,7 @@ class EditTask extends React.Component {
               initialValue: data.taskCollaborators || defaultAssignedTo
             })(<span />)}
           </Form.Item>
-          {/* <Form.Item label="Select Collaborators">
-            {form.getFieldDecorator("taskCollaborators", {
-              initialValue: data.taskCollaborators || defaultAssignedTo,
-              valuePropName: "value",
-              getValueProps: value => {
-                return {
-                  value,
-                  collaborators,
-                  user
-                };
-              },
-              getValueFromEvent: data => data
-            })(
-              <Select
-                placeholder="Assign Collaborator"
-                onChange={index => {
-                  this.onAssignCollaborator(collaborators[index]);
-                }}
-              >
-                {collaborators.map((collaborator, index) => {
-                  return (
-                    <Select.Option value={index} key={collaborator.customId}>
-                      <CollaboratorThumbnail collaborator={collaborator} />
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            )}
-            <Button block onClick={() => this.onAssignCollaborator(user)}>
-              Assign To Me
-            </Button>
-          </Form.Item> */}
-          {/* <Form.Item label="Collaborators">
-            {form.getFieldDecorator("taskCollaborators", {
-              // initialValue: data.taskCollaborators || defaultAssignedTo,
-              initialValue: JSON.stringify(
-                data.taskCollaborators || defaultAssignedTo
-              ),
-              valuePropName: "value",
-              preserve: false,
-              getValueProps: value => {
-                console.log(value);
-                return {
-                  // value,
-                  collaborators,
-                  user,
-                  value: value ? JSON.parse(value) : undefined
-                };
-              },
-              // getValueFromEvent: data => data
-              getValueFromEvent: data => JSON.stringify(data)
-            })(<AssignTask />)}
-          </Form.Item> */}
+
           <Form.Item label="Should Complete At">
             {form.getFieldDecorator("expectedEndAt", {
               initialValue: data.expectedEndAt

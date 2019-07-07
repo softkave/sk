@@ -64,9 +64,6 @@ class AC extends React.PureComponent {
   }
 
   validateRequests = value => {
-    console.log(value, "L");
-    // const indexedEmails = indexArray(value, { path: "email" });
-
     function findRequest(requests, request, excludeIndex) {
       return requests.find((next, index) => {
         return next.email === request.email && index !== excludeIndex;

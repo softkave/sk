@@ -29,9 +29,7 @@ class EditOrg extends React.Component {
       form,
       submitCallback: onSubmit,
       process: data => {
-        console.log(data);
         data.type = "org";
-        console.log(data);
         return { values: data, hasError: false };
       },
       beforeProcess: () => this.setState({ isLoading: true, error: null }),
@@ -43,7 +41,6 @@ class EditOrg extends React.Component {
           });
         }
       },
-      // completedProcess: () => this.setState({ isLoading: false }),
       transformErrorMap: [
         {
           field: blockErrorFields.orgExists,

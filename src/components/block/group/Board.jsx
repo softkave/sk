@@ -13,7 +13,6 @@ import BoardContainer from "./BoardContainer";
 import Collaborators from "../../collaborator/Collaborators.jsx";
 import KanbanBoard from "./KanbanBoard";
 import DataLoader from "./DataLoader.jsx";
-import withForm from "../../form/withForm.jsx";
 
 class Board extends React.Component {
   constructor(props) {
@@ -124,7 +123,6 @@ class Board extends React.Component {
 
     const remove = boardContext === "task" ? "project" : "task";
     const childrenTypes = getBlockValidChildrenTypes(block);
-    console.log(childrenTypes, remove, block);
     const typeIndex = childrenTypes.indexOf(remove);
 
     if (typeIndex !== -1) {
@@ -143,7 +141,6 @@ class Board extends React.Component {
         onBack={this.toggleShowCollaborators}
         collaborators={rootBlock.collaborators}
         onAddCollaborators={async data => {
-          console.log(data);
           return blockHandlers.onAddCollaborators(rootBlock, data);
         }}
         collaborationRequests={rootBlock.collaborationRequests}
@@ -174,11 +171,8 @@ class Board extends React.Component {
     } = this.state;
 
     const collaborators = this.getCollaborators();
-    // const childrenTypes = getBlockValidChildrenTypes(rootBlock);
     const childrenTypes = this.getChildrenTypes(rootBlock);
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
-    // const InternalEditTask = withForm(EditTask);
-    console.log(this);
 
     /**
      * This should be only for collaboration requests,

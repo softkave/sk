@@ -62,7 +62,6 @@ class EditGroup extends React.Component {
     const { form, data, submitLabel, existingGroups } = this.props;
     const { isLoading, error } = this.state;
     const onSubmit = this.getSubmitHandler();
-    console.log(this.props);
 
     return (
       <Spin spinning={isLoading}>
