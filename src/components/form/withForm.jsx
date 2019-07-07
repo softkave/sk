@@ -1,7 +1,9 @@
 import React from "react";
 import util from "util";
+// import { Form } from "antd";
 
 export default function withForm(component) {
+  // const Component = Form.create()(component);
   const Component = component;
   const displayName = `withForm(${component.displayName ||
     component.name ||

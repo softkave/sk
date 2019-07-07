@@ -2,8 +2,8 @@ export function assignTask(collaborator, by) {
   return {
     userId: collaborator.customId,
     assignedAt: Date.now(),
-    assignedBy: by ? by.customId : null,
-    completedAt: null
+    assignedBy: by ? by.customId : collaborator.customId,
+    completedAt: undefined
   };
 }
 
@@ -19,5 +19,6 @@ const validChildrenTypesMap = {
 };
 
 export function getBlockValidChildrenTypes(block) {
-  return validChildrenTypesMap[block.type] || [];
+  const types = validChildrenTypesMap[block.type] || [];
+  return [...types];
 }

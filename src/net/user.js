@@ -13,18 +13,18 @@ import {
 } from "./schema/user";
 import query from "./query";
 import auth from "./auth";
-import { getDataFromObj } from "../utils/object";
+import { getDataFromObject } from "../utils/object";
 import { setItem, getItem, removeItem } from "../utils/storage";
 
 const tokenStorageName = "t";
 
 export async function signup(user) {
-  const userFields = ["name", "password", "email"];
+  const userFields = ["name", "password", "email", "color"];
 
   let result = await query(
     null,
     userSignupMutation,
-    { user: getDataFromObj(user, userFields) },
+    { user: getDataFromObject(user, userFields) },
     "data.user.signup"
   );
 
@@ -41,10 +41,12 @@ export async function login(user) {
     "data.user.login"
   );
 
-  const prevToken = getItem(tokenStorageName);
+  if (!result.errors) {
+    const prevToken = getItem(tokenStorageName);
 
-  if (user.remember || prevToken) {
-    setItem(tokenStorageName, result.token, "local");
+    if (user.remember || prevToken) {
+      setItem(tokenStorageName, result.token, "local");
+    }
   }
 
   return result;
@@ -60,7 +62,7 @@ export function updateUser(user) {
   return auth(
     null,
     updateUserMutation,
-    { user: getDataFromObj(user, updateUserFields) },
+    { user: getDataFromObject(user, updateUserFields) },
     "data.user.updateUser"
   );
 }
@@ -103,7 +105,7 @@ export function updateCollaborationRequest(request, data) {
     updateCollaborationRequestMutation,
     {
       customId: request.customId,
-      data: getDataFromObj(data, updateRequestFields)
+      data: getDataFromObject(data, updateRequestFields)
     },
     "data.user.updateCollaborationRequest"
   );
@@ -145,7 +147,13 @@ export async function getSavedUserData() {
   let userToken = getItem(tokenStorageName);
 
   if (userToken) {
-    let { user, token } = await getUserData(userToken);
+    let result = await getUserData(userToken);
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    let { user, token } = result;
     setItem(tokenStorageName, token);
     return { user, token };
   }

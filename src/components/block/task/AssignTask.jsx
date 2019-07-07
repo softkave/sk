@@ -1,135 +1,98 @@
 import React from "react";
-import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import { Form, Select, Button } from "antd";
-import dotProp from "dot-prop-immutable";
-import CollaboratorThumbnail from "../../collaborator/Thumnail.jsx";
 
-export default class AssignTask extends React.Component {
+import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
+import CollaboratorThumbnail from "../../collaborator/Thumnail.jsx";
+import { indexArray } from "../../../utils/object";
+
+export default class AssignTask extends React.PureComponent {
+  static defaultProps = {
+    collaborators: [],
+    value: []
+  };
+
   constructor(props) {
     super(props);
-    this.existingTaskCollaboratorsIdMap = {};
-    this.collaboratorsIdMap = {};
-    const defaultTaskCollaborators = props.defaultTaskCollaborators || [];
-    defaultTaskCollaborators.forEach(c => {
-      this.existingTaskCollaboratorsIdMap[c.userId] = c;
+    this.indexedCollaborators = indexArray(props.collaborators, {
+      path: "customId"
     });
-
-    const collaborators = props.collaborators || [];
-    collaborators.forEach(c => {
-      this.collaboratorsIdMap[c.customId] = c;
-    });
-
-    this.error = null;
   }
 
-  onAddCollaborator = collaborator => {
-    const { form, user } = this.props;
-
-    if (this.existingTaskCollaboratorsIdMap[collaborator.customId]) {
-      this.error = "collaborator is already assigned";
-      return;
-    }
-
-    let collaborators = form.getFieldValue("taskCollaborators");
-    collaborators.push({
-      userId: collaborator.customId,
-      assignedAt: Date.now(),
-      completedAt: 0,
-      assignedBy: user.customId
+  onAssignCollaborator = collaborator => {
+    const { value, user, onChange } = this.props;
+    const collaboratorExists = !!value.find(collaboratorData => {
+      return collaborator.customId === collaboratorData.userId;
     });
 
-    this.error = null;
-    this.existingTaskCollaboratorsIdMap[collaborator.customId] = collaborator;
-    form.setFieldsValue({ taskCollaborators: collaborators });
+    if (!collaboratorExists) {
+      value.push({
+        userId: collaborator.customId,
+        assignedAt: Date.now(),
+        completedAt: 0,
+        assignedBy: user.customId
+      });
+
+      onChange(value);
+    }
   };
 
   onUnassignCollaborator = (collaborator, index) => {
-    const { form } = this.props;
+    const { value, onChange } = this.props;
 
-    if (!this.existingTaskCollaboratorsIdMap[collaborator.userId]) {
-      this.error = "collaborator is not assigned";
-      return;
-    }
-
-    let collaborators = form.getFieldValue("taskCollaborators");
-    collaborators = dotProp.delete(collaborators, `${index}`);
-    this.error = null;
-    delete this.existingTaskCollaboratorsIdMap[collaborator.userId];
-    form.setFieldsValue({ taskCollaborators: collaborators });
+    value.splice(index, 1);
+    onChange(value);
   };
 
-  renderSelectCollaborators(collaborators) {
-    const { user } = this.props;
-    let options = [];
-    let showAssignToMeButton = false;
-
-    collaborators.forEach((c, index) => {
-      if (!this.existingTaskCollaboratorsIdMap[c.customId]) {
-        if (c.customId === user.customId) {
-          showAssignToMeButton = true;
-        }
-
-        options.push(
-          <Select.Option value={index} key={c.customId}>
-            <CollaboratorThumbnail collaborator={c} />
-          </Select.Option>
-        );
-      }
+  renderCollaboratorOptions(collaborators = [], user) {
+    let options = collaborators.map((collaborator, index) => {
+      return (
+        <Select.Option value={index} key={collaborator.customId}>
+          <CollaboratorThumbnail collaborator={collaborator} />
+        </Select.Option>
+      );
     });
 
-    return options.length > 0 ? (
-      <React.Fragment>
-        <Form.Item
-          style={{
-            marginBottom: showAssignToMeButton ? "8px" : undefined
+    return (
+      <Form.Item label="Select Collaborator">
+        <Select
+          placeholder="Assign Collaborator"
+          value={undefined}
+          onChange={i => {
+            this.onAssignCollaborator(collaborators[i]);
           }}
         >
-          <Select
-            placeholder="Assign collaborator"
-            onChange={i => {
-              this.onAddCollaborator(collaborators[i]);
-            }}
-          >
-            {options}
-          </Select>
-        </Form.Item>
-        {showAssignToMeButton && (
-          <div>
-            <Button onClick={() => this.onAddCollaborator(user)}>
-              Assign to me
-            </Button>
-          </div>
-        )}
-      </React.Fragment>
-    ) : null;
+          {options}
+        </Select>
+        <Button block onClick={() => this.onAssignCollaborator(user)}>
+          Assign To Me
+        </Button>
+      </Form.Item>
+    );
   }
 
-  renderCollaborators(taskCollaborators) {
-    return taskCollaborators.map((c, i) => {
+  renderTaskCollaborators(taskCollaborators = []) {
+    return taskCollaborators.map((taskCollaborator, index) => {
       return (
         <TaskCollaboratorThumbnail
-          key={c.userId}
-          collaborator={this.collaboratorsIdMap[c.userId]}
-          collaboratorTaskData={c}
+          key={taskCollaborator.userId}
+          collaborator={this.indexedCollaborators[taskCollaborator.userId]}
+          taskCollaborator={taskCollaborator}
           onToggle={null}
-          onUnassign={() => this.onUnassignCollaborator(c, i)}
+          onUnassign={() =>
+            this.onUnassignCollaborator(taskCollaborator, index)
+          }
         />
       );
     });
   }
 
   render() {
-    const { form, collaborators, defaultTaskCollaborators } = this.props;
+    const { collaborators, value, user } = this.props;
 
-    form.getFieldDecorator("taskCollaborators", {
-      initialValue: defaultTaskCollaborators || []
-    });
-
-    const taskCollaborators = form.getFieldValue("taskCollaborators");
     return (
       <div>
-        {this.renderCollaborators(taskCollaborators)}
-        {this.renderSelectCollaborators(collaborators)}
+        {this.renderTaskCollaborators(value)}
+        {this.renderCollaboratorOptions(collaborators, user)}
       </div>
     );
   }

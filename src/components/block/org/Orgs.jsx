@@ -26,8 +26,8 @@ class Orgs extends React.Component {
     });
   };
 
-  onCreateOrg = org => {
-    this.props.blockHandlers.onAdd(org);
+  onCreateOrg = async org => {
+    await this.props.blockHandlers.onAdd(org);
     this.toggleNewOrgForm();
   };
 

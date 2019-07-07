@@ -22,7 +22,7 @@ export const blockDescriptor = {
     },
     {
       pattern: /[\w\s]+/,
-      message: "only alphanumeric characters allowed"
+      message: "Only alphanumeric characters allowed"
     }
   ],
   expectedEndAt: [

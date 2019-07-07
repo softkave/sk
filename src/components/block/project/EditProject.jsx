@@ -1,77 +1,105 @@
 import React from "react";
-import ComputeForm from "../../compute-form/ComputeForm.jsx";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, Spin } from "antd";
+
 import { projectDescriptor as blockDescriptor } from "../../../models/block/descriptor";
 import { makeNameExistsValidator } from "../../../utils/descriptor";
 import modalWrap from "../../modalWrap.jsx";
+import FormError from "../../FormError.jsx";
+import { constructSubmitHandler } from "../../form-utils.js";
+import { blockErrorFields } from "../../../models/block/blockErrorMessages";
+import { serverErrorFields } from "../../../models/serverErrorMessages";
 
-const TextArea = Input.TextArea;
+const projectExistsErrorMessage = "Project with the same name exists";
 
 class EditProject extends React.Component {
   static defaultProps = {
-    data: {}
+    data: {},
+    submitLabel: "Create Project"
   };
 
   constructor(props) {
     super(props);
-    const self = this;
-    const data = props.data || {};
-
-    this.model = {
-      fields: {
-        name: {
-          component: Input,
-          props: { autoComplete: "off" },
-          label: "Name",
-          labelCol: null,
-          wrapperCol: null,
-          rules: [
-            ...blockDescriptor.name,
-            {
-              validator: makeNameExistsValidator(
-                props.existingProjects,
-                "project exists"
-              )
-            }
-          ],
-          initialValue: data.name
-        },
-        description: {
-          component: TextArea,
-          props: { autosize: { minRows: 2, maxRows: 6 } },
-          label: "Description",
-          labelCol: null,
-          wrapperCol: null,
-          rules: blockDescriptor.description,
-          initialValue: data.description
-        },
-        submit: {
-          component: Button,
-          props: {
-            type: "primary",
-            children: "Submit",
-            block: true,
-            htmlType: "submit"
-          },
-          labelCol: null,
-          wrapperCol: null,
-          noDecorate: true
-        }
-      },
-      formProps: {
-        hideRequiredMark: true
-      },
-      onSubmit: self.onSubmit
+    this.state = {
+      isLoading: false,
+      error: null
     };
   }
 
-  onSubmit = data => {
-    data.type = "project";
-    return this.props.onSubmit(data);
+  getSubmitHandler = () => {
+    const { form, onSubmit } = this.props;
+
+    return constructSubmitHandler({
+      form,
+      submitCallback: onSubmit,
+      process: data => {
+        data.type = "project";
+        return { values: data, hasError: false };
+      },
+      beforeProcess: () => this.setState({ isLoading: true, error: null }),
+      afterErrorProcess: indexedErrors => {
+        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
+          this.setState({
+            error: indexedErrors.error[0].message,
+            isLoading: false
+          });
+        }
+      },
+      // completedProcess: () => this.setState({ isLoading: false }),
+      transformErrorMap: [
+        {
+          field: blockErrorFields.orgExists,
+          toField: "name"
+        },
+        {
+          field: serverErrorFields.serverError,
+          toField: "error"
+        }
+      ]
+    });
   };
 
   render() {
-    return <ComputeForm model={this.model} form={this.props.form} />;
+    const { form, data, submitLabel, existingProjects } = this.props;
+    const { isLoading, error } = this.state;
+    const onSubmit = this.getSubmitHandler();
+
+    return (
+      <Spin spinning={isLoading}>
+        <Form hideRequiredMark onSubmit={onSubmit}>
+          {error && <FormError>{error}</FormError>}
+          <Form.Item label="Project Name">
+            {form.getFieldDecorator("name", {
+              rules: [
+                ...blockDescriptor.name,
+                {
+                  validator: makeNameExistsValidator(
+                    existingProjects,
+                    projectExistsErrorMessage
+                  )
+                }
+              ],
+              initialValue: data.name
+            })(<Input autoComplete="off" />)}
+          </Form.Item>
+          <Form.Item label="Description">
+            {form.getFieldDecorator("description", {
+              rules: blockDescriptor.description,
+              initialValue: data.description
+            })(
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+              />
+            )}
+          </Form.Item>
+          <Form.Item>
+            <Button block type="primary" htmlType="submit">
+              {submitLabel}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Spin>
+    );
   }
 }
 

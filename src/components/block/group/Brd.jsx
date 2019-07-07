@@ -25,7 +25,6 @@ export default class Board extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       columns: this.props.initial || {},
       ordered: Object.keys(this.props.initial || {})
@@ -112,7 +111,6 @@ export default class Board extends Component {
     const columns = this.state.columns;
     const ordered = this.state.ordered;
     const { containerHeight, onClickAddChild, onEdit } = this.props;
-    console.log(this.props, this.state);
 
     const board = (
       <Droppable

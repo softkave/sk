@@ -6,7 +6,7 @@ import Group from "./Group.jsx";
 import MiniTask from "../task/MiniTask.jsx";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
-import { DraggableItem } from "../dnd";
+// import { DraggableItem } from "../dnd";
 import DataLoader from "./DataLoader";
 import { sortBlocksByPosition } from "./sortBlocks";
 
@@ -40,7 +40,6 @@ class KanbanBoard extends React.PureComponent {
     const { destination, type, draggableId, source } = result;
 
     if (!destination || draggableId === rootBlock.customId) {
-      console.log({ result });
       return;
     }
 
@@ -367,9 +366,9 @@ const KanbanBoardDroppable = styled.div`
   padding: 0 16px;
 `;
 
-const DraggableBlock = styled.div`
-  margin: 12px;
-`;
+// const DraggableBlock = styled.div`
+//   margin: 12px;
+// `;
 
 const SpinContainer = styled.div`
   width: 100%;

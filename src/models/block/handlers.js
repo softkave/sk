@@ -16,6 +16,14 @@ function convertDateToTimestamp(date) {
   }
 }
 
+function throwOnError(result) {
+  if (result && result.errors) {
+    throw result.errors;
+  }
+
+  return result;
+}
+
 export function makeBlockHandlers({ dispatch, user }) {
   return {
     async onAdd(block, parent) {
@@ -72,13 +80,15 @@ export function makeBlockHandlers({ dispatch, user }) {
 
       actions.push(setDataByPath(block.path, block));
 
-      await netInterface("block.addBlock", block);
+      const result = await netInterface("block.addBlock", block);
+      throwOnError(result);
       dispatch(makeMultiple(actions));
     },
 
     async onUpdate(block, data) {
       data.expectedEndAt = convertDateToTimestamp(data.expectedEndAt);
-      await netInterface("block.updateBlock", block, data);
+      const result = await netInterface("block.updateBlock", block, data);
+      throwOnError(result);
       dispatch(mergeDataByPath(block.path, data));
     },
 
@@ -92,42 +102,45 @@ export function makeBlockHandlers({ dispatch, user }) {
         block.path
       }.taskCollaborators.${collaboratorIndex}.completedAt`;
 
-      await netInterface("block.toggleTask", block, true);
+      const result = await netInterface("block.toggleTask", block, true);
+      throwOnError(result);
       dispatch(
         setDataByPath(path, collaborator.completedAt ? null : Date.now())
       );
     },
 
     async onDelete(block) {
-      await netInterface("block.deleteBlock", block);
+      const result = await netInterface("block.deleteBlock", block);
+      throwOnError(result);
       dispatch(deleteDataByPath(block.path));
     },
 
-    async onAddCollaborators(block, { collaborators, message, expiresAt }) {
-      collaborators = collaborators.map(c => {
-        if (!c.message) {
-          c.message = message;
+    async onAddCollaborators(block, { collaborators, body, expiresAt }) {
+      collaborators = collaborators.map(request => {
+        if (!request.body) {
+          request.body = body;
         }
 
-        if (!c.expiresAt) {
-          c.expiresAt = expiresAt;
-        } else if (c.expiresAt.valueOf) {
-          c.expiresAt = convertDateToTimestamp(c.expiresAt);
+        if (!request.expiresAt) {
+          request.expiresAt = expiresAt;
+        } else if (request.expiresAt.valueOf) {
+          request.expiresAt = convertDateToTimestamp(request.expiresAt);
         }
 
-        c.customId = newId();
-        c.statusHistory = [{ status: "pending", date: Date.now() }];
-        return c;
+        request.customId = newId();
+        request.statusHistory = [{ status: "pending", date: Date.now() }];
+        return request;
       });
 
-      await netInterface(
+      const result = await netInterface(
         "block.addCollaborators",
         block,
         collaborators,
-        message,
+        body,
         expiresAt
       );
 
+      throwOnError(result);
       dispatch(
         mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
       );
@@ -138,7 +151,11 @@ export function makeBlockHandlers({ dispatch, user }) {
     },
 
     async getBlockChildren(block) {
-      const { blocks } = await netInterface("block.getBlockChildren", block);
+      const result = await netInterface("block.getBlockChildren", block);
+
+      throwOnError(result);
+
+      const { blocks } = result;
       let blockMappedToType = {};
       const childrenTypes = getBlockValidChildrenTypes(block);
       let children = {
@@ -220,30 +237,35 @@ export function makeBlockHandlers({ dispatch, user }) {
       });
 
       if (updateParentBlock) {
-        await this.onUpdate(block, block);
+        const updateBlockResult = await this.onUpdate(block, block);
+        throwOnError(updateBlockResult);
       }
 
       dispatch(mergeDataByPath(block.path, blockMappedToType));
     },
 
     async getCollaborators(block) {
-      const { collaborators } = await netInterface(
-        "block.getCollaborators",
-        block
-      );
+      const result = await netInterface("block.getCollaborators", block);
 
+      throwOnError(result);
+
+      const { collaborators } = result;
       dispatch(setDataByPath(`${block.path}.collaborators`, collaborators));
     },
 
     async getCollaborationRequests(block) {
-      const { requests } = await netInterface("block.getCollabRequests", block);
+      const result = await netInterface("block.getCollabRequests", block);
+      throwOnError(result);
 
+      const { requests } = result;
       dispatch(setDataByPath(`${block.path}.collaborationRequests`, requests));
     },
 
     async fetchRootData() {
-      const { blocks } = await netInterface("block.getRoleBlocks");
+      const result = await netInterface("block.getRoleBlocks");
+      throwOnError(result);
 
+      const { blocks } = result;
       let rootBlock = null;
       let orgs = {};
       blocks.forEach(blk => {
@@ -311,14 +333,6 @@ export function makeBlockHandlers({ dispatch, user }) {
         sourceBlock[pluralizedType],
         draggedBlock.customId
       );
-
-      // console.log({
-      //   draggedBlock,
-      //   sourceBlock,
-      //   destinationBlock,
-      //   dragInformation,
-      //   groupContext
-      // });
 
       if (draggedBlock.type === "group") {
         if (groupContext) {
@@ -412,8 +426,8 @@ export function makeBlockHandlers({ dispatch, user }) {
         return;
       }
 
-      dispatch(makeMultiple(actions));
-      await netInterface(
+      // dispatch(makeMultiple(actions));
+      const result = await netInterface(
         "block.transferBlock",
         sourceBlock,
         draggedBlock,
@@ -424,8 +438,8 @@ export function makeBlockHandlers({ dispatch, user }) {
         groupContext
       );
 
-      // console.log(actions);
-      // dispatch(makeMultiple(actions));
+      throwOnError(result);
+      dispatch(makeMultiple(actions));
     }
   };
 }

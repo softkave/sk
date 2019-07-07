@@ -4,7 +4,7 @@ import Thumbnail from "../../thumbnail/Thumbnail.jsx";
 
 export default class TaskCollaboratorThumbnail extends React.Component {
   render() {
-    const { collaborator, collaboratorTaskData, onUnassign } = this.props;
+    const { collaborator, taskCollaborator, onUnassign } = this.props;
 
     return (
       <Thumbnail
@@ -18,7 +18,7 @@ export default class TaskCollaboratorThumbnail extends React.Component {
                 <div style={{ marginTop: "8px" }}>
                   <Switch
                     disabled={true}
-                    checked={collaboratorTaskData.data}
+                    checked={taskCollaborator.data}
                     onChange={null}
                     style={{ marginRight: "16px" }}
                   />

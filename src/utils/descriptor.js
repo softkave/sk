@@ -23,37 +23,23 @@ export function makeConfirmValidator(
   field0,
   field1,
   form,
-  msg = "values do not match"
+  msg = "Values do not match"
 ) {
   return function validatePassword(rule, value, cb, source) {
     const value0 = form.getFieldValue(field0);
     const value1 = form.getFieldValue(field1);
-    let fieldToUpdate = null;
-    let fieldValue = null;
-    let error = null;
 
-    if (value0 && value1 && value0 === value1) {
-      cb();
-    } else {
+    if (value0 && value1 && value0 !== value1) {
       cb(msg);
-      error = msg;
-    }
-
-    if (rule.field === field0) {
-      fieldToUpdate = field1;
-      fieldValue = value1;
     } else {
-      fieldToUpdate = field0;
-      fieldValue = value0;
+      cb();
     }
-
-    form.setFields({ [fieldToUpdate]: { error, value: fieldValue } });
   };
 }
 
 export function makeNameExistsValidator(
   existingNames,
-  msg = "name already exist"
+  msg = "Name already exist"
 ) {
   return function validatePassword(rule, value, cb, source) {
     value = value.toLowerCase();
