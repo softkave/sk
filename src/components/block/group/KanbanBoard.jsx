@@ -245,25 +245,31 @@ class KanbanBoard extends React.PureComponent {
 
     let groups = sortBlocksByPosition(rootBlock.group, sortedIds);
     let rendered = [];
-    const ungrouped = (
-      <Group
-        disabled
-        key="ungrouped"
-        type={type}
-        group={{ name: "ungrouped" }}
-        user={user}
-        draggableId="ungrouped"
-        droppableId="ungrouped"
-        index={0}
-        render={
-          type === "task"
-            ? () => this.renderTasks(rootBlock.task, rootBlock)
-            : () => this.renderProjects(rootBlock.project, rootBlock)
-        }
-      />
-    );
 
-    rendered.push(ungrouped);
+    if (
+      (type === "task" && this.hasChildren(rootBlock.type)) ||
+      (type === "project" && this.hasChildren(rootBlock.project))
+    ) {
+      const ungrouped = (
+        <Group
+          disabled
+          key="ungrouped"
+          type={type}
+          group={{ name: "ungrouped" }}
+          user={user}
+          draggableId="ungrouped"
+          droppableId="ungrouped"
+          index={0}
+          render={
+            type === "task"
+              ? () => this.renderTasks(rootBlock.task, rootBlock)
+              : () => this.renderProjects(rootBlock.project, rootBlock)
+          }
+        />
+      );
+
+      rendered.push(ungrouped);
+    }
 
     groups.forEach((group, index) => {
       let groupId = group.customId;
