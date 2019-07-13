@@ -255,7 +255,9 @@ class KanbanBoard extends React.PureComponent {
           disabled
           key="ungrouped"
           type={type}
-          group={{ name: "ungrouped" }}
+          group={{
+            name: type === "task" ? "Ungrouped Tasks" : "Ungrouped Projects"
+          }}
           user={user}
           draggableId="ungrouped"
           droppableId="ungrouped"
