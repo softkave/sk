@@ -24,10 +24,6 @@ function defaultIndexer(data, path) {
 
 export function indexArray(arr = [], { path, indexer } = {}) {
   if (typeof indexer !== "function") {
-    if (typeof path !== "string") {
-      throw new Error("path must be provided if an indexer is not provided");
-    }
-
     indexer = defaultIndexer;
   }
 

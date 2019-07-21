@@ -18,7 +18,7 @@ import { setItem, getItem, removeItem } from "../utils/storage";
 
 const tokenStorageName = "t";
 
-export async function signup(user) {
+export async function signup({ user }) {
   const userFields = ["name", "password", "email", "color"];
 
   let result = await query(
@@ -33,11 +33,11 @@ export async function signup(user) {
   return result;
 }
 
-export async function login(user) {
+export async function login({ email, password }) {
   let result = await query(
     null,
     userLoginMutation,
-    { email: user.email, password: user.password },
+    { email, password },
     "data.user.login"
   );
 
@@ -56,7 +56,7 @@ export function logout() {
   removeItem(tokenStorageName, "local");
 }
 
-export function updateUser(user) {
+export function updateUser({ user }) {
   const updateUserFields = ["name", "lastNotificationCheckTime"];
 
   return auth(
@@ -67,7 +67,7 @@ export function updateUser(user) {
   );
 }
 
-export async function changePassword(password) {
+export async function changePassword({ password }) {
   let result = await auth(
     null,
     changePasswordMutation,
@@ -84,7 +84,7 @@ export async function changePassword(password) {
   return result;
 }
 
-export function forgotPassword(email) {
+export function forgotPassword({ email }) {
   return query(
     null,
     forgotPasswordMutation,
@@ -93,11 +93,11 @@ export function forgotPassword(email) {
   );
 }
 
-export function userExists(email) {
+export function userExists({ email }) {
   return query(null, userExistsQuery, { email }, "data.user.userExists");
 }
 
-export function updateCollaborationRequest(request, data) {
+export function updateCollaborationRequest({ request, data }) {
   const updateRequestFields = ["readAt"];
 
   return auth(
@@ -111,7 +111,7 @@ export function updateCollaborationRequest(request, data) {
   );
 }
 
-export function changePasswordWithToken(password, token) {
+export function changePasswordWithToken({ password, token }) {
   return auth(
     null,
     changePasswordWithTokenMutation,
@@ -121,7 +121,7 @@ export function changePasswordWithToken(password, token) {
   );
 }
 
-export function respondToCollaborationRequest(request, response) {
+export function respondToCollaborationRequest({ request, response }) {
   return auth(
     null,
     respondToCollaborationRequestMutation,

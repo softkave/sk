@@ -1,12 +1,13 @@
 import { blockFragment } from "./block";
+import { errorFragment } from "./error";
 
 export const userExistsQuery = `
+  ${errorFragment}
   query UserExistsQuery (email: String!) {
     user {
       userExists(email: $email) {
         errors {
-          field
-          message
+          ...errorFragment
         }
         userExists
       }
@@ -15,12 +16,12 @@ export const userExistsQuery = `
 `;
 
 export const updateUserMutation = `
+  ${errorFragment}
   mutation UpdateUserMutation($data: UpdateUserInput!) {
     user {
       updateUser(user: $user) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -28,10 +29,10 @@ export const updateUserMutation = `
 `;
 
 export const userLoginFragement = `
+  ${errorFragment}
   fragment userQueryResult on UserQueryResult {
     errors {
-      field
-      message
+      ...errorFragment
     }
     user {
       name
@@ -68,12 +69,12 @@ export const userLoginMutation = `
 `;
 
 export const forgotPasswordMutation = `
+  ${errorFragment}
   mutation UserForgotPasswordMutation ($email: String!) {
     user {
       forgotPassword(email: $email) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -105,12 +106,12 @@ export const changePasswordWithTokenMutation = `
 `;
 
 export const getCollaborationRequestsQuery = `
+  ${errorFragment}
   query GetCollaborationRequestsQuery {
     user {
       getCollaborationRequests {
         errors {
-          field
-          message
+          ...errorFragment
         }
         requests {
           customId
@@ -155,14 +156,14 @@ export const getUserDataQuery = `
 `;
 
 export const updateCollaborationRequestMutation = `
+  ${errorFragment}
   mutation UpdateCollaborationRequestMutation (
     $customId: String!, $data: UpdateCollaborationRequestInput!
   ) {
     user {
       updateCollaborationRequest (customId: $customId, data: $data) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -171,14 +172,14 @@ export const updateCollaborationRequestMutation = `
 
 export const respondToCollaborationRequestMutation = `
   ${blockFragment}
+  ${errorFragment}
   mutation RespondToCollaborationRequestMutation (
     $customId: String!, $response: String!
   ) {
     user {
       respondToCollaborationRequest (customId: $customId, response: $response) {
         errors {
-          field
-          message
+          ...errorFragment
         }
         block {
           ...blockFragment
