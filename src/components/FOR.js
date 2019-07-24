@@ -11,19 +11,19 @@ function defaultErrorAggregator(accumulator, nextError, values) {
 
     if (existingEntry) {
       set(accumulator.values, {
-        ...nextError,
+        // ...nextError,
         value: fieldValue,
         error: [].concat(existingEntry.error, nextError.message)
       });
     } else {
       set(accumulator.values, {
-        ...nextError,
+        // ...nextError,
         value: fieldValue,
         error: nextError.message
       });
     }
   } else {
-    accumulator.global.push(nextError);
+    accumulator.global.push(nextError.message);
   }
 
   return accumulator;
@@ -108,4 +108,28 @@ export function clearFieldFromAllError(error) {
 export function reduceAllErrorToGlobal(error) {
   error = clearFieldFromAllError(error);
   return aggregateError(error);
+}
+
+export function makeSubmitHandler({ before, onError, success, done, submit }) {
+  return async function submitHandler(...values) {
+    if (before) {
+      before();
+    }
+
+    try {
+      const result = await submit(...values);
+
+      if (success) {
+        success(result);
+      }
+    } catch (error) {
+      if (onError) {
+        onError(error);
+      }
+    }
+
+    if (done) {
+      done();
+    }
+  };
 }

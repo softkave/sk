@@ -33,7 +33,7 @@ export async function signup({ user }) {
   return result;
 }
 
-export async function login({ email, password }) {
+export async function login({ email, password, remember }) {
   let result = await query(
     null,
     userLoginMutation,
@@ -44,7 +44,7 @@ export async function login({ email, password }) {
   if (!result.errors) {
     const prevToken = getItem(tokenStorageName);
 
-    if (user.remember || prevToken) {
+    if (remember || prevToken) {
       setItem(tokenStorageName, result.token, "local");
     }
   }

@@ -7,6 +7,7 @@ import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
 import { userErrorFields } from "../../../models/user/userErrorMessages";
 import { serverErrorFields } from "../../../models/serverErrorMessages";
+import { makeSubmitHandler, aggregateError } from "../../FOR";
 
 const passwordExtraInfo = "Minimum of 5 characters";
 
@@ -36,8 +37,39 @@ class Signup extends React.Component {
     };
   }
 
+  setFormError(error) {
+    this.setState({ error, isLoading: false });
+  }
+
   getSubmitHandler = () => {
     const { form, onSubmit } = this.props;
+    const self = this;
+
+    return makeSubmitHandler({
+      submit: onSubmit,
+      before() {
+        this.setState({ isLoading: true, error: null });
+      },
+
+      onError(error) {
+        const reduced = aggregateError(error, form.getFieldsValue());
+
+        if (Object.keys(reduced.values)) {
+          form.setFields(reduced.values);
+        }
+
+        if (reduced.global.length > 0) {
+          self.setState({
+            error: reduced.global.join(", "),
+            isLoading: false
+          });
+        }
+      },
+
+      success() {},
+
+      done() {}
+    });
 
     return constructSubmitHandler({
       form,

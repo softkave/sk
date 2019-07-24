@@ -9,7 +9,7 @@ const methods = {
     return changePasswordData;
   },
 
-  async net(loginData) {
+  async net(data) {
     const query = new URLSearchParams(window.location.search);
 
     return await netInterface("user.changePasswordWithToken", {

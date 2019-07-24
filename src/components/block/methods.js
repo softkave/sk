@@ -6,13 +6,13 @@ import {
 } from "../../redux/actions/data";
 import netInterface from "../../net/index";
 import randomColor from "randomcolor";
-import { getBlockValidChildrenTypes } from "./utils";
 import { makeMultiple } from "../../redux/actions/make";
 import { newId } from "../../utils/utils";
 import {
   stripFieldsFromError,
   filterErrorByBaseName
 } from "../../components/FOR";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 
 function convertDateToTimestamp(date) {
   if (date && date.valueOf) {
@@ -404,7 +404,6 @@ const fetchRootDataMethods = {
   },
 
   redux({ state, dispatch, blocks }) {
-    const { blocks } = result;
     let rootBlock = null;
     let orgs = {};
     blocks.forEach(blk => {
@@ -434,6 +433,7 @@ const transferBlockMethods = {
     dragInformation,
     groupContext
   }) {
+    const pluralizedType = `${draggedBlock.type}s`;
     return {
       draggedBlock,
       sourceBlock,
@@ -483,12 +483,7 @@ const transferBlockMethods = {
     draggedBlockPosition
   }) {
     const actions = [];
-    const dropPosition = dragInformation.destination.index;
     const pluralizedType = `${draggedBlock.type}s`;
-    let draggedBlockPosition = getIndex(
-      sourceBlock[pluralizedType],
-      draggedBlock.customId
-    );
 
     if (draggedBlock.type === "group") {
       if (groupContext) {
