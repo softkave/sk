@@ -8,7 +8,16 @@ const StyledFormError = styled.div({
 });
 
 export default function FormError(props) {
-  const { children } = props;
+  const { children, error } = props;
 
-  return <StyledFormError>{children}</StyledFormError>;
+  return (
+    <StyledFormError>
+      {children}
+      {[].concat(error).map(nextError => nextError)}
+    </StyledFormError>
+  );
 }
+
+FormError.defaultProps = {
+  error: []
+};

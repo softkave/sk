@@ -1,5 +1,6 @@
 import get from "lodash/get";
 import { devLog } from "../utils/log";
+import { IAnyObject } from "../utils/types";
 
 const serverAddr =
   process.env.NODE_ENV === "development"
@@ -25,7 +26,7 @@ function processQueryResult(resultBody, process) {
 
 export default async function query(headers, netQuery, variables, process) {
   try {
-    let hd = {
+    const hd = {
       "Content-Type": "application/json",
       ...headers
     };
@@ -63,4 +64,15 @@ export default async function query(headers, netQuery, variables, process) {
       throw defaultQueryError;
     }
   }
+}
+
+export interface INetError {
+  field?: string;
+  message?: string;
+  action?: string;
+  type: string;
+}
+
+export interface INetResult extends IAnyObject {
+  errors?: INetError;
 }
