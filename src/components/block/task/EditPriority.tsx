@@ -1,10 +1,17 @@
-import React from "react";
 import { Dropdown, Menu } from "antd";
-import Priority, { priorityToColorMap } from "./Priority.jsx";
+import React from "react";
 
-export default class EditPriority extends React.Component {
-  render() {
+import Priority, { PriorityValues } from "./Priority.jsx";
+
+export interface IEditPriorityProps {
+  value: PriorityValues;
+  onChange: (value: string) => void;
+}
+
+export default class EditPriority extends React.Component<IEditPriorityProps> {
+  public render() {
     const { value, onChange } = this.props;
+
     const menu = (
       <Menu onClick={({ key }) => onChange(key)}>
         <Menu.Item key="not important">
@@ -21,15 +28,7 @@ export default class EditPriority extends React.Component {
 
     return (
       <Dropdown overlay={menu} trigger={["click"]}>
-        <span
-          className="sk-priority"
-          style={{
-            backgroundColor: priorityToColorMap[value],
-            cursor: "pointer"
-          }}
-        >
-          {value}
-        </span>
+        <Priority level={value} />
       </Dropdown>
     );
   }

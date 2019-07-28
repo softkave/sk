@@ -1,5 +1,7 @@
+import { Field } from "formik";
 import get from "lodash/get";
 import set from "lodash/set";
+import { INetError } from "../net/query";
 import { indexArray } from "../utils/object";
 
 // Default error aggregator aggregates all error with the same field into an array,
@@ -35,8 +37,8 @@ export function aggregateError(
   values,
   aggregator = defaultErrorAggregator
 ) {
-  let schema = { values: {}, total: error, global: [] };
-  let result = error.reduce((accumulator, nextError) => {
+  const schema = { values: {}, total: error, global: [] };
+  const result = error.reduce((accumulator, nextError) => {
     return aggregator(accumulator, nextError, values);
   }, schema);
 

@@ -54,40 +54,53 @@ class EditGroup extends React.Component {
     const { form, data, submitLabel, existingGroups } = this.props;
 
     return (
-      <NewFormAntD>
-        <Form.Item label="Group Name">
-          {form.getFieldDecorator("name", {
-            rules: [
-              ...blockDescriptor.name,
-              {
-                validator: makeNameExistsValidator(
-                  existingGroups,
-                  groupExistsErrorMessage
-                )
-              }
-            ],
-            initialValue: data.name
-          })(<Input autoComplete="off" />)}
-        </Form.Item>
-        <Form.Item label="Description">
-          {form.getFieldDecorator("description", {
-            rules: blockDescriptor.description,
-            initialValue: data.description
-          })(
-            <Input.TextArea
-              autosize={{ minRows: 2, maxRows: 6 }}
-              autoComplete="off"
-            />
-          )}
-        </Form.Item>
-        <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            {submitLabel}
-          </Button>
-        </Form.Item>
-      </NewFormAntD>
+      <Formik initialValues={null} onSubmit={null} validate={null}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting
+        }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Form.Item label="Group Name">
+                <Input
+                  autoComplete="off"
+                  name="name"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.name}
+                />
+              </Form.Item>
+              <Form.Item label="Description">
+                <Input.TextArea
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                  autoComplete="off"
+                  name="description"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.description}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isSubmitting}
+                >
+                  {submitLabel}
+                </Button>
+              </Form.Item>
+            </form>
+          );
+        }}
+      </Formik>
     );
   }
 }
 
-export default modalWrap(Form.create()(EditGroup), "Group");
+export default modalWrap(EditGroup, "Group");

@@ -14,23 +14,35 @@ function getFontColor(type) {
   }
 }
 
-const StyledFormMessage = styled.div(props => ({
+interface IStyledMessageProps {
+  type?: string;
+}
+
+const StyledFormMessage = styled.div<IStyledMessageProps>(props => ({
   color: getFontColor(props.type),
   lineHeight: "24px",
   padding: "8px 0"
 }));
 
-export default function FormMessage(props) {
+export interface IFormMessageProps {
+  message?: string | string[];
+  type?: "error" | "message";
+}
+
+const FormMessage: React.SFC<IFormMessageProps> = props => {
   const { children, message, type } = props;
+  const messages = Array.isArray(message) ? message : [message];
 
   return (
     <StyledFormMessage type={type}>
       {children}
-      {[].concat(message).map(nextMessage => nextMessage)}
+      {messages.map(nextMessage => nextMessage)}
     </StyledFormMessage>
   );
-}
+};
 
 FormMessage.defaultProps = {
   message: []
 };
+
+export default FormMessage;

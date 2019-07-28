@@ -1,5 +1,6 @@
 import React from "react";
 import { Input, Button, Form, notification } from "antd";
+import { Formik } from "formik";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
@@ -67,34 +68,54 @@ class ForgotPassword extends React.Component {
   };
 
   render() {
-    const { form } = this.props;
-
     return (
-      <NewFormAntD>
-        <Form.Item label="Email Address">
-          {form.getFieldDecorator("email", {
-            rules: userDescriptor.email
-          })(<Input autoComplete="email" />)}
-        </Form.Item>
-        <Form.Item label="Confirm Email Address">
-          {form.getFieldDecorator("confirmEmail", {
-            rules: [
-              {
-                required: true,
-                type: "string",
-                validator: this.confirmEmailValidator
-              }
-            ]
-          })(<Input autoComplete="email" />)}
-        </Form.Item>
-        <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            Send Request
-          </Button>
-        </Form.Item>
-      </NewFormAntD>
+      <Formik initialValues={null} onSubmit={null} validate={null}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting
+        }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Form.Item label="Email Address">
+                <Input
+                  autoComplete="email"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                />
+                )}
+              </Form.Item>
+              <Form.Item label="Confirm Email Address">
+                <Input
+                  autoComplete="email"
+                  name="confirmEmail"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmEmail}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isSubmitting}
+                >
+                  Change Password
+                </Button>
+              </Form.Item>
+            </form>
+          );
+        }}
+      </Formik>
     );
   }
 }
 
-export default Form.create()(ForgotPassword);
+export default ForgotPassword;

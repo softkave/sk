@@ -1,5 +1,6 @@
 import React from "react";
 import { Input, Button, Form, message } from "antd";
+import { Formik } from "formik";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
@@ -53,34 +54,57 @@ class ChangePassword extends React.Component {
   };
 
   render() {
-    const { form } = this.props;
+    const { onSubmit } = this.props;
 
     return (
-      <NewFormAntD>
-        <Form.Item label="Password">
-          {form.getFieldDecorator("password", {
-            rules: userDescriptor.password
-          })(<Input.Password visibilityToggle autoComplete="new-password" />)}
-        </Form.Item>
-        <Form.Item label="Confirm Password">
-          {form.getFieldDecorator("confirmPassword", {
-            rules: [
-              {
-                required: true,
-                type: "string",
-                validator: this.confirmPasswordValidator
-              }
-            ]
-          })(<Input.Password visibilityToggle autoComplete="new-password" />)}
-        </Form.Item>
-        <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            Change Password
-          </Button>
-        </Form.Item>
-      </NewFormAntD>
+      <Formik initialValues={null} onSubmit={null} validate={null}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting
+        }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Form.Item label="Password">
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                />
+              </Form.Item>
+              <Form.Item label="Confirm Password">
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="confirmPassword"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isSubmitting}
+                >
+                  Change Password
+                </Button>
+              </Form.Item>
+            </form>
+          );
+        }}
+      </Formik>
     );
   }
 }
 
-export default Form.create()(ChangePassword);
+export default ChangePassword;

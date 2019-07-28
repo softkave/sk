@@ -1,5 +1,6 @@
 import React from "react";
 import { Input, Button, Checkbox, Form } from "antd";
+import { Formik } from "formik";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { constructSubmitHandler } from "../../form-utils.js";
@@ -42,33 +43,62 @@ class Login extends React.Component {
     const { form } = this.props;
 
     return (
-      <NewFormAntD>
-        <Form.Item label="Email Address">
-          {form.getFieldDecorator("email", {
-            rules: userDescriptor.email
-          })(<Input autoComplete="email" />)}
-        </Form.Item>
-        <Form.Item label="Password">
-          {form.getFieldDecorator("password", {
-            rules: userDescriptor.password
-          })(
-            <Input.Password visibilityToggle autoComplete="current-password" />
-          )}
-        </Form.Item>
-        <Form.Item>
-          {form.getFieldDecorator("remember", {
-            initialValue: true,
-            valuePropName: "checked"
-          })(<Checkbox>Remember Me</Checkbox>)}
-        </Form.Item>
-        <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            Login
-          </Button>
-        </Form.Item>
-      </NewFormAntD>
+      <Formik initialValues={null} onSubmit={null} validate={null}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting
+        }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Form.Item label="Email Address">
+                <Input
+                  autoComplete="email"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                />
+              </Form.Item>
+              <Form.Item label="Password">
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="current-password"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Checkbox
+                  name="remember"
+                  onChange={handleChange}
+                  value={values.remember}
+                >
+                  Remember Me
+                </Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isSubmitting}
+                >
+                  Login
+                </Button>
+              </Form.Item>
+            </form>
+          );
+        }}
+      </Formik>
     );
   }
 }
 
-export default Form.create()(Login);
+export default Login;

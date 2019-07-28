@@ -2,6 +2,7 @@ import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import styled from "@emotion/styled";
 import { Spin, Icon } from "antd";
+
 import Group from "./Group.jsx";
 import MiniTask from "../task/MiniTask.jsx";
 import ProjectThumbnail from "../project/ProjectThumbnail.jsx";

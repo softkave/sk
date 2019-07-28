@@ -1,9 +1,9 @@
 import React from "react";
 import { Input, Button, Form } from "antd";
+import { Formik } from "formik";
 
 import { userDescriptor } from "../../../models/user/descriptor";
 import { makeConfirmValidator } from "../../../utils/descriptor";
-import { NewFormAntD } from "../../NewFormAntD";
 
 const passwordExtraInfo = "Minimum of 5 characters";
 
@@ -29,55 +29,84 @@ class Signup extends React.Component {
   }
 
   render() {
-    const { form, onSubmit } = this.props;
+    const { onSubmit } = this.props;
 
     return (
-      <NewFormAntD form={form} onSubmit={onSubmit}>
-        <Form.Item label="Name">
-          {form.getFieldDecorator("name", {
-            rules: userDescriptor.name
-          })(<Input autoComplete="name" />)}
-        </Form.Item>
-        <Form.Item label="Email Address">
-          {form.getFieldDecorator("email", {
-            rules: userDescriptor.email
-          })(<Input autoComplete="email" />)}
-        </Form.Item>
-        <Form.Item label="Confirm Email Address">
-          {form.getFieldDecorator("confirmEmail", {
-            rules: [
-              {
-                required: true,
-                type: "string",
-                validator: this.confirmEmailValidator
-              }
-            ]
-          })(<Input autoComplete="email" />)}
-        </Form.Item>
-        <Form.Item label="Password" extra={passwordExtraInfo}>
-          {form.getFieldDecorator("password", {
-            rules: userDescriptor.password
-          })(<Input.Password visibilityToggle autoComplete="new-password" />)}
-        </Form.Item>
-        <Form.Item label="Confirm Password">
-          {form.getFieldDecorator("confirmPassword", {
-            rules: [
-              {
-                required: true,
-                type: "string",
-                validator: this.confirmPasswordValidator
-              }
-            ]
-          })(<Input.Password visibilityToggle autoComplete="new-password" />)}
-        </Form.Item>
-        <Form.Item>
-          <Button block type="primary" htmlType="submit">
-            Create Account
-          </Button>
-        </Form.Item>
-      </NewFormAntD>
+      <Formik initialValues={null} onSubmit={null} validate={null}>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting
+        }) => {
+          return (
+            <form onSubmit={handleSubmit}>
+              <Form.Item label="Name">
+                <Input
+                  autoComplete="name"
+                  name="name"
+                  value={values.name}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+              <Form.Item label="Email Address">
+                <Input
+                  autoComplete="email"
+                  name="email"
+                  value={values.email}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+              <Form.Item label="Confirm Email Address">
+                <Input
+                  autoComplete="email"
+                  name="confirmEmail"
+                  value={values.confirmEmail}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+              <Form.Item label="Password" extra={passwordExtraInfo}>
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="password"
+                  value={values.password}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+              <Form.Item label="Confirm Password">
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="confirmPassword"
+                  value={values.confirmPassword}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  disabled={isSubmitting}
+                >
+                  Create Account
+                </Button>
+              </Form.Item>
+            </form>
+          );
+        }}
+      </Formik>
     );
   }
 }
 
-export default Form.create()(Signup);
+export default Signup;
