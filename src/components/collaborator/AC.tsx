@@ -33,6 +33,7 @@ const validationSchema = yup.object().shape({
       })
     )
     .max(blockConstants.maxAddCollaboratorValuesLength)
+    .required()
 });
 
 interface IACValue {
@@ -70,48 +71,6 @@ class AC extends React.PureComponent<IACProp> {
     }
   }
 
-  public validateRequests = value => {
-    function findRequest(requests, request, excludeIndex) {
-      return requests.find((next, index) => {
-        return next.email === request.email && index !== excludeIndex;
-      });
-    }
-
-    function setError(err, index, field, error) {
-      const indexError = err[index] || {};
-      const fieldError = indexError[field] || [];
-      fieldError.push(error);
-      indexError[field] = fieldError;
-      err[index] = indexError;
-    }
-
-    const errors = [];
-
-    value.forEach((request, index) => {
-      if (findRequest(value, request, index)) {
-        setError(errors, index, "email", emailExistsError);
-      } else if (this.indexedExistingUsersEmail[request.email]) {
-        setError(
-          errors,
-          index,
-          "email",
-          notificationErrorMessages.sendingRequestToAnExistingCollaborator
-        );
-      } else if (this.indexedExistingRequestsEmail[request.email]) {
-        setError(
-          errors,
-          index,
-          "email",
-          notificationErrorMessages.requestHasBeenSentBefore
-        );
-      }
-    });
-
-    if (errors.length > 0) {
-      return errors;
-    }
-  };
-
   public render() {
     const { onSendRequests } = this.props;
 
@@ -123,6 +82,7 @@ class AC extends React.PureComponent<IACProp> {
           requests: []
         }}
         onSubmit={(values, { setErrors }) => {
+          // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
           const requestError = this.validateRequests(values.requests);
 
           if (requestError) {
@@ -144,11 +104,15 @@ class AC extends React.PureComponent<IACProp> {
           isSubmitting,
           setFieldValue
         }) => {
+          const globalError = getGlobalError(errors);
+
           return (
             <form onSubmit={handleSubmit}>
-              <Form.Item>
-                <FormError error={getGlobalError(errors)} />
-              </Form.Item>
+              {globalError && (
+                <Form.Item>
+                  <FormError error={globalError} />
+                </Form.Item>
+              )}
               <Form.Item
                 label="Default Message"
                 help={<FormError>{errors.message}</FormError>}
@@ -198,6 +162,48 @@ class AC extends React.PureComponent<IACProp> {
       </Formik>
     );
   }
+
+  private validateRequests = value => {
+    function findRequest(requests, request, excludeIndex) {
+      return requests.find((next, index) => {
+        return next.email === request.email && index !== excludeIndex;
+      });
+    }
+
+    function setError(err, index, field, error) {
+      const indexError = err[index] || {};
+      const fieldError = indexError[field] || [];
+      fieldError.push(error);
+      indexError[field] = fieldError;
+      err[index] = indexError;
+    }
+
+    const errors = [];
+
+    value.forEach((request, index) => {
+      if (findRequest(value, request, index)) {
+        setError(errors, index, "email", emailExistsError);
+      } else if (this.indexedExistingUsersEmail[request.email]) {
+        setError(
+          errors,
+          index,
+          "email",
+          notificationErrorMessages.sendingRequestToAnExistingCollaborator
+        );
+      } else if (this.indexedExistingRequestsEmail[request.email]) {
+        setError(
+          errors,
+          index,
+          "email",
+          notificationErrorMessages.requestHasBeenSentBefore
+        );
+      }
+    });
+
+    if (errors.length > 0) {
+      return errors;
+    }
+  };
 }
 
 export default modalWrap(AC, "Collaboration Request");

@@ -1,21 +1,45 @@
-import { Button, DatePicker, Form, Input, List, Select, Spin } from "antd";
+import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
+import yup from "yup";
 
-import { blockErrorFields } from "../../../models/block/blockErrorMessages";
-import { taskDescriptor as blockDescriptor } from "../../../models/block/descriptor";
-import { serverErrorFields } from "../../../models/serverErrorMessages";
+import { blockConstants } from "../../../models/block/constants";
+import { textPattern } from "../../../models/user/descriptor";
 import { indexArray } from "../../../utils/object";
 import CollaboratorThumbnail from "../../collaborator/Thumnail";
-import { constructSubmitHandler } from "../../form-utils.js";
 import FormError from "../../FormError.jsx";
+import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 import EditPriority from "./EditPriority.jsx";
+import { PriorityValues } from "./Priority";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 
+const validationSchema = yup.object().shape({
+  description: yup
+    .string()
+    .max(blockConstants.maxDescriptionLength)
+    .matches(textPattern)
+});
+
+interface ITaskCollaborator {
+  userId: string;
+  assignedAt: number;
+  assignedBy: string;
+  completedAt?: number;
+}
+
+interface IEditTaskValues {
+  // name: string;
+  description: string;
+  priority: string;
+  taskCollaborators: ITaskCollaborator[];
+  expectedEndAt: number;
+}
+
+// TODO: Input appropriate types
 export interface IEditTaskProps {
-  data: any;
+  data: IEditTaskValues;
   submitLabel: string;
   defaultAssignedTo: [];
   user: any;
@@ -26,10 +50,12 @@ export interface IEditTaskProps {
 class EditTask extends React.Component<IEditTaskProps> {
   public static defaultProps = {
     data: {},
-    submitLabel: "Create Task"
+    submitLabel: "Create Task",
+    defaultAssignedTo: []
   };
 
-  public indexedCollaborators: any[];
+  // TODO: Input appropriate types
+  private indexedCollaborators: { [key: string]: any };
 
   constructor(props) {
     super(props);
@@ -39,83 +65,27 @@ class EditTask extends React.Component<IEditTaskProps> {
     });
   }
 
-  public getSubmitHandler = () => {
-    const { onSubmit } = this.props;
-
-    return constructSubmitHandler({
-      submitCallback: onSubmit,
-      process: data => {
-        data.type = "task";
-        return { values: data, hasError: false };
-      },
-      beforeProcess: () => this.setState({ isLoading: true, error: null }),
-      afterErrorProcess: indexedErrors => {
-        if (Array.isArray(indexedErrors.error) && indexedErrors.error[0]) {
-          this.setState({
-            error: indexedErrors.error[0].message,
-            isLoading: false
-          });
-        }
-      },
-      transformErrorMap: [
-        {
-          field: blockErrorFields.orgExists,
-          toField: "name"
-        },
-        {
-          field: serverErrorFields.serverError,
-          toField: "error"
-        }
-      ]
-    });
-  };
-
-  public assignCollaborator = (collaborator, taskCollaborators) => {
-    const { user } = this.props;
-    const collaboratorExists = !!taskCollaborators.find(next => {
-      return collaborator.customId === next.userId;
-    });
-
-    if (!collaboratorExists) {
-      return [
-        ...taskCollaborators,
-        {
-          userId: collaborator.customId,
-          assignedAt: Date.now(),
-          completedAt: 0,
-          assignedBy: user.customId
-        }
-      ];
-    }
-
-    return taskCollaborators;
-  };
-
-  public unassignCollaborator = (taskC, taskCollaborators) => {
-    const index = taskCollaborators.findIndex(next => {
-      return next.userId === taskC.userId;
-    });
-
-    if (index !== -1) {
-      const updated = [...taskCollaborators];
-      updated.splice(index, 1);
-      return updated;
-    }
-
-    return taskCollaborators;
-  };
-
   public render() {
     const {
       data,
       collaborators,
       defaultAssignedTo,
       user,
-      submitLabel
+      submitLabel,
+      onSubmit
     } = this.props;
 
     return (
-      <Formik initialValues={null} onSubmit={null} validate={null}>
+      <Formik
+        initialValues={{
+          ...data,
+          taskCollaborators: data.taskCollaborators || defaultAssignedTo
+        }}
+        validationSchema={validationSchema}
+        onSubmit={(values, { setErrors }) => {
+          submitHandler(onSubmit, values, { setErrors });
+        }}
+      >
         {({
           values,
           errors,
@@ -126,9 +96,15 @@ class EditTask extends React.Component<IEditTaskProps> {
           isSubmitting,
           setFieldValue
         }) => {
+          const globalError = getGlobalError(errors);
+
           return (
             <form onSubmit={handleSubmit}>
-              <Form.Item label="Organization Name">
+              {/* TODO: Maybe rename to title */}
+              {/* <Form.Item
+                label="Organization Name"
+                help={<FormError>{errors.name}</FormError>}
+              >
                 <Input
                   autoComplete="off"
                   name="name"
@@ -136,8 +112,16 @@ class EditTask extends React.Component<IEditTaskProps> {
                   onChange={handleChange}
                   value={values.name}
                 />
-              </Form.Item>
-              <Form.Item label="Description">
+              </Form.Item> */}
+              {globalError && (
+                <Form.Item>
+                  <FormError error={globalError} />
+                </Form.Item>
+              )}
+              <Form.Item
+                label="Description"
+                help={<FormError>{errors.description}</FormError>}
+              >
                 <Input.TextArea
                   autosize={{ minRows: 2, maxRows: 6 }}
                   autoComplete="off"
@@ -150,7 +134,7 @@ class EditTask extends React.Component<IEditTaskProps> {
               <Form.Item label="Priority">
                 <EditPriority
                   onChange={(value: string) => setFieldValue("priority", value)}
-                  value={values.priority}
+                  value={values.priority as PriorityValues}
                 />
               </Form.Item>
               <Form.Item label="Assigned To">
@@ -230,7 +214,7 @@ class EditTask extends React.Component<IEditTaskProps> {
                   block
                   type="primary"
                   htmlType="submit"
-                  disabled={isSubmitting}
+                  loading={isSubmitting}
                 >
                   {submitLabel}
                 </Button>
@@ -241,6 +225,41 @@ class EditTask extends React.Component<IEditTaskProps> {
       </Formik>
     );
   }
+
+  private assignCollaborator = (collaborator, taskCollaborators) => {
+    const { user } = this.props;
+    const collaboratorExists = !!taskCollaborators.find(next => {
+      return collaborator.customId === next.userId;
+    });
+
+    if (!collaboratorExists) {
+      return [
+        ...taskCollaborators,
+        {
+          userId: collaborator.customId,
+          assignedAt: Date.now(),
+          completedAt: 0,
+          assignedBy: user.customId
+        }
+      ];
+    }
+
+    return taskCollaborators;
+  };
+
+  private unassignCollaborator = (taskC, taskCollaborators) => {
+    const index = taskCollaborators.findIndex(next => {
+      return next.userId === taskC.userId;
+    });
+
+    if (index !== -1) {
+      const updated = [...taskCollaborators];
+      updated.splice(index, 1);
+      return updated;
+    }
+
+    return taskCollaborators;
+  };
 }
 
 export default modalWrap(EditTask, "Task");

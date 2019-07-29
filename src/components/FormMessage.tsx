@@ -32,6 +32,13 @@ export interface IFormMessageProps {
 const FormMessage: React.SFC<IFormMessageProps> = props => {
   const { children, message, type } = props;
   const messages = Array.isArray(message) ? message : [message];
+  const isVisible =
+    React.Children.count(children) > 0 ||
+    (Array.isArray(message) ? message.length > 0 : !!message);
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <StyledFormMessage type={type}>

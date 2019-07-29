@@ -39,11 +39,48 @@ export function flattenErrorToObject(error: INetError[]) {
   });
 }
 
-export async function submitHandler(onSubmit, values: object, { setErrors }) {
+interface ISubmitHandlerOptions {
+  setErrors: (errors: object) => void;
+  fieldsToDelete?: string[];
+  onError?: () => void;
+  onSuccess?: () => void;
+  onComplete?: () => void;
+}
+
+export async function submitHandler(
+  onSubmit,
+  values: object,
+  {
+    setErrors,
+    fieldsToDelete,
+    onError,
+    onComplete,
+    onSuccess
+  }: ISubmitHandlerOptions
+) {
+  let result = null;
+
   try {
-    const result = await onSubmit(deleteFields(values));
-    return result;
+    if (fieldsToDelete && fieldsToDelete.indexOf("error") === -1) {
+      fieldsToDelete.push("error");
+    }
+
+    result = await onSubmit(deleteFields(values, fieldsToDelete));
+
+    if (onSuccess) {
+      onSuccess();
+    }
   } catch (error) {
     setErrors(flattenErrorToObject(error));
+
+    if (onError) {
+      onError();
+    }
   }
+
+  if (onComplete) {
+    onComplete();
+  }
+
+  return result;
 }
