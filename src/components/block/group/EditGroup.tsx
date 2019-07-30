@@ -50,6 +50,14 @@ class EditGroup extends React.Component<IEditGroupProps> {
         initialValues={data!}
         validationSchema={validationSchema}
         onSubmit={(values, { setErrors }) => {
+          // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
+          const error = this.validate(values);
+
+          if (error) {
+            setErrors(error);
+            return;
+          }
+
           submitHandler(onSubmit, values, { setErrors });
         }}
       >

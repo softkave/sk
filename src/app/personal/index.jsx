@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+
 import Board from "../../components/block/group/Board";
-import { makeBlockHandlers } from "../../models/block/handlers";
 import { getBlockMethods } from "../../components/block/methods";
 
 class Personal extends React.Component {

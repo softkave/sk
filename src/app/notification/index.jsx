@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+
 import NotificationList from "../../components/notification/NotificationList.jsx";
-import { makeNotificationHandlers } from "../../models/notification/handlers";
 import {
   filterErrorByBaseName,
   stripFieldsFromError
@@ -9,6 +9,7 @@ import {
 import netInterface from "../../net/index.js";
 import { mergeDataByPath, setDataByPath } from "../../redux/actions/data.js";
 import { makeMultiple } from "../../redux/actions/make.js";
+import { makePipeline } from "../../components/FormPipeline.js";
 
 class NotificationsContainer extends React.Component {
   constructor(props) {
@@ -65,28 +66,6 @@ function throwOnError(result, filterBaseNames, stripBaseNames) {
   }
 
   return result;
-}
-
-function makeField(methods, initialParams) {
-  return async function(params) {
-    return main(methods, { ...initialParams, params });
-  };
-}
-
-async function main(methods, params) {
-  let processedData;
-
-  try {
-    processedData = methods.process(params);
-  } catch (error) {
-    throw [{ type: "error", message: error.message }];
-  }
-
-  let next = { ...params, ...processedData };
-  let result = await methods.net(next);
-  result = methods.handleError(result);
-  next = { ...next, ...result };
-  methods.redux(next);
 }
 
 function requestIsValid(statusHistory) {
@@ -197,9 +176,9 @@ const fetchNotificationsMethods = {
 
 function getNotificationMethods(reduxParams) {
   return {
-    onClickNotification: makeField(clickNotificationMethods, reduxParams),
-    onRespond: makeField(respondToNotificationMethods, reduxParams),
-    fetchNotifications: makeField(fetchNotificationsMethods, reduxParams)
+    onClickNotification: makePipeline(clickNotificationMethods, reduxParams),
+    onRespond: makePipeline(respondToNotificationMethods, reduxParams),
+    fetchNotifications: makePipeline(fetchNotificationsMethods, reduxParams)
   };
 }
 
@@ -214,8 +193,7 @@ function mapDispatchToProps(dispatch) {
 function mergeProps({ state }, { dispatch }, ownProps) {
   return {
     notifications: state.notifications,
-    // ...makeNotificationHandlers({ dispatch })
-    ...getNotificationMethods({ state, dispatch })
+    ...getNotificationMethods({ state, dispatch, user: state.user.user })
   };
 }
 

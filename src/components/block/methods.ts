@@ -1,18 +1,17 @@
 import dotProp from "dot-prop-immutable";
+import randomColor from "randomcolor";
+
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import netInterface from "../../net/index";
 import {
-  mergeDataByPath,
   deleteDataByPath,
+  mergeDataByPath,
   setDataByPath
 } from "../../redux/actions/data";
-import netInterface from "../../net/index";
-import randomColor from "randomcolor";
 import { makeMultiple } from "../../redux/actions/make";
 import { newId } from "../../utils/utils";
-import {
-  stripFieldsFromError,
-  filterErrorByBaseName
-} from "../../components/FOR";
-import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import { filterErrorByBaseName, stripFieldsFromError } from "../FOR";
+import { makePipeline } from "../FormPipeline";
 
 function convertDateToTimestamp(date) {
   if (date && date.valueOf) {
@@ -46,7 +45,11 @@ function getIndex(list, id) {
   return idIndex;
 }
 
-function throwOnError(result, filterBaseNames, stripBaseNames) {
+function throwOnError(
+  result: any,
+  filterBaseNames?: string[] | null,
+  stripBaseNames?: string[] | null
+) {
   if (result && result.errors) {
     if (filterBaseNames) {
       result.errors = filterErrorByBaseName(
@@ -126,7 +129,7 @@ const addBlockMethods = {
   },
 
   redux({ state, dispatch, block, parent }) {
-    const actions = [];
+    const actions: any[] = [];
 
     if (parent) {
       actions.push(setDataByPath(parent.path, parent));
@@ -262,9 +265,9 @@ const getBlockChildrenMethods = {
   // TODO: think on having a postNet function
 
   redux({ state, dispatch, block, blocks, updateBlock }) {
-    let blockMappedToType = {};
+    const blockMappedToType = {};
     const childrenTypes = getBlockValidChildrenTypes(block);
-    let children = {
+    const children: any = {
       tasks: [],
       groups: [],
       projects: [],
@@ -306,7 +309,7 @@ const getBlockChildrenMethods = {
 
     blocks.forEach(data => {
       data.path = `${block.path}.${data.type}.${data.customId}`;
-      let typeMap = blockMappedToType[data.type] || {};
+      const typeMap = blockMappedToType[data.type] || {};
       typeMap[data.customId] = data;
       blockMappedToType[data.type] = typeMap;
 
@@ -404,8 +407,8 @@ const fetchRootDataMethods = {
   },
 
   redux({ state, dispatch, blocks }) {
-    let rootBlock = null;
-    let orgs = {};
+    let rootBlock: any = null;
+    const orgs = {};
     blocks.forEach(blk => {
       if (blk.type === "root") {
         rootBlock = blk;
@@ -416,7 +419,7 @@ const fetchRootDataMethods = {
       }
     });
 
-    let actions = [
+    const actions = [
       mergeDataByPath(rootBlock.path, rootBlock),
       mergeDataByPath("orgs", orgs)
     ];
@@ -482,7 +485,7 @@ const transferBlockMethods = {
     dropPosition,
     draggedBlockPosition
   }) {
-    const actions = [];
+    const actions: any[] = [];
     const pluralizedType = `${draggedBlock.type}s`;
 
     if (draggedBlock.type === "group") {
@@ -581,35 +584,20 @@ const transferBlockMethods = {
   }
 };
 
-function makeField(methods, initialParams) {
-  return async function(params) {
-    return main(methods, { ...initialParams, params });
-  };
-}
-
-async function main(methods, params) {
-  let processedData = methods.process(params);
-  let next = { ...params, ...processedData };
-  let result = await methods.net(next);
-  result = methods.handleError(result);
-  next = { ...next, ...result };
-  methods.redux(next);
-}
-
 export function getBlockMethods(reduxParams) {
   return {
-    onAdd: makeField(addBlockMethods, reduxParams),
-    onUpdate: makeField(updateBlockMethods, reduxParams),
-    onToggle: makeField(toggleTaskMethods, reduxParams),
-    onDelete: makeField(deleteBlockMethods, reduxParams),
-    onAddCollaborators: makeField(addCollaboratorMethods, reduxParams),
-    getBlockChildren: makeField(getBlockChildrenMethods, reduxParams),
-    getCollaborators: makeField(getCollaboratorsMethods, reduxParams),
-    getCollaborationRequests: makeField(
+    onAdd: makePipeline(addBlockMethods, reduxParams),
+    onUpdate: makePipeline(updateBlockMethods, reduxParams),
+    onToggle: makePipeline(toggleTaskMethods, reduxParams),
+    onDelete: makePipeline(deleteBlockMethods, reduxParams),
+    onAddCollaborators: makePipeline(addCollaboratorMethods, reduxParams),
+    getBlockChildren: makePipeline(getBlockChildrenMethods, reduxParams),
+    getCollaborators: makePipeline(getCollaboratorsMethods, reduxParams),
+    getCollaborationRequests: makePipeline(
       getCollaborationRequestsMethods,
       reduxParams
     ),
-    fetchRootData: makeField(fetchRootDataMethods, reduxParams),
-    onTransferBlock: makeField(transferBlockMethods, reduxParams)
+    fetchRootData: makePipeline(fetchRootDataMethods, reduxParams),
+    onTransferBlock: makePipeline(transferBlockMethods, reduxParams)
   };
 }

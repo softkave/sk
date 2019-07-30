@@ -12,13 +12,13 @@ function defaultErrorAggregator(accumulator, nextError, values) {
     const existingEntry = get(accumulator.values, nextError.field);
 
     if (existingEntry) {
-      set(accumulator.values, {
+      set(accumulator.values, nextError.field, {
         // ...nextError,
         value: fieldValue,
         error: [].concat(existingEntry.error, nextError.message)
       });
     } else {
-      set(accumulator.values, {
+      set(accumulator.values, nextError.field, {
         // ...nextError,
         value: fieldValue,
         error: nextError.message
@@ -34,7 +34,7 @@ function defaultErrorAggregator(accumulator, nextError, values) {
 // Aggregates the error using an aggregator to the schema defined in the schema variable
 export function aggregateError(
   error,
-  values,
+  values = {},
   aggregator = defaultErrorAggregator
 ) {
   const schema = { values: {}, total: error, global: [] };
