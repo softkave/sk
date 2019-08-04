@@ -1,7 +1,7 @@
 import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
-import yup from "yup";
+import * as yup from "yup";
 
 import { userConstants } from "../../../models/user/constants";
 import { passwordPattern, textPattern } from "../../../models/user/descriptor";

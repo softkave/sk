@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "antd";
 import styled from "@emotion/styled";
-import EditGroup from "./EditGroup.jsx";
-import EditTask from "../task/EditTask.jsx";
-import EditProject from "../project/EditProject.jsx";
+import EditGroup from "./EditGroup.tsx";
+import EditTask from "../task/EditTask.tsx";
+import EditProject from "../project/EditProject.tsx";
 import AddDropdownButton from "../../AddDropdownButton.jsx";
 import {
   assignTask,

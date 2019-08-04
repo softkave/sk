@@ -1,13 +1,10 @@
-import { connect } from "react-redux";
 import netInterface from "../../../net";
+import { getReduxConnectors } from "../../../utils/redux";
+import { makePipeline } from "../../FormPipeline";
 import ForgotPassword from "./ForgotPassword";
 
 const methods = {
-  process(userInfo) {
-    return userInfo;
-  },
-
-  async net(userInfo) {
+  async net({ userInfo }) {
     return await netInterface("user.forgotPassword", { email: userInfo.email });
   },
 
@@ -17,23 +14,17 @@ const methods = {
     }
 
     return result;
-  },
-
-  redux(result, dispatch) {}
+  }
 };
 
-function mapDispatchToProps(dispatch) {
+function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: async data => {
-      let userInfo = methods.process(data);
-      let result = await methods.net(userInfo);
-      result = methods.handleError(result);
-      methods.redux(result, dispatch);
-    }
+    onSubmit: makePipeline(
+      methods,
+      { state, dispatch },
+      { paramName: "userInfo" }
+    )
   };
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ForgotPassword);
+export default getReduxConnectors(mergeProps)(ForgotPassword);

@@ -53,11 +53,6 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps({ state }, { dispatch }, ownProps) {
   const user = state.user.user;
-  // const blockHandlers = makeBlockHandlers({
-  //   dispatch,
-  //   user
-  // });
-
   const blockHandlers = getBlockMethods({ state, dispatch, user });
 
   return {

@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Switch, Row, Col, Spin, Icon, Tooltip } from "antd";
-import Priority from "./Priority.jsx";
+
+import Priority from "./Priority";
 import DeleteButton from "../../DeleteButton";
 import "./minitask.css";
 

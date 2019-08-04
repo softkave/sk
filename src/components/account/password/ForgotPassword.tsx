@@ -1,7 +1,7 @@
 import { Button, Form, Input, notification } from "antd";
 import { Formik } from "formik";
 import React from "react";
-import yup from "yup";
+import * as yup from "yup";
 
 import FormError from "../../FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";

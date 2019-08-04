@@ -1,8 +1,9 @@
 import React from "react";
-import OrgThumbnail from "./OrgThumbnail.jsx";
-import Board from "../group/Board";
-import EditOrg from "./EditOrg.jsx";
 import { Button } from "antd";
+
+import OrgThumbnail from "./OrgThumbnail";
+import Board from "../group/Board";
+import EditOrg from "./EditOrg";
 import "./orgs.css";
 
 class Orgs extends React.Component {

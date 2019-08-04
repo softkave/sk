@@ -1,9 +1,10 @@
 import React from "react";
-import CollaboratorThumbnail from "./Thumnail.jsx";
 import { List, Button, Tabs } from "antd";
+
+import CollaboratorThumbnail from "./Thumnail.jsx";
 // import AddCollaborator from "./AddCollaborator.jsx";
 import "./collaborators.css";
-import AC from "./AC.jsx";
+import AC from "./AC";
 
 export default class Collaborators extends React.Component {
   state = {

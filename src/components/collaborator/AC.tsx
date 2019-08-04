@@ -2,17 +2,17 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
-import yup from "yup";
+import * as yup from "yup";
 
 import { blockConstants } from "../../models/block/constants.js";
 import { notificationConstants } from "../../models/notification/constants";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
-import { indexArray } from "../../utils/object.js";
-import FormError from "../FormError.jsx";
-import { getGlobalError, submitHandler } from "../formik-utils.js";
+import { indexArray } from "../../utils/object";
+import FormError from "../FormError";
+import { getGlobalError, submitHandler } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
 import ACF from "./ACF";
-import ACFExpiresAt from "./ACFExpiresAt.jsx";
+import ACFExpiresAt from "./ACFExpiresAt";
 
 const emailExistsError = "Email addresss has been entered already";
 

@@ -1,7 +1,5 @@
-import { Field } from "formik";
 import get from "lodash/get";
 import set from "lodash/set";
-import { INetError } from "../net/query";
 import { indexArray } from "../utils/object";
 
 // Default error aggregator aggregates all error with the same field into an array,

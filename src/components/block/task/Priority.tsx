@@ -4,9 +4,9 @@ import React from "react";
 export type PriorityValues = "very important" | "important" | "not important";
 
 export const priorityToColorMap = {
-  ["not important"]: "#EACA2C",
-  ["important"]: "#7ED321",
-  ["very important"]: "#EB5424"
+  "not important": "#EACA2C",
+  important: "#7ED321",
+  "very important": "#EB5424"
 };
 
 interface IStyledPriorityProps {

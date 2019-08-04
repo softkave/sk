@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { makeBlockHandlers } from "../../models/block/handlers";
+
 import Orgs from "../../components/block/org/Orgs.jsx";
 import { getBlockMethods } from "../../components/block/methods";
 
@@ -45,11 +45,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mergeProps({ state }, { dispatch }) {
-  // const blockHandlers = makeBlockHandlers({
-  //   dispatch,
-  //   user: state.user.user
-  // });
-
   const blockHandlers = getBlockMethods({
     state,
     dispatch,

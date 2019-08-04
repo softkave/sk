@@ -2,16 +2,16 @@ import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
-import yup from "yup";
+import * as yup from "yup";
 
 import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
 import { indexArray } from "../../../utils/object";
 import CollaboratorThumbnail from "../../collaborator/Thumnail";
-import FormError from "../../FormError.jsx";
+import FormError from "../../FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
-import EditPriority from "./EditPriority.jsx";
+import EditPriority from "./EditPriority";
 import { PriorityValues } from "./Priority";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 

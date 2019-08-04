@@ -1,16 +1,19 @@
-import { connect } from "react-redux";
 import randomColor from "randomcolor";
+
 import netInterface from "../../../net";
 import { mergeDataByPath } from "../../../redux/actions/data";
-import Signup from "./Signup";
+import { devLog } from "../../../utils/log";
+import { getReduxConnectors } from "../../../utils/redux";
 import { stripFieldsFromError } from "../../FOR";
+import { makePipeline } from "../../FormPipeline";
+import Signup from "./Signup";
 
 const methods = {
-  process(user) {
+  process({ params: user }) {
     user.color = randomColor();
   },
 
-  async net(user) {
+  async net({ user }) {
     return await netInterface("user.signup", { user });
   },
 
@@ -23,27 +26,20 @@ const methods = {
     return result;
   },
 
-  redux(result, dispatch) {
+  redux({ result, dispatch }) {
     if (result.user && result.token) {
       dispatch(mergeDataByPath("user", result));
     } else {
-      throw new Error("An error occurred");
+      devLog(__filename, result);
+      throw [{ type: "error", message: new Error("An error occurred") }];
     }
   }
 };
 
-function mapDispatchToProps(dispatch) {
+function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: async data => {
-      let user = methods.process(data);
-      let result = await methods.net(user);
-      result = methods.handleError(result);
-      methods.redux(result, dispatch);
-    }
+    onSubmit: makePipeline(methods, { state, dispatch }, { paramName: "user" })
   };
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(Signup);
+export default getReduxConnectors(mergeProps)(Signup);

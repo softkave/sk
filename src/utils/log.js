@@ -1,4 +1,4 @@
-export function devConsole(type, location = "--") {
+export function devConsole(type, location = "unknown") {
   return function(...args) {
     if (process.env.NODE_ENV === "development") {
       console.log(`-- ${location} --`);
@@ -7,10 +7,10 @@ export function devConsole(type, location = "--") {
   };
 }
 
-export function devLog(...args) {
-  devConsole("log")(...args);
+export function devLog(location, ...args) {
+  devConsole("log", location)(...args);
 }
 
-export function devError(...args) {
-  devConsole("error")(...args);
+export function devError(location, ...args) {
+  devConsole("error", location)(...args);
 }

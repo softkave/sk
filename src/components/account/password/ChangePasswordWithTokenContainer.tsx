@@ -1,15 +1,12 @@
-import { connect } from "react-redux";
-
 import netInterface from "../../../net";
 import { mergeDataByPath } from "../../../redux/actions/data";
+import { devLog } from "../../../utils/log";
+import { getReduxConnectors } from "../../../utils/redux";
+import { makePipeline } from "../../FormPipeline";
 import ChangePassword from "./ChangePassword";
 
 const methods = {
-  process(changePasswordData) {
-    return changePasswordData;
-  },
-
-  async net(data) {
+  async net({ data }) {
     const query = new URLSearchParams(window.location.search);
 
     return await netInterface("user.changePasswordWithToken", {
@@ -26,27 +23,20 @@ const methods = {
     return result;
   },
 
-  redux(result, dispatch) {
+  redux({ result, dispatch }) {
     if (result.user && result.token) {
       dispatch(mergeDataByPath("user", result));
     } else if (result.errors) {
-      throw new Error("An error occurred");
+      devLog(__filename, result);
+      throw [{ type: "error", message: new Error("An error occurred") }];
     }
   }
 };
 
-function mapDispatchToProps(dispatch) {
+function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: async data => {
-      let changePasswordData = methods.process(data);
-      let result = await methods.net(changePasswordData);
-      result = methods.handleError(result);
-      methods.redux(result, dispatch);
-    }
+    onSubmit: makePipeline(methods, { state, dispatch }, { paramName: "data" })
   };
 }
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(ChangePassword);
+export default getReduxConnectors(mergeProps)(ChangePassword);

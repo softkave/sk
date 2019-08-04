@@ -1,12 +1,12 @@
 import { Button, Form, Input, notification } from "antd";
 import { Formik } from "formik";
 import React from "react";
-import yup from "yup";
+import * as yup from "yup";
 
 import { userConstants } from "../../../models/user/constants";
 import { passwordPattern } from "../../../models/user/descriptor";
 import FormError from "../../FormError";
-import { submitHandler } from "../../formik-utils";
+import { getGlobalError, submitHandler } from "../../formik-utils";
 
 const changePasswordSuccessMessage = "Password changed successfully";
 const invalidPasswordMessage = "Password is invalid";

@@ -233,7 +233,7 @@ export function makeBlockHandlers({ dispatch, user }) {
 
         prefill.forEach(key => {
           if (!Array.isArray(data[key])) {
-            data.key = [];
+            data[key] = [];
           }
         });
       });

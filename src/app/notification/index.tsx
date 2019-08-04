@@ -1,15 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import NotificationList from "../../components/notification/NotificationList.jsx";
 import {
   filterErrorByBaseName,
   stripFieldsFromError
-} from "../../components/FOR.js";
+} from "../../components/FOR.ts";
+import { IPipeline } from "../../components/FormPipeline.js";
+import { makePipeline } from "../../components/FormPipeline.ts";
+import NotificationList from "../../components/notification/NotificationList.jsx";
 import netInterface from "../../net/index.js";
-import { mergeDataByPath, setDataByPath } from "../../redux/actions/data.js";
+import { mergeDataByPath, setDataByPath } from "../../redux/actions/data.ts";
 import { makeMultiple } from "../../redux/actions/make.js";
-import { makePipeline } from "../../components/FormPipeline.js";
 
 class NotificationsContainer extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class NotificationsContainer extends React.Component {
     };
   }
 
-  async componentDidMount() {
+  public async componentDidMount() {
     if (!this.props.notifications) {
       try {
         await this.props.fetchNotifications();
@@ -29,7 +30,7 @@ class NotificationsContainer extends React.Component {
     }
   }
 
-  render() {
+  public render() {
     const { notifications, onRespond, onClickNotification } = this.props;
     const { error } = this.state;
 
@@ -84,30 +85,42 @@ function requestIsValid(statusHistory) {
   return false;
 }
 
-const clickNotificationMethods = {
-  process() {
-    return { readAt: Date.now() };
+// TODO: Define notification's type
+interface IOnClickNotificationParams {
+  notification: any;
+}
+
+interface IOnClickNotificationProcessParams extends IOnClickNotificationParams {
+  data: { readAt: number };
+}
+
+const clickNotificationMethods: IPipeline<
+  IOnClickNotificationParams,
+  IOnClickNotificationProcessParams,
+  null,
+  null
+> = {
+  process({ params }) {
+    return { ...params, data: { readAt: Date.now() } };
   },
 
-  async net({ notification, data }) {
-    await netInterface("user.updateCollaborationRequest", {
+  async net({ params }) {
+    const { notification, data } = params;
+    return await netInterface("user.updateCollaborationRequest", {
       request: notification,
       data
     });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, notification, data }) {
+  redux({ state, dispatch, params }) {
+    const { notification, data } = params;
     dispatch(mergeDataByPath(`notifications.${notification.customId}`, data));
   }
 };
 
 const respondToNotificationMethods = {
   process({ notification }) {
-    let statusHistory = notification.statusHistory;
+    const statusHistory = notification.statusHistory;
 
     if (requestIsValid(statusHistory)) {
       return;
@@ -129,14 +142,14 @@ const respondToNotificationMethods = {
   },
 
   redux({ state, dispatch, notification, response, block }) {
-    let statusHistory = notification.statusHistory;
+    const statusHistory = notification.statusHistory;
 
     statusHistory.push({
       status: response,
       date: Date.now()
     });
 
-    let update = { statusHistory };
+    const update = { statusHistory };
 
     dispatch(mergeDataByPath(`notifications.${notification.customId}`, update));
 
@@ -165,7 +178,7 @@ const fetchNotificationsMethods = {
 
   redux({ state, dispatch, requests: notifications }) {
     notifications = notifications || [];
-    let notificationsObj = {};
+    const notificationsObj = {};
     notifications.forEach(notification => {
       notificationsObj[notification.customId] = notification;
     });

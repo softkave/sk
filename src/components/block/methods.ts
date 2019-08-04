@@ -1,8 +1,11 @@
 import dotProp from "dot-prop-immutable";
 import randomColor from "randomcolor";
 
+import { IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import { IUser } from "../../models/user/user";
 import netInterface from "../../net/index";
+import { INetResult } from "../../net/query";
 import {
   deleteDataByPath,
   mergeDataByPath,
@@ -10,8 +13,7 @@ import {
 } from "../../redux/actions/data";
 import { makeMultiple } from "../../redux/actions/make";
 import { newId } from "../../utils/utils";
-import { filterErrorByBaseName, stripFieldsFromError } from "../FOR";
-import { makePipeline } from "../FormPipeline";
+import { IPipeline, makePipeline, PipelineEntryFunc } from "../FormPipeline";
 
 function convertDateToTimestamp(date) {
   if (date && date.valueOf) {
@@ -45,31 +47,26 @@ function getIndex(list, id) {
   return idIndex;
 }
 
-function throwOnError(
-  result: any,
-  filterBaseNames?: string[] | null,
-  stripBaseNames?: string[] | null
-) {
-  if (result && result.errors) {
-    if (filterBaseNames) {
-      result.errors = filterErrorByBaseName(
-        result.errors,
-        filterErrorByBaseName
-      );
-    }
+// TODO: Define the return types of the pipeline methods
+// TODO: Add the type of the handleError function amdn maybe validate in the runtime
+// TODO: Consider validating the pipeline methods arguments in runtime
+// TODO: Add ResultType to the pipelines
 
-    if (stripBaseNames) {
-      result.errors = stripFieldsFromError(result.errors, stripBaseNames);
-    }
-
-    throw result.errors;
-  }
-
-  return result;
+interface IAddBlockParams {
+  block: IBlock;
+  user: IUser;
+  parent: IBlock;
 }
 
-const addBlockMethods = {
-  process({ block, parent, user }) {
+const addBlockMethods: IPipeline<
+  IAddBlockParams,
+  IAddBlockParams,
+  INetResult,
+  INetResult
+> = {
+  process({ params }) {
+    const { block, parent, user } = params;
+
     block.createdAt = Date.now();
     block.createdBy = user.customId;
     block.customId = newId();
@@ -117,18 +114,18 @@ const addBlockMethods = {
       });
     }
 
-    return { parent, block };
+    return { ...params, parent, block };
   },
 
-  async net({ block }) {
+  async net({ params }) {
+    const { block } = params;
     return await netInterface("block.addBlock", { block });
   },
 
-  handleError(result) {
-    throwOnError(result, null, ["block"]);
-  },
+  handleError: { stripBaseNames: ["block"] },
 
-  redux({ state, dispatch, block, parent }) {
+  redux({ state, dispatch, params }) {
+    const { block, parent } = params;
     const actions: any[] = [];
 
     if (parent) {
@@ -144,39 +141,57 @@ const addBlockMethods = {
   }
 };
 
-const updateBlockMethods = {
-  process({ block }) {
-    block.expectedEndAt = convertDateToTimestamp(block.expectedEndAt);
-    return block;
+// TODO: Update this to IUpdateBlock which will include and make required the required fields
+interface IUpdateBlockParams {
+  data: Partial<IBlock>;
+  block: IBlock;
+}
+
+const updateBlockMethods: IPipeline<
+  IUpdateBlockParams,
+  IUpdateBlockParams,
+  INetResult,
+  INetResult
+> = {
+  process({ params: params }) {
+    const { data } = params;
+    data.expectedEndAt = convertDateToTimestamp(data.expectedEndAt);
+    return { ...params, data };
   },
 
-  async net({ block, data }) {
+  async net({ params }) {
+    const { block, data } = params;
     return await netInterface("block.updateBlock", { block, data });
   },
 
-  handleError(result) {
-    throwOnError(result, ["block"], ["data"]);
+  handleError: {
+    // filterBaseNames: ["block"],
+    stripBaseNames: ["data"]
   },
 
-  redux({ state, dispatch, block, data }) {
+  redux({ state, dispatch, params }) {
+    const { block, data } = params;
     dispatch(mergeDataByPath(block.path, data));
   }
 };
 
-const toggleTaskMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IToggleTaskParams {
+  block: IBlock;
+}
 
-  async net({ block }) {
+const toggleTaskMethods: IPipeline<
+  IToggleTaskParams,
+  IToggleTaskParams,
+  INetResult,
+  INetResult
+> = {
+  async net({ params }) {
+    const { block } = params;
     return await netInterface("block.toggleTask", { block, data: true });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, block, user }) {
+  redux({ state, dispatch, params, user }) {
+    const { block } = params;
     const collaboratorIndex = block.taskCollaborators.findIndex(
       c => c.userId === user.customId
     );
@@ -190,27 +205,45 @@ const toggleTaskMethods = {
   }
 };
 
-const deleteBlockMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IDeleteBlockParams {
+  block: IBlock;
+}
 
-  async net({ block }) {
+const deleteBlockMethods: IPipeline<
+  IDeleteBlockParams,
+  IDeleteBlockParams,
+  INetResult,
+  INetResult
+> = {
+  async net({ params }) {
+    const { block } = params;
     return await netInterface("block.deleteBlock", { block });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, block }) {
+  redux({ state, dispatch, params }) {
+    const { block } = params;
     dispatch(deleteDataByPath(block.path));
   }
 };
 
-const addCollaboratorMethods = {
-  process({ collaborators, message, expiresAt }) {
-    return collaborators.map(request => {
+// TODO: Define collaborators type
+// TODO: Create a package maybe called softkave-bridge that contains resuable bits between front and backend
+interface IAddCollaboratorParams {
+  collaborators: any;
+  message: string;
+  expiresAt: number | Date;
+  block: IBlock;
+}
+
+const addCollaboratorMethods: IPipeline<
+  IAddCollaboratorParams,
+  IAddCollaboratorParams,
+  INetResult,
+  INetResult
+> = {
+  process({ params }) {
+    const { collaborators, message, expiresAt } = params;
+    const proccessedCollaborators = collaborators.map(request => {
       if (!request.message) {
         request.body = message;
       }
@@ -225,32 +258,49 @@ const addCollaboratorMethods = {
       request.statusHistory = [{ status: "pending", date: Date.now() }];
       return request;
     });
+
+    return { ...params, collaborators: proccessedCollaborators };
   },
 
-  async net({ block, collaborators }) {
+  async net({ params }) {
+    const { block, collaborators } = params;
     return await netInterface("block.addCollaborators", {
       block,
       collaborators
     });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, block, collaborators }) {
+  redux({ state, dispatch, params }) {
+    const { block, collaborators } = params;
     dispatch(
       mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
     );
   }
 };
 
-const getBlockChildrenMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IGetBlockChildrenParams {
+  block: IBlock;
+  types?: string[];
+  isBacklog?: boolean;
+  updateBlock: PipelineEntryFunc<IUpdateBlockParams>;
+}
 
-  async net({ block, types, isBacklog }) {
+/**
+ * TODO: Separate IBlock from INetBlock which is block returned from the server
+ * because some fields are not present in it
+ */
+interface IGetBlockChildrenNetResult {
+  blocks: IBlock[];
+}
+
+const getBlockChildrenMethods: IPipeline<
+  IGetBlockChildrenParams,
+  IGetBlockChildrenParams,
+  IGetBlockChildrenNetResult,
+  IGetBlockChildrenNetResult
+> = {
+  async net({ params }) {
+    const { block, types, isBacklog } = params;
     return await netInterface("block.getBlockChildren", {
       block,
       types,
@@ -258,13 +308,11 @@ const getBlockChildrenMethods = {
     });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
   // TODO: think on having a postNet function
 
-  redux({ state, dispatch, block, blocks, updateBlock }) {
+  redux({ state, dispatch, params, result }) {
+    const { block, updateBlock } = params;
+    const { blocks } = result;
     const blockMappedToType = {};
     const childrenTypes = getBlockValidChildrenTypes(block);
     const children: any = {
@@ -307,31 +355,31 @@ const getBlockChildrenMethods = {
       }
     });
 
-    blocks.forEach(data => {
-      data.path = `${block.path}.${data.type}.${data.customId}`;
-      const typeMap = blockMappedToType[data.type] || {};
-      typeMap[data.customId] = data;
-      blockMappedToType[data.type] = typeMap;
+    blocks.forEach(next => {
+      next.path = `${next.path}.${next.type}.${next.customId}`;
+      const typeMap = blockMappedToType[next.type] || {};
+      typeMap[next.customId] = next;
+      blockMappedToType[next.type] = typeMap;
 
-      if (data.type === "group") {
-        if (!existingChildrenIds[groupTaskContext][data.customId]) {
-          children[groupTaskContext].push(data.customId);
+      if (next.type === "group") {
+        if (!existingChildrenIds[groupTaskContext][next.customId]) {
+          children[groupTaskContext].push(next.customId);
         }
 
-        if (!existingChildrenIds[groupProjectContext][data.customId]) {
-          children[groupProjectContext].push(data.customId);
+        if (!existingChildrenIds[groupProjectContext][next.customId]) {
+          children[groupProjectContext].push(next.customId);
         }
       }
 
-      const pluralizedType = `${data.type}s`;
+      const pluralizedType = `${next.type}s`;
 
-      if (!existingChildrenIds[pluralizedType][data.customId]) {
-        children[pluralizedType].push(data.customId);
+      if (!existingChildrenIds[pluralizedType][next.customId]) {
+        children[pluralizedType].push(next.customId);
       }
 
       prefill.forEach(key => {
-        if (!Array.isArray(data[key])) {
-          data.key = [];
+        if (!Array.isArray(next[key])) {
+          next[key] = [];
         }
       });
     });
@@ -346,7 +394,7 @@ const getBlockChildrenMethods = {
     });
 
     if (updateParentBlock) {
-      updateBlock(block, block);
+      updateBlock({ block, data: block });
 
       // TODO: Think on: do we need to handle error here
       // const updateBlockResult = await updateBlock(block, block);
@@ -357,56 +405,78 @@ const getBlockChildrenMethods = {
   }
 };
 
-const getCollaboratorsMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IGetCollaboratorsParams {
+  block: IBlock;
+}
 
-  async net({ block }) {
+// TODO: Change collaborators type to appropriate type
+interface IGetCollaboratorsNetResult {
+  collaborators: IUser[];
+}
+
+const getCollaboratorsMethods: IPipeline<
+  IGetCollaboratorsParams,
+  IGetCollaboratorsParams,
+  IGetCollaboratorsNetResult,
+  IGetCollaboratorsNetResult
+> = {
+  async net({ params }) {
+    const { block } = params;
     return await netInterface("block.getCollaborators", { block });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, block, collaborators }) {
-    dispatch(setDataByPath(`${block.path}.collaborators`, collaborators));
+  redux({ state, dispatch, params, result }) {
+    const { block } = params;
+    dispatch(
+      setDataByPath(`${block.path}.collaborators`, result.collaborators)
+    );
   }
 };
 
-const getCollaborationRequestsMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IGetCollaborationRequestsParams {
+  block: IBlock;
+}
 
-  async net({ block }) {
+// TODO: Change requests type from any
+interface IGetCollaborationRequestsNetResult {
+  requests: any[];
+}
+
+const getCollaborationRequestsMethods: IPipeline<
+  IGetCollaborationRequestsParams,
+  IGetCollaborationRequestsParams,
+  IGetCollaborationRequestsNetResult,
+  IGetCollaborationRequestsNetResult
+> = {
+  async net({ params }) {
+    const { block } = params;
     return await netInterface("block.getCollabRequests", { block });
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, block, requests }) {
-    dispatch(setDataByPath(`${block.path}.collaborationRequests`, requests));
+  redux({ state, dispatch, params, result }) {
+    const { block } = params;
+    dispatch(
+      setDataByPath(`${block.path}.collaborationRequests`, result.requests)
+    );
   }
 };
 
-const fetchRootDataMethods = {
-  process({ block }) {
-    return block;
-  },
+interface IFetchRootDataNetResult {
+  blocks: IBlock[];
+}
 
+const fetchRootDataMethods: IPipeline<
+  null,
+  null,
+  IFetchRootDataNetResult,
+  IFetchRootDataNetResult
+> = {
   async net() {
     return await netInterface("block.getRoleBlocks");
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, blocks }) {
+  redux({ state, dispatch, result }) {
+    const { blocks } = result;
     let rootBlock: any = null;
     const orgs = {};
     blocks.forEach(blk => {
@@ -428,14 +498,34 @@ const fetchRootDataMethods = {
   }
 };
 
-const transferBlockMethods = {
-  process({
-    draggedBlock,
-    sourceBlock,
-    destinationBlock,
-    dragInformation,
-    groupContext
-  }) {
+// TODO: Define dragInformation data type
+interface ITransferBlockParams {
+  draggedBlock: IBlock;
+  sourceBlock: IBlock;
+  destinationBlock: IBlock;
+  dropPosition: number;
+  groupContext?: string;
+  dragInformation: any;
+}
+
+interface ITransferBlockProcessedParams extends ITransferBlockParams {
+  draggedBlockPosition: number;
+}
+
+const transferBlockMethods: IPipeline<
+  ITransferBlockParams,
+  ITransferBlockProcessedParams,
+  INetResult,
+  INetResult
+> = {
+  process({ params }) {
+    const {
+      draggedBlock,
+      sourceBlock,
+      destinationBlock,
+      dragInformation,
+      groupContext
+    } = params;
     const pluralizedType = `${draggedBlock.type}s`;
     return {
       draggedBlock,
@@ -451,14 +541,15 @@ const transferBlockMethods = {
     };
   },
 
-  async net({
-    draggedBlock,
-    sourceBlock,
-    destinationBlock,
-    groupContext,
-    dropPosition,
-    draggedBlockPosition
-  }) {
+  async net({ params }) {
+    const {
+      draggedBlock,
+      sourceBlock,
+      destinationBlock,
+      groupContext,
+      dropPosition,
+      draggedBlockPosition
+    } = params;
     return await netInterface(
       "block.transferBlock",
       sourceBlock,
@@ -471,32 +562,27 @@ const transferBlockMethods = {
     );
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({
-    state,
-    dispatch,
-    draggedBlock,
-    sourceBlock,
-    destinationBlock,
-    groupContext,
-    dropPosition,
-    draggedBlockPosition
-  }) {
+  redux({ state, dispatch, params }) {
+    const {
+      draggedBlock,
+      sourceBlock,
+      destinationBlock,
+      groupContext,
+      dropPosition,
+      draggedBlockPosition
+    } = params;
     const actions: any[] = [];
     const pluralizedType = `${draggedBlock.type}s`;
 
     if (draggedBlock.type === "group") {
       if (groupContext) {
-        const children = move(
+        const groupChildren = move(
           sourceBlock[groupContext],
           draggedBlock.customId,
           dropPosition
         );
 
-        sourceBlock[groupContext] = children;
+        sourceBlock[groupContext] = groupChildren;
       } else {
         const groupTaskContext = `groupTaskContext`;
         const groupProjectContext = `groupProjectContext`;
@@ -561,16 +647,16 @@ const transferBlockMethods = {
       const draggedBlockType = draggedBlock.type;
       const draggedBlockPath = `${draggedBlockType}.${draggedBlock.customId}`;
 
-      sourceBlock = dotProp.delete(sourceBlock, draggedBlockPath);
-      destinationBlock = dotProp.set(
+      const updatedSourceBlock = dotProp.delete(sourceBlock, draggedBlockPath);
+      const updatedDestBlock = dotProp.set(
         destinationBlock,
         draggedBlockPath,
         draggedBlock
       );
 
       actions.push(setDataByPath(draggedBlock.path, draggedBlock));
-      actions.push(setDataByPath(sourceBlock.path, sourceBlock));
-      actions.push(setDataByPath(destinationBlock.path, destinationBlock));
+      actions.push(setDataByPath(updatedSourceBlock.path, updatedSourceBlock));
+      actions.push(setDataByPath(updatedDestBlock.path, updatedDestBlock));
     }
 
     if (
@@ -584,7 +670,20 @@ const transferBlockMethods = {
   }
 };
 
-export function getBlockMethods(reduxParams) {
+export interface IBlockMethods {
+  onAdd: PipelineEntryFunc<IAddBlockParams>;
+  onUpdate: PipelineEntryFunc<IUpdateBlockParams>;
+  onToggle: PipelineEntryFunc<IToggleTaskParams>;
+  onDelete: PipelineEntryFunc<IDeleteBlockParams>;
+  onAddCollaborators: PipelineEntryFunc<IAddCollaboratorParams>;
+  getBlockChildren: PipelineEntryFunc<IGetBlockChildrenParams>;
+  getCollaborators: PipelineEntryFunc<IGetCollaboratorsParams>;
+  getCollaborationRequests: PipelineEntryFunc<IGetCollaborationRequestsParams>;
+  fetchRootData: PipelineEntryFunc<undefined>;
+  onTransferBlock: PipelineEntryFunc<ITransferBlockParams>;
+}
+
+export function getBlockMethods(reduxParams): IBlockMethods {
   return {
     onAdd: makePipeline(addBlockMethods, reduxParams),
     onUpdate: makePipeline(updateBlockMethods, reduxParams),
