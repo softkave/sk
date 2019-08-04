@@ -1,18 +1,33 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import Orgs from "../../components/block/org/Orgs.jsx";
-import { getBlockMethods } from "../../components/block/methods";
+import { getBlockMethods, IBlockMethods } from "../../components/block/methods";
+import Orgs from "../../components/block/org/Orgs";
+import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 
-class OrgsContainer extends React.Component {
+export interface IOrgsContainerProps {
+  blockHandlers: IBlockMethods;
+  user: IUser;
+  orgs?: IBlock[];
+}
+
+interface IOrgsContainerState {
+  error?: Error;
+}
+
+class OrgsContainer extends React.Component<
+  IOrgsContainerProps,
+  IOrgsContainerState
+> {
   constructor(props) {
     super(props);
     this.state = {
-      error: null
+      error: undefined
     };
   }
 
-  async componentDidMount() {
+  public async componentDidMount() {
     if (!this.props.orgs) {
       try {
         await this.props.blockHandlers.fetchRootData();
@@ -22,7 +37,7 @@ class OrgsContainer extends React.Component {
     }
   }
 
-  render() {
+  public render() {
     const { orgs } = this.props;
     const { error } = this.state;
 

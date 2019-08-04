@@ -27,8 +27,8 @@ interface IPipelineOperatingData<ParamType = any, ResultType = any> {
 export interface IPipeline<
   ParamsType,
   ProcessedParamType,
-  ResultType,
-  ProcessedResultType
+  ResultType extends INetResult | null | undefined,
+  ProcessedResultType = ResultType
 > {
   process?: (
     args: IPipelineOperatingData<ParamsType, null>
@@ -131,13 +131,13 @@ async function main(
 //   paramName: "params"
 // };
 
-export type PipelineEntryFunc<ParamType> = (params: ParamType) => void;
+export type PipelineEntryFunc<ParamType> = (params?: ParamType) => void;
 
 export function makePipeline<ParamType>(
   methods: IQuietPipeline,
   initialOperatingData: object
 ): PipelineEntryFunc<ParamType> {
-  return async (params: ParamType) => {
+  return async (params?: ParamType) => {
     return main(methods, {
       ...initialOperatingData,
       params

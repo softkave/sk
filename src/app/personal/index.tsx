@@ -2,27 +2,42 @@ import React from "react";
 import { connect } from "react-redux";
 
 import Board from "../../components/block/group/Board";
-import { getBlockMethods } from "../../components/block/methods";
+import { getBlockMethods, IBlockMethods } from "../../components/block/methods";
+import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 
-class Personal extends React.Component {
+export interface IPersonalContainerProps {
+  blockHandlers: IBlockMethods;
+  user: IUser;
+  rootBlock?: IBlock;
+}
+
+interface IPersonalContainerState {
+  error?: Error;
+}
+
+class Personal extends React.Component<
+  IPersonalContainerProps,
+  IPersonalContainerState
+> {
   constructor(props) {
     super(props);
     this.state = {
-      error: null
+      error: undefined
     };
   }
 
-  async componentDidMount() {
+  public async componentDidMount() {
     if (!this.props.rootBlock) {
       try {
-        await this.props.fetchRootData();
+        await this.props.blockHandlers.fetchRootData();
       } catch (error) {
         this.setState({ error });
       }
     }
   }
 
-  render() {
+  public render() {
     const { rootBlock, blockHandlers, user } = this.props;
     const { error } = this.state;
 

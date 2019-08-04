@@ -1,17 +1,32 @@
+import { Button, Col, Icon, Row, Spin, Switch, Tooltip } from "antd";
 import React from "react";
-import { Button, Switch, Row, Col, Spin, Icon, Tooltip } from "antd";
 
-import Priority from "./Priority";
+import { IBlock } from "../../../models/block/block";
+import { IUser } from "../../../models/user/user";
 import DeleteButton from "../../DeleteButton";
+import { IBlockMethods } from "../methods";
 import "./minitask.css";
+import Priority from "./Priority";
 
-class Task extends React.PureComponent {
-  state = {
+export interface ITaskProps {
+  task: IBlock;
+  user: IUser;
+  blockHandlers: IBlockMethods;
+  onEdit: (task: IBlock) => void;
+}
+
+interface ITaskState {
+  toggleLoading: boolean;
+  toggleLoadingError?: Error;
+}
+
+class Task extends React.PureComponent<ITaskProps, ITaskState> {
+  public state = {
     toggleLoading: false,
-    toggleLoadingError: null
+    toggleLoadingError: undefined
   };
 
-  getCollaborator() {
+  public getCollaborator() {
     const { task, user } = this.props;
     if (task.taskCollaborators) {
       return task.taskCollaborators.find(
@@ -20,11 +35,11 @@ class Task extends React.PureComponent {
     }
   }
 
-  toggleChecked = async () => {
+  public toggleChecked = async () => {
     try {
-      const { task, blockHandlers } = this.props;
+      const { task, blockHandlers, user } = this.props;
       this.setState({ toggleLoading: true });
-      await blockHandlers.onToggle(task);
+      await blockHandlers.onToggle({ user, block: task });
       this.setState({ toggleLoading: false });
     } catch (error) {
       this.setState({
@@ -34,7 +49,7 @@ class Task extends React.PureComponent {
     }
   };
 
-  render() {
+  public render() {
     const { task, blockHandlers, onEdit } = this.props;
     const { toggleLoading, toggleLoadingError } = this.state;
     const collaborator = this.getCollaborator();
@@ -49,7 +64,6 @@ class Task extends React.PureComponent {
                   checked={collaborator && !!collaborator.completedAt}
                   onChange={this.toggleChecked}
                   disabled={collaborator ? false : true}
-                  title={collaborator ? "toggle task" : null}
                 />
               </Spin>
             ) : (
@@ -57,7 +71,9 @@ class Task extends React.PureComponent {
                 title={
                   <React.Fragment>
                     <p style={{ color: "red" }}>
-                      {toggleLoadingError.message || "An error occurred"}
+                      {toggleLoadingError
+                        ? ((toggleLoadingError as unknown) as Error).message
+                        : "An error occurred"}
                     </p>
                     <p>Please reload the page</p>
                   </React.Fragment>
@@ -92,7 +108,7 @@ class Task extends React.PureComponent {
                     className="sk-minitask-close"
                   />
                 }
-                onDelete={() => blockHandlers.onDelete(task)}
+                onDelete={() => blockHandlers.onDelete({ block: task })}
                 title="Are you sure you want to delete this task?"
               />
             </span>

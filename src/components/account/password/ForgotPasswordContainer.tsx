@@ -1,29 +1,26 @@
 import netInterface from "../../../net";
 import { getReduxConnectors } from "../../../utils/redux";
-import { makePipeline } from "../../FormPipeline";
+import { IPipeline, makePipeline } from "../../FormPipeline";
 import ForgotPassword from "./ForgotPassword";
 
-const methods = {
-  async net({ userInfo }) {
-    return await netInterface("user.forgotPassword", { email: userInfo.email });
-  },
+interface IForgotPasswordParams {
+  email: string;
+}
 
-  handleError(result) {
-    if (result.errors) {
-      throw result.errors;
-    }
-
-    return result;
+const methods: IPipeline<
+  IForgotPasswordParams,
+  IForgotPasswordParams,
+  undefined,
+  null
+> = {
+  async net({ params }) {
+    return await netInterface("user.forgotPassword", { email: params.email });
   }
 };
 
 function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: makePipeline(
-      methods,
-      { state, dispatch },
-      { paramName: "userInfo" }
-    )
+    onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 

@@ -1,22 +1,32 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import {
-  filterErrorByBaseName,
-  stripFieldsFromError
-} from "../../components/FOR.ts";
+import { makePipeline, PipelineEntryFunc } from "../../components/FormPipeline";
 import { IPipeline } from "../../components/FormPipeline.js";
-import { makePipeline } from "../../components/FormPipeline.ts";
-import NotificationList from "../../components/notification/NotificationList.jsx";
-import netInterface from "../../net/index.js";
-import { mergeDataByPath, setDataByPath } from "../../redux/actions/data.ts";
-import { makeMultiple } from "../../redux/actions/make.js";
+import NotificationList from "../../components/notification/NotificationList";
+import { IBlock } from "../../models/block/block";
+import netInterface from "../../net/index";
+import { INetResult } from "../../net/query";
+import { mergeDataByPath, setDataByPath } from "../../redux/actions/data";
+import { makeMultiple } from "../../redux/actions/make";
 
-class NotificationsContainer extends React.Component {
+// TODO: Define notification's types
+export interface INotificationsContainerProps extends INotificationMethods {
+  notifications?: any[];
+}
+
+interface INotificationsContainerState {
+  error?: Error;
+}
+
+class NotificationsContainer extends React.Component<
+  INotificationsContainerProps,
+  INotificationsContainerState
+> {
   constructor(props) {
     super(props);
     this.state = {
-      error: null
+      error: undefined
     };
   }
 
@@ -48,25 +58,6 @@ class NotificationsContainer extends React.Component {
       />
     );
   }
-}
-
-function throwOnError(result, filterBaseNames, stripBaseNames) {
-  if (result && result.errors) {
-    if (filterBaseNames) {
-      result.errors = filterErrorByBaseName(
-        result.errors,
-        filterErrorByBaseName
-      );
-    }
-
-    if (stripBaseNames) {
-      result.errors = stripFieldsFromError(result.errors, stripBaseNames);
-    }
-
-    throw result.errors;
-  }
-
-  return result;
 }
 
 function requestIsValid(statusHistory) {
@@ -112,24 +103,41 @@ const clickNotificationMethods: IPipeline<
     });
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const { notification, data } = params;
     dispatch(mergeDataByPath(`notifications.${notification.customId}`, data));
   }
 };
 
-const respondToNotificationMethods = {
-  process({ notification }) {
+// TODO: Define notification's type
+interface IRespondToNotificationParams {
+  notification: any;
+  response: string;
+}
+
+interface IRespondToNotificationNetResult extends INetResult {
+  block?: IBlock;
+}
+
+const respondToNotificationMethods: IPipeline<
+  IRespondToNotificationParams,
+  IRespondToNotificationParams,
+  IRespondToNotificationNetResult,
+  IRespondToNotificationNetResult
+> = {
+  process({ params }) {
+    const { notification } = params;
     const statusHistory = notification.statusHistory;
 
     if (requestIsValid(statusHistory)) {
-      return;
+      return params;
     }
 
-    throw new Error("Request is not valid");
+    throw [{ field: "error", message: new Error("Request is not valid") }];
   },
 
-  async net({ notification, response }) {
+  async net({ params }) {
+    const { notification, response } = params;
     return await netInterface(
       "user.respondToCollaborationRequest",
       notification,
@@ -137,11 +145,9 @@ const respondToNotificationMethods = {
     );
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, notification, response, block }) {
+  redux({ dispatch, params, result }) {
+    const { notification, response } = params;
+    const { block } = result;
     const statusHistory = notification.statusHistory;
 
     statusHistory.push({
@@ -165,18 +171,23 @@ const respondToNotificationMethods = {
   }
 };
 
-const fetchNotificationsMethods = {
-  process() {},
+// TODO: Define notification's type
+interface IFetchNotificationsNetResult {
+  requests: any[];
+}
 
+const fetchNotificationsMethods: IPipeline<
+  null,
+  null,
+  IFetchNotificationsNetResult
+> = {
   async net() {
     return await netInterface("user.getCollaborationRequests");
   },
 
-  handleError(result) {
-    throwOnError(result);
-  },
-
-  redux({ state, dispatch, requests: notifications }) {
+  redux({ state, dispatch, result }) {
+    const { requests } = result;
+    let notifications = requests;
     notifications = notifications || [];
     const notificationsObj = {};
     notifications.forEach(notification => {
@@ -187,7 +198,19 @@ const fetchNotificationsMethods = {
   }
 };
 
-function getNotificationMethods(reduxParams) {
+export type OnClickNotification = PipelineEntryFunc<IOnClickNotificationParams>;
+export type OnRespondToNotification = PipelineEntryFunc<
+  IRespondToNotificationParams
+>;
+export type FetchNotifications = PipelineEntryFunc<null>;
+
+export interface INotificationMethods {
+  onClickNotification: OnClickNotification;
+  onRespond: OnRespondToNotification;
+  fetchNotifications: FetchNotifications;
+}
+
+function getNotificationMethods(reduxParams): INotificationMethods {
   return {
     onClickNotification: makePipeline(clickNotificationMethods, reduxParams),
     onRespond: makePipeline(respondToNotificationMethods, reduxParams),

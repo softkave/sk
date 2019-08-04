@@ -1,24 +1,33 @@
+import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
+import { INetResult } from "../../../net/query";
 import { mergeDataByPath } from "../../../redux/actions/data";
-import { getReduxConnectors } from "../../../utils/redux";
-import { makePipeline } from "../../FormPipeline";
-import Login from "./Login";
 import { devLog } from "../../../utils/log";
+import { getReduxConnectors } from "../../../utils/redux";
+import { IPipeline, makePipeline } from "../../FormPipeline";
+import Login from "./Login";
 
-const methods = {
-  async net({ loginData }) {
+interface ILoginParams {
+  email: string;
+  password: string;
+}
+
+interface ILoginNetResult extends INetResult {
+  user?: IUser;
+  token?: string;
+}
+
+const methods: IPipeline<
+  ILoginParams,
+  ILoginParams,
+  ILoginNetResult,
+  ILoginNetResult
+> = {
+  async net({ params }) {
     return await netInterface("user.login", {
-      email: loginData.email,
-      password: loginData.password
+      email: params.email,
+      password: params.password
     });
-  },
-
-  handleError(result) {
-    if (result.errors) {
-      throw result.errors;
-    }
-
-    return result;
   },
 
   redux({ result, dispatch }) {
@@ -33,11 +42,7 @@ const methods = {
 
 function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: makePipeline(
-      methods,
-      { state, dispatch },
-      { paramName: "loginData" }
-    )
+    onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 

@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
-import { clearState } from "../redux/actions/data";
+
 import netInterface from "../net";
+import { clearState } from "../redux/actions/data";
 import App from "./App";
 
 function mapStateToProps(state, props) {

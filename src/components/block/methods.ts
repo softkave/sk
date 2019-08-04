@@ -1,6 +1,7 @@
 import dotProp from "dot-prop-immutable";
 import randomColor from "randomcolor";
 
+import { Dispatch } from "redux";
 import { IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
@@ -177,6 +178,7 @@ const updateBlockMethods: IPipeline<
 
 interface IToggleTaskParams {
   block: IBlock;
+  user: IUser;
 }
 
 const toggleTaskMethods: IPipeline<
@@ -190,8 +192,8 @@ const toggleTaskMethods: IPipeline<
     return await netInterface("block.toggleTask", { block, data: true });
   },
 
-  redux({ state, dispatch, params, user }) {
-    const { block } = params;
+  redux({ state, dispatch, params }) {
+    const { block, user } = params;
     const collaboratorIndex = block.taskCollaborators.findIndex(
       c => c.userId === user.customId
     );
@@ -229,10 +231,10 @@ const deleteBlockMethods: IPipeline<
 // TODO: Define collaborators type
 // TODO: Create a package maybe called softkave-bridge that contains resuable bits between front and backend
 interface IAddCollaboratorParams {
-  collaborators: any;
-  message: string;
-  expiresAt: number | Date;
+  requests: any;
   block: IBlock;
+  message?: string;
+  expiresAt?: number | Date;
 }
 
 const addCollaboratorMethods: IPipeline<
@@ -242,7 +244,7 @@ const addCollaboratorMethods: IPipeline<
   INetResult
 > = {
   process({ params }) {
-    const { collaborators, message, expiresAt } = params;
+    const { requests: collaborators, message, expiresAt } = params;
     const proccessedCollaborators = collaborators.map(request => {
       if (!request.message) {
         request.body = message;
@@ -259,11 +261,11 @@ const addCollaboratorMethods: IPipeline<
       return request;
     });
 
-    return { ...params, collaborators: proccessedCollaborators };
+    return { ...params, requests: proccessedCollaborators };
   },
 
   async net({ params }) {
-    const { block, collaborators } = params;
+    const { block, requests: collaborators } = params;
     return await netInterface("block.addCollaborators", {
       block,
       collaborators
@@ -271,7 +273,7 @@ const addCollaboratorMethods: IPipeline<
   },
 
   redux({ state, dispatch, params }) {
-    const { block, collaborators } = params;
+    const { block, requests: collaborators } = params;
     dispatch(
       mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
     );
@@ -503,13 +505,13 @@ interface ITransferBlockParams {
   draggedBlock: IBlock;
   sourceBlock: IBlock;
   destinationBlock: IBlock;
-  dropPosition: number;
   groupContext?: string;
   dragInformation: any;
 }
 
 interface ITransferBlockProcessedParams extends ITransferBlockParams {
   draggedBlockPosition: number;
+  dropPosition: number;
 }
 
 const transferBlockMethods: IPipeline<
@@ -681,6 +683,13 @@ export interface IBlockMethods {
   getCollaborationRequests: PipelineEntryFunc<IGetCollaborationRequestsParams>;
   fetchRootData: PipelineEntryFunc<undefined>;
   onTransferBlock: PipelineEntryFunc<ITransferBlockParams>;
+}
+
+export interface IGetBlockMethodsParams {
+  dispatch: Dispatch;
+
+  // TODO: Define state's type
+  state: any;
 }
 
 export function getBlockMethods(reduxParams): IBlockMethods {

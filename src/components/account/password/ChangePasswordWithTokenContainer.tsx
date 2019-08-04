@@ -1,26 +1,35 @@
+import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
+import { INetResult } from "../../../net/query";
 import { mergeDataByPath } from "../../../redux/actions/data";
 import { devLog } from "../../../utils/log";
 import { getReduxConnectors } from "../../../utils/redux";
-import { makePipeline } from "../../FormPipeline";
+import { IPipeline, makePipeline } from "../../FormPipeline";
 import ChangePassword from "./ChangePassword";
 
-const methods = {
-  async net({ data }) {
+interface IChangePasswordWithTokenParams {
+  password: string;
+  token: string;
+}
+
+interface IChangePasswordWithTokenNetResult extends INetResult {
+  user?: IUser;
+  token?: string;
+}
+
+const methods: IPipeline<
+  IChangePasswordWithTokenParams,
+  IChangePasswordWithTokenParams,
+  IChangePasswordWithTokenNetResult,
+  IChangePasswordWithTokenNetResult
+> = {
+  async net({ params }) {
     const query = new URLSearchParams(window.location.search);
 
     return await netInterface("user.changePasswordWithToken", {
-      password: data.password,
+      password: params.password,
       token: query.get("t")
     });
-  },
-
-  handleError(result) {
-    if (result.errors) {
-      throw result.errors;
-    }
-
-    return result;
   },
 
   redux({ result, dispatch }) {
@@ -35,7 +44,7 @@ const methods = {
 
 function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: makePipeline(methods, { state, dispatch }, { paramName: "data" })
+    onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 

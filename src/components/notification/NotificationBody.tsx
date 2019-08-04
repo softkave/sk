@@ -1,12 +1,20 @@
-import React from "react";
 import { Button } from "antd";
+import React from "react";
+
+import { OnRespondToNotification } from "../../app/notification";
+
 import "./notification-body.css";
 
 const accepted = "accepted";
 const declined = "declined";
 
-class NotificationBody extends React.Component {
-  getUserResponse(notification) {
+export interface INotificationBodyProps {
+  notification: any;
+  onRespond: OnRespondToNotification;
+}
+
+class NotificationBody extends React.Component<INotificationBodyProps> {
+  public getUserResponse(notification) {
     if (Array.isArray(notification.statusHistory)) {
       const possibleUserResponses = {
         [accepted]: true,
@@ -21,7 +29,7 @@ class NotificationBody extends React.Component {
     return null;
   }
 
-  render() {
+  public render() {
     const { notification, onRespond } = this.props;
     const response = this.getUserResponse(notification);
 
@@ -37,13 +45,13 @@ class NotificationBody extends React.Component {
             <>
               <Button
                 type="primary"
-                onClick={() => onRespond(notification, accepted)}
+                onClick={() => onRespond({ notification, response: accepted })}
               >
                 Accept
               </Button>
               <Button
                 type="danger"
-                onClick={() => onRespond(notification, accepted)}
+                onClick={() => onRespond({ notification, response: declined })}
                 style={{ margin: "0 1em" }}
               >
                 Decline

@@ -1,20 +1,49 @@
-import React from "react";
-import { Button } from "antd";
 import styled from "@emotion/styled";
-import EditGroup from "./EditGroup.tsx";
-import EditTask from "../task/EditTask.tsx";
-import EditProject from "../project/EditProject.tsx";
-import AddDropdownButton from "../../AddDropdownButton.jsx";
+import { Button } from "antd";
+import React from "react";
+
+import { IBlock } from "../../../models/block/block";
 import {
   assignTask,
   getBlockValidChildrenTypes
 } from "../../../models/block/utils";
+import { IUser } from "../../../models/user/user";
+import AddDropdownButton from "../../AddDropdownButton";
+import Collaborators from "../../collaborator/Collaborators";
+import { IBlockMethods } from "../methods";
+import EditProject from "../project/EditProject";
+import EditTask from "../task/EditTask";
 import BoardContainer from "./BoardContainer";
-import Collaborators from "../../collaborator/Collaborators.jsx";
+import DataLoader from "./DataLoader";
+import EditGroup from "./EditGroup";
 import KanbanBoard from "./KanbanBoard";
-import DataLoader from "./DataLoader.jsx";
 
-class Board extends React.Component {
+export interface IBoardProps {
+  rootBlock: IBlock;
+  blockHandlers: IBlockMethods;
+  user: IUser;
+  onBack: () => void;
+  isFromRoot?: boolean;
+  isUserRootBlock?: boolean;
+
+  // TODO: Define the right type
+  collaborators?: IUser[];
+}
+
+interface IBoardState {
+  form: {
+    task: boolean;
+    project: boolean;
+    group: boolean;
+  };
+  showCollaborators: boolean;
+  boardContext: string;
+  parent?: IBlock | null;
+  project?: IBlock | null;
+  block?: IBlock | null;
+}
+
+class Board extends React.Component<IBoardProps, IBoardState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +60,7 @@ class Board extends React.Component {
     };
   }
 
-  isBlockCollaboratorsLoaded() {
+  public isBlockCollaboratorsLoaded() {
     const { rootBlock } = this.props;
     if (rootBlock.type === "org" && !rootBlock.collaborators) {
       return false;
@@ -40,7 +69,7 @@ class Board extends React.Component {
     return true;
   }
 
-  isBlockCollaborationRequestsLoaded() {
+  public isBlockCollaborationRequestsLoaded() {
     const { rootBlock } = this.props;
     if (rootBlock.type === "org" && !rootBlock.collaborationRequests) {
       return false;
@@ -49,55 +78,63 @@ class Board extends React.Component {
     return true;
   }
 
-  isCollaboratorDataLoaded = () => {
+  public isCollaboratorDataLoaded = () => {
     return (
       this.isBlockCollaboratorsLoaded() &&
       this.isBlockCollaborationRequestsLoaded()
     );
   };
 
-  async fetchCollaborators() {
+  public async fetchCollaborators() {
     const { rootBlock, blockHandlers } = this.props;
-    await blockHandlers.getCollaborators(rootBlock);
+    await blockHandlers.getCollaborators({ block: rootBlock });
   }
 
-  async fetchCollaborationRequests() {
+  public async fetchCollaborationRequests() {
     const { rootBlock, blockHandlers } = this.props;
-    await blockHandlers.getCollaborationRequests(rootBlock);
+    await blockHandlers.getCollaborationRequests({ block: rootBlock });
   }
 
-  fetchCollaborationData = async () => {
+  public fetchCollaborationData = async () => {
     await this.fetchCollaborators();
     await this.fetchCollaborationRequests();
   };
 
-  onSubmitData = async (data, formType) => {
+  public onSubmitData = async (data, formType) => {
+    const { user } = this.props;
     const { parent, block } = this.state;
 
     if (block) {
-      await this.props.blockHandlers.onUpdate(block, data);
+      await this.props.blockHandlers.onUpdate({
+        block,
+        data
+      });
     } else {
-      await this.props.blockHandlers.onAdd(data, parent);
+      await this.props.blockHandlers.onAdd({
+        user,
+        parent: parent!,
+        block: data
+      });
     }
 
     this.toggleForm(formType);
   };
 
-  toggleForm = (type, parent, block) => {
+  public toggleForm = (type: string, parent?: IBlock, block?: IBlock) => {
     this.setState(prevState => {
       return {
-        parent: parent,
-        block: block,
+        parent,
+        block,
         form: { ...prevState.form, [type]: !prevState.form[type] }
       };
     });
   };
 
-  setCurrentProject = project => {
+  public setCurrentProject = project => {
     this.setState({ project });
   };
 
-  toggleShowCollaborators = () => {
+  public toggleShowCollaborators = () => {
     this.setState(prevState => {
       return {
         showCollaborators: !prevState.showCollaborators
@@ -105,20 +142,20 @@ class Board extends React.Component {
     });
   };
 
-  toggleContext = context => {
+  public toggleContext = context => {
     this.setState({ boardContext: context });
   };
 
-  getCollaborators() {
+  public getCollaborators() {
     const { user, rootBlock, collaborators } = this.props;
     return rootBlock.collaborators || collaborators || [user];
   }
 
-  getExistingNames(blocks = {}) {
+  public getExistingNames(blocks = {}) {
     return Object.keys(blocks).map(customId => blocks[customId].name);
   }
 
-  getChildrenTypes(block) {
+  public getChildrenTypes(block) {
     const { boardContext } = this.state;
 
     const remove = boardContext === "task" ? "project" : "task";
@@ -132,7 +169,7 @@ class Board extends React.Component {
     return childrenTypes;
   }
 
-  renderCollaborators = () => {
+  public renderCollaborators = () => {
     const { rootBlock, blockHandlers } = this.props;
 
     return (
@@ -141,18 +178,17 @@ class Board extends React.Component {
         onBack={this.toggleShowCollaborators}
         collaborators={rootBlock.collaborators}
         onAddCollaborators={async data => {
-          return blockHandlers.onAddCollaborators(rootBlock, data);
+          return blockHandlers.onAddCollaborators({
+            ...data,
+            block: rootBlock
+          });
         }}
         collaborationRequests={rootBlock.collaborationRequests}
-        bench={rootBlock.bench}
-        onUpdateCollaborator={(collaborator, data) => {
-          blockHandlers.onUpdateCollaborator(rootBlock, collaborator, data);
-        }}
       />
     );
   };
 
-  render() {
+  public render() {
     const {
       rootBlock,
       blockHandlers,
@@ -214,7 +250,7 @@ class Board extends React.Component {
             onClose={() => this.toggleForm("project")}
             data={block}
             existingProjects={
-              form.project && this.getExistingNames(parent.project)
+              form.project && this.getExistingNames(parent!.project)
             }
             submitLabel={block && "Update Project"}
           />
@@ -225,7 +261,7 @@ class Board extends React.Component {
             onSubmit={data => this.onSubmitData(data, "group")}
             onClose={() => this.toggleForm("group")}
             data={block}
-            existingGroups={form.group && this.getExistingNames(parent.group)}
+            existingGroups={form.group && this.getExistingNames(parent!.group)}
             submitLabel={block && "Update Group"}
           />
         )}

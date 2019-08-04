@@ -1,30 +1,47 @@
 import randomColor from "randomcolor";
 
+import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
+import { INetResult } from "../../../net/query";
 import { mergeDataByPath } from "../../../redux/actions/data";
 import { devLog } from "../../../utils/log";
 import { getReduxConnectors } from "../../../utils/redux";
-import { stripFieldsFromError } from "../../FOR";
-import { makePipeline } from "../../FormPipeline";
+import { IPipeline, makePipeline } from "../../FormPipeline";
 import Signup from "./Signup";
 
-const methods = {
+interface ISignupParams {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface ISignupProcessedParams extends ISignupParams {
+  color: string;
+}
+
+interface ISignupNetResult extends INetResult {
+  user: IUser;
+  token: string;
+}
+
+const methods: IPipeline<
+  ISignupParams,
+  ISignupProcessedParams,
+  ISignupNetResult,
+  ISignupNetResult
+> = {
   process({ params: user }) {
-    user.color = randomColor();
+    return {
+      ...user,
+      color: randomColor()
+    };
   },
 
-  async net({ user }) {
+  async net({ params: user }) {
     return await netInterface("user.signup", { user });
   },
 
-  handleError(result) {
-    if (result.errors) {
-      result.errors = stripFieldsFromError(result.errors, ["user"]);
-      throw result.errors;
-    }
-
-    return result;
-  },
+  handleError: { stripBaseNames: ["user"] },
 
   redux({ result, dispatch }) {
     if (result.user && result.token) {
@@ -38,7 +55,7 @@ const methods = {
 
 function mergeProps({ state }, { dispatch }) {
   return {
-    onSubmit: makePipeline(methods, { state, dispatch }, { paramName: "user" })
+    onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 

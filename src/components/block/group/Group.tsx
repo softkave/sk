@@ -1,16 +1,19 @@
-import React from "react";
-import { Row, Col, Button } from "antd";
-import SimpleBar from "simplebar-react";
-import { Draggable } from "react-beautiful-dnd";
-// import { Draggable, Droppable } from "react-beautiful-dnd";
-import AddDropdownButton from "../../AddDropdownButton.jsx";
-import { getBlockValidChildrenTypes } from "../../../models/block/utils";
-import DeleteButton from "../../DeleteButton";
 import styled from "@emotion/styled";
+import { Button, Col, Row } from "antd";
+import { ButtonProps } from "antd/lib/button";
+import React from "react";
+import { Draggable } from "react-beautiful-dnd";
+import SimpleBar from "simplebar-react";
 
-// import "simplebar/dist/simplebar.min.css";
+import { getBlockValidChildrenTypes } from "../../../models/block/utils";
+import AddDropdownButton from "../../AddDropdownButton.jsx";
+import DeleteButton from "../../DeleteButton";
 
-function getChildrenTypes(block, type) {
+import "simplebar/dist/simplebar.css";
+import { IBlock } from "../../../models/block/block.js";
+import { IBlockMethods } from "../methods.js";
+
+function getChildrenTypes(block: IBlock, type: string) {
   const remove = type === "task" ? "project" : "task";
   const childrenTypes = getBlockValidChildrenTypes(block);
   const typeIndex = childrenTypes.indexOf(remove);
@@ -22,7 +25,21 @@ function getChildrenTypes(block, type) {
   return childrenTypes;
 }
 
-const GroupHeader = React.memo(function GroupHeader(props) {
+export interface IGroupProps {
+  group: IBlock;
+  blockHandlers: IBlockMethods;
+
+  draggableId: string;
+  index: number;
+  droppableId: string;
+  disabled?: boolean;
+  type: string;
+  onClickAddChild: (type: string, group: IBlock) => void;
+  onEdit: (group: IBlock) => void;
+  render: () => React.ReactNode;
+}
+
+const GroupHeader = React.memo<IGroupProps>(props => {
   const {
     group,
     blockHandlers,
@@ -41,13 +58,13 @@ const GroupHeader = React.memo(function GroupHeader(props) {
           {childrenTypes && childrenTypes.length > 0 && (
             <AddDropdownButton
               types={childrenTypes}
-              onClick={type => onClickAddChild(type, group)}
+              onClick={blockType => onClickAddChild(blockType, group)}
             />
           )}
           <GroupHeaderButton icon="edit" onClick={() => onEdit(group)} />
           <DeleteButton
             deleteButton={<GroupHeaderButton icon="delete" type="danger" />}
-            onDelete={() => blockHandlers.onDelete(group)}
+            onDelete={() => blockHandlers.onDelete({ block: group })}
             title="Are you sure you want to delete this group?"
           />
         </GroupHeaderButtons>
@@ -56,22 +73,8 @@ const GroupHeader = React.memo(function GroupHeader(props) {
   );
 });
 
-const GroupBody = React.memo(function GroupBody(props) {
-  const { render,  } = props;
-  // const { render, droppableId, type } = props;
-
-  // return (
-  //   <GroupScrollContainer>
-  //     <Droppable droppableId={droppableId} type={type.toUpperCase()}>
-  //       {(provided, snapshot) => (
-  //         <GroupDroppable ref={provided.innerRef} {...provided.droppableProps}>
-  //           {render()}
-  //           {provided.placeholder}
-  //         </GroupDroppable>
-  //       )}
-  //     </Droppable>
-  //   </GroupScrollContainer>
-  // );
+const GroupBody = React.memo<IGroupProps>(props => {
+  const { render } = props;
 
   return (
     <GroupScrollContainer>
@@ -80,20 +83,9 @@ const GroupBody = React.memo(function GroupBody(props) {
   );
 });
 
-class Group extends React.PureComponent {
-  render() {
-    const {
-      group,
-      blockHandlers,
-      onClickAddChild,
-      onEdit,
-      draggableId,
-      index,
-      droppableId,
-      disabled,
-      render,
-      type
-    } = this.props;
+class Group extends React.PureComponent<IGroupProps> {
+  public render() {
+    const { draggableId, index, disabled } = this.props;
 
     const rendered = (
       <Draggable
@@ -109,20 +101,9 @@ class Group extends React.PureComponent {
             >
               <GroupContainerInner>
                 <div {...provided.dragHandleProps}>
-                  <GroupHeader
-                    disabled={disabled}
-                    group={group}
-                    blockHandlers={blockHandlers}
-                    onClickAddChild={onClickAddChild}
-                    onEdit={onEdit}
-                    type={type}
-                  />
+                  <GroupHeader {...this.props} />
                 </div>
-                <GroupBody
-                  droppableId={droppableId}
-                  render={render}
-                  type={type}
-                />
+                <GroupBody {...this.props} />
               </GroupContainerInner>
             </GroupContainer>
           );
@@ -185,25 +166,5 @@ const GroupScrollContainer = styled(SimpleBar)`
 const GroupScrollContainerInner = styled.div`
   margin: 12px;
 `;
-
-// const GroupScrollContainer = styled(SimpleBar)`
-//   overflow-x: hidden;
-//   height: 100%;
-//   width: 100%;
-//   flex: 2 1;
-// `;
-
-// const GroupScrollContainer = styled.div`
-//   overflow-x: hidden;
-//   height: 100%;
-// `;
-
-// const GroupDroppable = styled.div`
-//   // width: 100%;
-//   // flex: 2 1;
-//   // overflow-x: hidden;
-//   // overflow-y: hidden;
-//   // height: 100%;
-// `;
 
 export default Group;

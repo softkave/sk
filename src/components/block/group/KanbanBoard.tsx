@@ -1,27 +1,50 @@
+import styled from "@emotion/styled";
+import { Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import styled from "@emotion/styled";
-import { Spin, Icon } from "antd";
 
-import Group from "./Group.jsx";
-import MiniTask from "../task/MiniTask.jsx";
-import ProjectThumbnail from "../project/ProjectThumbnail.jsx";
+import { IBlock } from "../../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
-// import { DraggableItem } from "../dnd";
+import { IUser } from "../../../models/user/user";
+import { IBlockMethods } from "../methods";
+import ProjectThumbnail from "../project/ProjectThumbnail";
+import MiniTask from "../task/MiniTask";
 import DataLoader from "./DataLoader";
+import Group from "./Group";
 import { sortBlocksByPosition } from "./sortBlocks";
 
-class KanbanBoard extends React.PureComponent {
-  state = {
+export interface IKanbanBoardProps {
+  blockHandlers: IBlockMethods;
+  user: IUser;
+  rootBlock: IBlock;
+
+  // TODO: define collaborators' type, it's slightly different from IUser
+  collaborators: IUser[];
+  type: string;
+  toggleForm: (type: string, parent: IBlock, block: IBlock) => void;
+  setCurrentProject: (project: IBlock) => void;
+  onClickAddChild: (type: string, group: IBlock) => void;
+  onEdit: (group: IBlock) => void;
+}
+
+interface IKanbanBoardState {
+  loading: boolean;
+}
+
+class KanbanBoard extends React.PureComponent<
+  IKanbanBoardProps,
+  IKanbanBoardState
+> {
+  public state = {
     loading: false
   };
 
-  fetchChildren = async block => {
+  public fetchChildren = async block => {
     const { blockHandlers } = this.props;
     await blockHandlers.getBlockChildren(block);
   };
 
-  blockHasUngrouped(block) {
+  public blockHasUngrouped(block) {
     const { type } = this.props;
 
     switch (type) {
@@ -36,7 +59,7 @@ class KanbanBoard extends React.PureComponent {
     }
   }
 
-  onDragEnd = async result => {
+  public onDragEnd = async result => {
     const { rootBlock, blockHandlers } = this.props;
     const { destination, type, draggableId, source } = result;
 
@@ -44,9 +67,10 @@ class KanbanBoard extends React.PureComponent {
       return;
     }
 
-    let draggedBlock = null;
-    let sourceBlock = null;
-    let destinationBlock = null;
+    let draggedBlock: IBlock;
+    let sourceBlock: IBlock;
+    let destinationBlock: IBlock;
+    let dropPosition = result.destination.index;
 
     this.setState({ loading: true });
 
@@ -54,10 +78,6 @@ class KanbanBoard extends React.PureComponent {
       sourceBlock = rootBlock;
       destinationBlock = rootBlock;
       draggedBlock = rootBlock.group[draggableId];
-      let dropPosition = result.destination.index;
-      // result.destination.index = this.blockHasUngrouped(sourceBlock)
-      //   ? dropPosition - 1
-      //   : dropPosition;
 
       dropPosition -= 1;
       result.destination.index = dropPosition;
@@ -79,7 +99,7 @@ class KanbanBoard extends React.PureComponent {
         sourceBlock = rootBlock.group[source.droppableId];
       }
 
-      draggedBlock = sourceBlock["task"][draggableId];
+      draggedBlock = sourceBlock.task[draggableId];
     } else if (type === "PROJECT") {
       if (destination.droppableId === "ungrouped") {
         destinationBlock = rootBlock;
@@ -93,20 +113,20 @@ class KanbanBoard extends React.PureComponent {
         sourceBlock = rootBlock.group[source.droppableId];
       }
 
-      draggedBlock = sourceBlock["project"][draggableId];
+      draggedBlock = sourceBlock.project[draggableId];
     }
 
-    await blockHandlers.onTransferBlock(
-      draggedBlock,
-      sourceBlock,
-      destinationBlock,
-      result
-    );
+    await blockHandlers.onTransferBlock({
+      draggedBlock: draggedBlock!,
+      sourceBlock: sourceBlock!,
+      destinationBlock: destinationBlock!,
+      dragInformation: result
+    });
 
     this.setState({ loading: false });
   };
 
-  hasChildren(obj) {
+  public hasChildren(obj) {
     if (obj && typeof obj === "object") {
       return Object.keys(obj).length > 0;
     }
@@ -114,7 +134,7 @@ class KanbanBoard extends React.PureComponent {
     return false;
   }
 
-  areBlocksSame(block1, block2) {
+  public areBlocksSame(block1, block2) {
     if (block1.customId === block2.customId) {
       return true;
     } else {
@@ -122,7 +142,7 @@ class KanbanBoard extends React.PureComponent {
     }
   }
 
-  isBlockChildrenLoaded(block) {
+  public isBlockChildrenLoaded(block) {
     const validChildrenTypes = getBlockValidChildrenTypes(block);
     return !!!validChildrenTypes.find(type => {
       if (block[type] === undefined) {
@@ -133,7 +153,7 @@ class KanbanBoard extends React.PureComponent {
     });
   }
 
-  renderTasks(tasks, parent) {
+  public renderTasks(tasks, parent) {
     const {
       blockHandlers,
       user,
@@ -144,25 +164,6 @@ class KanbanBoard extends React.PureComponent {
     const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
 
     const renderedTasks = tasksToRender.map((task, index) => {
-      // return (
-      //   <DraggableItem
-      //     key={task.customId}
-      //     draggableProps={{
-      //       index,
-      //       draggableId: task.customId
-      //     }}
-      //     getContainer={() => ({ container: DraggableBlock })}
-      //   >
-      //     <MiniTask
-      //       user={user}
-      //       task={task}
-      //       collaborators={collaborators}
-      //       blockHandlers={blockHandlers}
-      //       onEdit={task => this.toggleForm("task", parent || rootBlock, task)}
-      //     />
-      //   </DraggableItem>
-      // );
-
       return (
         <BlockThumbnailContainer key={task.customId}>
           <MiniTask
@@ -170,7 +171,9 @@ class KanbanBoard extends React.PureComponent {
             task={task}
             collaborators={collaborators}
             blockHandlers={blockHandlers}
-            onEdit={task => toggleForm("task", parent || rootBlock, task)}
+            onEdit={editedTask =>
+              toggleForm("task", parent || rootBlock, editedTask)
+            }
           />
         </BlockThumbnailContainer>
       );
@@ -179,26 +182,10 @@ class KanbanBoard extends React.PureComponent {
     return renderedTasks;
   }
 
-  renderProjects(projects, parent) {
+  public renderProjects(projects, parent) {
     const { setCurrentProject } = this.props;
     const projectsToRender = sortBlocksByPosition(projects, parent.projects);
     const renderedProjects = projectsToRender.map((project, index) => {
-      // return (
-      //   <DraggableItem
-      //     key={project.customId}
-      //     getContainer={() => ({ container: DraggableBlock })}
-      //     draggableProps={{
-      //       index,
-      //       draggableId: project.customId
-      //     }}
-      //   >
-      //     <ProjectThumbnail
-      //       project={project}
-      //       onClick={() => setCurrentProject(project)}
-      //     />
-      //   </DraggableItem>
-      // );
-
       return (
         <BlockThumbnailContainer key={project.customId}>
           <ProjectThumbnail
@@ -212,25 +199,25 @@ class KanbanBoard extends React.PureComponent {
     return renderedProjects;
   }
 
-  renderGroupChildren = (block, context) => {
+  public renderGroupChildren = (block, context) => {
     return (
       <DataLoader
         data={block}
         areDataSame={this.areBlocksSame}
         isDataLoaded={this.isBlockChildrenLoaded}
         loadData={this.fetchChildren}
-        render={block => (
+        render={renderBlock => (
           <React.Fragment>
             {context === "task"
-              ? this.renderTasks(block.task, block)
-              : this.renderProjects(block.project, block)}
+              ? this.renderTasks(renderBlock.task, renderBlock)
+              : this.renderProjects(renderBlock.project, renderBlock)}
           </React.Fragment>
         )}
       />
     );
   };
 
-  renderGroups = () => {
+  public renderGroups = () => {
     const {
       blockHandlers,
       onClickAddChild,
@@ -244,8 +231,8 @@ class KanbanBoard extends React.PureComponent {
         ? rootBlock.groupTaskContext
         : rootBlock.groupProjectContext;
 
-    let groups = sortBlocksByPosition(rootBlock.group, sortedIds);
-    let rendered = [];
+    const groups = sortBlocksByPosition(rootBlock.group, sortedIds);
+    const rendered: JSX.Element[] = [];
 
     if (
       (type === "task" && this.hasChildren(rootBlock.type)) ||
@@ -256,12 +243,16 @@ class KanbanBoard extends React.PureComponent {
           disabled
           key="ungrouped"
           type={type}
-          group={{
-            name: type === "task" ? "Ungrouped Tasks" : "Ungrouped Projects"
-          }}
-          user={user}
+          group={
+            {
+              name: type === "task" ? "Ungrouped Tasks" : "Ungrouped Projects"
+            } as IBlock
+          }
           draggableId="ungrouped"
           droppableId="ungrouped"
+          blockHandlers={blockHandlers}
+          onClickAddChild={onClickAddChild}
+          onEdit={onEdit}
           index={0}
           render={
             type === "task"
@@ -275,8 +266,8 @@ class KanbanBoard extends React.PureComponent {
     }
 
     groups.forEach((group, index) => {
-      let groupId = group.customId;
-      let groupProps = {
+      const groupId = group.customId;
+      const groupProps = {
         type,
         group,
         user,
@@ -293,13 +284,14 @@ class KanbanBoard extends React.PureComponent {
     });
 
     return rendered;
+    // tslint:disable-next-line: semicolon
   };
 
-  renderBlockChildren = () => {
+  public renderBlockChildren = () => {
     return <React.Fragment>{this.renderGroups()}</React.Fragment>;
   };
 
-  renderMain = () => {
+  public renderMain = () => {
     const { rootBlock } = this.props;
     const { loading } = this.state;
 
@@ -342,7 +334,7 @@ class KanbanBoard extends React.PureComponent {
     return rendered;
   };
 
-  render() {
+  public render() {
     const { rootBlock } = this.props;
 
     return (
@@ -374,10 +366,6 @@ const KanbanBoardDroppable = styled.div`
   display: inline-flex;
   padding: 0 16px;
 `;
-
-// const DraggableBlock = styled.div`
-//   margin: 12px;
-// `;
 
 const SpinContainer = styled.div`
   width: 100%;

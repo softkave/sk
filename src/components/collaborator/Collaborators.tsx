@@ -1,17 +1,37 @@
+import { Button, List, Tabs } from "antd";
 import React from "react";
-import { List, Button, Tabs } from "antd";
 
-import CollaboratorThumbnail from "./Thumnail.jsx";
-// import AddCollaborator from "./AddCollaborator.jsx";
+import { IBlock } from "../../models/block/block.js";
+import { IUser } from "../../models/user/user.js";
+import AC, { IACValue } from "./AC";
 import "./collaborators.css";
-import AC from "./AC";
+import CollaboratorThumbnail from "./Thumnail.jsx";
 
-export default class Collaborators extends React.Component {
-  state = {
+export interface ICollaboratorsProps {
+  // TODO: Define collaborators' right type
+  collaborators: IUser[];
+
+  // TODO: Define type
+  collaborationRequests: any[];
+  block: IBlock;
+  error?: Error;
+  onBack: () => void;
+  onAddCollaborators: (values: IACValue) => void;
+}
+
+interface ICollaboratorsState {
+  showAddCollaboratorForm: boolean;
+}
+
+export default class Collaborators extends React.Component<
+  ICollaboratorsProps,
+  ICollaboratorsState
+> {
+  public state = {
     showAddCollaboratorForm: false
   };
 
-  toggleCollaboratorForm = () => {
+  public toggleCollaboratorForm = () => {
     this.setState(prevState => {
       return {
         showAddCollaboratorForm: !prevState.showAddCollaboratorForm
@@ -19,7 +39,7 @@ export default class Collaborators extends React.Component {
     });
   };
 
-  renderList(items, renderItem) {
+  public renderList(items, renderItem) {
     return (
       <List
         dataSource={items}
@@ -36,7 +56,8 @@ export default class Collaborators extends React.Component {
     );
   }
 
-  renderCollaborators(collaborators = []) {
+  // TODO: Define type
+  public renderCollaborators(collaborators: any[] = []) {
     return this.renderList(collaborators, c => {
       return (
         <List.Item key={c.customId}>
@@ -46,7 +67,8 @@ export default class Collaborators extends React.Component {
     });
   }
 
-  renderCollaborationRequests(collaborationRequests = []) {
+  // TODO: Define type
+  public renderCollaborationRequests(collaborationRequests: any[] = []) {
     return this.renderList(collaborationRequests, c => {
       return (
         <List.Item key={c.customId}>
@@ -56,7 +78,7 @@ export default class Collaborators extends React.Component {
     });
   }
 
-  render() {
+  public render() {
     const {
       collaborators,
       onBack,
@@ -88,16 +110,6 @@ export default class Collaborators extends React.Component {
             this.toggleCollaboratorForm();
           }}
         />
-        {/* <AddCollaborator
-          onSubmit={data => {
-            onAddCollaborators(data);
-            this.toggleCollaboratorForm();
-          }}
-          visible={showAddCollaboratorForm}
-          onClose={this.toggleCollaboratorForm}
-          existingCollaborators={collaborators}
-          existingCollaborationRequests={collaborationRequests}
-        /> */}
         <div className="sk-collaborators-header">
           <Button icon="arrow-left" onClick={onBack} />
           <Button

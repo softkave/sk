@@ -1,11 +1,24 @@
+import { Col, Row } from "antd";
 import React from "react";
-import { getWindowWidth } from "../../utils/window";
+
 import throttle from "lodash/throttle";
-import { Row, Col } from "antd";
+import { getWindowWidth } from "../../utils/window";
 import NotificationBody from "./NotificationBody.jsx";
+
+import {
+  OnClickNotification,
+  OnRespondToNotification
+} from "../../app/notification";
 import "./notification-list.css";
 
-function NotificationListItem(props) {
+export interface INotificationListItemProps {
+  // TODO: Define type
+  notification: any;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
   const { notification, isSelected, onClick } = props;
   const style = isSelected
     ? {
@@ -16,7 +29,7 @@ function NotificationListItem(props) {
     ? {
         color: "grey"
       }
-    : null;
+    : {};
 
   return (
     <div onClick={onClick} className="notifications-list-item" style={style}>
@@ -24,58 +37,75 @@ function NotificationListItem(props) {
       <span>{new Date(notification.createdAt).toDateString()}</span>
     </div>
   );
+};
+
+export interface INotificationListProps {
+  // TODO: Define type
+  notifications: { [key: string]: any };
+  onClickNotification: OnClickNotification;
+  onRespond: OnRespondToNotification;
 }
 
-class NotificationList extends React.Component {
+interface INotificationListState {
+  renderType: string;
+  currentNotification?: string;
+}
+
+class NotificationList extends React.Component<
+  INotificationListProps,
+  INotificationListState
+> {
   constructor(props) {
     super(props);
     this.state = {
       renderType: this.getRenderType(),
-      currentNotification: null
+      currentNotification: undefined
     };
 
     this.setRenderType = throttle(this.setRenderType, 100, { leading: true });
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     window.addEventListener("resize", this.setRenderType);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     window.removeEventListener("resize", this.setRenderType);
   }
 
-  onClickNotication = id => {
+  public onClickNotication = id => {
     if (this.state.currentNotification !== id) {
       this.setState({ currentNotification: id });
-      this.props.onClickNotification(this.props.notifications[id]);
+      this.props.onClickNotification({
+        notification: this.props.notifications[id]
+      });
     }
   };
 
-  setRenderType() {
+  public setRenderType() {
     const renderType = this.getRenderType();
     if (this.state.renderType !== renderType) {
-      this.setRenderType({ renderType });
+      this.setState({ renderType });
     }
   }
 
-  getRenderType() {
+  public getRenderType() {
     return getWindowWidth() > 500 ? "desktop" : "mobile";
   }
 
-  renderCurrentNotification() {
+  public renderCurrentNotification() {
     const { notifications, onRespond } = this.props;
     const { currentNotification } = this.state;
 
     return (
       <NotificationBody
-        notification={notifications[currentNotification]}
+        notification={notifications[currentNotification!]}
         onRespond={onRespond}
       />
     );
   }
 
-  renderNotifications() {
+  public renderNotifications() {
     const { notifications } = this.props;
     const { currentNotification } = this.state;
     return (
@@ -97,7 +127,7 @@ class NotificationList extends React.Component {
     );
   }
 
-  render() {
+  public render() {
     const { renderType, currentNotification } = this.state;
 
     if (renderType === "mobile") {

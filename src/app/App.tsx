@@ -1,15 +1,23 @@
+import { Avatar, Dropdown, Menu } from "antd";
 import React from "react";
-import { Dropdown, Menu, Avatar } from "antd";
-import { withRouter } from "react-router-dom";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+
 import Header from "../components/header/Header";
-import Personal from "./personal";
-import Orgs from "./orgs";
+import { IUser } from "../models/user/user";
 import Notifications from "./notification";
+import Orgs from "./orgs";
+import Personal from "./personal";
 
 const defaultAvatarColor = "#aaa";
 
-class App extends React.Component {
-  componentDidMount() {
+export interface IAppProps extends RouteComponentProps {
+  loginValid: boolean;
+  user: IUser;
+  onLogout: () => void;
+}
+
+class App extends React.Component<IAppProps> {
+  public componentDidMount() {
     const { history, loginValid } = this.props;
 
     if (!loginValid) {
@@ -17,7 +25,7 @@ class App extends React.Component {
     }
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     const { history, loginValid } = this.props;
 
     if (!loginValid) {
@@ -25,13 +33,13 @@ class App extends React.Component {
     }
   }
 
-  onSelectAvatarMenu = event => {
+  public onSelectAvatarMenu = event => {
     if (event.key === "logout") {
       this.props.onLogout();
     }
   };
 
-  render() {
+  public render() {
     const { onLogout, loginValid, user } = this.props;
 
     if (!loginValid) {

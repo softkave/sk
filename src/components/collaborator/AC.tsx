@@ -36,7 +36,7 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface IACValue {
+export interface IACValue {
   message?: string;
   expiresAt?: number;
   requests: IACValue[];

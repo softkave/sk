@@ -37,4 +37,12 @@ export interface IBlock {
   roles: IBlockRole[];
   path: string;
   collaborators: IUser[];
+
+  // TODO: Define a new type of IBlock for client, Redux, etc
+  group: { [key: string]: IBlock };
+  task: { [key: string]: IBlock };
+  project: { [key: string]: IBlock };
+
+  // TODO: define type
+  collaborationRequests: any[];
 }

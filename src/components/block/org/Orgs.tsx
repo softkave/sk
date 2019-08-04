@@ -1,12 +1,26 @@
-import React from "react";
 import { Button } from "antd";
+import React from "react";
 
-import OrgThumbnail from "./OrgThumbnail";
+import { IBlock } from "../../../models/block/block";
+import { IUser } from "../../../models/user/user";
 import Board from "../group/Board";
+import { IBlockMethods } from "../methods";
 import EditOrg from "./EditOrg";
 import "./orgs.css";
+import OrgThumbnail from "./OrgThumbnail";
 
-class Orgs extends React.Component {
+export interface IOrgsProps {
+  blockHandlers: IBlockMethods;
+  orgs: { [key: string]: IBlock };
+  user: IUser;
+}
+
+interface IOrgsState {
+  currentOrg?: string | null;
+  showNewOrgForm: boolean;
+}
+
+class Orgs extends React.Component<IOrgsProps, IOrgsState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,11 +29,11 @@ class Orgs extends React.Component {
     };
   }
 
-  setCurrentOrg = id => {
+  public setCurrentOrg = id => {
     this.setState({ currentOrg: id });
   };
 
-  toggleNewOrgForm = () => {
+  public toggleNewOrgForm = () => {
     this.setState(prevState => {
       return {
         showNewOrgForm: !prevState.showNewOrgForm
@@ -27,12 +41,12 @@ class Orgs extends React.Component {
     });
   };
 
-  onCreateOrg = async org => {
+  public onCreateOrg = async org => {
     await this.props.blockHandlers.onAdd(org);
     this.toggleNewOrgForm();
   };
 
-  render() {
+  public render() {
     const { orgs, blockHandlers, user } = this.props;
     const { currentOrg, showNewOrgForm } = this.state;
 

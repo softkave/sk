@@ -5,11 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import store from "./redux/store";
 import Router from "./Router";
 
-// import "simplebar";
-import "simplebar/dist/simplebar.css";
-
-import "./styles.css";
 import "./sk-global.css";
+import "./styles.css";
 
 if (process.env.NODE_ENV === "development") {
   require("antd/dist/antd.css");
