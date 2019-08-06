@@ -41,6 +41,7 @@ interface IBoardState {
   parent?: IBlock | null;
   project?: IBlock | null;
   block?: IBlock | null;
+  selectedCollaborator: IUser[];
 }
 
 class Board extends React.Component<IBoardProps, IBoardState> {
@@ -56,7 +57,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       block: null,
       parent: null,
       showCollaborators: false,
-      boardContext: "task"
+      boardContext: "task",
+      selectedCollaborator: []
     };
   }
 
@@ -278,7 +280,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           />
         )}
         <Header>
-          {onBack && <OnBackButton onClick={onBack} icon="arrow-left" />}
+          {onBack && <Button onClick={onBack} icon="arrow-left" />}
           {childrenTypes.length > 0 && (
             <CreateButton
               types={childrenTypes}
@@ -303,12 +305,15 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             </Button.Group>
           </ContextButtons>
           {rootBlock.type === "org" && (
-            <CollaboratorsButton onClick={this.toggleShowCollaborators}>
-              Collaborators
-            </CollaboratorsButton>
+            <CollaboratorsButtonContainer>
+              <Button onClick={this.toggleShowCollaborators}>
+                Collaborators
+              </Button>
+            </CollaboratorsButtonContainer>
           )}
           <BlockName>{isUserRootBlock ? "Root" : rootBlock.name}</BlockName>
         </Header>
+
         <BoardContent>
           <DataLoader
             isDataLoaded={this.isCollaboratorDataLoaded}
@@ -346,7 +351,6 @@ const Content = styled.div`
 const BoardContent = styled.div`
   flex: 1;
   display: inline-flex;
-  // overflow-x: hidden;
 `;
 
 const Header = styled.div`
@@ -362,18 +366,21 @@ const BlockName = styled.span`
   font-weight: bold;
 `;
 
-const OnBackButton = styled(Button)``;
 const CreateButton = styled(AddDropdownButton)`
   margin-left: 16px;
 `;
 
-const CollaboratorsButton = styled(Button)`
+const CollaboratorsButtonContainer = styled.span`
   margin-left: 16px;
 `;
 
 const ContextButtons = styled.div`
   display: inline-block;
   margin-left: 16px;
+`;
+
+const CollaboratorAvatars = styled.div`
+  padding: 1em;
 `;
 
 export default Board;

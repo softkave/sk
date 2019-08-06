@@ -3,6 +3,7 @@ import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Header from "../components/header/Header";
+import SkAvatar from "../components/SkAvatar";
 import { IUser } from "../models/user/user";
 import Notifications from "./notification";
 import Orgs from "./orgs";
@@ -89,14 +90,7 @@ class App extends React.Component<IAppProps> {
             }
             trigger={["click"]}
           >
-            <Avatar
-              size="default"
-              shape="square"
-              style={{
-                backgroundColor: user.color || defaultAvatarColor,
-                cursor: "pointer"
-              }}
-            />
+            <SkAvatar color={user.color || defaultAvatarColor} />
           </Dropdown>
         }
       />

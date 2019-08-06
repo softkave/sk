@@ -11,7 +11,7 @@ import ProjectThumbnail from "../project/ProjectThumbnail";
 import MiniTask from "../task/MiniTask";
 import DataLoader from "./DataLoader";
 import Group from "./Group";
-import { sortBlocksByPosition } from "./sortBlocks";
+import { sortBlocksByPosition, sortBlocksByPriority } from "./sortBlocks";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
@@ -154,14 +154,9 @@ class KanbanBoard extends React.PureComponent<
   }
 
   public renderTasks(tasks, parent) {
-    const {
-      blockHandlers,
-      user,
-      rootBlock,
-      collaborators,
-      toggleForm
-    } = this.props;
-    const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
+    const { blockHandlers, user, rootBlock, toggleForm } = this.props;
+    // const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
+    const tasksToRender = sortBlocksByPriority(tasks);
 
     const renderedTasks = tasksToRender.map((task, index) => {
       return (
@@ -169,7 +164,6 @@ class KanbanBoard extends React.PureComponent<
           <MiniTask
             user={user}
             task={task}
-            collaborators={collaborators}
             blockHandlers={blockHandlers}
             onEdit={editedTask =>
               toggleForm("task", parent || rootBlock, editedTask)

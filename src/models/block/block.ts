@@ -25,7 +25,7 @@ export interface IBlock {
   parents: string[];
   createdBy: string;
   taskCollaborators: ITaskCollaborator[];
-  priority: string;
+  priority: "very important" | "important" | "not important";
   isBacklog: boolean;
   position: number;
   positionTimestamp: number;
