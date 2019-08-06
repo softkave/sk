@@ -18,6 +18,8 @@ import BoardContainer from "./BoardContainer";
 import DataLoader from "./DataLoader";
 import EditGroup from "./EditGroup";
 import KanbanBoard from "./KanbanBoard";
+import SplitView, { ISplit } from "./SplitView";
+import ExpandedGroup from "./ExpandedGroup";
 
 export interface IBoardProps {
   rootBlock: IBlock;
@@ -43,6 +45,7 @@ interface IBoardState {
   project?: IBlock | null;
   block?: IBlock | null;
   selectedCollaborators: { [key: string]: boolean };
+  selectedGroup: IBlock | null;
 }
 
 class Board extends React.Component<IBoardProps, IBoardState> {
@@ -59,11 +62,39 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       parent: null,
       showCollaborators: false,
       boardContext: "task",
-      selectedCollaborators: {}
+      selectedCollaborators: {},
+      selectedGroup: null
     };
   }
 
   public render() {
+    const { selectedGroup } = this.state;
+    const splits: ISplit[] = [
+      {
+        showControls: false,
+        render: this.renderMain,
+        flex: 1
+      }
+    ];
+
+    if (selectedGroup) {
+      splits.push({
+        showControls: true,
+        title: selectedGroup.name,
+        flex: 1,
+        onClose: () => {
+          this.setState({ selectedGroup: null });
+        },
+        render() {
+          return <ExpandedGroup />;
+        }
+      });
+    }
+
+    return <SplitView splits={splits} />;
+  }
+
+  private renderMain = () => {
     const {
       rootBlock,
       blockHandlers,
@@ -226,7 +257,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         </BoardContent>
       </Content>
     );
-  }
+  };
 
   private isBlockCollaboratorsLoaded() {
     const { rootBlock } = this.props;

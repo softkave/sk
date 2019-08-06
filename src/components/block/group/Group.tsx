@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Button, Col, Row } from "antd";
-import { ButtonProps } from "antd/lib/button";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import SimpleBar from "simplebar-react";
@@ -28,7 +27,6 @@ function getChildrenTypes(block: IBlock, type: string) {
 export interface IGroupProps {
   group: IBlock;
   blockHandlers: IBlockMethods;
-
   draggableId: string;
   index: number;
   droppableId: string;
@@ -37,6 +35,14 @@ export interface IGroupProps {
   onClickAddChild: (type: string, group: IBlock) => void;
   onEdit: (group: IBlock) => void;
   render: () => React.ReactNode;
+
+  /**
+   * TODO: 
+   * Move the children rendering logic from kanban board to it's own component
+   * OR into Group or a child of group
+   */
+  onViewMore?: () => void;
+  showViewMore?: boolean;
 }
 
 const GroupHeader = React.memo<IGroupProps>(props => {
@@ -61,9 +67,15 @@ const GroupHeader = React.memo<IGroupProps>(props => {
               onClick={blockType => onClickAddChild(blockType, group)}
             />
           )}
-          <GroupHeaderButton icon="edit" onClick={() => onEdit(group)} />
+          <GroupHeaderButtonContainer>
+            <Button icon="edit" onClick={() => onEdit(group)} />
+          </GroupHeaderButtonContainer>
           <DeleteButton
-            deleteButton={<GroupHeaderButton icon="delete" type="danger" />}
+            deleteButton={
+              <GroupHeaderButtonContainer>
+                <Button icon="delete" type="danger" />
+              </GroupHeaderButtonContainer>
+            }
             onDelete={() => blockHandlers.onDelete({ block: group })}
             title="Are you sure you want to delete this group?"
           />
@@ -154,7 +166,7 @@ const GroupHeaderButtons = styled(Col)`
   text-align: right;
 `;
 
-const GroupHeaderButton = styled(Button)`
+const GroupHeaderButtonContainer = styled.span`
   margin-left: 2px;
 `;
 
