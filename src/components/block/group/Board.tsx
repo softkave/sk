@@ -9,6 +9,7 @@ import {
 } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import AddDropdownButton from "../../AddDropdownButton";
+import AvatarList, { IAvatarItem } from "../../collaborator/AvatarList";
 import Collaborators from "../../collaborator/Collaborators";
 import { IBlockMethods } from "../methods";
 import EditProject from "../project/EditProject";
@@ -41,7 +42,7 @@ interface IBoardState {
   parent?: IBlock | null;
   project?: IBlock | null;
   block?: IBlock | null;
-  selectedCollaborator: IUser[];
+  selectedCollaborators: { [key: string]: boolean };
 }
 
 class Board extends React.Component<IBoardProps, IBoardState> {
@@ -58,137 +59,9 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       parent: null,
       showCollaborators: false,
       boardContext: "task",
-      selectedCollaborator: []
+      selectedCollaborators: {}
     };
   }
-
-  public isBlockCollaboratorsLoaded() {
-    const { rootBlock } = this.props;
-    if (rootBlock.type === "org" && !rootBlock.collaborators) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public isBlockCollaborationRequestsLoaded() {
-    const { rootBlock } = this.props;
-    if (rootBlock.type === "org" && !rootBlock.collaborationRequests) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public isCollaboratorDataLoaded = () => {
-    return (
-      this.isBlockCollaboratorsLoaded() &&
-      this.isBlockCollaborationRequestsLoaded()
-    );
-  };
-
-  public async fetchCollaborators() {
-    const { rootBlock, blockHandlers } = this.props;
-    await blockHandlers.getCollaborators({ block: rootBlock });
-  }
-
-  public async fetchCollaborationRequests() {
-    const { rootBlock, blockHandlers } = this.props;
-    await blockHandlers.getCollaborationRequests({ block: rootBlock });
-  }
-
-  public fetchCollaborationData = async () => {
-    await this.fetchCollaborators();
-    await this.fetchCollaborationRequests();
-  };
-
-  public onSubmitData = async (data, formType) => {
-    const { user } = this.props;
-    const { parent, block } = this.state;
-
-    if (block) {
-      await this.props.blockHandlers.onUpdate({
-        block,
-        data
-      });
-    } else {
-      await this.props.blockHandlers.onAdd({
-        user,
-        parent: parent!,
-        block: data
-      });
-    }
-
-    this.toggleForm(formType);
-  };
-
-  public toggleForm = (type: string, parent?: IBlock, block?: IBlock) => {
-    this.setState(prevState => {
-      return {
-        parent,
-        block,
-        form: { ...prevState.form, [type]: !prevState.form[type] }
-      };
-    });
-  };
-
-  public setCurrentProject = project => {
-    this.setState({ project });
-  };
-
-  public toggleShowCollaborators = () => {
-    this.setState(prevState => {
-      return {
-        showCollaborators: !prevState.showCollaborators
-      };
-    });
-  };
-
-  public toggleContext = context => {
-    this.setState({ boardContext: context });
-  };
-
-  public getCollaborators() {
-    const { user, rootBlock, collaborators } = this.props;
-    return rootBlock.collaborators || collaborators || [user];
-  }
-
-  public getExistingNames(blocks = {}) {
-    return Object.keys(blocks).map(customId => blocks[customId].name);
-  }
-
-  public getChildrenTypes(block) {
-    const { boardContext } = this.state;
-
-    const remove = boardContext === "task" ? "project" : "task";
-    const childrenTypes = getBlockValidChildrenTypes(block);
-    const typeIndex = childrenTypes.indexOf(remove);
-
-    if (typeIndex !== -1) {
-      childrenTypes.splice(typeIndex, 1);
-    }
-
-    return childrenTypes;
-  }
-
-  public renderCollaborators = () => {
-    const { rootBlock, blockHandlers } = this.props;
-
-    return (
-      <Collaborators
-        block={rootBlock}
-        onBack={this.toggleShowCollaborators}
-        collaborators={rootBlock.collaborators}
-        onAddCollaborators={async data => {
-          return blockHandlers.onAddCollaborators({
-            ...data,
-            block: rootBlock
-          });
-        }}
-        collaborationRequests={rootBlock.collaborationRequests}
-      />
-    );
-  };
 
   public render() {
     const {
@@ -205,7 +78,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       block,
       showCollaborators,
       parent,
-      boardContext
+      boardContext,
+      selectedCollaborators
     } = this.state;
 
     const collaborators = this.getCollaborators();
@@ -313,7 +187,19 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           )}
           <BlockName>{isUserRootBlock ? "Root" : rootBlock.name}</BlockName>
         </Header>
-
+        <CollaboratorAvatarsContainer>
+          <AvatarList
+            collaborators={collaborators.map(collaborator => {
+              return {
+                key: collaborator.customId,
+                color: collaborator.color,
+                active: selectedCollaborators[collaborator.customId],
+                extra: collaborator.name
+              };
+            })}
+            onClick={this.onSelectCollaborator}
+          />
+        </CollaboratorAvatarsContainer>
         <BoardContent>
           <DataLoader
             isDataLoaded={this.isCollaboratorDataLoaded}
@@ -332,6 +218,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                   setCurrentProject={this.setCurrentProject}
                   type={boardContext}
                   toggleForm={this.toggleForm}
+                  selectedCollaborators={selectedCollaborators}
                 />
               );
             }}
@@ -340,6 +227,148 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       </Content>
     );
   }
+
+  private isBlockCollaboratorsLoaded() {
+    const { rootBlock } = this.props;
+    if (rootBlock.type === "org" && !rootBlock.collaborators) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private isBlockCollaborationRequestsLoaded() {
+    const { rootBlock } = this.props;
+    if (rootBlock.type === "org" && !rootBlock.collaborationRequests) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private isCollaboratorDataLoaded = () => {
+    return (
+      this.isBlockCollaboratorsLoaded() &&
+      this.isBlockCollaborationRequestsLoaded()
+    );
+  };
+
+  private async fetchCollaborators() {
+    const { rootBlock, blockHandlers } = this.props;
+    await blockHandlers.getCollaborators({ block: rootBlock });
+  }
+
+  private async fetchCollaborationRequests() {
+    const { rootBlock, blockHandlers } = this.props;
+    await blockHandlers.getCollaborationRequests({ block: rootBlock });
+  }
+
+  private fetchCollaborationData = async () => {
+    await this.fetchCollaborators();
+    await this.fetchCollaborationRequests();
+  };
+
+  private onSelectCollaborator = (
+    collaborator: IAvatarItem,
+    selected: boolean
+  ) => {
+    this.setState(state => {
+      return {
+        selectedCollaborators: {
+          ...state.selectedCollaborators,
+          [collaborator.key]: selected
+        }
+      };
+    });
+  };
+
+  private onSubmitData = async (data, formType) => {
+    const { user } = this.props;
+    const { parent, block } = this.state;
+
+    if (block) {
+      await this.props.blockHandlers.onUpdate({
+        block,
+        data
+      });
+    } else {
+      await this.props.blockHandlers.onAdd({
+        user,
+        parent: parent!,
+        block: data
+      });
+    }
+
+    this.toggleForm(formType);
+  };
+
+  private toggleForm = (type: string, parent?: IBlock, block?: IBlock) => {
+    this.setState(prevState => {
+      return {
+        parent,
+        block,
+        form: { ...prevState.form, [type]: !prevState.form[type] }
+      };
+    });
+  };
+
+  private setCurrentProject = project => {
+    this.setState({ project });
+  };
+
+  private toggleShowCollaborators = () => {
+    this.setState(prevState => {
+      return {
+        showCollaborators: !prevState.showCollaborators
+      };
+    });
+  };
+
+  private toggleContext = context => {
+    this.setState({ boardContext: context });
+  };
+
+  private getCollaborators() {
+    const { user, rootBlock, collaborators } = this.props;
+    return rootBlock.collaborators || collaborators || [user];
+  }
+
+  private getExistingNames(blocks = {}) {
+    return Object.keys(blocks).map(customId => blocks[customId].name);
+  }
+
+  private getChildrenTypes(block) {
+    const { boardContext } = this.state;
+
+    const remove = boardContext === "task" ? "project" : "task";
+    const childrenTypes = getBlockValidChildrenTypes(block);
+    const typeIndex = childrenTypes.indexOf(remove);
+
+    if (typeIndex !== -1) {
+      childrenTypes.splice(typeIndex, 1);
+    }
+
+    return childrenTypes;
+  }
+
+  private renderCollaborators = () => {
+    const { rootBlock, blockHandlers } = this.props;
+
+    return (
+      <Collaborators
+        block={rootBlock}
+        onBack={this.toggleShowCollaborators}
+        collaborators={rootBlock.collaborators}
+        onAddCollaborators={async data => {
+          return blockHandlers.onAddCollaborators({
+            ...data,
+            block: rootBlock
+          });
+        }}
+        collaborationRequests={rootBlock.collaborationRequests}
+      />
+    );
+  };
 }
 
 const Content = styled.div`
@@ -379,7 +408,7 @@ const ContextButtons = styled.div`
   margin-left: 16px;
 `;
 
-const CollaboratorAvatars = styled.div`
+const CollaboratorAvatarsContainer = styled.div`
   padding: 1em;
 `;
 

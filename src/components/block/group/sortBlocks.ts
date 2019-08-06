@@ -1,4 +1,3 @@
-import values from "lodash/values";
 import { IBlock } from "../../../models/block/block";
 
 // TODO: Define types
@@ -22,8 +21,8 @@ const blockPriorityToNumMap = {
   "not important": 1
 };
 
-export function sortBlocksByPriority(blocks: { [key: string]: IBlock } = {}) {
-  return values(blocks).sort((blockA, blockB) => {
+export function sortBlocksByPriority(blocks: IBlock[] = []) {
+  return blocks.sort((blockA, blockB) => {
     const blockAPriorityNum = blockPriorityToNumMap[blockA.priority];
     const blockBPriorityNum = blockPriorityToNumMap[blockB.priority];
 

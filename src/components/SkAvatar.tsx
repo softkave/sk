@@ -47,6 +47,7 @@ const AvatarContainer = styled("span")<IAvatarContainerProps>(props => {
       return {
         color: props.color,
         border: props.active ? "2px solid rbg(66,133,244)" : undefined,
+        padding: props.active ? "2px" : undefined,
         cursor: "pointer"
       };
     }

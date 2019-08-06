@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Icon, Spin } from "antd";
+import values from "lodash/values";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
@@ -20,6 +21,7 @@ export interface IKanbanBoardProps {
 
   // TODO: define collaborators' type, it's slightly different from IUser
   collaborators: IUser[];
+  selectedCollaborators: { [key: string]: boolean };
   type: string;
   toggleForm: (type: string, parent: IBlock, block: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
@@ -153,11 +155,30 @@ class KanbanBoard extends React.PureComponent<
     });
   }
 
-  public renderTasks(tasks, parent) {
-    const { blockHandlers, user, rootBlock, toggleForm } = this.props;
+  public renderTasks(tasks: { [key: string]: IBlock }, parent: IBlock) {
+    const {
+      blockHandlers,
+      user,
+      rootBlock,
+      toggleForm,
+      selectedCollaborators
+    } = this.props;
     // const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
-    const tasksToRender = sortBlocksByPriority(tasks);
+    const tasksArray = values(tasks);
+    const filteredTasks =
+      !selectedCollaborators || Object.keys(selectedCollaborators).length === 0
+        ? tasksArray
+        : tasksArray.filter(task => {
+            const tc = task.taskCollaborators;
 
+            if (Array.isArray(tc) && tc.length > 0) {
+              return tc.find(c => selectedCollaborators[c.userId]);
+            }
+
+            return false;
+          });
+
+    const tasksToRender = sortBlocksByPriority(filteredTasks);
     const renderedTasks = tasksToRender.map((task, index) => {
       return (
         <BlockThumbnailContainer key={task.customId}>

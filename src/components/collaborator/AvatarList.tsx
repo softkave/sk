@@ -1,19 +1,19 @@
 import styled from "@emotion/styled";
-import { Avatar, Checkbox, Col, Dropdown, Menu, Row } from "antd";
+import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
 
 import SkAvatar from "../SkAvatar";
 
-interface IAvatarItem {
+export interface IAvatarItem {
   color?: string;
   extra?: React.ReactNode;
   active?: boolean;
+  key: any;
 }
 
 export interface IAvatarListProps {
   collaborators?: IAvatarItem[];
-  clickable?: boolean;
   onClick?: (avatar: IAvatarItem, selected: boolean) => void;
 }
 
@@ -34,14 +34,11 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
         {({ size }) => {
           const renderNum = this.getRenderNum(size.width!);
           const renderAvatarNum = renderNum - 1;
-          const hiddenAvatarNum = avatars!.length - renderAvatarNum;
 
           return (
             <AvatarListContainer>
-              {this.renderAvatars(avatars!.slice(0, renderNum - 1))}
-              <MoreButtonContainer>
-                <SkAvatar>{hiddenAvatarNum}+</SkAvatar>
-              </MoreButtonContainer>
+              {this.renderAvatars(avatars!.slice(0, renderAvatarNum))}
+              {this.renderHiddenButton(avatars!.slice(renderAvatarNum + 1))}
             </AvatarListContainer>
           );
         }}
@@ -70,18 +67,15 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
 
       if (renderExtra) {
         return (
-          <Row>
-            <Col span={4}>
-              <Checkbox
-                onChange={event => onClick!(avatar, event.target.checked)}
-              />
-            </Col>
+          <Row key={avatar.key} type="flex" align="middle">
             <Col span={8}>{renderedAvatar}</Col>
-            <Col span={12}>{avatar.extra}</Col>
+            <Col span={16}>{avatar.extra}</Col>
           </Row>
         );
       } else {
-        return <AvatarContainer>{renderedAvatar}</AvatarContainer>;
+        return (
+          <AvatarContainer key={avatar.key}>{renderedAvatar}</AvatarContainer>
+        );
       }
     });
   }
@@ -91,6 +85,18 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
       <HiddenAvatarContainer>
         {this.renderAvatars(avatars, true)}
       </HiddenAvatarContainer>
+    );
+  }
+
+  private renderHiddenButton(avatars: IAvatarItem[]) {
+    const menu = <Menu>{this.renderHiddenAvatars(avatars)}</Menu>;
+
+    return (
+      <Dropdown overlay={menu} trigger={["click"]}>
+        <MoreButtonContainer>
+          <SkAvatar>{avatars.length}+</SkAvatar>
+        </MoreButtonContainer>
+      </Dropdown>
     );
   }
 }
