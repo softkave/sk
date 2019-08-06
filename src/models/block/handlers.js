@@ -9,6 +9,10 @@ import randomColor from "randomcolor";
 import { getBlockValidChildrenTypes } from "./utils";
 import { makeMultiple } from "../../redux/actions/make";
 import { newId } from "../../utils/utils";
+import {
+  stripFieldsFromError,
+  filterErrorByBaseName
+} from "../../components/FOR";
 
 function convertDateToTimestamp(date) {
   if (date && date.valueOf) {
@@ -16,8 +20,19 @@ function convertDateToTimestamp(date) {
   }
 }
 
-function throwOnError(result) {
+function throwOnError(result, filterBaseNames, stripBaseNames) {
   if (result && result.errors) {
+    if (filterBaseNames) {
+      result.errors = filterErrorByBaseName(
+        result.errors,
+        filterErrorByBaseName
+      );
+    }
+
+    if (stripBaseNames) {
+      result.errors = stripFieldsFromError(result.errors, stripBaseNames);
+    }
+
     throw result.errors;
   }
 
@@ -81,14 +96,14 @@ export function makeBlockHandlers({ dispatch, user }) {
       actions.push(setDataByPath(block.path, block));
 
       const result = await netInterface("block.addBlock", block);
-      throwOnError(result);
+      throwOnError(result, null, ["block"]);
       dispatch(makeMultiple(actions));
     },
 
     async onUpdate(block, data) {
       data.expectedEndAt = convertDateToTimestamp(data.expectedEndAt);
       const result = await netInterface("block.updateBlock", block, data);
-      throwOnError(result);
+      throwOnError(result, ["block"], ["data"]);
       dispatch(mergeDataByPath(block.path, data));
     },
 
@@ -144,10 +159,6 @@ export function makeBlockHandlers({ dispatch, user }) {
       dispatch(
         mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
       );
-    },
-
-    async onUpdateCollaborator(block, collaborator, data) {
-      // TODO: implement
     },
 
     async getBlockChildren(block) {
@@ -222,7 +233,7 @@ export function makeBlockHandlers({ dispatch, user }) {
 
         prefill.forEach(key => {
           if (!Array.isArray(data[key])) {
-            data.key = [];
+            data[key] = [];
           }
         });
       });

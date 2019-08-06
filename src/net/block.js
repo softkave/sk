@@ -11,13 +11,16 @@ import {
   removeCollaboratorMutation,
   toggleTaskMutation,
   revokeRequestMutation,
-  transferBlockMutation
+  transferBlockMutation,
+  updateAccessControlDataMutation,
+  updateRolesMutation,
+  assignRoleMutation
 } from "./schema/block";
 import { getDataFromObject } from "../utils/object";
 
 const blockParamFields = ["customId"];
 
-export function addBlock(block) {
+export function addBlock({ block }) {
   const fields = [
     "name",
     "customId",
@@ -47,7 +50,7 @@ export function addBlock(block) {
   );
 }
 
-export function updateBlock(block, data) {
+export function updateBlock({ block, data }) {
   const dataFields = [
     "name",
     "description",
@@ -78,7 +81,7 @@ export function updateBlock(block, data) {
   );
 }
 
-export function deleteBlock(block) {
+export function deleteBlock({ block }) {
   return auth(
     null,
     deleteBlockMutation,
@@ -87,16 +90,16 @@ export function deleteBlock(block) {
   );
 }
 
-export function getBlockChildren(block, types) {
+export function getBlockChildren({ block, types, isBacklog }) {
   return auth(
     null,
     getBlockChildrenQuery,
-    { types, block: getDataFromObject(block, blockParamFields) },
+    { types, block: getDataFromObject(block, blockParamFields), isBacklog },
     "data.block.getBlockChildren"
   );
 }
 
-export function addCollaborators(block, collaborators) {
+export function addCollaborators({ block, collaborators }) {
   const collaboratorFields = ["email", "body", "expiresAt", "customId"];
   return auth(
     null,
@@ -111,7 +114,7 @@ export function addCollaborators(block, collaborators) {
   );
 }
 
-export function removeCollaborator(block, collaborator) {
+export function removeCollaborator({ block, collaborator }) {
   return auth(
     null,
     removeCollaboratorMutation,
@@ -123,7 +126,7 @@ export function removeCollaborator(block, collaborator) {
   );
 }
 
-export function getCollaborators(block) {
+export function getCollaborators({ block }) {
   return auth(
     null,
     getCollaboratorsQuery,
@@ -134,7 +137,7 @@ export function getCollaborators(block) {
   );
 }
 
-export function getCollabRequests(block) {
+export function getCollabRequests({ block }) {
   return auth(
     null,
     getCollabRequestsQuery,
@@ -149,7 +152,7 @@ export function getRoleBlocks() {
   return auth(null, getRoleBlocksQuery, {}, "data.block.getRoleBlocks");
 }
 
-export function toggleTask(block, data) {
+export function toggleTask({ block, data }) {
   return auth(
     null,
     toggleTaskMutation,
@@ -161,7 +164,7 @@ export function toggleTask(block, data) {
   );
 }
 
-export function revokeRequest(block, request) {
+export function revokeRequest({ block, request }) {
   return auth(
     null,
     revokeRequestMutation,
@@ -173,7 +176,7 @@ export function revokeRequest(block, request) {
   );
 }
 
-export function transferBlock(
+export function transferBlock({
   sourceBlock,
   draggedBlock,
   destinationBlock,
@@ -181,7 +184,7 @@ export function transferBlock(
   blockPosition,
   draggedBlockType,
   groupContext
-) {
+}) {
   return auth(
     null,
     transferBlockMutation,
@@ -195,5 +198,46 @@ export function transferBlock(
       destinationBlock: getDataFromObject(destinationBlock, blockParamFields)
     },
     "data.block.transferBlock"
+  );
+}
+
+export function updateAccessControlData({ block, accessControlData }) {
+  return auth(
+    null,
+    updateAccessControlDataMutation,
+    {
+      accessControlData: getDataFromObject(accessControlData, [
+        "orgId",
+        "actionName",
+        "permittedRoles"
+      ]),
+      block: getDataFromObject(block, blockParamFields)
+    },
+    "data.block.updateAccessControlData"
+  );
+}
+
+export function updateRoles({ block, roles }) {
+  return auth(
+    null,
+    updateRolesMutation,
+    {
+      roles,
+      block: getDataFromObject(block, blockParamFields)
+    },
+    "data.block.updateRoles"
+  );
+}
+
+export function assignRole({ block, collaborator, roleName }) {
+  return auth(
+    null,
+    assignRoleMutation,
+    {
+      collaborator,
+      roleName,
+      block: getDataFromObject(block, blockParamFields)
+    },
+    "data.block.assignRole"
   );
 }

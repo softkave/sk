@@ -1,12 +1,13 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import Web from "./Web.jsx";
-import SignupContainer from "./components/account/signup/SignupContainer.jsx";
-import LoginContainer from "./components/account/login/LoginContainer.jsx";
-import ForgotPasswordContainer from "./components/account/password/ForgotPasswordContainer.jsx";
-import ChangePasswordWithTokenContainer from "./components/account/password/ChangePasswordWithTokenContainer.jsx";
-import App from "./app";
 import { Col, Row } from "antd";
+
+import Web from "./Web";
+import SignupContainer from "./components/account/signup/SignupContainer";
+import LoginContainer from "./components/account/login/LoginContainer";
+import ForgotPasswordContainer from "./components/account/password/ForgotPasswordContainer";
+import ChangePasswordWithTokenContainer from "./components/account/password/ChangePasswordWithTokenContainer";
+import App from "./app";
 
 function renderComponent(component) {
   return function() {

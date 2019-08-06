@@ -1,4 +1,4 @@
-const { errorFragment } = require("./error");
+import { errorFragment } from "./error";
 
 const blockFragment = `
   fragment blockFragment on Block {
@@ -30,12 +30,12 @@ const blockFragment = `
 `;
 
 const addBlockMutation = `
+  ${errorFragment}
   mutation AddBlockMutation ($block: AddBlockInput!) {
     block {
       addBlock (block: $block) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -43,12 +43,12 @@ const addBlockMutation = `
 `;
 
 const updateBlockMutation = `
+  ${errorFragment}
   mutation UpdateBlockMutation ($block: BlockParamInput!, $data: UpdateBlockInput!) {
     block {
       updateBlock (block: $block, data: $data) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -56,12 +56,12 @@ const updateBlockMutation = `
 `;
 
 const deleteBlockMutation = `
+  ${errorFragment}
   mutation DeleteBlockMutation ($block: BlockParamInput!) {
     block {
       deleteBlock (block: $block) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -88,9 +88,9 @@ const getRoleBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlockChildrenQuery ($block: BlockParamInput!, $types: [String!]) {
+  query GetBlockChildrenQuery ($block: BlockParamInput!, $types: [String!], $isBacklog: Boolean) {
     block {
-      getBlockChildren (block: $block, types: $types) {
+      getBlockChildren (block: $block, types: $types, isBacklog: $isBacklog) {
         errors {
           ...errorFragment
         }
@@ -103,6 +103,7 @@ const getBlockChildrenQuery = `
 `;
 
 const addCollaboratorsMutation = `
+  ${errorFragment}
   mutation AddCollaborators (
     $block: BlockParamInput!, 
     $collaborators: [AddCollaboratorInput!]!
@@ -110,8 +111,7 @@ const addCollaboratorsMutation = `
     block {
       addCollaborators (block: $block, collaborators: $collaborators) {
         errors {
-          field
-          message
+          ...errorFragment
         }
       }
     }
@@ -243,7 +243,48 @@ const transferBlockMutation = `
   }
 `;
 
-module.exports = {
+const updateAccessControlDataMutation = `
+  ${errorFragment}
+  mutation UpdateAccessControlDataMutation (
+    $block: BlockParamInput!, $accessControlData: [AccessControlInput!]!) {
+    block {
+      updateAccessControlData (block: $block, accessControlData: $accessControlData) {
+        errors {
+          ...errorFragment
+        }
+      }
+    }
+  }
+`;
+
+const updateRolesMutation = `
+  ${errorFragment}
+  mutation UpdateRolesMutation ($block: BlockParamInput!, $roles: [String!]!) {
+    block {
+      updateRoles (block: $block, roles: $roles) {
+        errors {
+          ...errorFragment
+        }
+      }
+    }
+  }
+`;
+
+const assignRoleMutation = `
+  ${errorFragment}
+  mutation AssignRoleMutation (
+    $block: BlockParamInput!, $collaborator: String!, $roleName: String!) {
+    block {
+      assignRole (block: $block, collaborator: $collaborator, roleName: $roleName) {
+        errors {
+          ...errorFragment
+        }
+      }
+    }
+  }
+`;
+
+export {
   addBlockMutation,
   updateBlockMutation,
   deleteBlockMutation,
@@ -256,5 +297,8 @@ module.exports = {
   removeCollaboratorMutation,
   toggleTaskMutation,
   revokeRequestMutation,
-  transferBlockMutation
+  transferBlockMutation,
+  updateAccessControlDataMutation,
+  updateRolesMutation,
+  assignRoleMutation
 };
