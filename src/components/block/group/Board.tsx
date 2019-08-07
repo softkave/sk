@@ -17,9 +17,9 @@ import EditTask from "../task/EditTask";
 import BoardContainer from "./BoardContainer";
 import DataLoader from "./DataLoader";
 import EditGroup from "./EditGroup";
+import ExpandedGroup from "./ExpandedGroup";
 import KanbanBoard from "./KanbanBoard";
 import SplitView, { ISplit } from "./SplitView";
-import ExpandedGroup from "./ExpandedGroup";
 
 export interface IBoardProps {
   rootBlock: IBlock;
@@ -240,7 +240,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                 <KanbanBoard
                   blockHandlers={blockHandlers}
                   rootBlock={rootBlock}
-                  onEdit={group => {
+                  onEditGroup={group => {
                     this.toggleForm("group", rootBlock, group);
                   }}
                   onClickAddChild={this.toggleForm}

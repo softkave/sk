@@ -13,6 +13,8 @@ export interface IBlockRole {
   createdAt: number;
 }
 
+export type BlockPriority = "very important" | "important" | "not important";
+
 export interface IBlock {
   customId: string;
   name: string;
@@ -25,7 +27,7 @@ export interface IBlock {
   parents: string[];
   createdBy: string;
   taskCollaborators: ITaskCollaborator[];
-  priority: "very important" | "important" | "not important";
+  priority: BlockPriority;
   isBacklog: boolean;
   position: number;
   positionTimestamp: number;

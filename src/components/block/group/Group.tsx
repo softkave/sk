@@ -8,9 +8,10 @@ import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import AddDropdownButton from "../../AddDropdownButton.jsx";
 import DeleteButton from "../../DeleteButton";
 
-import "simplebar/dist/simplebar.css";
 import { IBlock } from "../../../models/block/block.js";
 import { IBlockMethods } from "../methods.js";
+
+import "simplebar/dist/simplebar.css";
 
 function getChildrenTypes(block: IBlock, type: string) {
   const remove = type === "task" ? "project" : "task";
@@ -37,12 +38,13 @@ export interface IGroupProps {
   render: () => React.ReactNode;
 
   /**
-   * TODO: 
+   * TODO:
    * Move the children rendering logic from kanban board to it's own component
    * OR into Group or a child of group
    */
   onViewMore?: () => void;
   showViewMore?: boolean;
+  viewMoreCount?: number;
 }
 
 const GroupHeader = React.memo<IGroupProps>(props => {
@@ -97,7 +99,14 @@ const GroupBody = React.memo<IGroupProps>(props => {
 
 class Group extends React.PureComponent<IGroupProps> {
   public render() {
-    const { draggableId, index, disabled } = this.props;
+    const {
+      draggableId,
+      index,
+      disabled,
+      showViewMore,
+      viewMoreCount,
+      onViewMore
+    } = this.props;
 
     const rendered = (
       <Draggable
@@ -115,7 +124,14 @@ class Group extends React.PureComponent<IGroupProps> {
                 <div {...provided.dragHandleProps}>
                   <GroupHeader {...this.props} />
                 </div>
-                <GroupBody {...this.props} />
+                <GroupBodyContainer>
+                  <GroupBody {...this.props} />
+                </GroupBodyContainer>
+                {showViewMore && (
+                  <ViewMoreContainer onClick={onViewMore}>
+                    View More | {viewMoreCount}
+                  </ViewMoreContainer>
+                )}
               </GroupContainerInner>
             </GroupContainer>
           );
@@ -177,6 +193,17 @@ const GroupScrollContainer = styled(SimpleBar)`
 
 const GroupScrollContainerInner = styled.div`
   margin: 12px;
+`;
+
+const GroupBodyContainer = styled.div`
+  flex: 1;
+`;
+
+const ViewMoreContainer = styled.div`
+  padding: 12px;
+  border-top: 1px solid #ddd;
+  cursor: pointer;
+  font-weight: bold;
 `;
 
 export default Group;

@@ -17,5 +17,8 @@ export interface IUser {
   rootBlockId: string;
   orgs: string[];
   color: string;
-  roles: IUserRole[];
+
+  // TODO: Consider splitting into 2, INetUser and IUser
+  // TODO: OR separate roles into a separat DB model in server
+  roles: IUserRole[] | string[];
 }

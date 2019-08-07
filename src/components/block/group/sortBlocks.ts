@@ -29,3 +29,5 @@ export function sortBlocksByPriority(blocks: IBlock[] = []) {
     return blockAPriorityNum - blockBPriorityNum;
   });
 }
+
+export function sortBlocksByExpirationDate(blocks: IBlock[]) {}
