@@ -1,88 +1,23 @@
 import { INotification } from "../../models/notification/notification";
-import { IReferenceCountedResource } from "../referenceCounting";
+import { makeReferenceCountedResourceActions } from "../referenceCounting";
 import {
   BULK_ADD_NOTIFICATIONS,
   BULK_DELETE_NOTIFICATIONS,
   BULK_UPDATE_NOTIFICATIONS
 } from "./constants";
 
-export interface IUpdateNotificationParams {
-  id: string;
-  notification: INotification;
-}
+const actions = makeReferenceCountedResourceActions<
+  INotification,
+  BULK_ADD_NOTIFICATIONS,
+  BULK_UPDATE_NOTIFICATIONS,
+  BULK_DELETE_NOTIFICATIONS
+>(BULK_ADD_NOTIFICATIONS, BULK_UPDATE_NOTIFICATIONS, BULK_DELETE_NOTIFICATIONS);
 
-export interface IReduxNotification
-  extends INotification,
-    IReferenceCountedResource {}
+export const addNotification = actions.addResource;
+export const updateNotification = actions.updateResource;
+export const deleteNotification = actions.deleteResource;
+export const bulkAddNotifications = actions.bulkAddResources;
+export const bulkUpdateNotifications = actions.bulkUpdateResources;
+export const bulkDeleteNotifications = actions.bulkDeleteResources;
 
-export function addNotification(
-  notification: IReduxNotification
-): IBulkAddNotificationsAction {
-  return bulkAddNotifications([notification]);
-}
-
-export function updateNotification(
-  notification: IUpdateNotificationParams
-): IBulkUpdateNotificationsAction {
-  return bulkUpdateNotifications([notification]);
-}
-
-export function deleteNotification(
-  notification: string
-): IBulkDeleteNotificationsAction {
-  return bulkDeleteNotifications([notification]);
-}
-
-export interface IBulkAddNotificationsAction {
-  type: BULK_ADD_NOTIFICATIONS;
-  payload: {
-    notifications: INotification[];
-  };
-}
-
-export function bulkAddNotifications(
-  notifications: INotification[]
-): IBulkAddNotificationsAction {
-  return {
-    type: BULK_ADD_NOTIFICATIONS,
-    payload: {
-      notifications
-    }
-  };
-}
-
-export interface IBulkUpdateNotificationsAction {
-  type: BULK_UPDATE_NOTIFICATIONS;
-  payload: {
-    notifications: IUpdateNotificationParams[];
-  };
-}
-
-export function bulkUpdateNotifications(
-  notifications: IUpdateNotificationParams[]
-): IBulkUpdateNotificationsAction {
-  return {
-    type: BULK_UPDATE_NOTIFICATIONS,
-    payload: {
-      notifications
-    }
-  };
-}
-
-export interface IBulkDeleteNotificationsAction {
-  type: BULK_DELETE_NOTIFICATIONS;
-  payload: {
-    notifications: string[];
-  };
-}
-
-export function bulkDeleteNotifications(
-  notifications: string[]
-): IBulkDeleteNotificationsAction {
-  return {
-    type: BULK_DELETE_NOTIFICATIONS,
-    payload: {
-      notifications
-    }
-  };
-}
+export type INotificationsActions = typeof actions.actionTypes;

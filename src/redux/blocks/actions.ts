@@ -1,76 +1,23 @@
 import { IBlock } from "../../models/block/block";
-import { IReferenceCountedResource } from "../referenceCounting";
+import { makeReferenceCountedResourceActions } from "../referenceCounting";
 import {
   BULK_ADD_BLOCKS,
   BULK_DELETE_BLOCKS,
   BULK_UPDATE_BLOCKS
 } from "./constants";
 
-export interface IAddBlockParams {
-  id: string;
-  block: IBlock;
-}
+const actions = makeReferenceCountedResourceActions<
+  IBlock,
+  BULK_ADD_BLOCKS,
+  BULK_UPDATE_BLOCKS,
+  BULK_DELETE_BLOCKS
+>(BULK_ADD_BLOCKS, BULK_UPDATE_BLOCKS, BULK_DELETE_BLOCKS);
 
-export interface IUpdateBlockParams {
-  id: string;
-  block: IBlock;
-}
+export const addBlock = actions.addResource;
+export const updateBlock = actions.updateResource;
+export const deleteBlock = actions.deleteResource;
+export const bulkAddBlocks = actions.bulkAddResources;
+export const bulkUpdateBlocks = actions.bulkUpdateResources;
+export const bulkDeleteBlocks = actions.bulkDeleteResources;
 
-export interface IReduxBlock extends IBlock, IReferenceCountedResource {}
-
-export function addBlock(block: IAddBlockParams): IBulkAddBlocksAction {
-  return bulkAddBlocks([block]);
-}
-
-export function updateBlock(
-  block: IUpdateBlockParams
-): IBulkUpdateBlocksAction {
-  return bulkUpdateBlocks([block]);
-}
-
-export function deleteBlock(block: string): IBulkDeleteBlocksAction {
-  return bulkDeleteBlocks([block]);
-}
-
-export interface IBulkAddBlocksAction {
-  type: BULK_ADD_BLOCKS;
-  payload: IAddBlockParams[];
-}
-
-export function bulkAddBlocks(blocks: IAddBlockParams[]): IBulkAddBlocksAction {
-  return {
-    type: BULK_ADD_BLOCKS,
-    payload: blocks
-  };
-}
-
-export interface IBulkUpdateBlocksAction {
-  type: BULK_UPDATE_BLOCKS;
-  payload: IUpdateBlockParams[];
-}
-
-export function bulkUpdateBlocks(
-  blocks: IUpdateBlockParams[]
-): IBulkUpdateBlocksAction {
-  return {
-    type: BULK_UPDATE_BLOCKS,
-    payload: blocks
-  };
-}
-
-export interface IBulkDeleteBlocksAction {
-  type: BULK_DELETE_BLOCKS;
-  payload: string[];
-}
-
-export function bulkDeleteBlocks(blocks: string[]): IBulkDeleteBlocksAction {
-  return {
-    type: BULK_DELETE_BLOCKS,
-    payload: blocks
-  };
-}
-
-export type IBlockAction =
-  | IBulkAddBlocksAction
-  | IBulkUpdateBlocksAction
-  | IBulkDeleteBlocksAction;
+export type IBlocksActions = typeof actions.actionTypes;
