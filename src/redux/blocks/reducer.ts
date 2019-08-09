@@ -1,41 +1,20 @@
 // TODO: Remove unused node modules
 
 import { IBlock } from "../../models/block/block";
-import {
-  bulkAddReferenceCountedResources,
-  bulkDeleteReferenceCountedResources,
-  bulkUpdateReferenceCountedResources,
-  IReferenceCountedResourceContainer
-} from "../referenceCounting";
-import { IBlocksActions } from "./actions";
+import { makeReferenceCountedResourcesReducer } from "../referenceCounting";
 import {
   BULK_ADD_BLOCKS,
   BULK_DELETE_BLOCKS,
   BULK_UPDATE_BLOCKS
 } from "./constants";
 
-export interface IBlocksReduxState {
-  [key: string]: IReferenceCountedResourceContainer<IBlock>;
-}
+const reducer = makeReferenceCountedResourcesReducer<
+  IBlock,
+  BULK_ADD_BLOCKS,
+  BULK_UPDATE_BLOCKS,
+  BULK_DELETE_BLOCKS
+>(BULK_ADD_BLOCKS, BULK_UPDATE_BLOCKS, BULK_DELETE_BLOCKS);
 
-export function blocksReducer(
-  state: IBlocksReduxState,
-  action: IBlocksActions
-) {
-  switch (action.type) {
-    case BULK_ADD_BLOCKS: {
-      return bulkAddReferenceCountedResources(state, action.payload);
-    }
+export const blocksReducer = reducer.reducer;
 
-    case BULK_UPDATE_BLOCKS: {
-      return bulkUpdateReferenceCountedResources(state, action.payload);
-    }
-
-    case BULK_DELETE_BLOCKS: {
-      return bulkDeleteReferenceCountedResources(state, action.payload);
-    }
-
-    default:
-      return state;
-  }
-}
+export type IBlocksReduxState = typeof reducer.resourcesType;

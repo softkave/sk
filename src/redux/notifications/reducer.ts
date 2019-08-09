@@ -1,87 +1,18 @@
-// TODO: Remove unused node modules
-
-import merge from "lodash/merge";
-
-import { IBlockAction, IReduxBlock } from "./actions";
+import { INotification } from "../../models/notification/notification";
+import { makeReferenceCountedResourcesReducer } from "../referenceCounting";
 import {
-  BULK_ADD_BLOCKS,
-  BULK_DELETE_BLOCKS,
-  BULK_UPDATE_BLOCKS
+  BULK_ADD_NOTIFICATIONS,
+  BULK_DELETE_NOTIFICATIONS,
+  BULK_UPDATE_NOTIFICATIONS
 } from "./constants";
 
-export interface IBlocksReduxState {
-  [key: string]: IReduxBlock;
-}
+const reducer = makeReferenceCountedResourcesReducer<
+  INotification,
+  BULK_ADD_NOTIFICATIONS,
+  BULK_UPDATE_NOTIFICATIONS,
+  BULK_DELETE_NOTIFICATIONS
+>(BULK_ADD_NOTIFICATIONS, BULK_UPDATE_NOTIFICATIONS, BULK_DELETE_NOTIFICATIONS);
 
-export function blocksReducer(state: IBlocksReduxState, action: IBlockAction) {
-  switch (action.type) {
-    case BULK_ADD_BLOCKS: {
-      if (action.payload.length === 0) {
-        return state;
-      }
+export const notificationsReducer = reducer.reducer;
 
-      const updatedState = { ...state };
-
-      action.payload.forEach(block => {
-        const reduxBlock = merge(
-          {},
-          updatedState[block.id] || {
-            ...block.block,
-            referenceCount: 0
-          }
-        );
-
-        reduxBlock.referenceCount += 1;
-        updatedState[block.id] = reduxBlock;
-      });
-
-      return updatedState;
-    }
-
-    case BULK_UPDATE_BLOCKS: {
-      if (action.payload.length === 0) {
-        return state;
-      }
-
-      const updatedState = { ...state };
-
-      action.payload.forEach(block => {
-        let reduxBlock = updatedState[block.id];
-
-        if (reduxBlock) {
-          reduxBlock = merge({}, updatedState[block.id], block.block);
-          updatedState[block.id] = reduxBlock;
-        }
-      });
-
-      return updatedState;
-    }
-
-    case BULK_DELETE_BLOCKS: {
-      if (action.payload.length === 0) {
-        return state;
-      }
-
-      const updatedState = { ...state };
-
-      action.payload.forEach(id => {
-        let reduxBlock = updatedState[id];
-
-        if (reduxBlock) {
-          if (reduxBlock.referenceCount > 1) {
-            reduxBlock = merge({}, updatedState[id]);
-            reduxBlock.referenceCount -= 1;
-            updatedState[id] = reduxBlock;
-          } else {
-            delete updatedState[id];
-          }
-        }
-      });
-
-      return updatedState;
-    }
-
-    default:
-      return state;
-  }
-}
+export type INotificationsReduxState = typeof reducer.resourcesType;
