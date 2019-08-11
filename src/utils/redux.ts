@@ -4,11 +4,11 @@ import { AnyFunction } from "./types";
 
 export function getReduxConnectors(mergePropsFunction: AnyFunction) {
   function mapStateToProps(state) {
-    return { state };
+    return state;
   }
 
   function mapDispatchToProps(dispatch) {
-    return { dispatch };
+    return dispatch;
   }
 
   return connect(

@@ -1,114 +1,75 @@
 import styled from "@emotion/styled";
-import { Button, Col, Row } from "antd";
+import { Button } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import SimpleBar from "simplebar-react";
-
-import { getBlockValidChildrenTypes } from "../../../models/block/utils";
-import AddDropdownButton from "../../AddDropdownButton.jsx";
-import DeleteButton from "../../DeleteButton";
 
 import { IBlock } from "../../../models/block/block.js";
+import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods.js";
-
-import "simplebar/dist/simplebar.css";
-
-function getChildrenTypes(block: IBlock, type: string) {
-  const remove = type === "task" ? "project" : "task";
-  const childrenTypes = getBlockValidChildrenTypes(block);
-  const typeIndex = childrenTypes.indexOf(remove);
-
-  if (typeIndex !== -1) {
-    childrenTypes.splice(typeIndex, 1);
-  }
-
-  return childrenTypes;
-}
+import GroupHeader from "./GroupHeader";
+import ProjectList from "./ProjectList.jsx";
+import TaskListWithViewMore from "./TaskListWithViewMore.jsx";
 
 export interface IGroupProps {
   group: IBlock;
   blockHandlers: IBlockMethods;
   draggableId: string;
   index: number;
-  droppableId: string;
-  disabled?: boolean;
-  type: string;
+  context: "task" | "project";
+  selectedCollaborators: { [key: string]: boolean };
+  user: IUser;
+  tasks: IBlock[];
+  projects: IBlock[];
+  toggleForm: (type: string, block: IBlock) => void;
   onClickAddChild: (type: string, group: IBlock) => void;
-  onEdit: (group: IBlock) => void;
-  render: () => React.ReactNode;
-
-  /**
-   * TODO:
-   * Move the children rendering logic from kanban board to it's own component
-   * OR into Group or a child of group
-   */
-  onViewMore?: () => void;
-  showViewMore?: boolean;
-  viewMoreCount?: number;
+  setCurrentProject: (project: IBlock) => void;
+  onViewMore: () => void;
+  disabled?: boolean;
 }
 
-const GroupHeader = React.memo<IGroupProps>(props => {
-  const {
-    group,
-    blockHandlers,
-    onClickAddChild,
-    onEdit,
-    disabled,
-    type
-  } = props;
-  const childrenTypes = disabled ? [] : getChildrenTypes(group, type);
-
-  return (
-    <Header>
-      <GroupName span={disabled ? 24 : 12}>{group.name}</GroupName>
-      {!disabled && (
-        <GroupHeaderButtons span={12}>
-          {childrenTypes && childrenTypes.length > 0 && (
-            <AddDropdownButton
-              types={childrenTypes}
-              onClick={blockType => onClickAddChild(blockType, group)}
-            />
-          )}
-          <GroupHeaderButtonContainer>
-            <Button icon="edit" onClick={() => onEdit(group)} />
-          </GroupHeaderButtonContainer>
-          <DeleteButton
-            deleteButton={
-              <GroupHeaderButtonContainer>
-                <Button icon="delete" type="danger" />
-              </GroupHeaderButtonContainer>
-            }
-            onDelete={() => blockHandlers.onDelete({ block: group })}
-            title="Are you sure you want to delete this group?"
-          />
-        </GroupHeaderButtons>
-      )}
-    </Header>
-  );
-});
-
-const GroupBody = React.memo<IGroupProps>(props => {
-  const { render } = props;
-
-  return (
-    <GroupScrollContainer>
-      <GroupScrollContainerInner>{render()}</GroupScrollContainerInner>
-    </GroupScrollContainer>
-  );
-});
-
 class Group extends React.PureComponent<IGroupProps> {
-  public render() {
+  public renderContext() {
     const {
-      draggableId,
-      index,
-      disabled,
-      showViewMore,
-      viewMoreCount,
-      onViewMore
+      group,
+      context,
+      projects,
+      tasks,
+      blockHandlers,
+      user,
+      setCurrentProject,
+      onViewMore,
+      selectedCollaborators,
+      toggleForm
     } = this.props;
 
-    const rendered = (
+    if (context === "project") {
+      return (
+        <ProjectList
+          blockHandlers={blockHandlers}
+          user={user}
+          projects={projects}
+          setCurrentProject={setCurrentProject}
+        />
+      );
+    } else if (context === "task") {
+      return (
+        <TaskListWithViewMore
+          blockHandlers={blockHandlers}
+          selectedCollaborators={selectedCollaborators}
+          user={user}
+          tasks={tasks}
+          parent={group}
+          toggleForm={toggleForm}
+          onViewMore={onViewMore}
+        />
+      );
+    }
+  }
+
+  public render() {
+    const { draggableId, index, disabled, group } = this.props;
+
+    return (
       <Draggable
         index={index}
         draggableId={draggableId}
@@ -122,24 +83,15 @@ class Group extends React.PureComponent<IGroupProps> {
             >
               <GroupContainerInner>
                 <div {...provided.dragHandleProps}>
-                  <GroupHeader {...this.props} />
+                  <GroupHeader name={group.name} />
                 </div>
-                <GroupBodyContainer>
-                  <GroupBody {...this.props} />
-                </GroupBodyContainer>
-                {showViewMore && (
-                  <ViewMoreContainer onClick={onViewMore}>
-                    View More | {viewMoreCount}
-                  </ViewMoreContainer>
-                )}
+                {this.renderContext()}
               </GroupContainerInner>
             </GroupContainer>
           );
         }}
       </Draggable>
     );
-
-    return rendered;
   }
 }
 
@@ -166,44 +118,6 @@ const GroupContainerInner = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 4px;
-`;
-
-const Header = styled(Row)`
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-`;
-
-const GroupName = styled(Col)`
-  font-weight: bold;
-  min-height: 32px;
-`;
-
-const GroupHeaderButtons = styled(Col)`
-  text-align: right;
-`;
-
-const GroupHeaderButtonContainer = styled.span`
-  margin-left: 2px;
-`;
-
-const GroupScrollContainer = styled(SimpleBar)`
-  overflow-x: hidden;
-  height: 100%;
-`;
-
-const GroupScrollContainerInner = styled.div`
-  margin: 12px;
-`;
-
-const GroupBodyContainer = styled.div`
-  flex: 1;
-`;
-
-const ViewMoreContainer = styled.div`
-  padding: 12px;
-  border-top: 1px solid #ddd;
-  cursor: pointer;
-  font-weight: bold;
 `;
 
 export default Group;

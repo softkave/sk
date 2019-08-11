@@ -6,7 +6,7 @@ import { getBlockMethods } from "../methods";
 import Board, { IBoardProps } from "./Board";
 
 export interface IBoardContainerProps extends IBoardProps {
-  path: string;
+  blockID: string;
 }
 
 class BoardContainer extends React.Component<IBoardContainerProps> {

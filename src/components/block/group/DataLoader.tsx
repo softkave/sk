@@ -1,7 +1,23 @@
 import React from "react";
 
-export default class DataLoader extends React.Component {
-  static defaultProps = {
+export interface IDataLoaderProps {
+  isDataLoaded: (data: any) => boolean;
+  areDataSame: (data1: any, data2: any) => boolean;
+  loadData: (data: any) => void;
+  render: (data: any) => React.ReactNode;
+  data?: any;
+}
+
+interface IDataLoaderState {
+  fetchingData: boolean;
+  error?: Error | null;
+}
+
+export default class DataLoader extends React.Component<
+  IDataLoaderProps,
+  IDataLoaderState
+> {
+  public static defaultProps = {
     areDataSame: () => false
   };
 
@@ -13,11 +29,11 @@ export default class DataLoader extends React.Component {
     };
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.loadData();
   }
 
-  componentDidUpdate(prevProps) {
+  public componentDidUpdate(prevProps) {
     const { areDataSame } = this.props;
 
     if (!areDataSame(this.props.data, prevProps.data)) {
@@ -27,7 +43,7 @@ export default class DataLoader extends React.Component {
     }
   }
 
-  updateFetchingState() {
+  public updateFetchingState() {
     const { isDataLoaded, data } = this.props;
     const { fetchingData } = this.state;
 
@@ -36,10 +52,10 @@ export default class DataLoader extends React.Component {
     }
   }
 
-  async loadData() {
+  public async loadData() {
     const { loadData, isDataLoaded, data } = this.props;
     const { fetchingData } = this.state;
-    let newState = {};
+    const newState: Partial<IDataLoaderState> = {};
 
     if (!isDataLoaded(data)) {
       try {
@@ -55,11 +71,11 @@ export default class DataLoader extends React.Component {
     }
 
     if (Object.keys(newState).length > 0) {
-      this.setState(newState);
+      this.setState((newState as unknown) as IDataLoaderState);
     }
   }
 
-  render() {
+  public render() {
     const { data, render } = this.props;
     const { fetchingData, error } = this.state;
 
