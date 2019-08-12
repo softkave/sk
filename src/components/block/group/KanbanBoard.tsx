@@ -8,11 +8,10 @@ import { IBlock } from "../../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods";
-import ProjectThumbnail from "../project/ProjectThumbnail";
-import MiniTask from "../task/MiniTask";
 import DataLoader from "./DataLoader";
 import Group from "./Group";
-import { sortBlocksByPosition, sortBlocksByPriority } from "./sortBlocks";
+import GroupContainer from "./GroupContainer";
+import { sortBlocksByPosition } from "./sortBlocks";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
@@ -156,193 +155,6 @@ class KanbanBoard extends React.PureComponent<
     });
   }
 
-  public isAnyCollaboratorSelected() {
-    const { selectedCollaborators } = this.props;
-    return (
-      selectedCollaborators && Object.keys(selectedCollaborators).length > 0
-    );
-  }
-
-  // TODO: Rename function
-  public getTaskStat(tasks: IBlock[]) {
-    const showAll = this.isAnyCollaboratorSelected();
-    const sortedTasks = sortBlocksByPriority(tasks);
-
-    if (showAll) {
-      return {
-        sortedTasks,
-        rendered: sortedTasks,
-        renderNum: tasks.length,
-        showViewMore: false,
-        viewMoreCount: 0
-      };
-    }
-
-    // TODO: Add sorting by expiration date
-
-    let veryImportantNum = 0;
-
-    for (const task of sortedTasks) {
-      // TODO: If perf is slow, consider mapping to boolean and comparing that instead
-      if (task.priority === "very important") {
-        veryImportantNum += 1;
-      } else {
-        break;
-      }
-    }
-
-    const defaultMaxRenderedTasks = tasks.length < 5 ? tasks.length : 5;
-    const renderNum =
-      veryImportantNum < defaultMaxRenderedTasks
-        ? defaultMaxRenderedTasks
-        : veryImportantNum;
-
-    return {
-      renderNum,
-      sortedTasks,
-      rendered: sortedTasks.slice(0, renderNum),
-      showViewMore: !(renderNum === tasks.length),
-      viewMoreCount: tasks.length - renderNum
-    };
-  }
-
-  public renderTasks(tasks: IBlock[], parent: IBlock) {
-    const {
-      blockHandlers,
-      user,
-      rootBlock,
-      toggleForm,
-      selectedCollaborators
-    } = this.props;
-    // const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
-    const tasksArray = tasks;
-    const filteredTasks = !this.isAnyCollaboratorSelected()
-      ? tasksArray
-      : tasksArray.filter(task => {
-          const tc = task.taskCollaborators;
-
-          if (Array.isArray(tc) && tc.length > 0) {
-            return tc.find(c => selectedCollaborators[c.userId]);
-          }
-
-          return false;
-        });
-
-    const tasksToRender = filteredTasks;
-    const renderedTasks = tasksToRender.map((task, index) => {
-      return (
-        <BlockThumbnailContainer key={task.customId}>
-          <MiniTask
-            user={user}
-            task={task}
-            blockHandlers={blockHandlers}
-            onEdit={editedTask =>
-              toggleForm("task", parent || rootBlock, editedTask)
-            }
-          />
-        </BlockThumbnailContainer>
-      );
-    });
-
-    return renderedTasks;
-  }
-
-  public renderProjects(projects, parent) {
-    const { setCurrentProject } = this.props;
-    const projectsToRender = sortBlocksByPosition(projects, parent.projects);
-    const renderedProjects = projectsToRender.map((project, index) => {
-      return (
-        <BlockThumbnailContainer key={project.customId}>
-          <ProjectThumbnail
-            project={project}
-            onClick={() => setCurrentProject(project)}
-          />
-        </BlockThumbnailContainer>
-      );
-    });
-
-    return renderedProjects;
-  }
-
-  public renderGroup(
-    group: IBlock,
-    context: "task" | "project",
-    index,
-    isRootBlock = false
-  ) {
-    const {
-      onSelectGroup,
-      onClickAddChild,
-      onEditGroup,
-      blockHandlers,
-      user
-    } = this.props;
-    let renderChildren: any = () => null;
-    let props: any = {};
-
-    if (context === "task") {
-      const stat = this.getTaskStat(values(group.task));
-      renderChildren = () => this.renderTasks(stat.rendered, group);
-      props = {
-        showViewMore: stat.showViewMore,
-        viewMoreCount: stat.viewMoreCount,
-        onViewMore: () => onSelectGroup(group, true)
-      };
-    } else {
-      renderChildren = () => this.renderProjects(group.project, group);
-    }
-
-    if (isRootBlock) {
-
-    } else {
-      const keepRenderChildren = renderChildren;
-      renderChildren = () => (
-        <DataLoader
-          data={group}
-          areDataSame={this.areBlocksSame}
-          isDataLoaded={this.isBlockChildrenLoaded}
-          loadData={this.fetchChildren}
-          render={(block) => }
-        />
-      );
-    }
-
-    if (isRootBlock) {
-      props = {
-        ...props,
-        index,
-        blockHandlers,
-        onClickAddChild,
-        disabled: true,
-        key: "ungrouped",
-        type: context,
-        group: {
-          name: "..."
-        } as IBlock,
-        draggableId: "ungrouped",
-        droppableId: "ungrouped",
-        onEdit: onEditGroup,
-        render: renderChildren
-      };
-    } else {
-      props = {
-        ...props,
-        group,
-        user,
-        index,
-        blockHandlers,
-        onClickAddChild,
-        onEdit: onEditGroup,
-        type: context,
-        draggableId: group.customId,
-        droppableId: group.customId,
-        render: renderChildren
-      };
-    }
-
-    return <Group {...props} />;
-  }
-
   public renderGroups = () => {
     const {
       blockHandlers,
@@ -351,7 +163,7 @@ class KanbanBoard extends React.PureComponent<
       rootBlock,
       user,
       type,
-      onSelectGroup
+      toggleForm
     } = this.props;
     const sortedIds =
       type === "task"
@@ -361,44 +173,22 @@ class KanbanBoard extends React.PureComponent<
     const groups = sortBlocksByPosition(rootBlock.group, sortedIds);
     const rendered: JSX.Element[] = [];
 
-    if (
-      (type === "task" && this.hasChildren(rootBlock.type)) ||
-      (type === "project" && this.hasChildren(rootBlock.project))
-    ) {
-      let renderChildren: any = () => null;
-      let props: any = {};
-
-      if (type === "task") {
-        const stat = this.getTaskStat(values(rootBlock.task));
-        renderChildren = () => this.renderTasks(stat.sortedTasks, rootBlock);
-        props = {
-          showViewMore: stat.showViewMore,
-          viewMoreCount: stat.viewMoreCount,
-          onViewMore: () => onSelectGroup(rootBlock, true)
-        };
-      } else {
-        renderChildren = () =>
-          this.renderProjects(rootBlock.project, rootBlock);
-      }
-
+    if (this.blockHasUngrouped(rootBlock)) {
       const ungrouped = (
-        <Group
+        <GroupContainer
           disabled
           key="ungrouped"
-          type={type}
           group={
             {
-              name: type === "task" ? "Ungrouped Tasks" : "Ungrouped Projects"
+              name: "..."
             } as IBlock
           }
-          draggableId="ungrouped"
-          droppableId="ungrouped"
+          draggableID="ungrouped"
           blockHandlers={blockHandlers}
           onClickAddChild={onClickAddChild}
-          onEdit={onEdit}
+          toggleForm={() => null}
           index={0}
-          render={renderChildren}
-          {...props}
+          context
         />
       );
 
@@ -416,34 +206,13 @@ class KanbanBoard extends React.PureComponent<
         onClickAddChild,
         draggableId: groupId,
         droppableId: groupId,
-        index: index + 1,
-        render: () => this.renderGroupChildren(group, type)
+        index: index + 1
       };
 
       rendered.push(<Group key={groupId} {...groupProps} />);
     });
 
     return rendered;
-  };
-
-  public renderGroupChildren = (block, context) => {
-    return (
-      <DataLoader
-        data={block}
-        areDataSame={this.areBlocksSame}
-        isDataLoaded={this.isBlockChildrenLoaded}
-        loadData={this.fetchChildren}
-        render={renderBlock => {
-          return (
-            <React.Fragment>
-              {context === "task"
-                ? this.renderTasks(renderBlock.task, renderBlock)
-                : this.renderProjects(renderBlock.project, renderBlock)}
-            </React.Fragment>
-          )
-        }}
-      />
-    );
   };
 
   public renderBlockChildren = () => {
@@ -537,11 +306,6 @@ const SpinContainer = styled.div`
   & .ant-spin-nested-loading {
     height: 100%;
   }
-`;
-
-const BlockThumbnailContainer = styled.div`
-  margin-top: 12px;
-  margin-bottom: 12px;
 `;
 
 export default KanbanBoard;

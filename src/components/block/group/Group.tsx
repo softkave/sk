@@ -8,12 +8,13 @@ import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods.js";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList.jsx";
+import TaskList from "./TaskList.jsx";
 import TaskListWithViewMore from "./TaskListWithViewMore.jsx";
 
 export interface IGroupProps {
   group: IBlock;
   blockHandlers: IBlockMethods;
-  draggableId: string;
+  draggableID: string;
   index: number;
   context: "task" | "project";
   selectedCollaborators: { [key: string]: boolean };
@@ -25,6 +26,7 @@ export interface IGroupProps {
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;
   disabled?: boolean;
+  withViewMore?: boolean;
 }
 
 class Group extends React.PureComponent<IGroupProps> {
@@ -39,7 +41,8 @@ class Group extends React.PureComponent<IGroupProps> {
       setCurrentProject,
       onViewMore,
       selectedCollaborators,
-      toggleForm
+      toggleForm,
+      withViewMore
     } = this.props;
 
     if (context === "project") {
@@ -52,22 +55,35 @@ class Group extends React.PureComponent<IGroupProps> {
         />
       );
     } else if (context === "task") {
-      return (
-        <TaskListWithViewMore
-          blockHandlers={blockHandlers}
-          selectedCollaborators={selectedCollaborators}
-          user={user}
-          tasks={tasks}
-          parent={group}
-          toggleForm={toggleForm}
-          onViewMore={onViewMore}
-        />
-      );
+      if (withViewMore) {
+        return (
+          <TaskListWithViewMore
+            blockHandlers={blockHandlers}
+            selectedCollaborators={selectedCollaborators}
+            user={user}
+            tasks={tasks}
+            parent={group}
+            toggleForm={toggleForm}
+            onViewMore={onViewMore}
+          />
+        );
+      } else {
+        return (
+          <TaskList
+            blockHandlers={blockHandlers}
+            selectedCollaborators={selectedCollaborators}
+            user={user}
+            tasks={tasks}
+            parent={group}
+            toggleForm={toggleForm}
+          />
+        );
+      }
     }
   }
 
   public render() {
-    const { draggableId, index, disabled, group } = this.props;
+    const { draggableID: draggableId, index, disabled, group } = this.props;
 
     return (
       <Draggable
