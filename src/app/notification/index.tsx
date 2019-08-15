@@ -5,10 +5,16 @@ import { makePipeline, PipelineEntryFunc } from "../../components/FormPipeline";
 import { IPipeline } from "../../components/FormPipeline.js";
 import NotificationList from "../../components/notification/NotificationList";
 import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import netInterface from "../../net/index";
 import { INetResult } from "../../net/query";
-import { mergeDataByPath, setDataByPath } from "../../redux/actions/data";
-import { makeMultiple } from "../../redux/actions/make";
+import { addBlockRedux } from "../../redux/blocks/actions";
+import {
+  bulkAddNotificationsRedux,
+  updateNotificationRedux
+} from "../../redux/notifications/actions";
+import { getResourceParamArray } from "../../redux/referenceCounting";
+import { updateUserRedux } from "../../redux/users/actions";
 
 // TODO: Define notification's types
 export interface INotificationsContainerProps extends INotificationMethods {
@@ -105,7 +111,9 @@ const clickNotificationMethods: IPipeline<
 
   redux({ dispatch, params }) {
     const { notification, data } = params;
-    dispatch(mergeDataByPath(`notifications.${notification.customId}`, data));
+    dispatch(
+      updateNotificationRedux({ id: notification.customId, resource: data })
+    );
   }
 };
 
@@ -113,6 +121,7 @@ const clickNotificationMethods: IPipeline<
 interface IRespondToNotificationParams {
   notification: any;
   response: string;
+  user: IUser;
 }
 
 interface IRespondToNotificationNetResult extends INetResult {
@@ -146,7 +155,7 @@ const respondToNotificationMethods: IPipeline<
   },
 
   redux({ dispatch, params, result }) {
-    const { notification, response } = params;
+    const { notification, response, user } = params;
     const { block } = result;
     const statusHistory = notification.statusHistory;
 
@@ -157,15 +166,17 @@ const respondToNotificationMethods: IPipeline<
 
     const update = { statusHistory };
 
-    dispatch(mergeDataByPath(`notifications.${notification.customId}`, update));
+    dispatch(
+      updateNotificationRedux({ id: notification.customId, resource: update })
+    );
 
     if (response === "accepted" && block) {
-      block.path = `orgs.${block.customId}`;
+      dispatch(addBlockRedux({ id: block.customId, resource: block }));
       dispatch(
-        makeMultiple([
-          setDataByPath(block.path, block),
-          mergeDataByPath(`user.user.orgs`, [block.customId])
-        ])
+        updateUserRedux({
+          id: user.customId,
+          resource: { orgs: [block.customId] }
+        })
       );
     }
   }
@@ -187,14 +198,10 @@ const fetchNotificationsMethods: IPipeline<
 
   redux({ state, dispatch, result }) {
     const { requests } = result;
-    let notifications = requests;
-    notifications = notifications || [];
-    const notificationsObj = {};
-    notifications.forEach(notification => {
-      notificationsObj[notification.customId] = notification;
-    });
 
-    dispatch(mergeDataByPath("notifications", notificationsObj));
+    dispatch(
+      bulkAddNotificationsRedux(getResourceParamArray(requests, "customId"))
+    );
   }
 };
 

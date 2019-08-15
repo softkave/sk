@@ -1,23 +1,110 @@
 import { IUserRole } from "../../models/user/user";
-import { makeReferenceCountedResourceActions } from "../referenceCounting";
 import {
+  IReferenceCountedResourceAddPayload,
+  IReferenceCountedResourceDeletePayload,
+  IReferenceCountedResourceUpdatePayload
+} from "../referenceCounting";
+import {
+  ADD_ROLE,
   BULK_ADD_ROLES,
   BULK_DELETE_ROLES,
-  BULK_UPDATE_ROLES
+  BULK_UPDATE_ROLES,
+  DELETE_ROLE,
+  UPDATE_ROLE
 } from "./constants";
 
-const actions = makeReferenceCountedResourceActions<
-  IUserRole,
-  BULK_ADD_ROLES,
-  BULK_UPDATE_ROLES,
-  BULK_DELETE_ROLES
->(BULK_ADD_ROLES, BULK_UPDATE_ROLES, BULK_DELETE_ROLES);
+export interface IAddRoleAction {
+  type: ADD_ROLE;
+  payload: IReferenceCountedResourceAddPayload<IUserRole>;
+}
 
-export const addRole = actions.addResource;
-export const updateRole = actions.updateResource;
-export const deleteRole = actions.deleteResource;
-export const bulkAddRoles = actions.bulkAddResources;
-export const bulkUpdateRoles = actions.bulkUpdateResources;
-export const bulkDeleteRoles = actions.bulkDeleteResources;
+export function addRoleRedux(role: IUserRole): IAddRoleAction {
+  return {
+    type: ADD_ROLE,
+    payload: {
+      id: role.customId,
+      data: role
+    }
+  };
+}
 
-export type IRolesActions = typeof actions.actionTypes;
+export interface IUpdateRoleAction {
+  type: UPDATE_ROLE;
+  payload: IReferenceCountedResourceUpdatePayload<IUserRole>;
+}
+
+export function updateRoleRedux(
+  id: string,
+  role: IUserRole
+): IUpdateRoleAction {
+  return {
+    type: UPDATE_ROLE,
+    payload: {
+      id,
+      data: role
+    }
+  };
+}
+
+export interface IDeleteRoleAction {
+  type: DELETE_ROLE;
+  payload: IReferenceCountedResourceDeletePayload;
+}
+
+export function deleteRoleRedux(id: string): IDeleteRoleAction {
+  return {
+    type: DELETE_ROLE,
+    payload: {
+      id
+    }
+  };
+}
+
+export interface IBulkAddRolesAction {
+  type: BULK_ADD_ROLES;
+  payload: Array<IReferenceCountedResourceAddPayload<IUserRole>>;
+}
+
+export function bulkAddRolesRedux(roles: IUserRole[]): IBulkAddRolesAction {
+  return {
+    type: BULK_ADD_ROLES,
+    payload: roles.map(role => ({
+      id: role.customId,
+      data: role
+    }))
+  };
+}
+
+export interface IBulkUpdateRolesAction {
+  type: BULK_UPDATE_ROLES;
+  payload: Array<IReferenceCountedResourceUpdatePayload<IUserRole>>;
+}
+
+export function bulkUpdateRolesRedux(
+  roles: Array<{ id: string; data: Partial<IUserRole> }>
+): IBulkUpdateRolesAction {
+  return {
+    type: BULK_UPDATE_ROLES,
+    payload: roles
+  };
+}
+
+export interface IBulkDeleteRolesAction {
+  type: BULK_DELETE_ROLES;
+  payload: IReferenceCountedResourceDeletePayload[];
+}
+
+export function bulkDeleteRolesRedux(roles: string[]): IBulkDeleteRolesAction {
+  return {
+    type: BULK_DELETE_ROLES,
+    payload: roles.map(id => ({ id }))
+  };
+}
+
+export type IRolesAction =
+  | IAddRoleAction
+  | IUpdateRoleAction
+  | IDeleteRoleAction
+  | IBulkAddRolesAction
+  | IBulkUpdateRolesAction
+  | IBulkDeleteRolesAction;

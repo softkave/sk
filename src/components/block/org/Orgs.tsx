@@ -3,7 +3,7 @@ import React from "react";
 
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
-import Board from "../group/Board";
+import BoardContainer from "../group/BoardContainer";
 import { IBlockMethods } from "../methods";
 import EditOrg from "./EditOrg";
 import "./orgs.css";
@@ -11,7 +11,7 @@ import OrgThumbnail from "./OrgThumbnail";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;
-  orgs: { [key: string]: IBlock };
+  orgs: IBlock[];
   user: IUser;
 }
 
@@ -46,14 +46,20 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     this.toggleNewOrgForm();
   };
 
+  public getCurrentBlock() {
+    return this.props.orgs.find(
+      block => block.customId === this.state.currentOrg
+    );
+  }
+
   public render() {
     const { orgs, blockHandlers, user } = this.props;
     const { currentOrg, showNewOrgForm } = this.state;
 
     if (currentOrg) {
       return (
-        <Board
-          rootBlock={orgs[currentOrg]}
+        <BoardContainer
+          block={this.getCurrentBlock()}
           onBack={() => this.setCurrentOrg(null)}
           blockHandlers={blockHandlers}
           user={user}

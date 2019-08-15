@@ -18,7 +18,7 @@ const methods: IPipeline<
   }
 };
 
-function mergeProps({ state }, { dispatch }) {
+function mergeProps(state, dispatch) {
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };

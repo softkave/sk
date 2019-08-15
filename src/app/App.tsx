@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Menu } from "antd";
+import { Dropdown, Menu } from "antd";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
@@ -56,11 +56,11 @@ class App extends React.Component<IAppProps> {
             label: "Notifications",
             component: Notifications
           },
-          {
-            key: "personal",
-            label: "Personal",
-            component: Personal
-          },
+          // {
+          //   key: "personal",
+          //   label: "Personal",
+          //   component: Personal
+          // },
           {
             key: "orgs",
             label: "Orgs",

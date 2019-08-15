@@ -9,11 +9,12 @@ import {
   OnClickNotification,
   OnRespondToNotification
 } from "../../app/notification";
+import { INotification } from "../../models/notification/notification";
 import "./notification-list.css";
 
 export interface INotificationListItemProps {
   // TODO: Define type
-  notification: any;
+  notification: INotification;
   isSelected: boolean;
   onClick: () => void;
 }

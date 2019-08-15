@@ -3,7 +3,8 @@ import randomColor from "randomcolor";
 import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
-import { mergeDataByPath } from "../../../redux/actions/data";
+import { loginUserRedux } from "../../../redux/session/actions";
+import { addUserRedux } from "../../../redux/users/actions";
 import { devLog } from "../../../utils/log";
 import { getReduxConnectors } from "../../../utils/redux";
 import { IPipeline, makePipeline } from "../../FormPipeline";
@@ -45,7 +46,10 @@ const methods: IPipeline<
 
   redux({ result, dispatch }) {
     if (result.user && result.token) {
-      dispatch(mergeDataByPath("user", result));
+      dispatch(
+        addUserRedux({ id: result.user.customId, resource: result.user })
+      );
+      dispatch(loginUserRedux(result.token, result.user.customId));
     } else {
       devLog(__filename, result);
       throw [{ type: "error", message: new Error("An error occurred") }];
@@ -53,7 +57,7 @@ const methods: IPipeline<
   }
 };
 
-function mergeProps({ state }, { dispatch }) {
+function mergeProps(state, dispatch) {
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };

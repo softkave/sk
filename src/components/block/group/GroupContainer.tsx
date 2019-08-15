@@ -1,15 +1,15 @@
 import React from "react";
+import { connect, MapDispatchToProps } from "react-redux";
+import { Dispatch } from "redux";
 
 import { IBlock } from "../../../models/block/block";
 import { getBlock, getBlocksAsArray } from "../../../redux/blocks/selectors";
 import { getSignedInUser } from "../../../redux/session/selectors";
+import { IReduxState } from "../../../redux/store";
 import { getReduxConnectors } from "../../../utils/redux";
 import { getBlockMethods } from "../methods";
 import DataLoader from "./DataLoader";
 import Group, { IGroupProps } from "./Group";
-import { IReduxState } from "../../../redux/store";
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
 
 interface IInternalGroupContainerProps extends IGroupProps {}
 
@@ -55,7 +55,8 @@ class InternalGroupContainer extends React.Component<
 }
 
 export interface IGroupContainerProps {
-  groupID: string;
+  groupID?: string;
+  group?: IBlock;
   draggableID: string;
   index: number;
   context: "task" | "project";
@@ -71,21 +72,32 @@ function mapStateToProps(state: IReduxState, ownProps: IGroupContainerProps) {
   return state;
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: IGroupContainerProps) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: IGroupContainerProps
+) {
   return dispatch;
 }
 
 function mergeProps(state, dispatch, ownProps: IGroupContainerProps) {
-  const group = getBlock(state, ownProps.groupID);
+  if (!ownProps.group && !ownProps.groupID) {
+    throw new Error("group or groupID required");
+  }
+
+  const group = ownProps.group || getBlock(state, ownProps.groupID!);
 
   return {
     ...ownProps,
     group,
-    user: getSignedInUser(state),
+    user: getSignedInUser(state)!,
     blockHandlers: getBlockMethods({ state, dispatch }),
     tasks: getBlocksAsArray(state, group.tasks),
     projects: getBlocksAsArray(state, group.projects)
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(InternalGroupContainer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps as any,
+  mergeProps
+)(InternalGroupContainer);

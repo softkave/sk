@@ -8,7 +8,10 @@ export interface ILoginUserAction {
   };
 }
 
-export function loginUser(token: string, userId: string): ILoginUserAction {
+export function loginUserRedux(
+  token: string,
+  userId: string
+): ILoginUserAction {
   return {
     type: LOGIN_USER,
     payload: {
@@ -22,7 +25,7 @@ export interface ILogoutUserAction {
   type: LOGOUT_USER;
 }
 
-export function logoutUser(): ILogoutUserAction {
+export function logoutUserRedux(): ILogoutUserAction {
   return {
     type: LOGOUT_USER
   };
@@ -35,7 +38,7 @@ export interface IUpdateTokenAction {
   };
 }
 
-export function updateToken(token: string): IUpdateTokenAction {
+export function updateTokenRedux(token: string): IUpdateTokenAction {
   return {
     type: UPDATE_TOKEN,
     payload: {

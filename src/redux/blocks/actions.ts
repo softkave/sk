@@ -1,23 +1,112 @@
 import { IBlock } from "../../models/block/block";
-import { makeReferenceCountedResourceActions } from "../referenceCounting";
 import {
+  IReferenceCountedResourceAddPayload,
+  IReferenceCountedResourceDeletePayload,
+  IReferenceCountedResourceUpdatePayload
+} from "../referenceCounting";
+import {
+  ADD_BLOCK,
   BULK_ADD_BLOCKS,
   BULK_DELETE_BLOCKS,
-  BULK_UPDATE_BLOCKS
+  BULK_UPDATE_BLOCKS,
+  DELETE_BLOCK,
+  UPDATE_BLOCK
 } from "./constants";
 
-const actions = makeReferenceCountedResourceActions<
-  IBlock,
-  BULK_ADD_BLOCKS,
-  BULK_UPDATE_BLOCKS,
-  BULK_DELETE_BLOCKS
->(BULK_ADD_BLOCKS, BULK_UPDATE_BLOCKS, BULK_DELETE_BLOCKS);
+export interface IAddBlockAction {
+  type: ADD_BLOCK;
+  payload: IReferenceCountedResourceAddPayload<IBlock>;
+}
 
-export const addBlock = actions.addResource;
-export const updateBlock = actions.updateResource;
-export const deleteBlock = actions.deleteResource;
-export const bulkAddBlocks = actions.bulkAddResources;
-export const bulkUpdateBlocks = actions.bulkUpdateResources;
-export const bulkDeleteBlocks = actions.bulkDeleteResources;
+export function addBlockRedux(block: IBlock): IAddBlockAction {
+  return {
+    type: ADD_BLOCK,
+    payload: {
+      id: block.customId,
+      data: block
+    }
+  };
+}
 
-export type IBlocksActions = typeof actions.actionTypes;
+export interface IUpdateBlockAction {
+  type: UPDATE_BLOCK;
+  payload: IReferenceCountedResourceUpdatePayload<IBlock>;
+}
+
+export function updateBlockRedux(
+  id: string,
+  block: IBlock
+): IUpdateBlockAction {
+  return {
+    type: UPDATE_BLOCK,
+    payload: {
+      id,
+      data: block
+    }
+  };
+}
+
+export interface IDeleteBlockAction {
+  type: DELETE_BLOCK;
+  payload: IReferenceCountedResourceDeletePayload;
+}
+
+export function deleteBlockRedux(id: string): IDeleteBlockAction {
+  return {
+    type: DELETE_BLOCK,
+    payload: {
+      id
+    }
+  };
+}
+
+export interface IBulkAddBlocksAction {
+  type: BULK_ADD_BLOCKS;
+  payload: Array<IReferenceCountedResourceAddPayload<IBlock>>;
+}
+
+export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
+  return {
+    type: BULK_ADD_BLOCKS,
+    payload: blocks.map(block => ({
+      id: block.customId,
+      data: block
+    }))
+  };
+}
+
+export interface IBulkUpdateBlocksAction {
+  type: BULK_UPDATE_BLOCKS;
+  payload: Array<IReferenceCountedResourceUpdatePayload<IBlock>>;
+}
+
+export function bulkUpdateBlocksRedux(
+  blocks: Array<{ id: string; data: Partial<IBlock> }>
+): IBulkUpdateBlocksAction {
+  return {
+    type: BULK_UPDATE_BLOCKS,
+    payload: blocks
+  };
+}
+
+export interface IBulkDeleteBlocksAction {
+  type: BULK_DELETE_BLOCKS;
+  payload: IReferenceCountedResourceDeletePayload[];
+}
+
+export function bulkDeleteBlocksRedux(
+  blocks: string[]
+): IBulkDeleteBlocksAction {
+  return {
+    type: BULK_DELETE_BLOCKS,
+    payload: blocks.map(id => ({ id }))
+  };
+}
+
+export type IBlocksAction =
+  | IAddBlockAction
+  | IUpdateBlockAction
+  | IDeleteBlockAction
+  | IBulkAddBlocksAction
+  | IBulkUpdateBlocksAction
+  | IBulkDeleteBlocksAction;

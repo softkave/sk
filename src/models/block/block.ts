@@ -23,7 +23,7 @@ export interface IBlock {
   createdAt: number;
   color: string;
   updatedAt: number;
-  type: string;
+  type: "org" | "project" | "group" | "task" | "root";
   parents: string[];
   createdBy: string;
   taskCollaborators: ITaskCollaborator[];
@@ -38,7 +38,7 @@ export interface IBlock {
   groupProjectContext: string[];
   roles: IBlockRole[];
   path: string;
-  collaborators: IUser[];
+  collaborators: string[];
 
   // TODO: Define a new type of IBlock for client, Redux, etc
   group: { [key: string]: IBlock };
@@ -46,5 +46,5 @@ export interface IBlock {
   project: { [key: string]: IBlock };
 
   // TODO: define type
-  collaborationRequests: any[];
+  collaborationRequests: string[];
 }

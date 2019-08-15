@@ -3,6 +3,7 @@ export interface IUserRole {
   orgId: string;
   assignedAt: number;
   assignedBy: string;
+  customId: string;
 }
 
 export interface IUser {

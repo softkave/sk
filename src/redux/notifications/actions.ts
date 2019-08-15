@@ -1,23 +1,116 @@
 import { INotification } from "../../models/notification/notification";
-import { makeReferenceCountedResourceActions } from "../referenceCounting";
 import {
+  IReferenceCountedResourceAddPayload,
+  IReferenceCountedResourceDeletePayload,
+  IReferenceCountedResourceUpdatePayload
+} from "../referenceCounting";
+import {
+  ADD_NOTIFICATION,
   BULK_ADD_NOTIFICATIONS,
   BULK_DELETE_NOTIFICATIONS,
-  BULK_UPDATE_NOTIFICATIONS
+  BULK_UPDATE_NOTIFICATIONS,
+  DELETE_NOTIFICATION,
+  UPDATE_NOTIFICATION
 } from "./constants";
 
-const actions = makeReferenceCountedResourceActions<
-  INotification,
-  BULK_ADD_NOTIFICATIONS,
-  BULK_UPDATE_NOTIFICATIONS,
-  BULK_DELETE_NOTIFICATIONS
->(BULK_ADD_NOTIFICATIONS, BULK_UPDATE_NOTIFICATIONS, BULK_DELETE_NOTIFICATIONS);
+export interface IAddNotificationAction {
+  type: ADD_NOTIFICATION;
+  payload: IReferenceCountedResourceAddPayload<INotification>;
+}
 
-export const addNotification = actions.addResource;
-export const updateNotification = actions.updateResource;
-export const deleteNotification = actions.deleteResource;
-export const bulkAddNotifications = actions.bulkAddResources;
-export const bulkUpdateNotifications = actions.bulkUpdateResources;
-export const bulkDeleteNotifications = actions.bulkDeleteResources;
+export function addNotificationRedux(
+  notification: INotification
+): IAddNotificationAction {
+  return {
+    type: ADD_NOTIFICATION,
+    payload: {
+      id: notification.customId,
+      data: notification
+    }
+  };
+}
 
-export type INotificationsActions = typeof actions.actionTypes;
+export interface IUpdateNotificationAction {
+  type: UPDATE_NOTIFICATION;
+  payload: IReferenceCountedResourceUpdatePayload<INotification>;
+}
+
+export function updateNotificationRedux(
+  id: string,
+  notification: INotification
+): IUpdateNotificationAction {
+  return {
+    type: UPDATE_NOTIFICATION,
+    payload: {
+      id,
+      data: notification
+    }
+  };
+}
+
+export interface IDeleteNotificationAction {
+  type: DELETE_NOTIFICATION;
+  payload: IReferenceCountedResourceDeletePayload;
+}
+
+export function deleteNotificationRedux(id: string): IDeleteNotificationAction {
+  return {
+    type: DELETE_NOTIFICATION,
+    payload: {
+      id
+    }
+  };
+}
+
+export interface IBulkAddNotificationsAction {
+  type: BULK_ADD_NOTIFICATIONS;
+  payload: Array<IReferenceCountedResourceAddPayload<INotification>>;
+}
+
+export function bulkAddNotificationsRedux(
+  notifications: INotification[]
+): IBulkAddNotificationsAction {
+  return {
+    type: BULK_ADD_NOTIFICATIONS,
+    payload: notifications.map(notification => ({
+      id: notification.customId,
+      data: notification
+    }))
+  };
+}
+
+export interface IBulkUpdateNotificationsAction {
+  type: BULK_UPDATE_NOTIFICATIONS;
+  payload: Array<IReferenceCountedResourceUpdatePayload<INotification>>;
+}
+
+export function bulkUpdateNotificationsRedux(
+  notifications: Array<{ id: string; data: Partial<INotification> }>
+): IBulkUpdateNotificationsAction {
+  return {
+    type: BULK_UPDATE_NOTIFICATIONS,
+    payload: notifications
+  };
+}
+
+export interface IBulkDeleteNotificationsAction {
+  type: BULK_DELETE_NOTIFICATIONS;
+  payload: IReferenceCountedResourceDeletePayload[];
+}
+
+export function bulkDeleteNotificationsRedux(
+  notifications: string[]
+): IBulkDeleteNotificationsAction {
+  return {
+    type: BULK_DELETE_NOTIFICATIONS,
+    payload: notifications.map(id => ({ id }))
+  };
+}
+
+export type INotificationsAction =
+  | IAddNotificationAction
+  | IUpdateNotificationAction
+  | IDeleteNotificationAction
+  | IBulkAddNotificationsAction
+  | IBulkUpdateNotificationsAction
+  | IBulkDeleteNotificationsAction;

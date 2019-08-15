@@ -21,11 +21,10 @@ export interface IKanbanBoardProps {
   // TODO: define collaborators' type, it's slightly different from IUser
   collaborators: IUser[];
   selectedCollaborators: { [key: string]: boolean };
-  type: string;
+  type: "task" | "project";
   toggleForm: (type: string, parent: IBlock, block: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onClickAddChild: (type: string, group: IBlock) => void;
-  onEditGroup: (group: IBlock) => void;
   onSelectGroup: (group: IBlock, isRootBlock: boolean) => void;
 }
 
@@ -157,13 +156,13 @@ class KanbanBoard extends React.PureComponent<
 
   public renderGroups = () => {
     const {
-      blockHandlers,
       onClickAddChild,
-      onEditGroup: onEdit,
       rootBlock,
-      user,
       type,
-      toggleForm
+      toggleForm,
+      selectedCollaborators,
+      setCurrentProject,
+      onSelectGroup
     } = this.props;
     const sortedIds =
       type === "task"
@@ -172,11 +171,13 @@ class KanbanBoard extends React.PureComponent<
 
     const groups = sortBlocksByPosition(rootBlock.group, sortedIds);
     const rendered: JSX.Element[] = [];
+    const blockHasUngrouped = this.blockHasUngrouped(rootBlock);
 
-    if (this.blockHasUngrouped(rootBlock)) {
+    if (blockHasUngrouped) {
       const ungrouped = (
         <GroupContainer
           disabled
+          withViewMore={false}
           key="ungrouped"
           group={
             {
@@ -184,11 +185,13 @@ class KanbanBoard extends React.PureComponent<
             } as IBlock
           }
           draggableID="ungrouped"
-          blockHandlers={blockHandlers}
           onClickAddChild={onClickAddChild}
           toggleForm={() => null}
           index={0}
-          context
+          context={type}
+          selectedCollaborators={selectedCollaborators}
+          setCurrentProject={setCurrentProject}
+          onViewMore={() => onSelectGroup(rootBlock, true)}
         />
       );
 
@@ -197,19 +200,22 @@ class KanbanBoard extends React.PureComponent<
 
     groups.forEach((group, index) => {
       const groupId = group.customId;
-      const groupProps = {
-        type,
-        group,
-        user,
-        onEdit,
-        blockHandlers,
-        onClickAddChild,
-        draggableId: groupId,
-        droppableId: groupId,
-        index: index + 1
-      };
 
-      rendered.push(<Group key={groupId} {...groupProps} />);
+      rendered.push(
+        <GroupContainer
+          withViewMore={false}
+          key={groupId}
+          group={group}
+          draggableID={groupId}
+          onClickAddChild={onClickAddChild}
+          toggleForm={() => toggleForm("group", rootBlock, group)}
+          index={blockHasUngrouped ? index + 1 : index}
+          context={type}
+          selectedCollaborators={selectedCollaborators}
+          setCurrentProject={setCurrentProject}
+          onViewMore={() => onSelectGroup(group, false)}
+        />
+      );
     });
 
     return rendered;

@@ -22,7 +22,7 @@ import KanbanBoard from "./KanbanBoard";
 import SplitView, { ISplit } from "./SplitView";
 
 export interface IBoardProps {
-  rootBlock: IBlock;
+  block: IBlock;
   blockHandlers: IBlockMethods;
   user: IUser;
   onBack: () => void;
@@ -30,7 +30,7 @@ export interface IBoardProps {
   isUserRootBlock?: boolean;
 
   // TODO: Define the right type
-  collaborators?: IUser[];
+  collaborators: IUser[];
 }
 
 interface IBoardState {
@@ -40,7 +40,7 @@ interface IBoardState {
     group: boolean;
   };
   showCollaborators: boolean;
-  boardContext: string;
+  boardContext: "task" | "project";
   parent?: IBlock | null;
   project?: IBlock | null;
   block?: IBlock | null;
@@ -96,7 +96,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
 
   private renderMain = () => {
     const {
-      rootBlock,
+      block: rootBlock,
       blockHandlers,
       user,
       onBack,
@@ -221,6 +221,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         <CollaboratorAvatarsContainer>
           <AvatarList
             collaborators={collaborators.map(collaborator => {
+              // TODO: Remove avatar list from personal or root kanban boards
               return {
                 key: collaborator.customId,
                 color: collaborator.color,
@@ -240,9 +241,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                 <KanbanBoard
                   blockHandlers={blockHandlers}
                   rootBlock={rootBlock}
-                  onEditGroup={group => {
-                    this.toggleForm("group", rootBlock, group);
-                  }}
                   onClickAddChild={this.toggleForm}
                   user={user}
                   collaborators={collaborators}
@@ -250,6 +248,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                   type={boardContext}
                   toggleForm={this.toggleForm}
                   selectedCollaborators={selectedCollaborators}
+                  onSelectGroup={() => null}
                 />
               );
             }}
@@ -260,7 +259,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   };
 
   private isBlockCollaboratorsLoaded() {
-    const { rootBlock } = this.props;
+    const { block: rootBlock } = this.props;
     if (rootBlock.type === "org" && !rootBlock.collaborators) {
       return false;
     }
@@ -269,7 +268,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   }
 
   private isBlockCollaborationRequestsLoaded() {
-    const { rootBlock } = this.props;
+    const { block: rootBlock } = this.props;
     if (rootBlock.type === "org" && !rootBlock.collaborationRequests) {
       return false;
     }
@@ -285,12 +284,12 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   };
 
   private async fetchCollaborators() {
-    const { rootBlock, blockHandlers } = this.props;
+    const { block: rootBlock, blockHandlers } = this.props;
     await blockHandlers.getCollaborators({ block: rootBlock });
   }
 
   private async fetchCollaborationRequests() {
-    const { rootBlock, blockHandlers } = this.props;
+    const { block: rootBlock, blockHandlers } = this.props;
     await blockHandlers.getCollaborationRequests({ block: rootBlock });
   }
 
@@ -360,8 +359,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   };
 
   private getCollaborators() {
-    const { user, rootBlock, collaborators } = this.props;
-    return rootBlock.collaborators || collaborators || [user];
+    const { user, collaborators } = this.props;
+    return collaborators || [user];
   }
 
   private getExistingNames(blocks = {}) {
@@ -383,13 +382,13 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   }
 
   private renderCollaborators = () => {
-    const { rootBlock, blockHandlers } = this.props;
+    const { block: rootBlock, blockHandlers } = this.props;
 
     return (
       <Collaborators
         block={rootBlock}
         onBack={this.toggleShowCollaborators}
-        collaborators={rootBlock.collaborators}
+        collaborators={this.getCollaborators()}
         onAddCollaborators={async data => {
           return blockHandlers.onAddCollaborators({
             ...data,

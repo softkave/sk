@@ -8,11 +8,17 @@ import { IUser } from "../../models/user/user";
 import netInterface from "../../net/index";
 import { INetResult } from "../../net/query";
 import {
-  deleteDataByPath,
-  mergeDataByPath,
-  setDataByPath
-} from "../../redux/actions/data";
-import { makeMultiple } from "../../redux/actions/make";
+  addBlockRedux,
+  bulkAddBlocksRedux,
+  deleteBlockRedux,
+  updateBlockRedux
+} from "../../redux/blocks/actions";
+import { bulkAddNotificationsRedux } from "../../redux/notifications/actions";
+import {
+  getResourceParam,
+  getResourceParamArray
+} from "../../redux/referenceCounting";
+import { bulkAddUsersRedux, updateUserRedux } from "../../redux/users/actions";
 import { newId } from "../../utils/utils";
 import { IPipeline, makePipeline, PipelineEntryFunc } from "../FormPipeline";
 
@@ -79,7 +85,6 @@ const addBlockMethods: IPipeline<
     const childrenTypes = getBlockValidChildrenTypes(block);
 
     if (parent) {
-      block.path = `${parent.path}.${block.type}.${block.customId}`;
       block.parents = [];
 
       if (parent.parents) {
@@ -94,13 +99,10 @@ const addBlockMethods: IPipeline<
         parent.groupTaskContext.push(block.customId);
         parent.groupProjectContext.push(block.customId);
       }
-    } else {
-      block.path = `${block.type}.${block.customId}`;
     }
 
     if (block.type === "org") {
-      block.collaborators = [user];
-      block.path = `orgs.${block.customId}`;
+      block.collaborators = [user.customId];
     } else if (block.type === "task") {
       if (!block.taskCollaborators) {
         block.taskCollaborators = [];
@@ -127,18 +129,21 @@ const addBlockMethods: IPipeline<
 
   redux({ state, dispatch, params }) {
     const { block, parent } = params;
-    const actions: any[] = [];
 
     if (parent) {
-      actions.push(setDataByPath(parent.path, parent));
+      dispatch(updateBlockRedux(getResourceParam(parent, "customId")));
     }
 
     if (block.type === "org") {
-      actions.push(setDataByPath("user.user.orgs", [block.customId]));
+      dispatch(
+        updateUserRedux({
+          id: params.user.customId,
+          resource: { orgs: [block.customId] }
+        })
+      );
     }
 
-    actions.push(setDataByPath(block.path, block));
-    dispatch(makeMultiple(actions));
+    dispatch(addBlockRedux(getResourceParam(block, "customId")));
   }
 };
 
@@ -172,7 +177,12 @@ const updateBlockMethods: IPipeline<
 
   redux({ state, dispatch, params }) {
     const { block, data } = params;
-    dispatch(mergeDataByPath(block.path, data));
+    dispatch(
+      updateBlockRedux({
+        id: block.customId,
+        resource: data
+      })
+    );
   }
 };
 
@@ -199,11 +209,13 @@ const toggleTaskMethods: IPipeline<
     );
 
     const collaborator = block.taskCollaborators[collaboratorIndex];
-    const path = `${
-      block.path
-    }.taskCollaborators.${collaboratorIndex}.completedAt`;
+    const updatedBlock = dotProp.set(
+      block,
+      `taskCollaborators.${collaboratorIndex}.completedAt`,
+      collaborator.completedAt ? null : Date.now()
+    );
 
-    dispatch(setDataByPath(path, collaborator.completedAt ? null : Date.now()));
+    dispatch(updateBlockRedux(getResourceParam(updatedBlock, "customId")));
   }
 };
 
@@ -224,14 +236,14 @@ const deleteBlockMethods: IPipeline<
 
   redux({ state, dispatch, params }) {
     const { block } = params;
-    dispatch(deleteDataByPath(block.path));
+    dispatch(deleteBlockRedux(getResourceParam(block, "customId")));
   }
 };
 
 // TODO: Define collaborators type
 // TODO: Create a package maybe called softkave-bridge that contains resuable bits between front and backend
 interface IAddCollaboratorParams {
-  requests: any;
+  requests: any[];
   block: IBlock;
   message?: string;
   expiresAt?: number | Date;
@@ -273,9 +285,17 @@ const addCollaboratorMethods: IPipeline<
   },
 
   redux({ state, dispatch, params }) {
-    const { block, requests: collaborators } = params;
+    const { block, requests } = params;
+    const requestIds = requests.map(request => request.customId);
+
     dispatch(
-      mergeDataByPath(`${block.path}.collaborationRequests`, collaborators)
+      bulkAddNotificationsRedux(getResourceParamArray(requests, "customId"))
+    );
+    dispatch(
+      updateBlockRedux({
+        id: block.customId,
+        resource: { collaborationRequests: requestIds }
+      })
     );
   }
 };
@@ -315,8 +335,6 @@ const getBlockChildrenMethods: IPipeline<
   redux({ state, dispatch, params, result }) {
     const { block, updateBlock } = params;
     const { blocks } = result;
-    const blockMappedToType = {};
-    const childrenTypes = getBlockValidChildrenTypes(block);
     const children: any = {
       tasks: [],
       groups: [],
@@ -325,85 +343,34 @@ const getBlockChildrenMethods: IPipeline<
       groupProjectContext: []
     };
 
-    const groupTaskContext = "groupTaskContext";
-    const groupProjectContext = "groupProjectContext";
-    const prefill = [
-      "tasks",
-      "groups",
-      "projects",
-      groupTaskContext,
-      groupProjectContext
-    ];
+    blocks.forEach(nextBlock => {
+      const container = children[`${nextBlock.type}s`];
+      container.push(nextBlock.customId);
 
-    if (childrenTypes.length > 0) {
-      childrenTypes.forEach(type => {
-        blockMappedToType[type] = {};
-      });
+      if (nextBlock.type === "group") {
+        children.groupTaskContext.push(nextBlock.customId);
+        children.groupProjectContext.push(nextBlock.customId);
+      }
+    });
+
+    // tslint:disable-next-line: forin
+    for (const key in children) {
+      const typeContainer = children[key];
+
+      if (
+        !Array.isArray(block[key]) ||
+        block[key].length !== typeContainer.length
+      ) {
+        // TODO: Think on: do we need to handle error here
+        // const updateBlockResult = await updateBlock(block, block);
+        // throwOnError(updateBlockResult);
+        updateBlock({ block, data: children });
+        dispatch(updateBlockRedux({ id: block.customId, resource: children }));
+        break;
+      }
     }
 
-    const existingChildrenIds = {
-      tasks: {},
-      groups: {},
-      projects: {},
-      groupTaskContext: {},
-      groupProjectContext: {}
-    };
-
-    Object.keys(existingChildrenIds).forEach(key => {
-      if (Array.isArray(block[key])) {
-        block[key].forEach(id => {
-          existingChildrenIds[key][id] = true;
-        });
-      }
-    });
-
-    blocks.forEach(next => {
-      next.path = `${next.path}.${next.type}.${next.customId}`;
-      const typeMap = blockMappedToType[next.type] || {};
-      typeMap[next.customId] = next;
-      blockMappedToType[next.type] = typeMap;
-
-      if (next.type === "group") {
-        if (!existingChildrenIds[groupTaskContext][next.customId]) {
-          children[groupTaskContext].push(next.customId);
-        }
-
-        if (!existingChildrenIds[groupProjectContext][next.customId]) {
-          children[groupProjectContext].push(next.customId);
-        }
-      }
-
-      const pluralizedType = `${next.type}s`;
-
-      if (!existingChildrenIds[pluralizedType][next.customId]) {
-        children[pluralizedType].push(next.customId);
-      }
-
-      prefill.forEach(key => {
-        if (!Array.isArray(next[key])) {
-          next[key] = [];
-        }
-      });
-    });
-
-    let updateParentBlock = false;
-
-    Object.keys(children).forEach(key => {
-      if (!Array.isArray(block[key]) || children[key].length > 0) {
-        updateParentBlock = true;
-        block[key] = children[key];
-      }
-    });
-
-    if (updateParentBlock) {
-      updateBlock({ block, data: block });
-
-      // TODO: Think on: do we need to handle error here
-      // const updateBlockResult = await updateBlock(block, block);
-      // throwOnError(updateBlockResult);
-    }
-
-    dispatch(mergeDataByPath(block.path, blockMappedToType));
+    dispatch(bulkAddBlocksRedux(getResourceParamArray(blocks, "customId")));
   }
 };
 
@@ -428,9 +395,15 @@ const getCollaboratorsMethods: IPipeline<
   },
 
   redux({ state, dispatch, params, result }) {
-    const { block } = params;
+    const ids = result.collaborators.map(collaborator => collaborator.customId);
     dispatch(
-      setDataByPath(`${block.path}.collaborators`, result.collaborators)
+      bulkAddUsersRedux(getResourceParamArray(result.collaborators, "customId"))
+    );
+    dispatch(
+      updateBlockRedux({
+        id: params.block.customId,
+        resource: { collaborators: ids }
+      })
     );
   }
 };
@@ -456,9 +429,17 @@ const getCollaborationRequestsMethods: IPipeline<
   },
 
   redux({ state, dispatch, params, result }) {
-    const { block } = params;
+    const ids = result.requests.map(request => request.customId);
     dispatch(
-      setDataByPath(`${block.path}.collaborationRequests`, result.requests)
+      bulkAddNotificationsRedux(
+        getResourceParamArray(result.requests, "customId")
+      )
+    );
+    dispatch(
+      updateBlockRedux({
+        id: params.block.customId,
+        resource: { collaborationRequests: ids }
+      })
     );
   }
 };
@@ -484,19 +465,12 @@ const fetchRootDataMethods: IPipeline<
     blocks.forEach(blk => {
       if (blk.type === "root") {
         rootBlock = blk;
-        rootBlock.path = `rootBlock`;
       } else if (blk.type === "org") {
         orgs[blk.customId] = blk;
-        blk.path = `orgs.${blk.customId}`;
       }
     });
 
-    const actions = [
-      mergeDataByPath(rootBlock.path, rootBlock),
-      mergeDataByPath("orgs", orgs)
-    ];
-
-    dispatch(makeMultiple(actions));
+    dispatch(bulkAddBlocksRedux(getResourceParamArray(blocks, "customId")));
   }
 };
 
@@ -573,7 +547,6 @@ const transferBlockMethods: IPipeline<
       dropPosition,
       draggedBlockPosition
     } = params;
-    const actions: any[] = [];
     const pluralizedType = `${draggedBlock.type}s`;
 
     if (draggedBlock.type === "group") {
@@ -611,7 +584,7 @@ const transferBlockMethods: IPipeline<
       );
 
       sourceBlock[pluralizedType] = children;
-      actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+      dispatch(updateBlockRedux(getResourceParam(sourceBlock, "customId")));
     } else if (sourceBlock.customId === destinationBlock.customId) {
       const children = move(
         sourceBlock[pluralizedType],
@@ -620,7 +593,7 @@ const transferBlockMethods: IPipeline<
       );
 
       sourceBlock[pluralizedType] = children;
-      actions.push(setDataByPath(sourceBlock.path, sourceBlock));
+      dispatch(updateBlockRedux(getResourceParam(sourceBlock, "customId")));
     } else {
       sourceBlock[pluralizedType] = remove(
         sourceBlock[pluralizedType],
@@ -643,22 +616,14 @@ const transferBlockMethods: IPipeline<
       );
 
       draggedBlockChildrenTypes.forEach(type => {
-        draggedBlock[type] = undefined;
+        draggedBlock[`${type}s`] = undefined;
       });
 
-      const draggedBlockType = draggedBlock.type;
-      const draggedBlockPath = `${draggedBlockType}.${draggedBlock.customId}`;
-
-      const updatedSourceBlock = dotProp.delete(sourceBlock, draggedBlockPath);
-      const updatedDestBlock = dotProp.set(
-        destinationBlock,
-        draggedBlockPath,
-        draggedBlock
+      dispatch(updateBlockRedux(getResourceParam(draggedBlock, "customId")));
+      dispatch(updateBlockRedux(getResourceParam(sourceBlock, "customId")));
+      dispatch(
+        updateBlockRedux(getResourceParam(destinationBlock, "customId"))
       );
-
-      actions.push(setDataByPath(draggedBlock.path, draggedBlock));
-      actions.push(setDataByPath(updatedSourceBlock.path, updatedSourceBlock));
-      actions.push(setDataByPath(updatedDestBlock.path, updatedDestBlock));
     }
 
     if (
@@ -667,8 +632,6 @@ const transferBlockMethods: IPipeline<
     ) {
       return;
     }
-
-    dispatch(makeMultiple(actions));
   }
 };
 

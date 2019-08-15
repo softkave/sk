@@ -5,6 +5,8 @@ import Board from "../../components/block/group/Board";
 import { getBlockMethods, IBlockMethods } from "../../components/block/methods";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import { getBlock } from "../../redux/blocks/selectors";
+import { getSignedInUser } from "../../redux/session/selectors";
 
 export interface IPersonalContainerProps {
   blockHandlers: IBlockMethods;
@@ -14,6 +16,7 @@ export interface IPersonalContainerProps {
 
 interface IPersonalContainerState {
   error?: Error;
+  loading: boolean;
 }
 
 class Personal extends React.Component<
@@ -23,25 +26,27 @@ class Personal extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      error: undefined
+      error: undefined,
+      loading: false
     };
   }
 
   public async componentDidMount() {
     if (!this.props.rootBlock) {
       try {
+        this.setState({ loading: true });
         await this.props.blockHandlers.fetchRootData();
       } catch (error) {
-        this.setState({ error });
+        this.setState({ error, loading: false });
       }
     }
   }
 
   public render() {
     const { rootBlock, blockHandlers, user } = this.props;
-    const { error } = this.state;
+    const { error, loading } = this.state;
 
-    if (!rootBlock) {
+    if (loading) {
       return "Loading";
     } else if (error) {
       return "An error occurred";
@@ -50,9 +55,11 @@ class Personal extends React.Component<
     return (
       <Board
         isUserRootBlock
-        rootBlock={rootBlock}
+        block={rootBlock!}
         blockHandlers={blockHandlers}
         user={user}
+        onBack={() => null}
+        collaborators={[user]}
       />
     );
   }
@@ -67,13 +74,19 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mergeProps({ state }, { dispatch }, ownProps) {
-  const user = state.user.user;
-  const blockHandlers = getBlockMethods({ state, dispatch, user });
+  const user = getSignedInUser(state);
+  const blockHandlers = getBlockMethods({
+    state,
+    dispatch,
+    user
+  });
+
+  const rootBlock = getBlock(state, user!.rootBlockId!);
 
   return {
     blockHandlers,
-    user,
-    rootBlock: state.rootBlock
+    rootBlock,
+    user
   };
 }
 

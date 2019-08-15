@@ -1,18 +1,54 @@
 import { IUser } from "../../models/user/user";
-import { makeReferenceCountedResourcesReducer } from "../referenceCounting";
 import {
+  bulkAddReferenceCountedResources,
+  bulkDeleteReferenceCountedResources,
+  bulkUpdateReferenceCountedResources,
+  IReferenceCountedNormalizedResources
+} from "../referenceCounting";
+import { IUsersAction } from "./actions";
+import {
+  ADD_USER,
   BULK_ADD_USERS,
   BULK_DELETE_USERS,
-  BULK_UPDATE_USERS
+  BULK_UPDATE_USERS,
+  DELETE_USER,
+  UPDATE_USER
 } from "./constants";
 
-const reducer = makeReferenceCountedResourcesReducer<
-  IUser,
-  BULK_ADD_USERS,
-  BULK_UPDATE_USERS,
-  BULK_DELETE_USERS
->(BULK_ADD_USERS, BULK_UPDATE_USERS, BULK_DELETE_USERS);
+// TODO: Remove unused node modules
 
-export const usersReducer = reducer.reducer;
+export type IUsersState = IReferenceCountedNormalizedResources<IUser>;
 
-export type IUsersReduxState = typeof reducer.resourcesType;
+export function usersReducer(
+  state: IUsersState = {},
+  action: IUsersAction
+): IUsersState {
+  switch (action.type) {
+    case ADD_USER: {
+      return bulkAddReferenceCountedResources(state, [action.payload]);
+    }
+
+    case UPDATE_USER: {
+      return bulkUpdateReferenceCountedResources(state, [action.payload]);
+    }
+
+    case DELETE_USER: {
+      return bulkDeleteReferenceCountedResources(state, [action.payload]);
+    }
+
+    case BULK_ADD_USERS: {
+      return bulkAddReferenceCountedResources(state, action.payload);
+    }
+
+    case BULK_UPDATE_USERS: {
+      return bulkUpdateReferenceCountedResources(state, action.payload);
+    }
+
+    case BULK_DELETE_USERS: {
+      return bulkDeleteReferenceCountedResources(state, action.payload);
+    }
+
+    default:
+      return state;
+  }
+}

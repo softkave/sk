@@ -1,6 +1,8 @@
+import get from "lodash/get";
 import merge from "lodash/merge";
 import { AnyAction } from "redux";
-import { IReduxState } from "./store";
+
+// TODO: Rework the types and architecture
 
 export interface IReferenceCountedResourceContainer<ResourceType> {
   referenceCount: number;
@@ -11,14 +13,27 @@ export interface IReferenceCountedNormalizedResources<ResourceType> {
   [key: string]: IReferenceCountedResourceContainer<ResourceType>;
 }
 
-export interface IReferenceCountedResourceOperationParams<ResourceType> {
+export interface IReferenceCountedResourceAddPayload<
+  ResourceType extends object
+> {
   id: string;
-  resource?: ResourceType;
+  data: ResourceType;
+}
+
+export interface IReferenceCountedResourceUpdatePayload<
+  ResourceType extends object
+> {
+  id: string;
+  data: Partial<ResourceType>;
+}
+
+export interface IReferenceCountedResourceDeletePayload {
+  id: string;
 }
 
 export function bulkAddReferenceCountedResources<ResourceType extends object>(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
-  params: Array<IReferenceCountedResourceOperationParams<ResourceType>>
+  params: Array<IReferenceCountedResourceAddPayload<ResourceType>>
 ) {
   if (params.length === 0) {
     return resources;
@@ -27,14 +42,14 @@ export function bulkAddReferenceCountedResources<ResourceType extends object>(
   const updatedResources = { ...resources };
 
   params.forEach(param => {
-    if (!param.resource) {
+    if (!param.data) {
       return;
     }
 
     const resource = merge(
       {},
       updatedResources[param.id] || {
-        resource: param.resource,
+        resource: param.data,
         referenceCount: 0
       }
     );
@@ -50,7 +65,7 @@ export function bulkUpdateReferenceCountedResources<
   ResourceType extends object
 >(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
-  params: Array<IReferenceCountedResourceOperationParams<ResourceType>>
+  params: Array<IReferenceCountedResourceUpdatePayload<ResourceType>>
 ) {
   if (params.length === 0) {
     return resources;
@@ -59,7 +74,7 @@ export function bulkUpdateReferenceCountedResources<
   const updatedResources = { ...resources };
 
   params.forEach(param => {
-    if (!param.resource) {
+    if (!param.data) {
       return;
     }
 
@@ -67,7 +82,7 @@ export function bulkUpdateReferenceCountedResources<
 
     if (resource) {
       resource = merge({}, updatedResources[param.id]);
-      resource.resource = merge({}, resource.resource, param.resource);
+      resource.resource = merge({}, resource.resource, param.data);
       updatedResources[param.id] = resource;
     }
   });
@@ -79,7 +94,7 @@ export function bulkDeleteReferenceCountedResources<
   ResourceType extends object
 >(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
-  params: Array<IReferenceCountedResourceOperationParams<ResourceType>>
+  params: IReferenceCountedResourceDeletePayload[]
 ) {
   if (params.length === 0) {
     return resources;
@@ -104,160 +119,6 @@ export function bulkDeleteReferenceCountedResources<
   return updatedResources;
 }
 
-interface IBulkReferenceCountedResourceAction<
-  ActionType,
-  ResourceType,
-  PayloadType extends Array<
-    IReferenceCountedResourceOperationParams<ResourceType>
-  > = Array<IReferenceCountedResourceOperationParams<ResourceType>>
-> extends AnyAction {
-  type: ActionType;
-  payload: PayloadType;
-}
-
-export type IBulkReferenceCountedResourceActions<
-  ResourceType,
-  AddType,
-  UpdateType,
-  DeleteType
-> =
-  | IBulkReferenceCountedResourceAction<
-      AddType,
-      ResourceType,
-      Array<IReferenceCountedResourceOperationParams<ResourceType>>
-    >
-  | IBulkReferenceCountedResourceAction<
-      UpdateType,
-      ResourceType,
-      Array<IReferenceCountedResourceOperationParams<ResourceType>>
-    >
-  | IBulkReferenceCountedResourceAction<
-      DeleteType,
-      ResourceType,
-      Array<IReferenceCountedResourceOperationParams<ResourceType>>
-    >;
-
-/**
- * You can supply the arguments without the types, but the types will be inferred as strings.
- * To get the exact types, supply the arguments and the types.
- */
-
-export function makeReferenceCountedResourceActions<
-  ResourceType extends object,
-  AddType extends string,
-  UpdateType extends string,
-  DeleteType extends string
->(addType: AddType, updateType: UpdateType, deleteType: DeleteType) {
-  type AddActionParamsType = IReferenceCountedResourceOperationParams<
-    ResourceType
-  >;
-  type DeleteActionParamsType = IReferenceCountedResourceOperationParams<
-    ResourceType
-  >;
-  type ActionsType = IBulkReferenceCountedResourceActions<
-    ResourceType,
-    AddType,
-    UpdateType,
-    DeleteType
-  >;
-
-  return {
-    /**
-     * Do not use this object directly, it is meant for getting a union of the action types.
-     * Like type IExampleActions = typeof actions.actionsTypes
-     */
-    actionTypes: {} as ActionsType,
-
-    addResource(resource: AddActionParamsType) {
-      return this.bulkAddResources([resource]);
-    },
-
-    updateResource(resource: AddActionParamsType) {
-      return this.bulkUpdateResources([resource]);
-    },
-
-    deleteResource(resource: DeleteActionParamsType) {
-      return this.bulkDeleteResources([resource]);
-    },
-
-    bulkAddResources(
-      resources: AddActionParamsType[]
-    ): IBulkReferenceCountedResourceAction<AddType, ResourceType> {
-      return {
-        type: addType,
-        payload: resources
-      };
-    },
-
-    bulkUpdateResources(
-      resources: AddActionParamsType[]
-    ): IBulkReferenceCountedResourceAction<UpdateType, ResourceType> {
-      return {
-        type: updateType,
-        payload: resources
-      };
-    },
-
-    bulkDeleteResources(
-      resources: DeleteActionParamsType[]
-    ): IBulkReferenceCountedResourceAction<DeleteType, ResourceType> {
-      return {
-        type: deleteType,
-        payload: resources
-      };
-    }
-  };
-}
-
-export function makeReferenceCountedResourcesReducer<
-  ResourceType extends object,
-  AddType extends string,
-  UpdateType extends string,
-  DeleteType extends string
->(addType: AddType, updateType: UpdateType, deleteType: DeleteType) {
-  type ResourcesType = IReferenceCountedNormalizedResources<ResourceType>;
-  type ActionTypes = IBulkReferenceCountedResourceActions<
-    ResourceType,
-    AddType,
-    UpdateType,
-    DeleteType
-  >;
-
-  function referenceCountedResourceReducer(
-    state: ResourcesType = {},
-    action: ActionTypes
-  ): ResourcesType {
-    switch (action.type) {
-      case addType: {
-        return bulkAddReferenceCountedResources(state, action.payload as Array<
-          IReferenceCountedResourceOperationParams<ResourceType>
-        >);
-      }
-
-      case updateType: {
-        return bulkUpdateReferenceCountedResources(
-          state,
-          action.payload as Array<
-            IReferenceCountedResourceOperationParams<ResourceType>
-          >
-        );
-      }
-
-      case deleteType: {
-        return bulkDeleteReferenceCountedResources(state, action.payload);
-      }
-
-      default:
-        return state;
-    }
-  }
-
-  return {
-    resourcesType: {} as ResourcesType,
-    reducer: referenceCountedResourceReducer
-  };
-}
-
 export function getResourcesAsArray<ResourceType>(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
   ids: string[]
@@ -274,4 +135,23 @@ export function getResourcesAsArray<ResourceType>(
     },
     [] as ResourceType[]
   );
+}
+
+export function getResourceParam<ResourceType extends object>(
+  data: ResourceType,
+  idPropName: string
+) {
+  return {
+    data,
+    id: get(data, idPropName)
+  };
+}
+
+export function getResourceParamArray<ResourceType extends object>(
+  resources: ResourceType[],
+  idPropName: string
+) {
+  return resources.map(resource => {
+    return getResourceParam(resource, idPropName);
+  });
 }
