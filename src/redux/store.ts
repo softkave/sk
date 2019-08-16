@@ -1,24 +1,22 @@
 import { combineReducers, createStore } from "redux";
-import { blocksReducer, IBlocksReduxState } from "./blocks/reducer";
+
+import { blocksReducer, IBlocksState } from "./blocks/reducer";
 import {
-  INotificationsReduxState,
+  INotificationsState,
   notificationsReducer
 } from "./notifications/reducer";
-import { IRolesReduxState, rolesReducer } from "./roles/reducer";
 import { ISessionReduxState, sessionReducer } from "./session/reducer";
-import { IUsersReduxState, usersReducer } from "./users/reducer";
+import { IUsersState, usersReducer } from "./users/reducer";
 
 export interface IReduxState {
-  blocks: IBlocksReduxState;
-  roles: IRolesReduxState;
-  users: IUsersReduxState;
-  notifications: INotificationsReduxState;
+  blocks: IBlocksState;
+  users: IUsersState;
+  notifications: INotificationsState;
   session: ISessionReduxState;
 }
 
 const reducers = combineReducers({
   blocks: blocksReducer,
-  roles: rolesReducer,
   users: usersReducer,
   notifications: notificationsReducer,
   session: sessionReducer

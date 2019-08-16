@@ -1,9 +1,8 @@
-import { getResourcesAsArray } from "../referenceCounting";
+import { getResource, getResourcesAsArray } from "../referenceCounting";
 import { IReduxState } from "../store";
 
 export function getUser(state: IReduxState, userID: string) {
-  const users = getResourcesAsArray(state.users, [userID]);
-  return users[0];
+  return getResource(state.users, userID);
 }
 
 export function getUsersAsArray(state: IReduxState, ids: string[]) {

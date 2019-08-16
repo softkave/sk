@@ -1,5 +1,3 @@
-import { IUser } from "../user/user";
-
 export interface ITaskCollaborator {
   userId: string;
   completedAt: number;
@@ -14,6 +12,7 @@ export interface IBlockRole {
 }
 
 export type BlockPriority = "very important" | "important" | "not important";
+export type BlockType = "org" | "project" | "group" | "task" | "root";
 
 export interface IBlock {
   customId: string;
@@ -23,7 +22,7 @@ export interface IBlock {
   createdAt: number;
   color: string;
   updatedAt: number;
-  type: "org" | "project" | "group" | "task" | "root";
+  type: BlockType;
   parents: string[];
   createdBy: string;
   taskCollaborators: ITaskCollaborator[];
@@ -37,14 +36,6 @@ export interface IBlock {
   groupTaskContext: string[];
   groupProjectContext: string[];
   roles: IBlockRole[];
-  path: string;
   collaborators: string[];
-
-  // TODO: Define a new type of IBlock for client, Redux, etc
-  group: { [key: string]: IBlock };
-  task: { [key: string]: IBlock };
-  project: { [key: string]: IBlock };
-
-  // TODO: define type
   collaborationRequests: string[];
 }

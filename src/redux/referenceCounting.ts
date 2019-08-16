@@ -119,6 +119,17 @@ export function bulkDeleteReferenceCountedResources<
   return updatedResources;
 }
 
+export function getResource<ResourceType>(
+  resources: IReferenceCountedNormalizedResources<ResourceType>,
+  id: string
+) {
+  const resource = resources[id];
+
+  if (resource) {
+    return resource.resource;
+  }
+}
+
 export function getResourcesAsArray<ResourceType>(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
   ids: string[]
