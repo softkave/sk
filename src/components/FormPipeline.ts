@@ -131,14 +131,16 @@ async function main(
 //   paramName: "params"
 // };
 
-export type PipelineEntryFunc<ParamType> = (params?: ParamType) => void;
+export type PipelineEntryFunc<ParamType> = (
+  params?: ParamType
+) => Promise<void>;
 
 export function makePipeline<ParamType>(
   methods: IQuietPipeline,
   initialOperatingData: object
 ): PipelineEntryFunc<ParamType> {
   return async (params?: ParamType) => {
-    return main(methods, {
+    return await main(methods, {
       ...initialOperatingData,
       params
     } as any);

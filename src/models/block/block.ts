@@ -38,4 +38,8 @@ export interface IBlock {
   roles: IBlockRole[];
   collaborators: string[];
   collaborationRequests: string[];
+
+  loadingChildren?: boolean;
+  loadingCollaborators?: boolean;
+  loadingCollaborationRequests?: boolean;
 }

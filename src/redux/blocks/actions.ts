@@ -35,7 +35,7 @@ export interface IUpdateBlockAction {
 
 export function updateBlockRedux(
   id: string,
-  block: IBlock
+  block: Partial<IBlock>
 ): IUpdateBlockAction {
   return {
     type: UPDATE_BLOCK,
