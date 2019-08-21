@@ -24,10 +24,14 @@ const getCollaborationRequestsPipeline: IPipeline<
     return await netInterface("block.getCollabRequests", { block });
   },
 
-  redux({ state, dispatch, params, result }) {
+  redux({ dispatch, params, result }) {
     const ids = result.requests.map(request => request.customId);
-    dispatch(bulkAddNotificationsRedux());
-    dispatch(updateBlockRedux());
+    dispatch(bulkAddNotificationsRedux(result.requests));
+    dispatch(
+      updateBlockRedux(params.block.customId, {
+        collaborationRequests: params.block.collaborationRequests.concat(ids)
+      })
+    );
   }
 };
 

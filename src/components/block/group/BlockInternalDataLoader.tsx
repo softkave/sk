@@ -28,7 +28,7 @@ interface IBlockChildren {
   tasks?: IBlock[];
 }
 
-export interface IBlockLoaderProps {
+export interface IBlockInternalDataLoaderProps {
   block: IBlock;
   render: (renderParams: {
     block: IBlock;
@@ -199,12 +199,10 @@ function loadBlockCollaborationRequestsFromRedux(
   }
 }
 
-function load(block: IBlock) {}
-
 function mergeProps(
   state: IReduxState,
   dispatch: Dispatch,
-  ownProps: IBlockLoaderProps
+  ownProps: IBlockInternalDataLoaderProps
 ): IDataLoaderProps {
   const block = ownProps.block;
   const blockHandlers = getBlockMethods({ state, dispatch });

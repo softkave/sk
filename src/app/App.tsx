@@ -7,7 +7,7 @@ import SkAvatar from "../components/SkAvatar";
 import { IUser } from "../models/user/user";
 import Notifications from "./notification";
 import Orgs from "./orgs";
-import Personal from "./personal";
+// import Personal from "./personal";
 
 const defaultAvatarColor = "#aaa";
 

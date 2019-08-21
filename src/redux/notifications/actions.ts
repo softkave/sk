@@ -1,4 +1,5 @@
 import { INotification } from "../../models/notification/notification";
+import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
@@ -37,7 +38,7 @@ export interface IUpdateNotificationAction {
 
 export function updateNotificationRedux(
   id: string,
-  notification: INotification
+  notification: Partial<INotification>
 ): IUpdateNotificationAction {
   return {
     type: UPDATE_NOTIFICATION,
@@ -108,6 +109,7 @@ export function bulkDeleteNotificationsRedux(
 }
 
 export type INotificationsAction =
+  | IClearStateAction
   | IAddNotificationAction
   | IUpdateNotificationAction
   | IDeleteNotificationAction

@@ -5,6 +5,7 @@ import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
 import { addBlockRedux, updateBlockRedux } from "../../../redux/blocks/actions";
+import { updateUserRedux } from "../../../redux/users/actions";
 import { newId } from "../../../utils/utils";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
 
@@ -82,18 +83,23 @@ const addBlockPipeline: IPipeline<
 
   handleError: { stripBaseNames: ["block"] },
 
-  redux({ state, dispatch, params }) {
-    const { block, parent } = params;
+  redux({ dispatch, params }) {
+    const { block, parent, user } = params;
 
     if (parent) {
-      dispatch(updateBlockRedux());
+      const blockTypePropName = `${block.type}s`;
+      dispatch(
+        updateBlockRedux(parent.customId, {
+          [blockTypePropName]: parent[blockTypePropName].concat(block.customId)
+        })
+      );
     }
 
     if (block.type === "org") {
-      dispatch(updateUserRedux());
+      dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
     }
 
-    dispatch(addBlockRedux());
+    dispatch(addBlockRedux(block));
   }
 };
 

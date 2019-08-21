@@ -19,9 +19,9 @@ const deleteBlockPipeline: IPipeline<
     return await netInterface("block.deleteBlock", { block });
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const { block } = params;
-    dispatch(deleteBlockRedux());
+    dispatch(deleteBlockRedux(block.customId));
   }
 };
 

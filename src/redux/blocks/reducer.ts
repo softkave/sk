@@ -1,4 +1,5 @@
 import { IBlock } from "../../models/block/block";
+import { CLEAR_STATE } from "../constants";
 import {
   bulkAddReferenceCountedResources,
   bulkDeleteReferenceCountedResources,
@@ -46,6 +47,10 @@ export function blocksReducer(
 
     case BULK_DELETE_BLOCKS: {
       return bulkDeleteReferenceCountedResources(state, action.payload);
+    }
+
+    case CLEAR_STATE: {
+      return {};
     }
 
     default:

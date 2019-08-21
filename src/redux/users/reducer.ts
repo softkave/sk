@@ -1,4 +1,5 @@
 import { IUser } from "../../models/user/user";
+import { CLEAR_STATE } from "../constants";
 import {
   bulkAddReferenceCountedResources,
   bulkDeleteReferenceCountedResources,
@@ -46,6 +47,10 @@ export function usersReducer(
 
     case BULK_DELETE_USERS: {
       return bulkDeleteReferenceCountedResources(state, action.payload);
+    }
+
+    case CLEAR_STATE: {
+      return {};
     }
 
     default:

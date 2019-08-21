@@ -25,10 +25,14 @@ const getCollaboratorsPipeline: IPipeline<
     return await netInterface("block.getCollaborators", { block });
   },
 
-  redux({ state, dispatch, params, result }) {
+  redux({ dispatch, params, result }) {
     const ids = result.collaborators.map(collaborator => collaborator.customId);
-    dispatch(bulkAddUsersRedux());
-    dispatch(updateBlockRedux());
+    dispatch(bulkAddUsersRedux(result.collaborators));
+    dispatch(
+      updateBlockRedux(params.block.customId, {
+        collaborators: params.block.collaborators.concat(ids)
+      })
+    );
   }
 };
 

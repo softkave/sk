@@ -3,6 +3,7 @@ import React from "react";
 
 import { OnRespondToNotification } from "../../app/notification";
 
+import { IUser } from "../../models/user/user";
 import "./notification-body.css";
 
 const accepted = "accepted";
@@ -11,6 +12,7 @@ const declined = "declined";
 export interface INotificationBodyProps {
   notification: any;
   onRespond: OnRespondToNotification;
+  user: IUser;
 }
 
 class NotificationBody extends React.Component<INotificationBodyProps> {
@@ -30,7 +32,7 @@ class NotificationBody extends React.Component<INotificationBodyProps> {
   }
 
   public render() {
-    const { notification, onRespond } = this.props;
+    const { notification, onRespond, user } = this.props;
     const response = this.getUserResponse(notification);
 
     return (
@@ -45,13 +47,17 @@ class NotificationBody extends React.Component<INotificationBodyProps> {
             <>
               <Button
                 type="primary"
-                onClick={() => onRespond({ notification, response: accepted })}
+                onClick={() =>
+                  onRespond({ notification, user, response: accepted })
+                }
               >
                 Accept
               </Button>
               <Button
                 type="danger"
-                onClick={() => onRespond({ notification, response: declined })}
+                onClick={() =>
+                  onRespond({ notification, user, response: declined })
+                }
                 style={{ margin: "0 1em" }}
               >
                 Decline

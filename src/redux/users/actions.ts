@@ -1,4 +1,5 @@
 import { IUser } from "../../models/user/user";
+import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
@@ -33,7 +34,10 @@ export interface IUpdateUserAction {
   payload: IReferenceCountedResourceUpdatePayload<IUser>;
 }
 
-export function updateUserRedux(id: string, user: IUser): IUpdateUserAction {
+export function updateUserRedux(
+  id: string,
+  user: Partial<IUser>
+): IUpdateUserAction {
   return {
     type: UPDATE_USER,
     payload: {
@@ -99,6 +103,7 @@ export function bulkDeleteUsersRedux(users: string[]): IBulkDeleteUsersAction {
 }
 
 export type IUsersAction =
+  | IClearStateAction
   | IAddUserAction
   | IUpdateUserAction
   | IDeleteUserAction

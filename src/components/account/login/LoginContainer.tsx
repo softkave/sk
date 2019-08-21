@@ -33,9 +33,7 @@ const methods: IPipeline<
 
   redux({ result, dispatch }) {
     if (result && result.user && result.token) {
-      dispatch(
-        addUserRedux({ id: result.user.customId, resource: result.user })
-      );
+      dispatch(addUserRedux(result.user));
       dispatch(loginUserRedux(result.token, result.user.customId));
     } else if (result.errors) {
       devLog(__filename, result);

@@ -1,6 +1,9 @@
 import { IBlock } from "../../../models/block/block";
 import netInterface from "../../../net";
-import { bulkAddBlocksRedux } from "../../../redux/blocks/actions";
+import {
+  bulkAddBlocksRedux,
+  updateBlockRedux
+} from "../../../redux/blocks/actions";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
 import { UpdateBlockPipelineEntryFunc } from "./updateBlock";
 
@@ -36,7 +39,7 @@ const getBlockChildrenPipeline: IPipeline<
 
   // TODO: think on having a postNet function
 
-  redux({ state, dispatch, params, result }) {
+  redux({ dispatch, params, result }) {
     const { block, updateBlock } = params;
     const { blocks } = result;
     const children: any = {
@@ -69,12 +72,12 @@ const getBlockChildrenPipeline: IPipeline<
         // const updateBlockResult = await updateBlock(block, block);
         // throwOnError(updateBlockResult);
         updateBlock({ block, data: children });
-        dispatch(updateBlockRedux());
+        dispatch(updateBlockRedux(block.customId, children));
         break;
       }
     }
 
-    dispatch(bulkAddBlocksRedux());
+    dispatch(bulkAddBlocksRedux(blocks));
   }
 };
 

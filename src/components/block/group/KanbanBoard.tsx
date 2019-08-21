@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Icon, Spin } from "antd";
-import values from "lodash/values";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
@@ -8,15 +7,16 @@ import { IBlock } from "../../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods";
-import DataLoader from "./DataLoader";
-import Group from "./Group";
 import GroupContainer from "./GroupContainer";
 import { sortBlocksByPosition } from "./sortBlocks";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
   user: IUser;
-  rootBlock: IBlock;
+  block: IBlock;
+  projects?: IBlock[];
+  groups?: IBlock[];
+  tasks?: IBlock[];
 
   // TODO: define collaborators' type, it's slightly different from IUser
   collaborators: IUser[];
@@ -61,7 +61,13 @@ class KanbanBoard extends React.PureComponent<
   }
 
   public onDragEnd = async result => {
-    const { rootBlock, blockHandlers } = this.props;
+    const {
+      block: rootBlock,
+      blockHandlers,
+      groups,
+      tasks,
+      projects
+    } = this.props;
     const { destination, type, draggableId, source } = result;
 
     if (!destination || draggableId === rootBlock.customId) {
@@ -78,7 +84,7 @@ class KanbanBoard extends React.PureComponent<
     if (type === "GROUP") {
       sourceBlock = rootBlock;
       destinationBlock = rootBlock;
-      draggedBlock = rootBlock.group[draggableId];
+      draggedBlock = groups!.find(group => group.customId === draggableId)!;
 
       dropPosition -= 1;
       result.destination.index = dropPosition;
@@ -91,30 +97,40 @@ class KanbanBoard extends React.PureComponent<
       if (destination.droppableId === "ungrouped") {
         destinationBlock = rootBlock;
       } else {
-        destinationBlock = rootBlock.group[destination.droppableId];
+        destinationBlock = groups!.find(
+          group => group.customId === destination.droppableId
+        )!;
       }
 
       if (source.droppableId === "ungrouped") {
         sourceBlock = rootBlock;
       } else {
-        sourceBlock = rootBlock.group[source.droppableId];
+        sourceBlock = groups!.find(
+          group => group.customId === source.droppableId
+        )!;
       }
 
-      draggedBlock = sourceBlock.task[draggableId];
+      draggedBlock = tasks!.find(task => task.customId === draggableId)!;
     } else if (type === "PROJECT") {
       if (destination.droppableId === "ungrouped") {
         destinationBlock = rootBlock;
       } else {
-        destinationBlock = rootBlock.group[destination.droppableId];
+        destinationBlock = groups!.find(
+          group => group.customId === destination.droppableId
+        )!;
       }
 
       if (source.droppableId === "ungrouped") {
         sourceBlock = rootBlock;
       } else {
-        sourceBlock = rootBlock.group[source.droppableId];
+        sourceBlock = groups!.find(
+          group => group.customId === source.droppableId
+        )!;
       }
 
-      draggedBlock = sourceBlock.project[draggableId];
+      draggedBlock = projects!.find(
+        project => project.customId === draggableId
+      )!;
     }
 
     await blockHandlers.onTransferBlock({
@@ -157,19 +173,20 @@ class KanbanBoard extends React.PureComponent<
   public renderGroups = () => {
     const {
       onClickAddChild,
-      rootBlock,
+      block: rootBlock,
       type,
       toggleForm,
       selectedCollaborators,
       setCurrentProject,
-      onSelectGroup
+      onSelectGroup,
+      groups: blockGroups
     } = this.props;
     const sortedIds =
       type === "task"
         ? rootBlock.groupTaskContext
         : rootBlock.groupProjectContext;
 
-    const groups = sortBlocksByPosition(rootBlock.group, sortedIds);
+    const groups = sortBlocksByPosition(blockGroups || [], sortedIds);
     const rendered: JSX.Element[] = [];
     const blockHasUngrouped = this.blockHasUngrouped(rootBlock);
 
@@ -226,7 +243,7 @@ class KanbanBoard extends React.PureComponent<
   };
 
   public renderMain = () => {
-    const { rootBlock } = this.props;
+    const { block: rootBlock } = this.props;
     const { loading } = this.state;
 
     const rendered = (
@@ -269,17 +286,7 @@ class KanbanBoard extends React.PureComponent<
   };
 
   public render() {
-    const { rootBlock } = this.props;
-
-    return (
-      <DataLoader
-        render={this.renderMain}
-        areDataSame={this.areBlocksSame}
-        isDataLoaded={this.isBlockChildrenLoaded}
-        loadData={this.fetchChildren}
-        data={rootBlock}
-      />
-    );
+    return this.renderMain();
   }
 }
 

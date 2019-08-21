@@ -1,6 +1,5 @@
 import get from "lodash/get";
 import merge from "lodash/merge";
-import { AnyAction } from "redux";
 
 // TODO: Rework the types and architecture
 

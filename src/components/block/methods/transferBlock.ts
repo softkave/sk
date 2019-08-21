@@ -141,7 +141,7 @@ const transferBlockPipeline: IPipeline<
       );
 
       sourceBlock[pluralizedType] = children;
-      dispatch(updateBlockRedux());
+      dispatch(updateBlockRedux(sourceBlock.customId, sourceBlock));
     } else if (sourceBlock.customId === destinationBlock.customId) {
       const children = move(
         sourceBlock[pluralizedType],
@@ -150,7 +150,7 @@ const transferBlockPipeline: IPipeline<
       );
 
       sourceBlock[pluralizedType] = children;
-      dispatch(updateBlockRedux());
+      dispatch(updateBlockRedux(sourceBlock.customId, sourceBlock));
     } else {
       sourceBlock[pluralizedType] = remove(
         sourceBlock[pluralizedType],
@@ -176,9 +176,9 @@ const transferBlockPipeline: IPipeline<
         draggedBlock[`${type}s`] = undefined;
       });
 
-      dispatch(updateBlockRedux());
-      dispatch(updateBlockRedux());
-      dispatch(updateBlockRedux());
+      dispatch(updateBlockRedux(draggedBlock.customId, draggedBlock));
+      dispatch(updateBlockRedux(destinationBlock.customId, destinationBlock));
+      dispatch(updateBlockRedux(sourceBlock.customId, sourceBlock));
     }
 
     if (

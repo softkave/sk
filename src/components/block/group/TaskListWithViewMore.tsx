@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { IBlock } from "../../../models/block/block.js";
-import { sortBlocksByPriority } from "./sortBlocks.js";
-import TaskList, { ITaskListProps } from "./TaskList.jsx";
+import { IBlock } from "../../../models/block/block";
+import { sortBlocksByPriority } from "./sortBlocks";
+import TaskList, { ITaskListProps } from "./TaskList";
 
 export interface ITaskListWithViewMoreProps extends ITaskListProps {
   onViewMore: () => void;

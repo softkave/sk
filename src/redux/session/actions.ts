@@ -1,3 +1,4 @@
+import { IClearStateAction } from "../actions";
 import { LOGIN_USER, LOGOUT_USER, UPDATE_TOKEN } from "./constants";
 
 export interface ILoginUserAction {
@@ -47,4 +48,7 @@ export function updateTokenRedux(token: string): IUpdateTokenAction {
   };
 }
 
-export type ISessionAction = ILoginUserAction | ILogoutUserAction;
+export type ISessionAction =
+  | IClearStateAction
+  | ILoginUserAction
+  | ILogoutUserAction;

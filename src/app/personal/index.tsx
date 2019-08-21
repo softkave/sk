@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import Board from "../../components/block/group/Board";
+import BoardContainer from "../../components/block/group/BoardContainer";
 import { getBlockMethods, IBlockMethods } from "../../components/block/methods";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -43,7 +43,7 @@ class Personal extends React.Component<
   }
 
   public render() {
-    const { rootBlock, blockHandlers, user } = this.props;
+    const { rootBlock } = this.props;
     const { error, loading } = this.state;
 
     if (loading) {
@@ -53,13 +53,12 @@ class Personal extends React.Component<
     }
 
     return (
-      <Board
+      <BoardContainer
+        isFromRoot
         isUserRootBlock
+        blockID={rootBlock!.customId}
         block={rootBlock!}
-        blockHandlers={blockHandlers}
-        user={user}
         onBack={() => null}
-        collaborators={[user]}
       />
     );
   }
@@ -73,12 +72,11 @@ function mapDispatchToProps(dispatch) {
   return { dispatch };
 }
 
-function mergeProps({ state }, { dispatch }, ownProps) {
+function mergeProps({ state }, { dispatch }) {
   const user = getSignedInUser(state);
   const blockHandlers = getBlockMethods({
     state,
-    dispatch,
-    user
+    dispatch
   });
 
   const rootBlock = getBlock(state, user!.rootBlockId!);

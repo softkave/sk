@@ -28,6 +28,8 @@ export interface IBoardProps {
   onBack: () => void;
   isFromRoot?: boolean;
   isUserRootBlock?: boolean;
+  projects?: IBlock[];
+  groups?: IBlock[];
 
   // TODO: Define the right type
   collaborators: IUser[];
@@ -101,14 +103,15 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       user,
       onBack,
       isFromRoot,
-      isUserRootBlock
+      isUserRootBlock,
+      projects,
+      groups
     } = this.props;
     const {
       form,
       project,
       block,
       showCollaborators,
-      parent,
       boardContext,
       selectedCollaborators
     } = this.state;
@@ -124,26 +127,16 @@ class Board extends React.Component<IBoardProps, IBoardState> {
      * TODO: move fetching collaborators upward
      */
     if (showCollaborators) {
-      return (
-        <DataLoader
-          render={this.renderCollaborators}
-          isDataLoaded={this.isCollaboratorDataLoaded}
-          loadData={this.fetchCollaborationData}
-        />
-      );
+      return this.renderCollaborators();
     }
 
     if (project) {
       return (
         <BoardContainer
-          path={project.path}
-          collaborators={collaborators}
-          user={user}
           onBack={() => this.setCurrentProject(null)}
-          blockHandlers={blockHandlers}
-          parentBlock={rootBlock}
+          blockID={project.customId}
+          block={project}
           isFromRoot={actLikeRootBlock}
-          type={boardContext}
         />
       );
     }
@@ -156,9 +149,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             onSubmit={data => this.onSubmitData(data, "project")}
             onClose={() => this.toggleForm("project")}
             data={block}
-            existingProjects={
-              form.project && this.getExistingNames(parent!.project)
-            }
+            existingProjects={form.project && this.getExistingNames(projects)}
             submitLabel={block && "Update Project"}
           />
         )}
@@ -168,7 +159,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             onSubmit={data => this.onSubmitData(data, "group")}
             onClose={() => this.toggleForm("group")}
             data={block}
-            existingGroups={form.group && this.getExistingNames(parent!.group)}
+            existingGroups={form.group && this.getExistingNames(groups)}
             submitLabel={block && "Update Group"}
           />
         )}
@@ -240,7 +231,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               return (
                 <KanbanBoard
                   blockHandlers={blockHandlers}
-                  rootBlock={rootBlock}
+                  block={rootBlock}
                   onClickAddChild={this.toggleForm}
                   user={user}
                   collaborators={collaborators}
@@ -363,8 +354,12 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     return collaborators || [user];
   }
 
-  private getExistingNames(blocks = {}) {
-    return Object.keys(blocks).map(customId => blocks[customId].name);
+  private getExistingNames(blocks?: IBlock[]) {
+    if (Array.isArray(blocks)) {
+      return blocks.map(block => block.name);
+    }
+
+    return [];
   }
 
   private getChildrenTypes(block) {

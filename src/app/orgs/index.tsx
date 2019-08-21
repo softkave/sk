@@ -72,8 +72,7 @@ function mergeProps(state: IReduxState, dispatch: Dispatch) {
 
   const blockHandlers = getBlockMethods({
     state,
-    dispatch,
-    user
+    dispatch
   });
 
   const orgs = getBlocksAsArray(state, user!.orgs!);

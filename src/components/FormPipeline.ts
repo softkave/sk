@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 
 import { INetResult } from "../net/query";
-import { AnyFunction, AnyFunctionAsync, IAnyObject } from "../utils/types";
+import { IAnyObject } from "../utils/types";
 import { filterErrorByBaseName, stripFieldsFromError } from "./FOR";
 
 export interface IHandleErrorParams {
@@ -53,7 +53,6 @@ export interface IPipeline<
 export interface IQuietPipeline extends IPipeline<any, any, any, any> {}
 
 const returnFirstArg = (arg: any) => arg;
-const doNothing = () => undefined;
 
 const defaultProcessFunc = returnFirstArg;
 const defaultProcessResultFunc = returnFirstArg;

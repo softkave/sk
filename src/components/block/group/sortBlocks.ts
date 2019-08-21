@@ -1,14 +1,16 @@
 import { IBlock } from "../../../models/block/block";
+import { indexArray } from "../../../utils/object";
 
 // TODO: Define types
 export function sortBlocksByPosition(
-  blocks: { [key: string]: IBlock } = {},
+  blocks: IBlock[] = [],
   sortIds: string[] = []
 ) {
+  const indexedBlocks = indexArray(blocks, { path: "customId" });
   const sortedBlocks: IBlock[] = [];
   sortIds.forEach(id => {
-    if (blocks[id]) {
-      sortedBlocks.push(blocks[id]);
+    if (indexedBlocks[id]) {
+      sortedBlocks.push(indexedBlocks[id]);
     }
   });
 

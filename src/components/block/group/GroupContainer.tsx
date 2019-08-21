@@ -1,58 +1,16 @@
 import React from "react";
-import { connect, MapDispatchToProps } from "react-redux";
+import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
 import { IBlock } from "../../../models/block/block";
-import { getBlock, getBlocksAsArray } from "../../../redux/blocks/selectors";
+import { getBlock } from "../../../redux/blocks/selectors";
 import { getSignedInUser } from "../../../redux/session/selectors";
 import { IReduxState } from "../../../redux/store";
-import { getReduxConnectors } from "../../../utils/redux";
 import { getBlockMethods } from "../methods";
-import DataLoader from "./DataLoader";
-import Group, { IGroupProps } from "./Group";
-
-interface IInternalGroupContainerProps extends IGroupProps {}
-
-class InternalGroupContainer extends React.Component<
-  IInternalGroupContainerProps
-> {
-  public isDataLoaded() {
-    const { context, projects, tasks } = this.props;
-
-    if (context === "project") {
-      return Array.isArray(projects);
-    } else if (context === "task") {
-      return Array.isArray(tasks);
-    }
-
-    return false;
-  }
-
-  public renderGroup() {
-    return <Group {...this.props} />;
-  }
-
-  public render() {
-    const { group, blockHandlers } = this.props;
-
-    return (
-      <DataLoader
-        isDataLoaded={this.isDataLoaded}
-        areDataSame={(group1: IBlock, group2: IBlock) =>
-          group1.customId === group2.customId
-        }
-        loadData={() =>
-          blockHandlers.getBlockChildren({
-            block: group,
-            updateBlock: blockHandlers.onUpdate
-          })
-        }
-        render={this.renderGroup}
-        data={group}
-      />
-    );
-  }
-}
+import BlockInternalDataLoader, {
+  IBlockInternalDataLoaderProps
+} from "./BlockInternalDataLoader";
+import Group from "./Group";
 
 export interface IGroupContainerProps {
   groupID?: string;
@@ -66,33 +24,53 @@ export interface IGroupContainerProps {
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;
   disabled?: boolean;
+  withViewMore?: boolean;
 }
 
-function mapStateToProps(state: IReduxState, ownProps: IGroupContainerProps) {
+function mapStateToProps(state: IReduxState) {
   return state;
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: IGroupContainerProps
-) {
+function mapDispatchToProps(dispatch: Dispatch) {
   return dispatch;
 }
 
-function mergeProps(state, dispatch, ownProps: IGroupContainerProps) {
+function mergeProps(
+  state,
+  dispatch,
+  ownProps: IGroupContainerProps
+): IBlockInternalDataLoaderProps {
   if (!ownProps.group && !ownProps.groupID) {
     throw new Error("group or groupID required");
   }
 
   const group = ownProps.group || getBlock(state, ownProps.groupID!);
+  const blockHandlers = getBlockMethods({ state, dispatch });
+  const user = getSignedInUser(state);
 
   return {
-    ...ownProps,
-    group,
-    user: getSignedInUser(state)!,
-    blockHandlers: getBlockMethods({ state, dispatch }),
-    tasks: getBlocksAsArray(state, group.tasks),
-    projects: getBlocksAsArray(state, group.projects)
+    block: group,
+    render: ({ blockChildren }) => {
+      return (
+        <Group
+          withViewMore={ownProps.withViewMore}
+          group={group}
+          blockHandlers={blockHandlers}
+          draggableID={ownProps.draggableID}
+          index={ownProps.index}
+          context={ownProps.context}
+          selectedCollaborators={ownProps.selectedCollaborators}
+          user={user!}
+          tasks={blockChildren.tasks!}
+          projects={blockChildren.projects!}
+          toggleForm={ownProps.toggleForm}
+          onClickAddChild={ownProps.onClickAddChild}
+          setCurrentProject={ownProps.setCurrentProject}
+          onViewMore={ownProps.onViewMore}
+          disabled={ownProps.disabled}
+        />
+      );
+    }
   };
 }
 
@@ -100,4 +78,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps as any,
   mergeProps
-)(InternalGroupContainer);
+)(BlockInternalDataLoader);

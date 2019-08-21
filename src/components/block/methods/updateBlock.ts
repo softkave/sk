@@ -22,7 +22,7 @@ const updateBlockPipeline: IPipeline<
   INetResult,
   INetResult
 > = {
-  process({ params: params }) {
+  process({ params }) {
     const { data } = params;
     data.expectedEndAt = convertDateToTimestamp(data.expectedEndAt);
     return { ...params, data };
@@ -38,9 +38,9 @@ const updateBlockPipeline: IPipeline<
     stripBaseNames: ["data"]
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const { block, data } = params;
-    dispatch(updateBlockRedux());
+    dispatch(updateBlockRedux(block.customId, data));
   }
 };
 

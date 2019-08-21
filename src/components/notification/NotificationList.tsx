@@ -1,16 +1,16 @@
 import { Col, Row } from "antd";
-import React from "react";
-
 import throttle from "lodash/throttle";
-import { getWindowWidth } from "../../utils/window";
-import NotificationBody from "./NotificationBody.jsx";
+import React from "react";
 
 import {
   OnClickNotification,
   OnRespondToNotification
 } from "../../app/notification";
 import { INotification } from "../../models/notification/notification";
+import { IUser } from "../../models/user/user";
+import { getWindowWidth } from "../../utils/window";
 import "./notification-list.css";
+import NotificationBody from "./NotificationBody";
 
 export interface INotificationListItemProps {
   // TODO: Define type
@@ -41,10 +41,10 @@ const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
 };
 
 export interface INotificationListProps {
-  // TODO: Define type
-  notifications: { [key: string]: any };
+  notifications: INotification[];
   onClickNotification: OnClickNotification;
   onRespond: OnRespondToNotification;
+  user: IUser;
 }
 
 interface INotificationListState {
@@ -74,11 +74,17 @@ class NotificationList extends React.Component<
     window.removeEventListener("resize", this.setRenderType);
   }
 
+  public findNotification(id: string) {
+    return this.props.notifications.find(
+      nextNotification => nextNotification.customId === id
+    )!;
+  }
+
   public onClickNotication = id => {
     if (this.state.currentNotification !== id) {
       this.setState({ currentNotification: id });
       this.props.onClickNotification({
-        notification: this.props.notifications[id]
+        notification: this.findNotification(id)
       });
     }
   };
@@ -95,13 +101,14 @@ class NotificationList extends React.Component<
   }
 
   public renderCurrentNotification() {
-    const { notifications, onRespond } = this.props;
+    const { onRespond, user } = this.props;
     const { currentNotification } = this.state;
 
     return (
       <NotificationBody
-        notification={notifications[currentNotification!]}
+        notification={this.findNotification(currentNotification!)}
         onRespond={onRespond}
+        user={user}
       />
     );
   }
@@ -111,11 +118,10 @@ class NotificationList extends React.Component<
     const { currentNotification } = this.state;
     return (
       <div className="notifications-list-list">
-        {Object.keys(notifications).map(notificationId => {
-          const notification = notifications[notificationId];
+        {notifications.map(notification => {
           return (
             <NotificationListItem
-              key={notificationId}
+              key={notification.customId}
               notification={notification}
               onClick={() => this.onClickNotication(notification.customId)}
               isSelected={

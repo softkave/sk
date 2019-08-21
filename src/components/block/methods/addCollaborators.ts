@@ -56,12 +56,16 @@ const addCollaboratorPipeline: IPipeline<
     });
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const { block, requests } = params;
     const requestIds = requests.map(request => request.customId);
 
-    dispatch(bulkAddNotificationsRedux());
-    dispatch(updateBlockRedux());
+    dispatch(bulkAddNotificationsRedux(requests));
+    dispatch(
+      updateBlockRedux(block.customId, {
+        collaborationRequests: block.collaborationRequests.concat(requestIds)
+      })
+    );
   }
 };
 

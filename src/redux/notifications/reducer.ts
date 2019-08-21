@@ -1,4 +1,5 @@
 import { INotification } from "../../models/notification/notification";
+import { CLEAR_STATE } from "../constants";
 import {
   bulkAddReferenceCountedResources,
   bulkDeleteReferenceCountedResources,
@@ -48,6 +49,10 @@ export function notificationsReducer(
 
     case BULK_DELETE_NOTIFICATIONS: {
       return bulkDeleteReferenceCountedResources(state, action.payload);
+    }
+
+    case CLEAR_STATE: {
+      return {};
     }
 
     default:

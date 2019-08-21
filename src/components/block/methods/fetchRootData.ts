@@ -17,19 +17,9 @@ const fetchRootDataPipeline: IPipeline<
     return await netInterface("block.getRoleBlocks");
   },
 
-  redux({ state, dispatch, result }) {
+  redux({ dispatch, result }) {
     const { blocks } = result;
-    let rootBlock: any = null;
-    const orgs = {};
-    blocks.forEach(blk => {
-      if (blk.type === "root") {
-        rootBlock = blk;
-      } else if (blk.type === "org") {
-        orgs[blk.customId] = blk;
-      }
-    });
-
-    dispatch(bulkAddBlocksRedux());
+    dispatch(bulkAddBlocksRedux(blocks));
   }
 };
 

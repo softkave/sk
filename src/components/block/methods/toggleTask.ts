@@ -22,7 +22,7 @@ const toggleTaskPipeline: IPipeline<
     return await netInterface("block.toggleTask", { block, data: true });
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const { block, user } = params;
     const collaboratorIndex = block.taskCollaborators.findIndex(
       c => c.userId === user.customId
@@ -35,7 +35,7 @@ const toggleTaskPipeline: IPipeline<
       collaborator.completedAt ? null : Date.now()
     );
 
-    dispatch(updateBlockRedux());
+    dispatch(updateBlockRedux(block.customId, updatedBlock));
   }
 };
 

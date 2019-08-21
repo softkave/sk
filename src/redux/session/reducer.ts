@@ -1,3 +1,4 @@
+import { CLEAR_STATE } from "../constants";
 import { ISessionAction } from "./actions";
 import { LOGIN_USER, LOGOUT_USER } from "./constants";
 
@@ -18,6 +19,7 @@ export function sessionReducer(
       };
     }
 
+    case CLEAR_STATE:
     case LOGOUT_USER: {
       return {};
     }

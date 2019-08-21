@@ -1,15 +1,14 @@
 import styled from "@emotion/styled";
-import { Button } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
-import { IBlock } from "../../../models/block/block.js";
+import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
-import { IBlockMethods } from "../methods.js";
+import { IBlockMethods } from "../methods";
 import GroupHeader from "./GroupHeader";
-import ProjectList from "./ProjectList.jsx";
-import TaskList from "./TaskList.jsx";
-import TaskListWithViewMore from "./TaskListWithViewMore.jsx";
+import ProjectList from "./ProjectList";
+import TaskList from "./TaskList";
+import TaskListWithViewMore from "./TaskListWithViewMore";
 
 export interface IGroupProps {
   group: IBlock;

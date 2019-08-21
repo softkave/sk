@@ -1,4 +1,5 @@
 import { IBlock } from "../../models/block/block";
+import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
@@ -104,6 +105,7 @@ export function bulkDeleteBlocksRedux(
 }
 
 export type IBlocksAction =
+  | IClearStateAction
   | IAddBlockAction
   | IUpdateBlockAction
   | IDeleteBlockAction

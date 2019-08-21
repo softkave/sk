@@ -53,16 +53,17 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
   }
 
   public render() {
-    const { orgs, blockHandlers, user } = this.props;
+    const { orgs } = this.props;
     const { currentOrg, showNewOrgForm } = this.state;
 
     if (currentOrg) {
+      const currentBlock = this.getCurrentBlock();
+
       return (
         <BoardContainer
-          block={this.getCurrentBlock()}
+          blockID={currentBlock!.customId}
+          block={currentBlock}
           onBack={() => this.setCurrentOrg(null)}
-          blockHandlers={blockHandlers}
-          user={user}
         />
       );
     }
