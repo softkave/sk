@@ -35,7 +35,7 @@ class OrgsContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    if (!this.props.areOrgsLoaded) {
+    if (!this.props.areOrgsLoaded && !this.props.user.loadingRootData) {
       try {
         this.setState({ loading: true });
         await this.props.blockHandlers.fetchRootData();
@@ -69,14 +69,13 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps(state: IReduxState, dispatch: Dispatch) {
   const user = getSignedInUser(state);
-
   const blockHandlers = getBlockMethods({
     state,
     dispatch
   });
 
   const orgs = getBlocksAsArray(state, user!.orgs!);
-  const areOrgsLoaded = orgs.length !== user!.orgs!.length;
+  const areOrgsLoaded = orgs.length === user!.orgs.length;
 
   return {
     blockHandlers,

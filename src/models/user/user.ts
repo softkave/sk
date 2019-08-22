@@ -19,4 +19,8 @@ export interface IUser {
   orgs: string[];
   color: string;
   roles: IUserRole[];
+
+  notifications?: string[];
+  loadingNotifications?: boolean;
+  loadingRootData?: boolean;
 }

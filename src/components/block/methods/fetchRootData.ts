@@ -1,6 +1,8 @@
 import { IBlock } from "../../../models/block/block";
 import netInterface from "../../../net";
 import { bulkAddBlocksRedux } from "../../../redux/blocks/actions";
+import { getSignedInUser } from "../../../redux/session/selectors";
+import { updateUserRedux } from "../../../redux/users/actions";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
 
 interface IFetchRootDataNetResult {
@@ -13,13 +15,17 @@ const fetchRootDataPipeline: IPipeline<
   IFetchRootDataNetResult,
   IFetchRootDataNetResult
 > = {
-  async net() {
+  async net({ state, dispatch }) {
+    const user = getSignedInUser(state);
+    dispatch(updateUserRedux(user!.customId, { loadingRootData: true }));
     return await netInterface("block.getRoleBlocks");
   },
 
-  redux({ dispatch, result }) {
+  redux({ dispatch, result, state }) {
     const { blocks } = result;
+    const user = getSignedInUser(state);
     dispatch(bulkAddBlocksRedux(blocks));
+    dispatch(updateUserRedux(user!.customId, { loadingRootData: false }));
   }
 };
 

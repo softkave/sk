@@ -9,11 +9,11 @@ import {
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
-import "./notification-list.css";
 import NotificationBody from "./NotificationBody";
 
+import "./notification-list.css";
+
 export interface INotificationListItemProps {
-  // TODO: Define type
   notification: INotification;
   isSelected: boolean;
   onClick: () => void;
@@ -116,6 +116,7 @@ class NotificationList extends React.Component<
   public renderNotifications() {
     const { notifications } = this.props;
     const { currentNotification } = this.state;
+
     return (
       <div className="notifications-list-list">
         {notifications.map(notification => {

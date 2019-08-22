@@ -1,10 +1,10 @@
 import { Dropdown, Menu } from "antd";
 import React from "react";
 
-import Priority, { PriorityValues } from "./Priority";
+import Priority, { TaskPriority } from "./Priority";
 
 export interface IEditPriorityProps {
-  value: PriorityValues;
+  value: TaskPriority;
   onChange: (value: string) => void;
 }
 

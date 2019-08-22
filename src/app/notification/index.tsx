@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
+import { Dispatch } from "redux";
 import { makePipeline, PipelineEntryFunc } from "../../components/FormPipeline";
 import { IPipeline } from "../../components/FormPipeline.js";
 import NotificationList from "../../components/notification/NotificationList";
@@ -14,7 +15,9 @@ import {
   bulkAddNotificationsRedux,
   updateNotificationRedux
 } from "../../redux/notifications/actions";
+import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { getSignedInUser } from "../../redux/session/selectors";
+import { IReduxState } from "../../redux/store";
 import { updateUserRedux } from "../../redux/users/actions";
 
 // TODO: Define notification's types
@@ -39,7 +42,7 @@ class NotificationsContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    if (!this.props.notifications) {
+    if (!this.props.notifications && !this.props.user.loadingNotifications) {
       try {
         await this.props.fetchNotifications();
       } catch (error) {
@@ -55,7 +58,7 @@ class NotificationsContainer extends React.Component<
     if (!notifications) {
       return "Loading";
     } else if (error) {
-      return error.message || "An error occurred";
+      return error.message ? error.message : "An error occurred";
     }
 
     return (
@@ -120,7 +123,7 @@ const clickNotificationMethods: IPipeline<
 
 // TODO: Define notification's type
 interface IRespondToNotificationParams {
-  notification: any;
+  notification: INotification;
   response: string;
   user: IUser;
 }
@@ -157,10 +160,7 @@ const respondToNotificationMethods: IPipeline<
 
   redux({ dispatch, params, result }) {
     const { notification, response, user } = params;
-    const { block } = result;
-    const statusHistory = notification.statusHistory;
-
-    statusHistory.push({
+    const statusHistory = notification.statusHistory.concat({
       status: response,
       date: Date.now()
     });
@@ -169,9 +169,13 @@ const respondToNotificationMethods: IPipeline<
 
     dispatch(updateNotificationRedux(notification.customId, update));
 
-    if (response === "accepted" && block) {
-      dispatch(addBlockRedux(block));
-      dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
+    if (response === "accepted") {
+      const { block } = result;
+
+      if (block) {
+        dispatch(addBlockRedux(block));
+        dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
+      }
     }
   }
 };
@@ -186,14 +190,24 @@ const fetchNotificationsMethods: IPipeline<
   null,
   IFetchNotificationsNetResult
 > = {
-  async net() {
+  async net({ state, dispatch }) {
+    const user = getSignedInUser(state);
+    dispatch(updateUserRedux(user!.customId, { loadingNotifications: true }));
     return await netInterface("user.getCollaborationRequests");
   },
 
-  redux({ dispatch, result }) {
+  redux({ dispatch, result, state }) {
     const { requests } = result;
+    const ids = requests.map(request => request.customId);
+    const user = getSignedInUser(state);
 
     dispatch(bulkAddNotificationsRedux(requests));
+    dispatch(
+      updateUserRedux(user!.customId, {
+        notifications: ids,
+        loadingNotifications: false
+      })
+    );
   }
 };
 
@@ -225,12 +239,21 @@ function mapDispatchToProps(dispatch) {
   return dispatch;
 }
 
-function mergeProps(state, dispatch): INotificationsContainerProps {
+function mergeProps(
+  state: IReduxState,
+  dispatch: Dispatch
+): INotificationsContainerProps {
   const user = getSignedInUser(state);
+  const notifications = Array.isArray(user!.notifications)
+    ? getNotificationsAsArray(state, user!.notifications)
+    : undefined;
+
+  const handlers = getNotificationMethods({ state, dispatch, user });
+
   return {
     user: user!,
-    notifications: state.notifications,
-    ...getNotificationMethods({ state, dispatch, user: state.user.user })
+    notifications,
+    ...handlers
   };
 }
 

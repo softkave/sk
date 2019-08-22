@@ -17,7 +17,7 @@ export interface ITaskProps {
 
 interface ITaskState {
   toggleLoading: boolean;
-  toggleLoadingError?: Error;
+  toggleLoadingError?: string;
 }
 
 class Task extends React.PureComponent<ITaskProps, ITaskState> {
@@ -26,7 +26,7 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
     toggleLoadingError: undefined
   };
 
-  public getCollaborator() {
+  public getUserTaskCollaboratorData() {
     const { task, user } = this.props;
     if (task.taskCollaborators) {
       return task.taskCollaborators.find(
@@ -38,13 +38,16 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
   public toggleChecked = async () => {
     try {
       const { task, blockHandlers, user } = this.props;
+
       this.setState({ toggleLoading: true });
       await blockHandlers.onToggle({ user, block: task });
       this.setState({ toggleLoading: false });
     } catch (error) {
       this.setState({
         toggleLoading: false,
-        toggleLoadingError: error
+
+        // TODO: Use server returned error message
+        toggleLoadingError: "An error occurred"
       });
     }
   };
@@ -52,7 +55,7 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
   public render() {
     const { task, blockHandlers, onEdit } = this.props;
     const { toggleLoading, toggleLoadingError } = this.state;
-    const collaborator = this.getCollaborator();
+    const collaborator = this.getUserTaskCollaboratorData();
 
     return (
       <div className="sk-minitask">
@@ -71,15 +74,12 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
                 title={
                   <React.Fragment>
                     <p style={{ color: "red" }}>
-                      {toggleLoadingError
-                        ? ((toggleLoadingError as unknown) as Error).message
-                        : "An error occurred"}
+                      {toggleLoadingError} <br /> Please reload the page.
                     </p>
-                    <p>Please reload the page</p>
                   </React.Fragment>
                 }
               >
-                <Icon type="close" />
+                <Button icon="close" type="danger" />
               </Tooltip>
             )}
           </Col>

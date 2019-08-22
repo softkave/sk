@@ -4,15 +4,17 @@ import moment from "moment";
 import React from "react";
 import * as yup from "yup";
 
+import { IBlock } from "../../../models/block/block";
 import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
+import { IUser } from "../../../models/user/user";
 import { indexArray } from "../../../utils/object";
 import CollaboratorThumbnail from "../../collaborator/Thumnail";
 import FormError from "../../FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 import EditPriority from "./EditPriority";
-import { PriorityValues } from "./Priority";
+import { TaskPriority } from "./Priority";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 
 const validationSchema = yup.object().shape({
@@ -42,9 +44,9 @@ export interface IEditTaskProps {
   data: IEditTaskValues;
   submitLabel: string;
   defaultAssignedTo: [];
-  user: any;
-  collaborators: any;
-  onSubmit: any;
+  user: IUser;
+  collaborators: IUser[];
+  onSubmit: (data: IBlock) => Promise<void>;
 }
 
 class EditTask extends React.Component<IEditTaskProps> {
@@ -55,7 +57,7 @@ class EditTask extends React.Component<IEditTaskProps> {
   };
 
   // TODO: Input appropriate types
-  private indexedCollaborators: { [key: string]: any };
+  private indexedCollaborators: { [key: string]: IUser };
 
   constructor(props) {
     super(props);
@@ -79,7 +81,7 @@ class EditTask extends React.Component<IEditTaskProps> {
       <Formik
         initialValues={{
           ...data,
-          taskCollaborators: data.taskCollaborators || defaultAssignedTo
+          taskCollaborators: data.taskCollaborators || defaultAssignedTo || []
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setErrors }) => {
@@ -100,9 +102,8 @@ class EditTask extends React.Component<IEditTaskProps> {
 
           return (
             <form onSubmit={handleSubmit}>
-              {/* TODO: Maybe rename to title */}
               {/* <Form.Item
-                label="Organization Name"
+                label="Task Name"
                 help={<FormError>{errors.name}</FormError>}
               >
                 <Input
@@ -134,7 +135,7 @@ class EditTask extends React.Component<IEditTaskProps> {
               <Form.Item label="Priority">
                 <EditPriority
                   onChange={(value: string) => setFieldValue("priority", value)}
-                  value={values.priority as PriorityValues}
+                  value={values.priority as TaskPriority}
                 />
               </Form.Item>
               <Form.Item label="Assigned To">
@@ -226,7 +227,10 @@ class EditTask extends React.Component<IEditTaskProps> {
     );
   }
 
-  private assignCollaborator = (collaborator, taskCollaborators) => {
+  private assignCollaborator = (
+    collaborator: IUser,
+    taskCollaborators: ITaskCollaborator[]
+  ): ITaskCollaborator[] => {
     const { user } = this.props;
     const collaboratorExists = !!taskCollaborators.find(next => {
       return collaborator.customId === next.userId;
@@ -238,7 +242,6 @@ class EditTask extends React.Component<IEditTaskProps> {
         {
           userId: collaborator.customId,
           assignedAt: Date.now(),
-          completedAt: 0,
           assignedBy: user.customId
         }
       ];
@@ -247,9 +250,12 @@ class EditTask extends React.Component<IEditTaskProps> {
     return taskCollaborators;
   };
 
-  private unassignCollaborator = (taskC, taskCollaborators) => {
+  private unassignCollaborator = (
+    collaboratorData: ITaskCollaborator,
+    taskCollaborators: ITaskCollaborator[]
+  ) => {
     const index = taskCollaborators.findIndex(next => {
-      return next.userId === taskC.userId;
+      return next.userId === collaboratorData.userId;
     });
 
     if (index !== -1) {

@@ -1,4 +1,6 @@
+import moment from "moment";
 import randomColor from "randomcolor";
+
 import { IBlock } from "../../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
@@ -8,12 +10,6 @@ import { addBlockRedux, updateBlockRedux } from "../../../redux/blocks/actions";
 import { updateUserRedux } from "../../../redux/users/actions";
 import { newId } from "../../../utils/utils";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
-
-function convertDateToTimestamp(date) {
-  if (date && date.valueOf) {
-    return date.valueOf();
-  }
-}
 
 export interface IAddBlockPipelineParams {
   block: IBlock;
@@ -34,22 +30,23 @@ const addBlockPipeline: IPipeline<
     block.createdBy = user.customId;
     block.customId = newId();
     block.color = randomColor();
-    block.expectedEndAt = convertDateToTimestamp(block.expectedEndAt);
+    block.expectedEndAt = moment(block.expectedEndAt).valueOf();
     block.groupTaskContext = [];
     block.groupProjectContext = [];
 
     const childrenTypes = getBlockValidChildrenTypes(block);
 
     if (parent) {
-      block.parents = [];
+      const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
+      block.parents = [...ancestors, parent.customId];
 
-      if (parent.parents) {
-        block.parents = block.parents.concat(parent.parents);
+      const pluralType = `${block.type}s`;
+
+      if (!parent[pluralType]) {
+        parent[pluralType] = [];
       }
 
-      const type = `${block.type}s`;
-      block.parents.push(parent.customId);
-      parent[type].push(block.customId);
+      parent[pluralType].push(block.customId);
 
       if (block.type === "group") {
         parent.groupTaskContext.push(block.customId);
@@ -67,9 +64,8 @@ const addBlockPipeline: IPipeline<
 
     if (childrenTypes.length > 0) {
       childrenTypes.forEach(type => {
-        const pluralizedType = `${type}s`;
-        block[type] = {};
-        block[pluralizedType] = [];
+        const pluralType = `${type}s`;
+        block[pluralType] = [];
       });
     }
 
@@ -81,25 +77,22 @@ const addBlockPipeline: IPipeline<
     return await netInterface("block.addBlock", { block });
   },
 
+  // TODO: Instead of stripping basenames, let the forms use the same data structure as the sent data in net
+  // TODO: Let form containers handle data loading and submission + redux
   handleError: { stripBaseNames: ["block"] },
 
   redux({ dispatch, params }) {
     const { block, parent, user } = params;
 
+    dispatch(addBlockRedux(block));
+
     if (parent) {
-      const blockTypePropName = `${block.type}s`;
-      dispatch(
-        updateBlockRedux(parent.customId, {
-          [blockTypePropName]: parent[blockTypePropName].concat(block.customId)
-        })
-      );
+      dispatch(updateBlockRedux(parent.customId, parent));
     }
 
     if (block.type === "org") {
       dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
     }
-
-    dispatch(addBlockRedux(block));
   }
 };
 

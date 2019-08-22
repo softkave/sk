@@ -33,19 +33,17 @@ export interface IBlockInternalDataLoaderProps {
   render: (renderParams: {
     block: IBlock;
     blockChildren: IBlockChildren;
-    collaborators?: IUser[];
-    collaborationRequests?: INotification[];
+    collaborators: IUser[];
+    collaborationRequests: INotification[];
   }) => React.ReactNode;
 }
 
-type BlockInternalDataTypes =
+type BlockInternalDataToLoad =
   | "collaborators"
   | "collaborationRequests"
   | "children";
 
-function getDefaultBlockInternalDataToLoad(
-  block: IBlock
-): BlockInternalDataTypes[] {
+function getBlockInternalDataToLoad(block: IBlock): BlockInternalDataToLoad[] {
   switch (block.type) {
     case "root":
     case "org": {
@@ -71,7 +69,7 @@ function getDefaultBlockInternalDataToLoad(
 
 async function loadBlockInternalDataFromNet(
   block: IBlock,
-  dataToLoad: BlockInternalDataTypes[],
+  dataToLoad: BlockInternalDataToLoad[],
   blockHandlers: IBlockMethods
 ) {
   const promises: Array<IPromise<any>> = [];
@@ -115,16 +113,16 @@ async function loadBlockInternalDataFromNet(
   return Promise.all(promises);
 }
 
-function pluralizeBlockChildrenTypes(blockChildrenTypes: string[]) {
+function pluralize(blockChildrenTypes: string[]) {
   return blockChildrenTypes.map(type => `${type}s`);
 }
 
 function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockChildren) {
-  const blockChildrenTypes = getBlockValidChildrenTypes(block);
-  const blockTypesToPropName = pluralizeBlockChildrenTypes(blockChildrenTypes);
+  const childrenTypes = getBlockValidChildrenTypes(block);
+  const pluralizedBlockTypes = pluralize(childrenTypes);
 
   return (
-    blockTypesToPropName.findIndex(propName => {
+    pluralizedBlockTypes.findIndex(propName => {
       if (
         Array.isArray(block[propName]) &&
         Array.isArray(blockChildren[propName]) &&
@@ -167,21 +165,19 @@ function areBlockCollaborationRequestsLoaded(
 }
 
 function loadBlockChildrenFromRedux(block: IBlock, state: IReduxState) {
-  const blockChildrenByPluralizedType: IBlockChildren = {};
-  const blockChildrenTypes = getBlockValidChildrenTypes(block);
-  const pluralizedChildrenTypes = pluralizeBlockChildrenTypes(
-    blockChildrenTypes
-  );
+  const childrenByPluralizedType: IBlockChildren = {};
+  const childrenTypes = getBlockValidChildrenTypes(block);
+  const pluralizedTypes = pluralize(childrenTypes);
 
-  pluralizedChildrenTypes.forEach(pluralType => {
-    const ids = block[pluralType];
+  pluralizedTypes.forEach(typePropName => {
+    const ids = block[typePropName];
 
     if (Array.isArray(ids)) {
-      blockChildrenByPluralizedType[pluralType] = getBlocksAsArray(state, ids);
+      childrenByPluralizedType[typePropName] = getBlocksAsArray(state, ids);
     }
   });
 
-  return blockChildrenByPluralizedType;
+  return childrenByPluralizedType;
 }
 
 function loadBlockCollaboratorsFromRedux(block: IBlock, state: IReduxState) {
@@ -220,27 +216,27 @@ function mergeProps(
     collaborationRequests
   );
 
-  const blockInternalDataToLoad = getDefaultBlockInternalDataToLoad(
-    block
-  ).filter(dataName => {
-    switch (dataName) {
-      case "children": {
-        return childrenLoaded;
-      }
+  const blockInternalDataToLoad = getBlockInternalDataToLoad(block).filter(
+    dataName => {
+      switch (dataName) {
+        case "children": {
+          return childrenLoaded;
+        }
 
-      case "collaborationRequests": {
-        return requestsLoaded;
-      }
+        case "collaborationRequests": {
+          return requestsLoaded;
+        }
 
-      case "collaborators": {
-        return collaboratorsLoaded;
-      }
+        case "collaborators": {
+          return collaboratorsLoaded;
+        }
 
-      default: {
-        throw new Error(`Unknown internal block data name ${dataName}`);
+        default: {
+          throw new Error(`Unknown internal block data name ${dataName}`);
+        }
       }
     }
-  });
+  );
 
   return {
     data: block,
@@ -257,6 +253,7 @@ function mergeProps(
           loadingCollaborationRequests: true
         })
       );
+
       await loadBlockInternalDataFromNet(
         block,
         blockInternalDataToLoad,
@@ -275,8 +272,8 @@ function mergeProps(
       ownProps.render({
         block,
         blockChildren,
-        collaborators,
-        collaborationRequests
+        collaborators: collaborators || [],
+        collaborationRequests: collaborationRequests || []
       })
   };
 }

@@ -40,7 +40,7 @@ function mergeProps(
 
   return {
     block,
-    render: ({ collaborators, blockChildren }) => {
+    render: ({ collaborators, blockChildren, collaborationRequests }) => {
       return (
         <Board
           block={block}
@@ -52,6 +52,7 @@ function mergeProps(
           collaborators={collaborators!}
           projects={blockChildren.projects}
           groups={blockChildren.groups}
+          collaborationRequests={collaborationRequests!}
         />
       );
     }

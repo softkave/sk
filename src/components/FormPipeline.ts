@@ -1,12 +1,14 @@
 import { Dispatch } from "redux";
 
 import { INetResult } from "../net/query";
+import { IReduxState } from "../redux/store";
 import { IAnyObject } from "../utils/types";
 import { filterErrorByBaseName, stripFieldsFromError } from "./FOR";
 
 export interface IHandleErrorParams {
   filterBaseNames?: string[];
   stripBaseNames?: string[];
+  replaceBaseNames?: Array<{ from: string; to: string }>;
 }
 
 // OperatingDataType
@@ -20,7 +22,7 @@ interface IPipelineOperatingData<ParamType = any, ResultType = any> {
   result: ResultType;
 
   // TODO: Define state's type
-  state: any;
+  state: IReduxState;
   dispatch: Dispatch;
 }
 
@@ -76,6 +78,9 @@ const handleErrorWithParams = (
         result.errors,
         handleErrorParams.stripBaseNames
       );
+    }
+
+    if (handleErrorParams.replaceBaseNames) {
     }
 
     throw result.errors;

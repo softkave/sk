@@ -3,14 +3,17 @@ import { connect } from "react-redux";
 import netInterface from "../net";
 
 import { clearState } from "../redux/actions";
+import { getSignedInUser } from "../redux/session/selectors";
+import { IReduxState } from "../redux/store";
 import App from "./App";
 
-function mapStateToProps(state, props) {
-  const user = state.user && state.user.token ? state.user : {};
+function mapStateToProps(state: IReduxState, props) {
+  const user = getSignedInUser(state);
+
   return {
     ...props,
-    user: user.user,
-    loginValid: !!user.token
+    user,
+    loginValid: !!user
   };
 }
 

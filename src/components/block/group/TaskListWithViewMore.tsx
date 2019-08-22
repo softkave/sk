@@ -5,6 +5,14 @@ import { IBlock } from "../../../models/block/block";
 import { sortBlocksByPriority } from "./sortBlocks";
 import TaskList, { ITaskListProps } from "./TaskList";
 
+interface IRenderInfo {
+  sortedTasks: IBlock[];
+  tasksToRender: IBlock[];
+  renderNum: number;
+  showViewMore: boolean;
+  viewMoreCount: number;
+}
+
 export interface ITaskListWithViewMoreProps extends ITaskListProps {
   onViewMore: () => void;
 }
@@ -19,15 +27,14 @@ class TaskListWithViewMore extends React.PureComponent<
     );
   }
 
-  // TODO: Rename function
-  public getTaskStat(tasks: IBlock[]) {
-    const showAll = this.isAnyCollaboratorSelected();
+  public getRenderInfo(tasks: IBlock[]): IRenderInfo {
+    const showAllTasks = this.isAnyCollaboratorSelected();
     const sortedTasks = sortBlocksByPriority(tasks);
 
-    if (showAll) {
+    if (showAllTasks) {
       return {
         sortedTasks,
-        renderTasks: sortedTasks,
+        tasksToRender: sortedTasks,
         renderNum: tasks.length,
         showViewMore: false,
         viewMoreCount: 0
@@ -35,28 +42,33 @@ class TaskListWithViewMore extends React.PureComponent<
     }
 
     // TODO: Add sorting by expiration date
+    let veryImportantTasksNum = 0;
 
-    let veryImportantNum = 0;
-
+    // Very important tasks will always be displayed
     for (const task of sortedTasks) {
       // TODO: If perf is slow, consider mapping to boolean and comparing that instead
       if (task.priority === "very important") {
-        veryImportantNum += 1;
+        veryImportantTasksNum += 1;
       } else {
+        /**
+         * Optimization:
+         * Since all the tasks are sorted by priority,
+         * we can break when we encounter a task that is not very important
+         */
         break;
       }
     }
 
-    const defaultMaxRenderedTasks = tasks.length < 5 ? tasks.length : 5;
+    const maxTasksToRender = tasks.length < 5 ? tasks.length : 5;
     const renderNum =
-      veryImportantNum < defaultMaxRenderedTasks
-        ? defaultMaxRenderedTasks
-        : veryImportantNum;
+      veryImportantTasksNum < maxTasksToRender
+        ? maxTasksToRender
+        : veryImportantTasksNum;
 
     return {
       renderNum,
       sortedTasks,
-      renderTasks: sortedTasks.slice(0, renderNum),
+      tasksToRender: sortedTasks.slice(0, renderNum),
       showViewMore: !(renderNum === tasks.length),
       viewMoreCount: tasks.length - renderNum
     };
@@ -72,7 +84,7 @@ class TaskListWithViewMore extends React.PureComponent<
       parent,
       toggleForm
     } = this.props;
-    const stat = this.getTaskStat(tasks);
+    const stat = this.getRenderInfo(tasks);
 
     return (
       <React.Fragment>
@@ -80,7 +92,7 @@ class TaskListWithViewMore extends React.PureComponent<
           blockHandlers={blockHandlers}
           selectedCollaborators={selectedCollaborators}
           user={user}
-          tasks={stat.renderTasks}
+          tasks={stat.tasksToRender}
           parent={parent}
           toggleForm={toggleForm}
         />

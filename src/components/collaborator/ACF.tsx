@@ -1,5 +1,6 @@
 import { Button, Divider } from "antd";
 import React from "react";
+
 import ACFItem, { IACFItemError, IACFItemValue } from "./ACFItem";
 
 export interface IACFProps {
@@ -12,20 +13,24 @@ export interface IACFProps {
 // TODO: Add requests count and max to let the user know
 
 export default class ACF extends React.PureComponent<IACFProps> {
+  public static defaultProps = {
+    errors: []
+  };
+
   public onUpdate = (index, data) => {
     const { onChange, value } = this.props;
     const request = value[index];
     const updatedRequest = { ...request, ...data };
-    const updatedValue = [...value];
-    updatedValue[index] = updatedRequest;
-    onChange(updatedValue);
+    const valueClone = [...value];
+    valueClone[index] = updatedRequest;
+    onChange(valueClone);
   };
 
   public onDelete = index => {
     const { onChange, value } = this.props;
-    const updated = [...value];
-    updated.splice(index, 1);
-    onChange(updated);
+    const valueClone = [...value];
+    valueClone.splice(index, 1);
+    onChange(valueClone);
   };
 
   public onAdd = () => {
@@ -39,7 +44,7 @@ export default class ACF extends React.PureComponent<IACFProps> {
 
   public render() {
     const { value, errors, maxRequests } = this.props;
-    const requestErrors = errors || [];
+    const requestErrors = errors!;
 
     return (
       <React.Fragment>

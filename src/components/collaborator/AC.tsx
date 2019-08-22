@@ -6,7 +6,9 @@ import * as yup from "yup";
 
 import { blockConstants } from "../../models/block/constants.js";
 import { notificationConstants } from "../../models/notification/constants";
+import { INotification } from "../../models/notification/notification.js";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
+import { IUser } from "../../models/user/user.js";
 import { indexArray } from "../../utils/object";
 import FormError from "../FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
@@ -14,7 +16,7 @@ import modalWrap from "../modalWrap.jsx";
 import ACF from "./ACF";
 import ACFExpiresAt from "./ACFExpiresAt";
 
-const emailExistsError = "Email addresss has been entered already";
+const emailExistsErrorMessage = "Email addresss has been entered already";
 
 const validationSchema = yup.object().shape({
   message: yup
@@ -43,8 +45,8 @@ export interface IACValue {
 }
 
 export interface IACProp {
-  existingCollaborators: any[];
-  existingCollaborationRequests: any[];
+  existingCollaborators: IUser[];
+  existingCollaborationRequests: INotification[];
   onSendRequests: (value: IACValue) => void;
 }
 
@@ -65,7 +67,7 @@ class AC extends React.PureComponent<IACProp> {
       this.indexedExistingRequestsEmail = indexArray(
         existingCollaborationRequests,
         {
-          path: "email"
+          path: "to.email"
         }
       );
     }
@@ -83,10 +85,10 @@ class AC extends React.PureComponent<IACProp> {
         }}
         onSubmit={(values, { setErrors }) => {
           // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
-          const requestError = this.validateRequests(values.requests);
+          const errors = this.validateRequests(values.requests);
 
-          if (requestError) {
-            setErrors({ requests: requestError });
+          if (errors) {
+            setErrors({ requests: errors });
             return;
           }
 
@@ -170,19 +172,19 @@ class AC extends React.PureComponent<IACProp> {
       });
     }
 
-    function setError(err, index, field, error) {
-      const indexError = err[index] || {};
-      const fieldError = indexError[field] || [];
-      fieldError.push(error);
-      indexError[field] = fieldError;
-      err[index] = indexError;
+    function setError(errorArray, index, field, error) {
+      const errorsInIndex = errorArray[index] || {};
+      const errorsForField = errorsInIndex[field] || [];
+      errorsForField.push(error);
+      errorsInIndex[field] = errorsForField;
+      errorArray[index] = errorsInIndex;
     }
 
     const errors = [];
 
     value.forEach((request, index) => {
       if (findRequest(value, request, index)) {
-        setError(errors, index, "email", emailExistsError);
+        setError(errors, index, "email", emailExistsErrorMessage);
       } else if (this.indexedExistingUsersEmail[request.email]) {
         setError(
           errors,

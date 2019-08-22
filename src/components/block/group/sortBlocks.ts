@@ -18,8 +18,8 @@ export function sortBlocksByPosition(
 }
 
 const blockPriorityToNumMap = {
-  "very important": 3,
-  important: 2,
+  "very important": -1,
+  important: 0,
   "not important": 1
 };
 
@@ -32,4 +32,5 @@ export function sortBlocksByPriority(blocks: IBlock[] = []) {
   });
 }
 
+// TODO: Implement
 export function sortBlocksByExpirationDate(blocks: IBlock[]) {}

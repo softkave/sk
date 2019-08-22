@@ -46,7 +46,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     this.toggleNewOrgForm();
   };
 
-  public getCurrentBlock() {
+  public getCurrentOrg() {
     return this.props.orgs.find(
       block => block.customId === this.state.currentOrg
     );
@@ -57,12 +57,12 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     const { currentOrg, showNewOrgForm } = this.state;
 
     if (currentOrg) {
-      const currentBlock = this.getCurrentBlock();
+      const block = this.getCurrentOrg();
 
       return (
         <BoardContainer
-          blockID={currentBlock!.customId}
-          block={currentBlock}
+          blockID={block!.customId}
+          block={block}
           onBack={() => this.setCurrentOrg(null)}
         />
       );
@@ -74,7 +74,6 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
           visible={showNewOrgForm}
           onSubmit={this.onCreateOrg}
           onClose={this.toggleNewOrgForm}
-          existingOrgs={Object.keys(orgs).map(orgId => orgs[orgId].name)}
         />
         <div className="sk-orgs-header">
           <Button onClick={this.toggleNewOrgForm} icon="plus">
@@ -82,13 +81,12 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
           </Button>
         </div>
         <div className="sk-orgs-content">
-          {Object.keys(orgs).map(orgId => {
-            const org = orgs[orgId];
+          {orgs.map(org => {
             return (
               <OrgThumbnail
                 key={org.customId}
                 org={org}
-                onClick={() => this.setCurrentOrg(orgId)}
+                onClick={() => this.setCurrentOrg(org.customId)}
                 className="sk-orgs-thumbnail"
               />
             );

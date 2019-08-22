@@ -33,11 +33,9 @@ export default class TaskList extends React.Component<ITaskListProps> {
       tasks,
       parent
     } = this.props;
-    // const tasksToRender = sortBlocksByPosition(tasks, parent.tasks);
-    const tasksArray = tasks;
     const filteredTasks = !this.isAnyCollaboratorSelected()
-      ? tasksArray
-      : tasksArray.filter(task => {
+      ? tasks
+      : tasks.filter(task => {
           const tc = task.taskCollaborators;
 
           if (Array.isArray(tc) && tc.length > 0) {

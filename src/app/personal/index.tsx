@@ -32,7 +32,7 @@ class Personal extends React.Component<
   }
 
   public async componentDidMount() {
-    if (!this.props.rootBlock) {
+    if (!this.props.rootBlock && !this.props.user.loadingRootData) {
       try {
         this.setState({ loading: true });
         await this.props.blockHandlers.fetchRootData();

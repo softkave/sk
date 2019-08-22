@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-export type PriorityValues = "very important" | "important" | "not important";
+export type TaskPriority = "very important" | "important" | "not important";
 
 export const priorityToColorMap = {
   "not important": "#EACA2C",
@@ -10,7 +10,7 @@ export const priorityToColorMap = {
 };
 
 interface IStyledPriorityProps {
-  level: PriorityValues;
+  level: TaskPriority;
   cover: "background-color" | "color";
 }
 

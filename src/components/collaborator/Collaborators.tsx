@@ -2,6 +2,7 @@ import { Button, List, Tabs } from "antd";
 import React from "react";
 
 import { IBlock } from "../../models/block/block.js";
+import { INotification } from "../../models/notification/notification.js";
 import { IUser } from "../../models/user/user.js";
 import AC, { IACValue } from "./AC";
 import "./collaborators.css";
@@ -11,8 +12,7 @@ export interface ICollaboratorsProps {
   // TODO: Define collaborators' right type
   collaborators: IUser[];
 
-  // TODO: Define type
-  collaborationRequests: any[];
+  collaborationRequests: INotification[];
   block: IBlock;
   error?: Error;
   onBack: () => void;
@@ -20,7 +20,7 @@ export interface ICollaboratorsProps {
 }
 
 interface ICollaboratorsState {
-  showAddCollaboratorForm: boolean;
+  showAddCollaboratorsForm: boolean;
 }
 
 export default class Collaborators extends React.Component<
@@ -28,13 +28,13 @@ export default class Collaborators extends React.Component<
   ICollaboratorsState
 > {
   public state = {
-    showAddCollaboratorForm: false
+    showAddCollaboratorsForm: false
   };
 
   public toggleCollaboratorForm = () => {
     this.setState(prevState => {
       return {
-        showAddCollaboratorForm: !prevState.showAddCollaboratorForm
+        showAddCollaboratorsForm: !prevState.showAddCollaboratorsForm
       };
     });
   };
@@ -58,10 +58,10 @@ export default class Collaborators extends React.Component<
 
   // TODO: Define type
   public renderCollaborators(collaborators: any[] = []) {
-    return this.renderList(collaborators, c => {
+    return this.renderList(collaborators, collaborator => {
       return (
-        <List.Item key={c.customId}>
-          <CollaboratorThumbnail collaborator={c} />
+        <List.Item key={collaborator.customId}>
+          <CollaboratorThumbnail collaborator={collaborator} />
         </List.Item>
       );
     });
@@ -69,10 +69,10 @@ export default class Collaborators extends React.Component<
 
   // TODO: Define type
   public renderCollaborationRequests(collaborationRequests: any[] = []) {
-    return this.renderList(collaborationRequests, c => {
+    return this.renderList(collaborationRequests, request => {
       return (
-        <List.Item key={c.customId}>
-          <CollaboratorThumbnail collaborator={c} />
+        <List.Item key={request.customId}>
+          <CollaboratorThumbnail collaborator={request} />
         </List.Item>
       );
     });
@@ -87,7 +87,7 @@ export default class Collaborators extends React.Component<
       block,
       error
     } = this.props;
-    const { showAddCollaboratorForm } = this.state;
+    const { showAddCollaboratorsForm } = this.state;
 
     if (error) {
       return (
@@ -101,7 +101,7 @@ export default class Collaborators extends React.Component<
     return (
       <div className="sk-collaborators">
         <AC
-          visible={showAddCollaboratorForm}
+          visible={showAddCollaboratorsForm}
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}
           existingCollaborationRequests={collaborationRequests}

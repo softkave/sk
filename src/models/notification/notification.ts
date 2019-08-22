@@ -8,7 +8,7 @@ export interface INotificationFrom {
 
 export interface INotificationTo {
   email: string;
-  userId: string;
+  userId?: string;
 }
 
 export interface INotificationStatusHistory {
@@ -25,13 +25,13 @@ export type NotificationType = "collab-req" | "remove-collaborator";
 export interface INotification {
   customId: string;
   from: INotificationFrom;
-  createdAt: string;
+  createdAt: number;
   body: string;
-  readAt: number;
   to: INotificationTo;
   expiresAt: number;
   type: NotificationType;
-  statusHistory: INotificationStatusHistory;
-  sentEmailHistory: INotificationSentEmailHistory;
-  root: string;
+  statusHistory: INotificationStatusHistory[];
+  sentEmailHistory: INotificationSentEmailHistory[];
+  root?: string;
+  readAt?: number;
 }

@@ -16,21 +16,6 @@ export interface INotificationBodyProps {
 }
 
 class NotificationBody extends React.Component<INotificationBodyProps> {
-  public getUserResponse(notification) {
-    if (Array.isArray(notification.statusHistory)) {
-      const possibleUserResponses = {
-        [accepted]: true,
-        [declined]: true
-      };
-
-      return notification.statusHistory.find(({ status }) => {
-        return possibleUserResponses[status];
-      });
-    }
-
-    return null;
-  }
-
   public render() {
     const { notification, onRespond, user } = this.props;
     const response = this.getUserResponse(notification);
@@ -80,6 +65,21 @@ class NotificationBody extends React.Component<INotificationBodyProps> {
         </div>
       </div>
     );
+  }
+
+  private getUserResponse(notification) {
+    if (Array.isArray(notification.statusHistory)) {
+      const possibleUserResponses = {
+        [accepted]: true,
+        [declined]: true
+      };
+
+      return notification.statusHistory.find(({ status }) => {
+        return possibleUserResponses[status];
+      });
+    }
+
+    return null;
   }
 }
 

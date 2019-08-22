@@ -77,6 +77,31 @@ export function filterErrorByBaseName(error, baseNames) {
   });
 }
 
+export function replaceErrorBaseName(
+  error,
+  baseNames: Array<{ from: string; to: string }>
+) {
+  const indexedBaseNames = indexArray(baseNames, { path: "from" });
+  return error.map(next => {
+    const newNext = { ...next };
+
+    if (newNext.field) {
+      const field = newNext.field.split(".");
+      newNext.field = field
+        .map(nextField => {
+          if (!!!indexedBaseNames[nextField]) {
+            return indexedBaseNames[nextField].to;
+          } else {
+            return nextField;
+          }
+        })
+        .join(".");
+    }
+
+    return newNext;
+  });
+}
+
 // Clears the field property of all error whose baseName is found in the baseNames argument
 export function clearFieldFromErrorWithBaseName(error, baseNames) {
   const indexedBaseNames = indexArray(baseNames);
