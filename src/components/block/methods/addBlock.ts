@@ -30,7 +30,11 @@ const addBlockPipeline: IPipeline<
     block.createdBy = user.customId;
     block.customId = newId();
     block.color = randomColor();
-    block.expectedEndAt = moment(block.expectedEndAt).valueOf();
+
+    if (block.expectedEndAt && typeof block.expectedEndAt !== "number") {
+      block.expectedEndAt = moment(block.expectedEndAt).valueOf();
+    }
+
     block.groupTaskContext = [];
     block.groupProjectContext = [];
 

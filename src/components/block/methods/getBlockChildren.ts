@@ -60,6 +60,8 @@ const getBlockChildrenPipeline: IPipeline<
       }
     });
 
+    dispatch(bulkAddBlocksRedux(blocks));
+
     // tslint:disable-next-line: forin
     for (const key in children) {
       const typeContainer = children[key];
@@ -76,8 +78,6 @@ const getBlockChildrenPipeline: IPipeline<
         break;
       }
     }
-
-    dispatch(bulkAddBlocksRedux(blocks));
   }
 };
 

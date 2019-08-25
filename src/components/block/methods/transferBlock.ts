@@ -52,20 +52,10 @@ const transferBlockPipeline: IPipeline<
   INetResult
 > = {
   process({ params }) {
-    const {
-      draggedBlock,
-      sourceBlock,
-      destinationBlock,
-      dragInformation,
-      groupContext
-    } = params;
+    const { draggedBlock, sourceBlock, dragInformation } = params;
     const pluralizedType = `${draggedBlock.type}s`;
     return {
-      draggedBlock,
-      sourceBlock,
-      destinationBlock,
-      dragInformation,
-      groupContext,
+      ...params,
       draggedBlockPosition: getIndex(
         sourceBlock[pluralizedType],
         draggedBlock.customId
@@ -95,7 +85,7 @@ const transferBlockPipeline: IPipeline<
     );
   },
 
-  redux({ state, dispatch, params }) {
+  redux({ dispatch, params }) {
     const {
       draggedBlock,
       sourceBlock,

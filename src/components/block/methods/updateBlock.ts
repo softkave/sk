@@ -1,14 +1,9 @@
+import moment from "moment";
 import { IBlock } from "../../../models/block/block";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
 import { updateBlockRedux } from "../../../redux/blocks/actions";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
-
-function convertDateToTimestamp(date) {
-  if (date && date.valueOf) {
-    return date.valueOf();
-  }
-}
 
 // TODO: Update this to IUpdateBlock which will include and make required the required fields
 export interface IUpdateBlockPipelineParams {
@@ -24,7 +19,11 @@ const updateBlockPipeline: IPipeline<
 > = {
   process({ params }) {
     const { data } = params;
-    data.expectedEndAt = convertDateToTimestamp(data.expectedEndAt);
+
+    if (data.expectedEndAt && typeof data.expectedEndAt !== "number") {
+      data.expectedEndAt = moment(data.expectedEndAt).valueOf();
+    }
+
     return { ...params, data };
   },
 

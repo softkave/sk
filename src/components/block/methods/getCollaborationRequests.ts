@@ -29,7 +29,7 @@ const getCollaborationRequestsPipeline: IPipeline<
     dispatch(bulkAddNotificationsRedux(result.requests));
     dispatch(
       updateBlockRedux(params.block.customId, {
-        collaborationRequests: params.block.collaborationRequests.concat(ids)
+        collaborationRequests: ids
       })
     );
   }

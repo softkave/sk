@@ -30,7 +30,7 @@ const getCollaboratorsPipeline: IPipeline<
     dispatch(bulkAddUsersRedux(result.collaborators));
     dispatch(
       updateBlockRedux(params.block.customId, {
-        collaborators: params.block.collaborators.concat(ids)
+        collaborators: ids
       })
     );
   }
