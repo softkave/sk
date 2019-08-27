@@ -1,3 +1,4 @@
+import { connect } from "react-redux";
 import netInterface from "../../../net";
 import { getReduxConnectors } from "../../../utils/redux";
 import { IPipeline, makePipeline } from "../../FormPipeline";
@@ -18,10 +19,22 @@ const methods: IPipeline<
   }
 };
 
-function mergeProps(state, dispatch) {
+function mapStateToProps(state) {
+  return state;
+}
+
+function mapDispatchToProps(dispatch) {
+  return { dispatch };
+}
+
+function mergeProps(state, { dispatch }) {
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 
-export default getReduxConnectors(mergeProps)(ForgotPassword);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(ForgotPassword);

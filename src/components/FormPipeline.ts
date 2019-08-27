@@ -3,7 +3,11 @@ import { Dispatch } from "redux";
 import { INetResult } from "../net/query";
 import { IReduxState } from "../redux/store";
 import { IAnyObject } from "../utils/types";
-import { filterErrorByBaseName, stripFieldsFromError } from "./FOR";
+import {
+  filterErrorByBaseName,
+  replaceErrorBaseName,
+  stripFieldsFromError
+} from "./FOR";
 
 export interface IHandleErrorParams {
   filterBaseNames?: string[];
@@ -56,9 +60,9 @@ export interface IQuietPipeline extends IPipeline<any, any, any, any> {}
 
 const returnFirstArg = (arg: any) => arg;
 
-const defaultProcessFunc = returnFirstArg;
-const defaultProcessResultFunc = returnFirstArg;
-const defaultReduxFunc = returnFirstArg;
+const defaultProcessFunc = (arg: IPipelineOperatingData) => arg.params;
+const defaultProcessResultFunc = (arg: IPipelineOperatingData) => arg.result;
+const defaultReduxFunc = () => null;
 // const defaultHandleErrorFunc = returnFirstArg;
 
 const handleErrorWithParams = (
@@ -81,6 +85,10 @@ const handleErrorWithParams = (
     }
 
     if (handleErrorParams.replaceBaseNames) {
+      result.errors = replaceErrorBaseName(
+        result.errors,
+        handleErrorParams.replaceBaseNames
+      );
     }
 
     throw result.errors;
@@ -143,7 +151,9 @@ export function makePipeline<ParamType>(
   methods: IQuietPipeline,
   initialOperatingData: object
 ): PipelineEntryFunc<ParamType> {
+  console.log("pipeline");
   return async (params?: ParamType) => {
+    console.log({ params });
     return await main(methods, {
       ...initialOperatingData,
       params

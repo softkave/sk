@@ -50,16 +50,16 @@ class EditProject extends React.Component<IEditProjectProps> {
       <Formik
         initialValues={data!}
         validationSchema={validationSchema}
-        onSubmit={(values, { setErrors }) => {
+        onSubmit={(values, props) => {
           // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
           const error = this.validate(values);
 
           if (error) {
-            setErrors(error);
+            props.setErrors(error);
             return;
           }
 
-          submitHandler(onSubmit, values, { setErrors });
+          submitHandler(onSubmit, values, props);
         }}
       >
         {({

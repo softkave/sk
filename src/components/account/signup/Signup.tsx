@@ -66,9 +66,9 @@ class Signup extends React.Component<ISignupProps> {
           password: undefined,
           confirmPassword: undefined
         }}
-        onSubmit={(values, { setErrors }) =>
+        onSubmit={(values, props) =>
           submitHandler(onSubmit, values, {
-            setErrors,
+            ...props,
             fieldsToDelete: ["confirmEmail", "confirmPassword"]
           })
         }
@@ -84,6 +84,7 @@ class Signup extends React.Component<ISignupProps> {
           isSubmitting
         }) => {
           const globalError = getGlobalError(errors);
+          console.log({ globalError });
 
           return (
             <form onSubmit={handleSubmit}>
@@ -94,7 +95,7 @@ class Signup extends React.Component<ISignupProps> {
               )}
               <Form.Item
                 label="Name"
-                help={<FormError>{errors.name}</FormError>}
+                help={touched.name && <FormError>{errors.name}</FormError>}
               >
                 <Input
                   autoComplete="name"
@@ -106,7 +107,7 @@ class Signup extends React.Component<ISignupProps> {
               </Form.Item>
               <Form.Item
                 label="Email Address"
-                help={<FormError>{errors.email}</FormError>}
+                help={touched.email && <FormError>{errors.email}</FormError>}
               >
                 <Input
                   autoComplete="email"
@@ -118,7 +119,11 @@ class Signup extends React.Component<ISignupProps> {
               </Form.Item>
               <Form.Item
                 label="Confirm Email Address"
-                help={<FormError>{errors.confirmEmail}</FormError>}
+                help={
+                  touched.confirmEmail && (
+                    <FormError>{errors.confirmEmail}</FormError>
+                  )
+                }
               >
                 <Input
                   autoComplete="email"
@@ -130,8 +135,14 @@ class Signup extends React.Component<ISignupProps> {
               </Form.Item>
               <Form.Item
                 label="Password"
-                extra={passwordExtraInfo}
-                help={<FormError>{errors.password}</FormError>}
+                // extra={passwordExtraInfo}
+                help={
+                  touched.password && errors.password ? (
+                    <FormError>{errors.password}</FormError>
+                  ) : (
+                    passwordExtraInfo
+                  )
+                }
               >
                 <Input.Password
                   visibilityToggle
@@ -144,7 +155,11 @@ class Signup extends React.Component<ISignupProps> {
               </Form.Item>
               <Form.Item
                 label="Confirm Password"
-                help={<FormError>{errors.confirmPassword}</FormError>}
+                help={
+                  touched.confirmPassword && (
+                    <FormError>{errors.confirmPassword}</FormError>
+                  )
+                }
               >
                 <Input.Password
                   visibilityToggle

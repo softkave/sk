@@ -53,7 +53,8 @@ export function stripFieldsFromError(error, fields) {
       const field = newNext.field.split(".");
       newNext.field = field
         .filter(nextField => {
-          return !!!indexedFields[nextField];
+          console.log(indexedFields[nextField], nextField, indexedFields);
+          return fields.indexOf(nextField) === -1;
         })
         .join(".");
     }
@@ -64,13 +65,12 @@ export function stripFieldsFromError(error, fields) {
 
 // Removes all error whose baseName are not found in the baseNames argument
 export function filterErrorByBaseName(error, baseNames) {
-  const indexedBaseNames = indexArray(baseNames);
   return error.filter(next => {
     const newNext = { ...next };
 
     if (newNext.field) {
       const field = newNext.field.split(".");
-      return !!indexedBaseNames[field[0]];
+      return baseNames.indexOf(field[0]);
     }
 
     return true;
@@ -81,7 +81,6 @@ export function replaceErrorBaseName(
   error,
   baseNames: Array<{ from: string; to: string }>
 ) {
-  const indexedBaseNames = indexArray(baseNames, { path: "from" });
   return error.map(next => {
     const newNext = { ...next };
 
@@ -89,8 +88,12 @@ export function replaceErrorBaseName(
       const field = newNext.field.split(".");
       newNext.field = field
         .map(nextField => {
-          if (!!!indexedBaseNames[nextField]) {
-            return indexedBaseNames[nextField].to;
+          const transform = baseNames.find(({ from }) => {
+            return from === nextField;
+          });
+
+          if (transform) {
+            return transform.to;
           } else {
             return nextField;
           }

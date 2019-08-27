@@ -41,9 +41,9 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
       <Formik
         initialValues={{ password: undefined, confirmPassword: undefined }}
         validationSchema={validationSchema}
-        onSubmit={async (values, { setErrors }) => {
+        onSubmit={async (values, props) => {
           submitHandler(onSubmit, values, {
-            setErrors,
+            ...props,
             fieldsToDelete: ["confirmPassword"],
             onSuccess() {
               notification.success({

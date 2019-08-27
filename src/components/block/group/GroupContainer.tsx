@@ -32,12 +32,12 @@ function mapStateToProps(state: IReduxState) {
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
 function mergeProps(
   state,
-  dispatch,
+  { dispatch },
   ownProps: IGroupContainerProps
 ): IBlockInternalDataLoaderProps {
   if (!ownProps.group && !ownProps.groupID) {

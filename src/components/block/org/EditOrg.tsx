@@ -45,8 +45,8 @@ class EditOrg extends React.Component<IEditOrgProps> {
       <Formik
         initialValues={data!}
         validationSchema={validationSchema}
-        onSubmit={(values, { setErrors }) => {
-          submitHandler(onSubmit, values, { setErrors });
+        onSubmit={(values, props) => {
+          submitHandler(onSubmit, values, props);
         }}
       >
         {({

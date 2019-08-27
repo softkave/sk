@@ -65,14 +65,14 @@ class Personal extends React.Component<
 }
 
 function mapStateToProps(state) {
-  return { state };
+  return state;
 }
 
 function mapDispatchToProps(dispatch) {
   return { dispatch };
 }
 
-function mergeProps({ state }, { dispatch }) {
+function mergeProps(state, { dispatch }) {
   const user = getSignedInUser(state);
   const blockHandlers = getBlockMethods({
     state,

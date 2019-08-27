@@ -11,6 +11,7 @@ import App from "./app";
 
 function renderComponent(component) {
   return function() {
+    console.log("component x container");
     const ComponentX = component;
     return (
       <Row type="flex" justify="center">

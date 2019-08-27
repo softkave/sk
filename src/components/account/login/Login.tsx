@@ -38,9 +38,7 @@ class Login extends React.Component<ILoginProps> {
           password: undefined,
           remember: true
         }}
-        onSubmit={(values, { setErrors }) =>
-          submitHandler(onSubmit, values, { setErrors })
-        }
+        onSubmit={(values, props) => submitHandler(onSubmit, values, props)}
         validationSchema={validationSchema}
       >
         {({

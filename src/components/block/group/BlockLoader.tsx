@@ -12,7 +12,7 @@ function mapStateToProps(state: IReduxState) {
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
 export interface IBlockLoaderProps {
@@ -22,7 +22,7 @@ export interface IBlockLoaderProps {
 
 function mergeProps(
   state: IReduxState,
-  dispatch: Dispatch,
+  { dispatch }: { dispatch: Dispatch },
   ownProps: IBlockLoaderProps
 ): IDataLoaderProps {
   const block = getBlock(state, ownProps.blockID);

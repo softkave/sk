@@ -38,9 +38,9 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
       <Formik
         initialValues={{ email: undefined, confirmEmail: undefined }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setErrors }) => {
+        onSubmit={(values, props) => {
           submitHandler(onSubmit, values, {
-            setErrors,
+            ...props,
             fieldsToDelete: ["confirmEmail"],
             onSuccess() {
               notification.success({

@@ -64,10 +64,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
-function mergeProps(state: IReduxState, dispatch: Dispatch) {
+function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   const user = getSignedInUser(state);
   const blockHandlers = getBlockMethods({
     state,

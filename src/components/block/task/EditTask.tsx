@@ -84,8 +84,8 @@ class EditTask extends React.Component<IEditTaskProps> {
           taskCollaborators: data.taskCollaborators || defaultAssignedTo || []
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setErrors }) => {
-          submitHandler(onSubmit, values, { setErrors });
+        onSubmit={(values, props) => {
+          submitHandler(onSubmit, values, props);
         }}
       >
         {({

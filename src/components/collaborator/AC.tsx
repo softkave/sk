@@ -15,6 +15,7 @@ import { getGlobalError, submitHandler } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
 import ACF from "./ACF";
 import ACFExpiresAt from "./ACFExpiresAt";
+import { IACFItemValue } from "./ACFItem.jsx";
 
 const emailExistsErrorMessage = "Email addresss has been entered already";
 
@@ -41,7 +42,7 @@ const validationSchema = yup.object().shape({
 export interface IACValue {
   message?: string;
   expiresAt?: number;
-  requests: IACValue[];
+  requests: IACFItemValue[];
 }
 
 export interface IACProp {
@@ -83,16 +84,16 @@ class AC extends React.PureComponent<IACProp> {
           expiresAt: undefined,
           requests: []
         }}
-        onSubmit={(values, { setErrors }) => {
+        onSubmit={(values, props) => {
           // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
           const errors = this.validateRequests(values.requests);
 
           if (errors) {
-            setErrors({ requests: errors });
+            props.setErrors({ requests: errors });
             return;
           }
 
-          submitHandler(onSendRequests, values, { setErrors });
+          submitHandler(onSendRequests, values, props);
         }}
         validationSchema={validationSchema}
       >

@@ -1,3 +1,4 @@
+import { connect } from "react-redux";
 import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
@@ -42,10 +43,22 @@ const methods: IPipeline<
   }
 };
 
-function mergeProps(state, dispatch) {
+function mapStateToProps(state) {
+  return state;
+}
+
+function mapDispatchToProps(dispatch) {
+  return { dispatch };
+}
+
+function mergeProps(state, { dispatch }) {
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 
-export default getReduxConnectors(mergeProps)(Login);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(Login);

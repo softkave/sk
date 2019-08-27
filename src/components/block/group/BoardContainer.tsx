@@ -15,7 +15,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
 export interface IBoardContainerProps {
@@ -28,7 +28,7 @@ export interface IBoardContainerProps {
 
 function mergeProps(
   state,
-  dispatch,
+  { dispatch },
   ownProps: IBoardContainerProps
 ): IBlockInternalDataLoaderProps {
   const user = getSignedInUser(state);

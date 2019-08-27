@@ -2,7 +2,7 @@ import React from "react";
 import FormMessage from "./FormMessage";
 
 export interface IFormErrorProps {
-  error?: string | string[];
+  error?: string | string[] | Error | Error[];
 }
 
 const FormError: React.SFC<IFormErrorProps> = props => {

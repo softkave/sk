@@ -236,12 +236,12 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
 function mergeProps(
   state: IReduxState,
-  dispatch: Dispatch
+  { dispatch }: { dispatch: Dispatch }
 ): INotificationsContainerProps {
   const user = getSignedInUser(state);
   const notifications = Array.isArray(user!.notifications)

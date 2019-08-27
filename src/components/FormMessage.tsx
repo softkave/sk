@@ -25,16 +25,14 @@ const StyledFormMessage = styled.div<IStyledMessageProps>(props => ({
 }));
 
 export interface IFormMessageProps {
-  message?: string | string[];
+  message?: string | string[] | Error | Error[];
   type?: "error" | "message";
 }
 
 const FormMessage: React.SFC<IFormMessageProps> = props => {
   const { children, message, type } = props;
-  const messages = Array.isArray(message) ? message : [message];
-  const isVisible =
-    React.Children.count(children) > 0 ||
-    (Array.isArray(message) ? message.length > 0 : !!message);
+  const messages = Array.isArray(message) ? message : message ? [message] : [];
+  const isVisible = React.Children.count(children) > 0 || messages.length > 0;
 
   if (!isVisible) {
     return null;
@@ -43,7 +41,13 @@ const FormMessage: React.SFC<IFormMessageProps> = props => {
   return (
     <StyledFormMessage type={type}>
       {children}
-      {messages.map(nextMessage => nextMessage)}
+      {messages.map(nextMessage => {
+        if (typeof nextMessage === "string") {
+          return nextMessage;
+        } else {
+          return nextMessage.message;
+        }
+      })}
     </StyledFormMessage>
   );
 };

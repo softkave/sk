@@ -1,5 +1,6 @@
 import randomColor from "randomcolor";
 
+import { connect } from "react-redux";
 import { IUser } from "../../../models/user/user";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
@@ -55,10 +56,25 @@ const methods: IPipeline<
   }
 };
 
-function mergeProps(state, dispatch) {
+function mapStateToProps(state) {
+  console.log("signup map state");
+  return state;
+}
+
+function mapDispatchToProps(dispatch) {
+  console.log("signup map dispatch");
+  return { dispatch };
+}
+
+function mergeProps(state, { dispatch }) {
+  console.log("merge props was called");
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };
 }
 
-export default getReduxConnectors(mergeProps)(Signup);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(Signup);

@@ -1,3 +1,4 @@
+import { FormikActions } from "formik";
 import { INetError } from "../net/query";
 import { indexArray } from "../utils/object";
 
@@ -33,14 +34,18 @@ export function flattenErrorToObject(error: INetError[]) {
         existing.push(value.message);
         return existing;
       } else {
-        return [value];
+        return [value.message];
       }
     }
   });
 }
 
-interface ISubmitHandlerOptions {
-  setErrors: (errors: object) => void;
+/**
+ * TODO: Define a better process, and let the submitHandler do just one thing, handle submit
+ * Remove the strip and error handling
+ * Make the strip and error handling into a pipeline of sorts
+ */
+interface ISubmitHandlerOptions extends FormikActions<any> {
   fieldsToDelete?: string[];
   onError?: () => void;
   onSuccess?: () => void;
@@ -51,6 +56,7 @@ export async function submitHandler(
   onSubmit,
   values: object,
   {
+    setSubmitting,
     setErrors,
     fieldsToDelete,
     onError,
@@ -68,9 +74,11 @@ export async function submitHandler(
     result = await onSubmit(deleteFields(values, fieldsToDelete));
 
     if (onSuccess) {
+      setSubmitting(false);
       onSuccess();
     }
   } catch (error) {
+    setSubmitting(false);
     setErrors(flattenErrorToObject(error));
 
     if (onError) {

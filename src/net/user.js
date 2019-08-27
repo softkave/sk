@@ -145,6 +145,7 @@ export function getUserData(token) {
 
 export async function getSavedUserData() {
   let userToken = getItem(tokenStorageName);
+  console.log({ userToken });
 
   if (userToken) {
     let result = await getUserData(userToken);

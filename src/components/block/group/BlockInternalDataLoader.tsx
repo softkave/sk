@@ -19,7 +19,7 @@ function mapStateToProps(state: IReduxState) {
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
-  return dispatch;
+  return { dispatch };
 }
 
 interface IBlockChildren {
@@ -197,7 +197,7 @@ function loadBlockCollaborationRequestsFromRedux(
 
 function mergeProps(
   state: IReduxState,
-  dispatch: Dispatch,
+  { dispatch }: { dispatch: Dispatch },
   ownProps: IBlockInternalDataLoaderProps
 ): IDataLoaderProps {
   const block = ownProps.block;

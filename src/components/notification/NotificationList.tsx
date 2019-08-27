@@ -26,7 +26,7 @@ const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
         backgroundColor: "rgb(66,133,244)",
         color: "white"
       }
-    : notification.readAt > 0
+    : Number(notification.readAt) > 0
     ? {
         color: "grey"
       }
