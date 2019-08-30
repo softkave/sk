@@ -12,14 +12,20 @@ import { newId } from "../../../utils/utils";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
 
 export interface IAddBlockPipelineParams {
+  block: Partial<IBlock>;
+  user: IUser;
+  parent?: IBlock;
+}
+
+interface IAddBlockProcessedParams {
   block: IBlock;
   user: IUser;
-  parent: IBlock;
+  parent?: IBlock;
 }
 
 const addBlockPipeline: IPipeline<
   IAddBlockPipelineParams,
-  IAddBlockPipelineParams,
+  IAddBlockProcessedParams,
   INetResult,
   INetResult
 > = {
@@ -53,8 +59,8 @@ const addBlockPipeline: IPipeline<
       parent[pluralType].push(block.customId);
 
       if (block.type === "group") {
-        parent.groupTaskContext.push(block.customId);
-        parent.groupProjectContext.push(block.customId);
+        parent.groupTaskContext.push(block.customId!);
+        parent.groupProjectContext.push(block.customId!);
       }
     }
 
@@ -73,7 +79,7 @@ const addBlockPipeline: IPipeline<
       });
     }
 
-    return { ...params, parent, block };
+    return { ...params, parent, block: block as IBlock };
   },
 
   async net({ params }) {

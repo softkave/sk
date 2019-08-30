@@ -200,6 +200,7 @@ function mergeProps(
   { dispatch }: { dispatch: Dispatch },
   ownProps: IBlockInternalDataLoaderProps
 ): IDataLoaderProps {
+  console.log(ownProps);
   const block = ownProps.block;
   const blockHandlers = getBlockMethods({ state, dispatch });
   const blockChildren = loadBlockChildrenFromRedux(block, state);

@@ -21,6 +21,7 @@ export function deleteFields(values: object, fields: string[] = defaultFields) {
 }
 
 export function flattenErrorToObject(error: INetError[]) {
+  console.log(error);
   return indexArray(error, {
     indexer: (next: INetError) => {
       if (next.field) {

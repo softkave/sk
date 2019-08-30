@@ -90,7 +90,11 @@ class App extends React.Component<IAppProps> {
             }
             trigger={["click"]}
           >
-            <SkAvatar color={user.color || defaultAvatarColor} />
+            <SkAvatar
+              clickable
+              onClick={() => null}
+              color={user.color || defaultAvatarColor}
+            />
           </Dropdown>
         }
       />

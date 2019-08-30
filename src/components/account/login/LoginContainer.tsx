@@ -6,12 +6,14 @@ import { loginUserRedux } from "../../../redux/session/actions";
 import { addUserRedux } from "../../../redux/users/actions";
 import { devLog } from "../../../utils/log";
 import { getReduxConnectors } from "../../../utils/redux";
+import { setItem } from "../../../utils/storage";
 import { IPipeline, makePipeline } from "../../FormPipeline";
 import Login from "./Login";
 
 interface ILoginParams {
   email: string;
   password: string;
+  remember?: boolean;
 }
 
 interface ILoginNetResult extends INetResult {
@@ -32,10 +34,15 @@ const methods: IPipeline<
     });
   },
 
-  redux({ result, dispatch }) {
+  redux({ result, dispatch, params }) {
     if (result && result.user && result.token) {
       dispatch(addUserRedux(result.user));
       dispatch(loginUserRedux(result.token, result.user.customId));
+
+      if (params.remember) {
+        // TODO: put all token or local storage data in one place
+        setItem("t", result.token);
+      }
     } else if (result.errors) {
       devLog(__filename, result);
       throw [{ type: "error", message: new Error("An error occurred") }];

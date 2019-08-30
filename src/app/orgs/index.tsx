@@ -46,6 +46,7 @@ class OrgsContainer extends React.Component<
   }
 
   public render() {
+    console.log(this);
     const { orgs, blockHandlers, user } = this.props;
     const { error, loading } = this.state;
 

@@ -131,7 +131,7 @@ export function getResource<ResourceType>(
 
 export function getResourcesAsArray<ResourceType>(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
-  ids: string[]
+  ids: string[] = []
 ) {
   return ids.reduce(
     (accumulator, id) => {

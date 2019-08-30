@@ -113,8 +113,11 @@ async function main(
   operatingData: IPipelineOperatingData & IAnyObject
 ) {
   const internalMethods = fillPipeline(methods);
+  console.log({ operatingData });
   const processedData = internalMethods.process(operatingData);
+  console.log({ processedData });
   let next = { ...operatingData, params: processedData };
+  console.log({ next: JSON.parse(JSON.stringify(next)) });
   let result = await internalMethods.net(next);
 
   // if (typeof internalMethods.handleError === "function") {
@@ -126,10 +129,16 @@ async function main(
   //   result = handleErrorWithParams(result, internalMethods.handleError);
   // }
 
+  console.log({ result: JSON.parse(JSON.stringify(result)) });
+
   result = handleErrorWithParams(result, internalMethods.handleError);
+
+  console.log({ handledError: JSON.parse(JSON.stringify(result)) });
 
   next = { ...next, result };
   const finalResult = internalMethods.processResult(next);
+
+  console.log({ finalResult: JSON.parse(JSON.stringify(result)) });
 
   next = { ...next, result: finalResult };
   internalMethods.redux(next);
@@ -151,9 +160,7 @@ export function makePipeline<ParamType>(
   methods: IQuietPipeline,
   initialOperatingData: object
 ): PipelineEntryFunc<ParamType> {
-  console.log("pipeline");
   return async (params?: ParamType) => {
-    console.log({ params });
     return await main(methods, {
       ...initialOperatingData,
       params
