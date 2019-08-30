@@ -85,6 +85,7 @@ class EditTask extends React.Component<IEditTaskProps> {
         }}
         validationSchema={validationSchema}
         onSubmit={(values, props) => {
+          (values as any).type = "task";
           submitHandler(onSubmit, values, props);
         }}
       >

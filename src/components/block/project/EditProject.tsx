@@ -59,6 +59,7 @@ class EditProject extends React.Component<IEditProjectProps> {
             return;
           }
 
+          (values as any).type = "project";
           submitHandler(onSubmit, values, props);
         }}
       >

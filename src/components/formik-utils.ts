@@ -79,6 +79,7 @@ export async function submitHandler(
       onSuccess();
     }
   } catch (error) {
+    console.log({ error });
     setSubmitting(false);
     setErrors(flattenErrorToObject(error));
 

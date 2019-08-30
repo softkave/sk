@@ -58,6 +58,7 @@ class EditGroup extends React.Component<IEditGroupProps> {
             return;
           }
 
+          (values as any).type = "group";
           submitHandler(onSubmit, values, props);
         }}
       >

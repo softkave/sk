@@ -3,10 +3,11 @@ import get from "lodash/get";
 import query from "./query";
 import NetError from "./NetError";
 
-let user = null;
+let token = null;
 store.subscribe(() => {
   const state = store.getState();
-  user = get(state, "user");
+  const session = get(state, "session");
+  token = session.token;
 });
 
 export default async function queryWithAuth(
@@ -14,12 +15,13 @@ export default async function queryWithAuth(
   netQuery,
   variables,
   process,
-  token
+  tokenParam
 ) {
-  const requestToken = token || (user && user.token);
+  const requestToken = tokenParam || token;
 
   if (!requestToken) {
-    throw new NetError("error, please try again");
+    // throw new NetError("error, please try again");
+    throw [{ type: "error", message: new Error("An error occurred") }];
   }
 
   return await query(

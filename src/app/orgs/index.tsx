@@ -35,12 +35,15 @@ class OrgsContainer extends React.Component<
   }
 
   public async componentDidMount() {
-    if (!this.props.areOrgsLoaded && !this.props.user.loadingRootData) {
-      try {
-        this.setState({ loading: true });
-        await this.props.blockHandlers.fetchRootData();
-      } catch (error) {
-        this.setState({ error, loading: false });
+    if (!this.props.areOrgsLoaded) {
+      if (!this.props.user.loadingRootData) {
+        try {
+          this.setState({ loading: true });
+          await this.props.blockHandlers.fetchRootData();
+          this.setState({ loading: false, error: undefined });
+        } catch (error) {
+          this.setState({ error, loading: false });
+        }
       }
     }
   }
