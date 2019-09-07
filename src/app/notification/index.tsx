@@ -117,7 +117,11 @@ const clickNotificationMethods: IPipeline<
 
   redux({ dispatch, params }) {
     const { notification, data } = params;
-    dispatch(updateNotificationRedux(notification.customId, data));
+    dispatch(
+      updateNotificationRedux(notification.customId, data, {
+        arrayUpdateStrategy: "replace"
+      })
+    );
   }
 };
 
@@ -167,14 +171,24 @@ const respondToNotificationMethods: IPipeline<
 
     const update = { statusHistory };
 
-    dispatch(updateNotificationRedux(notification.customId, update));
+    dispatch(
+      updateNotificationRedux(notification.customId, update, {
+        arrayUpdateStrategy: "replace"
+      })
+    );
 
     if (response === "accepted") {
       const { block } = result;
 
       if (block) {
         dispatch(addBlockRedux(block));
-        dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
+        dispatch(
+          updateUserRedux(
+            user.customId,
+            { orgs: [block.customId] },
+            { arrayUpdateStrategy: "concat" }
+          )
+        );
       }
     }
   }
@@ -192,7 +206,13 @@ const fetchNotificationsMethods: IPipeline<
 > = {
   async net({ state, dispatch }) {
     const user = getSignedInUser(state);
-    dispatch(updateUserRedux(user!.customId, { loadingNotifications: true }));
+    dispatch(
+      updateUserRedux(
+        user!.customId,
+        { loadingNotifications: true },
+        { arrayUpdateStrategy: "merge" }
+      )
+    );
     return await netInterface("user.getCollaborationRequests");
   },
 
@@ -203,10 +223,14 @@ const fetchNotificationsMethods: IPipeline<
 
     dispatch(bulkAddNotificationsRedux(requests));
     dispatch(
-      updateUserRedux(user!.customId, {
-        notifications: ids,
-        loadingNotifications: false
-      })
+      updateUserRedux(
+        user!.customId,
+        {
+          notifications: ids,
+          loadingNotifications: false
+        },
+        { arrayUpdateStrategy: "replace" }
+      )
     );
   }
 };

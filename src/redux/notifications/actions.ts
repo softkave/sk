@@ -3,7 +3,8 @@ import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload
+  IReferenceCountedResourceUpdatePayload,
+  IUpdateResourceMeta
 } from "../referenceCounting";
 import {
   ADD_NOTIFICATION,
@@ -34,13 +35,16 @@ export function addNotificationRedux(
 export interface IUpdateNotificationAction {
   type: UPDATE_NOTIFICATION;
   payload: IReferenceCountedResourceUpdatePayload<INotification>;
+  meta: IUpdateResourceMeta;
 }
 
 export function updateNotificationRedux(
   id: string,
-  notification: Partial<INotification>
+  notification: Partial<INotification>,
+  meta: IUpdateResourceMeta
 ): IUpdateNotificationAction {
   return {
+    meta,
     type: UPDATE_NOTIFICATION,
     payload: {
       id,
@@ -83,12 +87,15 @@ export function bulkAddNotificationsRedux(
 export interface IBulkUpdateNotificationsAction {
   type: BULK_UPDATE_NOTIFICATIONS;
   payload: Array<IReferenceCountedResourceUpdatePayload<INotification>>;
+  meta: IUpdateResourceMeta;
 }
 
 export function bulkUpdateNotificationsRedux(
-  notifications: Array<{ id: string; data: Partial<INotification> }>
+  notifications: Array<{ id: string; data: Partial<INotification> }>,
+  meta: IUpdateResourceMeta
 ): IBulkUpdateNotificationsAction {
   return {
+    meta,
     type: BULK_UPDATE_NOTIFICATIONS,
     payload: notifications
   };

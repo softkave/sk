@@ -32,7 +32,11 @@ export function notificationsReducer(
     }
 
     case UPDATE_NOTIFICATION: {
-      return bulkUpdateReferenceCountedResources(state, [action.payload]);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        [action.payload],
+        action.meta
+      );
     }
 
     case DELETE_NOTIFICATION: {
@@ -44,7 +48,11 @@ export function notificationsReducer(
     }
 
     case BULK_UPDATE_NOTIFICATIONS: {
-      return bulkUpdateReferenceCountedResources(state, action.payload);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        action.payload,
+        action.meta
+      );
     }
 
     case BULK_DELETE_NOTIFICATIONS: {

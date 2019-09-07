@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
-import { Button } from "antd";
 import React from "react";
 
 export interface ISplit {
+  id: string | number;
   flex: string | number;
   render: () => React.ReactNode;
-  showControls?: boolean;
   title?: string;
   onClose?: () => void;
 }
@@ -33,24 +32,17 @@ export default class SplitView extends React.Component<ISplitViewProps> {
 
   private renderSplit(split: ISplit) {
     return (
-      <ViewContainer flex={split.flex}>
-        {split.showControls && (
-          <ViewHeader>
-            <ViewTitle>{split.title}</ViewTitle>
-            <CloseViewButtonContainer>
-              <Button icon="close" onClick={split.onClose} type="danger" />
-            </CloseViewButtonContainer>
-          </ViewHeader>
-        )}
-        <ViewBodyContainer>{split.render()}</ViewBodyContainer>
+      <ViewContainer key={split.id} flex={split.flex}>
+        {split.render()}
       </ViewContainer>
     );
   }
 }
 
 const SplitContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 `;
 
 interface IViewContainerProps {
@@ -61,24 +53,8 @@ const ViewContainer = styled("div")<IViewContainerProps>(props => {
   return {
     display: "flex",
     flex: props.flex,
-    flexDirection: "column"
+    flexDirection: "column",
+    height: "100%",
+    overflow: "hidden"
   };
 });
-
-const ViewHeader = styled.div`
-  display: flex;
-`;
-
-const ViewTitle = styled.div`
-  display: flex;
-  flex: 1;
-`;
-
-const CloseViewButtonContainer = styled.div`
-  display: flex;
-`;
-
-const ViewBodyContainer = styled.div`
-  display: flex;
-  flex: 1;
-`;

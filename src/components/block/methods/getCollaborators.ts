@@ -29,9 +29,13 @@ const getCollaboratorsPipeline: IPipeline<
     const ids = result.collaborators.map(collaborator => collaborator.customId);
     dispatch(bulkAddUsersRedux(result.collaborators));
     dispatch(
-      updateBlockRedux(params.block.customId, {
-        collaborators: ids
-      })
+      updateBlockRedux(
+        params.block.customId,
+        {
+          collaborators: ids
+        },
+        { arrayUpdateStrategy: "replace" }
+      )
     );
   }
 };

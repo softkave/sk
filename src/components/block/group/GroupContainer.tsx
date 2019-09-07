@@ -28,10 +28,12 @@ export interface IGroupContainerProps {
 }
 
 function mapStateToProps(state: IReduxState) {
+  console.log("GC state");
   return state;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
+  console.log("GC dispatch");
   return { dispatch };
 }
 
@@ -40,6 +42,7 @@ function mergeProps(
   { dispatch },
   ownProps: IGroupContainerProps
 ): IBlockInternalDataLoaderProps {
+  console.log("GC merge");
   if (!ownProps.group && !ownProps.groupID) {
     throw new Error("group or groupID required");
   }
@@ -47,10 +50,13 @@ function mergeProps(
   const group = ownProps.group || getBlock(state, ownProps.groupID!);
   const blockHandlers = getBlockMethods({ state, dispatch });
   const user = getSignedInUser(state);
+  console.log("I got to group container");
 
   return {
     block: group,
+    blockType: "group",
     render: ({ blockChildren }) => {
+      console.log("i got here");
       return (
         <Group
           withViewMore={ownProps.withViewMore}
@@ -74,8 +80,42 @@ function mergeProps(
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps as any,
-  mergeProps
-)(BlockInternalDataLoader);
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps,
+//   mergeProps
+// )(BlockInternalDataLoader);
+
+export default function SideGroup(props: any) {
+  return (
+    <BlockInternalDataLoader
+      block={props.group}
+      blockType="group"
+      render={({ blockChildren, blockHandlers, user }) => {
+        console.log("i got here");
+        // return "LoL";
+        const ownProps = props;
+        const group = props.group;
+        return (
+          <Group
+            withViewMore={ownProps.withViewMore}
+            group={group}
+            blockHandlers={blockHandlers}
+            draggableID={ownProps.draggableID}
+            index={ownProps.index}
+            context={ownProps.context}
+            selectedCollaborators={ownProps.selectedCollaborators}
+            user={user!}
+            tasks={blockChildren.tasks!}
+            projects={blockChildren.projects!}
+            toggleForm={ownProps.toggleForm}
+            onClickAddChild={ownProps.onClickAddChild}
+            setCurrentProject={ownProps.setCurrentProject}
+            onViewMore={ownProps.onViewMore}
+            disabled={ownProps.disabled}
+          />
+        );
+      }}
+    />
+  );
+}

@@ -56,6 +56,7 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
     const { task, blockHandlers, onEdit } = this.props;
     const { toggleLoading, toggleLoadingError } = this.state;
     const collaborator = this.getUserTaskCollaboratorData();
+    console.log({ collaborator });
 
     return (
       <div className="sk-minitask">

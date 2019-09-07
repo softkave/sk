@@ -90,6 +90,7 @@ class AC extends React.PureComponent<IACProp> {
 
           if (errors) {
             props.setErrors({ requests: errors });
+            props.setSubmitting(false);
             return;
           }
 

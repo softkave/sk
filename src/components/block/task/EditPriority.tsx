@@ -15,20 +15,22 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
     const menu = (
       <Menu onClick={({ key }) => onChange(key)}>
         <Menu.Item key="not important">
-          <Priority level="not important" cover />
+          <Priority level="not important" />
         </Menu.Item>
         <Menu.Item key="important">
-          <Priority level="important" cover />
+          <Priority level="important" />
         </Menu.Item>
         <Menu.Item key="very important">
-          <Priority level="very important" cover />
+          <Priority level="very important" />
         </Menu.Item>
       </Menu>
     );
 
     return (
       <Dropdown overlay={menu} trigger={["click"]}>
-        <Priority level={value} />
+        <div style={{ cursor: "pointer" }}>
+          <Priority level={value} />
+        </div>
       </Dropdown>
     );
   }

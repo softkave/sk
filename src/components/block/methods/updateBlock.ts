@@ -39,7 +39,9 @@ const updateBlockPipeline: IPipeline<
 
   redux({ dispatch, params }) {
     const { block, data } = params;
-    dispatch(updateBlockRedux(block.customId, data));
+    dispatch(
+      updateBlockRedux(block.customId, data, { arrayUpdateStrategy: "replace" })
+    );
   }
 };
 

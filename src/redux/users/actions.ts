@@ -3,7 +3,8 @@ import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload
+  IReferenceCountedResourceUpdatePayload,
+  IUpdateResourceMeta
 } from "../referenceCounting";
 import {
   ADD_USER,
@@ -32,13 +33,16 @@ export function addUserRedux(user: IUser): IAddUserAction {
 export interface IUpdateUserAction {
   type: UPDATE_USER;
   payload: IReferenceCountedResourceUpdatePayload<IUser>;
+  meta: IUpdateResourceMeta;
 }
 
 export function updateUserRedux(
   id: string,
-  user: Partial<IUser>
+  user: Partial<IUser>,
+  meta: IUpdateResourceMeta
 ): IUpdateUserAction {
   return {
+    meta,
     type: UPDATE_USER,
     payload: {
       id,
@@ -79,12 +83,15 @@ export function bulkAddUsersRedux(users: IUser[]): IBulkAddUsersAction {
 export interface IBulkUpdateUsersAction {
   type: BULK_UPDATE_USERS;
   payload: Array<IReferenceCountedResourceUpdatePayload<IUser>>;
+  meta: IUpdateResourceMeta;
 }
 
 export function bulkUpdateUsersRedux(
-  users: Array<{ id: string; data: Partial<IUser> }>
+  users: Array<{ id: string; data: Partial<IUser> }>,
+  meta: IUpdateResourceMeta
 ): IBulkUpdateUsersAction {
   return {
+    meta,
     type: BULK_UPDATE_USERS,
     payload: users
   };

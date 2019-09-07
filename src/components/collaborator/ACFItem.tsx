@@ -59,7 +59,7 @@ const ACFItem = React.memo<IACFItemProps>(props => {
             .subtract(1, "day")
             .endOf("day")}
           onChange={date => {
-            onChange({ ...value, expiresAt: date.valueOf() });
+            onChange({ ...value, expiresAt: date });
           }}
         />
       </Form.Item>

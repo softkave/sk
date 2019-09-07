@@ -3,7 +3,7 @@ import moment from "moment";
 import React from "react";
 
 export interface IACFExpiresAtProps {
-  onChange: (value: number) => void;
+  onChange: (value?: number) => void;
   minDate: moment.Moment;
   value?: number;
   dateFormat?: string;
@@ -25,7 +25,8 @@ class ACFExpiresAt extends React.PureComponent<IACFExpiresAtProps> {
           return !!(current && current < minDate);
         }}
         onChange={date => {
-          onChange(date.valueOf());
+          console.log({ date: date && date.format("MMM DD, YYYY") });
+          onChange(date ? date.valueOf() : undefined);
         }}
       />
     );

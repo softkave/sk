@@ -28,9 +28,13 @@ const getCollaborationRequestsPipeline: IPipeline<
     const ids = result.requests.map(request => request.customId);
     dispatch(bulkAddNotificationsRedux(result.requests));
     dispatch(
-      updateBlockRedux(params.block.customId, {
-        collaborationRequests: ids
-      })
+      updateBlockRedux(
+        params.block.customId,
+        {
+          collaborationRequests: ids
+        },
+        { arrayUpdateStrategy: "replace" }
+      )
     );
   }
 };

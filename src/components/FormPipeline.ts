@@ -70,6 +70,22 @@ const handleErrorWithParams = (
   handleErrorParams: IHandleErrorParams
 ) => {
   if (result && result.errors) {
+    const fieldsPlusErrors = result.errors.map(e => {
+      return {
+        ...e,
+        message: `${e.field} - ${e.message}`
+      };
+    });
+
+    const logMessageStyle = "color: red;";
+    console.log("--------------- start");
+    console.log("---------------");
+    fieldsPlusErrors.forEach(e => {
+      console.log(`%c ${e.message}`, logMessageStyle);
+    });
+    console.log("---------------");
+    console.log("--------------- end");
+
     if (handleErrorParams.filterBaseNames) {
       result.errors = filterErrorByBaseName(
         result.errors,

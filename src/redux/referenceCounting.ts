@@ -1,7 +1,14 @@
+// import dotProp from "dot-prop-immutable";
 import get from "lodash/get";
+import isArray from "lodash/isArray";
 import merge from "lodash/merge";
+import mergeWith from "lodash/mergeWith";
 
 // TODO: Rework the types and architecture
+
+export interface IUpdateResourceMeta {
+  arrayUpdateStrategy?: "merge" | "concat" | "replace";
+}
 
 export interface IReferenceCountedResourceContainer<ResourceType> {
   referenceCount: number;
@@ -64,7 +71,8 @@ export function bulkUpdateReferenceCountedResources<
   ResourceType extends object
 >(
   resources: IReferenceCountedNormalizedResources<ResourceType>,
-  params: Array<IReferenceCountedResourceUpdatePayload<ResourceType>>
+  params: Array<IReferenceCountedResourceUpdatePayload<ResourceType>>,
+  meta: IUpdateResourceMeta
 ) {
   if (params.length === 0) {
     return resources;
@@ -81,7 +89,22 @@ export function bulkUpdateReferenceCountedResources<
 
     if (resource) {
       resource = merge({}, updatedResources[param.id]);
-      resource.resource = merge({}, resource.resource, param.data);
+      resource.resource = mergeWith(
+        {},
+        resource.resource,
+        param.data,
+        (objValue, srcValue) => {
+          if (isArray(objValue) && srcValue) {
+            if (meta.arrayUpdateStrategy === "concat") {
+              return objValue.concat(srcValue);
+            } else if (meta.arrayUpdateStrategy === "replace") {
+              return srcValue;
+            }
+          }
+        }
+      );
+
+      // resource = dotProp.merge(resource, "resource", param.data);
       updatedResources[param.id] = resource;
     }
   });

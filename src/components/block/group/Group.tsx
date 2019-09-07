@@ -1,10 +1,13 @@
 import styled from "@emotion/styled";
+import { Button, Dropdown, Icon, Menu } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods";
+import { BoardContext } from "./Board";
+import { getChildrenTypesForContext } from "./childrenTypes";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
 import TaskList from "./TaskList";
@@ -15,7 +18,7 @@ export interface IGroupProps {
   blockHandlers: IBlockMethods;
   draggableID: string;
   index: number;
-  context: "task" | "project";
+  context: BoardContext;
   selectedCollaborators: { [key: string]: boolean };
   user: IUser;
   tasks: IBlock[];
@@ -29,7 +32,40 @@ export interface IGroupProps {
 }
 
 class Group extends React.PureComponent<IGroupProps> {
-  public renderContext() {
+  public render() {
+    const { draggableID: draggableId, index, disabled, group } = this.props;
+    console.log(this);
+
+    return (
+      <Draggable
+        index={index}
+        draggableId={draggableId}
+        // isDragDisabled={disabled}
+        isDragDisabled={true}
+      >
+        {(provided, snapshot) => {
+          return (
+            <GroupContainer
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+            >
+              <GroupContainerInner>
+                <GroupHeaderDiv {...provided.dragHandleProps}>
+                  <GroupHeader
+                    name={group.name}
+                    controls={this.renderControls()}
+                  />
+                </GroupHeaderDiv>
+                <GroupBodyDiv>{this.renderContext()}</GroupBodyDiv>
+              </GroupContainerInner>
+            </GroupContainer>
+          );
+        }}
+      </Draggable>
+    );
+  }
+
+  private renderContext() {
     const {
       group,
       context,
@@ -81,34 +117,53 @@ class Group extends React.PureComponent<IGroupProps> {
     }
   }
 
-  public render() {
-    const { draggableID: draggableId, index, disabled, group } = this.props;
+  private onSelectControl = event => {
+    const { group, onClickAddChild } = this.props;
+    onClickAddChild(event.key, group);
+  };
+
+  private renderControls() {
+    const { group, context } = this.props;
+    const childrenTypes = getChildrenTypesForContext(group, context);
+    const overlay = (
+      <Menu onClick={this.onSelectControl}>
+        {childrenTypes.map(type => {
+          return (
+            <Menu.Item key={type}>
+              <ControlText>{`Create ${type}`}</ControlText>
+            </Menu.Item>
+          );
+        })}
+      </Menu>
+    );
 
     return (
-      <Draggable
-        index={index}
-        draggableId={draggableId}
-        isDragDisabled={disabled}
-      >
-        {(provided, snapshot) => {
-          return (
-            <GroupContainer
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-            >
-              <GroupContainerInner>
-                <div {...provided.dragHandleProps}>
-                  <GroupHeader name={group.name} />
-                </div>
-                {this.renderContext()}
-              </GroupContainerInner>
-            </GroupContainer>
-          );
-        }}
-      </Draggable>
+      <Dropdown overlay={overlay} trigger={["click"]}>
+        <OpenControlButtonSpan>
+          <Button icon="ellipsis"></Button>
+        </OpenControlButtonSpan>
+      </Dropdown>
     );
   }
 }
+
+const ControlText = styled.span({
+  textTransform: "capitalize"
+});
+
+const OpenControlButtonSpan = styled("span")({
+  ["& .anticon"]: {
+    // fontSize: "18px !important"
+  }
+});
+
+const GroupHeaderDiv = styled.div``;
+
+const GroupBodyDiv = styled.div`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+`;
 
 const GroupContainer = styled.div`
   display: flex;

@@ -73,9 +73,13 @@ const addCollaboratorPipeline: IPipeline<
      */
     // dispatch(bulkAddNotificationsRedux(requests));
     dispatch(
-      updateBlockRedux(block.customId, {
-        collaborationRequests: block.collaborationRequests.concat(requestIds)
-      })
+      updateBlockRedux(
+        block.customId,
+        {
+          collaborationRequests: requestIds
+        },
+        { arrayUpdateStrategy: "concat" }
+      )
     );
   }
 };

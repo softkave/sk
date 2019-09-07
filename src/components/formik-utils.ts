@@ -1,4 +1,6 @@
+import { notification } from "antd";
 import { FormikActions } from "formik";
+
 import { INetError } from "../net/query";
 import { indexArray } from "../utils/object";
 
@@ -80,8 +82,40 @@ export async function submitHandler(
     }
   } catch (error) {
     console.log({ error });
+    let flattenedError = flattenErrorToObject(error);
+
+    if (process.env.NODE_ENV === "development") {
+      const fieldsPlusErrors = error.map(e => {
+        return {
+          ...e,
+          message: `${e.field} - ${e.message}`
+        };
+      });
+
+      flattenedError = {
+        ...flattenedError,
+        error: flattenedError.error
+          ? flattenedError.error.concat(fieldsPlusErrors)
+          : fieldsPlusErrors
+      };
+
+      // notification.error({
+      //   message: fieldsPlusErrors.map((e) => {
+      //     return e.message;
+      //   }).join("/n")
+      // })
+
+      // console.log("--------------- start");
+      // console.log("---------------");
+      // fieldsPlusErrors.forEach((e) => {
+      //   console.log(e.message);
+      // });
+      // console.log("---------------");
+      // console.log("--------------- end");
+    }
+
     setSubmitting(false);
-    setErrors(flattenErrorToObject(error));
+    setErrors(flattenedError);
 
     if (onError) {
       onError();
@@ -93,4 +127,19 @@ export async function submitHandler(
   }
 
   return result;
+}
+
+export function touchFields(options: ISubmitHandlerOptions, fields: string[]) {
+  fields.forEach(field => {
+    options.setFieldTouched(field, true);
+  });
+}
+
+export function areFieldsTouched(
+  props: ISubmitHandlerOptions,
+  fields: string[]
+) {
+  const untouchedField = fields.find(field => {
+    // if (props.)
+  });
 }

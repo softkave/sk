@@ -35,10 +35,11 @@ export interface IEditProjectProps {
   existingProjects?: string[];
 }
 
+const defaultSubmitLabel = "Create Project";
+
 class EditProject extends React.Component<IEditProjectProps> {
   public static defaultProps = {
-    data: {},
-    submitLabel: "Create Project",
+    submitLabel: defaultSubmitLabel,
     existingProjects: []
   };
 
@@ -56,6 +57,7 @@ class EditProject extends React.Component<IEditProjectProps> {
 
           if (error) {
             props.setErrors(error);
+            props.setSubmitting(false);
             return;
           }
 
@@ -82,7 +84,7 @@ class EditProject extends React.Component<IEditProjectProps> {
                 </Form.Item>
               )}
               <Form.Item
-                label="Organization Name"
+                label="Project Name"
                 help={<FormError>{errors.name}</FormError>}
               >
                 <Input
@@ -113,7 +115,7 @@ class EditProject extends React.Component<IEditProjectProps> {
                   htmlType="submit"
                   loading={isSubmitting}
                 >
-                  {submitLabel}
+                  {submitLabel || defaultSubmitLabel}
                 </Button>
               </Form.Item>
             </form>

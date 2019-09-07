@@ -30,7 +30,11 @@ export function usersReducer(
     }
 
     case UPDATE_USER: {
-      return bulkUpdateReferenceCountedResources(state, [action.payload]);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        [action.payload],
+        action.meta
+      );
     }
 
     case DELETE_USER: {
@@ -42,7 +46,11 @@ export function usersReducer(
     }
 
     case BULK_UPDATE_USERS: {
-      return bulkUpdateReferenceCountedResources(state, action.payload);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        action.payload,
+        action.meta
+      );
     }
 
     case BULK_DELETE_USERS: {

@@ -3,7 +3,7 @@ import { Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods";
 import GroupContainer from "./GroupContainer";
@@ -21,9 +21,9 @@ export interface IKanbanBoardProps {
   collaborators: IUser[];
   selectedCollaborators: { [key: string]: boolean };
   context: "task" | "project";
-  toggleForm: (type: string, parent: IBlock, block: IBlock) => void;
+  toggleForm: (type: BlockType, parent: IBlock, block: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
-  onClickAddChild: (type: string, group: IBlock) => void;
+  onClickAddChild: (type: BlockType, group: IBlock) => void;
   onSelectGroup: (group: IBlock, isRootBlock: boolean) => void;
 }
 
@@ -48,10 +48,10 @@ class KanbanBoard extends React.PureComponent<
 
     switch (type) {
       case "task":
-        return this.hasChildren(block.task);
+        return this.hasChildren(block.tasks);
 
       case "project":
-        return this.hasChildren(block.project);
+        return this.hasChildren(block.projects);
 
       default:
         return false;
@@ -59,85 +59,75 @@ class KanbanBoard extends React.PureComponent<
   }
 
   private onDragEnd = async result => {
-    const { block, blockHandlers, groups, tasks, projects } = this.props;
-    const { destination, type, draggableId, source } = result;
-
-    if (!destination || draggableId === block.customId) {
-      return;
-    }
-
-    let draggedBlock: IBlock;
-    let sourceBlock: IBlock;
-    let destinationBlock: IBlock;
-    let dropPosition = result.destination.index;
-
-    this.setState({ loading: true });
-
-    if (type === "GROUP") {
-      sourceBlock = block;
-      destinationBlock = block;
-      draggedBlock = groups!.find(group => group.customId === draggableId)!;
-
-      dropPosition -= 1;
-      result.destination.index = dropPosition;
-
-      if (dropPosition < 0) {
-        this.setState({ loading: false });
-        return;
-      }
-    } else if (type === "TASK") {
-      if (destination.droppableId === "ungrouped") {
-        destinationBlock = block;
-      } else {
-        destinationBlock = groups!.find(
-          group => group.customId === destination.droppableId
-        )!;
-      }
-
-      if (source.droppableId === "ungrouped") {
-        sourceBlock = block;
-      } else {
-        sourceBlock = groups!.find(
-          group => group.customId === source.droppableId
-        )!;
-      }
-
-      draggedBlock = tasks!.find(task => task.customId === draggableId)!;
-    } else if (type === "PROJECT") {
-      if (destination.droppableId === "ungrouped") {
-        destinationBlock = block;
-      } else {
-        destinationBlock = groups!.find(
-          group => group.customId === destination.droppableId
-        )!;
-      }
-
-      if (source.droppableId === "ungrouped") {
-        sourceBlock = block;
-      } else {
-        sourceBlock = groups!.find(
-          group => group.customId === source.droppableId
-        )!;
-      }
-
-      draggedBlock = projects!.find(
-        project => project.customId === draggableId
-      )!;
-    }
-
-    await blockHandlers.onTransferBlock({
-      draggedBlock: draggedBlock!,
-      sourceBlock: sourceBlock!,
-      destinationBlock: destinationBlock!,
-      dragInformation: result
-    });
-
-    this.setState({ loading: false });
+    // const { block, blockHandlers, groups, tasks, projects } = this.props;
+    // const { destination, type, draggableId, source } = result;
+    // if (!destination || draggableId === block.customId) {
+    //   return;
+    // }
+    // let draggedBlock: IBlock;
+    // let sourceBlock: IBlock;
+    // let destinationBlock: IBlock;
+    // let dropPosition = result.destination.index;
+    // this.setState({ loading: true });
+    // if (type === "GROUP") {
+    //   sourceBlock = block;
+    //   destinationBlock = block;
+    //   draggedBlock = groups!.find(group => group.customId === draggableId)!;
+    //   dropPosition -= 1;
+    //   result.destination.index = dropPosition;
+    //   if (dropPosition < 0) {
+    //     this.setState({ loading: false });
+    //     return;
+    //   }
+    // } else if (type === "TASK") {
+    //   if (destination.droppableId === "ungrouped") {
+    //     destinationBlock = block;
+    //   } else {
+    //     destinationBlock = groups!.find(
+    //       group => group.customId === destination.droppableId
+    //     )!;
+    //   }
+    //   if (source.droppableId === "ungrouped") {
+    //     sourceBlock = block;
+    //   } else {
+    //     sourceBlock = groups!.find(
+    //       group => group.customId === source.droppableId
+    //     )!;
+    //   }
+    //   // TODO : Transferring blocks should maybe be done in redux, cause not all tasks
+    //   // or projects are here. Groups are okay though.
+    //   draggedBlock = tasks!.find(task => task.customId === draggableId)!;
+    // } else if (type === "PROJECT") {
+    //   if (destination.droppableId === "ungrouped") {
+    //     destinationBlock = block;
+    //   } else {
+    //     destinationBlock = groups!.find(
+    //       group => group.customId === destination.droppableId
+    //     )!;
+    //   }
+    //   if (source.droppableId === "ungrouped") {
+    //     sourceBlock = block;
+    //   } else {
+    //     sourceBlock = groups!.find(
+    //       group => group.customId === source.droppableId
+    //     )!;
+    //   }
+    //   draggedBlock = projects!.find(
+    //     project => project.customId === draggableId
+    //   )!;
+    // }
+    // await blockHandlers.onTransferBlock({
+    //   draggedBlock: draggedBlock!,
+    //   sourceBlock: sourceBlock!,
+    //   destinationBlock: destinationBlock!,
+    //   dragInformation: result
+    // });
+    // this.setState({ loading: false });
   };
 
-  private hasChildren(obj) {
-    if (obj && typeof obj === "object") {
-      return Object.keys(obj).length > 0;
+  private hasChildren(idArray) {
+    if (Array.isArray(idArray) && idArray.length > 0) {
+      return true;
     }
 
     return false;
@@ -154,6 +144,7 @@ class KanbanBoard extends React.PureComponent<
       onSelectGroup,
       groups: blockGroups
     } = this.props;
+    console.log(this);
     const sortedGroupIds =
       context === "task" ? block.groupTaskContext : block.groupProjectContext;
 
@@ -169,12 +160,12 @@ class KanbanBoard extends React.PureComponent<
           key="ungrouped"
           group={{
             ...block,
-            name: "...",
+            name: context === "task" ? "Ungrouped Tasks" : "Ungrouped Projects",
             type: "group"
           }}
           draggableID="ungrouped"
-          onClickAddChild={onClickAddChild}
-          toggleForm={() => null}
+          onClickAddChild={type => onClickAddChild(type, block)}
+          toggleForm={(type, parent, child) => toggleForm(type, block, child)}
           index={0}
           context={context}
           selectedCollaborators={selectedCollaborators}
@@ -196,7 +187,7 @@ class KanbanBoard extends React.PureComponent<
           group={group}
           draggableID={groupId}
           onClickAddChild={onClickAddChild}
-          toggleForm={() => toggleForm("group", block, group)}
+          toggleForm={toggleForm}
           index={blockHasUngrouped ? index + 1 : index}
           context={context}
           selectedCollaborators={selectedCollaborators}
@@ -210,7 +201,9 @@ class KanbanBoard extends React.PureComponent<
   };
 
   private renderBlockChildren = () => {
-    return <React.Fragment>{this.renderGroups()}</React.Fragment>;
+    const renderedGroups = this.renderGroups();
+    console.log(renderedGroups);
+    return <React.Fragment>{renderedGroups}</React.Fragment>;
   };
 
   private renderMain = () => {
@@ -240,6 +233,7 @@ class KanbanBoard extends React.PureComponent<
     );
 
     if (loading) {
+      console.log("i am loading");
       return (
         <SpinContainer>
           <Spin
@@ -260,19 +254,20 @@ class KanbanBoard extends React.PureComponent<
 const KanbanBoardInner = styled.div`
   width: 100%;
   height: 100%;
-  white-space: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
   flex: 1;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  padding: 12px 0;
+  box-sizing: border-box;
 `;
 
 const KanbanBoardDroppable = styled.div`
-  min-height: 100%;
-  display: inline-flex;
-  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  padding: 12px 16px;
+  box-sizing: border-box;
 `;
 
 const SpinContainer = styled.div`

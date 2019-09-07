@@ -74,5 +74,5 @@ export interface INetError {
 }
 
 export interface INetResult extends IAnyObject {
-  errors?: INetError;
+  errors?: INetError[];
 }

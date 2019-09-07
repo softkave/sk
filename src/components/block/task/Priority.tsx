@@ -30,5 +30,9 @@ const StyledPriority = styled("span")<IStyledPriorityProps>({}, props => {
 export default function Priority(props) {
   const { level, cover } = props;
 
-  return <StyledPriority level={level} cover={cover} />;
+  return (
+    <StyledPriority level={level} cover={cover}>
+      {level}
+    </StyledPriority>
+  );
 }

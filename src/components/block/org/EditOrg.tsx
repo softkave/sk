@@ -32,10 +32,14 @@ export interface IEditOrgProps {
   data?: IEditOrgValues;
 }
 
+const defaultSubmitLabel = "Create Organization";
+const initialValues = {
+  name: ""
+};
+
 class EditOrg extends React.Component<IEditOrgProps> {
   public static defaultProps = {
-    data: {},
-    submitLabel: "Create Organization"
+    submitLabel: defaultSubmitLabel
   };
 
   public render() {
@@ -100,7 +104,7 @@ class EditOrg extends React.Component<IEditOrgProps> {
                   htmlType="submit"
                   loading={isSubmitting}
                 >
-                  {submitLabel}
+                  {submitLabel || defaultSubmitLabel}
                 </Button>
               </Form.Item>
             </form>

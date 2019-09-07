@@ -14,13 +14,13 @@ import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
 export interface IAddBlockPipelineParams {
   block: Partial<IBlock>;
   user: IUser;
-  parent?: IBlock;
+  parent?: IBlock | null;
 }
 
 interface IAddBlockProcessedParams {
   block: IBlock;
   user: IUser;
-  parent?: IBlock;
+  parent?: IBlock | null;
 }
 
 const addBlockPipeline: IPipeline<
@@ -50,18 +50,18 @@ const addBlockPipeline: IPipeline<
       const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
       block.parents = [...ancestors, parent.customId];
 
-      const pluralType = `${block.type}s`;
+      // const pluralType = `${block.type}s`;
 
-      if (!parent[pluralType]) {
-        parent[pluralType] = [];
-      }
+      // if (!parent[pluralType]) {
+      //   parent[pluralType] = [];
+      // }
 
-      parent[pluralType].push(block.customId);
+      // parent[pluralType].push(block.customId);
 
-      if (block.type === "group") {
-        parent.groupTaskContext.push(block.customId!);
-        parent.groupProjectContext.push(block.customId!);
-      }
+      // if (block.type === "group") {
+      //   parent.groupTaskContext.push(block.customId!);
+      //   parent.groupProjectContext.push(block.customId!);
+      // }
     }
 
     if (block.type === "org") {
@@ -97,11 +97,29 @@ const addBlockPipeline: IPipeline<
     dispatch(addBlockRedux(block));
 
     if (parent) {
-      dispatch(updateBlockRedux(parent.customId, parent));
+      const pluralType = `${block.type}s`;
+      const parentUpdate = { [pluralType]: [block.customId] };
+
+      if (block.type === "group") {
+        parentUpdate.groupTaskContext = [block.customId!];
+        parentUpdate.groupProjectContext = [block.customId!];
+      }
+
+      dispatch(
+        updateBlockRedux(parent.customId, parentUpdate, {
+          arrayUpdateStrategy: "concat"
+        })
+      );
     }
 
     if (block.type === "org") {
-      dispatch(updateUserRedux(user.customId, { orgs: [block.customId] }));
+      dispatch(
+        updateUserRedux(
+          user.customId,
+          { orgs: [block.customId] },
+          { arrayUpdateStrategy: "concat" }
+        )
+      );
     }
   }
 };

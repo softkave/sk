@@ -1,6 +1,6 @@
 export interface ITaskCollaborator {
   userId: string;
-  completedAt: number;
+  completedAt?: number;
   assignedAt: number;
   assignedBy: string;
 }

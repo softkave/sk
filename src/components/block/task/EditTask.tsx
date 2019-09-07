@@ -22,6 +22,7 @@ const validationSchema = yup.object().shape({
     .string()
     .max(blockConstants.maxDescriptionLength)
     .matches(textPattern)
+    .required()
 });
 
 interface ITaskCollaborator {
@@ -49,10 +50,11 @@ export interface IEditTaskProps {
   onSubmit: (data: IBlock) => Promise<void>;
 }
 
+const defaultSubmitLabel = "Create Task";
+
 class EditTask extends React.Component<IEditTaskProps> {
   public static defaultProps = {
-    data: {},
-    submitLabel: "Create Task",
+    submitLabel: defaultSubmitLabel,
     defaultAssignedTo: []
   };
 
@@ -77,14 +79,21 @@ class EditTask extends React.Component<IEditTaskProps> {
       onSubmit
     } = this.props;
 
+    console.log(this);
+
     return (
       <Formik
         initialValues={{
           ...data,
-          taskCollaborators: data.taskCollaborators || defaultAssignedTo || []
+
+          // TODO: Create a const of defaults
+          priority: data ? data.priority : "important",
+          taskCollaborators:
+            (data ? data.taskCollaborators : defaultAssignedTo) || []
         }}
         validationSchema={validationSchema}
         onSubmit={(values, props) => {
+          // TODO: Only update forms if fields have changed. Use touched
           (values as any).type = "task";
           submitHandler(onSubmit, values, props);
         }}
@@ -169,10 +178,13 @@ class EditTask extends React.Component<IEditTaskProps> {
                 <Select
                   placeholder="Assign Collaborator"
                   value={undefined}
-                  onChange={value =>
+                  onChange={index =>
                     setFieldValue(
                       "taskCollaborators",
-                      this.assignCollaborator(value, values.taskCollaborators)
+                      this.assignCollaborator(
+                        collaborators[Number(index)],
+                        values.taskCollaborators
+                      )
                     )
                   }
                 >
@@ -202,7 +214,10 @@ class EditTask extends React.Component<IEditTaskProps> {
                   format="YYYY-MM-DD HH:mm:ss"
                   placeholder="Complete At"
                   onChange={value =>
-                    setFieldValue("expectedEndAt", value.valueOf())
+                    setFieldValue(
+                      "expectedEndAt",
+                      value ? value.valueOf() : null
+                    )
                   }
                   value={
                     values.expectedEndAt
@@ -218,7 +233,7 @@ class EditTask extends React.Component<IEditTaskProps> {
                   htmlType="submit"
                   loading={isSubmitting}
                 >
-                  {submitLabel}
+                  {submitLabel || defaultSubmitLabel}
                 </Button>
               </Form.Item>
             </form>
@@ -232,6 +247,7 @@ class EditTask extends React.Component<IEditTaskProps> {
     collaborator: IUser,
     taskCollaborators: ITaskCollaborator[]
   ): ITaskCollaborator[] => {
+    console.log({ collaborator, taskCollaborators });
     const { user } = this.props;
     const collaboratorExists = !!taskCollaborators.find(next => {
       return collaborator.customId === next.userId;

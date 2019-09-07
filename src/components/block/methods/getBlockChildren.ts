@@ -42,7 +42,7 @@ const getBlockChildrenPipeline: IPipeline<
   redux({ dispatch, params, result }) {
     const { block, updateBlock } = params;
     const { blocks } = result;
-    const children: any = {
+    const parentUpdate: Partial<IBlock> = {
       tasks: [],
       groups: [],
       projects: [],
@@ -51,20 +51,20 @@ const getBlockChildrenPipeline: IPipeline<
     };
 
     blocks.forEach(nextBlock => {
-      const container = children[`${nextBlock.type}s`];
+      const container = parentUpdate[`${nextBlock.type}s`];
       container.push(nextBlock.customId);
 
       if (nextBlock.type === "group") {
-        children.groupTaskContext.push(nextBlock.customId);
-        children.groupProjectContext.push(nextBlock.customId);
+        parentUpdate.groupTaskContext!.push(nextBlock.customId);
+        parentUpdate.groupProjectContext!.push(nextBlock.customId);
       }
     });
 
     dispatch(bulkAddBlocksRedux(blocks));
 
     // tslint:disable-next-line: forin
-    for (const key in children) {
-      const typeContainer = children[key];
+    for (const key in parentUpdate) {
+      const typeContainer = parentUpdate[key];
 
       if (
         !Array.isArray(block[key]) ||
@@ -73,8 +73,12 @@ const getBlockChildrenPipeline: IPipeline<
         // TODO: Think on: do we need to handle error here
         // const updateBlockResult = await updateBlock(block, block);
         // throwOnError(updateBlockResult);
-        updateBlock({ block, data: children });
-        dispatch(updateBlockRedux(block.customId, children));
+        updateBlock({ block, data: parentUpdate });
+        dispatch(
+          updateBlockRedux(block.customId, parentUpdate, {
+            arrayUpdateStrategy: "replace"
+          })
+        );
         break;
       }
     }

@@ -1,14 +1,15 @@
+import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
-import { IPromise } from "q";
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import { updateBlockRedux } from "../../../redux/blocks/actions";
-import { getBlocksAsArray } from "../../../redux/blocks/selectors";
+import { getBlock, getBlocksAsArray } from "../../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../../redux/notifications/selectors";
+import { getSignedInUser } from "../../../redux/session/selectors";
 import { IReduxState } from "../../../redux/store";
 import { getUsersAsArray } from "../../../redux/users/selectors";
 import { getBlockMethods, IBlockMethods } from "../methods";
@@ -29,12 +30,16 @@ interface IBlockChildren {
 }
 
 export interface IBlockInternalDataLoaderProps {
+  // blockID: string;
   block: IBlock;
+  blockType: BlockType;
   render: (renderParams: {
     block: IBlock;
     blockChildren: IBlockChildren;
     collaborators: IUser[];
     collaborationRequests: INotification[];
+    user: IUser;
+    blockHandlers: IBlockMethods;
   }) => React.ReactNode;
 }
 
@@ -43,8 +48,10 @@ type BlockInternalDataToLoad =
   | "collaborationRequests"
   | "children";
 
-function getBlockInternalDataToLoad(block: IBlock): BlockInternalDataToLoad[] {
-  switch (block.type) {
+function getBlockInternalDataToLoad(
+  blockType: BlockType
+): BlockInternalDataToLoad[] {
+  switch (blockType) {
     case "root":
     case "org": {
       return ["collaborators", "collaborationRequests", "children"];
@@ -72,7 +79,7 @@ async function loadBlockInternalDataFromNet(
   dataToLoad: BlockInternalDataToLoad[],
   blockHandlers: IBlockMethods
 ) {
-  const promises: Array<IPromise<any>> = [];
+  const promises: Array<Promise<any>> = [];
 
   dataToLoad.forEach(identifier => {
     switch (identifier) {
@@ -120,28 +127,38 @@ function pluralize(blockChildrenTypes: string[]) {
 function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockChildren) {
   const childrenTypes = getBlockValidChildrenTypes(block);
   const pluralizedBlockTypes = pluralize(childrenTypes);
+  console.log({ block, pluralizedBlockTypes, blockChildren });
 
   return (
+    // find children that isn't loaded yet
     pluralizedBlockTypes.findIndex(propName => {
+      // TODO: move this to the redux reducer or to the update action
+      const s1 = uniq(block[propName]);
+      const s2 = uniq(blockChildren[propName]);
+      console.log({ s1, s2, propName });
+
       if (
         Array.isArray(block[propName]) &&
         Array.isArray(blockChildren[propName]) &&
-        block[propName].length === blockChildren[propName].length
+        s1.length === s2.length
       ) {
-        return true;
+        return false;
       }
 
-      return false;
+      return true;
     }) === -1
   );
 }
 
 // TODO: Collaborator is slightly different from IUser
 function areBlockCollaboratorsLoaded(block: IBlock, collaborators?: IUser[]) {
+  const s1 = uniq(block.collaborators);
+  const s2 = uniq(collaborators);
+
   if (
     Array.isArray(block.collaborators) &&
     Array.isArray(collaborators) &&
-    block.collaborators.length === collaborators.length
+    s1.length === s2.length
   ) {
     return true;
   }
@@ -153,10 +170,13 @@ function areBlockCollaborationRequestsLoaded(
   block: IBlock,
   requests?: INotification[]
 ) {
+  const s1 = uniq(block.collaborationRequests);
+  const s2 = uniq(requests);
+
   if (
     Array.isArray(block.collaborationRequests) &&
     Array.isArray(requests) &&
-    block.collaborationRequests.length === requests.length
+    s1.length === s2.length
   ) {
     return true;
   }
@@ -195,16 +215,39 @@ function loadBlockCollaborationRequestsFromRedux(
   }
 }
 
+function getBlockCollaborators(
+  block: IBlock,
+  blockType: BlockType,
+  state: IReduxState
+) {
+  console.log("getBlockCollaborators", { block });
+  // The last check is for Ungrouped category
+  if (
+    blockType === "org" ||
+    blockType === "root" ||
+    (Array.isArray(block.parents) && block.parents.length === 0)
+  ) {
+    return loadBlockCollaboratorsFromRedux(block, state);
+  } else {
+    const block0 = getBlock(state, block.parents[0]);
+    console.log({ block0 });
+    return loadBlockCollaboratorsFromRedux(block0, state);
+  }
+}
+
 function mergeProps(
   state: IReduxState,
   { dispatch }: { dispatch: Dispatch },
   ownProps: IBlockInternalDataLoaderProps
 ): IDataLoaderProps {
   console.log(ownProps);
+  const user = getSignedInUser(state);
+  // const stateBlock = getBlock(state, ownProps.blockID);
+  // const block = stateBlock || ownProps.block;
   const block = ownProps.block;
   const blockHandlers = getBlockMethods({ state, dispatch });
   const blockChildren = loadBlockChildrenFromRedux(block, state);
-  const collaborators = loadBlockCollaboratorsFromRedux(block, state);
+  const collaborators = getBlockCollaborators(block, ownProps.blockType, state);
   const collaborationRequests = loadBlockCollaborationRequestsFromRedux(
     block,
     state
@@ -217,27 +260,35 @@ function mergeProps(
     collaborationRequests
   );
 
-  const blockInternalDataToLoad = getBlockInternalDataToLoad(block).filter(
-    dataName => {
-      switch (dataName) {
-        case "children": {
-          return childrenLoaded;
-        }
+  const blockInternalDataToLoad = getBlockInternalDataToLoad(
+    ownProps.blockType
+  ).filter(dataName => {
+    switch (dataName) {
+      case "children": {
+        return !childrenLoaded;
+      }
 
-        case "collaborationRequests": {
-          return requestsLoaded;
-        }
+      case "collaborationRequests": {
+        return !requestsLoaded;
+      }
 
-        case "collaborators": {
-          return collaboratorsLoaded;
-        }
+      case "collaborators": {
+        return !collaboratorsLoaded;
+      }
 
-        default: {
-          throw new Error(`Unknown internal block data name ${dataName}`);
-        }
+      default: {
+        throw new Error(`Unknown internal block data name ${dataName}`);
       }
     }
-  );
+  });
+
+  console.log({
+    block,
+    childrenLoaded,
+    collaboratorsLoaded,
+    requestsLoaded,
+    blockInternalDataToLoad
+  });
 
   return {
     data: block,
@@ -248,11 +299,15 @@ function mergeProps(
       data1.customId === data2.customId,
     loadData: async () => {
       dispatch(
-        updateBlockRedux(block.customId, {
-          loadingChildren: true,
-          loadingCollaborators: true,
-          loadingCollaborationRequests: true
-        })
+        updateBlockRedux(
+          block.customId,
+          {
+            loadingChildren: true,
+            loadingCollaborators: true,
+            loadingCollaborationRequests: true
+          },
+          { arrayUpdateStrategy: "merge" }
+        )
       );
 
       await loadBlockInternalDataFromNet(
@@ -262,20 +317,27 @@ function mergeProps(
       );
 
       dispatch(
-        updateBlockRedux(block.customId, {
-          loadingChildren: false,
-          loadingCollaborators: false,
-          loadingCollaborationRequests: false
-        })
+        updateBlockRedux(
+          block.customId,
+          {
+            loadingChildren: false,
+            loadingCollaborators: false,
+            loadingCollaborationRequests: false
+          },
+          { arrayUpdateStrategy: "merge" }
+        )
       );
     },
-    render: () =>
-      ownProps.render({
+    render: () => {
+      return ownProps.render({
         block,
         blockChildren,
+        blockHandlers,
+        user: user!,
         collaborators: collaborators || [],
         collaborationRequests: collaborationRequests || []
-      })
+      });
+    }
   };
 }
 

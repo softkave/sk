@@ -3,7 +3,8 @@ import { IClearStateAction } from "../actions";
 import {
   IReferenceCountedResourceAddPayload,
   IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload
+  IReferenceCountedResourceUpdatePayload,
+  IUpdateResourceMeta
 } from "../referenceCounting";
 import {
   ADD_BLOCK,
@@ -32,13 +33,16 @@ export function addBlockRedux(block: IBlock): IAddBlockAction {
 export interface IUpdateBlockAction {
   type: UPDATE_BLOCK;
   payload: IReferenceCountedResourceUpdatePayload<IBlock>;
+  meta: IUpdateResourceMeta;
 }
 
 export function updateBlockRedux(
   id: string,
-  block: Partial<IBlock>
+  block: Partial<IBlock>,
+  meta: IUpdateResourceMeta
 ): IUpdateBlockAction {
   return {
+    meta,
     type: UPDATE_BLOCK,
     payload: {
       id,
@@ -79,12 +83,15 @@ export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
 export interface IBulkUpdateBlocksAction {
   type: BULK_UPDATE_BLOCKS;
   payload: Array<IReferenceCountedResourceUpdatePayload<IBlock>>;
+  meta: IUpdateResourceMeta;
 }
 
 export function bulkUpdateBlocksRedux(
-  blocks: Array<{ id: string; data: Partial<IBlock> }>
+  blocks: Array<{ id: string; data: Partial<IBlock> }>,
+  meta: IUpdateResourceMeta
 ): IBulkUpdateBlocksAction {
   return {
+    meta,
     type: BULK_UPDATE_BLOCKS,
     payload: blocks
   };

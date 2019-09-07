@@ -1,4 +1,7 @@
-export function assignTask(collaborator, by) {
+import { IUser } from "../user/user";
+import { ITaskCollaborator } from "./block";
+
+export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
   return {
     userId: collaborator.customId,
     assignedAt: Date.now(),

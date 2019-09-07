@@ -6,6 +6,7 @@ import "simplebar/dist/simplebar.css";
 
 const ScrollList = React.memo(props => {
   const { children } = props;
+  console.log(props);
 
   return (
     <BodyContainer>
@@ -20,13 +21,17 @@ export default ScrollList;
 
 const ScrollContainer = styled(SimpleBar)`
   overflow-x: hidden;
+  overflow-y: auto;
   height: 100%;
 `;
 
 const ScrollContainerInner = styled.div`
-  margin: 12px;
+  padding: 0 12px;
+  overflow-x: hidden;
 `;
 
 const BodyContainer = styled.div`
   flex: 1;
+  height: 100%;
+  overflow: hidden;
 `;

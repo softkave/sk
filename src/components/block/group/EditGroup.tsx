@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
 import FormError from "../../FormError";
-import { getGlobalError, submitHandler } from "../../formik-utils";
+import { getGlobalError, submitHandler, touchFields } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 
 const groupExistsErrorMessage = "Group with the same name exists";
@@ -22,6 +22,9 @@ const validationSchema = yup.object().shape({
     .matches(textPattern)
 });
 
+// TODO: untouched fields are showing error message because of a re-render
+const requiredFields = ["name"];
+
 interface IEditGroupValues {
   name: string;
   description?: string;
@@ -34,10 +37,11 @@ export interface IEditGroupProps {
   existingGroups?: string[];
 }
 
+const defaultSubmitLabel = "Create Group";
+
 class EditGroup extends React.Component<IEditGroupProps> {
   public static defaultProps = {
-    data: {},
-    submitLabel: "Create Group",
+    submitLabel: defaultSubmitLabel,
     existingGroups: []
   };
 
@@ -55,6 +59,7 @@ class EditGroup extends React.Component<IEditGroupProps> {
 
           if (error) {
             props.setErrors(error);
+            props.setSubmitting(false);
             return;
           }
 
@@ -82,7 +87,7 @@ class EditGroup extends React.Component<IEditGroupProps> {
               )}
               <Form.Item
                 label="Group Name"
-                help={<FormError>{errors.name}</FormError>}
+                help={touched.name && <FormError>{errors.name}</FormError>}
               >
                 <Input
                   autoComplete="off"
@@ -112,7 +117,7 @@ class EditGroup extends React.Component<IEditGroupProps> {
                   htmlType="submit"
                   loading={isSubmitting}
                 >
-                  {submitLabel}
+                  {submitLabel || defaultSubmitLabel}
                 </Button>
               </Form.Item>
             </form>

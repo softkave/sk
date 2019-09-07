@@ -84,6 +84,7 @@ export default class DataLoader extends React.Component<
     } else if (error) {
       return "An error occurred.";
     } else {
+      console.log(this);
       return render(data);
     }
   }

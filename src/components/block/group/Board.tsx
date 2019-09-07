@@ -2,11 +2,8 @@ import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
 
-import { IBlock } from "../../../models/block/block";
-import {
-  assignTask,
-  getBlockValidChildrenTypes
-} from "../../../models/block/utils";
+import { BlockType, IBlock } from "../../../models/block/block";
+import { assignTask } from "../../../models/block/utils";
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import AddDropdownButton from "../../AddDropdownButton";
@@ -16,6 +13,7 @@ import { IBlockMethods } from "../methods";
 import EditProject from "../project/EditProject";
 import EditTask from "../task/EditTask";
 import BoardContainer from "./BoardContainer";
+import { getChildrenTypesForContext } from "./childrenTypes";
 import EditGroup from "./EditGroup";
 import ExpandedGroup from "./ExpandedGroup";
 import KanbanBoard from "./KanbanBoard";
@@ -30,22 +28,21 @@ export interface IBoardProps {
   isUserRootBlock?: boolean;
   projects?: IBlock[];
   groups?: IBlock[];
+  tasks?: IBlock[];
 
   // TODO: Define the right type for collaborators
   collaborators: IUser[];
   collaborationRequests: INotification[];
 }
 
+export type BoardContext = "task" | "project";
+
 interface IBoardState {
-  form: {
-    task: boolean;
-    project: boolean;
-    group: boolean;
-  };
+  formType: BlockType | null;
   showCollaborators: boolean;
-  boardContext: "task" | "project";
+  boardContext: BoardContext;
   parent?: IBlock | null;
-  project?: IBlock | null;
+  projectID?: string | null;
   block?: IBlock | null;
   selectedCollaborators: { [key: string]: boolean };
   selectedGroup: IBlock | null;
@@ -55,12 +52,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   constructor(props) {
     super(props);
     this.state = {
-      form: {
-        task: false,
-        project: false,
-        group: false
-      },
-      project: null,
+      formType: null,
+      projectID: null,
       block: null,
       parent: null,
       showCollaborators: false,
@@ -74,15 +67,15 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     const { selectedGroup } = this.state;
     const splits: ISplit[] = [
       {
-        showControls: false,
         render: this.renderMain,
-        flex: 1
+        flex: 1,
+        id: "main"
       }
     ];
 
     if (selectedGroup) {
       splits.push({
-        showControls: true,
+        id: "group",
         title: selectedGroup.name,
         flex: 1,
         onClose: () => {
@@ -97,6 +90,21 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     return <SplitView splits={splits} />;
   }
 
+  private findBlock(blocks: IBlock[] = [], id: string) {
+    return blocks.find(block => block.customId === id);
+  }
+
+  private canHaveContextButtons(block: IBlock) {
+    switch (block.type) {
+      case "org":
+      case "root":
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   private renderMain = () => {
     const {
       block,
@@ -106,30 +114,34 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       isFromRoot,
       isUserRootBlock,
       projects,
-      groups
+      groups,
+      tasks
     } = this.props;
     const {
-      form,
-      project,
+      formType,
+      projectID,
       showCollaborators,
       boardContext,
       selectedCollaborators,
       block: formBlock
     } = this.state;
 
+    console.log(this.props);
+
     const collaborators = this.getCollaborators();
-    const childrenTypes = this.getChildrenTypesForContext(block);
+    const childrenTypes = getChildrenTypesForContext(block, boardContext);
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
 
     if (showCollaborators) {
       return this.renderCollaborators();
     }
 
-    if (project) {
+    if (projectID) {
+      const project = this.findBlock(projects, projectID);
       return (
         <BoardContainer
           onBack={() => this.setCurrentProject(null)}
-          blockID={project.customId}
+          blockID={projectID}
           block={project}
           isFromRoot={actLikeRootBlock}
         />
@@ -138,36 +150,36 @@ class Board extends React.Component<IBoardProps, IBoardState> {
 
     return (
       <Content>
-        {form.project && (
+        {formType === "project" && (
           <EditProject
-            visible={form.project}
+            visible
             onSubmit={data => this.onSubmitData(data, "project")}
             onClose={() => this.toggleForm("project")}
             data={formBlock}
-            existingProjects={form.project && this.getExistingNames(projects)}
-            submitLabel={formBlock && "Update Project"}
+            existingProjects={this.getExistingNames(projects)}
+            submitLabel={formBlock ? "Update Project" : "Create Project"}
           />
         )}
-        {form.group && (
+        {formType === "group" && (
           <EditGroup
-            visible={form.group}
+            visible
             onSubmit={data => this.onSubmitData(data, "group")}
             onClose={() => this.toggleForm("group")}
             data={formBlock}
-            existingGroups={form.group && this.getExistingNames(groups)}
-            submitLabel={formBlock && "Update Group"}
+            existingGroups={this.getExistingNames(groups)}
+            submitLabel={formBlock ? "Update Group" : "Create Group"}
           />
         )}
-        {form.task && (
+        {formType === "task" && (
           <EditTask
+            visible
             defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
             collaborators={collaborators}
-            visible={form.task}
             onSubmit={data => this.onSubmitData(data, "task")}
             onClose={() => this.toggleForm("task")}
             data={formBlock}
             user={user}
-            submitLabel={formBlock && "Update Task"}
+            submitLabel={formBlock ? "Update Task" : "Create Task"}
           />
         )}
         <Header>
@@ -179,22 +191,24 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               onClick={type => this.toggleForm(type, block)}
             />
           )}
-          <ContextButtons>
-            <Button.Group>
-              <Button
-                onClick={() => this.toggleContext("task")}
-                type={boardContext === "task" ? "primary" : "default"}
-              >
-                Task
-              </Button>
-              <Button
-                onClick={() => this.toggleContext("project")}
-                type={boardContext === "project" ? "primary" : "default"}
-              >
-                Project
-              </Button>
-            </Button.Group>
-          </ContextButtons>
+          {this.canHaveContextButtons(block) && (
+            <ContextButtons>
+              <Button.Group>
+                <Button
+                  onClick={() => this.toggleContext("task")}
+                  type={boardContext === "task" ? "primary" : "default"}
+                >
+                  Task
+                </Button>
+                <Button
+                  onClick={() => this.toggleContext("project")}
+                  type={boardContext === "project" ? "primary" : "default"}
+                >
+                  Project
+                </Button>
+              </Button.Group>
+            </ContextButtons>
+          )}
           {block.type === "org" && (
             <CollaboratorsButtonContainer>
               <Button onClick={this.toggleShowCollaborators}>
@@ -204,7 +218,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           )}
           <BlockName>{isUserRootBlock ? "Root" : block.name}</BlockName>
         </Header>
-        {!actLikeRootBlock && (
+        {/** TODO: undo */}
+        {/* {!actLikeRootBlock && (
           <CollaboratorAvatarsContainer>
             <AvatarList
               collaborators={collaborators.map(collaborator => {
@@ -218,7 +233,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               onClick={this.onSelectCollaborator}
             />
           </CollaboratorAvatarsContainer>
-        )}
+        )} */}
         <BoardContent>
           <KanbanBoard
             blockHandlers={blockHandlers}
@@ -231,6 +246,9 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             toggleForm={this.toggleForm}
             selectedCollaborators={selectedCollaborators}
             onSelectGroup={() => null}
+            groups={groups}
+            projects={projects}
+            tasks={tasks}
           />
         </BoardContent>
       </Content>
@@ -251,19 +269,37 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     });
   };
 
+  private getChildrenBlocksContainer(type: BlockType) {
+    const { tasks, projects, groups } = this.props;
+
+    switch (type) {
+      case "group":
+        return groups;
+
+      case "project":
+        return projects;
+
+      case "task":
+        return tasks;
+
+      default:
+        return [];
+    }
+  }
+
   private onSubmitData = async (data, formType) => {
     const { user } = this.props;
     const { parent, block } = this.state;
 
     if (block) {
       await this.props.blockHandlers.onUpdate({
-        block,
-        data
+        data,
+        block: block!
       });
     } else {
       await this.props.blockHandlers.onAdd({
         user,
-        parent: parent!,
+        parent,
         block: data
       });
     }
@@ -271,18 +307,18 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     this.toggleForm(formType);
   };
 
-  private toggleForm = (type: string, parent?: IBlock, block?: IBlock) => {
+  private toggleForm = (type: BlockType, parent?: IBlock, block?: IBlock) => {
     this.setState(prevState => {
       return {
         parent,
         block,
-        form: { ...prevState.form, [type]: !prevState.form[type] }
+        formType: prevState.formType ? null : type
       };
     });
   };
 
-  private setCurrentProject = project => {
-    this.setState({ project });
+  private setCurrentProject = (project: IBlock | null) => {
+    this.setState({ projectID: project ? project.customId : null });
   };
 
   private toggleShowCollaborators = () => {
@@ -308,20 +344,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     }
 
     return [];
-  }
-
-  private getChildrenTypesForContext(block) {
-    const { boardContext } = this.state;
-
-    const contextToRemove = boardContext === "task" ? "project" : "task";
-    const childrenTypes = getBlockValidChildrenTypes(block);
-    const contextToRemoveIndex = childrenTypes.indexOf(contextToRemove);
-
-    if (contextToRemoveIndex !== -1) {
-      childrenTypes.splice(contextToRemoveIndex, 1);
-    }
-
-    return childrenTypes;
   }
 
   private renderCollaborators = () => {
@@ -356,7 +378,8 @@ const Content = styled.div`
 
 const BoardContent = styled.div`
   flex: 1;
-  display: inline-flex;
+  display: flex;
+  overflow-x: auto;
 `;
 
 const Header = styled.div`

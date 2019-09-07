@@ -17,7 +17,13 @@ const fetchRootDataPipeline: IPipeline<
 > = {
   async net({ state, dispatch }) {
     const user = getSignedInUser(state);
-    dispatch(updateUserRedux(user!.customId, { loadingRootData: true }));
+    dispatch(
+      updateUserRedux(
+        user!.customId,
+        { loadingRootData: true },
+        { arrayUpdateStrategy: "concat" }
+      )
+    );
     return await netInterface("block.getRoleBlocks");
   },
 
@@ -25,7 +31,13 @@ const fetchRootDataPipeline: IPipeline<
     const { blocks } = result;
     const user = getSignedInUser(state);
     dispatch(bulkAddBlocksRedux(blocks));
-    dispatch(updateUserRedux(user!.customId, { loadingRootData: false }));
+    dispatch(
+      updateUserRedux(
+        user!.customId,
+        { loadingRootData: false },
+        { arrayUpdateStrategy: "concat" }
+      )
+    );
   }
 };
 

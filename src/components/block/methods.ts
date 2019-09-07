@@ -28,9 +28,9 @@ import getCollaboratorsPipeline, {
 import toggleTaskPipeline, {
   ToggleTaskPipelineEntryFunc
 } from "./methods/toggleTask";
-import transferBlockPipeline, {
-  TransferBlockPipelineEntryFunc
-} from "./methods/transferBlock";
+// import transferBlockPipeline, {
+//   TransferBlockPipelineEntryFunc
+// } from "./methods/transferBlock";
 import updateBlockPipeline, {
   UpdateBlockPipelineEntryFunc
 } from "./methods/updateBlock";
@@ -51,7 +51,7 @@ export interface IBlockMethods {
   getCollaborators: GetCollaboratorsPipelineEntryFunc;
   getCollaborationRequests: GetCollaborationRequestsPipelineEntryFunc;
   fetchRootData: FetchRootDataPipelineEntryFunc;
-  onTransferBlock: TransferBlockPipelineEntryFunc;
+  // onTransferBlock: TransferBlockPipelineEntryFunc;
 }
 
 export interface IGetBlockMethodsParams {
@@ -77,7 +77,7 @@ export function getBlockMethods(
       reduxParams
     ),
     fetchRootData: makePipeline(fetchRootDataPipeline, reduxParams),
-    onTransferBlock: makePipeline(transferBlockPipeline, reduxParams),
+    // onTransferBlock: makePipeline(transferBlockPipeline, reduxParams),
     getBlock: makePipeline(getBlockPipeline, reduxParams)
   };
 }

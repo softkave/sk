@@ -42,11 +42,15 @@ const FormMessage: React.SFC<IFormMessageProps> = props => {
     <StyledFormMessage type={type}>
       {children}
       {messages.map(nextMessage => {
-        if (typeof nextMessage === "string") {
-          return nextMessage;
-        } else {
-          return nextMessage.message;
+        if (nextMessage) {
+          if (typeof nextMessage === "string") {
+            return nextMessage;
+          } else {
+            return nextMessage.message;
+          }
         }
+
+        return null;
       })}
     </StyledFormMessage>
   );

@@ -30,7 +30,11 @@ export function blocksReducer(
     }
 
     case UPDATE_BLOCK: {
-      return bulkUpdateReferenceCountedResources(state, [action.payload]);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        [action.payload],
+        action.meta
+      );
     }
 
     case DELETE_BLOCK: {
@@ -42,7 +46,11 @@ export function blocksReducer(
     }
 
     case BULK_UPDATE_BLOCKS: {
-      return bulkUpdateReferenceCountedResources(state, action.payload);
+      return bulkUpdateReferenceCountedResources(
+        state,
+        action.payload,
+        action.meta
+      );
     }
 
     case BULK_DELETE_BLOCKS: {

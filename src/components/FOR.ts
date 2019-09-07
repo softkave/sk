@@ -1,5 +1,6 @@
 import get from "lodash/get";
 import set from "lodash/set";
+
 import { indexArray } from "../utils/object";
 
 // Default error aggregator aggregates all error with the same field into an array,
@@ -45,7 +46,6 @@ export function aggregateError(
 
 // Strips all the fields found in the fields argument from the field property of all the error objects
 export function stripFieldsFromError(error, fields) {
-  const indexedFields = indexArray(fields);
   return error.map(next => {
     const newNext = { ...next };
 
@@ -53,7 +53,6 @@ export function stripFieldsFromError(error, fields) {
       const field = newNext.field.split(".");
       newNext.field = field
         .filter(nextField => {
-          console.log(indexedFields[nextField], nextField, indexedFields);
           return fields.indexOf(nextField) === -1;
         })
         .join(".");
