@@ -293,10 +293,14 @@ function mergeProps(
   return {
     data: block,
     isDataLoaded: () => {
+      console.log({
+        isDataLoaded: childrenLoaded && collaboratorsLoaded && requestsLoaded
+      });
       return childrenLoaded && collaboratorsLoaded && requestsLoaded;
     },
-    areDataSame: (data1: IBlock, data2: IBlock) =>
-      data1.customId === data2.customId,
+    areDataSame: (data1: IBlock, data2: IBlock) => {
+      return data1.customId === data2.customId;
+    },
     loadData: async () => {
       dispatch(
         updateBlockRedux(

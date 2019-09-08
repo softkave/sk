@@ -20,12 +20,11 @@ class ACFExpiresAt extends React.PureComponent<IACFExpiresAtProps> {
     return (
       <DatePicker
         format={dateFormat}
-        value={value ? moment(value, dateFormat) : undefined}
+        value={value ? moment(value) : undefined}
         disabledDate={current => {
           return !!(current && current < minDate);
         }}
         onChange={date => {
-          console.log({ date: date && date.format("MMM DD, YYYY") });
           onChange(date ? date.valueOf() : undefined);
         }}
       />

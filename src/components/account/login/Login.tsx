@@ -88,7 +88,7 @@ class Login extends React.Component<ILoginProps> {
                 <Checkbox
                   name="remember"
                   onChange={handleChange}
-                  value={values.remember}
+                  checked={values.remember}
                 >
                   Remember Me
                 </Checkbox>

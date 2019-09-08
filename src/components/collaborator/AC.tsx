@@ -9,7 +9,8 @@ import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification.js";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
 import { IUser } from "../../models/user/user.js";
-import { indexArray } from "../../utils/object";
+import { userErrorMessages } from "../../models/user/userErrorMessages.js";
+import { getErrorMessageWithMax } from "../../models/validationErrorMessages.js";
 import FormError from "../FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
@@ -28,16 +29,23 @@ const validationSchema = yup.object().shape({
     .array()
     .of(
       yup.object().shape({
-        email: yup.string().email(),
+        email: yup.string().email(userErrorMessages.invalidEmail),
         body: yup
           .string()
-          .max(notificationConstants.maxAddCollaboratorMessageLength),
+          .max(notificationConstants.maxAddCollaboratorMessageLength, () => {
+            return getErrorMessageWithMax(
+              notificationConstants.maxAddCollaboratorMessageLength,
+              "string"
+            );
+          }),
         expiresAt: yup.number()
       })
     )
     .max(blockConstants.maxAddCollaboratorValuesLength)
     .required()
 });
+
+// TODO: Test not allowing action on an expired collaboration request
 
 export interface IACValue {
   message?: string;
@@ -52,28 +60,6 @@ export interface IACProp {
 }
 
 class AC extends React.PureComponent<IACProp> {
-  public indexedExistingUsersEmail = {};
-  public indexedExistingRequestsEmail = {};
-
-  public componentDidMount() {
-    const { existingCollaborators, existingCollaborationRequests } = this.props;
-
-    if (Array.isArray(existingCollaborators)) {
-      this.indexedExistingUsersEmail = indexArray(existingCollaborators, {
-        path: "email"
-      });
-    }
-
-    if (Array.isArray(existingCollaborationRequests)) {
-      this.indexedExistingRequestsEmail = indexArray(
-        existingCollaborationRequests,
-        {
-          path: "to.email"
-        }
-      );
-    }
-  }
-
   public render() {
     const { onSendRequests } = this.props;
 
@@ -146,7 +132,9 @@ class AC extends React.PureComponent<IACProp> {
                 <ACF
                   value={values.requests}
                   maxRequests={blockConstants.maxAddCollaboratorValuesLength}
-                  onChange={value => setFieldValue("requests", value)}
+                  onChange={value => {
+                    setFieldValue("requests", value);
+                  }}
                   errors={errors.requests as any}
                 />
               </Form.Item>
@@ -168,6 +156,7 @@ class AC extends React.PureComponent<IACProp> {
   }
 
   private validateRequests = value => {
+    const { existingCollaborationRequests, existingCollaborators } = this.props;
     function findRequest(requests, request, excludeIndex) {
       return requests.find((next, index) => {
         return next.email === request.email && index !== excludeIndex;
@@ -187,14 +176,29 @@ class AC extends React.PureComponent<IACProp> {
     value.forEach((request, index) => {
       if (findRequest(value, request, index)) {
         setError(errors, index, "email", emailExistsErrorMessage);
-      } else if (this.indexedExistingUsersEmail[request.email]) {
+        return;
+      }
+
+      const exCol = existingCollaborators.find(col => {
+        return col.email === request.email;
+      });
+
+      if (exCol) {
         setError(
           errors,
           index,
           "email",
           notificationErrorMessages.sendingRequestToAnExistingCollaborator
         );
-      } else if (this.indexedExistingRequestsEmail[request.email]) {
+
+        return;
+      }
+
+      const exReq = existingCollaborationRequests.find(req => {
+        return req.to.email === request.email;
+      });
+
+      if (exReq) {
         setError(
           errors,
           index,

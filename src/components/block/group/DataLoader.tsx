@@ -24,7 +24,7 @@ export default class DataLoader extends React.Component<
   constructor(props) {
     super(props);
     this.state = {
-      fetchingData: true,
+      fetchingData: false,
       error: null
     };
   }
@@ -47,31 +47,30 @@ export default class DataLoader extends React.Component<
     const { isDataLoaded, data } = this.props;
     const { fetchingData } = this.state;
 
-    if (isDataLoaded(data) && fetchingData) {
-      this.setState({ fetchingData: false, error: null });
+    if (isDataLoaded(data)) {
+      if (fetchingData) {
+        this.setState({ fetchingData: false, error: null });
+      }
+    } else {
+      this.loadData();
     }
   }
 
   public async loadData() {
     const { loadData, isDataLoaded, data } = this.props;
     const { fetchingData } = this.state;
-    const newState: Partial<IDataLoaderState> = {};
+    console.log(this);
 
     if (!isDataLoaded(data)) {
-      try {
-        await loadData(data);
-        newState.fetchingData = false;
-        newState.error = null;
-      } catch (error) {
-        newState.error = error;
+      if (!fetchingData) {
+        try {
+          this.setState({ fetchingData: true });
+          await loadData(data);
+          this.setState({ fetchingData: false, error: null });
+        } catch (error) {
+          this.setState({ error });
+        }
       }
-    } else if (fetchingData) {
-      newState.fetchingData = false;
-      newState.error = null;
-    }
-
-    if (Object.keys(newState).length > 0) {
-      this.setState((newState as unknown) as IDataLoaderState);
     }
   }
 

@@ -8,6 +8,9 @@ import AC, { IACValue } from "./AC";
 import "./collaborators.css";
 import CollaboratorThumbnail from "./Thumnail.jsx";
 
+// TODO: After adding collaborator, control unmounts Collaborator and goes back to board
+// This is not expected behaviour.
+
 export interface ICollaboratorsProps {
   // TODO: Define collaborators' right type
   collaborators: IUser[];
@@ -69,6 +72,7 @@ export default class Collaborators extends React.Component<
 
   // TODO: Define type
   public renderCollaborationRequests(collaborationRequests: any[] = []) {
+    // TODO: Use the user's avatar color for the collaboration request also
     return this.renderList(collaborationRequests, request => {
       return (
         <List.Item key={request.customId}>
