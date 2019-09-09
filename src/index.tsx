@@ -8,9 +8,9 @@ import Router from "./Router";
 import "./sk-global.css";
 import "./styles.css";
 
-if (process.env.NODE_ENV === "development") {
-  require("antd/dist/antd.css");
-}
+// if (process.env.NODE_ENV === "development") {
+//   require("antd/dist/antd.css");
+// }
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(

@@ -4,8 +4,9 @@ module.exports = override(
   fixBabelImports("import", {
     libraryName: "antd",
     libraryDirectory: "es",
-    style: true
+    style: "css"
   })
+
   // TODO: remove less and less-loader from package.json
   //   or find a way to make this work
   // addLessLoader({
