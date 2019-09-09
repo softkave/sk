@@ -79,8 +79,6 @@ class EditTask extends React.Component<IEditTaskProps> {
       onSubmit
     } = this.props;
 
-    console.log(this);
-
     return (
       <Formik
         initialValues={{
@@ -247,7 +245,6 @@ class EditTask extends React.Component<IEditTaskProps> {
     collaborator: IUser,
     taskCollaborators: ITaskCollaborator[]
   ): ITaskCollaborator[] => {
-    console.log({ collaborator, taskCollaborators });
     const { user } = this.props;
     const collaboratorExists = !!taskCollaborators.find(next => {
       return collaborator.customId === next.userId;

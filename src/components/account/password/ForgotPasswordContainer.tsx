@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import netInterface from "../../../net";
-import { getReduxConnectors } from "../../../utils/redux";
 import { IPipeline, makePipeline } from "../../FormPipeline";
 import ForgotPassword from "./ForgotPassword";
 

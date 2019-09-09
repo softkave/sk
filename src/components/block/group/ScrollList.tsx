@@ -6,7 +6,6 @@ import "simplebar/dist/simplebar.css";
 
 const ScrollList = React.memo(props => {
   const { children } = props;
-  console.log(props);
 
   return (
     <BodyContainer>

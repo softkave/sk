@@ -85,7 +85,6 @@ class TaskListWithViewMore extends React.PureComponent<
       toggleForm
     } = this.props;
     const stat = this.getRenderInfo(tasks);
-    console.log(this);
 
     return (
       <React.Fragment>

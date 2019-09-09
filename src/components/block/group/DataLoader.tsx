@@ -13,6 +13,11 @@ interface IDataLoaderState {
   error?: Error | null;
 }
 
+// TODO: Provide - renderLoading, renderError
+/**
+ * TODO: Make the process smoother, or store state in redux with a request ID
+ * Because, there is setState that occurs when the component is unmounted
+ */
 export default class DataLoader extends React.Component<
   IDataLoaderProps,
   IDataLoaderState
@@ -34,9 +39,9 @@ export default class DataLoader extends React.Component<
   }
 
   public componentDidUpdate(prevProps) {
-    const { areDataSame } = this.props;
+    const { areDataSame, data } = this.props;
 
-    if (!areDataSame(this.props.data, prevProps.data)) {
+    if (!areDataSame(data, prevProps.data)) {
       this.loadData();
     } else {
       this.updateFetchingState();
@@ -45,13 +50,8 @@ export default class DataLoader extends React.Component<
 
   public updateFetchingState() {
     const { isDataLoaded, data } = this.props;
-    const { fetchingData } = this.state;
 
-    if (isDataLoaded(data)) {
-      if (fetchingData) {
-        this.setState({ fetchingData: false, error: null });
-      }
-    } else {
+    if (!isDataLoaded(data)) {
       this.loadData();
     }
   }
@@ -59,7 +59,6 @@ export default class DataLoader extends React.Component<
   public async loadData() {
     const { loadData, isDataLoaded, data } = this.props;
     const { fetchingData } = this.state;
-    console.log(this);
 
     if (!isDataLoaded(data)) {
       if (!fetchingData) {
@@ -83,7 +82,6 @@ export default class DataLoader extends React.Component<
     } else if (error) {
       return "An error occurred.";
     } else {
-      console.log(this);
       return render(data);
     }
   }

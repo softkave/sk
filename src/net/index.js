@@ -1,12 +1,6 @@
 import get from "lodash/get";
 
 let netRoutes = null;
-// const localNetRoutes = {
-//   block: require("./dev/block"),
-//   user: require("./dev/user")
-// };
-
-// netRoutes = localNetRoutes;
 
 const remoteNetRoutes = {
   block: require("./block"),

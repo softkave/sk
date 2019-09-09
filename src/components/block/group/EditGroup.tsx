@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
 import FormError from "../../FormError";
-import { getGlobalError, submitHandler, touchFields } from "../../formik-utils";
+import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 
 const groupExistsErrorMessage = "Group with the same name exists";

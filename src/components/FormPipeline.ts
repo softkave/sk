@@ -58,8 +58,6 @@ export interface IPipeline<
 
 export interface IQuietPipeline extends IPipeline<any, any, any, any> {}
 
-const returnFirstArg = (arg: any) => arg;
-
 const defaultProcessFunc = (arg: IPipelineOperatingData) => arg.params;
 const defaultProcessResultFunc = (arg: IPipelineOperatingData) => arg.result;
 const defaultReduxFunc = () => null;
@@ -70,21 +68,23 @@ const handleErrorWithParams = (
   handleErrorParams: IHandleErrorParams
 ) => {
   if (result && result.errors) {
-    const fieldsPlusErrors = result.errors.map(e => {
-      return {
-        ...e,
-        message: `${e.field} - ${e.message}`
-      };
-    });
+    if (process.env.NODE_ENV === "development") {
+      const fieldsPlusErrors = result.errors.map(e => {
+        return {
+          ...e,
+          message: `${e.field} - ${e.message}`
+        };
+      });
 
-    const logMessageStyle = "color: red;";
-    console.log("--------------- start");
-    console.log("---------------");
-    fieldsPlusErrors.forEach(e => {
-      console.log(`%c ${e.message}`, logMessageStyle);
-    });
-    console.log("---------------");
-    console.log("--------------- end");
+      const logMessageStyle = "color: red;";
+      console.log("--------------- start");
+      console.log("---------------");
+      fieldsPlusErrors.forEach(e => {
+        console.log(`%c ${e.message}`, logMessageStyle);
+      });
+      console.log("---------------");
+      console.log("--------------- end");
+    }
 
     if (handleErrorParams.filterBaseNames) {
       result.errors = filterErrorByBaseName(
@@ -129,44 +129,27 @@ async function main(
   operatingData: IPipelineOperatingData & IAnyObject
 ) {
   const internalMethods = fillPipeline(methods);
-  console.log({ operatingData });
+  // console.log({ operatingData });
   const processedData = internalMethods.process(operatingData);
-  console.log({ processedData });
+  // console.log({ processedData });
   let next = { ...operatingData, params: processedData };
-  console.log({ next: JSON.parse(JSON.stringify(next)) });
+  // console.log({ next: JSON.parse(JSON.stringify(next)) });
   let result = await internalMethods.net(next);
 
-  // if (typeof internalMethods.handleError === "function") {
-  //   result = internalMethods.handleError(result);
-  // } else if (
-  //   typeof internalMethods.handleError === "object" &&
-  //   !Array.isArray(internalMethods.handleError)
-  // ) {
-  //   result = handleErrorWithParams(result, internalMethods.handleError);
-  // }
-
-  console.log({ result: JSON.parse(JSON.stringify(result)) });
+  // console.log({ result: JSON.parse(JSON.stringify(result)) });
 
   result = handleErrorWithParams(result, internalMethods.handleError);
 
-  console.log({ handledError: JSON.parse(JSON.stringify(result)) });
+  // console.log({ handledError: JSON.parse(JSON.stringify(result)) });
 
   next = { ...next, result };
   const finalResult = internalMethods.processResult(next);
 
-  console.log({ finalResult: JSON.parse(JSON.stringify(result)) });
+  // console.log({ finalResult: JSON.parse(JSON.stringify(result)) });
 
   next = { ...next, result: finalResult };
   internalMethods.redux(next);
 }
-
-// export interface IMakePipelineOptions {
-//   paramName?: string;
-// }
-
-// const makePipelineDefaultOptions = {
-//   paramName: "params"
-// };
 
 export type PipelineEntryFunc<ParamType> = (
   params?: ParamType

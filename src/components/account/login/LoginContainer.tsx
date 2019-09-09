@@ -5,7 +5,6 @@ import { INetResult } from "../../../net/query";
 import { loginUserRedux } from "../../../redux/session/actions";
 import { addUserRedux } from "../../../redux/users/actions";
 import { devLog } from "../../../utils/log";
-import { getReduxConnectors } from "../../../utils/redux";
 import { setItem } from "../../../utils/storage";
 import { IPipeline, makePipeline } from "../../FormPipeline";
 import Login from "./Login";

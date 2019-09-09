@@ -144,7 +144,6 @@ class KanbanBoard extends React.PureComponent<
       onSelectGroup,
       groups: blockGroups
     } = this.props;
-    console.log(this);
     const sortedGroupIds =
       context === "task" ? block.groupTaskContext : block.groupProjectContext;
 
@@ -202,7 +201,6 @@ class KanbanBoard extends React.PureComponent<
 
   private renderBlockChildren = () => {
     const renderedGroups = this.renderGroups();
-    console.log(renderedGroups);
     return <React.Fragment>{renderedGroups}</React.Fragment>;
   };
 
@@ -233,7 +231,6 @@ class KanbanBoard extends React.PureComponent<
     );
 
     if (loading) {
-      console.log("i am loading");
       return (
         <SpinContainer>
           <Spin

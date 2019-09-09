@@ -1,4 +1,4 @@
-import { notification } from "antd";
+// import { notification } from "antd";
 import { FormikActions } from "formik";
 
 import { INetError } from "../net/query";
@@ -23,7 +23,6 @@ export function deleteFields(values: object, fields: string[] = defaultFields) {
 }
 
 export function flattenErrorToObject(error: INetError[]) {
-  console.log(error);
   return indexArray(error, {
     indexer: (next: INetError) => {
       if (next.field) {
@@ -81,7 +80,6 @@ export async function submitHandler(
       onSuccess();
     }
   } catch (error) {
-    console.log({ error });
     let flattenedError = flattenErrorToObject(error);
 
     if (process.env.NODE_ENV === "development") {
@@ -132,14 +130,5 @@ export async function submitHandler(
 export function touchFields(options: ISubmitHandlerOptions, fields: string[]) {
   fields.forEach(field => {
     options.setFieldTouched(field, true);
-  });
-}
-
-export function areFieldsTouched(
-  props: ISubmitHandlerOptions,
-  fields: string[]
-) {
-  const untouchedField = fields.find(field => {
-    // if (props.)
   });
 }

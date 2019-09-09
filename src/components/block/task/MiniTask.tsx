@@ -1,4 +1,4 @@
-import { Button, Col, Icon, Row, Spin, Switch, Tooltip } from "antd";
+import { Button, Col, Row, Spin, Switch, Tooltip } from "antd";
 import React from "react";
 
 import { IBlock } from "../../../models/block/block";
@@ -56,7 +56,6 @@ class Task extends React.PureComponent<ITaskProps, ITaskState> {
     const { task, blockHandlers, onEdit } = this.props;
     const { toggleLoading, toggleLoadingError } = this.state;
     const collaborator = this.getUserTaskCollaboratorData();
-    console.log({ collaborator });
 
     return (
       <div className="sk-minitask">

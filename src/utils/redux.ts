@@ -11,7 +11,6 @@ export type ReduxConnectorMergePropsFunction = (
 export function getReduxConnectors(
   mergePropsFunction: ReduxConnectorMergePropsFunction
 ) {
-  console.log("getReduxConnectors was called");
   function mapStateToProps(state) {
     return state;
   }

@@ -127,7 +127,7 @@ function pluralize(blockChildrenTypes: string[]) {
 function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockChildren) {
   const childrenTypes = getBlockValidChildrenTypes(block);
   const pluralizedBlockTypes = pluralize(childrenTypes);
-  console.log({ block, pluralizedBlockTypes, blockChildren });
+  // console.log({ block, pluralizedBlockTypes, blockChildren });
 
   return (
     // find children that isn't loaded yet
@@ -135,7 +135,7 @@ function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockChildren) {
       // TODO: move this to the redux reducer or to the update action
       const s1 = uniq(block[propName]);
       const s2 = uniq(blockChildren[propName]);
-      console.log({ s1, s2, propName });
+      // console.log({ s1, s2, propName });
 
       if (
         Array.isArray(block[propName]) &&
@@ -152,36 +152,44 @@ function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockChildren) {
 
 // TODO: Collaborator is slightly different from IUser
 function areBlockCollaboratorsLoaded(block: IBlock, collaborators?: IUser[]) {
-  const s1 = uniq(block.collaborators);
-  const s2 = uniq(collaborators);
+  if (block.type === "org" || block.type === "root") {
+    const s1 = uniq(block.collaborators);
+    const s2 = uniq(collaborators);
 
-  if (
-    Array.isArray(block.collaborators) &&
-    Array.isArray(collaborators) &&
-    s1.length === s2.length
-  ) {
+    if (
+      Array.isArray(block.collaborators) &&
+      Array.isArray(collaborators) &&
+      s1.length === s2.length
+    ) {
+      return true;
+    }
+
+    return false;
+  } else {
     return true;
   }
-
-  return false;
 }
 
 function areBlockCollaborationRequestsLoaded(
   block: IBlock,
   requests?: INotification[]
 ) {
-  const s1 = uniq(block.collaborationRequests);
-  const s2 = uniq(requests);
+  if (block.type === "org" || block.type === "root") {
+    const s1 = uniq(block.collaborationRequests);
+    const s2 = uniq(requests);
 
-  if (
-    Array.isArray(block.collaborationRequests) &&
-    Array.isArray(requests) &&
-    s1.length === s2.length
-  ) {
+    if (
+      Array.isArray(block.collaborationRequests) &&
+      Array.isArray(requests) &&
+      s1.length === s2.length
+    ) {
+      return true;
+    }
+
+    return false;
+  } else {
     return true;
   }
-
-  return false;
 }
 
 function loadBlockChildrenFromRedux(block: IBlock, state: IReduxState) {
@@ -220,7 +228,7 @@ function getBlockCollaborators(
   blockType: BlockType,
   state: IReduxState
 ) {
-  console.log("getBlockCollaborators", { block });
+  // console.log("getBlockCollaborators", { block });
   // The last check is for Ungrouped category
   if (
     blockType === "org" ||
@@ -230,7 +238,7 @@ function getBlockCollaborators(
     return loadBlockCollaboratorsFromRedux(block, state);
   } else {
     const block0 = getBlock(state, block.parents[0]);
-    console.log({ block0 });
+    // console.log({ block0 });
     return loadBlockCollaboratorsFromRedux(block0, state);
   }
 }
@@ -240,7 +248,7 @@ function mergeProps(
   { dispatch }: { dispatch: Dispatch },
   ownProps: IBlockInternalDataLoaderProps
 ): IDataLoaderProps {
-  console.log(ownProps);
+  // console.log(ownProps);
   const user = getSignedInUser(state);
   // const stateBlock = getBlock(state, ownProps.blockID);
   // const block = stateBlock || ownProps.block;
@@ -282,26 +290,59 @@ function mergeProps(
     }
   });
 
-  console.log({
-    block,
-    childrenLoaded,
-    collaboratorsLoaded,
-    requestsLoaded,
-    blockInternalDataToLoad
-  });
+  // console.log({
+  //   block,
+  //   childrenLoaded,
+  //   collaboratorsLoaded,
+  //   requestsLoaded,
+  //   blockInternalDataToLoad
+  // });
+
+  const isBlockLoading = () => {
+    // return blockInternalDataToLoad.reduce((loaded, type) => {
+    //   switch(type) {
+    //     case "children":
+    //       return loaded && childrenLoaded;
+
+    //     case "collaborationRequests":
+    //       return loaded && requestsLoaded;
+
+    //     case ""
+    //   }
+    // }, true);
+
+    return (
+      !!block.loadingChildren ||
+      !!block.loadingCollaborationRequests ||
+      !!block.loadingCollaborators
+    );
+  };
+
+  const isDataLoaded = () => {
+    // console.log({
+    //   block,
+    //   blockInternalDataToLoad,
+    //   childrenLoaded,
+    //   collaboratorsLoaded,
+    //   requestsLoaded,
+    //   a: childrenLoaded && collaboratorsLoaded && requestsLoaded,
+    //   b: isBlockLoading()
+    // });
+
+    return (
+      (childrenLoaded && collaboratorsLoaded && requestsLoaded) ||
+      isBlockLoading()
+    );
+  };
 
   return {
+    isDataLoaded,
     data: block,
-    isDataLoaded: () => {
-      console.log({
-        isDataLoaded: childrenLoaded && collaboratorsLoaded && requestsLoaded
-      });
-      return childrenLoaded && collaboratorsLoaded && requestsLoaded;
-    },
     areDataSame: (data1: IBlock, data2: IBlock) => {
       return data1.customId === data2.customId;
     },
     loadData: async () => {
+      // console.log(block, "block children fetching children");
       dispatch(
         updateBlockRedux(
           block.customId,

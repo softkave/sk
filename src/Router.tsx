@@ -31,7 +31,6 @@ class App extends React.Component<IAppProps> {
     if (!!!user) {
       try {
         const result = await netInterface("user.getSavedUserData");
-        console.log({ result });
 
         if (result && result.token) {
           saveUserData(result);

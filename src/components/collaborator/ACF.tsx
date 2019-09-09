@@ -1,7 +1,6 @@
 import { Button, Divider } from "antd";
 import React from "react";
 
-import { newId } from "../../utils/utils";
 import ACFItem, { IACFItemError, IACFItemValue } from "./ACFItem";
 
 export interface IACFProps {
@@ -69,6 +68,8 @@ export default class ACF extends React.PureComponent<IACFProps> {
                    * I think it's maybe because we're using the index as key, and maybe use a better id system.
                    *
                    * Nope, it's not because of the using idex as key, using a unique id, didn't work too.
+                   *
+                   * TODO: Maybe, turn off auto-fill for email
                    */
                   this.onUpdate(index, data);
                 }}

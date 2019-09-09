@@ -33,9 +33,9 @@ export interface IEditOrgProps {
 }
 
 const defaultSubmitLabel = "Create Organization";
-const initialValues = {
-  name: ""
-};
+// const initialValues = {
+//   name: ""
+// };
 
 class EditOrg extends React.Component<IEditOrgProps> {
   public static defaultProps = {

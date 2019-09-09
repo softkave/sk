@@ -4,7 +4,6 @@ import { IBlock } from "../../../models/block/block";
 import netInterface from "../../../net";
 import { INetResult } from "../../../net/query";
 import { updateBlockRedux } from "../../../redux/blocks/actions";
-import { bulkAddNotificationsRedux } from "../../../redux/notifications/actions";
 import { newId } from "../../../utils/utils";
 import { IACFItemValue } from "../../collaborator/ACFItem";
 import { IPipeline, PipelineEntryFunc } from "../../FormPipeline";
@@ -71,7 +70,6 @@ const addCollaboratorPipeline: IPipeline<
      * create the notifications from the request and store it here, and not rely on reloading all the data,
      * as updates will be pushed as they occur
      */
-    // dispatch(bulkAddNotificationsRedux(requests));
     dispatch(
       updateBlockRedux(
         block.customId,

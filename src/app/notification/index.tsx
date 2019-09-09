@@ -155,11 +155,10 @@ const respondToNotificationMethods: IPipeline<
 
   async net({ params }) {
     const { notification, response } = params;
-    return await netInterface(
-      "user.respondToCollaborationRequest",
-      notification,
-      response
-    );
+    return await netInterface("user.respondToCollaborationRequest", {
+      response,
+      request: notification
+    });
   },
 
   redux({ dispatch, params, result }) {

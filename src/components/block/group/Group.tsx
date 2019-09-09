@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Dropdown, Icon, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -33,8 +33,7 @@ export interface IGroupProps {
 
 class Group extends React.PureComponent<IGroupProps> {
   public render() {
-    const { draggableID: draggableId, index, disabled, group } = this.props;
-    console.log(this);
+    const { draggableID: draggableId, index, group } = this.props;
 
     return (
       <Draggable
@@ -152,7 +151,7 @@ const ControlText = styled.span({
 });
 
 const OpenControlButtonSpan = styled("span")({
-  ["& .anticon"]: {
+  "& .anticon": {
     // fontSize: "18px !important"
   }
 });

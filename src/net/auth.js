@@ -1,7 +1,6 @@
 import store from "../redux/store";
 import get from "lodash/get";
 import query from "./query";
-import NetError from "./NetError";
 
 let token = null;
 store.subscribe(() => {

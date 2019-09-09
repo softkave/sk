@@ -84,7 +84,6 @@ class Signup extends React.Component<ISignupProps> {
           isSubmitting
         }) => {
           const globalError = getGlobalError(errors);
-          console.log({ globalError });
 
           return (
             <form onSubmit={handleSubmit}>

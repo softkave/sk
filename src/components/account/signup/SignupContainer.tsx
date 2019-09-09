@@ -7,7 +7,6 @@ import { INetResult } from "../../../net/query";
 import { loginUserRedux } from "../../../redux/session/actions";
 import { addUserRedux } from "../../../redux/users/actions";
 import { devLog } from "../../../utils/log";
-import { getReduxConnectors } from "../../../utils/redux";
 import { IPipeline, makePipeline } from "../../FormPipeline";
 import Signup from "./Signup";
 
@@ -57,17 +56,14 @@ const methods: IPipeline<
 };
 
 function mapStateToProps(state) {
-  console.log("signup map state");
   return state;
 }
 
 function mapDispatchToProps(dispatch) {
-  console.log("signup map dispatch");
   return { dispatch };
 }
 
 function mergeProps(state, { dispatch }) {
-  console.log("merge props was called");
   return {
     onSubmit: makePipeline(methods, { state, dispatch })
   };
