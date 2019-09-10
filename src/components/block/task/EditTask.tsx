@@ -10,7 +10,14 @@ import { textPattern } from "../../../models/user/descriptor";
 import { IUser } from "../../../models/user/user";
 import { indexArray } from "../../../utils/object";
 import CollaboratorThumbnail from "../../collaborator/Thumnail";
-import FormError from "../../FormError";
+import FormError from "../../form/FormError";
+import {
+  FormBody,
+  FormBodyContainer,
+  FormControls,
+  FormScrollList,
+  StyledForm
+} from "../../form/FormInternals";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 import EditPriority from "./EditPriority";
@@ -109,132 +116,150 @@ class EditTask extends React.Component<IEditTaskProps> {
           const globalError = getGlobalError(errors);
 
           return (
-            <form onSubmit={handleSubmit}>
-              {/* <Form.Item
-                label="Task Name"
-                help={<FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.name}
-                />
-              </Form.Item> */}
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Description"
-                help={<FormError>{errors.description}</FormError>}
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-              <Form.Item label="Priority">
-                <EditPriority
-                  onChange={(value: string) => setFieldValue("priority", value)}
-                  value={values.priority as TaskPriority}
-                />
-              </Form.Item>
-              <Form.Item label="Assigned To">
-                <List
-                  dataSource={values.taskCollaborators}
-                  renderItem={item => {
-                    return (
-                      <List.Item>
-                        <TaskCollaboratorThumbnail
-                          key={item.userId}
-                          collaborator={this.indexedCollaborators[item.userId]}
-                          taskCollaborator={item}
-                          onToggle={null}
-                          onUnassign={() =>
-                            setFieldValue(
-                              "taskCollaborators",
-                              this.unassignCollaborator(
-                                item,
-                                values.taskCollaborators
-                              )
+            <StyledForm onSubmit={handleSubmit}>
+              <FormBodyContainer>
+                <FormScrollList>
+                  <FormBody>
+                    {/* <Form.Item
+                      label="Task Name"
+                      help={<FormError>{errors.name}</FormError>}
+                    >
+                      <Input
+                        autoComplete="off"
+                        name="name"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.name}
+                      />
+                    </Form.Item> */}
+                    {globalError && (
+                      <Form.Item>
+                        <FormError error={globalError} />
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      label="Description"
+                      help={<FormError>{errors.description}</FormError>}
+                    >
+                      <Input.TextArea
+                        autosize={{ minRows: 2, maxRows: 6 }}
+                        autoComplete="off"
+                        name="description"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.description}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Priority">
+                      <EditPriority
+                        onChange={(value: string) =>
+                          setFieldValue("priority", value)
+                        }
+                        value={values.priority as TaskPriority}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Assigned To">
+                      <List
+                        dataSource={values.taskCollaborators}
+                        renderItem={item => {
+                          return (
+                            <List.Item>
+                              <TaskCollaboratorThumbnail
+                                key={item.userId}
+                                collaborator={
+                                  this.indexedCollaborators[item.userId]
+                                }
+                                taskCollaborator={item}
+                                onToggle={null}
+                                onUnassign={() =>
+                                  setFieldValue(
+                                    "taskCollaborators",
+                                    this.unassignCollaborator(
+                                      item,
+                                      values.taskCollaborators
+                                    )
+                                  )
+                                }
+                              />
+                            </List.Item>
+                          );
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item>
+                      <Select
+                        placeholder="Assign Collaborator"
+                        value={undefined}
+                        onChange={index =>
+                          setFieldValue(
+                            "taskCollaborators",
+                            this.assignCollaborator(
+                              collaborators[Number(index)],
+                              values.taskCollaborators
                             )
-                          }
-                        />
-                      </List.Item>
-                    );
-                  }}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Select
-                  placeholder="Assign Collaborator"
-                  value={undefined}
-                  onChange={index =>
-                    setFieldValue(
-                      "taskCollaborators",
-                      this.assignCollaborator(
-                        collaborators[Number(index)],
-                        values.taskCollaborators
-                      )
-                    )
-                  }
-                >
-                  {collaborators.map((collaborator, index) => {
-                    return (
-                      <Select.Option value={index} key={collaborator.customId}>
-                        <CollaboratorThumbnail collaborator={collaborator} />
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-                <Button
-                  block
-                  onClick={() =>
-                    setFieldValue(
-                      "taskCollaborators",
-                      this.assignCollaborator(user, values.taskCollaborators)
-                    )
-                  }
-                >
-                  Assign To Me
-                </Button>
-              </Form.Item>
-              <Form.Item label="Complete At">
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="Complete At"
-                  onChange={value =>
-                    setFieldValue(
-                      "expectedEndAt",
-                      value ? value.valueOf() : null
-                    )
-                  }
-                  value={
-                    values.expectedEndAt
-                      ? moment(values.expectedEndAt)
-                      : undefined
-                  }
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  loading={isSubmitting}
-                >
-                  {submitLabel || defaultSubmitLabel}
-                </Button>
-              </Form.Item>
-            </form>
+                          )
+                        }
+                      >
+                        {collaborators.map((collaborator, index) => {
+                          return (
+                            <Select.Option
+                              value={index}
+                              key={collaborator.customId}
+                            >
+                              <CollaboratorThumbnail
+                                collaborator={collaborator}
+                              />
+                            </Select.Option>
+                          );
+                        })}
+                      </Select>
+                      <Button
+                        block
+                        onClick={() =>
+                          setFieldValue(
+                            "taskCollaborators",
+                            this.assignCollaborator(
+                              user,
+                              values.taskCollaborators
+                            )
+                          )
+                        }
+                      >
+                        Assign To Me
+                      </Button>
+                    </Form.Item>
+                    <Form.Item label="Complete At">
+                      <DatePicker
+                        showTime
+                        format="YYYY-MM-DD HH:mm:ss"
+                        placeholder="Complete At"
+                        onChange={value =>
+                          setFieldValue(
+                            "expectedEndAt",
+                            value ? value.valueOf() : null
+                          )
+                        }
+                        value={
+                          values.expectedEndAt
+                            ? moment(values.expectedEndAt)
+                            : undefined
+                        }
+                      />
+                    </Form.Item>
+                  </FormBody>
+                </FormScrollList>
+                <FormControls>
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                  >
+                    {submitLabel || defaultSubmitLabel}
+                  </Button>
+                </FormControls>
+              </FormBodyContainer>
+            </StyledForm>
           );
         }}
       </Formik>

@@ -5,7 +5,14 @@ import * as yup from "yup";
 
 import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
-import FormError from "../../FormError";
+import FormError from "../../form/FormError";
+import {
+  FormBody,
+  FormBodyContainer,
+  FormControls,
+  FormScrollList,
+  StyledForm
+} from "../../form/FormInternals";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 import modalWrap from "../../modalWrap.jsx";
 
@@ -66,48 +73,54 @@ class EditOrg extends React.Component<IEditOrgProps> {
           const globalError = getGlobalError(errors);
 
           return (
-            <form onSubmit={handleSubmit}>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Organization Name"
-                help={<FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={<FormError>{errors.description}</FormError>}
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  loading={isSubmitting}
-                >
-                  {submitLabel || defaultSubmitLabel}
-                </Button>
-              </Form.Item>
-            </form>
+            <StyledForm onSubmit={handleSubmit}>
+              <FormBodyContainer>
+                <FormScrollList>
+                  <FormBody>
+                    {globalError && (
+                      <Form.Item>
+                        <FormError error={globalError} />
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      label="Organization Name"
+                      help={<FormError>{errors.name}</FormError>}
+                    >
+                      <Input
+                        autoComplete="off"
+                        name="name"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.name}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Description"
+                      help={<FormError>{errors.description}</FormError>}
+                    >
+                      <Input.TextArea
+                        autosize={{ minRows: 2, maxRows: 6 }}
+                        autoComplete="off"
+                        name="description"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.description}
+                      />
+                    </Form.Item>
+                  </FormBody>
+                </FormScrollList>
+                <FormControls>
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                  >
+                    {submitLabel || defaultSubmitLabel}
+                  </Button>
+                </FormControls>
+              </FormBodyContainer>
+            </StyledForm>
           );
         }}
       </Formik>

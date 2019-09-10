@@ -1,7 +1,9 @@
 import React from "react";
 //import throttle from "lodash/throttle";
-import { getWindowWidth } from "../../utils/window";
 import { Menu, Drawer, Icon, Button } from "antd";
+import styled from "@emotion/styled";
+
+import { getWindowWidth } from "../../utils/window";
 import "./app-menu.css";
 
 const MenuItem = Menu.Item;
@@ -85,18 +87,22 @@ class AppMenu extends React.Component {
           visible={!collapsed}
           placement="left"
         >
-          <Menu
-            defaultSelectedKeys={[currentItemKey]}
-            onClick={this.onSelectMenu}
-            style={{ marginTop: "2em" }}
-          >
-            {menuItems.map(item => (
-              <MenuItem key={item.key}>
-                {item.icon && <Icon type={item.icon} theme={item.iconTheme} />}
-                <span>{item.label}</span>
-              </MenuItem>
-            ))}
-          </Menu>
+          <DrawerBody>
+            <Menu
+              defaultSelectedKeys={[currentItemKey]}
+              onClick={this.onSelectMenu}
+              style={{ marginTop: "2em" }}
+            >
+              {menuItems.map(item => (
+                <MenuItem key={item.key}>
+                  {item.icon && (
+                    <Icon type={item.icon} theme={item.iconTheme} />
+                  )}
+                  <span>{item.label}</span>
+                </MenuItem>
+              ))}
+            </Menu>
+          </DrawerBody>
         </Drawer>
         <div className="app-menu-header">
           <Button
@@ -115,3 +121,11 @@ class AppMenu extends React.Component {
 AppMenu.defaultProps = appMenuDefaultProps;
 
 export default AppMenu;
+
+const DrawerBody = styled("div")({
+  padding: "24px",
+
+  "& .ant-menu-vertical": {
+    borderRight: "0 !important"
+  }
+});

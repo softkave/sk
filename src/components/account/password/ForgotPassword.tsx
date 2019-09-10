@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 
-import FormError from "../../FormError";
+import FormError from "../../form/FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 
 const emailMismatchErrorMessage = "Email does not match";

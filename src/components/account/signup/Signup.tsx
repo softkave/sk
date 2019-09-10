@@ -5,7 +5,7 @@ import * as yup from "yup";
 
 import { userConstants } from "../../../models/user/constants";
 import { passwordPattern, textPattern } from "../../../models/user/descriptor";
-import FormError from "../../FormError";
+import FormError from "../../form/FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 
 // TODO: Add minimum and maximum to input helper
