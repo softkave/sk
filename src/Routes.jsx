@@ -2,7 +2,8 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 import { Col, Row } from "antd";
 
-import Web from "./Web";
+// import Web from "./Web";
+import Web from "./web/Web";
 import SignupContainer from "./components/account/signup/SignupContainer";
 import LoginContainer from "./components/account/login/LoginContainer";
 import ForgotPasswordContainer from "./components/account/password/ForgotPasswordContainer";

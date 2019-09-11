@@ -1,8 +1,10 @@
+import styled from "@emotion/styled";
 import { Dropdown, Menu } from "antd";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Header from "../components/header/Header";
+import Logo from "../components/Logo";
 import SkAvatar from "../components/SkAvatar";
 import { IUser } from "../models/user/user";
 import Notifications from "./notification";
@@ -73,6 +75,7 @@ class App extends React.Component<IAppProps> {
           }
         ]}
         onSelectMenu={key => {
+          // TODO: There is inconsistency when clicking the logout botton, it works only after the second try
           if (key === "logout" && onLogout) {
             onLogout();
           }
@@ -97,9 +100,13 @@ class App extends React.Component<IAppProps> {
             />
           </Dropdown>
         }
-      />
+      >
+        {/* <Logo /> */}
+      </Header>
     );
   }
 }
 
 export default withRouter(App);
+
+const StyledHeaderContent = styled.div({});
