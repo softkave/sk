@@ -77,9 +77,10 @@ const ACFItem = React.memo<IACFItemProps>(props => {
 export default ACFItem;
 
 const StyledContainer = styled.div({
-  backgroundColor: "#fafafa",
-  padding: "12px",
-  borderRadius: "8px"
+  backgroundColor: "#e7e7e7",
+  padding: "16px",
+  borderRadius: "8px",
+  marginBottom: "16px"
 });
 
 const StyledFormItem = styled.div({

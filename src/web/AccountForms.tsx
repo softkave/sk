@@ -9,6 +9,7 @@ interface IAccountFormState {
 
 const AccountForms: React.SFC<void> = () => {
   const [] = useState("");
+  return null;
 };
 
 export default AccountForms;
