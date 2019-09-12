@@ -81,7 +81,6 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                   onChange={handleChange}
                   value={values.email}
                 />
-                )}
               </Form.Item>
               <Form.Item
                 label="Confirm Email Address"

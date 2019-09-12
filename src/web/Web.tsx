@@ -34,7 +34,7 @@ const StyledWebHeader = styled.div``;
 const StyledWebBody = styled.div`
   flex: 1;
   display: flex;
-  margin: 32px 0;
+  margin: 100px 0;
 `;
 
 const StyledWebFooter = styled.div``;

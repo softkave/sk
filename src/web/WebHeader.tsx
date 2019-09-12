@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
+import { Link } from "react-router-dom";
+
 import Logo from "../components/Logo";
 
 const WebHeader: React.SFC<{}> = () => {
@@ -14,9 +16,15 @@ const WebHeader: React.SFC<{}> = () => {
           trigger={["click"]}
           overlay={
             <Menu style={{ minWidth: "300px" }}>
-              <Menu.Item key="signup">Signup</Menu.Item>
-              <Menu.Item key="login">Login</Menu.Item>
-              <Menu.Item key="forgot-password">ForgotPassword</Menu.Item>
+              <Menu.Item key="signup">
+                <Link to="/signup">Signup</Link>
+              </Menu.Item>
+              <Menu.Item key="login">
+                <Link to="login">Login</Link>
+              </Menu.Item>
+              <Menu.Item key="forgot-password">
+                <Link to="/forgot-password">Forgot Password</Link>
+              </Menu.Item>
             </Menu>
           }
         >
