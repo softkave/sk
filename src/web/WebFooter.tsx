@@ -4,8 +4,8 @@ import React from "react";
 const WebFooter: React.SFC<{}> = () => {
   return (
     <StyledWebFooter>
-      &copy;&nbsp;&nbsp;-&nbsp;&nbsp;Abayomi Akintomide & Ajayi
-      Solomon&nbsp;&nbsp;- &nbsp;&nbsp;2019
+      &copy;&nbsp;&nbsp;-&nbsp;&nbsp;Softkave&nbsp;&nbsp;- &nbsp;&nbsp;
+      {new Date().getFullYear()}
     </StyledWebFooter>
   );
 };

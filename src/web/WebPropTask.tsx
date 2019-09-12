@@ -3,13 +3,18 @@ import { Button, Switch } from "antd";
 import React from "react";
 import Priority from "../components/block/task/Priority";
 
-const WebPropTask: React.SFC<{}> = props => {
+export interface IWebPropTaskProps {
+  priority?: string;
+  checked?: boolean;
+}
+
+const WebPropTask: React.SFC<IWebPropTaskProps> = props => {
   return (
     <StyledPropTask>
       <StyledPropTaskHeader>
-        <Switch />
+        <Switch defaultChecked={props.checked} />
         <StyledPropTaskPriority>
-          <Priority level="important" />
+          <Priority level={props.priority || "important"} />
         </StyledPropTaskPriority>
       </StyledPropTaskHeader>
       <StyledPropTaskBody>{props.children}</StyledPropTaskBody>
