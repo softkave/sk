@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import { Button, Form, Input } from "antd";
+import { Button, Input } from "antd";
 import moment from "moment";
 import React from "react";
 
-import FormError from "../FormError";
+import FormError from "../form/FormError";
 import ACFExpiresAt from "./ACFExpiresAt";
 import ACFMessage from "./ACFMessage";
 
@@ -31,29 +31,31 @@ const ACFItem = React.memo<IACFItemProps>(props => {
   const itemError = error || {};
 
   return (
-    <Container>
-      <Form.Item
-        label="Email Address"
-        help={<FormError>{itemError.email}</FormError>}
-      >
+    <StyledContainer>
+      <StyledFormItem>
         <Input
+          placeholder="Email Address"
           value={value.email}
           autoComplete="email"
           onChange={event => {
             onChange({ ...value, email: event.target.value });
           }}
         />
-      </Form.Item>
-      <Form.Item label="Message" help={<FormError>{itemError.body}</FormError>}>
+        {itemError.email && <FormError>{itemError.email}</FormError>}
+      </StyledFormItem>
+      <StyledFormItem>
         <ACFMessage
+          placeholder="Message"
           value={value.body}
           onChange={body => {
             onChange({ ...value, body });
           }}
         />
-      </Form.Item>
-      <Form.Item label="Expires At">
+        {itemError.body && <FormError>{itemError.body}</FormError>}
+      </StyledFormItem>
+      <StyledFormItem>
         <ACFExpiresAt
+          placeholder="Expires At"
           value={value.expiresAt}
           minDate={moment()
             .subtract(1, "day")
@@ -62,21 +64,33 @@ const ACFItem = React.memo<IACFItemProps>(props => {
             onChange({ ...value, expiresAt: date });
           }}
         />
-      </Form.Item>
-      <Form.Item>
+      </StyledFormItem>
+      <StyledFormItemButtonContainer>
         <Button block onClick={() => onDelete(value)} type="danger">
           Delete
         </Button>
-      </Form.Item>
-    </Container>
+      </StyledFormItemButtonContainer>
+    </StyledContainer>
   );
 });
 
 export default ACFItem;
 
-const Container = styled.div({
-  backgroundColor: "#f0f0f0",
+const StyledContainer = styled.div({
+  backgroundColor: "#e7e7e7",
   padding: "16px",
-  paddingBottom: "1px",
+  borderRadius: "8px",
   marginBottom: "16px"
+});
+
+const StyledFormItem = styled.div({
+  marginTop: "8px",
+
+  "&:first-of-type": {
+    marginTop: 0
+  }
+});
+
+const StyledFormItemButtonContainer = styled.div({
+  marginTop: "16px"
 });

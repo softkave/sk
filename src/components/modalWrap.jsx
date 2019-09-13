@@ -1,9 +1,10 @@
 import React from "react";
 import { Drawer } from "antd";
-import { getWindowWidth } from "../utils/window";
 import throttle from "lodash/throttle";
 
-export default function modalWrap(component, defaultTitle) {
+import { getWindowWidth } from "../utils/window";
+
+export default function modalWrap(component, defaultTitle, { className } = {}) {
   class ModalWrappedComponent extends React.Component {
     constructor(props) {
       super(props);
@@ -49,6 +50,7 @@ export default function modalWrap(component, defaultTitle) {
 
       return (
         <Drawer
+          className={className}
           visible={visible}
           onClose={onClose}
           width={drawerWidth}

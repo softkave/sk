@@ -6,7 +6,8 @@ export type TaskPriority = "very important" | "important" | "not important";
 export const priorityToColorMap = {
   "not important": "#EACA2C",
   important: "#7ED321",
-  "very important": "#EB5424"
+  // "very important": "#EB5424"
+  "very important": "rgb(255, 77, 79)"
 };
 
 interface IStyledPriorityProps {

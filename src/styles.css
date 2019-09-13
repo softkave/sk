@@ -17,3 +17,14 @@ body,
 .ant-form-item-children {
   font-family: "Karla", sans-serif !important;
 }
+
+.ant-drawer-body {
+  flex: 1;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.ant-drawer-wrapper-body {
+  display: flex;
+  flex-direction: column;
+}

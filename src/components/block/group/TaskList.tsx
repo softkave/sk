@@ -3,9 +3,9 @@ import React from "react";
 
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
+import ScrollList from "../../ScrollList";
 import { IBlockMethods } from "../methods";
 import Task from "../task/MiniTask";
-import ScrollList from "./ScrollList";
 
 export interface ITaskListProps {
   blockHandlers: IBlockMethods;
@@ -63,11 +63,19 @@ export default class TaskList extends React.Component<ITaskListProps> {
   }
 
   public render() {
-    return <ScrollList>{this.renderTasks()}</ScrollList>;
+    return (
+      <ScrollList>
+        <Tasks>{this.renderTasks()}</Tasks>
+      </ScrollList>
+    );
   }
 }
 
 const BlockThumbnailContainer = styled.div`
   margin-top: 12px;
   margin-bottom: 12px;
+`;
+
+const Tasks = styled.div`
+  padding: 0 12px;
 `;

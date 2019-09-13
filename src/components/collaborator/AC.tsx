@@ -11,7 +11,14 @@ import { notificationErrorMessages } from "../../models/notification/notificatio
 import { IUser } from "../../models/user/user.js";
 import { userErrorMessages } from "../../models/user/userErrorMessages.js";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages.js";
-import FormError from "../FormError";
+import FormError from "../form/FormError";
+import {
+  FormBody,
+  FormBodyContainer,
+  FormControls,
+  FormScrollList,
+  StyledForm
+} from "../form/FormInternals";
 import { getGlobalError, submitHandler } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
 import ACF from "./ACF";
@@ -97,58 +104,66 @@ class AC extends React.PureComponent<IACProp> {
           const globalError = getGlobalError(errors);
 
           return (
-            <form onSubmit={handleSubmit}>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Default Message"
-                help={<FormError>{errors.message}</FormError>}
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="message"
-                  value={values.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Default Expiration Date"
-                help={<FormError>{errors.expiresAt}</FormError>}
-              >
-                <ACFExpiresAt
-                  minDate={moment()
-                    .subtract(1, "day")
-                    .endOf("day")}
-                  onChange={value => setFieldValue("expiresAt", value)}
-                  value={values.expiresAt}
-                />
-              </Form.Item>
-              <Form.Item label="Requests">
-                <ACF
-                  value={values.requests}
-                  maxRequests={blockConstants.maxAddCollaboratorValuesLength}
-                  onChange={value => {
-                    setFieldValue("requests", value);
-                  }}
-                  errors={errors.requests as any}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  loading={isSubmitting}
-                >
-                  Send Requests
-                </Button>
-              </Form.Item>
-            </form>
+            <StyledForm onSubmit={handleSubmit}>
+              <FormBodyContainer>
+                <FormScrollList>
+                  <FormBody>
+                    {globalError && (
+                      <Form.Item>
+                        <FormError error={globalError} />
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      label="Default Message"
+                      help={<FormError>{errors.message}</FormError>}
+                    >
+                      <Input.TextArea
+                        autosize={{ minRows: 2, maxRows: 6 }}
+                        autoComplete="off"
+                        name="message"
+                        value={values.message}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Default Expiration Date"
+                      help={<FormError>{errors.expiresAt}</FormError>}
+                    >
+                      <ACFExpiresAt
+                        minDate={moment()
+                          .subtract(1, "day")
+                          .endOf("day")}
+                        onChange={value => setFieldValue("expiresAt", value)}
+                        value={values.expiresAt}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Requests">
+                      <ACF
+                        value={values.requests}
+                        maxRequests={
+                          blockConstants.maxAddCollaboratorValuesLength
+                        }
+                        onChange={value => {
+                          setFieldValue("requests", value);
+                        }}
+                        errors={errors.requests as any}
+                      />
+                    </Form.Item>
+                  </FormBody>
+                </FormScrollList>
+                <FormControls>
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                  >
+                    Send Requests
+                  </Button>
+                </FormControls>
+              </FormBodyContainer>
+            </StyledForm>
           );
         }}
       </Formik>

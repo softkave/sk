@@ -3,9 +3,9 @@ import React from "react";
 
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
+import ScrollList from "../../ScrollList";
 import { IBlockMethods } from "../methods.js";
 import ProjectThumbnail from "../project/ProjectThumbnail";
-import ScrollList from "./ScrollList";
 
 export interface IProjectListProps {
   blockHandlers: IBlockMethods;
@@ -33,13 +33,21 @@ class ProjectList extends React.PureComponent<IProjectListProps> {
   }
 
   public render() {
-    return <ScrollList>{this.renderProjects()}</ScrollList>;
+    return (
+      <ScrollList>
+        <Projects>{this.renderProjects()}</Projects>
+      </ScrollList>
+    );
   }
 }
 
 const BlockThumbnailContainer = styled.div`
   margin-top: 12px;
   margin-bottom: 12px;
+`;
+
+const Projects = styled.div`
+  padding: 0 12px;
 `;
 
 export default ProjectList;

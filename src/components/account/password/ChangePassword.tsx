@@ -5,7 +5,7 @@ import * as yup from "yup";
 
 import { userConstants } from "../../../models/user/constants";
 import { passwordPattern } from "../../../models/user/descriptor";
-import FormError from "../../FormError";
+import FormError from "../../form/FormError";
 import { getGlobalError, submitHandler } from "../../formik-utils";
 
 const changePasswordSuccessMessage = "Password changed successfully";

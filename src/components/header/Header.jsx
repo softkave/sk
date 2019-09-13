@@ -1,6 +1,8 @@
 import React from "react";
-import { getWindowWidth } from "../../utils/window";
+import styled from "@emotion/styled";
 import { Menu, Drawer, Icon, Button, Row, Col } from "antd";
+
+import { getWindowWidth } from "../../utils/window";
 import "./header.css";
 
 const MenuItem = Menu.Item;
@@ -53,29 +55,33 @@ class Header extends React.Component {
           visible={!collapsed}
           placement="left"
         >
-          <Menu
-            defaultSelectedKeys={[currentItemKey]}
-            onClick={this.onSelectMenu}
-            style={{ marginTop: "2em" }}
-          >
-            {menuItems.map(item => (
-              <MenuItem key={item.key}>
-                {item.icon && <Icon type={item.icon} theme={item.iconTheme} />}
-                <span>{item.label}</span>
-              </MenuItem>
-            ))}
-          </Menu>
+          <DrawerBody>
+            <Menu
+              defaultSelectedKeys={[currentItemKey]}
+              onClick={this.onSelectMenu}
+              style={{ marginTop: "2em" }}
+            >
+              {menuItems.map(item => (
+                <MenuItem key={item.key}>
+                  {item.icon && (
+                    <Icon type={item.icon} theme={item.iconTheme} />
+                  )}
+                  <span>{item.label}</span>
+                </MenuItem>
+              ))}
+            </Menu>
+          </DrawerBody>
         </Drawer>
         <div className="app-header">
           <Row>
-            <Col span={4}>
+            <Col span={3}>
               <Button
                 icon={collapsed ? "menu-unfold" : "menu-fold"}
                 onClick={this.onToggleMenu}
               />
             </Col>
-            <Col span={16}>{children}</Col>
-            <Col span={4} style={{ textAlign: "right" }}>
+            <Col span={18}>{children}</Col>
+            <Col span={3} style={{ textAlign: "right" }}>
               {avatar}
             </Col>
           </Row>
@@ -91,3 +97,11 @@ class Header extends React.Component {
 Header.defaultProps = headerDefaultProps;
 
 export default Header;
+
+const DrawerBody = styled("div")({
+  padding: "24px",
+
+  "& .ant-menu-vertical": {
+    borderRight: "0 !important"
+  }
+});
