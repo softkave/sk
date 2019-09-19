@@ -7,14 +7,18 @@ import Orgs from "../../components/block/org/Orgs";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
-import { getSignedInUser } from "../../redux/session/selectors";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { getCurrentOrg } from "../../redux/view/selectors";
+import { setCurrentOrg } from "../../redux/view/actions";
 
 export interface IOrgsContainerProps {
   blockHandlers: IBlockMethods;
   user: IUser;
   areOrgsLoaded: boolean;
+  onSelectOrg: (orgID?: string) => void;
   orgs?: IBlock[];
+  currentOrg?: IBlock;
 }
 
 interface IOrgsContainerState {
@@ -49,7 +53,7 @@ class OrgsContainer extends React.Component<
   }
 
   public render() {
-    const { orgs, blockHandlers, user } = this.props;
+    const { orgs, blockHandlers, user, onSelectOrg, currentOrg } = this.props;
     const { error, loading } = this.state;
 
     if (loading) {
@@ -58,7 +62,15 @@ class OrgsContainer extends React.Component<
       return "An error occurred";
     }
 
-    return <Orgs orgs={orgs!} blockHandlers={blockHandlers} user={user} />;
+    return (
+      <Orgs
+        orgs={orgs!}
+        blockHandlers={blockHandlers}
+        user={user}
+        onSelectOrg={onSelectOrg}
+        currentOrg={currentOrg}
+      />
+    );
   }
 }
 
@@ -71,20 +83,25 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
-  const user = getSignedInUser(state);
+  const user = getSignedInUserRequired(state);
   const blockHandlers = getBlockMethods({
     state,
     dispatch
   });
 
-  const orgs = getBlocksAsArray(state, user!.orgs!);
-  const areOrgsLoaded = orgs.length === user!.orgs.length;
+  const orgs = getBlocksAsArray(state, user.orgs);
+  const areOrgsLoaded = orgs.length === user.orgs.length;
+  const currentOrg = getCurrentOrg(state);
 
   return {
     blockHandlers,
     areOrgsLoaded,
     user,
-    orgs
+    orgs,
+    currentOrg,
+    onSelectOrg(orgID?: string) {
+      dispatch(setCurrentOrg(orgID));
+    }
   };
 }
 

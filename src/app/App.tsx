@@ -1,12 +1,15 @@
 import styled from "@emotion/styled";
-import { Dropdown, Menu } from "antd";
+import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
+import { connect } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Header from "../components/header/Header";
 import Logo from "../components/Logo";
+import SelectOrgContainer from "../components/SelectOrg/SelectOrgContainer";
 import SkAvatar from "../components/SkAvatar";
 import { IUser } from "../models/user/user";
+import { IReduxState } from "../redux/store";
 import Notifications from "./notification";
 import Orgs from "./orgs";
 // import Personal from "./personal";
@@ -102,6 +105,11 @@ class App extends React.Component<IAppProps> {
         }
       >
         {/* <Logo /> */}
+        <Row type="flex" align="middle" justify="center">
+          <Col span={24}>
+            <SelectOrgContainer />
+          </Col>
+        </Row>
       </Header>
     );
   }

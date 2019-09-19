@@ -60,7 +60,7 @@ export function bulkAddReferenceCountedResources<ResourceType extends object>(
       }
     );
 
-    resource.referenceCount += 1;
+    // resource.referenceCount += 1;
     updatedResources[param.id] = resource;
   });
 
