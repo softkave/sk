@@ -9,7 +9,7 @@ import { blockConstants } from "../../../models/block/constants";
 import { textPattern } from "../../../models/user/descriptor";
 import { IUser } from "../../../models/user/user";
 import { indexArray } from "../../../utils/object";
-import CollaboratorThumbnail from "../../collaborator/Thumnail";
+import CollaboratorThumbnail from "../../collaborator/CollaboratorThumbnail";
 import FormError from "../../form/FormError";
 import {
   FormBody,

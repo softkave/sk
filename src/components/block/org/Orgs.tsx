@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
 
@@ -58,7 +59,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     }
 
     return (
-      <div className="sk-orgs">
+      <StyledOrgs>
         <EditOrg
           visible={showNewOrgForm}
           onSubmit={this.onCreateOrg}
@@ -81,9 +82,13 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
             );
           })}
         </div>
-      </div>
+      </StyledOrgs>
     );
   }
 }
 
 export default Orgs;
+
+const StyledOrgs = styled.div({
+  overflowY: "auto"
+});

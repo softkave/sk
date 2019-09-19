@@ -1,5 +1,5 @@
 import React from "react";
-import Thumbnail from "../../thumbnail/Thumbnail.jsx";
+import Thumbnail from "../../thumbnail/Thumbnail";
 
 export default function OrgThumbnail(props) {
   const { org, className, style, onClick } = props;
@@ -12,8 +12,6 @@ export default function OrgThumbnail(props) {
         return <h3>{org.name}</h3>;
       }}
       style={{
-        height: "70px",
-        padding: "4px",
         cursor: "pointer",
         ...style
       }}

@@ -116,5 +116,3 @@ class App extends React.Component<IAppProps> {
 }
 
 export default withRouter(App);
-
-const StyledHeaderContent = styled.div({});

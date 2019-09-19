@@ -5,8 +5,9 @@ import { IBlock } from "../../models/block/block.js";
 import { INotification } from "../../models/notification/notification.js";
 import { IUser } from "../../models/user/user.js";
 import AC, { IACValue } from "./AC";
+import CollaboratorThumbnail from "./CollaboratorThumbnail";
+
 import "./collaborators.css";
-import CollaboratorThumbnail from "./Thumnail.jsx";
 
 // TODO: After adding collaborator, control unmounts Collaborator and goes back to board
 // This is not expected behaviour.
