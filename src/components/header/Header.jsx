@@ -75,10 +75,7 @@ class Header extends React.Component {
         <div className="app-header">
           <Row>
             <Col span={3}>
-              <Button
-                icon={collapsed ? "menu-unfold" : "menu-fold"}
-                onClick={this.onToggleMenu}
-              />
+              <Button icon={"menu"} onClick={this.onToggleMenu} />
             </Col>
             <Col span={18}>{children}</Col>
             <Col span={3} style={{ textAlign: "right" }}>

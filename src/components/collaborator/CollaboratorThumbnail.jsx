@@ -1,5 +1,5 @@
 import React from "react";
-import Thumbnail from "../thumbnail/Thumbnail.jsx";
+import Thumbnail from "../thumbnail/Thumbnail";
 import moment from "moment";
 
 export default class CollaboratorThumbnail extends React.Component {

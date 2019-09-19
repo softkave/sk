@@ -3,7 +3,7 @@ import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
 
-import SkAvatar from "../SkAvatar";
+import StyledAvatar from "../StyledAvatar";
 
 export interface IAvatarItem {
   color?: string;
@@ -36,10 +36,10 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
           const renderAvatarNum = renderNum - 1;
 
           return (
-            <AvatarListContainer>
+            <StyledAvatarListContainer>
               {this.renderAvatars(avatars!.slice(0, renderAvatarNum))}
-              {this.renderHiddenButton(avatars!.slice(renderAvatarNum + 1))}
-            </AvatarListContainer>
+              {this.renderHiddenButton(avatars!.slice(renderAvatarNum))}
+            </StyledAvatarListContainer>
           );
         }}
       </SizeMe>
@@ -52,80 +52,88 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
     return Math.floor((displayWidth - avatarWidthPx) / avatarLayoutXPx) + 1;
   }
 
-  private renderAvatars(avatars: IAvatarItem[], renderExtra = false) {
+  private renderAvatar(avatar: IAvatarItem, renderExtra = false) {
     const { onClick } = this.props;
 
-    return avatars.map(avatar => {
-      const renderedAvatar = (
-        <SkAvatar
-          clickable
-          color={avatar.color}
-          active={avatar.active}
-          onClick={() => onClick!(avatar, !avatar.active)}
-        />
-      );
+    const renderedAvatar = (
+      <StyledAvatar
+        clickable
+        color={avatar.color}
+        active={avatar.active}
+        onClick={() => onClick!(avatar, !avatar.active)}
+      />
+    );
 
-      if (renderExtra) {
-        return (
-          <Row key={avatar.key} type="flex" align="middle">
-            <Col span={8}>{renderedAvatar}</Col>
-            <Col span={16}>{avatar.extra}</Col>
-          </Row>
-        );
-      } else {
-        return (
-          <AvatarContainer key={avatar.key}>{renderedAvatar}</AvatarContainer>
-        );
-      }
+    if (renderExtra) {
+      return (
+        <Row key={avatar.key} type="flex" align="middle">
+          <Col span={4}>{renderedAvatar}</Col>
+          <Col span={20}>{avatar.extra}</Col>
+        </Row>
+      );
+    } else {
+      return (
+        <StyledAvatarContainer key={avatar.key}>
+          {renderedAvatar}
+        </StyledAvatarContainer>
+      );
+    }
+  }
+
+  private renderAvatars(avatars: IAvatarItem[], renderExtra = false) {
+    return avatars.map(avatar => {
+      return this.renderAvatar(avatar, renderExtra);
     });
   }
 
-  private renderHiddenAvatars(avatars: IAvatarItem[]) {
-    return (
-      <HiddenAvatarContainer>
-        {this.renderAvatars(avatars, true)}
-      </HiddenAvatarContainer>
-    );
-  }
-
   private renderHiddenButton(avatars: IAvatarItem[]) {
-    const menu = <Menu>{this.renderHiddenAvatars(avatars)}</Menu>;
+    if (avatars.length > 0) {
+      const menu = (
+        <StyledMenu>
+          {avatars.map(avatar => {
+            return (
+              <Menu.Item key={avatar.key}>
+                {this.renderAvatar(avatar, true)}
+              </Menu.Item>
+            );
+          })}
+        </StyledMenu>
+      );
 
-    return (
-      <Dropdown overlay={menu} trigger={["click"]}>
-        <MoreButtonContainer>
-          <SkAvatar>{avatars.length}+</SkAvatar>
-        </MoreButtonContainer>
-      </Dropdown>
-    );
+      return (
+        <Dropdown overlay={menu}>
+          <StyledMoreButtonContainer>
+            <StyledAvatar>{avatars.length} +</StyledAvatar>
+          </StyledMoreButtonContainer>
+        </Dropdown>
+      );
+    }
+
+    return null;
   }
 }
 
-const AvatarListContainer = styled.div`
+const StyledAvatarListContainer = styled.div`
   white-space: nowrap;
   overflow-x: auto;
   flex: 1;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  height: 40px;
 `;
 
-const AvatarContainer = styled.div`
+const StyledAvatarContainer = styled.div`
   display: inline-block;
-  margin-left: 16px;
-
-  &:first-of-type {
-    margin-left: 0;
-  }
+  margin-right: 16px;
 `;
 
-const MoreButtonContainer = styled.div`
+const StyledMoreButtonContainer = styled.div`
   display: inline-block;
-  margin-left: 16px;
   cursor: pointer;
   font-size: 18px;
 `;
 
-const HiddenAvatarContainer = styled.div`
-  padding: 16px;
-`;
+const StyledMenu = styled(Menu)({
+  minWidth: 300
+});

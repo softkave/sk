@@ -9,9 +9,9 @@ export interface IAvatarProps {
   clickable?: boolean;
 }
 
-const SkAvatar: React.SFC<IAvatarProps> = props => {
+const StyledAvatar: React.SFC<IAvatarProps> = props => {
   return (
-    <AvatarContainer
+    <StyledAvatarContainer
       active={props.active}
       onClick={props.onClick}
       color={props.color!}
@@ -27,12 +27,12 @@ const SkAvatar: React.SFC<IAvatarProps> = props => {
       >
         {props.children}
       </Avatar>
-    </AvatarContainer>
+    </StyledAvatarContainer>
   );
 };
 
-SkAvatar.defaultProps = {
-  color: "#aaa"
+StyledAvatar.defaultProps = {
+  color: "#999"
 };
 
 interface IAvatarContainerProps {
@@ -41,24 +41,31 @@ interface IAvatarContainerProps {
   type: "regular" | "thumbnail";
 }
 
-const AvatarContainer = styled("span")<IAvatarContainerProps>(props => {
+const StyledAvatarContainer = styled("span")<IAvatarContainerProps>(props => {
+  const styles: React.CSSProperties = {
+    display: "inline-block",
+    color: props.color
+  };
+
   switch (props.type) {
     case "thumbnail": {
       return {
-        color: props.color,
-        border: props.active ? "2px solid rbg(66,133,244)" : undefined,
+        ...styles,
+        border: props.active ? "2px solid rgb(66,133,244)" : undefined,
         padding: props.active ? "2px" : undefined,
-        cursor: "pointer"
+        borderRadius: props.active ? "4px" : undefined,
+        cursor: "pointer",
+        boxSizing: "border-box"
       };
     }
 
     case "regular":
     default: {
       return {
-        color: props.color
+        ...styles
       };
     }
   }
 });
 
-export default SkAvatar;
+export default StyledAvatar;

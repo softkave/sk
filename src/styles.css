@@ -28,3 +28,7 @@ body,
   display: flex;
   flex-direction: column;
 }
+
+.ant-btn .anticon {
+  font-size: 16px;
+}

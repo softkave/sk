@@ -36,13 +36,11 @@ export default function modalWrap(component, defaultTitle, { className } = {}) {
       const WrappedComponent = component;
       const { visible, onClose, title } = this.props;
       const { currentDeviceWidth } = this.state;
-      // const windowWidth = getWindowWidth();
       const windowWidth = currentDeviceWidth;
-      const divider = windowWidth <= 500 ? 1 : windowWidth <= 700 ? 3 / 2 : 2;
-      // : windowWidth <= 1020
-      // ? 2
-      // : 3;
+      const divider = windowWidth <= 500 ? 1 : windowWidth <= 700 ? 1 / 3 : 2;
+      const maxDrawerWidth = 500;
       let drawerWidth = windowWidth / divider;
+      drawerWidth = drawerWidth > maxDrawerWidth ? maxDrawerWidth : drawerWidth;
 
       if (!visible) {
         return null;
