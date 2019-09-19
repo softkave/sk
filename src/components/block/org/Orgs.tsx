@@ -6,17 +6,19 @@ import { IUser } from "../../../models/user/user";
 import BoardContainer from "../group/BoardContainer";
 import { IBlockMethods } from "../methods";
 import EditOrg from "./EditOrg";
-import "./orgs.css";
 import OrgThumbnail from "./OrgThumbnail";
+
+import "./orgs.css";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;
   orgs: IBlock[];
   user: IUser;
+  onSelectOrg: (orgID?: string) => void;
+  currentOrg?: IBlock;
 }
 
 interface IOrgsState {
-  currentOrg?: string | null;
   showNewOrgForm: boolean;
 }
 
@@ -24,14 +26,9 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
   constructor(props) {
     super(props);
     this.state = {
-      currentOrg: null,
       showNewOrgForm: false
     };
   }
-
-  public setCurrentOrg = id => {
-    this.setState({ currentOrg: id });
-  };
 
   public toggleNewOrgForm = () => {
     this.setState(prevState => {
@@ -46,24 +43,16 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     this.toggleNewOrgForm();
   };
 
-  public getCurrentOrg() {
-    return this.props.orgs.find(
-      block => block.customId === this.state.currentOrg
-    );
-  }
-
   public render() {
-    const { orgs } = this.props;
-    const { currentOrg, showNewOrgForm } = this.state;
+    const { orgs, onSelectOrg, currentOrg } = this.props;
+    const { showNewOrgForm } = this.state;
 
     if (currentOrg) {
-      const block = this.getCurrentOrg();
-
       return (
         <BoardContainer
-          blockID={block!.customId}
-          block={block}
-          onBack={() => this.setCurrentOrg(null)}
+          blockID={currentOrg.customId}
+          block={currentOrg}
+          onBack={() => onSelectOrg()}
         />
       );
     }
@@ -86,7 +75,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
               <OrgThumbnail
                 key={org.customId}
                 org={org}
-                onClick={() => this.setCurrentOrg(org.customId)}
+                onClick={() => onSelectOrg(org.customId)}
                 className="sk-orgs-thumbnail"
               />
             );

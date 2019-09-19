@@ -21,3 +21,23 @@ export function isUserSignedIn(state: IReduxState) {
     !!state.users[state.session.userId].resource
   );
 }
+
+export function assertUserSignedIn(state: IReduxState) {
+  if (!isUserSignedIn(state)) {
+    throw new Error("User is not signed in");
+  }
+}
+
+export function getSignedInUserRequired(state: IReduxState) {
+  assertUserSignedIn(state);
+
+  const user = getSignedInUser(state)!;
+  return user;
+}
+
+export function getUserTokenRequired(state: IReduxState) {
+  assertUserSignedIn(state);
+
+  const token = getUserToken(state)!;
+  return token;
+}

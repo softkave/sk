@@ -5,6 +5,7 @@ import { Draggable } from "react-beautiful-dnd";
 
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
+import StyledCapitalizeText from "../../StyledCapitalizeText";
 import { IBlockMethods } from "../methods";
 import { BoardContext } from "./Board";
 import { getChildrenTypesForContext } from "./childrenTypes";
@@ -117,8 +118,18 @@ class Group extends React.PureComponent<IGroupProps> {
   }
 
   private onSelectControl = event => {
-    const { group, onClickAddChild } = this.props;
-    onClickAddChild(event.key, group);
+    const { group, onClickAddChild, context, blockHandlers } = this.props;
+    const childrenTypes = getChildrenTypesForContext(group, context);
+
+    if (childrenTypes.indexOf(event.key) !== -1) {
+      onClickAddChild(event.key, group);
+    } else {
+      switch (event.key) {
+        case "delete-group": {
+          blockHandlers.onDelete({ block: group });
+        }
+      }
+    }
   };
 
   private renderControls() {
@@ -129,10 +140,14 @@ class Group extends React.PureComponent<IGroupProps> {
         {childrenTypes.map(type => {
           return (
             <Menu.Item key={type}>
-              <ControlText>{`Create ${type}`}</ControlText>
+              <StyledCapitalizeText>{`Create ${type}`}</StyledCapitalizeText>
             </Menu.Item>
           );
         })}
+        <Menu.Divider />
+        <Menu.Item key="delete-group">
+          <StyledCapitalizeText>Delete Group</StyledCapitalizeText>
+        </Menu.Item>
       </Menu>
     );
 
@@ -145,10 +160,6 @@ class Group extends React.PureComponent<IGroupProps> {
     );
   }
 }
-
-const ControlText = styled.span({
-  textTransform: "capitalize"
-});
 
 const OpenControlButtonSpan = styled("span")({
   "& .anticon": {

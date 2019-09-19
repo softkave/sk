@@ -7,19 +7,22 @@ import {
 } from "./notifications/reducer";
 import { ISessionReduxState, sessionReducer } from "./session/reducer";
 import { IUsersState, usersReducer } from "./users/reducer";
+import viewReducer, { IViewState } from "./view/reducers";
 
 export interface IReduxState {
   blocks: IBlocksState;
   users: IUsersState;
   notifications: INotificationsState;
   session: ISessionReduxState;
+  view: IViewState;
 }
 
 const reducers = combineReducers({
   blocks: blocksReducer,
   users: usersReducer,
   notifications: notificationsReducer,
-  session: sessionReducer
+  session: sessionReducer,
+  view: viewReducer
 });
 
 const storeData = {};

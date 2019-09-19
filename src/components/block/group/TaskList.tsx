@@ -6,6 +6,7 @@ import { IUser } from "../../../models/user/user";
 import ScrollList from "../../ScrollList";
 import { IBlockMethods } from "../methods";
 import Task from "../task/MiniTask";
+import { sortBlocksByPriority } from "./sortBlocks";
 
 export interface ITaskListProps {
   blockHandlers: IBlockMethods;
@@ -45,7 +46,7 @@ export default class TaskList extends React.Component<ITaskListProps> {
           return false;
         });
 
-    const tasksToRender = filteredTasks;
+    const tasksToRender = sortBlocksByPriority(filteredTasks);
     const renderedTasks = tasksToRender.map(task => {
       return (
         <BlockThumbnailContainer key={task.customId}>
