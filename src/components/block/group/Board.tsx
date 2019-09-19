@@ -217,7 +217,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           <BlockName>{isUserRootBlock ? "Root" : block.name}</BlockName>
         </Header>
         {/** TODO: undo */}
-        {/* {!actLikeRootBlock && (
+        {!actLikeRootBlock && (
           <CollaboratorAvatarsContainer>
             <AvatarList
               collaborators={collaborators.map(collaborator => {
@@ -231,7 +231,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               onClick={this.onSelectCollaborator}
             />
           </CollaboratorAvatarsContainer>
-        )} */}
+        )}
         <BoardContent>
           <KanbanBoard
             blockHandlers={blockHandlers}
@@ -258,32 +258,19 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     selected: boolean
   ) => {
     this.setState(state => {
+      const selectedCollaborators = { ...state.selectedCollaborators };
+
+      if (selected) {
+        selectedCollaborators[collaborator.key] = selected;
+      } else if (selectedCollaborators[collaborator.key]) {
+        delete selectedCollaborators[collaborator.key];
+      }
+
       return {
-        selectedCollaborators: {
-          ...state.selectedCollaborators,
-          [collaborator.key]: selected
-        }
+        selectedCollaborators
       };
     });
   };
-
-  private getChildrenBlocksContainer(type: BlockType) {
-    const { tasks, projects, groups } = this.props;
-
-    switch (type) {
-      case "group":
-        return groups;
-
-      case "project":
-        return projects;
-
-      case "task":
-        return tasks;
-
-      default:
-        return [];
-    }
-  }
 
   private onSubmitData = async (data, formType) => {
     const { user } = this.props;
@@ -382,7 +369,8 @@ const BoardContent = styled.div`
 
 const Header = styled.div`
   white-space: normal;
-  padding: 1em;
+  padding: 2em 1em;
+  padding-bottom: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
 `;

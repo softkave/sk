@@ -1,18 +1,14 @@
-import styled from "@emotion/styled";
 import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
-import { connect } from "react-redux";
+
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Header from "../components/header/Header";
-import Logo from "../components/Logo";
 import SelectOrgContainer from "../components/SelectOrg/SelectOrgContainer";
-import SkAvatar from "../components/SkAvatar";
+import StyledAvatar from "../components/StyledAvatar";
 import { IUser } from "../models/user/user";
-import { IReduxState } from "../redux/store";
 import Notifications from "./notification";
 import Orgs from "./orgs";
-// import Personal from "./personal";
 
 const defaultAvatarColor = "#aaa";
 
@@ -61,11 +57,6 @@ class App extends React.Component<IAppProps> {
             label: "Notifications",
             component: Notifications
           },
-          // {
-          //   key: "personal",
-          //   label: "Personal",
-          //   component: Personal
-          // },
           {
             key: "orgs",
             label: "Orgs",
@@ -96,7 +87,7 @@ class App extends React.Component<IAppProps> {
             }
             trigger={["click"]}
           >
-            <SkAvatar
+            <StyledAvatar
               clickable
               onClick={() => null}
               color={user.color || defaultAvatarColor}
@@ -104,7 +95,6 @@ class App extends React.Component<IAppProps> {
           </Dropdown>
         }
       >
-        {/* <Logo /> */}
         <Row type="flex" align="middle" justify="center">
           <Col span={24}>
             <SelectOrgContainer />
