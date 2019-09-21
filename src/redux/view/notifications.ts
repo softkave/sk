@@ -1,5 +1,5 @@
 import { INotification } from "../../models/notification/notification";
-import IView from "./IView";
+import IView from "./view";
 
 export const notificationsViewName = "notifications";
 

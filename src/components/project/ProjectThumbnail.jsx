@@ -1,6 +1,6 @@
 import React from "react";
 
-import Thumbnail from "../../thumbnail/Thumbnail";
+import Thumbnail from "../thumbnail/Thumbnail";
 import "./project-thumbnail.css";
 
 export default function ProjectThumbnail(props) {

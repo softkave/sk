@@ -1,6 +1,6 @@
 import React from "react";
 
-import IView from "../../redux/view/IView";
+import IView from "../../redux/view/view";
 import EmptyView from "./EmptyView";
 
 export interface IRenderView extends IView {

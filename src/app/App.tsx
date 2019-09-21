@@ -4,7 +4,7 @@ import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import Header from "../components/header/Header";
-import SelectOrgContainer from "../components/SelectOrg/SelectOrgContainer";
+import SelectOrgContainer from "../components/select-org/SelectOrgContainer";
 import StyledAvatar from "../components/StyledAvatar";
 import { IUser } from "../models/user/user";
 import Notifications from "./notification";

@@ -1,7 +1,7 @@
 import { IBlock } from "../../models/block/block";
 import { CLEAR_VIEWS_FROM, POP_VIEW, PUSH_VIEW } from "./constants";
-import IView from "./IView";
 import { makeCurrentOrgView } from "./orgs";
+import IView from "./view";
 
 export interface IPushViewAction {
   type: PUSH_VIEW;

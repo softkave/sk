@@ -1,7 +1,7 @@
 import { IViewAction } from "./actions";
 import { CLEAR_VIEWS_FROM, POP_VIEW, PUSH_VIEW } from "./constants";
-import IView from "./IView";
 import { makeOrgsView } from "./orgs";
+import IView from "./view";
 
 export interface IViewState {
   viewHistory: IView[];

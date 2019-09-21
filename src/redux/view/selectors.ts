@@ -1,8 +1,8 @@
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../blocks/selectors";
 import { IReduxState } from "../store";
-import IView from "./IView";
 import { currentOrgViewName, ICurrentOrgView } from "./orgs";
+import IView from "./view";
 
 export function getCurrentView(state: IReduxState): IView | undefined {
   const viewHistory = state.view.viewHistory;

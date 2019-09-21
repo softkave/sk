@@ -3,20 +3,18 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 
-import { blockConstants } from "../../../models/block/constants";
-import { textPattern } from "../../../models/user/descriptor";
-import FormError from "../../form/FormError";
+import { blockConstants } from "../../models/block/constants";
+import { textPattern } from "../../models/user/descriptor";
+import FormError from "../form/FormError";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../../form/FormInternals";
-import { getGlobalError, submitHandler } from "../../formik-utils";
-import modalWrap from "../../modalWrap.jsx";
-
-const projectExistsErrorMessage = "Project with the same name exists";
+} from "../form/FormInternals";
+import { getGlobalError, submitHandler } from "../formik-utils";
+import modalWrap from "../modalWrap.jsx";
 
 const validationSchema = yup.object().shape({
   name: yup
@@ -30,45 +28,36 @@ const validationSchema = yup.object().shape({
     .matches(textPattern)
 });
 
-interface IEditProjectValues {
+interface IEditOrgValues {
   name: string;
   description?: string;
 }
 
-export interface IEditProjectProps {
-  onSubmit: (values: IEditProjectValues) => void | Promise<void>;
+export interface IEditOrgProps {
+  onSubmit: (values: IEditOrgValues) => void | Promise<void>;
   submitLabel?: string;
-  data?: IEditProjectValues;
-  existingProjects?: string[];
+  data?: IEditOrgValues;
 }
 
-const defaultSubmitLabel = "Create Project";
+const defaultSubmitLabel = "Create Organization";
+// const initialValues = {
+//   name: ""
+// };
 
-class EditProject extends React.Component<IEditProjectProps> {
+class EditOrg extends React.Component<IEditOrgProps> {
   public static defaultProps = {
-    submitLabel: defaultSubmitLabel,
-    existingProjects: []
+    submitLabel: defaultSubmitLabel
   };
 
   public render() {
     const { data, submitLabel, onSubmit } = this.props;
 
-    // TODO: Integrate internal validation
     return (
       <Formik
         initialValues={data!}
         validationSchema={validationSchema}
         onSubmit={(values, props) => {
-          // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
-          const error = this.validate(values);
-
-          if (error) {
-            props.setErrors(error);
-            props.setSubmitting(false);
-            return;
-          }
-
-          (values as any).type = "project";
+          (values as any).type = "org";
           submitHandler(onSubmit, values, props);
         }}
       >
@@ -94,7 +83,7 @@ class EditProject extends React.Component<IEditProjectProps> {
                       </Form.Item>
                     )}
                     <Form.Item
-                      label="Project Name"
+                      label="Organization Name"
                       help={<FormError>{errors.name}</FormError>}
                     >
                       <Input
@@ -137,14 +126,6 @@ class EditProject extends React.Component<IEditProjectProps> {
       </Formik>
     );
   }
-
-  private validate(values: IEditProjectValues) {
-    const { existingProjects } = this.props;
-
-    if (existingProjects && existingProjects.indexOf(values.name) !== -1) {
-      return { name: projectExistsErrorMessage };
-    }
-  }
 }
 
-export default modalWrap(EditProject, "Project");
+export default modalWrap(EditOrg, "Org");

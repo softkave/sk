@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import { Dispatch } from "redux";
 import { getBlockMethods, IBlockMethods } from "../../components/block/methods";
-import Orgs from "../../components/block/org/Orgs";
+import Orgs from "../../components/org/Orgs";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";

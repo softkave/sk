@@ -1,5 +1,5 @@
 import { IBlock } from "../../models/block/block";
-import IView from "./IView";
+import IView from "./view";
 
 export const orgsViewName = "orgs";
 

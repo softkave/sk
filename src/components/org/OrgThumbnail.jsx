@@ -1,5 +1,5 @@
 import React from "react";
-import Thumbnail from "../../thumbnail/Thumbnail";
+import Thumbnail from "../thumbnail/Thumbnail";
 
 export default function OrgThumbnail(props) {
   const { org, className, style, onClick } = props;

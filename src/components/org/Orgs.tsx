@@ -2,10 +2,10 @@ import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
 
-import { findBlock, IBlock } from "../../../models/block/block";
-import { IUser } from "../../../models/user/user";
+import { findBlock, IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
 import BoardContainer from "../group/BoardContainer";
-import { IBlockMethods } from "../methods";
 import EditOrg from "./EditOrg";
 import OrgThumbnail from "./OrgThumbnail";
 
