@@ -2,33 +2,41 @@ import styled from "@emotion/styled";
 import { Dropdown, Icon, Menu } from "antd";
 import React from "react";
 
-import { IBlock } from "../../models/block/block";
+import { findBlock, IBlock } from "../../models/block/block";
+import { orgsViewName } from "../../redux/view/orgs";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 
 export interface ISelectOrgProps {
   orgs: IBlock[];
+  onSelectOrg: (org: IBlock) => void;
+  gotoOrgs: () => void;
   currentOrgID?: string;
   trigger?: Array<"click" | "hover" | "contextMenu">;
   placeholder?: string;
-  onChange?: (orgID: string) => void;
 }
 
 const SelectOrg: React.SFC<ISelectOrgProps> = props => {
   const {
     currentOrgID,
     orgs,
-    onChange,
+    onSelectOrg,
+    gotoOrgs,
     placeholder,
     trigger: triggers
   } = props;
+
   const overlay = (
     <StyledMenu
       onClick={event => {
-        if (onChange) {
-          onChange(event.key);
+        if (event.key === orgsViewName) {
+          gotoOrgs();
+        } else {
+          onSelectOrg(findBlock(orgs, event.key)!);
         }
       }}
     >
+      <Menu.Item key={orgsViewName}>Orgs</Menu.Item>
+      <Menu.Divider />
       {orgs.map(org => {
         return (
           <Menu.Item key={org.customId}>

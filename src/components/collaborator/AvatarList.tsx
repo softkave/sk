@@ -120,7 +120,6 @@ const StyledAvatarListContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  height: 40px;
 `;
 
 const StyledAvatarContainer = styled.div`

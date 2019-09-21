@@ -43,3 +43,9 @@ export interface IBlock {
   loadingCollaborators?: boolean;
   loadingCollaborationRequests?: boolean;
 }
+
+export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {
+  return blocks.find(block => {
+    return block.customId === id;
+  });
+}

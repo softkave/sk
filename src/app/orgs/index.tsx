@@ -9,14 +9,16 @@ import { IUser } from "../../models/user/user";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { clearViewsFrom, setCurrentOrg } from "../../redux/view/actions";
+import { currentOrgViewName } from "../../redux/view/orgs";
 import { getCurrentOrg } from "../../redux/view/selectors";
-import { setCurrentOrg } from "../../redux/view/actions";
 
 export interface IOrgsContainerProps {
   blockHandlers: IBlockMethods;
   user: IUser;
   areOrgsLoaded: boolean;
-  onSelectOrg: (orgID?: string) => void;
+  onSelectOrg: (orgID: IBlock) => void;
+  onBack: () => void;
   orgs?: IBlock[];
   currentOrg?: IBlock;
 }
@@ -99,8 +101,11 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
     user,
     orgs,
     currentOrg,
-    onSelectOrg(orgID?: string) {
-      dispatch(setCurrentOrg(orgID));
+    onSelectOrg(org: IBlock) {
+      dispatch(setCurrentOrg(org));
+    },
+    onBack() {
+      dispatch(clearViewsFrom(currentOrgViewName));
     }
   };
 }

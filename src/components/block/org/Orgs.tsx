@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
 
-import { IBlock } from "../../../models/block/block";
+import { findBlock, IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import BoardContainer from "../group/BoardContainer";
 import { IBlockMethods } from "../methods";
@@ -15,7 +15,7 @@ export interface IOrgsProps {
   blockHandlers: IBlockMethods;
   orgs: IBlock[];
   user: IUser;
-  onSelectOrg: (orgID?: string) => void;
+  onSelectOrg: (orgID: IBlock) => void;
   currentOrg?: IBlock;
 }
 
@@ -76,7 +76,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
               <OrgThumbnail
                 key={org.customId}
                 org={org}
-                onClick={() => onSelectOrg(org.customId)}
+                onClick={() => onSelectOrg(org)}
                 className="sk-orgs-thumbnail"
               />
             );
