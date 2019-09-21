@@ -1,4 +1,4 @@
-import { IClearStateAction } from "../actions";
+import { IClearStateAction } from "../state/actions";
 import { LOGIN_USER, LOGOUT_USER, UPDATE_TOKEN } from "./constants";
 
 export interface ILoginUserAction {

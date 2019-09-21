@@ -1,11 +1,11 @@
 import { INotification } from "../../models/notification/notification";
-import { IClearStateAction } from "../actions";
 import {
-  IReferenceCountedResourceAddPayload,
-  IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload,
+  ICollectionAddItemPayload,
+  ICollectionDeleteItemPayload,
+  ICollectionUpdateItemPayload,
   IUpdateResourceMeta
-} from "../referenceCounting";
+} from "../collection";
+import { IClearStateAction } from "../state/actions";
 import {
   ADD_NOTIFICATION,
   BULK_ADD_NOTIFICATIONS,
@@ -17,7 +17,7 @@ import {
 
 export interface IAddNotificationAction {
   type: ADD_NOTIFICATION;
-  payload: IReferenceCountedResourceAddPayload<INotification>;
+  payload: ICollectionAddItemPayload<INotification>;
 }
 
 export function addNotificationRedux(
@@ -34,7 +34,7 @@ export function addNotificationRedux(
 
 export interface IUpdateNotificationAction {
   type: UPDATE_NOTIFICATION;
-  payload: IReferenceCountedResourceUpdatePayload<INotification>;
+  payload: ICollectionUpdateItemPayload<INotification>;
   meta: IUpdateResourceMeta;
 }
 
@@ -55,7 +55,7 @@ export function updateNotificationRedux(
 
 export interface IDeleteNotificationAction {
   type: DELETE_NOTIFICATION;
-  payload: IReferenceCountedResourceDeletePayload;
+  payload: ICollectionDeleteItemPayload;
 }
 
 export function deleteNotificationRedux(id: string): IDeleteNotificationAction {
@@ -69,7 +69,7 @@ export function deleteNotificationRedux(id: string): IDeleteNotificationAction {
 
 export interface IBulkAddNotificationsAction {
   type: BULK_ADD_NOTIFICATIONS;
-  payload: Array<IReferenceCountedResourceAddPayload<INotification>>;
+  payload: Array<ICollectionAddItemPayload<INotification>>;
 }
 
 export function bulkAddNotificationsRedux(
@@ -86,7 +86,7 @@ export function bulkAddNotificationsRedux(
 
 export interface IBulkUpdateNotificationsAction {
   type: BULK_UPDATE_NOTIFICATIONS;
-  payload: Array<IReferenceCountedResourceUpdatePayload<INotification>>;
+  payload: Array<ICollectionUpdateItemPayload<INotification>>;
   meta: IUpdateResourceMeta;
 }
 
@@ -103,7 +103,7 @@ export function bulkUpdateNotificationsRedux(
 
 export interface IBulkDeleteNotificationsAction {
   type: BULK_DELETE_NOTIFICATIONS;
-  payload: IReferenceCountedResourceDeletePayload[];
+  payload: ICollectionDeleteItemPayload[];
 }
 
 export function bulkDeleteNotificationsRedux(

@@ -1,11 +1,11 @@
 import { IUser } from "../../models/user/user";
-import { IClearStateAction } from "../actions";
 import {
-  IReferenceCountedResourceAddPayload,
-  IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload,
+  ICollectionAddItemPayload,
+  ICollectionDeleteItemPayload,
+  ICollectionUpdateItemPayload,
   IUpdateResourceMeta
-} from "../referenceCounting";
+} from "../collection";
+import { IClearStateAction } from "../state/actions";
 import {
   ADD_USER,
   BULK_ADD_USERS,
@@ -17,7 +17,7 @@ import {
 
 export interface IAddUserAction {
   type: ADD_USER;
-  payload: IReferenceCountedResourceAddPayload<IUser>;
+  payload: ICollectionAddItemPayload<IUser>;
 }
 
 export function addUserRedux(user: IUser): IAddUserAction {
@@ -32,7 +32,7 @@ export function addUserRedux(user: IUser): IAddUserAction {
 
 export interface IUpdateUserAction {
   type: UPDATE_USER;
-  payload: IReferenceCountedResourceUpdatePayload<IUser>;
+  payload: ICollectionUpdateItemPayload<IUser>;
   meta: IUpdateResourceMeta;
 }
 
@@ -53,7 +53,7 @@ export function updateUserRedux(
 
 export interface IDeleteUserAction {
   type: DELETE_USER;
-  payload: IReferenceCountedResourceDeletePayload;
+  payload: ICollectionDeleteItemPayload;
 }
 
 export function deleteUserRedux(id: string): IDeleteUserAction {
@@ -67,7 +67,7 @@ export function deleteUserRedux(id: string): IDeleteUserAction {
 
 export interface IBulkAddUsersAction {
   type: BULK_ADD_USERS;
-  payload: Array<IReferenceCountedResourceAddPayload<IUser>>;
+  payload: Array<ICollectionAddItemPayload<IUser>>;
 }
 
 export function bulkAddUsersRedux(users: IUser[]): IBulkAddUsersAction {
@@ -82,7 +82,7 @@ export function bulkAddUsersRedux(users: IUser[]): IBulkAddUsersAction {
 
 export interface IBulkUpdateUsersAction {
   type: BULK_UPDATE_USERS;
-  payload: Array<IReferenceCountedResourceUpdatePayload<IUser>>;
+  payload: Array<ICollectionUpdateItemPayload<IUser>>;
   meta: IUpdateResourceMeta;
 }
 
@@ -99,7 +99,7 @@ export function bulkUpdateUsersRedux(
 
 export interface IBulkDeleteUsersAction {
   type: BULK_DELETE_USERS;
-  payload: IReferenceCountedResourceDeletePayload[];
+  payload: ICollectionDeleteItemPayload[];
 }
 
 export function bulkDeleteUsersRedux(users: string[]): IBulkDeleteUsersAction {

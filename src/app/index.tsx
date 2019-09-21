@@ -2,8 +2,8 @@ import { connect } from "react-redux";
 
 import netInterface from "../net";
 
-import { clearState } from "../redux/actions";
 import { getSignedInUser } from "../redux/session/selectors";
+import { clearState } from "../redux/state/actions";
 import { IReduxState } from "../redux/store";
 import App from "./App";
 

@@ -1,11 +1,11 @@
 import { IBlock } from "../../models/block/block";
-import { IClearStateAction } from "../actions";
 import {
-  IReferenceCountedResourceAddPayload,
-  IReferenceCountedResourceDeletePayload,
-  IReferenceCountedResourceUpdatePayload,
+  ICollectionAddItemPayload,
+  ICollectionDeleteItemPayload,
+  ICollectionUpdateItemPayload,
   IUpdateResourceMeta
-} from "../referenceCounting";
+} from "../collection";
+import { IClearStateAction } from "../state/actions";
 import {
   ADD_BLOCK,
   BULK_ADD_BLOCKS,
@@ -17,7 +17,7 @@ import {
 
 export interface IAddBlockAction {
   type: ADD_BLOCK;
-  payload: IReferenceCountedResourceAddPayload<IBlock>;
+  payload: ICollectionAddItemPayload<IBlock>;
 }
 
 export function addBlockRedux(block: IBlock): IAddBlockAction {
@@ -32,7 +32,7 @@ export function addBlockRedux(block: IBlock): IAddBlockAction {
 
 export interface IUpdateBlockAction {
   type: UPDATE_BLOCK;
-  payload: IReferenceCountedResourceUpdatePayload<IBlock>;
+  payload: ICollectionUpdateItemPayload<IBlock>;
   meta: IUpdateResourceMeta;
 }
 
@@ -53,7 +53,7 @@ export function updateBlockRedux(
 
 export interface IDeleteBlockAction {
   type: DELETE_BLOCK;
-  payload: IReferenceCountedResourceDeletePayload;
+  payload: ICollectionDeleteItemPayload;
 }
 
 export function deleteBlockRedux(id: string): IDeleteBlockAction {
@@ -67,7 +67,7 @@ export function deleteBlockRedux(id: string): IDeleteBlockAction {
 
 export interface IBulkAddBlocksAction {
   type: BULK_ADD_BLOCKS;
-  payload: Array<IReferenceCountedResourceAddPayload<IBlock>>;
+  payload: Array<ICollectionAddItemPayload<IBlock>>;
 }
 
 export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
@@ -82,7 +82,7 @@ export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
 
 export interface IBulkUpdateBlocksAction {
   type: BULK_UPDATE_BLOCKS;
-  payload: Array<IReferenceCountedResourceUpdatePayload<IBlock>>;
+  payload: Array<ICollectionUpdateItemPayload<IBlock>>;
   meta: IUpdateResourceMeta;
 }
 
@@ -99,7 +99,7 @@ export function bulkUpdateBlocksRedux(
 
 export interface IBulkDeleteBlocksAction {
   type: BULK_DELETE_BLOCKS;
-  payload: IReferenceCountedResourceDeletePayload[];
+  payload: ICollectionDeleteItemPayload[];
 }
 
 export function bulkDeleteBlocksRedux(

@@ -5,7 +5,7 @@ import {
   INotificationsState,
   notificationsReducer
 } from "./notifications/reducer";
-import { ISessionReduxState, sessionReducer } from "./session/reducer";
+import { ISessionState, sessionReducer } from "./session/reducer";
 import { IUsersState, usersReducer } from "./users/reducer";
 import viewReducer, { IViewState } from "./view/reducers";
 
@@ -13,7 +13,7 @@ export interface IReduxState {
   blocks: IBlocksState;
   users: IUsersState;
   notifications: INotificationsState;
-  session: ISessionReduxState;
+  session: ISessionState;
   view: IViewState;
 }
 

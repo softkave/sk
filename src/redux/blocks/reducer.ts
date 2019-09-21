@@ -1,11 +1,11 @@
 import { IBlock } from "../../models/block/block";
-import { CLEAR_STATE } from "../constants";
 import {
-  bulkAddReferenceCountedResources,
-  bulkDeleteReferenceCountedResources,
-  bulkUpdateReferenceCountedResources,
-  IReferenceCountedNormalizedResources
-} from "../referenceCounting";
+  bulkAddCollectionItems,
+  bulkDeleteCollectionItems,
+  bulkUpdateCollectionItems,
+  ICollectionMap
+} from "../collection";
+import { CLEAR_STATE } from "../state/constants";
 import { IBlocksAction } from "./actions";
 import {
   ADD_BLOCK,
@@ -18,7 +18,7 @@ import {
 
 // TODO: Remove unused node modules
 
-export type IBlocksState = IReferenceCountedNormalizedResources<IBlock>;
+export type IBlocksState = ICollectionMap<IBlock>;
 
 export function blocksReducer(
   state: IBlocksState = {},
@@ -26,35 +26,27 @@ export function blocksReducer(
 ): IBlocksState {
   switch (action.type) {
     case ADD_BLOCK: {
-      return bulkAddReferenceCountedResources(state, [action.payload]);
+      return bulkAddCollectionItems(state, [action.payload]);
     }
 
     case UPDATE_BLOCK: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        [action.payload],
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, [action.payload], action.meta);
     }
 
     case DELETE_BLOCK: {
-      return bulkDeleteReferenceCountedResources(state, [action.payload]);
+      return bulkDeleteCollectionItems(state, [action.payload]);
     }
 
     case BULK_ADD_BLOCKS: {
-      return bulkAddReferenceCountedResources(state, action.payload);
+      return bulkAddCollectionItems(state, action.payload);
     }
 
     case BULK_UPDATE_BLOCKS: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        action.payload,
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, action.payload, action.meta);
     }
 
     case BULK_DELETE_BLOCKS: {
-      return bulkDeleteReferenceCountedResources(state, action.payload);
+      return bulkDeleteCollectionItems(state, action.payload);
     }
 
     case CLEAR_STATE: {

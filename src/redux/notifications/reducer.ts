@@ -1,11 +1,11 @@
 import { INotification } from "../../models/notification/notification";
-import { CLEAR_STATE } from "../constants";
 import {
-  bulkAddReferenceCountedResources,
-  bulkDeleteReferenceCountedResources,
-  bulkUpdateReferenceCountedResources,
-  IReferenceCountedNormalizedResources
-} from "../referenceCounting";
+  bulkAddCollectionItems,
+  bulkDeleteCollectionItems,
+  bulkUpdateCollectionItems,
+  ICollectionMap
+} from "../collection";
+import { CLEAR_STATE } from "../state/constants";
 import { INotificationsAction } from "./actions";
 import {
   ADD_NOTIFICATION,
@@ -18,9 +18,7 @@ import {
 
 // TODO: Remove unused node modules
 
-export type INotificationsState = IReferenceCountedNormalizedResources<
-  INotification
->;
+export type INotificationsState = ICollectionMap<INotification>;
 
 export function notificationsReducer(
   state: INotificationsState = {},
@@ -28,35 +26,27 @@ export function notificationsReducer(
 ): INotificationsState {
   switch (action.type) {
     case ADD_NOTIFICATION: {
-      return bulkAddReferenceCountedResources(state, [action.payload]);
+      return bulkAddCollectionItems(state, [action.payload]);
     }
 
     case UPDATE_NOTIFICATION: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        [action.payload],
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, [action.payload], action.meta);
     }
 
     case DELETE_NOTIFICATION: {
-      return bulkDeleteReferenceCountedResources(state, [action.payload]);
+      return bulkDeleteCollectionItems(state, [action.payload]);
     }
 
     case BULK_ADD_NOTIFICATIONS: {
-      return bulkAddReferenceCountedResources(state, action.payload);
+      return bulkAddCollectionItems(state, action.payload);
     }
 
     case BULK_UPDATE_NOTIFICATIONS: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        action.payload,
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, action.payload, action.meta);
     }
 
     case BULK_DELETE_NOTIFICATIONS: {
-      return bulkDeleteReferenceCountedResources(state, action.payload);
+      return bulkDeleteCollectionItems(state, action.payload);
     }
 
     case CLEAR_STATE: {

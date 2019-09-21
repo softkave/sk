@@ -1,10 +1,10 @@
-import { getResource, getResourcesAsArray } from "../referenceCounting";
+import { getCollectionItem, getCollectionItemsAsArray } from "../collection";
 import { IReduxState } from "../store";
 
 export function getUser(state: IReduxState, userID: string) {
-  return getResource(state.users, userID);
+  return getCollectionItem(state.users, userID);
 }
 
 export function getUsersAsArray(state: IReduxState, ids: string[]) {
-  return getResourcesAsArray(state.users, ids);
+  return getCollectionItemsAsArray(state.users, ids);
 }
