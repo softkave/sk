@@ -1,7 +1,8 @@
 import get from "lodash/get";
 import set from "lodash/set";
 
-import { indexArray } from "../utils/object";
+import { INetError, INetResult } from "../../net/query";
+import { indexArray } from "../../utils/object";
 
 // Default error aggregator aggregates all error with the same field into an array,
 // And puts the ones without fields into the global property array
@@ -160,3 +161,46 @@ export function makeSubmitHandler({ before, onError, success, done, submit }) {
     }
   };
 }
+
+export interface IHandleErrorParams {
+  filterBaseNames?: string[];
+  stripBaseNames?: string[];
+  replaceBaseNames?: Array<{ from: string; to: string }>;
+}
+
+export const transformError = (
+  errors: INetError[],
+  handleErrorParams: IHandleErrorParams = {}
+): INetError[] => {
+  if (process.env.NODE_ENV === "development") {
+    const fieldsPlusErrors = errors.map(e => {
+      return {
+        ...e,
+        message: `${e.field} - ${e.message}`
+      };
+    });
+
+    const logMessageStyle = "color: red;";
+    console.log("--------------- start");
+    console.log("---------------");
+    fieldsPlusErrors.forEach(e => {
+      console.log(`%c ${e.message}`, logMessageStyle);
+    });
+    console.log("---------------");
+    console.log("--------------- end");
+  }
+
+  if (handleErrorParams.filterBaseNames) {
+    errors = filterErrorByBaseName(errors, filterErrorByBaseName);
+  }
+
+  if (handleErrorParams.stripBaseNames) {
+    errors = stripFieldsFromError(errors, handleErrorParams.stripBaseNames);
+  }
+
+  if (handleErrorParams.replaceBaseNames) {
+    errors = replaceErrorBaseName(errors, handleErrorParams.replaceBaseNames);
+  }
+
+  return errors;
+};

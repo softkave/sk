@@ -1,3 +1,6 @@
+import { Dispatch } from "redux";
+import { pushOperation } from "./actions";
+
 const operationStarted = "started";
 const operationPending = "pending";
 const operationComplete = "complete";
@@ -55,7 +58,7 @@ export function getOperationLastStatusType(operation: IOperation) {
   return lastStatus ? lastStatus.status : null;
 }
 
-export function hasOperationStarted(operation: IOperation) {
+export function isOperationStarted(operation: IOperation) {
   return getOperationLastStatusType(operation) === operationStarted;
 }
 
@@ -63,11 +66,11 @@ export function isOperationPending(operation: IOperation) {
   return getOperationLastStatusType(operation) === operationPending;
 }
 
-export function hasOperationCompleted(operation: IOperation) {
+export function isOperationCompleted(operation: IOperation) {
   return getOperationLastStatusType(operation) === operationComplete;
 }
 
-export function isOperationInError(operation: IOperation) {
+export function isOperationError(operation: IOperation) {
   return getOperationLastStatusType(operation) === operationError;
 }
 
@@ -82,4 +85,89 @@ export function makeOperationStatus(
     status: statusType,
     timestamp: Date.now()
   };
+}
+
+function dispatchOperationStatus(
+  dispatch: Dispatch,
+  operationID: string,
+  statusType: string,
+  resourceID?: string | null,
+  data?: any,
+  meta?: any
+) {
+  dispatch(
+    pushOperation(
+      operationID,
+      makeOperationStatus(statusType, data, meta),
+      resourceID
+    )
+  );
+}
+
+export function dispatchOperationStarted(
+  dispatch: Dispatch,
+  operationID: string,
+  resourceID?: string | null,
+  data?: any,
+  meta?: any
+) {
+  dispatchOperationStatus(
+    dispatch,
+    operationID,
+    defaultOperationStatusTypes.operationStarted,
+    resourceID,
+    data,
+    meta
+  );
+}
+
+export function dispatchOperationPending(
+  dispatch: Dispatch,
+  operationID: string,
+  resourceID?: string | null,
+  data?: any,
+  meta?: any
+) {
+  dispatchOperationStatus(
+    dispatch,
+    operationID,
+    defaultOperationStatusTypes.operationPending,
+    resourceID,
+    data,
+    meta
+  );
+}
+
+export function dispatchOperationError(
+  dispatch: Dispatch,
+  operationID: string,
+  resourceID?: string | null,
+  data?: any,
+  meta?: any
+) {
+  dispatchOperationStatus(
+    dispatch,
+    operationID,
+    defaultOperationStatusTypes.operationError,
+    resourceID,
+    data,
+    meta
+  );
+}
+
+export function dispatchOperationComplete(
+  dispatch: Dispatch,
+  operationID: string,
+  resourceID?: string | null,
+  data?: any,
+  meta?: any
+) {
+  dispatchOperationStatus(
+    dispatch,
+    operationID,
+    defaultOperationStatusTypes.operationComplete,
+    resourceID,
+    data,
+    meta
+  );
 }

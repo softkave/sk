@@ -1,0 +1,96 @@
+import moment from "moment";
+
+import { Dispatch } from "redux";
+
+import { IBlock } from "../../../models/block/block";
+import * as blockNet from "../../../net/block";
+import * as blockActions from "../../blocks/actions";
+import { IReduxState } from "../../store";
+import { transformError } from "../error";
+import {
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  isOperationStarted
+} from "../operation";
+import { getBlockChildrenOperationID } from "../operationIDs";
+import { getOperationWithIDForResource } from "../selectors";
+import updateBlockOperation from "./updateBlock";
+
+export default async function getBlockChildrenOperation(
+  state: IReduxState,
+  dispatch: Dispatch,
+  block: IBlock,
+  types?: string[],
+  isBacklog?: boolean
+) {
+  const operation = getOperationWithIDForResource(
+    state,
+    getBlockChildrenOperationID,
+    block.customId
+  );
+
+  if (operation && isOperationStarted(operation)) {
+    return;
+  }
+
+  dispatchOperationStarted(dispatch, getBlockChildrenOperationID);
+
+  try {
+    const blocks = await blockNet.getBlockChildren({
+      block,
+      types,
+      isBacklog
+    });
+
+    const parentUpdate: Partial<IBlock> = {
+      tasks: [],
+      groups: [],
+      projects: [],
+      groupTaskContext: [],
+      groupProjectContext: []
+    };
+
+    blocks.forEach(nextBlock => {
+      const container = parentUpdate[`${nextBlock.type}s`];
+      container.push(nextBlock.customId);
+
+      if (nextBlock.type === "group") {
+        parentUpdate.groupTaskContext!.push(nextBlock.customId);
+        parentUpdate.groupProjectContext!.push(nextBlock.customId);
+      }
+    });
+
+    dispatch(blockActions.bulkAddBlocksRedux(blocks));
+
+    // tslint:disable-next-line: forin
+    for (const key in parentUpdate) {
+      const typeContainer = parentUpdate[key];
+
+      if (
+        !Array.isArray(block[key]) ||
+        block[key].length !== typeContainer.length
+      ) {
+        // TODO: Think on, this is currently fire and forget
+        updateBlockOperation(state, dispatch, block, parentUpdate);
+        dispatch(
+          blockActions.updateBlockRedux(block.customId, parentUpdate, {
+            arrayUpdateStrategy: "replace"
+          })
+        );
+
+        break;
+      }
+    }
+
+    dispatchOperationComplete(dispatch, getBlockChildrenOperationID);
+  } catch (error) {
+    const transformedError = transformError(error);
+    dispatchOperationError(
+      dispatch,
+      getBlockChildrenOperationID,
+      null,
+      transformedError
+    );
+  }
+}

@@ -1,27 +1,27 @@
-import {
-  userSignupMutation,
-  userLoginMutation,
-  updateUserMutation,
-  changePasswordMutation,
-  forgotPasswordMutation,
-  userExistsQuery,
-  updateCollaborationRequestMutation,
-  changePasswordWithTokenMutation,
-  respondToCollaborationRequestMutation,
-  getCollaborationRequestsQuery,
-  getUserDataQuery
-} from "./schema/user";
-import query from "./query";
-import auth from "./auth";
 import { getDataFromObject } from "../utils/object";
-import { setItem, getItem, removeItem } from "../utils/storage";
+import { getItem, removeItem, setItem } from "../utils/storage";
+import auth from "./auth";
+import query from "./query";
+import {
+  changePasswordMutation,
+  changePasswordWithTokenMutation,
+  forgotPasswordMutation,
+  getCollaborationRequestsQuery,
+  getUserDataQuery,
+  respondToCollaborationRequestMutation,
+  updateCollaborationRequestMutation,
+  updateUserMutation,
+  userExistsQuery,
+  userLoginMutation,
+  userSignupMutation
+} from "./schema/user";
 
 const tokenStorageName = "t";
 
 export async function signup({ user }) {
   const userFields = ["name", "password", "email", "color"];
 
-  let result = await query(
+  const result = await query(
     null,
     userSignupMutation,
     { user: getDataFromObject(user, userFields) },
@@ -34,7 +34,7 @@ export async function signup({ user }) {
 }
 
 export async function login({ email, password, remember }) {
-  let result = await query(
+  const result = await query(
     null,
     userLoginMutation,
     { email, password },
@@ -68,14 +68,14 @@ export function updateUser({ user }) {
 }
 
 export async function changePassword({ password }) {
-  let result = await auth(
+  const result = await auth(
     null,
     changePasswordMutation,
     { password },
     "data.user.changePassword"
   );
 
-  let prevToken = getItem(tokenStorageName);
+  const prevToken = getItem(tokenStorageName);
 
   if (prevToken) {
     setItem(tokenStorageName, result.token, "local");
@@ -144,16 +144,16 @@ export function getUserData(token) {
 }
 
 export async function getSavedUserData() {
-  let userToken = getItem(tokenStorageName);
+  const userToken = getItem(tokenStorageName);
 
   if (userToken) {
-    let result = await getUserData(userToken);
+    const result = await getUserData(userToken);
 
     if (result.errors) {
       throw result.errors;
     }
 
-    let { user, token } = result;
+    const { user, token } = result;
     setItem(tokenStorageName, token);
     return { user, token };
   }

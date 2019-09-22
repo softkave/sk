@@ -14,9 +14,6 @@ const validChildrenTypesMap = {
   root: ["project", "group", "task"],
   org: ["project", "group", "task"],
   project: ["group", "task"],
-  // root: ["group"],
-  // org: ["group"],
-  // project: ["group"],
   group: ["project", "task"],
   task: []
 };

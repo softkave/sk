@@ -6,18 +6,21 @@ export interface IPushOperationAction {
   payload: {
     operationID: string;
     status: IOperationStatus;
+    resourceID?: string | null;
   };
 }
 
 export function pushOperation(
   operationID: string,
-  status: IOperationStatus
+  status: IOperationStatus,
+  resourceID?: string | null
 ): IPushOperationAction {
   return {
     type: PUSH_OPERATION,
     payload: {
       operationID,
-      status
+      status,
+      resourceID
     }
   };
 }

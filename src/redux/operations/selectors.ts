@@ -18,7 +18,7 @@ export function getOperationsForResource(
 export function getOperationWithIDForResource(
   state: IReduxState,
   operationID: string,
-  resourceID: string
+  resourceID?: string
 ) {
   return state.operations.operations.find(operation => {
     return (
