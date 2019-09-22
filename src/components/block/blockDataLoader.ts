@@ -1,9 +1,12 @@
 import uniq from "lodash/uniq";
-import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
+import { IUser } from "../../models/user/user";
+import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
@@ -20,6 +23,8 @@ import {
 } from "../../redux/operations/operationIDs";
 import { getOperationWithIDForResource } from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
+import { getUsersAsArray } from "../../redux/users/selectors";
+import IView from "../../redux/view/view";
 
 interface IBlockData {
   projects?: IBlock[];
@@ -27,20 +32,6 @@ interface IBlockData {
   tasks?: IBlock[];
   collaborators?: IUser[];
   collaborationRequests?: INotification[];
-}
-
-export interface IBlockInternalDataLoaderProps {
-  // blockID: string;
-  block: IBlock;
-  blockType: BlockType;
-  render: (renderParams: {
-    block: IBlock;
-    blockChildren: IBlockData;
-    collaborators: IUser[];
-    collaborationRequests: INotification[];
-    user: IUser;
-    blockHandlers: IBlockMethods;
-  }) => React.ReactNode;
 }
 
 type BlockInternalDataToLoad =
@@ -149,6 +140,9 @@ function loadBlockChildrenFromRedux(state: IReduxState, block: IBlock) {
 function loadBlockCollaboratorsFromRedux(state: IReduxState, block: IBlock) {
   if (Array.isArray(block.collaborators)) {
     return getUsersAsArray(state, block.collaborators);
+  } else if (Array.isArray(block.parents) && block.parents.length > 0) {
+    const block0 = getBlock(state, block.parents[0]);
+    return loadBlockCollaboratorsFromRedux(state, block0);
   }
 }
 
@@ -158,25 +152,6 @@ function loadBlockCollaborationRequestsFromRedux(
 ) {
   if (Array.isArray(block.collaborationRequests)) {
     return getNotificationsAsArray(state, block.collaborationRequests);
-  }
-}
-
-function getBlockCollaborators(
-  block: IBlock,
-  blockType: BlockType,
-  state: IReduxState
-) {
-  // console.log("getBlockCollaborators", { block });
-  // The last check is for Ungrouped category
-  if (
-    blockType === "org" ||
-    blockType === "root" ||
-    (Array.isArray(block.parents) && block.parents.length === 0)
-  ) {
-    return loadBlockCollaboratorsFromRedux(block, state);
-  } else {
-    const block0 = getBlock(state, block.parents[0]);
-    return loadBlockCollaboratorsFromRedux(block0, state);
   }
 }
 
@@ -231,6 +206,7 @@ function shouldLoadCollaborators(state: IReduxState, block: IBlock) {
     state,
     block
   );
+
   const collaborators = loadBlockCollaboratorsFromRedux(state, block);
 
   if (
@@ -253,15 +229,26 @@ function getLoadCollaboratorsOperation(state: IReduxState, block: IBlock) {
 }
 
 function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
-  if (shouldLoadBlockChildren(state, block)) {
+  const dataToLoad = getBlockInternalDataToLoad(block.type);
+
+  if (
+    dataToLoad.includes("children") &&
+    shouldLoadBlockChildren(state, block)
+  ) {
     loadBlockChildrenOperation(state, dispatch, block);
   }
 
-  if (shouldLoadCollaborators(state, block)) {
+  if (
+    dataToLoad.includes("collaborators") &&
+    shouldLoadCollaborators(state, block)
+  ) {
     loadBlockCollaboratorsOperation(state, dispatch, block);
   }
 
-  if (shouldLoadRequests(state, block)) {
+  if (
+    dataToLoad.includes("collaborationRequests") &&
+    shouldLoadRequests(state, block)
+  ) {
     loadBlockCollaborationRequestsOperation(state, dispatch, block);
   }
 }
@@ -327,11 +314,11 @@ function getView(state: IReduxState, block: IBlock) {
 function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
   switch (viewName) {
     case "loading":
-      return null;
+      return {};
 
     case "error": {
       // TODO: return errors from statuses and display
-      return null;
+      return {};
     }
 
     case "ready": {
@@ -352,21 +339,28 @@ function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
   }
 }
 
-function mapStateToProps(state: IReduxState) {
-  return state;
+export interface IBlockDataLoaderProps {
+  block: IBlock;
 }
 
-function mapDispatchToProps(dispatch: Dispatch) {
-  return { dispatch };
+export interface IBlockDataLoaderResult {
+  view: IView;
+  blockData: IBlockData;
 }
 
-export default function mergeProps(
+export default function blockDataLoader(
   state: IReduxState,
-  { dispatch }: { dispatch: Dispatch },
-  ownProps: IBlockInternalDataLoaderProps
-) {
+  dispatch: Dispatch,
+  ownProps: IBlockDataLoaderProps
+): IBlockDataLoaderResult {
   const block = ownProps.block;
   const view = getView(state, block);
-  const viewProps = getViewProps(state, block, view.viewName);
+  const blockData = getViewProps(state, block, view.viewName);
+
   loadData(state, dispatch, block);
+
+  return {
+    view,
+    blockData
+  };
 }

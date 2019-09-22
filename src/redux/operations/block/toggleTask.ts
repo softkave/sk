@@ -51,10 +51,14 @@ export default async function toggleTaskOperation(
       user.customId
     );
 
-    await blockNet.toggleTask({
+    const result = await blockNet.toggleTask({
       block,
       data: taskCollaborator.completedAt ? false : true
     });
+
+    if (result.errors) {
+      throw result.errors;
+    }
 
     const taskCollaborators = [...block.taskCollaborators];
     const collaboratorIndex = taskCollaborators.findIndex(

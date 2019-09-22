@@ -2,22 +2,22 @@ import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
 
-import { BlockType, IBlock } from "../../../models/block/block";
-import { assignTask } from "../../../models/block/utils";
-import { INotification } from "../../../models/notification/notification";
-import { IUser } from "../../../models/user/user";
-import AddDropdownButton from "../../AddDropdownButton";
-import AvatarList, { IAvatarItem } from "../../collaborator/AvatarList";
-import Collaborators from "../../collaborator/Collaborators";
-import { IBlockMethods } from "../methods";
-import EditProject from "../project/EditProject";
-import EditTask from "../task/EditTask";
-import BoardContainer from "./BoardContainer";
-import { getChildrenTypesForContext } from "./childrenTypes";
+import { BlockType, IBlock } from "../../models/block/block";
+import { assignTask } from "../../models/block/utils";
+import { INotification } from "../../models/notification/notification";
+import { IUser } from "../../models/user/user";
+import AddDropdownButton from "../AddDropdownButton";
+import { IBlockMethods } from "../block/methods";
+import AvatarList, { IAvatarItem } from "../collaborator/AvatarList";
+import Collaborators from "../collaborator/Collaborators";
 import EditGroup from "../group/EditGroup";
 import ExpandedGroup from "../group/ExpandedGroup";
-import KanbanBoard from "./KanbanBoard";
+import EditProject from "../project/EditProject";
+import EditTask from "../task/EditTask";
 import SplitView, { ISplit } from "../view/SplitView";
+import BoardContainer from "./BoardContainer";
+import { getChildrenTypesForContext } from "./childrenTypes";
+import KanbanBoard from "./KanbanBoard";
 
 export interface IBoardProps {
   block: IBlock;
@@ -26,9 +26,9 @@ export interface IBoardProps {
   onBack: () => void;
   isFromRoot?: boolean;
   isUserRootBlock?: boolean;
-  projects?: IBlock[];
-  groups?: IBlock[];
-  tasks?: IBlock[];
+  projects: IBlock[];
+  groups: IBlock[];
+  tasks: IBlock[];
 
   // TODO: Define the right type for collaborators
   collaborators: IUser[];
@@ -277,16 +277,9 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     const { parent, block } = this.state;
 
     if (block) {
-      await this.props.blockHandlers.onUpdate({
-        data,
-        block: block!
-      });
+      await this.props.blockHandlers.onUpdate(block, data);
     } else {
-      await this.props.blockHandlers.onAdd({
-        user,
-        parent,
-        block: data
-      });
+      await this.props.blockHandlers.onAdd(user, data, parent!);
     }
 
     this.toggleForm(formType);
@@ -332,22 +325,20 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   }
 
   private renderCollaborators = () => {
-    const {
-      block: rootBlock,
-      blockHandlers,
-      collaborationRequests
-    } = this.props;
+    const { block, blockHandlers, collaborationRequests } = this.props;
 
     return (
       <Collaborators
-        block={rootBlock}
+        block={block}
         onBack={this.toggleShowCollaborators}
         collaborators={this.getCollaborators()}
         onAddCollaborators={async data => {
-          return blockHandlers.onAddCollaborators({
-            ...data,
-            block: rootBlock
-          });
+          return blockHandlers.onAddCollaborators(
+            block,
+            data.requests,
+            data.message,
+            data.expiresAt
+          );
         }}
         collaborationRequests={collaborationRequests}
       />

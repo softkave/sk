@@ -4,8 +4,8 @@ import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import { getBlock } from "../../../redux/blocks/selectors";
 import { IReduxState } from "../../../redux/store";
+import DataLoader, { IDataLoaderProps } from "../group/DataLoader";
 import { getBlockMethods } from "../methods";
-import DataLoader, { IDataLoaderProps } from "./DataLoader";
 
 function mapStateToProps(state: IReduxState) {
   return state;

@@ -65,6 +65,10 @@ export default async function respondToNotificationOperation(
       response
     });
 
+    if (result.errors) {
+      throw result.errors;
+    }
+
     request.statusHistory.concat({
       status: response,
       date: Date.now()
@@ -78,7 +82,7 @@ export default async function respondToNotificationOperation(
       })
     );
 
-    if (response === "accepted" && result) {
+    if (response === "accepted") {
       const { block } = result as { block: IBlock };
 
       if (block) {

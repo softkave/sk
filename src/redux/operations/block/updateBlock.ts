@@ -38,7 +38,12 @@ export default async function updateBlockOperation(
   dispatchOperationStarted(dispatch, updateBlockOperationID, block.customId);
 
   try {
-    await blockNet.updateBlock({ block, data });
+    const result = await blockNet.updateBlock({ block, data });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
     dispatch(
       blockActions.updateBlockRedux(block.customId, data, {
         arrayUpdateStrategy: "replace"

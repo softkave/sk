@@ -7,7 +7,7 @@ import { getSignedInUser } from "../../../redux/session/selectors";
 import { getBlockMethods } from "../methods";
 import BlockInternalDataLoader, {
   IBlockInternalDataLoaderProps
-} from "./BlockDataLoaderContainer";
+} from "./blockDataLoader";
 import Board from "../board/Board";
 
 function mapStateToProps(state) {

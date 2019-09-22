@@ -3,27 +3,28 @@ import { Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
-import { BlockType, IBlock } from "../../../models/block/block";
-import { IUser } from "../../../models/user/user";
-import { IBlockMethods } from "../methods";
-import GroupContainer from "../group/GroupContainer";
+import { BlockType, IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPosition } from "../block/sortBlocks";
+import GroupContainer from "../group/GroupContainer";
+import UngroupedContainer from "../group/UngroupedContainer";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
   user: IUser;
   block: IBlock;
-  projects?: IBlock[];
-  groups?: IBlock[];
-  tasks?: IBlock[];
+  projects: IBlock[];
+  groups: IBlock[];
+  tasks: IBlock[];
 
   // TODO: define collaborators' type, it's slightly different from IUser
   collaborators: IUser[];
   selectedCollaborators: { [key: string]: boolean };
   context: "task" | "project";
-  toggleForm: (type: BlockType, parent: IBlock, block: IBlock) => void;
+  toggleForm: (type: BlockType, parent?: IBlock, block?: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
-  onClickAddChild: (type: BlockType, group: IBlock) => void;
+  onClickAddChild: (type: BlockType, parent: IBlock) => void;
   onSelectGroup: (group: IBlock, isRootBlock: boolean) => void;
 }
 
@@ -135,6 +136,9 @@ class KanbanBoard extends React.PureComponent<
 
   private renderGroups = () => {
     const {
+      user,
+      tasks,
+      projects,
       onClickAddChild,
       block,
       context,
@@ -153,18 +157,20 @@ class KanbanBoard extends React.PureComponent<
 
     if (blockHasUngrouped) {
       const ungrouped = (
-        <GroupContainer
+        <UngroupedContainer
           disabled
+          user={user}
+          tasks={tasks}
+          projects={projects}
           withViewMore={false}
           key="ungrouped"
           group={{
             ...block,
-            name: context === "task" ? "Ungrouped Tasks" : "Ungrouped Projects",
-            type: "group"
+            name: context === "task" ? "Ungrouped Tasks" : "Ungrouped Projects"
           }}
           draggableID="ungrouped"
-          onClickAddChild={type => onClickAddChild(type, block)}
-          toggleForm={(type, parent, child) => toggleForm(type, block, child)}
+          onClickAddChild={(type: BlockType) => onClickAddChild(type, block)}
+          toggleForm={(type: BlockType) => toggleForm(type, block)}
           index={0}
           context={context}
           selectedCollaborators={selectedCollaborators}

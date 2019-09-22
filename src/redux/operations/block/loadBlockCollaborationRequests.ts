@@ -33,7 +33,13 @@ export default async function loadBlockCollaborationRequestsOperation(
   dispatchOperationStarted(dispatch, getBlockCollaborationRequestsOperationID);
 
   try {
-    const requests = await blockNet.getCollabRequests({ block });
+    const result = await blockNet.getCollabRequests({ block });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    const { requests } = result;
     const ids = requests.map(request => request.customId);
     dispatch(notificationActions.bulkAddNotificationsRedux(requests));
     dispatch(

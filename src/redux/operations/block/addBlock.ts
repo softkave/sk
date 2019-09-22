@@ -23,7 +23,7 @@ export default async function addBlockOperation(
   dispatch: Dispatch,
   user: IUser,
   block: Partial<IBlock>,
-  parent: IBlock
+  parent?: IBlock
 ) {
   const newBlock = { ...block } as IBlock;
   newBlock.customId = newId();
@@ -64,7 +64,12 @@ export default async function addBlockOperation(
   }
 
   try {
-    await blockNet.addBlock({ block: newBlock });
+    const result = await blockNet.addBlock({ block: newBlock });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
     dispatch(blockActions.addBlockRedux(newBlock as IBlock));
 
     if (parent) {

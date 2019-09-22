@@ -3,18 +3,18 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 
-import { blockConstants } from "../../../models/block/constants";
-import { textPattern } from "../../../models/user/descriptor";
-import FormError from "../../form/FormError";
+import { blockConstants } from "../../models/block/constants";
+import { textPattern } from "../../models/user/descriptor";
+import FormError from "../form/FormError";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../../form/FormInternals";
-import { getGlobalError, submitHandler } from "../../formik-utils";
-import modalWrap from "../../modalWrap.jsx";
+} from "../form/FormInternals";
+import { getGlobalError, submitHandler } from "../formik-utils";
+import modalWrap from "../modalWrap.jsx";
 
 const groupExistsErrorMessage = "Group with the same name exists";
 const validationSchema = yup.object().shape({

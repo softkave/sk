@@ -35,7 +35,7 @@ class Personal extends React.Component<
     if (!this.props.rootBlock && !this.props.user.loadingRootData) {
       try {
         this.setState({ loading: true });
-        await this.props.blockHandlers.fetchRootData();
+        await this.props.blockHandlers.loadRootData();
         this.setState({ loading: false, error: undefined });
       } catch (error) {
         this.setState({ error, loading: false });

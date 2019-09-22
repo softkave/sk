@@ -35,7 +35,15 @@ export default async function markNotificationReadOperation(
 
   try {
     const data = { readAt: Date.now() };
-    await userNet.updateCollaborationRequest({ request: notification, data });
+    const result = await userNet.updateCollaborationRequest({
+      request: notification,
+      data
+    });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
     dispatch(
       notificationActions.updateNotificationRedux(notification.customId, data, {
         arrayUpdateStrategy: "replace"

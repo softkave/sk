@@ -37,12 +37,17 @@ export default async function loadBlockChildrenOperation(
   dispatchOperationStarted(dispatch, getBlockChildrenOperationID);
 
   try {
-    const blocks = await blockNet.getBlockChildren({
+    const result = await blockNet.getBlockChildren({
       block,
       types,
       isBacklog
     });
 
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    const { blocks } = result;
     const parentUpdate: Partial<IBlock> = {
       tasks: [],
       groups: [],

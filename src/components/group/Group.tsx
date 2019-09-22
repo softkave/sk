@@ -3,12 +3,12 @@ import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
-import StyledCapitalizeText from "../StyledCapitalizeText";
 import { BoardContext } from "../board/Board";
 import { getChildrenTypesForContext } from "../board/childrenTypes";
+import StyledCapitalizeText from "../StyledCapitalizeText";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
 import TaskList from "./TaskList";
@@ -24,8 +24,8 @@ export interface IGroupProps {
   user: IUser;
   tasks: IBlock[];
   projects: IBlock[];
-  toggleForm: (type: string, block: IBlock) => void;
-  onClickAddChild: (type: string, group: IBlock) => void;
+  toggleForm: (type: BlockType, block: IBlock) => void;
+  onClickAddChild: (type: BlockType, group: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;
   disabled?: boolean;
@@ -126,7 +126,7 @@ class Group extends React.PureComponent<IGroupProps> {
     } else {
       switch (event.key) {
         case "delete-group": {
-          blockHandlers.onDelete({ block: group });
+          blockHandlers.onDelete(group);
         }
       }
     }
@@ -162,9 +162,7 @@ class Group extends React.PureComponent<IGroupProps> {
 }
 
 const OpenControlButtonSpan = styled("span")({
-  "& .anticon": {
-    // fontSize: "18px !important"
-  }
+  "& .anticon": {}
 });
 
 const GroupHeaderDiv = styled.div``;

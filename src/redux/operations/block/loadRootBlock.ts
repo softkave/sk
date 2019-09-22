@@ -26,8 +26,13 @@ export default async function loadRootBlocksOperation(
   dispatchOperationStarted(dispatch, loadRootBlocksOperationID);
 
   try {
-    const rootBlocks = await blockNet.getRoleBlocks();
+    const result = await blockNet.getRoleBlocks();
 
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    const { blocks: rootBlocks } = result;
     dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
     dispatchOperationComplete(dispatch, loadRootBlocksOperationID);
   } catch (error) {

@@ -6,7 +6,7 @@ import { IBlock } from "../../../models/block/block";
 
 import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
-
+import * as blockNet from "../../../net/block";
 import { IReduxState } from "../../store";
 import { transformError } from "../error";
 import {
@@ -45,6 +45,15 @@ export default async function addCollaboratorsOperation(
   );
 
   try {
+    const result = await blockNet.addCollaborators({
+      block,
+      collaborators: requests
+    });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
     const proccessedCollaborators = requests.map(request => {
       return {
         ...request,

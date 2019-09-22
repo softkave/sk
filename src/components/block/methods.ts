@@ -1,83 +1,114 @@
 import { Dispatch } from "redux";
 
-import { makePipeline } from "../FormPipeline";
-import addBlockPipeline, {
-  AddBlockPipelineEntryFunc
-} from "./methods/addBlock";
-import addCollaboratorPipeline, {
-  AddCollaboratorPipelineEntryFunc
-} from "./methods/addCollaborators";
-import deleteBlockPipeline, {
-  DeleteBlockPipelineEntryFunc
-} from "./methods/deleteBlock";
-import fetchRootDataPipeline, {
-  FetchRootDataPipelineEntryFunc
-} from "./methods/fetchRootData";
-import getBlockPipeline, {
-  GetBlockPipelineEntryFunc
-} from "./methods/getBlock";
-import getBlockChildrenPipeline, {
-  GetBlockChildrenPipelineEntryFunc
-} from "./methods/getBlockChildren";
-import getCollaborationRequestsPipeline, {
-  GetCollaborationRequestsPipelineEntryFunc
-} from "./methods/getCollaborationRequests";
-import getCollaboratorsPipeline, {
-  GetCollaboratorsPipelineEntryFunc
-} from "./methods/getCollaborators";
-import toggleTaskPipeline, {
-  ToggleTaskPipelineEntryFunc
-} from "./methods/toggleTask";
-// import transferBlockPipeline, {
-//   TransferBlockPipelineEntryFunc
-// } from "./methods/transferBlock";
-import updateBlockPipeline, {
-  UpdateBlockPipelineEntryFunc
-} from "./methods/updateBlock";
-
-// TODO: Define the return types of the pipeline methods
-// TODO: Add the type of the handleError function amdn maybe validate in the runtime
-// TODO: Consider validating the pipeline methods arguments in runtime
-// TODO: Add ResultType to the pipelines
+import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import addBlockOperation from "../../redux/operations/block/addBlock";
+import addCollaboratorsOperation from "../../redux/operations/block/addCollaborators";
+import deleteBlockOperation from "../../redux/operations/block/deleteBlock";
+import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
+import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
+import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock";
+import toggleTaskOperation from "../../redux/operations/block/toggleTask";
+import updateBlockOperation from "../../redux/operations/block/updateBlock";
+import { IReduxState } from "../../redux/store";
+import { IACFItemValue } from "../collaborator/ACFItem";
 
 export interface IBlockMethods {
-  onAdd: AddBlockPipelineEntryFunc;
-  onUpdate: UpdateBlockPipelineEntryFunc;
-  onToggle: ToggleTaskPipelineEntryFunc;
-  onDelete: DeleteBlockPipelineEntryFunc;
-  onAddCollaborators: AddCollaboratorPipelineEntryFunc;
-  getBlock: GetBlockPipelineEntryFunc;
-  getBlockChildren: GetBlockChildrenPipelineEntryFunc;
-  getCollaborators: GetCollaboratorsPipelineEntryFunc;
-  getCollaborationRequests: GetCollaborationRequestsPipelineEntryFunc;
-  fetchRootData: FetchRootDataPipelineEntryFunc;
-  // onTransferBlock: TransferBlockPipelineEntryFunc;
+  onAdd: (
+    user: IUser,
+    block: Partial<IBlock>,
+    parent?: IBlock
+  ) => Promise<void>;
+  onUpdate: (block: IBlock, data: Partial<IBlock>) => Promise<void>;
+  onToggle: (user: IUser, block: IBlock) => Promise<void>;
+  onDelete: (block: IBlock) => Promise<void>;
+  onAddCollaborators: (
+    block: IBlock,
+
+    // TODO: This is wrong, better declare type
+    requests: IACFItemValue[],
+    message?: string,
+    expiresAt?: number | Date
+  ) => Promise<void>;
+  loadBlockChildren: (
+    block: IBlock,
+    types?: string[],
+    isBacklog?: boolean
+  ) => Promise<void>;
+  loadCollaborators: (block: IBlock) => Promise<void>;
+  loadCollaborationRequests: (block: IBlock) => Promise<void>;
+  loadRootData: () => Promise<void>;
 }
 
 export interface IGetBlockMethodsParams {
   dispatch: Dispatch;
-
-  // TODO: Define state's type
-  state: any;
+  state: IReduxState;
 }
 
 export function getBlockMethods(
-  reduxParams: IGetBlockMethodsParams
+  state: IReduxState,
+  dispatch: Dispatch
 ): IBlockMethods {
   return {
-    onAdd: makePipeline(addBlockPipeline, reduxParams),
-    onUpdate: makePipeline(updateBlockPipeline, reduxParams),
-    onToggle: makePipeline(toggleTaskPipeline, reduxParams),
-    onDelete: makePipeline(deleteBlockPipeline, reduxParams),
-    onAddCollaborators: makePipeline(addCollaboratorPipeline, reduxParams),
-    getBlockChildren: makePipeline(getBlockChildrenPipeline, reduxParams),
-    getCollaborators: makePipeline(getCollaboratorsPipeline, reduxParams),
-    getCollaborationRequests: makePipeline(
-      getCollaborationRequestsPipeline,
-      reduxParams
-    ),
-    fetchRootData: makePipeline(fetchRootDataPipeline, reduxParams),
-    // onTransferBlock: makePipeline(transferBlockPipeline, reduxParams),
-    getBlock: makePipeline(getBlockPipeline, reduxParams)
+    async onAdd(user: IUser, block: Partial<IBlock>, parent?: IBlock) {
+      return addBlockOperation(state, dispatch, user, block, parent);
+    },
+
+    async onUpdate(block: IBlock, data: Partial<IBlock>) {
+      return updateBlockOperation(state, dispatch, block, data);
+    },
+
+    async onToggle(user: IUser, block: IBlock) {
+      return toggleTaskOperation(state, dispatch, user, block);
+    },
+
+    async onDelete(block: IBlock) {
+      return deleteBlockOperation(state, dispatch, block);
+    },
+
+    async onAddCollaborators(
+      block: IBlock,
+
+      // TODO: This is wrong, better declare type
+      requests: IACFItemValue[],
+      message?: string,
+      expiresAt?: number | Date
+    ) {
+      return addCollaboratorsOperation(
+        state,
+        dispatch,
+        block,
+        requests,
+        message,
+        expiresAt
+      );
+    },
+
+    async loadBlockChildren(
+      block: IBlock,
+      types?: string[],
+      isBacklog?: boolean
+    ) {
+      return loadBlockChildrenOperation(
+        state,
+        dispatch,
+        block,
+        types,
+        isBacklog
+      );
+    },
+
+    async loadCollaborators(block: IBlock) {
+      return loadBlockCollaboratorsOperation(state, dispatch, block);
+    },
+
+    async loadCollaborationRequests(block: IBlock) {
+      return loadBlockCollaborationRequestsOperation(state, dispatch, block);
+    },
+
+    async loadRootData() {
+      return loadRootBlocksOperation(state, dispatch);
+    }
   };
 }

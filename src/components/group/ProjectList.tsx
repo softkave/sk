@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { IBlock } from "../../../models/block/block";
-import { IUser } from "../../../models/user/user";
-import ScrollList from "../../ScrollList";
-import { IBlockMethods } from "../methods.js";
+import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
 import ProjectThumbnail from "../project/ProjectThumbnail";
+import ScrollList from "../ScrollList";
 
 export interface IProjectListProps {
   blockHandlers: IBlockMethods;

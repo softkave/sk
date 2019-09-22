@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-import { IBlock } from "../../../models/block/block";
-import { IUser } from "../../../models/user/user";
-import ScrollList from "../../ScrollList";
-import { IBlockMethods } from "../methods";
-import Task from "../task/MiniTask";
+import { BlockType, IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPriority } from "../block/sortBlocks";
+import ScrollList from "../ScrollList";
+import Task from "../task/MiniTask";
 
 export interface ITaskListProps {
   blockHandlers: IBlockMethods;
@@ -14,7 +14,7 @@ export interface ITaskListProps {
   user: IUser;
   tasks: IBlock[];
   parent: IBlock;
-  toggleForm: (type: string, parent: IBlock, block: IBlock) => void;
+  toggleForm: (type: BlockType, parent: IBlock, block: IBlock) => void;
 }
 
 export default class TaskList extends React.Component<ITaskListProps> {

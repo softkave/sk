@@ -1,6 +1,6 @@
 export * from "./addBlock";
 export * from "./addCollaborators";
-export * from "./deleteTask";
+export * from "./deleteBlock";
 export * from "./loadBlock";
 export * from "./loadBlockChildren";
 export * from "./loadBlockCollaborationRequests";

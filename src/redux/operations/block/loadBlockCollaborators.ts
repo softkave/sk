@@ -33,7 +33,13 @@ export default async function loadBlockCollaboratorsOperation(
   dispatchOperationStarted(dispatch, getBlockCollaboratorsOperationID);
 
   try {
-    const collaborators = await blockNet.getCollaborators({ block });
+    const result = await blockNet.getCollaborators({ block });
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    const { collaborators } = result;
     const ids = collaborators.map(collaborator => collaborator.customId);
     dispatch(userActions.bulkAddUsersRedux(collaborators));
     dispatch(

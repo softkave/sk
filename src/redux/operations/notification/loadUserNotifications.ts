@@ -32,7 +32,13 @@ export default async function loadUserNotificationsOperation(
   dispatchOperationStarted(dispatch, loadUserNotificationsOperationID);
 
   try {
-    const requests = await userNet.getCollaborationRequests();
+    const result = await userNet.getCollaborationRequests();
+
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    const { requests } = result;
     const ids = requests.map(request => request.customId);
 
     dispatch(notificationActions.bulkAddNotificationsRedux(requests));

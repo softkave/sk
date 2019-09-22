@@ -1,67 +1,64 @@
-import React from "react";
 import { connect } from "react-redux";
 
 import { Dispatch } from "redux";
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
-import BlockInternalDataLoader from "./BlockDataLoaderContainer";
-import Group from "./Group";
+import blockDataLoader from "../block/blockDataLoader";
+import { getBlockMethods } from "../block/methods";
+import { BoardContext } from "../board/Board";
 import GroupViewManager from "./GroupViewManager";
 
-function mapStateToProps(state: IReduxState) {
-  const operation =  
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(GroupViewManager);
-
 export interface IGroupContainerProps {
-  groupID?: string;
-  group?: IBlock;
+  group: IBlock;
   draggableID: string;
   index: number;
-  context: "task" | "project";
+  context: BoardContext;
   selectedCollaborators: { [key: string]: boolean };
-  toggleForm: (type: string, block: IBlock) => void;
-  onClickAddChild: (type: string, group: IBlock) => void;
+  toggleForm: (type: BlockType, block: IBlock) => void;
+  onClickAddChild: (type: BlockType, group: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;
   disabled?: boolean;
   withViewMore?: boolean;
 }
 
-// TODO: Loading groups show loading which doesn't look good. Consider using an empty group instead
-// export default function SideGroup(props: any) {
-//   return (
-//     <BlockInternalDataLoader
-//       block={props.group}
-//       blockType="group"
-//       render={({ blockChildren, blockHandlers, user }) => {
-//         const ownProps = props;
-//         const group = props.group;
-//         return (
-//           <Group
-//             withViewMore={ownProps.withViewMore}
-//             group={group}
-//             blockHandlers={blockHandlers}
-//             draggableID={ownProps.draggableID}
-//             index={ownProps.index}
-//             context={ownProps.context}
-//             selectedCollaborators={ownProps.selectedCollaborators}
-//             user={user!}
-//             tasks={blockChildren.tasks!}
-//             projects={blockChildren.projects!}
-//             toggleForm={ownProps.toggleForm}
-//             onClickAddChild={ownProps.onClickAddChild}
-//             setCurrentProject={ownProps.setCurrentProject}
-//             onViewMore={ownProps.onViewMore}
-//             disabled={ownProps.disabled}
-//           />
-//         );
-//       }}
-//     />
-//   );
-// }
+function mapStateToProps(state: IReduxState) {
+  return state;
+}
+
+function mapDispatchToProps(dispatch: Dispatch) {
+  return { dispatch };
+}
+
+function mergeProps(
+  state: IReduxState,
+  { dispatch }: { dispatch: Dispatch },
+  ownProps: IGroupContainerProps
+) {
+  const user = getSignedInUserRequired(state);
+  const { view, blockData } = blockDataLoader(state, dispatch, {
+    block: ownProps.group
+  });
+
+  return {
+    currentView: view,
+    group: ownProps.group,
+    readyProps:
+      view.viewName === "ready"
+        ? {
+            ...ownProps,
+            user,
+            tasks: blockData.tasks!,
+            projects: blockData.projects!,
+            blockHandlers: getBlockMethods(state, dispatch)
+          }
+        : undefined
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(GroupViewManager);
