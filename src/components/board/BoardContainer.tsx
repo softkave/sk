@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import { IBlock } from "../../../models/block/block";
 import { getBlock } from "../../../redux/blocks/selectors";
 import { getSignedInUser } from "../../../redux/session/selectors";
-import { getBlockMethods } from "../methods";
+import Board from "../block/Board";
 import BlockInternalDataLoader, {
   IBlockInternalDataLoaderProps
-} from "./BlockDataLoaderContainer";
-import Board from "../board/Board";
+} from "../group/BlockDataLoaderContainer";
+import { getBlockMethods } from "../methods";
 
 function mapStateToProps(state) {
   return state;

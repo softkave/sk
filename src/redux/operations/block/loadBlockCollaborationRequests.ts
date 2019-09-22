@@ -15,7 +15,7 @@ import {
 import { getBlockCollaborationRequestsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function getBlockCollaborationRequestsOperation(
+export default async function loadBlockCollaborationRequestsOperation(
   state: IReduxState,
   dispatch: Dispatch,
   block: IBlock

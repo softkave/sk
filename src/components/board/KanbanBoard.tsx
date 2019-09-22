@@ -6,8 +6,8 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { BlockType, IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import { IBlockMethods } from "../methods";
-import GroupContainer from "./GroupContainer";
-import { sortBlocksByPosition } from "./sortBlocks";
+import GroupContainer from "../group/GroupContainer";
+import { sortBlocksByPosition } from "../block/sortBlocks";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;

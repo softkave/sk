@@ -14,10 +14,10 @@ import EditProject from "../project/EditProject";
 import EditTask from "../task/EditTask";
 import BoardContainer from "./BoardContainer";
 import { getChildrenTypesForContext } from "./childrenTypes";
-import EditGroup from "./EditGroup";
-import ExpandedGroup from "./ExpandedGroup";
+import EditGroup from "../group/EditGroup";
+import ExpandedGroup from "../group/ExpandedGroup";
 import KanbanBoard from "./KanbanBoard";
-import SplitView, { ISplit } from "./SplitView";
+import SplitView, { ISplit } from "../view/SplitView";
 
 export interface IBoardProps {
   block: IBlock;

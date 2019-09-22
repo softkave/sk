@@ -5,15 +5,16 @@ import React from "react";
 export interface IGroupHeaderProps {
   controls?: React.ReactNode;
   name?: string;
+  disabled?: boolean;
 }
 
 const GroupHeader = React.memo<IGroupHeaderProps>(props => {
-  const { name, controls } = props;
+  const { name, controls, disabled } = props;
 
   return (
     <GroupHeaderContainer>
       <GroupName span={controls ? 24 : 12}>{name}</GroupName>
-      {controls ? (
+      {controls && !disabled ? (
         <GroupHeaderControlsContainer>{controls}</GroupHeaderControlsContainer>
       ) : null}
     </GroupHeaderContainer>

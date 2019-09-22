@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 
 import { IBlock } from "../../../models/block/block";
-import { sortBlocksByPriority } from "./sortBlocks";
+import { sortBlocksByPriority } from "../block/sortBlocks";
 import TaskList, { ITaskListProps } from "./TaskList";
 
 interface IRenderInfo {

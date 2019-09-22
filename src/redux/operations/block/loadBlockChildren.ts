@@ -17,7 +17,7 @@ import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 import updateBlockOperation from "./updateBlock";
 
-export default async function getBlockChildrenOperation(
+export default async function loadBlockChildrenOperation(
   state: IReduxState,
   dispatch: Dispatch,
   block: IBlock,

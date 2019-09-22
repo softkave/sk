@@ -3,12 +3,12 @@ import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 
-import { IBlock } from "../../../models/block/block";
-import { IUser } from "../../../models/user/user";
-import StyledCapitalizeText from "../../StyledCapitalizeText";
-import { IBlockMethods } from "../methods";
-import { BoardContext } from "./Board";
-import { getChildrenTypesForContext } from "./childrenTypes";
+import { IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
+import StyledCapitalizeText from "../StyledCapitalizeText";
+import { BoardContext } from "../board/Board";
+import { getChildrenTypesForContext } from "../board/childrenTypes";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
 import TaskList from "./TaskList";

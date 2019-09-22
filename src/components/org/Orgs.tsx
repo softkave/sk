@@ -5,7 +5,7 @@ import React from "react";
 import { findBlock, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
-import BoardContainer from "../group/BoardContainer";
+import BoardContainer from "../board/BoardContainer";
 import EditOrg from "./EditOrg";
 import OrgThumbnail from "./OrgThumbnail";
 

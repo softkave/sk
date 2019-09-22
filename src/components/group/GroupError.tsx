@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { Icon } from "antd";
 import React from "react";
 
 import { IBlock } from "../../models/block/block";
@@ -10,11 +9,11 @@ import {
   StyledGroupContainerInner
 } from "./StyledGroupContainer";
 
-export interface IGroupLoadingProps {
+export interface IGroupErrorProps {
   group: IBlock;
 }
 
-const GroupLoading = React.memo<IGroupLoadingProps>(props => {
+const GroupError = React.memo<IGroupErrorProps>(props => {
   const { group } = props;
 
   return (
@@ -22,9 +21,7 @@ const GroupLoading = React.memo<IGroupLoadingProps>(props => {
       <StyledGroupContainerInner>
         <GroupHeader disabled name={group.name} />
         <GroupBody>
-          <StyledGroupLoadingBody>
-            <StyledLoadingIcon type="loading" />
-          </StyledGroupLoadingBody>
+          <StyledGroupLoadingBody>Error loading data</StyledGroupLoadingBody>
         </GroupBody>
       </StyledGroupContainerInner>
     </StyledGroupContainer>
@@ -38,9 +35,4 @@ const StyledGroupLoadingBody = styled.div({
   justifyContent: "center"
 });
 
-const StyledLoadingIcon = styled(Icon)({
-  fontSize: "24px",
-  color: "rgb(66,133,244)"
-});
-
-export default GroupLoading;
+export default GroupError;
