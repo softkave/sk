@@ -2,20 +2,20 @@ import React from "react";
 
 import NotificationsContainer from "../../app/notification";
 import OrgsContainer from "../../app/orgs";
+import OrgContainer from "../components/org/OrgContainer";
+import ProjectContainer from "../components/project/ProjectContainer";
+import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {
   currentNotificationViewName,
   notificationsViewName
-} from "../../redux/view/notifications";
+} from "../redux/view/notifications";
 import {
   currentOrgViewName,
   makeOrgsView,
   orgsViewName
-} from "../../redux/view/orgs";
-import { currentProjectViewName } from "../../redux/view/project";
-import IView from "../../redux/view/view";
-import OrgContainer from "../org/OrgContainer";
-import ProjectContainer from "../project/ProjectContainer";
-import ViewManager, { IRenderView } from "./ViewManager";
+} from "../redux/view/orgs";
+import { currentProjectViewName } from "../redux/view/project";
+import IView from "../redux/view/view";
 
 export interface IAppViewProps {
   currentView: IView;

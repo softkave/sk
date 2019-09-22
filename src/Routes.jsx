@@ -3,10 +3,10 @@ import { Switch, Route } from "react-router-dom";
 import { Col, Row } from "antd";
 
 import Web from "./web/Web";
-import SignupContainer from "./components/account/signup/SignupContainer";
-import LoginContainer from "./components/account/login/LoginContainer";
-import ForgotPasswordContainer from "./components/account/password/ForgotPasswordContainer";
-import ChangePasswordWithTokenContainer from "./components/account/password/ChangePasswordWithTokenContainer";
+import SignupContainer from "./components/signup/SignupContainer";
+import LoginContainer from "./components/login/LoginContainer";
+import ForgotPasswordContainer from "./components/password/ForgotPasswordContainer";
+import ChangePasswordWithTokenContainer from "./components/password/ChangePasswordWithTokenContainer";
 import App from "./app";
 import WebHeader from "./web/WebHeader";
 

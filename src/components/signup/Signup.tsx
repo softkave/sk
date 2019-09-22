@@ -3,10 +3,10 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 
-import { userConstants } from "../../../models/user/constants";
-import { passwordPattern, textPattern } from "../../../models/user/descriptor";
-import FormError from "../../form/FormError";
-import { getGlobalError, submitHandler } from "../../formik-utils";
+import { userConstants } from "../../models/user/constants";
+import { passwordPattern, textPattern } from "../../models/user/descriptor";
+import FormError from "../form/FormError";
+import { getGlobalError, submitHandler } from "../formik-utils";
 
 // TODO: Add minimum and maximum to input helper
 const passwordExtraInfo = "Minimum of 5 characters";

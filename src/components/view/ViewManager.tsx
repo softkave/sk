@@ -1,7 +1,7 @@
 import React from "react";
 
 import IView from "../../redux/view/view";
-import EmptyView from "./EmptyView";
+import NotFoundView from "./NotFoundView";
 
 export interface IRenderView extends IView {
   component?: React.ComponentClass | React.SFC;
@@ -35,6 +35,6 @@ export default class ViewManager extends React.Component<IViewManagerProps> {
       }
     }
 
-    return <EmptyView />;
+    return <NotFoundView />;
   }
 }

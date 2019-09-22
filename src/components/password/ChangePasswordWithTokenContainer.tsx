@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
-import { IUser } from "../../../models/user/user";
-import netInterface from "../../../net";
-import { INetResult } from "../../../net/query";
-import { loginUserRedux } from "../../../redux/session/actions";
-import { addUserRedux } from "../../../redux/users/actions";
-import { devLog } from "../../../utils/log";
-import { getReduxConnectors } from "../../../utils/redux";
-import { IPipeline, makePipeline } from "../../FormPipeline";
+import { IUser } from "../../models/user/user";
+import netInterface from "../../net";
+import { INetResult } from "../../net/query";
+import { loginUserRedux } from "../../redux/session/actions";
+import { addUserRedux } from "../../redux/users/actions";
+import { devLog } from "../../utils/log";
+import { getReduxConnectors } from "../../utils/redux";
+import { IPipeline, makePipeline } from "../FormPipeline";
 import ChangePassword from "./ChangePassword";
 
 interface IChangePasswordWithTokenParams {

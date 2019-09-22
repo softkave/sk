@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
-import netInterface from "../../../net";
-import { IPipeline, makePipeline } from "../../FormPipeline";
+import netInterface from "../../net";
+import { IPipeline, makePipeline } from "../FormPipeline";
 import ForgotPassword from "./ForgotPassword";
 
 interface IForgotPasswordParams {
