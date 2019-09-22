@@ -25,6 +25,7 @@ import { getOperationWithIDForResource } from "../../redux/operations/selectors"
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import IView from "../../redux/view/view";
+import getViewFromOperations from "../view/getViewFromOperations";
 
 interface IBlockData {
   projects?: IBlock[];
@@ -253,62 +254,21 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
   }
 }
 
-function getView(state: IReduxState, block: IBlock) {
+function getBlockView(state: IReduxState, block: IBlock) {
   const loadChildrenOperation = getLoadChildrenOperation(state, block);
   const loadCollaboratorsOperation = getLoadCollaboratorsOperation(
     state,
     block
   );
+
   const loadRequestsOperation = getLoadRequestsOperation(state, block);
-
-  if (
-    !loadChildrenOperation ||
-    !loadCollaboratorsOperation ||
-    !loadRequestsOperation
-  ) {
-    return {
-      viewName: "loading"
-    };
-  }
-
   const operations = [
     loadChildrenOperation!,
     loadCollaboratorsOperation!,
     loadRequestsOperation!
   ];
 
-  if (
-    operations.find(operation => {
-      return isOperationStarted(operation) || isOperationPending(operation);
-    })
-  ) {
-    return {
-      viewName: "loading"
-    };
-  }
-
-  if (
-    operations.find(operation => {
-      return isOperationError(operation);
-    })
-  ) {
-    return {
-      viewName: "error"
-    };
-  }
-
-  if (
-    operations.find(operation => {
-      return isOperationCompleted(operation);
-    })
-  ) {
-    return {
-      viewName: "ready"
-    };
-  }
-
-  // TODO: Track errors globally and report them
-  throw new Error("Status check failed");
+  return getViewFromOperations(operations);
 }
 
 function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
@@ -354,7 +314,7 @@ export default function blockDataLoader(
   ownProps: IBlockDataLoaderProps
 ): IBlockDataLoaderResult {
   const block = ownProps.block;
-  const view = getView(state, block);
+  const view = getBlockView(state, block);
   const blockData = getViewProps(state, block, view.viewName);
 
   loadData(state, dispatch, block);

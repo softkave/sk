@@ -6,7 +6,7 @@ import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import ScrollList from "../ScrollList";
-import Task from "../task/MiniTask";
+import Task from "../task/Task";
 
 export interface ITaskListProps {
   blockHandlers: IBlockMethods;
