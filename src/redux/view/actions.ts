@@ -1,5 +1,5 @@
 import { IBlock } from "../../models/block/block";
-import { CLEAR_VIEWS_FROM, POP_VIEW, PUSH_VIEW } from "./constants";
+import { POP_VIEW, PUSH_VIEW, REPLACE_VIEW } from "./constants";
 import { makeCurrentOrgView } from "./orgs";
 import IView from "./view";
 
@@ -33,23 +33,25 @@ export function popView(): IPopViewAction {
   };
 }
 
-export interface IClearViewsFromAction {
-  type: CLEAR_VIEWS_FROM;
+export interface IReplaceViewAction {
+  type: REPLACE_VIEW;
   payload: {
     viewName: string;
+    newViewName: string;
   };
 }
 
-export function clearViewsFrom(viewName: string): IClearViewsFromAction {
+export function replaceView(
+  viewName: string,
+  newViewName: string
+): IReplaceViewAction {
   return {
-    type: CLEAR_VIEWS_FROM,
+    type: REPLACE_VIEW,
     payload: {
-      viewName
+      viewName,
+      newViewName
     }
   };
 }
 
-export type IViewAction =
-  | IPushViewAction
-  | IPopViewAction
-  | IClearViewsFromAction;
+export type IViewAction = IPushViewAction | IPopViewAction | IReplaceViewAction;

@@ -5,7 +5,8 @@ import {
   bulkUpdateCollectionItems,
   ICollectionMap
 } from "../collection";
-import { CLEAR_STATE } from "../state/constants";
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { INotificationsAction } from "./actions";
 import {
   ADD_NOTIFICATION,
@@ -22,7 +23,7 @@ export type INotificationsState = ICollectionMap<INotification>;
 
 export function notificationsReducer(
   state: INotificationsState = {},
-  action: INotificationsAction
+  action: INotificationsAction | ILogoutUserAction
 ): INotificationsState {
   switch (action.type) {
     case ADD_NOTIFICATION: {
@@ -49,7 +50,7 @@ export function notificationsReducer(
       return bulkDeleteCollectionItems(state, action.payload);
     }
 
-    case CLEAR_STATE: {
+    case LOGOUT_USER: {
       return {};
     }
 

@@ -1,5 +1,10 @@
 import { IClearStateAction } from "../state/actions";
-import { LOGIN_USER, LOGOUT_USER, UPDATE_TOKEN } from "./constants";
+import {
+  LOGIN_USER,
+  LOGOUT_USER,
+  SET_SESSION_TO_WEB,
+  UPDATE_TOKEN
+} from "./constants";
 
 export interface ILoginUserAction {
   type: LOGIN_USER;
@@ -48,7 +53,18 @@ export function updateTokenRedux(token: string): IUpdateTokenAction {
   };
 }
 
+export interface ISetSessionToWebAction {
+  type: SET_SESSION_TO_WEB;
+}
+
+export function setSessionToWeb(): ISetSessionToWebAction {
+  return {
+    type: SET_SESSION_TO_WEB
+  };
+}
+
 export type ISessionAction =
   | IClearStateAction
   | ILoginUserAction
-  | ILogoutUserAction;
+  | ILogoutUserAction
+  | ISetSessionToWebAction;

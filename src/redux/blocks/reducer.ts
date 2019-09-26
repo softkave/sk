@@ -5,7 +5,8 @@ import {
   bulkUpdateCollectionItems,
   ICollectionMap
 } from "../collection";
-import { CLEAR_STATE } from "../state/constants";
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { IBlocksAction } from "./actions";
 import {
   ADD_BLOCK,
@@ -22,7 +23,7 @@ export type IBlocksState = ICollectionMap<IBlock>;
 
 export function blocksReducer(
   state: IBlocksState = {},
-  action: IBlocksAction
+  action: IBlocksAction | ILogoutUserAction
 ): IBlocksState {
   switch (action.type) {
     case ADD_BLOCK: {
@@ -49,7 +50,7 @@ export function blocksReducer(
       return bulkDeleteCollectionItems(state, action.payload);
     }
 
-    case CLEAR_STATE: {
+    case LOGOUT_USER: {
       return {};
     }
 

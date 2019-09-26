@@ -5,7 +5,8 @@ import {
   bulkUpdateCollectionItems,
   ICollectionMap
 } from "../collection";
-import { CLEAR_STATE } from "../state/constants";
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { IUsersAction } from "./actions";
 import {
   ADD_USER,
@@ -22,7 +23,7 @@ export type IUsersState = ICollectionMap<IUser>;
 
 export function usersReducer(
   state: IUsersState = {},
-  action: IUsersAction
+  action: IUsersAction | ILogoutUserAction
 ): IUsersState {
   switch (action.type) {
     case ADD_USER: {
@@ -49,7 +50,7 @@ export function usersReducer(
       return bulkDeleteCollectionItems(state, action.payload);
     }
 
-    case CLEAR_STATE: {
+    case LOGOUT_USER: {
       return {};
     }
 

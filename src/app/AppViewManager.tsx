@@ -1,31 +1,22 @@
 import React from "react";
 
-import NotificationsContainer from "../../app/notification";
-import OrgsContainer from "../../app/orgs";
+import NotificationsContainer from "../components/notification/NotificationsContainer";
 import OrgContainer from "../components/org/OrgContainer";
-import ProjectContainer from "../components/project/ProjectContainer";
+import OrgsContainer from "../components/org/OrgsContainer";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {
   currentNotificationViewName,
   notificationsViewName
 } from "../redux/view/notifications";
-import {
-  currentOrgViewName,
-  makeOrgsView,
-  orgsViewName
-} from "../redux/view/orgs";
+import { currentOrgViewName, orgsViewName } from "../redux/view/orgs";
 import { currentProjectViewName } from "../redux/view/project";
 import IView from "../redux/view/view";
 
-export interface IAppViewProps {
+export interface IAppViewManagerProps {
   currentView: IView;
 }
 
-class AppView extends React.Component<IAppViewProps> {
-  public static defaultProps = {
-    currentView: makeOrgsView()
-  };
-
+class AppViewManager extends React.Component<IAppViewManagerProps> {
   public render() {
     const { currentView } = this.props;
     const renderViews: IRenderView[] = [
@@ -36,7 +27,7 @@ class AppView extends React.Component<IAppViewProps> {
         viewName: currentNotificationViewName,
         component: NotificationsContainer
       },
-      { viewName: currentProjectViewName, component: ProjectContainer }
+      { viewName: currentProjectViewName, component: OrgContainer }
     ];
 
     return (
@@ -45,4 +36,4 @@ class AppView extends React.Component<IAppViewProps> {
   }
 }
 
-export default AppView;
+export default AppViewManager;

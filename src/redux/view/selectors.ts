@@ -26,3 +26,7 @@ export function getCurrentOrg(state: IReduxState): IBlock | undefined {
     return getBlock(state, currentOrgView.orgID);
   }
 }
+
+export function getRootView(state: IReduxState): IView {
+  return state.view.viewHistory[0];
+}

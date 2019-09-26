@@ -22,3 +22,7 @@ export const respondToNotificationOperationID =
 
 // user
 export const updateUserOperationID = "updateUserOperationID";
+
+// session
+export const initializeAppSessionOperationID =
+  "initializeAppSessionOperationID";

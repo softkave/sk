@@ -1,3 +1,5 @@
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { IOperationsAction } from "./actions";
 import IOperation from "./operation";
 
@@ -7,9 +9,13 @@ export interface IOperationState {
 
 export default function operationsReducer(
   state: IOperationState = { operations: [] },
-  action: IOperationsAction
+  action: IOperationsAction | ILogoutUserAction
 ) {
   switch (action.type) {
+    case LOGOUT_USER: {
+      return {};
+    }
+
     default:
       return state;
   }

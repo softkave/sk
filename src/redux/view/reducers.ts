@@ -1,5 +1,7 @@
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { IViewAction } from "./actions";
-import { CLEAR_VIEWS_FROM, POP_VIEW, PUSH_VIEW } from "./constants";
+import { POP_VIEW, PUSH_VIEW } from "./constants";
 import { makeOrgsView } from "./orgs";
 import IView from "./view";
 
@@ -9,7 +11,7 @@ export interface IViewState {
 
 export default function viewsReducer(
   state: IViewState = { viewHistory: [makeOrgsView()] },
-  action: IViewAction
+  action: IViewAction | ILogoutUserAction
 ) {
   switch (action.type) {
     case PUSH_VIEW: {
@@ -27,20 +29,8 @@ export default function viewsReducer(
       };
     }
 
-    case CLEAR_VIEWS_FROM: {
-      const viewIndex = state.viewHistory.findIndex(view => {
-        return view.viewName === action.payload.viewName;
-      });
-
-      if (viewIndex !== -1) {
-        const newViewHistory = state.viewHistory.slice(0, viewIndex);
-
-        return {
-          viewHistory: newViewHistory
-        };
-      } else {
-        return state;
-      }
+    case LOGOUT_USER: {
+      return {};
     }
 
     default:
