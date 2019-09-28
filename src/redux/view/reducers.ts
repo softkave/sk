@@ -1,7 +1,7 @@
 import { ILogoutUserAction } from "../session/actions";
 import { LOGOUT_USER } from "../session/constants";
 import { IViewAction } from "./actions";
-import { POP_VIEW, PUSH_VIEW } from "./constants";
+import { POP_VIEW, PUSH_VIEW, REPLACE_VIEW } from "./constants";
 import { makeOrgsView } from "./orgs";
 import IView from "./view";
 
@@ -27,6 +27,21 @@ export default function viewsReducer(
       return {
         viewHistory: newViewHistory
       };
+    }
+
+    case REPLACE_VIEW: {
+      const { viewName, view } = action.payload;
+      const viewIndex = state.viewHistory.findIndex(
+        nextView => nextView.viewName === viewName
+      );
+
+      if (viewIndex !== -1) {
+        const newViewHistory = state.viewHistory.slice(0, viewIndex);
+        newViewHistory.push(view);
+        return { viewHistory: newViewHistory };
+      }
+
+      return state;
     }
 
     case LOGOUT_USER: {

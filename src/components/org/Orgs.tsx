@@ -1,15 +1,13 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
-
-import { findBlock, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import BoardContainer from "../board/BoardContainer";
 import EditOrg from "./EditOrg";
-import OrgThumbnail from "./OrgThumbnail";
-
 import "./orgs.css";
+import OrgThumbnail from "./OrgThumbnail";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;

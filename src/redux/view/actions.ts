@@ -37,19 +37,16 @@ export interface IReplaceViewAction {
   type: REPLACE_VIEW;
   payload: {
     viewName: string;
-    newViewName: string;
+    view: IView;
   };
 }
 
-export function replaceView(
-  viewName: string,
-  newViewName: string
-): IReplaceViewAction {
+export function replaceView(viewName: string, view: IView): IReplaceViewAction {
   return {
     type: REPLACE_VIEW,
     payload: {
       viewName,
-      newViewName
+      view
     }
   };
 }

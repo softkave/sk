@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 
+import { consumeOperation } from "../redux/operations/actions";
 import {
   defaultOperationStatusTypes,
   getOperationLastStatus,
@@ -57,6 +58,12 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
         isOperationError(initializeOperation))
     ) {
       const latestStatus = getOperationLastStatus(initializeOperation);
+      dispatch(
+        consumeOperation(
+          initializeOperation.operationID,
+          initializeOperation.resourceID
+        )
+      );
 
       // TODO: loading is not going to be completed, i don't like that, add the complete part
       return {

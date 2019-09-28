@@ -1,22 +1,23 @@
-import React from "react";
-import { Switch, Route } from "react-router-dom";
 import { Col, Row } from "antd";
+import React from "react";
+import { Route, Switch } from "react-router-dom";
 
-import Web from "../web/Web";
-import SignupContainer from "../components/signup/SignupContainer";
 import LoginContainer from "../components/login/LoginContainer";
-import ForgotPasswordContainer from "../components/password/ForgotPasswordContainer";
 import ChangePasswordWithTokenContainer from "../components/password/ChangePasswordWithTokenContainer";
+import ForgotPasswordContainer from "../components/password/ForgotPasswordContainer";
+import SignupContainer from "../components/signup/SignupContainer";
+import Web from "../web/Web";
 import WebHeader from "../web/WebHeader";
 
 function renderComponent(component) {
-  return function() {
+  return () => {
+    const ComponentX = component;
     return (
       <div>
         <WebHeader />
         <Row type="flex" justify="center">
           <Col sm={24} md={12} lg={8} style={{ padding: "1em" }}>
-            {React.createElement(component)}
+            <ComponentX />
           </Col>
         </Row>
       </div>

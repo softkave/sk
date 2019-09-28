@@ -33,21 +33,19 @@ export default interface IOperation<
   >
 > {
   operationID: string;
-  operationStatusHistory: OperationStatus[];
-  resourceID?: string;
+  statusHistory: OperationStatus[];
+  resourceID?: string | null;
 }
 
 export function getOperationLastStatus(operation: IOperation) {
-  return operation.operationStatusHistory[
-    operation.operationStatusHistory.length - 1
-  ];
+  return operation.statusHistory[operation.statusHistory.length - 1];
 }
 
 export function getOperationStatusesWithType(
   operation: IOperation,
   statusType: string
 ) {
-  return operation.operationStatusHistory.filter(status => {
+  return operation.statusHistory.filter(status => {
     return status.status === statusType;
   });
 }

@@ -30,7 +30,10 @@ export default async function loadBlockChildrenOperation(
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (
+    operation
+    // && isOperationStarted(operation)
+  ) {
     return;
   }
 

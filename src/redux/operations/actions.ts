@@ -29,14 +29,19 @@ export interface IConsumeOperationAction {
   type: CONSUME_OPERATION;
   payload: {
     operationID: string;
+    resourceID?: string | null;
   };
 }
 
-export function consumeOperation(operationID: string): IConsumeOperationAction {
+export function consumeOperation(
+  operationID: string,
+  resourceID?: string | null
+): IConsumeOperationAction {
   return {
     type: CONSUME_OPERATION,
     payload: {
-      operationID
+      operationID,
+      resourceID
     }
   };
 }
