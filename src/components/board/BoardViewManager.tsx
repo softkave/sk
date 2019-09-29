@@ -1,5 +1,4 @@
 import React from "react";
-
 import { IBlock } from "../../models/block/block";
 import IView from "../../redux/view/view";
 import ViewManager, { IRenderView } from "../view/ViewManager";

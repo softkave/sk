@@ -1,5 +1,4 @@
 import { connect } from "react-redux";
-
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -18,6 +17,7 @@ function mapDispatchToProps(dispatch) {
 export interface IBoardContainerProps {
   blockID: string;
   onBack: () => void;
+  onSelectProject: (project: IBlock) => void;
   isFromRoot?: boolean;
   isUserRootBlock?: boolean;
   block?: IBlock;

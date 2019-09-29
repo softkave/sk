@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
-
 import { BlockType, IBlock } from "../../models/block/block";
 import { assignTask } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
@@ -24,6 +23,7 @@ export interface IBoardProps {
   blockHandlers: IBlockMethods;
   user: IUser;
   onBack: () => void;
+  onSelectProject: (project: IBlock) => void;
   isFromRoot?: boolean;
   isUserRootBlock?: boolean;
   projects: IBlock[];
@@ -42,7 +42,6 @@ interface IBoardState {
   showCollaborators: boolean;
   boardContext: BoardContext;
   parent?: IBlock | null;
-  projectID?: string | null;
   block?: IBlock | null;
   selectedCollaborators: { [key: string]: boolean };
   selectedGroup: IBlock | null;
@@ -53,7 +52,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     super(props);
     this.state = {
       formType: null,
-      projectID: null,
       block: null,
       parent: null,
       showCollaborators: false,
@@ -115,11 +113,11 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       isUserRootBlock,
       projects,
       groups,
-      tasks
+      tasks,
+      onSelectProject
     } = this.props;
     const {
       formType,
-      projectID,
       showCollaborators,
       boardContext,
       selectedCollaborators,
@@ -132,18 +130,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
 
     if (showCollaborators) {
       return this.renderCollaborators();
-    }
-
-    if (projectID) {
-      const project = this.findBlock(projects, projectID);
-      return (
-        <BoardContainer
-          onBack={() => this.setCurrentProject(null)}
-          blockID={projectID}
-          block={project}
-          isFromRoot={actLikeRootBlock}
-        />
-      );
     }
 
     return (
@@ -216,7 +202,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           )}
           <BlockName>{isUserRootBlock ? "Root" : block.name}</BlockName>
         </Header>
-        {/** TODO: undo */}
         {!actLikeRootBlock && (
           <CollaboratorAvatarsContainer>
             <AvatarList
@@ -239,7 +224,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             onClickAddChild={this.toggleForm}
             user={user}
             collaborators={collaborators}
-            setCurrentProject={this.setCurrentProject}
+            setCurrentProject={onSelectProject}
             context={boardContext}
             toggleForm={this.toggleForm}
             selectedCollaborators={selectedCollaborators}
@@ -293,10 +278,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         formType: prevState.formType ? null : type
       };
     });
-  };
-
-  private setCurrentProject = (project: IBlock | null) => {
-    this.setState({ projectID: project ? project.customId : null });
   };
 
   private toggleShowCollaborators = () => {

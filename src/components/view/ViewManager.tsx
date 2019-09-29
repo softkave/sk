@@ -1,5 +1,4 @@
 import React from "react";
-
 import IView from "../../redux/view/view";
 import NotFoundView from "./NotFoundView";
 

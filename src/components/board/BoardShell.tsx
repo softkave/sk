@@ -4,7 +4,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 
 export interface IBoardShellProps {
-  block: IBlock;
+  block?: IBlock;
 }
 
 const BoardShell: React.SFC<IBoardShellProps> = props => {
@@ -12,7 +12,7 @@ const BoardShell: React.SFC<IBoardShellProps> = props => {
 
   return (
     <StyledBoardShell>
-      <StyledBoardName>{block.name}</StyledBoardName>
+      {block && <StyledBoardName>{block.name}</StyledBoardName>}
       <StyledContent>{children}</StyledContent>
     </StyledBoardShell>
   );

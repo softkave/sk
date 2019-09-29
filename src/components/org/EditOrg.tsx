@@ -2,7 +2,6 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
 import FormError from "../form/FormError";

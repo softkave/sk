@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-
 import AppHeaderContainer from "../components/header/AppHeaderContainer";
 import IView from "../redux/view/view";
 import AppViewManager from "./AppViewManager";

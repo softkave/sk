@@ -1,6 +1,7 @@
 import { IBlock } from "../../models/block/block";
 import { POP_VIEW, PUSH_VIEW, REPLACE_VIEW } from "./constants";
 import { makeCurrentOrgView } from "./orgs";
+import { makeCurrentProjectView } from "./project";
 import IView from "./view";
 
 export interface IPushViewAction {
@@ -21,6 +22,10 @@ export function pushView(view: IView): IPushViewAction {
 
 export function setCurrentOrg(org: IBlock): IPushViewAction {
   return pushView(makeCurrentOrgView(org));
+}
+
+export function setCurrentProject(project: IBlock): IPushViewAction {
+  return pushView(makeCurrentProjectView(project));
 }
 
 export interface IPopViewAction {

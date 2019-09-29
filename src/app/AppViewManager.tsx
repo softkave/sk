@@ -1,7 +1,6 @@
 import React from "react";
 
 import NotificationsContainer from "../components/notification/NotificationsContainer";
-import OrgContainer from "../components/org/OrgContainer";
 import OrgsContainer from "../components/org/OrgsContainer";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {
@@ -21,13 +20,14 @@ class AppViewManager extends React.Component<IAppViewManagerProps> {
     const { currentView } = this.props;
     const renderViews: IRenderView[] = [
       { viewName: orgsViewName, component: OrgsContainer },
-      { viewName: currentOrgViewName, component: OrgContainer },
+      { viewName: currentOrgViewName, component: OrgsContainer },
       { viewName: notificationsViewName, component: NotificationsContainer },
       {
         viewName: currentNotificationViewName,
         component: NotificationsContainer
       },
-      { viewName: currentProjectViewName, component: OrgContainer }
+      // TODO: Split functionality, single responsibility principle
+      { viewName: currentProjectViewName, component: OrgsContainer }
     ];
 
     return (

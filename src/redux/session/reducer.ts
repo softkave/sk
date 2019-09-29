@@ -1,4 +1,3 @@
-import { CLEAR_STATE } from "../state/constants";
 import { ISessionAction } from "./actions";
 import { LOGIN_USER, LOGOUT_USER, SET_SESSION_TO_WEB } from "./constants";
 
@@ -30,7 +29,6 @@ export function sessionReducer(
       };
     }
 
-    case CLEAR_STATE:
     case LOGOUT_USER:
     case SET_SESSION_TO_WEB: {
       return { sessionType: sessionWeb };

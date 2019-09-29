@@ -2,6 +2,7 @@ import { IBlock } from "../../models/block/block";
 import { getBlock } from "../blocks/selectors";
 import { IReduxState } from "../store";
 import { currentOrgViewName, ICurrentOrgView } from "./orgs";
+import { currentProjectViewName, ICurrentProjectView } from "./project";
 import IView from "./view";
 
 export function getCurrentView(state: IReduxState): IView | undefined {
@@ -24,6 +25,17 @@ export function getCurrentOrg(state: IReduxState): IBlock | undefined {
 
   if (currentOrgView) {
     return getBlock(state, currentOrgView.orgID);
+  }
+}
+
+export function getCurrentProject(state: IReduxState) {
+  const currentProjectView = getView<ICurrentProjectView>(
+    state,
+    currentProjectViewName
+  );
+
+  if (currentProjectView) {
+    return getBlock(state, currentProjectView.projectID);
   }
 }
 

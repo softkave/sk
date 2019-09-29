@@ -1,6 +1,5 @@
 import { notification } from "antd";
 import React from "react";
-
 import SoftkaveLoadingView from "../components/view/SoftkaveLoadingView";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {

@@ -1,5 +1,4 @@
 import { connect } from "react-redux";
-
 import { IReduxState } from "../redux/store";
 import { getCurrentView } from "../redux/view/selectors";
 import App from "./App";

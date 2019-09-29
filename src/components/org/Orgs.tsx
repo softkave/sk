@@ -4,17 +4,16 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
-import BoardContainer from "../board/BoardContainer";
 import EditOrg from "./EditOrg";
-import "./orgs.css";
 import OrgThumbnail from "./OrgThumbnail";
+
+import "./orgs.css";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;
   orgs: IBlock[];
   user: IUser;
-  onSelectOrg: (orgID: IBlock) => void;
-  currentOrg?: IBlock;
+  onSelectOrg: (org: IBlock) => void;
 }
 
 interface IOrgsState {
@@ -38,23 +37,14 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
   };
 
   public onCreateOrg = async org => {
-    await this.props.blockHandlers.onAdd({ block: org, user: this.props.user });
+    const { user, blockHandlers } = this.props;
+    await blockHandlers.onAdd(user, org);
     this.toggleNewOrgForm();
   };
 
   public render() {
-    const { orgs, onSelectOrg, currentOrg } = this.props;
+    const { orgs, onSelectOrg } = this.props;
     const { showNewOrgForm } = this.state;
-
-    if (currentOrg) {
-      return (
-        <BoardContainer
-          blockID={currentOrg.customId}
-          block={currentOrg}
-          onBack={() => onSelectOrg()}
-        />
-      );
-    }
 
     return (
       <StyledOrgs>
