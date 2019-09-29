@@ -1,17 +1,14 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import { consumeOperation } from "../redux/operations/actions";
 import {
   defaultOperationStatusTypes,
   getOperationLastStatus,
-  isOperationCompleted,
-  isOperationError,
   isOperationStarted
 } from "../redux/operations/operation";
 import { initializeAppSessionOperationID } from "../redux/operations/operationIDs";
 import { getOperationsWithID } from "../redux/operations/selectors";
 import initializeAppSessionOperation from "../redux/operations/session/initializeAppSession";
-import { getSessionType } from "../redux/session/selectors";
+import { getSessionType, isUserSignedIn } from "../redux/session/selectors";
 import { IReduxState } from "../redux/store";
 import IndexViewManager from "./IndexViewManager";
 
@@ -29,6 +26,8 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
     state,
     initializeAppSessionOperationID
   )[0];
+
+  console.log({ sessionType, initializeOperation });
 
   if (sessionType === "initializing") {
     if (!initializeOperation) {
@@ -51,11 +50,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
       throw new Error("Application error");
     }
   } else if (sessionType === "web" || sessionType === "app") {
-    if (
-      initializeOperation &&
-      (isOperationCompleted(initializeOperation) ||
-        isOperationError(initializeOperation))
-    ) {
+    if (initializeOperation && isUserSignedIn(state)) {
       const latestStatus = getOperationLastStatus(initializeOperation);
       // dispatch(
       //   consumeOperation(

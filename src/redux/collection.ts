@@ -1,4 +1,3 @@
-import get from "lodash/get";
 import isArray from "lodash/isArray";
 import merge from "lodash/merge";
 import mergeWith from "lodash/mergeWith";

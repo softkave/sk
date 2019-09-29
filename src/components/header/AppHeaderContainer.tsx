@@ -24,7 +24,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
       dispatch(logoutUserRedux());
     },
     onChangeView(currentViewName: string, newViewName: string) {
-      dispatch(replaceView(currentViewName, newViewName));
+      dispatch(replaceView(currentViewName, { viewName: newViewName }));
     }
   };
 }

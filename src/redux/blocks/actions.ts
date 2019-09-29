@@ -5,7 +5,6 @@ import {
   ICollectionUpdateItemPayload,
   IUpdateResourceMeta
 } from "../collection";
-import { IClearStateAction } from "../state/actions";
 import {
   ADD_BLOCK,
   BULK_ADD_BLOCKS,
@@ -112,7 +111,6 @@ export function bulkDeleteBlocksRedux(
 }
 
 export type IBlocksAction =
-  | IClearStateAction
   | IAddBlockAction
   | IUpdateBlockAction
   | IDeleteBlockAction

@@ -1,3 +1,4 @@
+// TODO: delete pipelines
 import { Dispatch } from "redux";
 
 import { INetResult } from "../net/query";

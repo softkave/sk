@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col, Switch, Button } from "antd";
-import Thumbnail from "../../thumbnail/Thumbnail";
+import Thumbnail from "../thumbnail/Thumbnail";
 
 export default class TaskCollaboratorThumbnail extends React.Component {
   render() {

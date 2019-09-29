@@ -44,8 +44,7 @@ interface IAvatarContainerProps {
 const StyledAvatarContainer = styled("span")<IAvatarContainerProps>(props => {
   const styles: React.CSSProperties = {
     display: "inline-block",
-    color: props.color,
-    height: 40
+    color: props.color
   };
 
   switch (props.type) {

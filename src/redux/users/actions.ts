@@ -5,7 +5,6 @@ import {
   ICollectionUpdateItemPayload,
   IUpdateResourceMeta
 } from "../collection";
-import { IClearStateAction } from "../state/actions";
 import {
   ADD_USER,
   BULK_ADD_USERS,
@@ -110,7 +109,6 @@ export function bulkDeleteUsersRedux(users: string[]): IBulkDeleteUsersAction {
 }
 
 export type IUsersAction =
-  | IClearStateAction
   | IAddUserAction
   | IUpdateUserAction
   | IDeleteUserAction

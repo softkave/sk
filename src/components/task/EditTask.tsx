@@ -3,23 +3,22 @@ import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
 import * as yup from "yup";
-
-import { IBlock } from "../../../models/block/block";
-import { blockConstants } from "../../../models/block/constants";
-import { textPattern } from "../../../models/user/descriptor";
-import { IUser } from "../../../models/user/user";
-import { indexArray } from "../../../utils/object";
-import CollaboratorThumbnail from "../../collaborator/CollaboratorThumbnail";
-import FormError from "../../form/FormError";
+import { IBlock } from "../../models/block/block";
+import { blockConstants } from "../../models/block/constants";
+import { textPattern } from "../../models/user/descriptor";
+import { IUser } from "../../models/user/user";
+import { indexArray } from "../../utils/object";
+import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
+import FormError from "../form/FormError";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../../form/FormInternals";
-import { getGlobalError, submitHandler } from "../../formik-utils";
-import modalWrap from "../../modalWrap.jsx";
+} from "../form/FormInternals";
+import { getGlobalError, submitHandler } from "../formik-utils";
+import modalWrap from "../modalWrap";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";

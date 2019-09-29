@@ -1,7 +1,4 @@
-import moment from "moment";
-
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import * as blockActions from "../../blocks/actions";
@@ -10,8 +7,7 @@ import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
-  dispatchOperationStarted,
-  isOperationStarted
+  dispatchOperationStarted
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";

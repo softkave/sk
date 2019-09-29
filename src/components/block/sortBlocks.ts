@@ -1,5 +1,5 @@
-import { IBlock } from "../../../models/block/block";
-import { indexArray } from "../../../utils/object";
+import { IBlock } from "../../models/block/block";
+import { indexArray } from "../../utils/object";
 
 // TODO: Define types
 export function sortBlocksByPosition(

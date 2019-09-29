@@ -12,7 +12,7 @@ import {
   setCurrentOrg,
   setCurrentProject
 } from "../../redux/view/actions";
-import { currentOrgViewName } from "../../redux/view/orgs";
+import { currentOrgViewName, orgsViewName } from "../../redux/view/orgs";
 import { currentProjectViewName } from "../../redux/view/project";
 import {
   getCurrentOrg,
@@ -37,29 +37,52 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
     loadRootBlocksOperationID
   )[0];
 
-  const view = loadInitialBlocksOperation
-    ? getViewFromOperations([loadInitialBlocksOperation])
-    : getCurrentView(state)!;
-
   const user = getSignedInUserRequired(state);
   const orgs = getBlocksAsArray(state, user.orgs);
+  const currentView = getCurrentView(state)!;
 
-  if (
-    view.viewName === currentOrgViewName ||
-    view.viewName === currentProjectViewName
+  if (currentView.viewName === orgsViewName) {
+    const view = getViewFromOperations([loadInitialBlocksOperation]);
+
+    if (!loadInitialBlocksOperation) {
+      // TODO: move to componentDidMount
+      loadRootBlocksOperation(state, dispatch);
+
+      return {
+        view
+      };
+    } else {
+      return {
+        view,
+        orgsProps: {
+          user,
+          orgs,
+          blockHandlers: getBlockMethods(state, dispatch),
+          onSelectOrg(org: IBlock) {
+            dispatch(setCurrentOrg(org));
+          },
+          onSelectProject(project: IBlock) {
+            dispatch(setCurrentProject(project));
+          }
+        }
+      };
+    }
+  } else if (
+    currentView.viewName === currentOrgViewName ||
+    currentView.viewName === currentProjectViewName
   ) {
     let block: IBlock;
 
-    if (view.viewName === currentOrgViewName) {
+    if (currentView.viewName === currentOrgViewName) {
       block = getCurrentOrg(state)!;
-    } else if (view.viewName === currentProjectViewName) {
+    } else if (currentView.viewName === currentProjectViewName) {
       block = getCurrentProject(state)!;
     } else {
       throw new Error("Application error");
     }
 
     return {
-      view,
+      view: currentView,
       currentBlockProps: {
         block,
         blockID: block.customId,
@@ -73,27 +96,8 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
         }
       }
     };
-  } else if (!loadInitialBlocksOperation || user.orgs.length === orgs.length) {
-    loadRootBlocksOperation(state, dispatch);
-
-    return {
-      view
-    };
   } else {
-    return {
-      view,
-      orgsProps: {
-        user,
-        orgs,
-        blockHandlers: getBlockMethods(state, dispatch),
-        onSelectOrg(org: IBlock) {
-          dispatch(setCurrentOrg(org));
-        },
-        onSelectProject(project: IBlock) {
-          dispatch(setCurrentProject(project));
-        }
-      }
-    };
+    throw new Error("Application error");
   }
 }
 

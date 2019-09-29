@@ -1,12 +1,9 @@
 import { Dispatch } from "redux";
-
-import * as blockNet from "../../../net/block";
 import { getUserData } from "../../../net/user";
 import {
   getUserTokenFromStorage,
   saveUserTokenInStorage
 } from "../../../storage/userSession";
-import * as blockActions from "../../blocks/actions";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -17,10 +14,7 @@ import {
   dispatchOperationStarted,
   isOperationStarted
 } from "../operation";
-import {
-  initializeAppSessionOperationID,
-  loadRootBlocksOperationID
-} from "../operationIDs";
+import { initializeAppSessionOperationID } from "../operationIDs";
 import { getOperationsWithID } from "../selectors";
 
 export default async function initializeAppSessionOperation(

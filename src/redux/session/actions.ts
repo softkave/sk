@@ -1,4 +1,3 @@
-import { IClearStateAction } from "../state/actions";
 import {
   LOGIN_USER,
   LOGOUT_USER,
@@ -64,7 +63,6 @@ export function setSessionToWeb(): ISetSessionToWebAction {
 }
 
 export type ISessionAction =
-  | IClearStateAction
   | ILoginUserAction
   | ILogoutUserAction
   | ISetSessionToWebAction;

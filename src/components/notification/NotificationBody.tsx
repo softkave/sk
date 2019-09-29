@@ -1,10 +1,8 @@
 import { Button } from "antd";
 import React from "react";
-
-import { OnRespondToNotification } from "../../app/notification";
-
 import { IUser } from "../../models/user/user";
 import "./notification-body.css";
+import { OnRespondToNotification } from "./NotificationsContainer";
 
 const accepted = "accepted";
 const declined = "declined";

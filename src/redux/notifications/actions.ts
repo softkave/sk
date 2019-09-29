@@ -5,7 +5,6 @@ import {
   ICollectionUpdateItemPayload,
   IUpdateResourceMeta
 } from "../collection";
-import { IClearStateAction } from "../state/actions";
 import {
   ADD_NOTIFICATION,
   BULK_ADD_NOTIFICATIONS,
@@ -116,7 +115,6 @@ export function bulkDeleteNotificationsRedux(
 }
 
 export type INotificationsAction =
-  | IClearStateAction
   | IAddNotificationAction
   | IUpdateNotificationAction
   | IDeleteNotificationAction

@@ -14,7 +14,6 @@ import ExpandedGroup from "../group/ExpandedGroup";
 import EditProject from "../project/EditProject";
 import EditTask from "../task/EditTask";
 import SplitView, { ISplit } from "../view/SplitView";
-import BoardContainer from "./BoardContainer";
 import { getChildrenTypesForContext } from "./childrenTypes";
 import KanbanBoard from "./KanbanBoard";
 

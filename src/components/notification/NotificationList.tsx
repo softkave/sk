@@ -1,17 +1,16 @@
 import { Col, Row } from "antd";
 import throttle from "lodash/throttle";
 import React from "react";
-
-import {
-  OnClickNotification,
-  OnRespondToNotification
-} from "../../app/notification";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
 import NotificationBody from "./NotificationBody";
 
 import "./notification-list.css";
+import {
+  OnClickNotification,
+  OnRespondToNotification
+} from "./NotificationsContainer";
 
 export interface INotificationListItemProps {
   notification: INotification;

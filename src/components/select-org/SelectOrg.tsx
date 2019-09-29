@@ -35,7 +35,9 @@ const SelectOrg: React.SFC<ISelectOrgProps> = props => {
         }
       }}
     >
-      <Menu.Item key={orgsViewName}>Orgs</Menu.Item>
+      <Menu.Item key={orgsViewName} disabled={!currentOrgID}>
+        Organizations
+      </Menu.Item>
       <Menu.Divider />
       {orgs.map(org => {
         return (

@@ -5,20 +5,20 @@ export interface ILoadingTextProps {
   percent: number;
 }
 
-const minPercent = 0;
 const maxPercent = 100;
 
 const LoadingText: React.SFC<ILoadingTextProps> = props => {
   const { percent, children } = props;
-  const progressFlex = Math.round(maxPercent / (maxPercent - percent));
-  const remainderFlex = Math.round(maxPercent / percent);
+  // TODO: Clean unused comment codes
+  // const progressFlex = Math.round(maxPercent / (maxPercent - percent));
+  // const remainderFlex = Math.round(maxPercent / percent);
 
   return (
     <StyledLoadingTextContainer>
       <StyledLoadingText>{children}</StyledLoadingText>
       <StyledProgressContainer>
-        <StyledProgress style={{ flex: progressFlex }} />
-        <StyledRemainder style={{ flex: remainderFlex }} />
+        <StyledProgress style={{ flex: percent }} />
+        <StyledRemainder style={{ flex: maxPercent - percent }} />
       </StyledProgressContainer>
     </StyledLoadingTextContainer>
   );

@@ -13,7 +13,7 @@ import Routes from "./Routes";
 
 export interface IIndexViewManagerProps {
   view: IView;
-  intializingProps?: {
+  initializingProps?: {
     progress: number;
   };
   readyProps?: {
@@ -24,9 +24,15 @@ export interface IIndexViewManagerProps {
 
 class IndexViewManager extends React.Component<IIndexViewManagerProps> {
   public render() {
-    const { intializingProps, readyProps, view: currentView } = this.props;
+    console.log(this.props);
+    const {
+      initializingProps: intializingProps,
+      readyProps,
+      view: currentView
+    } = this.props;
     const renderViews: IRenderView[] = [
       {
+        // TODO: Test this view
         viewName: sessionInitializing,
         render() {
           return <SoftkaveLoadingView percent={intializingProps!.progress} />;

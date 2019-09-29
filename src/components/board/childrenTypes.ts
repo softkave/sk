@@ -1,4 +1,4 @@
-import { getBlockValidChildrenTypes } from "../../../models/block/utils";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { BoardContext } from "./Board";
 
 export function getChildrenTypesForContext(block, context: BoardContext) {
