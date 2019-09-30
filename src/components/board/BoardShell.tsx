@@ -21,7 +21,9 @@ const BoardShell: React.SFC<IBoardShellProps> = props => {
 export default BoardShell;
 
 const StyledBoardShell = styled.div({
-  padding: "32px"
+  padding: "32px",
+  flex: 1,
+  display: "flex"
 });
 
 const StyledBoardName = styled.div({});

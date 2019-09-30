@@ -7,7 +7,7 @@ import BoardShell, { IBoardShellProps } from "./BoardShell";
 const BoardLoading: React.SFC<IBoardShellProps> = props => {
   return (
     <BoardShell {...props}>
-      <StyledLoadingIcon />
+      <StyledLoadingIcon type="loading" />
     </BoardShell>
   );
 };
@@ -15,6 +15,6 @@ const BoardLoading: React.SFC<IBoardShellProps> = props => {
 export default BoardLoading;
 
 const StyledLoadingIcon = styled(Icon)({
-  fontSize: "24px",
+  fontSize: "48px",
   color: "rgb(66,133,244)"
 });

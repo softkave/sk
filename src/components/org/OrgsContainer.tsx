@@ -3,6 +3,12 @@ import { Dispatch } from "redux";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock";
+import {
+  isOperationCompleted,
+  isOperationError,
+  isOperationPending,
+  isOperationStarted
+} from "../../redux/operations/operation";
 import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getOperationsWithID } from "../../redux/operations/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -41,6 +47,10 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   const orgs = getBlocksAsArray(state, user.orgs);
   const currentView = getCurrentView(state)!;
 
+  console.log({ currentView });
+
+  // return { view: { viewName: "error" } };
+
   if (currentView.viewName === orgsViewName) {
     const view = getViewFromOperations([loadInitialBlocksOperation]);
 
@@ -51,7 +61,15 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
       return {
         view
       };
-    } else {
+    } else if (
+      isOperationStarted(loadInitialBlocksOperation) ||
+      isOperationPending(loadInitialBlocksOperation) ||
+      isOperationError(loadInitialBlocksOperation)
+    ) {
+      return {
+        view
+      };
+    } else if (isOperationCompleted(loadInitialBlocksOperation)) {
       return {
         view,
         orgsProps: {
@@ -66,6 +84,8 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
           }
         }
       };
+    } else {
+      return { view: { viewName: "error" } };
     }
   } else if (
     currentView.viewName === currentOrgViewName ||
@@ -80,6 +100,8 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
     } else {
       throw new Error("Application error");
     }
+
+    throw new Error("Application error");
 
     return {
       view: currentView,
@@ -97,7 +119,9 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
       }
     };
   } else {
-    throw new Error("Application error");
+    return {
+      view: { viewName: "error" }
+    };
   }
 }
 

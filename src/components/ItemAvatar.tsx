@@ -2,14 +2,14 @@ import styled from "@emotion/styled";
 import { Avatar } from "antd";
 import React from "react";
 
-export interface IAvatarProps {
+export interface IItemAvatarProps {
   color?: string;
   onClick?: () => void;
   active?: boolean;
   clickable?: boolean;
 }
 
-const StyledAvatar: React.SFC<IAvatarProps> = props => {
+const ItemAvatar: React.SFC<IItemAvatarProps> = props => {
   return (
     <StyledAvatarContainer
       active={props.active}
@@ -31,7 +31,7 @@ const StyledAvatar: React.SFC<IAvatarProps> = props => {
   );
 };
 
-StyledAvatar.defaultProps = {
+ItemAvatar.defaultProps = {
   color: "#999"
 };
 
@@ -68,4 +68,4 @@ const StyledAvatarContainer = styled("span")<IAvatarContainerProps>(props => {
   }
 });
 
-export default StyledAvatar;
+export default ItemAvatar;

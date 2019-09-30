@@ -4,10 +4,9 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
+import ScrollList from "../ScrollList";
 import EditOrg from "./EditOrg";
-import OrgThumbnail from "./OrgThumbnail";
-
-import "./orgs.css";
+import OrgList from "./OrgList";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;
@@ -53,23 +52,16 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
           onSubmit={this.onCreateOrg}
           onClose={this.toggleNewOrgForm}
         />
-        <div className="sk-orgs-header">
-          <Button onClick={this.toggleNewOrgForm} icon="plus">
-            Create Org
-          </Button>
-        </div>
-        <div className="sk-orgs-content">
-          {orgs.map(org => {
-            return (
-              <OrgThumbnail
-                key={org.customId}
-                org={org}
-                onClick={() => onSelectOrg(org)}
-                className="sk-orgs-thumbnail"
-              />
-            );
-          })}
-        </div>
+        <ScrollList>
+          <StyledOrgsContent>
+            <StyledCreateOrgWrapper>
+              <Button block onClick={this.toggleNewOrgForm} icon="plus">
+                Create Org
+              </Button>
+            </StyledCreateOrgWrapper>
+            <OrgList orgs={orgs} onClick={() => null} />
+          </StyledOrgsContent>
+        </ScrollList>
       </StyledOrgs>
     );
   }
@@ -78,5 +70,21 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
 export default Orgs;
 
 const StyledOrgs = styled.div({
-  overflowY: "auto"
+  height: "100%",
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  overflow: "auto"
+});
+
+const StyledCreateOrgWrapper = styled.div({
+  padding: "32px 0"
+});
+
+const StyledOrgsContent = styled.div({
+  boxSizing: "border-box",
+  maxWidth: "400px",
+  width: "100%",
+  margin: "auto",
+  padding: "24px 0"
 });

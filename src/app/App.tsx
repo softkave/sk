@@ -27,8 +27,17 @@ class App extends React.Component<IAppProps> {
 
 export default App;
 
-const StyledApp = styled.div({});
+const StyledApp = styled.div({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+  overflow: "hidden"
+});
 
 const StyledAppHeader = styled.div({});
 
-const StyledAppBody = styled.div({});
+const StyledAppBody = styled.div({
+  display: "flex",
+  flex: 1,
+  overflow: "hidden"
+});

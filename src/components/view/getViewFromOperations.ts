@@ -9,9 +9,9 @@ export default function getViewFromOperations(
   operations: Array<IOperation | undefined>
 ) {
   if (
-    operations.find(operation => {
-      return !operation;
-    })
+    operations.findIndex(operation => {
+      return typeof operation !== "object" && !Array.isArray(operation);
+    }) !== -1
   ) {
     return {
       viewName: "loading"

@@ -4,6 +4,7 @@ import React from "react";
 
 import { findBlock, IBlock } from "../../models/block/block";
 import { orgsViewName } from "../../redux/view/orgs";
+import { getWindowWidth } from "../../utils/window";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 
 export interface ISelectOrgProps {
@@ -57,7 +58,7 @@ const SelectOrg: React.SFC<ISelectOrgProps> = props => {
 
   return (
     <StyledSelectOrg>
-      <Dropdown overlay={overlay} trigger={triggers}>
+      <Dropdown overlay={overlay} trigger={triggers} placement="bottomCenter">
         <StyledDropdownContent>
           <StyledOrgOrPlaceholder>{content}</StyledOrgOrPlaceholder>
           <StyledDropdownIcon type="caret-down" />
@@ -81,9 +82,7 @@ const StyledSelectOrg = styled.div({
 
 const StyledDropdownContent = styled.div({
   textAlign: "center",
-  cursor: "pointer",
-  maxWidth: 300,
-  minWidth: 200
+  cursor: "pointer"
 });
 
 const StyledOrgOrPlaceholder = styled.span({});
@@ -94,4 +93,15 @@ const StyledDropdownIcon = styled(Icon)({
   verticalAlign: "middle"
 });
 
-const StyledMenu = styled(Menu)({});
+const StyledMenu = styled(Menu)(() => {
+  const windowWidth = getWindowWidth();
+  const maxMenuWidth = 500;
+  const maxMenuHeight = 400;
+
+  return {
+    marginTop: "22px",
+    width: windowWidth <= maxMenuWidth ? windowWidth : maxMenuWidth,
+    maxHeight: maxMenuHeight,
+    overflow: "auto"
+  };
+});

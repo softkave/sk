@@ -4,7 +4,7 @@ import React from "react";
 
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
-import StyledAvatar from "../StyledAvatar";
+import ItemAvatar from "../ItemAvatar";
 
 import "./header.css";
 
@@ -95,7 +95,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                 }
                 trigger={["click"]}
               >
-                <StyledAvatar
+                <ItemAvatar
                   clickable
                   onClick={() => null}
                   color={user.color || defaultAvatarColor}
