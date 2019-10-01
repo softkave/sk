@@ -9,10 +9,10 @@ export interface IOrgListItemProps {
 }
 
 const OrgListItem: React.SFC<IOrgListItemProps> = props => {
-  const { org } = props;
+  const { org, onClick } = props;
 
   return (
-    <StyledOrgListItem>
+    <StyledOrgListItem onClick={() => onClick(org)}>
       <StyledOrgAvatar>
         <ItemAvatar color={org.color} />
       </StyledOrgAvatar>

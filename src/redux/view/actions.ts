@@ -17,6 +17,7 @@ export interface IPushViewAction {
 }
 
 export function pushView(view: IView): IPushViewAction {
+  console.log({ view });
   return {
     type: PUSH_VIEW,
     payload: {
@@ -26,6 +27,7 @@ export function pushView(view: IView): IPushViewAction {
 }
 
 export function setCurrentOrg(org: IBlock): IPushViewAction {
+  console.log({ org });
   return pushView(makeCurrentOrgView(org));
 }
 

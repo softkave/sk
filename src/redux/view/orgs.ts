@@ -21,6 +21,7 @@ export interface ICurrentOrgView extends IView {
 }
 
 export function makeCurrentOrgView(org: IBlock): ICurrentOrgView {
+  console.log({ org });
   return {
     orgID: org.customId,
     viewName: currentOrgViewName

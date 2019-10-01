@@ -30,7 +30,7 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
   const { view, blockData } = blockDataLoader(state, dispatch, { block });
   console.log({ view, blockData, block, user });
 
-  return { block, currentView: { viewName: "loading" } };
+  // return { block, currentView: { viewName: "loading" } };
 
   return {
     block,

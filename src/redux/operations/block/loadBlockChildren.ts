@@ -33,7 +33,11 @@ export default async function loadBlockChildrenOperation(
     return;
   }
 
-  dispatchOperationStarted(dispatch, getBlockChildrenOperationID);
+  dispatchOperationStarted(
+    dispatch,
+    getBlockChildrenOperationID,
+    block.customId
+  );
 
   try {
     const result = await blockNet.getBlockChildren({
@@ -87,13 +91,17 @@ export default async function loadBlockChildrenOperation(
       }
     }
 
-    dispatchOperationComplete(dispatch, getBlockChildrenOperationID);
+    dispatchOperationComplete(
+      dispatch,
+      getBlockChildrenOperationID,
+      block.customId
+    );
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       getBlockChildrenOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

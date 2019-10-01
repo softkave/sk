@@ -2,13 +2,12 @@ import styled from "@emotion/styled";
 import { Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPosition } from "../block/sortBlocks";
+import Group from "../group/Group";
 import GroupContainer from "../group/GroupContainer";
-import UngroupedContainer from "../group/UngroupedContainer";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
@@ -146,8 +145,10 @@ class KanbanBoard extends React.PureComponent<
       selectedCollaborators,
       setCurrentProject,
       onSelectGroup,
+      blockHandlers,
       groups: blockGroups
     } = this.props;
+    console.log(this.props);
     const sortedGroupIds =
       context === "task" ? block.groupTaskContext : block.groupProjectContext;
 
@@ -157,8 +158,9 @@ class KanbanBoard extends React.PureComponent<
 
     if (blockHasUngrouped) {
       const ungrouped = (
-        <UngroupedContainer
+        <Group
           disabled
+          blockHandlers={blockHandlers}
           user={user}
           tasks={tasks}
           projects={projects}
@@ -182,6 +184,8 @@ class KanbanBoard extends React.PureComponent<
       rendered.push(ungrouped);
     }
 
+    console.log({ GroupContainer });
+
     groups.forEach((group, index) => {
       const groupId = group.customId;
 
@@ -201,6 +205,8 @@ class KanbanBoard extends React.PureComponent<
         />
       );
     });
+
+    console.log({ rendered });
 
     return rendered;
   };

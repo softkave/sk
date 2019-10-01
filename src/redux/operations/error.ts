@@ -173,21 +173,31 @@ export const transformError = (
   handleErrorParams: IHandleErrorParams = {}
 ): INetError[] => {
   if (process.env.NODE_ENV === "development") {
-    const fieldsPlusErrors = errors.map(e => {
-      return {
-        ...e,
-        message: `${e.field} - ${e.message}`
-      };
-    });
+    if (Array.isArray(errors)) {
+      const fieldsPlusErrors = errors.map(e => {
+        return {
+          ...e,
+          message: `${e.field} - ${e.message}`
+        };
+      });
 
-    const logMessageStyle = "color: red;";
-    console.log("--------------- start");
-    console.log("---------------");
-    fieldsPlusErrors.forEach(e => {
-      console.log(`%c ${e.message}`, logMessageStyle);
-    });
-    console.log("---------------");
-    console.log("--------------- end");
+      const logMessageStyle = "color: red;";
+      console.log("--------------- start");
+      console.log("---------------");
+      fieldsPlusErrors.forEach(e => {
+        console.log(`%c ${e.message}`, logMessageStyle);
+      });
+      console.log("---------------");
+      console.log("--------------- end");
+    } else {
+      console.log("--------------- start");
+      console.log("---------------");
+      console.log(errors);
+      console.log("---------------");
+      console.log("--------------- end");
+
+      errors = [{ type: "error", message: "Error" }];
+    }
   }
 
   if (handleErrorParams.filterBaseNames) {

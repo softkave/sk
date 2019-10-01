@@ -30,7 +30,11 @@ export default async function loadBlockCollaborationRequestsOperation(
     return;
   }
 
-  dispatchOperationStarted(dispatch, getBlockCollaborationRequestsOperationID);
+  dispatchOperationStarted(
+    dispatch,
+    getBlockCollaborationRequestsOperationID,
+    block.customId
+  );
 
   try {
     const result = await blockNet.getCollabRequests({ block });
@@ -54,14 +58,15 @@ export default async function loadBlockCollaborationRequestsOperation(
 
     dispatchOperationComplete(
       dispatch,
-      getBlockCollaborationRequestsOperationID
+      getBlockCollaborationRequestsOperationID,
+      block.customId
     );
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       getBlockCollaborationRequestsOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

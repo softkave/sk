@@ -59,7 +59,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
                 Create Org
               </Button>
             </StyledCreateOrgWrapper>
-            <OrgList orgs={orgs} onClick={() => null} />
+            <OrgList orgs={orgs} onClick={org => onSelectOrg(org)} />
           </StyledOrgsContent>
         </ScrollList>
       </StyledOrgs>

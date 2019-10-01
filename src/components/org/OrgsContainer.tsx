@@ -77,6 +77,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
           orgs,
           blockHandlers: getBlockMethods(state, dispatch),
           onSelectOrg(org: IBlock) {
+            console.log({ org });
             dispatch(setCurrentOrg(org));
           },
           onSelectProject(project: IBlock) {
@@ -101,7 +102,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
       throw new Error("Application error");
     }
 
-    throw new Error("Application error");
+    // throw new Error("Application error");
 
     return {
       view: currentView,

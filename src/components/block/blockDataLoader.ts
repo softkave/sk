@@ -161,14 +161,14 @@ function shouldLoadBlockChildren(
   const blockChildren = loadBlockChildrenFromRedux(state, block);
 
   if (areBlockChildrenLoaded(block, blockChildren) || loadChildrenOperation) {
-    if (loadChildrenOperation && isOperationCompleted(loadChildrenOperation)) {
-      dispatch(
-        consumeOperation(
-          loadChildrenOperation.operationID,
-          loadChildrenOperation.resourceID
-        )
-      );
-    }
+    // if (loadChildrenOperation && isOperationCompleted(loadChildrenOperation)) {
+    //   dispatch(
+    //     consumeOperation(
+    //       loadChildrenOperation.operationID,
+    //       loadChildrenOperation.resourceID
+    //     )
+    //   );
+    // }
 
     return false;
   }
@@ -196,14 +196,14 @@ function shouldLoadRequests(
     loadRequestsOperation ||
     areBlockCollaborationRequestsLoaded(block, requests)
   ) {
-    if (loadRequestsOperation && isOperationCompleted(loadRequestsOperation)) {
-      dispatch(
-        consumeOperation(
-          loadRequestsOperation.operationID,
-          loadRequestsOperation.resourceID
-        )
-      );
-    }
+    // if (loadRequestsOperation && isOperationCompleted(loadRequestsOperation)) {
+    //   dispatch(
+    //     consumeOperation(
+    //       loadRequestsOperation.operationID,
+    //       loadRequestsOperation.resourceID
+    //     )
+    //   );
+    // }
 
     return false;
   }
@@ -235,17 +235,17 @@ function shouldLoadCollaborators(
     areBlockCollaboratorsLoaded(block, collaborators) ||
     loadCollaboratorsOperation
   ) {
-    if (
-      loadCollaboratorsOperation &&
-      isOperationCompleted(loadCollaboratorsOperation)
-    ) {
-      dispatch(
-        consumeOperation(
-          loadCollaboratorsOperation.operationID,
-          loadCollaboratorsOperation.resourceID
-        )
-      );
-    }
+    // if (
+    //   loadCollaboratorsOperation &&
+    //   isOperationCompleted(loadCollaboratorsOperation)
+    // ) {
+    //   dispatch(
+    //     consumeOperation(
+    //       loadCollaboratorsOperation.operationID,
+    //       loadCollaboratorsOperation.resourceID
+    //     )
+    //   );
+    // }
 
     return false;
   }
@@ -263,6 +263,7 @@ function getLoadCollaboratorsOperation(state: IReduxState, block: IBlock) {
 
 function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
   const dataToLoad = getBlockInternalDataToLoad(block.type);
+  console.log({ dataToLoad });
 
   if (
     dataToLoad.includes("children") &&
@@ -319,7 +320,7 @@ function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
       const requests = loadBlockCollaborationRequestsFromRedux(state, block);
 
       return {
-        blockChildren,
+        ...blockChildren,
         collaborators,
         requests
       };
@@ -348,6 +349,7 @@ export default function blockDataLoader(
   const block = ownProps.block;
   const view = getBlockView(state, block);
   const blockData = getViewProps(state, block, view.viewName);
+  console.log({ view, blockData });
 
   loadData(state, dispatch, block);
 

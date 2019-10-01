@@ -1,5 +1,4 @@
-import { connect } from "react-redux";
-
+import { connect, DispatchProp } from "react-redux";
 import { Dispatch } from "redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -24,18 +23,21 @@ export interface IGroupContainerProps {
 }
 
 function mapStateToProps(state: IReduxState) {
+  console.log("map state");
   return state;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
+  console.log("map dispatch");
   return { dispatch };
 }
 
 function mergeProps(
   state: IReduxState,
-  { dispatch }: { dispatch: Dispatch },
+  { dispatch }: DispatchProp,
   ownProps: IGroupContainerProps
 ) {
+  console.log("merge props");
   const user = getSignedInUserRequired(state);
   const { view, blockData } = blockDataLoader(state, dispatch, {
     block: ownProps.group

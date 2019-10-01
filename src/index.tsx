@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-
 import IndexContainer from "./app/IndexContainer";
 import store from "./redux/store";
 
@@ -11,10 +10,10 @@ import "./styles.css";
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <Provider store={store}>
       <IndexContainer />
-    </BrowserRouter>
-  </Provider>,
+    </Provider>
+  </BrowserRouter>,
   rootElement
 );
