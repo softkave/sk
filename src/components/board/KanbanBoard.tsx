@@ -200,7 +200,11 @@ class KanbanBoard extends React.PureComponent<
           draggableID={groupId}
           onClickAddChild={onClickAddChild}
           toggleForm={(type: BlockType, child?: IBlock) =>
-            toggleForm(type, group, child)
+            toggleForm(
+              type,
+              child && child.customId === group.customId ? block : group,
+              child
+            )
           }
           index={blockHasUngrouped ? index + 1 : index}
           context={context}

@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Modal } from "antd";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
@@ -13,6 +12,9 @@ import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
 import TaskList from "./TaskList";
 import TaskListWithViewMore from "./TaskListWithViewMore";
+
+const editGroupKey = "edit-group";
+const deleteGroupKey = "delete-group";
 
 export interface IGroupProps {
   group: IBlock;
@@ -119,16 +121,39 @@ class Group extends React.PureComponent<IGroupProps> {
     }
   }
 
+  private promptDeleteGroup() {
+    const { blockHandlers, group } = this.props;
+
+    Modal.confirm({
+      title: "Are you sure you want to delete this group",
+      okText: "Yes",
+      cancelText: "No",
+      okType: "danger",
+      onOk() {
+        blockHandlers.onDelete(group);
+      },
+      onCancel() {
+        // Do nothing
+      }
+    });
+  }
+
   private onSelectControl = event => {
-    const { group, onClickAddChild, context, blockHandlers } = this.props;
+    const { group, onClickAddChild, context, toggleForm } = this.props;
     const childrenTypes = getChildrenTypesForContext(group, context);
 
     if (childrenTypes.indexOf(event.key) !== -1) {
       onClickAddChild(event.key, group);
     } else {
       switch (event.key) {
-        case "delete-group": {
-          blockHandlers.onDelete(group);
+        case deleteGroupKey: {
+          this.promptDeleteGroup();
+          break;
+        }
+
+        case editGroupKey: {
+          toggleForm(group.type, group);
+          break;
         }
       }
     }
@@ -153,7 +178,10 @@ class Group extends React.PureComponent<IGroupProps> {
         })}
         {!isUngrouped && [
           <Menu.Divider key="divider" />,
-          <Menu.Item key="delete-group">
+          <Menu.Item key={editGroupKey}>
+            <StyledCapitalizeText>Edit Group</StyledCapitalizeText>
+          </Menu.Item>,
+          <Menu.Item key={deleteGroupKey}>
             <StyledCapitalizeText>Delete Group</StyledCapitalizeText>
           </Menu.Item>
         ]}
