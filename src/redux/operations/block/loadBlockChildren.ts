@@ -46,7 +46,7 @@ export default async function loadBlockChildrenOperation(
       isBacklog
     });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 

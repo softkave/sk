@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../models/block/block";
 import { toggleTaskOperationID } from "../../redux/operations/operationIDs";
 import { getOperationWithIDForResource } from "../../redux/operations/selectors";
@@ -35,7 +34,9 @@ function mergeProps(
     task.customId
   );
 
-  const view = getViewFromOperations([toggleSwitchOperation]);
+  const view = getViewFromOperations([toggleSwitchOperation], {
+    viewName: "ready"
+  });
   const taskCollaborator = Array.isArray(task.taskCollaborators)
     ? task.taskCollaborators.find(item => {
         return item.userId === user.customId;
@@ -46,12 +47,14 @@ function mergeProps(
     taskCollaborator && !!taskCollaborator.completedAt ? true : false;
 
   const blockHandlers = getBlockMethods(state, dispatch);
+  // console.log({ toggleSwitchOperation, view, task, taskCollaborator });
 
   return {
     currentView: view,
     readyProps: {
+      task,
       checked,
-      disabled: !!taskCollaborator,
+      disabled: !taskCollaborator,
       onToggle() {
         return blockHandlers.onToggle(user, task);
       }

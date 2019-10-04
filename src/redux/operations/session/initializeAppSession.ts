@@ -38,7 +38,7 @@ export default async function initializeAppSessionOperation(
     if (token) {
       const result = await getUserData(token);
 
-      if (result.errors) {
+      if (result && result.errors) {
         throw result.errors;
       }
 

@@ -1,5 +1,4 @@
 import React from "react";
-
 import { IBlock } from "../../models/block/block";
 import IView from "../../redux/view/view";
 import ViewManager, { IRenderView } from "../view/ViewManager";
@@ -15,6 +14,7 @@ export interface IGroupViewManagerProps {
 
 class GroupViewManager extends React.Component<IGroupViewManagerProps> {
   public render() {
+    console.log(this.props);
     const { currentView, group, readyProps } = this.props;
     const renderViews: IRenderView[] = [
       {

@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-
 import { IBlock, ITaskCollaborator } from "../../../models/block/block";
 import { assignTask } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
@@ -56,7 +55,7 @@ export default async function toggleTaskOperation(
       data: taskCollaborator.completedAt ? false : true
     });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -88,13 +87,13 @@ export default async function toggleTaskOperation(
       )
     );
 
-    dispatchOperationComplete(dispatch, toggleTaskOperationID);
+    dispatchOperationComplete(dispatch, toggleTaskOperationID, block.customId);
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       toggleTaskOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

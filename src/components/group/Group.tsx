@@ -24,12 +24,13 @@ export interface IGroupProps {
   user: IUser;
   tasks: IBlock[];
   projects: IBlock[];
-  toggleForm: (type: BlockType, block: IBlock) => void;
+  toggleForm: (type: BlockType, block?: IBlock) => void;
   onClickAddChild: (type: BlockType, group: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;
   disabled?: boolean;
   withViewMore?: boolean;
+  isUngrouped?: boolean;
 }
 
 class Group extends React.PureComponent<IGroupProps> {
@@ -134,8 +135,13 @@ class Group extends React.PureComponent<IGroupProps> {
   };
 
   private renderControls() {
-    const { group, context } = this.props;
-    const childrenTypes = getChildrenTypesForContext(group, context);
+    const { group, context, isUngrouped } = this.props;
+    const childrenTypes = getChildrenTypesForContext(group, context).filter(
+      type => {
+        return type !== "group";
+      }
+    );
+
     const overlay = (
       <Menu onClick={this.onSelectControl}>
         {childrenTypes.map(type => {
@@ -145,10 +151,12 @@ class Group extends React.PureComponent<IGroupProps> {
             </Menu.Item>
           );
         })}
-        <Menu.Divider />
-        <Menu.Item key="delete-group">
-          <StyledCapitalizeText>Delete Group</StyledCapitalizeText>
-        </Menu.Item>
+        {!isUngrouped && [
+          <Menu.Divider key="divider" />,
+          <Menu.Item key="delete-group">
+            <StyledCapitalizeText>Delete Group</StyledCapitalizeText>
+          </Menu.Item>
+        ]}
       </Menu>
     );
 

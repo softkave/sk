@@ -66,7 +66,7 @@ export default async function addBlockOperation(
   try {
     const result = await blockNet.addBlock({ block: newBlock });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -98,7 +98,7 @@ export default async function addBlockOperation(
       );
     }
 
-    dispatchOperationComplete(dispatch, addBlockOperationID);
+    dispatchOperationComplete(dispatch, addBlockOperationID, newBlock.customId);
   } catch (error) {
     const transformedError = transformError(error, {
       stripBaseNames: ["block"]
@@ -107,7 +107,7 @@ export default async function addBlockOperation(
     dispatchOperationError(
       dispatch,
       addBlockOperationID,
-      null,
+      newBlock.customId,
       transformedError
     );
   }

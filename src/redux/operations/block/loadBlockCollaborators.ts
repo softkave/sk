@@ -39,7 +39,7 @@ export default async function loadBlockCollaboratorsOperation(
   try {
     const result = await blockNet.getCollaborators({ block });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 

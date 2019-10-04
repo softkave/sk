@@ -34,7 +34,7 @@ export default async function loadUserNotificationsOperation(
   try {
     const result = await userNet.getCollaborationRequests();
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 

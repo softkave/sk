@@ -3,11 +3,15 @@ import { Icon } from "antd";
 import React from "react";
 
 const ToggleSwitchError: React.SFC<{}> = () => {
-  return <StyledToggleSwitchLoadingIcon type="close" />;
+  return (
+    <StyledToggleSwitchLoadingIcon>
+      <Icon type="close" />
+    </StyledToggleSwitchLoadingIcon>
+  );
 };
 
 export default ToggleSwitchError;
 
-const StyledToggleSwitchLoadingIcon = styled(Icon)({
+const StyledToggleSwitchLoadingIcon = styled.div({
   color: "red"
 });

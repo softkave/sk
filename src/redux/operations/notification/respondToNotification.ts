@@ -51,7 +51,11 @@ export default async function respondToNotificationOperation(
     return;
   }
 
-  dispatchOperationStarted(dispatch, respondToNotificationOperationID);
+  dispatchOperationStarted(
+    dispatch,
+    respondToNotificationOperationID,
+    request.customId
+  );
 
   try {
     const statusHistory = request.statusHistory;
@@ -65,7 +69,7 @@ export default async function respondToNotificationOperation(
       response
     });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -97,13 +101,17 @@ export default async function respondToNotificationOperation(
       }
     }
 
-    dispatchOperationComplete(dispatch, respondToNotificationOperationID);
+    dispatchOperationComplete(
+      dispatch,
+      respondToNotificationOperationID,
+      request.customId
+    );
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       respondToNotificationOperationID,
-      null,
+      request.customId,
       transformedError
     );
   }

@@ -37,7 +37,7 @@ const methods: IPipeline<
     if (result.user && result.token) {
       dispatch(addUserRedux(result.user));
       dispatch(loginUserRedux(result.token, result.user.customId));
-    } else if (result.errors) {
+    } else if (result && result.errors) {
       devLog(__filename, result);
       throw [{ type: "error", message: new Error("An error occurred") }];
     }

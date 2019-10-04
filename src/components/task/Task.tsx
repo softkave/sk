@@ -1,6 +1,6 @@
+import styled from "@emotion/styled";
 import { Button, Col, Row } from "antd";
 import React from "react";
-
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
@@ -33,7 +33,7 @@ class Task extends React.PureComponent<ITaskProps> {
         </Row>
         <Row className="sk-minitask-desc">
           <Col span={24} offset={0}>
-            <p>{task.description}</p>
+            <StyledTaskDescription>{task.description}</StyledTaskDescription>
           </Col>
         </Row>
         <Row>
@@ -64,3 +64,7 @@ class Task extends React.PureComponent<ITaskProps> {
 }
 
 export default Task;
+
+const StyledTaskDescription = styled.p({
+  padding: 0
+});

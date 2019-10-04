@@ -14,7 +14,7 @@ export interface IGroupContainerProps {
   index: number;
   context: BoardContext;
   selectedCollaborators: { [key: string]: boolean };
-  toggleForm: (type: BlockType, block: IBlock) => void;
+  toggleForm: (type: BlockType, block?: IBlock) => void;
   onClickAddChild: (type: BlockType, group: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onViewMore: () => void;

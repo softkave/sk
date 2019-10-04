@@ -160,6 +160,7 @@ class KanbanBoard extends React.PureComponent<
       const ungrouped = (
         <Group
           disabled
+          isUngrouped
           blockHandlers={blockHandlers}
           user={user}
           tasks={tasks}
@@ -172,7 +173,9 @@ class KanbanBoard extends React.PureComponent<
           }}
           draggableID="ungrouped"
           onClickAddChild={(type: BlockType) => onClickAddChild(type, block)}
-          toggleForm={(type: BlockType) => toggleForm(type, block)}
+          toggleForm={(type: BlockType, child?: IBlock) =>
+            toggleForm(type, block, child)
+          }
           index={0}
           context={context}
           selectedCollaborators={selectedCollaborators}
@@ -196,7 +199,9 @@ class KanbanBoard extends React.PureComponent<
           group={group}
           draggableID={groupId}
           onClickAddChild={onClickAddChild}
-          toggleForm={toggleForm}
+          toggleForm={(type: BlockType, child?: IBlock) =>
+            toggleForm(type, group, child)
+          }
           index={blockHasUngrouped ? index + 1 : index}
           context={context}
           selectedCollaborators={selectedCollaborators}

@@ -149,7 +149,7 @@ export async function getSavedUserData() {
   if (userToken) {
     const result = await getUserData(userToken);
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 

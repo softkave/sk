@@ -12,6 +12,7 @@ import {
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
+import { deleteBlockRedux } from "../../blocks/actions";
 
 export default async function deleteBlockOperation(
   state: IReduxState,
@@ -28,22 +29,23 @@ export default async function deleteBlockOperation(
     return;
   }
 
-  dispatchOperationStarted(dispatch, deleteBlockOperationID);
+  dispatchOperationStarted(dispatch, deleteBlockOperationID, block.customId);
 
   try {
     const result = await blockNet.deleteBlock({ block });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
-    dispatchOperationComplete(dispatch, deleteBlockOperationID);
+    dispatch(deleteBlockRedux(block.customId));
+    dispatchOperationComplete(dispatch, deleteBlockOperationID, block.customId);
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       deleteBlockOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

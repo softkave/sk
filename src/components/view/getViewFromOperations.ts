@@ -6,16 +6,15 @@ import IOperation, {
 } from "../../redux/operations/operation";
 
 export default function getViewFromOperations(
-  operations: Array<IOperation | undefined>
+  operations: Array<IOperation | undefined>,
+  defaultView = { viewName: "loading" }
 ) {
   if (
     operations.findIndex(operation => {
       return typeof operation !== "object" && !Array.isArray(operation);
     }) !== -1
   ) {
-    return {
-      viewName: "loading"
-    };
+    return defaultView;
   }
 
   if (

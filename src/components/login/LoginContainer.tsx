@@ -42,7 +42,7 @@ const methods: IPipeline<
         // TODO: put all token or local storage data in one place
         setItem("t", result.token);
       }
-    } else if (result.errors) {
+    } else if (result && result.errors) {
       devLog(__filename, result);
       throw [{ type: "error", message: new Error("An error occurred") }];
     }

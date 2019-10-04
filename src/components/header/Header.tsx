@@ -141,7 +141,7 @@ export default Header;
 const DrawerBody = styled("div")({
   padding: "24px",
 
-  "& .ant-menu-vertical": {
+  ["& .ant-menu-vertical"]: {
     borderRight: "0 !important"
   }
 });

@@ -40,7 +40,7 @@ export default async function updateBlockOperation(
   try {
     const result = await blockNet.updateBlock({ block, data });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -50,7 +50,7 @@ export default async function updateBlockOperation(
       })
     );
 
-    dispatchOperationComplete(dispatch, updateBlockOperationID);
+    dispatchOperationComplete(dispatch, updateBlockOperationID, block.customId);
   } catch (error) {
     const transformedError = transformError(error, {
       // filterBaseNames: ["block"],
@@ -60,7 +60,7 @@ export default async function updateBlockOperation(
     dispatchOperationError(
       dispatch,
       updateBlockOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

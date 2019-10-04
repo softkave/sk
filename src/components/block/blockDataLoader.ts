@@ -1,6 +1,5 @@
 import uniq from "lodash/uniq";
 import { Dispatch } from "redux";
-
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
@@ -11,7 +10,9 @@ import { consumeOperation } from "../../redux/operations/actions";
 import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
-import { isOperationCompleted } from "../../redux/operations/operation";
+import IOperation, {
+  isOperationCompleted
+} from "../../redux/operations/operation";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -159,6 +160,7 @@ function shouldLoadBlockChildren(
 ) {
   const loadChildrenOperation = getLoadChildrenOperation(state, block);
   const blockChildren = loadBlockChildrenFromRedux(state, block);
+  console.log({ block, loadChildrenOperation, blockChildren });
 
   if (areBlockChildrenLoaded(block, blockChildren) || loadChildrenOperation) {
     // if (loadChildrenOperation && isOperationCompleted(loadChildrenOperation)) {
@@ -269,6 +271,7 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
+    console.log({ block });
     loadBlockChildrenOperation(state, dispatch, block);
   }
 
@@ -287,21 +290,54 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
   }
 }
 
-function getBlockView(state: IReduxState, block: IBlock) {
-  const loadChildrenOperation = getLoadChildrenOperation(state, block);
-  const loadCollaboratorsOperation = getLoadCollaboratorsOperation(
-    state,
-    block
-  );
+function getBlockView(state: IReduxState, dispatch: Dispatch, block: IBlock) {
+  // const loadChildrenOperation = getLoadChildrenOperation(state, block);
+  // const loadCollaboratorsOperation = getLoadCollaboratorsOperation(
+  //   state,
+  //   block
+  // );
 
-  const loadRequestsOperation = getLoadRequestsOperation(state, block);
-  const operations = [
-    loadChildrenOperation!,
-    loadCollaboratorsOperation!,
-    loadRequestsOperation!
-  ];
+  // const loadRequestsOperation = getLoadRequestsOperation(state, block);
+  // const operations = [
+  //   loadChildrenOperation!,
+  //   loadCollaboratorsOperation!,
+  //   loadRequestsOperation!
+  // ];
 
-  return getViewFromOperations(operations);
+  const dataToLoad = getBlockInternalDataToLoad(block.type);
+  const operations: any[] = [];
+
+  if (
+    dataToLoad.includes("children") &&
+    shouldLoadBlockChildren(state, dispatch, block)
+  ) {
+    const loadChildrenOperation = getLoadChildrenOperation(state, block);
+    operations.push(loadChildrenOperation);
+  }
+
+  if (
+    dataToLoad.includes("collaborators") &&
+    shouldLoadCollaborators(state, dispatch, block)
+  ) {
+    const loadCollaboratorsOperation = getLoadCollaboratorsOperation(
+      state,
+      block
+    );
+
+    operations.push(loadCollaboratorsOperation);
+  }
+
+  if (
+    dataToLoad.includes("collaborationRequests") &&
+    shouldLoadRequests(state, dispatch, block)
+  ) {
+    const loadRequestsOperation = getLoadRequestsOperation(state, block);
+    operations.push(loadRequestsOperation);
+  }
+
+  return operations.length > 0
+    ? getViewFromOperations(operations)
+    : { viewName: "ready" };
 }
 
 function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
@@ -347,7 +383,7 @@ export default function blockDataLoader(
   ownProps: IBlockDataLoaderProps
 ): IBlockDataLoaderResult {
   const block = ownProps.block;
-  const view = getBlockView(state, block);
+  const view = getBlockView(state, dispatch, block);
   const blockData = getViewProps(state, block, view.viewName);
   console.log({ view, blockData });
 

@@ -4,9 +4,9 @@ import { Dispatch } from "redux";
 import { IACFItemValue } from "../../../components/collaborator/ACFItem";
 import { IBlock } from "../../../models/block/block";
 
+import * as blockNet from "../../../net/block";
 import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
-import * as blockNet from "../../../net/block";
 import { IReduxState } from "../../store";
 import { transformError } from "../error";
 import {
@@ -50,7 +50,7 @@ export default async function addCollaboratorsOperation(
       collaborators: requests
     });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -83,7 +83,11 @@ export default async function addCollaboratorsOperation(
       )
     );
 
-    dispatchOperationComplete(dispatch, addCollaboratorsOperationID);
+    dispatchOperationComplete(
+      dispatch,
+      addCollaboratorsOperationID,
+      block.customId
+    );
   } catch (error) {
     const transformedError = transformError(error, {
       replaceBaseNames: [{ from: "collaborators", to: "requests" }]
@@ -92,7 +96,7 @@ export default async function addCollaboratorsOperation(
     dispatchOperationError(
       dispatch,
       addCollaboratorsOperationID,
-      null,
+      block.customId,
       transformedError
     );
   }

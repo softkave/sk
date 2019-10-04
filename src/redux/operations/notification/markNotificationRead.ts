@@ -31,7 +31,11 @@ export default async function markNotificationReadOperation(
     return;
   }
 
-  dispatchOperationStarted(dispatch, updateNotificationOperationID);
+  dispatchOperationStarted(
+    dispatch,
+    updateNotificationOperationID,
+    notification.customId
+  );
 
   try {
     const data = { readAt: Date.now() };
@@ -40,7 +44,7 @@ export default async function markNotificationReadOperation(
       data
     });
 
-    if (result.errors) {
+    if (result && result.errors) {
       throw result.errors;
     }
 
@@ -50,13 +54,17 @@ export default async function markNotificationReadOperation(
       })
     );
 
-    dispatchOperationComplete(dispatch, updateNotificationOperationID);
+    dispatchOperationComplete(
+      dispatch,
+      updateNotificationOperationID,
+      notification.customId
+    );
   } catch (error) {
     const transformedError = transformError(error);
     dispatchOperationError(
       dispatch,
       updateNotificationOperationID,
-      null,
+      notification.customId,
       transformedError
     );
   }

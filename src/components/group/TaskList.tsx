@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
@@ -14,7 +13,7 @@ export interface ITaskListProps {
   user: IUser;
   tasks: IBlock[];
   parent: IBlock;
-  toggleForm: (type: BlockType, parent: IBlock, block: IBlock) => void;
+  toggleForm: (type: BlockType, block?: IBlock) => void;
 }
 
 export default class TaskList extends React.Component<ITaskListProps> {
@@ -54,7 +53,7 @@ export default class TaskList extends React.Component<ITaskListProps> {
             user={user}
             task={task}
             blockHandlers={blockHandlers}
-            onEdit={editedTask => toggleForm("task", parent, editedTask)}
+            onEdit={editedTask => toggleForm("task", editedTask)}
           />
         </BlockThumbnailContainer>
       );

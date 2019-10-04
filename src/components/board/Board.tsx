@@ -126,6 +126,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     const collaborators = this.getCollaborators();
     const childrenTypes = getChildrenTypesForContext(block, boardContext);
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
+    console.log(this);
 
     if (showCollaborators) {
       return this.renderCollaborators();

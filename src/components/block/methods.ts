@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import addBlockOperation from "../../redux/operations/block/addBlock";

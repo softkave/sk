@@ -18,7 +18,7 @@ export default class TaskCollaboratorThumbnail extends React.Component {
                 <div style={{ marginTop: "8px" }}>
                   <Switch
                     disabled={true}
-                    checked={taskCollaborator.data}
+                    checked={!!taskCollaborator.completedAt}
                     onChange={null}
                     style={{ marginRight: "16px" }}
                   />
