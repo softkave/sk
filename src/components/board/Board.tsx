@@ -87,11 +87,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     return <SplitView splits={splits} />;
   }
 
-  private findBlock(blocks: IBlock[] = [], id: string) {
-    return blocks.find(block => block.customId === id);
-  }
-
-  private canHaveContextButtons(block: IBlock) {
+  private canHaveContext(block: IBlock) {
     switch (block.type) {
       case "org":
       case "root":
@@ -124,9 +120,12 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     } = this.state;
 
     const collaborators = this.getCollaborators();
-    const childrenTypes = getChildrenTypesForContext(block, boardContext);
+    const childrenTypes = getChildrenTypesForContext(
+      block,
+      boardContext
+    ) as BlockType[];
     const actLikeRootBlock = isUserRootBlock || isFromRoot;
-    console.log(this);
+    console.log(this, { childrenTypes, boardContext });
 
     if (showCollaborators) {
       return this.renderCollaborators();
@@ -172,10 +171,10 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             <CreateButton
               types={childrenTypes}
               label="Create"
-              onClick={type => this.toggleForm(type, block)}
+              onClick={type => this.toggleForm(type as BlockType, block)}
             />
           )}
-          {this.canHaveContextButtons(block) && (
+          {this.canHaveContext(block) && (
             <ContextButtons>
               <Button.Group>
                 <Button

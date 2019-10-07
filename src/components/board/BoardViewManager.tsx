@@ -32,7 +32,7 @@ class BoardViewManager extends React.Component<IBoardViewManagerProps> {
         viewName: "ready",
         render() {
           if (readyProps) {
-            return <Board block={block} {...readyProps} />;
+            return <Board key={block.customId} block={block} {...readyProps} />;
           } else {
             return <BoardError block={block} />;
           }

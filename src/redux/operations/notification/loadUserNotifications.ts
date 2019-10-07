@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import * as notificationActions from "../../notifications/actions";

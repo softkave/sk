@@ -4,7 +4,7 @@ import {
   getUserTokenFromStorage,
   saveUserTokenInStorage
 } from "../../../storage/userSession";
-import { loginUserRedux } from "../../session/actions";
+import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import { transformError } from "../error";
@@ -52,6 +52,7 @@ export default async function initializeAppSessionOperation(
     dispatchOperationComplete(dispatch, initializeAppSessionOperationID);
   } catch (error) {
     const transformedError = transformError(error);
+    dispatch(setSessionToWeb());
     dispatchOperationError(
       dispatch,
       initializeAppSessionOperationID,

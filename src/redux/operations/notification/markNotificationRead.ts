@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";

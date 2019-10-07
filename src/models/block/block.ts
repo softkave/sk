@@ -38,10 +38,6 @@ export interface IBlock {
   roles: IBlockRole[];
   collaborators: string[];
   collaborationRequests: string[];
-
-  loadingChildren?: boolean;
-  loadingCollaborators?: boolean;
-  loadingCollaborationRequests?: boolean;
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

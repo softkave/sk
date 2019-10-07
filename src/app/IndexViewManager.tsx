@@ -25,17 +25,17 @@ export interface IIndexViewManagerProps {
 class IndexViewManager extends React.Component<IIndexViewManagerProps> {
   public render() {
     console.log(this.props);
-    const {
-      initializingProps: intializingProps,
-      readyProps,
-      view: currentView
-    } = this.props;
+    const { initializingProps, readyProps, view: currentView } = this.props;
     const renderViews: IRenderView[] = [
       {
         // TODO: Test this view
         viewName: sessionInitializing,
         render() {
-          return <SoftkaveLoadingView percent={intializingProps!.progress} />;
+          return (
+            <SoftkaveLoadingView
+              percent={initializingProps && initializingProps.progress}
+            />
+          );
         }
       },
       {

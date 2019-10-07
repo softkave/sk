@@ -168,7 +168,7 @@ class Group extends React.PureComponent<IGroupProps> {
     );
 
     const overlay = (
-      <Menu onClick={this.onSelectControl}>
+      <StyledGroupControlMenu onClick={this.onSelectControl}>
         {childrenTypes.map(type => {
           return (
             <Menu.Item key={type}>
@@ -185,7 +185,7 @@ class Group extends React.PureComponent<IGroupProps> {
             <StyledCapitalizeText>Delete Group</StyledCapitalizeText>
           </Menu.Item>
         ]}
-      </Menu>
+      </StyledGroupControlMenu>
     );
 
     return (
@@ -234,5 +234,9 @@ const GroupContainerInner = styled.div`
   flex-direction: column;
   border-radius: 4px;
 `;
+
+const StyledGroupControlMenu = styled(Menu)({
+  marginTop: "7px"
+});
 
 export default Group;

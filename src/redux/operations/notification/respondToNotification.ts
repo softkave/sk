@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../../models/block/block";
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";

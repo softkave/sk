@@ -6,13 +6,9 @@ import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import { consumeOperation } from "../../redux/operations/actions";
 import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
-import IOperation, {
-  isOperationCompleted
-} from "../../redux/operations/operation";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,

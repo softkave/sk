@@ -8,6 +8,7 @@ import {
 import { initializeAppSessionOperationID } from "../redux/operations/operationIDs";
 import { getOperationsWithID } from "../redux/operations/selectors";
 import initializeAppSessionOperation from "../redux/operations/session/initializeAppSession";
+import { sessionInitializing } from "../redux/session/reducer";
 import { getSessionType, isUserSignedIn } from "../redux/session/selectors";
 import { IReduxState } from "../redux/store";
 import IndexViewManager from "./IndexViewManager";
@@ -28,6 +29,10 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
   )[0];
 
   console.log({ sessionType, initializeOperation });
+  return {
+    view: { viewName: sessionInitializing },
+    initializingProps: { progress: 50 }
+  };
 
   if (sessionType === "initializing") {
     if (!initializeOperation) {
@@ -73,7 +78,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
         }
       };
     } else {
-      throw new Error("Application error");
+      return { view: { viewName: sessionType } };
     }
   }
 

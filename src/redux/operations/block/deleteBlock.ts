@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
+import { deleteBlockRedux } from "../../blocks/actions";
 import { IReduxState } from "../../store";
 import { transformError } from "../error";
 import {
@@ -12,7 +12,6 @@ import {
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
-import { deleteBlockRedux } from "../../blocks/actions";
 
 export default async function deleteBlockOperation(
   state: IReduxState,

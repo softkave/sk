@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
-
 import ItemAvatar from "../ItemAvatar";
 
 export interface IAvatarItem {
@@ -120,7 +119,7 @@ const StyledAvatarListContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  height: 40;
+  height: 40px;
 `;
 
 const StyledAvatarContainer = styled.div`

@@ -26,3 +26,8 @@ export const updateUserOperationID = "updateUserOperationID";
 // session
 export const initializeAppSessionOperationID =
   "initializeAppSessionOperationID";
+export const signupUserOperationID = "signupUserOperationID";
+export const loginUserOperationID = "loginUserOperationID";
+export const requestForgotPasswordOperationID =
+  "requestForgotPasswordOperationID";
+export const changePasswordOperationID = "changePasswordOperationID";
