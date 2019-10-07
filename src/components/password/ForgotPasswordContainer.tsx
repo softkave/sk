@@ -1,22 +1,8 @@
 import { connect } from "react-redux";
-import netInterface from "../../net";
-import { IPipeline, makePipeline } from "../FormPipeline";
+import requestForgotPasswordOperation, {
+  IForgotPasswordData
+} from "../../redux/operations/session/requestForgotPassword";
 import ForgotPassword from "./ForgotPassword";
-
-interface IForgotPasswordParams {
-  email: string;
-}
-
-const methods: IPipeline<
-  IForgotPasswordParams,
-  IForgotPasswordParams,
-  undefined,
-  null
-> = {
-  async net({ params }) {
-    return await netInterface("user.forgotPassword", { email: params.email });
-  }
-};
 
 function mapStateToProps(state) {
   return state;
@@ -28,7 +14,9 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps(state, { dispatch }) {
   return {
-    onSubmit: makePipeline(methods, { state, dispatch })
+    async onSubmit(data: IForgotPasswordData) {
+      return requestForgotPasswordOperation(state, dispatch, data);
+    }
   };
 }
 

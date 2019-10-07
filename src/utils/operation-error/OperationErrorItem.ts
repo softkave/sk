@@ -65,7 +65,7 @@ export default class OperationErrorItem extends Error {
 
     return new OperationErrorItem(
       defaultOperationErrorItemType,
-      defaultOperationErrorItemMessage
+      anErrorOccurredMessage
     );
   }
 
@@ -138,9 +138,9 @@ export default class OperationErrorItem extends Error {
 
 export const defaultOperationErrorItemType = "error";
 export const defaultOperationErrorItemField = "error";
-export const defaultOperationErrorItemMessage = "An error occurred";
-export const defaultOperationErrorItem = new OperationErrorItem(
+export const anErrorOccurredMessage = "An error occurred";
+export const anErrorOccurred = new OperationErrorItem(
   defaultOperationErrorItemType,
-  defaultOperationErrorItemMessage,
+  anErrorOccurredMessage,
   defaultOperationErrorItemField
 );

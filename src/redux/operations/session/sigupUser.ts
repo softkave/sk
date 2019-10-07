@@ -2,6 +2,9 @@ import randomColor from "randomcolor";
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
+import OperationErrorItem, {
+  anErrorOccurred
+} from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -35,9 +38,9 @@ export default async function signupUserOperation(
       dispatch,
       signupUserOperationID,
       user.email,
-
-      // TODO: define error type, and look into adding a better error message
-      [{ field: "error", message: "You've signed up already" }]
+      new OperationError([
+        new OperationErrorItem("error", "You've signed up already")
+      ])
     );
 
     return;
@@ -56,7 +59,7 @@ export default async function signupUserOperation(
       dispatch(addUserRedux(result.user));
       dispatch(loginUserRedux(result.token, result.user.customId));
     } else {
-      throw [{ field: "error", message: "An error occurred" }];
+      throw anErrorOccurred;
     }
 
     dispatchOperationComplete(dispatch, signupUserOperationID, data.email);

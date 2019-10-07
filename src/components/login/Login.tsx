@@ -2,8 +2,8 @@ import { Button, Checkbox, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-
 import { userConstants } from "../../models/user/constants";
+import { ILoginUserData } from "../../redux/operations/session/loginUser";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
 
@@ -18,13 +18,8 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface ILoginValues {
-  email: string;
-  password: string;
-}
-
 export interface ILoginProps {
-  onSubmit: (values: ILoginValues) => void | Promise<void>;
+  onSubmit: (values: ILoginUserData) => void | Promise<void>;
 }
 
 class Login extends React.Component<ILoginProps> {

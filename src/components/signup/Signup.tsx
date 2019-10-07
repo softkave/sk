@@ -2,11 +2,11 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern, textPattern } from "../../models/user/descriptor";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
+import { ISignupUserData } from "../../redux/operations/session/sigupUser";
 
 // TODO: Add minimum and maximum to input helper
 const passwordExtraInfo = "Minimum of 5 characters";
@@ -43,14 +43,8 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface ISignupValues {
-  name: string;
-  email: string;
-  password: string;
-}
-
 export interface ISignupProps {
-  onSubmit: (values: ISignupValues) => void | Promise<void>;
+  onSubmit: (values: ISignupUserData) => void | Promise<void>;
 }
 
 class Signup extends React.Component<ISignupProps> {

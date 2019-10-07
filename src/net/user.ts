@@ -18,6 +18,8 @@ import {
 
 const tokenStorageName = "t";
 
+// TODO: Define types for the parameters
+
 export async function signup({ user }) {
   const userFields = ["name", "password", "email", "color"];
 
@@ -67,12 +69,13 @@ export function updateUser({ user }) {
   );
 }
 
-export async function changePassword({ password }) {
+export async function changePassword({ password, token }) {
   const result = await auth(
     null,
     changePasswordMutation,
     { password },
-    "data.user.changePassword"
+    "data.user.changePassword",
+    token
   );
 
   const prevToken = getItem(tokenStorageName);

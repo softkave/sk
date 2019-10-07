@@ -25,12 +25,12 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface IChangePasswordValues {
+export interface IChangePasswordFormValues {
   password: string;
 }
 
 export interface IChangePasswordProps {
-  onSubmit: (values: IChangePasswordValues) => void | Promise<void>;
+  onSubmit: (values: IChangePasswordFormValues) => void | Promise<void>;
 }
 
 class ChangePassword extends React.Component<IChangePasswordProps> {

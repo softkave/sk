@@ -1,9 +1,7 @@
 import isObject from "lodash/isObject";
 import { indexArray } from "../object";
 import testValidity from "../testValidity";
-import OperationErrorItem, {
-  defaultOperationErrorItem
-} from "./OperationErrorItem";
+import OperationErrorItem, { anErrorOccurred } from "./OperationErrorItem";
 
 // TODO: add calling captureStackTrace
 export default class OperationError extends Error {
@@ -162,5 +160,5 @@ export default class OperationError extends Error {
 }
 
 export const defaultOperationError = new OperationError([
-  OperationErrorItem.fromAny(defaultOperationErrorItem)
+  OperationErrorItem.fromAny(anErrorOccurred)
 ]);

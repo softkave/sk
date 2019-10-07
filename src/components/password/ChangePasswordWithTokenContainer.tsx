@@ -1,48 +1,15 @@
 import { connect } from "react-redux";
-import { IUser } from "../../models/user/user";
-import netInterface from "../../net";
-import { INetResult } from "../../net/query";
-import { loginUserRedux } from "../../redux/session/actions";
-import { addUserRedux } from "../../redux/users/actions";
-import { devLog } from "../../utils/log";
-import { IPipeline, makePipeline } from "../FormPipeline";
-import ChangePassword from "./ChangePassword";
+import { dispatchOperationError } from "../../redux/operations/operation";
+import { changePasswordOperationID } from "../../redux/operations/operationIDs";
+import changePasswordOperation from "../../redux/operations/session/changePassword";
+import OperationError, {
+  defaultOperationError
+} from "../../utils/operation-error/OperationError";
+import ChangePassword, { IChangePasswordFormValues } from "./ChangePassword";
 
-interface IChangePasswordWithTokenParams {
-  password: string;
-  token: string;
-}
-
-interface IChangePasswordWithTokenNetResult extends INetResult {
-  user?: IUser;
-  token?: string;
-}
-
-const methods: IPipeline<
-  IChangePasswordWithTokenParams,
-  IChangePasswordWithTokenParams,
-  IChangePasswordWithTokenNetResult,
-  IChangePasswordWithTokenNetResult
-> = {
-  async net({ params }) {
-    const query = new URLSearchParams(window.location.search);
-
-    return await netInterface("user.changePasswordWithToken", {
-      password: params.password,
-      token: query.get("t")
-    });
-  },
-
-  redux({ result, dispatch }) {
-    if (result.user && result.token) {
-      dispatch(addUserRedux(result.user));
-      dispatch(loginUserRedux(result.token, result.user.customId));
-    } else if (result && result.errors) {
-      devLog(__filename, result);
-      throw [{ type: "error", message: new Error("An error occurred") }];
-    }
-  }
-};
+// TODO: Implement an endpoint to get user email from token ( forgot password and session token )
+// TODO: Implement a way to supply token to a net call
+// TODO: Implement an endpoint to convert forgot password token to change password token ( maybe not necessary )
 
 function mapStateToProps(state) {
   return state;
@@ -54,7 +21,26 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps(state, { dispatch }) {
   return {
-    onSubmit: makePipeline(methods, { state, dispatch })
+    async onSubmit(data: IChangePasswordFormValues) {
+      throw new Error("Implementation not complete");
+      const query = new URLSearchParams(window.location.search);
+      const token = query.get("t");
+
+      if (!token) {
+        dispatchOperationError(
+          dispatch,
+          changePasswordOperationID,
+          null,
+          OperationError.fromAny(defaultOperationError)
+        );
+      }
+
+      return changePasswordOperation(state, dispatch, {
+        password: data.password,
+        email: "",
+        token: token!
+      });
+    }
   };
 }
 

@@ -2,7 +2,7 @@ import { Button, Form, Input, notification } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-
+import { IForgotPasswordData } from "../../redux/operations/session/requestForgotPassword";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
 
@@ -22,12 +22,8 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface IForgotPasswordValues {
-  email: string;
-}
-
 export interface IForgotPasswordProps {
-  onSubmit: (values: IForgotPasswordValues) => void | Promise<void>;
+  onSubmit: (values: IForgotPasswordData) => void | Promise<void>;
 }
 
 class ForgotPassword extends React.Component<IForgotPasswordProps> {
