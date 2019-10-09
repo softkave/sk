@@ -4,10 +4,10 @@ import {
   getUserTokenFromStorage,
   saveUserTokenInStorage
 } from "../../../storage/userSession";
+import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
-import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -51,7 +51,7 @@ export default async function initializeAppSessionOperation(
 
     dispatchOperationComplete(dispatch, initializeAppSessionOperationID);
   } catch (error) {
-    const transformedError = transformError(error);
+    const transformedError = OperationError.fromAny(error);
     dispatch(setSessionToWeb());
     dispatchOperationError(
       dispatch,

@@ -17,7 +17,7 @@ import { getOperationWithIDForResource } from "../selectors";
 export interface IChangePasswordData {
   email: string;
   password: string;
-  token: string;
+  token?: string;
 }
 
 export default async function changePasswordOperation(
@@ -25,6 +25,17 @@ export default async function changePasswordOperation(
   dispatch: Dispatch,
   user: IChangePasswordData
 ) {
+  if (!user.token) {
+    dispatchOperationError(
+      dispatch,
+      changePasswordOperationID,
+      user.email,
+      OperationError.fromAny(new Error("Invalid credentials"))
+    );
+
+    return;
+  }
+
   const operation = getOperationWithIDForResource(
     state,
     changePasswordOperationID,
@@ -60,7 +71,7 @@ export default async function changePasswordOperation(
       dispatch,
       changePasswordOperationID,
       user.email,
-      err.errors
+      err
     );
   }
 }

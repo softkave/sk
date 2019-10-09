@@ -26,15 +26,6 @@ function mergeProps(state, { dispatch }) {
       const query = new URLSearchParams(window.location.search);
       const token = query.get("t");
 
-      if (!token) {
-        dispatchOperationError(
-          dispatch,
-          changePasswordOperationID,
-          null,
-          OperationError.fromAny(defaultOperationError)
-        );
-      }
-
       return changePasswordOperation(state, dispatch, {
         password: data.password,
         email: "",

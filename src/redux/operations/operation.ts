@@ -1,4 +1,5 @@
 import { Dispatch } from "redux";
+import OperationError from "../../utils/operation-error/OperationError";
 import { pushOperation } from "./actions";
 
 const operationStarted = "started";
@@ -23,7 +24,7 @@ export interface IOperationStatus<StatusType extends string = string> {
   status: StatusType;
   timestamp: number;
   data?: any;
-  meta?: any;
+  error?: OperationError;
 }
 
 export default interface IOperation<
@@ -75,11 +76,11 @@ export function isOperationError(operation: IOperation) {
 export function makeOperationStatus(
   statusType: string,
   data?: any,
-  meta?: any
+  error?: OperationError
 ): IOperationStatus {
   return {
     data,
-    meta,
+    error,
     status: statusType,
     timestamp: Date.now()
   };
@@ -91,12 +92,12 @@ function dispatchOperationStatus(
   statusType: string,
   resourceID?: string | null,
   data?: any,
-  meta?: any
+  error?: OperationError
 ) {
   dispatch(
     pushOperation(
       operationID,
-      makeOperationStatus(statusType, data, meta),
+      makeOperationStatus(statusType, data, error),
       resourceID
     )
   );
@@ -106,16 +107,14 @@ export function dispatchOperationStarted(
   dispatch: Dispatch,
   operationID: string,
   resourceID?: string | null,
-  data?: any,
-  meta?: any
+  data?: any
 ) {
   dispatchOperationStatus(
     dispatch,
     operationID,
     defaultOperationStatusTypes.operationStarted,
     resourceID,
-    data,
-    meta
+    data
   );
 }
 
@@ -123,16 +122,14 @@ export function dispatchOperationPending(
   dispatch: Dispatch,
   operationID: string,
   resourceID?: string | null,
-  data?: any,
-  meta?: any
+  data?: any
 ) {
   dispatchOperationStatus(
     dispatch,
     operationID,
     defaultOperationStatusTypes.operationPending,
     resourceID,
-    data,
-    meta
+    data
   );
 }
 
@@ -140,8 +137,8 @@ export function dispatchOperationError(
   dispatch: Dispatch,
   operationID: string,
   resourceID?: string | null,
-  data?: any,
-  meta?: any
+  error?: OperationError,
+  data?: any
 ) {
   dispatchOperationStatus(
     dispatch,
@@ -149,7 +146,7 @@ export function dispatchOperationError(
     defaultOperationStatusTypes.operationError,
     resourceID,
     data,
-    meta
+    error
   );
 }
 
@@ -157,15 +154,13 @@ export function dispatchOperationComplete(
   dispatch: Dispatch,
   operationID: string,
   resourceID?: string | null,
-  data?: any,
-  meta?: any
+  data?: any
 ) {
   dispatchOperationStatus(
     dispatch,
     operationID,
     defaultOperationStatusTypes.operationComplete,
     resourceID,
-    data,
-    meta
+    data
   );
 }

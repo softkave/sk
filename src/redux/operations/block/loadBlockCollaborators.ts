@@ -1,11 +1,10 @@
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
+import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
 import * as userActions from "../../users/actions";
-import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -62,7 +61,7 @@ export default async function loadBlockCollaboratorsOperation(
       block.customId
     );
   } catch (error) {
-    const transformedError = transformError(error);
+    const transformedError = OperationError.fromAny(error);
     dispatchOperationError(
       dispatch,
       getBlockCollaboratorsOperationID,

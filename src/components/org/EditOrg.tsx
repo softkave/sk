@@ -56,7 +56,10 @@ class EditOrg extends React.Component<IEditOrgProps> {
         initialValues={data!}
         validationSchema={validationSchema}
         onSubmit={(values, props) => {
+          // TODO: Implement right type
           (values as any).type = "org";
+
+          // TODO: Find a better alternative
           submitHandler(onSubmit, values, props);
         }}
       >

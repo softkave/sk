@@ -68,11 +68,6 @@ export default async function signupUserOperation(
       stripBaseNames: ["user"]
     });
 
-    dispatchOperationError(
-      dispatch,
-      signupUserOperationID,
-      data.email,
-      err.errors
-    );
+    dispatchOperationError(dispatch, signupUserOperationID, data.email, err);
   }
 }

@@ -2,9 +2,9 @@ import { Dispatch } from "redux";
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
+import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
 import { IReduxState } from "../../store";
-import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -59,7 +59,7 @@ export default async function markNotificationReadOperation(
       notification.customId
     );
   } catch (error) {
-    const transformedError = transformError(error);
+    const transformedError = OperationError.fromAny(error);
     dispatchOperationError(
       dispatch,
       updateNotificationOperationID,

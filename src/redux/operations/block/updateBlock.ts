@@ -1,11 +1,10 @@
 import moment from "moment";
 import { Dispatch } from "redux";
-
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
+import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
-import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -52,7 +51,7 @@ export default async function updateBlockOperation(
 
     dispatchOperationComplete(dispatch, updateBlockOperationID, block.customId);
   } catch (error) {
-    const transformedError = transformError(error, {
+    const transformedError = OperationError.fromAny(error).transform({
       // filterBaseNames: ["block"],
       stripBaseNames: ["data"]
     });

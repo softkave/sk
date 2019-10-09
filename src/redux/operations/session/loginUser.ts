@@ -55,11 +55,6 @@ export default async function loginUserOperation(
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(
-      dispatch,
-      loginUserOperationID,
-      user.email,
-      err.errors
-    );
+    dispatchOperationError(dispatch, loginUserOperationID, user.email, err);
   }
 }

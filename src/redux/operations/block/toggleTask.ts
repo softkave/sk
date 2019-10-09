@@ -3,9 +3,9 @@ import { IBlock, ITaskCollaborator } from "../../../models/block/block";
 import { assignTask } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
+import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
-import { transformError } from "../error";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -89,7 +89,7 @@ export default async function toggleTaskOperation(
 
     dispatchOperationComplete(dispatch, toggleTaskOperationID, block.customId);
   } catch (error) {
-    const transformedError = transformError(error);
+    const transformedError = OperationError.fromAny(error);
     dispatchOperationError(
       dispatch,
       toggleTaskOperationID,

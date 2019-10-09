@@ -55,7 +55,7 @@ export default async function requestForgotPasswordOperation(
       dispatch,
       requestForgotPasswordOperationID,
       user.email,
-      err.errors
+      err
     );
   }
 }
