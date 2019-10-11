@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { dispatchOperationError } from "../../redux/operations/operation";
 import { changePasswordOperationID } from "../../redux/operations/operationIDs";
+import { getFirstOperationWithID } from "../../redux/operations/selectors";
 import changePasswordOperation from "../../redux/operations/session/changePassword";
 import OperationError, {
   defaultOperationError
@@ -21,6 +22,7 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps(state, { dispatch }) {
   return {
+    operation: getFirstOperationWithID(state, changePasswordOperationID),
     async onSubmit(data: IChangePasswordFormValues) {
       throw new Error("Implementation not complete");
       const query = new URLSearchParams(window.location.search);

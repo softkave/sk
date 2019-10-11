@@ -5,6 +5,7 @@ import * as yup from "yup";
 
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern } from "../../models/user/descriptor";
+import IOperation from "../../redux/operations/operation";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
 
@@ -30,6 +31,7 @@ export interface IChangePasswordFormValues {
 }
 
 export interface IChangePasswordProps {
+  operation: IOperation;
   onSubmit: (values: IChangePasswordFormValues) => void | Promise<void>;
 }
 

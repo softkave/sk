@@ -2,6 +2,7 @@ import { Button, Form, Input, notification } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
+import IOperation from "../../redux/operations/operation";
 import { IForgotPasswordData } from "../../redux/operations/session/requestForgotPassword";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
@@ -23,6 +24,7 @@ const validationSchema = yup.object().shape({
 });
 
 export interface IForgotPasswordProps {
+  operation: IOperation;
   onSubmit: (values: IForgotPasswordData) => void | Promise<void>;
 }
 

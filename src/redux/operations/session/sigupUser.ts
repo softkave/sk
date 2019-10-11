@@ -37,7 +37,7 @@ export default async function signupUserOperation(
     dispatchOperationError(
       dispatch,
       signupUserOperationID,
-      user.email,
+      null,
       new OperationError([
         new OperationErrorItem("error", "You've signed up already")
       ])
@@ -48,7 +48,7 @@ export default async function signupUserOperation(
 
   const data = { ...user, color: randomColor() };
 
-  dispatchOperationStarted(dispatch, signupUserOperationID, data.email);
+  dispatchOperationStarted(dispatch, signupUserOperationID);
 
   try {
     const result = await userNet.signup({ user: data });
@@ -62,12 +62,12 @@ export default async function signupUserOperation(
       throw anErrorOccurred;
     }
 
-    dispatchOperationComplete(dispatch, signupUserOperationID, data.email);
+    dispatchOperationComplete(dispatch, signupUserOperationID);
   } catch (error) {
     const err = OperationError.fromAny(error).transform({
       stripBaseNames: ["user"]
     });
 
-    dispatchOperationError(dispatch, signupUserOperationID, data.email, err);
+    dispatchOperationError(dispatch, signupUserOperationID, null, err);
   }
 }

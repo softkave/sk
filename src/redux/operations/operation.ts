@@ -38,8 +38,21 @@ export default interface IOperation<
   resourceID?: string | null;
 }
 
-export function getOperationLastStatus(operation: IOperation) {
-  return operation.statusHistory[operation.statusHistory.length - 1];
+export function getOperationLastStatus(operation?: IOperation) {
+  return (
+    operation && operation.statusHistory[operation.statusHistory.length - 1]
+  );
+}
+
+export function getOperationLastError(operation?: IOperation) {
+  if (operation && isOperationError(operation)) {
+    const status =
+      operation && operation.statusHistory[operation.statusHistory.length - 1];
+
+    if (status) {
+      return status.error;
+    }
+  }
 }
 
 export function getOperationStatusesWithType(
@@ -53,8 +66,7 @@ export function getOperationStatusesWithType(
 
 export function getOperationLastStatusType(operation: IOperation) {
   const lastStatus = getOperationLastStatus(operation);
-
-  return lastStatus ? lastStatus.status : null;
+  return lastStatus && lastStatus.status;
 }
 
 export function isOperationStarted(operation: IOperation) {

@@ -1,4 +1,6 @@
 import { connect } from "react-redux";
+import { requestForgotPasswordOperationID } from "../../redux/operations/operationIDs";
+import { getFirstOperationWithID } from "../../redux/operations/selectors";
 import requestForgotPasswordOperation, {
   IForgotPasswordData
 } from "../../redux/operations/session/requestForgotPassword";
@@ -14,6 +16,7 @@ function mapDispatchToProps(dispatch) {
 
 function mergeProps(state, { dispatch }) {
   return {
+    operation: getFirstOperationWithID(state, requestForgotPasswordOperationID),
     async onSubmit(data: IForgotPasswordData) {
       return requestForgotPasswordOperation(state, dispatch, data);
     }

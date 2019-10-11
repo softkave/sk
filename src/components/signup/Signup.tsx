@@ -4,9 +4,10 @@ import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern, textPattern } from "../../models/user/descriptor";
+import IOperation from "../../redux/operations/operation";
+import { ISignupUserData } from "../../redux/operations/session/sigupUser";
 import FormError from "../form/FormError";
 import { getGlobalError, submitHandler } from "../formik-utils";
-import { ISignupUserData } from "../../redux/operations/session/sigupUser";
 
 // TODO: Add minimum and maximum to input helper
 const passwordExtraInfo = "Minimum of 5 characters";
@@ -44,6 +45,7 @@ const validationSchema = yup.object().shape({
 });
 
 export interface ISignupProps {
+  operation: IOperation;
   onSubmit: (values: ISignupUserData) => void | Promise<void>;
 }
 
