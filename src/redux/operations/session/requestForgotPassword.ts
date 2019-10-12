@@ -9,7 +9,7 @@ import {
   isOperationStarted
 } from "../operation";
 import { requestForgotPasswordOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getFirstOperationWithID } from "../selectors";
 
 export interface IForgotPasswordData {
   email: string;
@@ -20,21 +20,16 @@ export default async function requestForgotPasswordOperation(
   dispatch: Dispatch,
   user: IForgotPasswordData
 ) {
-  const operation = getOperationWithIDForResource(
+  const operation = getFirstOperationWithID(
     state,
-    requestForgotPasswordOperationID,
-    user.email
+    requestForgotPasswordOperationID
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  dispatchOperationStarted(
-    dispatch,
-    requestForgotPasswordOperationID,
-    user.email
-  );
+  dispatchOperationStarted(dispatch, requestForgotPasswordOperationID);
 
   try {
     const result = await userNet.forgotPassword(user);
@@ -43,18 +38,14 @@ export default async function requestForgotPasswordOperation(
       throw result.errors;
     }
 
-    dispatchOperationComplete(
-      dispatch,
-      requestForgotPasswordOperationID,
-      user.email
-    );
+    dispatchOperationComplete(dispatch, requestForgotPasswordOperationID);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
     dispatchOperationError(
       dispatch,
       requestForgotPasswordOperationID,
-      user.email,
+      null,
       err
     );
   }

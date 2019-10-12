@@ -2,9 +2,11 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-
+import { BlockType } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
+import IOperation from "../../redux/operations/operation";
+import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import {
   FormBody,
@@ -13,13 +15,17 @@ import {
   FormScrollList,
   StyledForm
 } from "../form/FormInternals";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
 
+// TODO: Move to a central location
 const groupExistsErrorMessage = "Group with the same name exists";
+
+// TODO: Add custom messages to the schemas
 const validationSchema = yup.object().shape({
   name: yup
     .string()
+    .min(blockConstants.minNameLength)
     .max(blockConstants.maxNameLength)
     .matches(textPattern)
     .required(),
@@ -32,16 +38,18 @@ const validationSchema = yup.object().shape({
 // TODO: untouched fields are showing error message because of a re-render
 // const requiredFields = ["name"];
 
-interface IEditGroupValues {
+export interface IEditGroupData {
+  type: BlockType;
   name: string;
   description?: string;
 }
 
 export interface IEditGroupProps {
-  onSubmit: (values: IEditGroupValues) => void | Promise<void>;
+  onSubmit: (values: IEditGroupData) => void | Promise<void>;
   submitLabel?: string;
-  data?: IEditGroupValues;
+  data?: IEditGroupData;
   existingGroups?: string[];
+  operation?: IOperation;
 }
 
 const defaultSubmitLabel = "Create Group";
@@ -52,26 +60,30 @@ class EditGroup extends React.Component<IEditGroupProps> {
     existingGroups: []
   };
 
+  private formikRef: React.RefObject<
+    Formik<IEditGroupData>
+  > = React.createRef();
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
   public render() {
     const { data, submitLabel, onSubmit } = this.props;
 
     // TODO: Integrate internal validation
     return (
       <Formik
-        initialValues={data!}
+        ref={this.formikRef}
+        initialValues={cast<IEditGroupData>(data || {})}
         validationSchema={validationSchema}
-        onSubmit={(values, props) => {
-          // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
-          const error = this.validate(values);
-
-          if (error) {
-            props.setErrors(error);
-            props.setSubmitting(false);
-            return;
-          }
-
-          (values as any).type = "group";
-          submitHandler(onSubmit, values, props);
+        onSubmit={values => {
+          values.type = "group";
+          onSubmit(values);
         }}
       >
         {({
@@ -81,7 +93,9 @@ class EditGroup extends React.Component<IEditGroupProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
+          isSubmitting,
+          setFieldError,
+          setFieldValue
         }) => {
           const globalError = getGlobalError(errors);
 
@@ -105,7 +119,19 @@ class EditGroup extends React.Component<IEditGroupProps> {
                         autoComplete="off"
                         name="name"
                         onBlur={handleBlur}
-                        onChange={handleChange}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          const value = event.target.value;
+
+                          setFieldValue("name", value);
+
+                          if (value && value.length > 0) {
+                            if (this.groupExists(value)) {
+                              setFieldError("name", groupExistsErrorMessage);
+                            }
+                          }
+                        }}
                         value={values.name}
                       />
                     </Form.Item>
@@ -142,11 +168,11 @@ class EditGroup extends React.Component<IEditGroupProps> {
     );
   }
 
-  private validate(values: IEditGroupValues) {
+  private groupExists(name: string) {
     const { existingGroups } = this.props;
 
-    if (existingGroups && existingGroups.indexOf(values.name) !== -1) {
-      return { name: groupExistsErrorMessage };
+    if (existingGroups && existingGroups.indexOf(name) !== -1) {
+      return true;
     }
   }
 }

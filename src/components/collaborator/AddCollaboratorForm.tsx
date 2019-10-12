@@ -3,7 +3,6 @@ import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
 import * as yup from "yup";
-
 import { blockConstants } from "../../models/block/constants.js";
 import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification.js";
@@ -11,6 +10,9 @@ import { notificationErrorMessages } from "../../models/notification/notificatio
 import { IUser } from "../../models/user/user.js";
 import { userErrorMessages } from "../../models/user/userErrorMessages.js";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages.js";
+import IOperation from "../../redux/operations/operation.js";
+import cast from "../../utils/cast.js";
+import findItem from "../../utils/findItem.js";
 import FormError from "../form/FormError";
 import {
   FormBody,
@@ -19,11 +21,14 @@ import {
   FormScrollList,
   StyledForm
 } from "../form/FormInternals";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
-import ACF from "./ACF";
-import ACFExpiresAt from "./ACFExpiresAt";
-import { IACFItemValue } from "./ACFItem.jsx";
+import {
+  IAddCollaboratorFormItemData,
+  IAddCollaboratorFormItemError
+} from "./AddCollaboratorFormItem.jsx";
+import AddCollaboratorFormItemList from "./AddCollaboratorFormItemList";
+import ExpiresAt from "./ExpiresAt";
 
 const emailExistsErrorMessage = "Email addresss has been entered already";
 
@@ -54,40 +59,43 @@ const validationSchema = yup.object().shape({
 
 // TODO: Test not allowing action on an expired collaboration request
 
-export interface IACValue {
+export interface IAddCollaboratorFormData {
   message?: string;
   expiresAt?: number;
-  requests: IACFItemValue[];
+  requests: IAddCollaboratorFormItemData[];
 }
 
-export interface IACProp {
+export interface IAddCollaboratorFormProps {
   existingCollaborators: IUser[];
   existingCollaborationRequests: INotification[];
-  onSendRequests: (value: IACValue) => void;
+  onSendRequests: (value: IAddCollaboratorFormData) => void;
+  operation?: IOperation;
 }
 
-class AC extends React.PureComponent<IACProp> {
+class AddCollaboratorForm extends React.PureComponent<
+  IAddCollaboratorFormProps
+> {
+  private formikRef: React.RefObject<
+    Formik<IAddCollaboratorFormData>
+  > = React.createRef();
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
   public render() {
     const { onSendRequests } = this.props;
 
     return (
       <Formik
-        initialValues={{
-          message: undefined,
-          expiresAt: undefined,
-          requests: []
-        }}
-        onSubmit={(values, props) => {
-          // TODO: Test for these errors during change, maybe by adding unique or test function to the schema
-          const errors = this.validateRequests(values.requests);
-
-          if (errors) {
-            props.setErrors({ requests: errors });
-            props.setSubmitting(false);
-            return;
-          }
-
-          submitHandler(onSendRequests, values, props);
+        ref={this.formikRef}
+        initialValues={cast<IAddCollaboratorFormData>({ requests: [] })}
+        onSubmit={values => {
+          onSendRequests(values);
         }}
         validationSchema={validationSchema}
       >
@@ -99,7 +107,8 @@ class AC extends React.PureComponent<IACProp> {
           handleBlur,
           handleSubmit,
           isSubmitting,
-          setFieldValue
+          setFieldValue,
+          setFieldError
         }) => {
           const globalError = getGlobalError(errors);
 
@@ -130,7 +139,7 @@ class AC extends React.PureComponent<IACProp> {
                       label="Default Expiration Date"
                       help={<FormError>{errors.expiresAt}</FormError>}
                     >
-                      <ACFExpiresAt
+                      <ExpiresAt
                         minDate={moment()
                           .subtract(1, "day")
                           .endOf("day")}
@@ -139,15 +148,18 @@ class AC extends React.PureComponent<IACProp> {
                       />
                     </Form.Item>
                     <Form.Item label="Requests">
-                      <ACF
+                      <AddCollaboratorFormItemList
                         value={values.requests}
                         maxRequests={
                           blockConstants.maxAddCollaboratorValuesLength
                         }
                         onChange={value => {
                           setFieldValue("requests", value);
+                          setFieldError("requests", this.getErrorFromRequests(
+                            value
+                          ) as any);
                         }}
-                        errors={errors.requests as any}
+                        errors={errors.requests}
                       />
                     </Form.Item>
                   </FormBody>
@@ -170,63 +182,49 @@ class AC extends React.PureComponent<IACProp> {
     );
   }
 
-  private validateRequests = value => {
+  private getErrorFromRequests(requests: IAddCollaboratorFormItemData[]) {
     const { existingCollaborationRequests, existingCollaborators } = this.props;
-    function findRequest(requests, request, excludeIndex) {
-      return requests.find((next, index) => {
-        return next.email === request.email && index !== excludeIndex;
-      });
-    }
+    const errors: Array<
+      IAddCollaboratorFormItemError | undefined
+    > = requests.map((req, index) => {
+      const existingRequest = findItem(
+        requests,
+        req,
+        (request1, request2) => request1.email === request2.email,
+        index
+      );
 
-    function setError(errorArray, index, field, error) {
-      const errorsInIndex = errorArray[index] || {};
-      const errorsForField = errorsInIndex[field] || [];
-      errorsForField.push(error);
-      errorsInIndex[field] = errorsForField;
-      errorArray[index] = errorsInIndex;
-    }
-
-    const errors = [];
-
-    value.forEach((request, index) => {
-      if (findRequest(value, request, index)) {
-        setError(errors, index, "email", emailExistsErrorMessage);
-        return;
+      if (existingRequest) {
+        return { email: emailExistsErrorMessage };
       }
 
-      const exCol = existingCollaborators.find(col => {
-        return col.email === request.email;
-      });
+      const collaborator = findItem(
+        existingCollaborators,
+        req,
+        (user, requestItem) => user.email === requestItem.email
+      );
 
-      if (exCol) {
-        setError(
-          errors,
-          index,
-          "email",
-          notificationErrorMessages.sendingRequestToAnExistingCollaborator
-        );
-
-        return;
+      if (collaborator) {
+        return {
+          email:
+            notificationErrorMessages.sendingRequestToAnExistingCollaborator
+        };
       }
 
-      const exReq = existingCollaborationRequests.find(req => {
-        return req.to.email === request.email;
-      });
+      const notification = findItem(
+        existingCollaborationRequests,
+        req,
+        (notificationItem, requestItem) =>
+          notificationItem.to.email === requestItem.email
+      );
 
-      if (exReq) {
-        setError(
-          errors,
-          index,
-          "email",
-          notificationErrorMessages.requestHasBeenSentBefore
-        );
+      if (notification) {
+        return { email: notificationErrorMessages.requestHasBeenSentBefore };
       }
     });
 
-    if (errors.length > 0) {
-      return errors;
-    }
-  };
+    return errors;
+  }
 }
 
-export default modalWrap(AC, "Collaboration Request");
+export default modalWrap(AddCollaboratorForm, "Collaboration Request");

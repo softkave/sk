@@ -2,19 +2,18 @@ import randomColor from "randomcolor";
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
-import OperationErrorItem, {
-  anErrorOccurred
-} from "../../../utils/operation-error/OperationErrorItem";
+import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
-  dispatchOperationStarted
+  dispatchOperationStarted,
+  isOperationStarted
 } from "../operation";
 import { signupUserOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getFirstOperationWithID, getOperationsWithID } from "../selectors";
 
 export interface ISignupUserData {
   name: string;
@@ -27,22 +26,9 @@ export default async function signupUserOperation(
   dispatch: Dispatch,
   user: ISignupUserData
 ) {
-  const operation = getOperationWithIDForResource(
-    state,
-    signupUserOperationID,
-    user.email
-  );
+  const operation = getFirstOperationWithID(state, signupUserOperationID);
 
-  if (operation) {
-    dispatchOperationError(
-      dispatch,
-      signupUserOperationID,
-      null,
-      new OperationError([
-        new OperationErrorItem("error", "You've signed up already")
-      ])
-    );
-
+  if (isOperationStarted(operation)) {
     return;
   }
 

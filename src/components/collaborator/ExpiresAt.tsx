@@ -2,7 +2,7 @@ import { DatePicker } from "antd";
 import moment from "moment";
 import React from "react";
 
-export interface IACFExpiresAtProps {
+export interface IExpiresAtProps {
   onChange: (value?: number) => void;
   minDate: moment.Moment;
   value?: number;
@@ -10,7 +10,7 @@ export interface IACFExpiresAtProps {
   dateFormat?: string;
 }
 
-class ACFExpiresAt extends React.PureComponent<IACFExpiresAtProps> {
+class ExpiresAt extends React.PureComponent<IExpiresAtProps> {
   public static defaultProps = {
     dateFormat: "MMM DD, YYYY"
   };
@@ -34,4 +34,4 @@ class ACFExpiresAt extends React.PureComponent<IACFExpiresAtProps> {
   }
 }
 
-export default ACFExpiresAt;
+export default ExpiresAt;

@@ -10,7 +10,7 @@ export function getGlobalError(errors: object) {
   return (errors as any).error;
 }
 
-const defaultFields = ["error"];
+const defaultFields = [];
 export function deleteFields(values: object, fields: string[] = defaultFields) {
   const updated = { ...values };
   fields.forEach(field => delete updated[field]);

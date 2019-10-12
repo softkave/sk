@@ -5,9 +5,9 @@ import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern, textPattern } from "../../models/user/descriptor";
 import IOperation from "../../redux/operations/operation";
-import { ISignupUserData } from "../../redux/operations/session/sigupUser";
+import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 
 // TODO: Add minimum and maximum to input helper
 const passwordExtraInfo = "Minimum of 5 characters";
@@ -44,30 +44,49 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
+export interface ISignupFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface ISignupFormInternalData extends ISignupFormData {
+  confirmEmail: string;
+  confirmPassword: string;
+}
+
 export interface ISignupProps {
-  operation: IOperation;
-  onSubmit: (values: ISignupUserData) => void | Promise<void>;
+  onSubmit: (values: ISignupFormData) => void | Promise<void>;
+  operation?: IOperation;
 }
 
 class Signup extends React.Component<ISignupProps> {
+  private formikRef: React.RefObject<
+    Formik<ISignupFormInternalData>
+  > = React.createRef();
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
   public render() {
     const { onSubmit } = this.props;
 
     return (
       <Formik
-        initialValues={{
-          name: undefined,
-          email: undefined,
-          confirmEmail: undefined,
-          password: undefined,
-          confirmPassword: undefined
+        ref={this.formikRef}
+        initialValues={cast<ISignupFormInternalData>({})}
+        onSubmit={values => {
+          onSubmit({
+            email: values.email,
+            name: values.name,
+            password: values.password
+          });
         }}
-        onSubmit={(values, props) =>
-          submitHandler(onSubmit, values, {
-            ...props,
-            fieldsToDelete: ["confirmEmail", "confirmPassword"]
-          })
-        }
         validationSchema={validationSchema}
       >
         {({

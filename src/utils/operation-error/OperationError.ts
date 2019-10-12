@@ -1,6 +1,6 @@
 import isObject from "lodash/isObject";
 import { indexArray } from "../object";
-import testValidity from "../testValidity";
+import testExistenceAndType from "../testExistenceAndType";
 import OperationErrorItem, { anErrorOccurred } from "./OperationErrorItem";
 
 // TODO: add calling captureStackTrace
@@ -30,7 +30,7 @@ export default class OperationError extends Error {
 
       if (
         testErrorsValidity(error.errors) &&
-        testValidity(error.message, false, "string")
+        testExistenceAndType(error.message, false, "string")
       ) {
         return true;
       }

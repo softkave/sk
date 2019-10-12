@@ -1,4 +1,5 @@
 import { Dispatch } from "redux";
+import { userErrorMessages } from "../../../models/user/userErrorMessages";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
@@ -12,7 +13,7 @@ import {
   isOperationStarted
 } from "../operation";
 import { changePasswordOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getFirstOperationWithID } from "../selectors";
 
 export interface IChangePasswordData {
   email: string;
@@ -29,24 +30,20 @@ export default async function changePasswordOperation(
     dispatchOperationError(
       dispatch,
       changePasswordOperationID,
-      user.email,
-      OperationError.fromAny(new Error("Invalid credentials"))
+      null,
+      OperationError.fromAny(new Error(userErrorMessages.invalidCredentials))
     );
 
     return;
   }
 
-  const operation = getOperationWithIDForResource(
-    state,
-    changePasswordOperationID,
-    user.email
-  );
+  const operation = getFirstOperationWithID(state, changePasswordOperationID);
 
-  if (operation && isOperationStarted(operation)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, changePasswordOperationID, user.email);
+  dispatchOperationStarted(dispatch, changePasswordOperationID);
 
   try {
     const result = await userNet.changePassword({
@@ -63,15 +60,10 @@ export default async function changePasswordOperation(
       throw anErrorOccurred;
     }
 
-    dispatchOperationComplete(dispatch, changePasswordOperationID, user.email);
+    dispatchOperationComplete(dispatch, changePasswordOperationID);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(
-      dispatch,
-      changePasswordOperationID,
-      user.email,
-      err
-    );
+    dispatchOperationError(dispatch, changePasswordOperationID, null, err);
   }
 }

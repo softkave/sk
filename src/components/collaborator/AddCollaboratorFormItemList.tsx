@@ -1,18 +1,22 @@
 import { Button, Divider } from "antd";
 import React from "react";
+import AddCollaboratorFormItem, {
+  IAddCollaboratorFormItemData,
+  IAddCollaboratorFormItemError
+} from "./AddCollaboratorFormItem";
 
-import ACFItem, { IACFItemError, IACFItemValue } from "./ACFItem";
-
-export interface IACFProps {
-  onChange: (value: IACFItemValue[]) => void;
-  value: IACFItemValue[];
+export interface IAddCollaboratorFormItemListProps {
+  onChange: (value: IAddCollaboratorFormItemData[]) => void;
+  value: IAddCollaboratorFormItemData[];
   maxRequests: number;
-  errors?: IACFItemError[];
+  errors?: Array<IAddCollaboratorFormItemError | undefined>;
 }
 
 // TODO: Add requests count and max to let the user know
 
-export default class ACF extends React.PureComponent<IACFProps> {
+export default class AddCollaboratorFormItemList extends React.PureComponent<
+  IAddCollaboratorFormItemListProps
+> {
   public static defaultProps = {
     errors: []
   };
@@ -37,7 +41,6 @@ export default class ACF extends React.PureComponent<IACFProps> {
     const { onChange, value, maxRequests } = this.props;
 
     if (value.length < maxRequests) {
-      // const updated = [...value, { email: "", id: newId() }];
       const updated = [...value, { email: "" }];
       onChange(updated);
     }
@@ -55,7 +58,7 @@ export default class ACF extends React.PureComponent<IACFProps> {
               // key={(request as any).id}
               key={index}
             >
-              <ACFItem
+              <AddCollaboratorFormItem
                 value={request}
                 error={requestErrors[index]}
                 onChange={data => {

@@ -1,4 +1,8 @@
-const testValidity = (subject: any, required: boolean, type: string) => {
+const testExistenceAndType = (
+  subject: any,
+  required: boolean,
+  type: string
+) => {
   if (subject !== undefined) {
     return typeof subject === type;
   } else if (required) {
@@ -8,4 +12,4 @@ const testValidity = (subject: any, required: boolean, type: string) => {
   }
 };
 
-export default testValidity;
+export default testExistenceAndType;

@@ -3,10 +3,12 @@ import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
 import * as yup from "yup";
-import { IBlock } from "../../models/block/block";
+import { BlockType, ITaskCollaborator } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
 import { IUser } from "../../models/user/user";
+import IOperation from "../../redux/operations/operation";
+import cast from "../../utils/cast";
 import { indexArray } from "../../utils/object";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
@@ -17,7 +19,7 @@ import {
   FormScrollList,
   StyledForm
 } from "../form/FormInternals";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 import modalWrap from "../modalWrap";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
@@ -31,29 +33,26 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-interface ITaskCollaborator {
-  userId: string;
-  assignedAt: number;
-  assignedBy: string;
-  completedAt?: number;
-}
-
-interface IEditTaskValues {
+export interface IEditTaskData {
+  // TODO: Should tasks have names and descriptions?
   // name: string;
+  type: BlockType;
   description: string;
   priority: string;
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
 }
 
-// TODO: Input appropriate types
+interface IEditTaskInternalData extends IEditTaskData {}
+
 export interface IEditTaskProps {
-  data: IEditTaskValues;
   submitLabel: string;
   defaultAssignedTo: [];
   user: IUser;
   collaborators: IUser[];
-  onSubmit: (data: IBlock) => Promise<void>;
+  onSubmit: (data: IEditTaskData) => Promise<void>;
+  operation?: IOperation;
+  data?: IEditTaskInternalData;
 }
 
 const defaultSubmitLabel = "Create Task";
@@ -64,8 +63,10 @@ class EditTask extends React.Component<IEditTaskProps> {
     defaultAssignedTo: []
   };
 
-  // TODO: Input appropriate types
   private indexedCollaborators: { [key: string]: IUser };
+  private formikRef: React.RefObject<
+    Formik<IEditTaskInternalData>
+  > = React.createRef();
 
   constructor(props) {
     super(props);
@@ -73,6 +74,14 @@ class EditTask extends React.Component<IEditTaskProps> {
     this.indexedCollaborators = indexArray(props.collaborators, {
       path: "customId"
     });
+  }
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
   }
 
   public render() {
@@ -87,19 +96,20 @@ class EditTask extends React.Component<IEditTaskProps> {
 
     return (
       <Formik
-        initialValues={{
-          ...data,
+        ref={this.formikRef}
+        initialValues={cast<IEditTaskInternalData>({
+          ...(data || null),
 
           // TODO: Create a const of defaults
           priority: data ? data.priority : "important",
           taskCollaborators:
             (data ? data.taskCollaborators : defaultAssignedTo) || []
-        }}
+        })}
         validationSchema={validationSchema}
-        onSubmit={(values, props) => {
+        onSubmit={values => {
           // TODO: Only update forms if fields have changed. Use touched
-          (values as any).type = "task";
-          submitHandler(onSubmit, values, props);
+          values.type = "task";
+          onSubmit(values);
         }}
       >
         {({
@@ -119,18 +129,6 @@ class EditTask extends React.Component<IEditTaskProps> {
               <FormBodyContainer>
                 <FormScrollList>
                   <FormBody>
-                    {/* <Form.Item
-                      label="Task Name"
-                      help={<FormError>{errors.name}</FormError>}
-                    >
-                      <Input
-                        autoComplete="off"
-                        name="name"
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        value={values.name}
-                      />
-                    </Form.Item> */}
                     {globalError && (
                       <Form.Item>
                         <FormError error={globalError} />

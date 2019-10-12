@@ -38,16 +38,60 @@ export default interface IOperation<
   resourceID?: string | null;
 }
 
-export function getOperationLastStatus(operation?: IOperation) {
+export function areOperationsSame(
+  operation1?: IOperation,
+  operation2?: IOperation
+) {
   return (
-    operation && operation.statusHistory[operation.statusHistory.length - 1]
+    operation1 &&
+    operation2 &&
+    operation1.operationID !== operation2.operationID &&
+    operation1.resourceID !== operation2.resourceID
   );
+}
+
+export function areStatusTypeSame(
+  status1?: IOperationStatus,
+  status2?: IOperationStatus
+) {
+  return status1 && status2 && status1.status === status2.status;
+}
+
+export function areStatusTypeAndTimestampSame(
+  status1?: IOperationStatus,
+  status2?: IOperationStatus
+) {
+  return (
+    areStatusTypeSame(status1, status2) &&
+    status1!.timestamp === status2!.timestamp
+  );
+}
+
+export function areOperationsSameCheckStatus(
+  operation1?: IOperation,
+  operation2?: IOperation
+) {
+  return (
+    areOperationsSame(operation1, operation2) &&
+    Array.isArray(operation1!.statusHistory) &&
+    Array.isArray(operation2!.statusHistory) &&
+    operation1!.statusHistory.length === operation2!.statusHistory.length &&
+    areStatusTypeAndTimestampSame(
+      getOperationLastStatus(operation1),
+      getOperationLastStatus(operation2)
+    )
+  );
+}
+
+export function getOperationLastStatus(operation?: IOperation) {
+  if (operation && Array.isArray(operation.statusHistory)) {
+    return operation.statusHistory[operation.statusHistory.length - 1];
+  }
 }
 
 export function getOperationLastError(operation?: IOperation) {
   if (operation && isOperationError(operation)) {
-    const status =
-      operation && operation.statusHistory[operation.statusHistory.length - 1];
+    const status = getOperationLastStatus(operation);
 
     if (status) {
       return status.error;
@@ -64,24 +108,24 @@ export function getOperationStatusesWithType(
   });
 }
 
-export function getOperationLastStatusType(operation: IOperation) {
+export function getOperationLastStatusType(operation?: IOperation) {
   const lastStatus = getOperationLastStatus(operation);
   return lastStatus && lastStatus.status;
 }
 
-export function isOperationStarted(operation: IOperation) {
+export function isOperationStarted(operation?: IOperation) {
   return getOperationLastStatusType(operation) === operationStarted;
 }
 
-export function isOperationPending(operation: IOperation) {
+export function isOperationPending(operation?: IOperation) {
   return getOperationLastStatusType(operation) === operationPending;
 }
 
-export function isOperationCompleted(operation: IOperation) {
+export function isOperationCompleted(operation?: IOperation) {
   return getOperationLastStatusType(operation) === operationComplete;
 }
 
-export function isOperationError(operation: IOperation) {
+export function isOperationError(operation?: IOperation) {
   return getOperationLastStatusType(operation) === operationError;
 }
 

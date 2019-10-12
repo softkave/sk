@@ -1,14 +1,14 @@
 import { Input } from "antd";
 import React from "react";
 
-export interface IACFMessageProps {
+export interface IMessageProps {
   onChange: (value: string) => void;
   value?: string;
   placeholder?: string;
   onBlur?: () => void;
 }
 
-class ACFMessage extends React.PureComponent<IACFMessageProps> {
+class Message extends React.PureComponent<IMessageProps> {
   public render() {
     const { value, onChange, onBlur, placeholder } = this.props;
 
@@ -27,4 +27,4 @@ class ACFMessage extends React.PureComponent<IACFMessageProps> {
   }
 }
 
-export default ACFMessage;
+export default Message;

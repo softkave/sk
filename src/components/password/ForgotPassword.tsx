@@ -2,10 +2,13 @@ import { Button, Form, Input, notification } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import IOperation from "../../redux/operations/operation";
-import { IForgotPasswordData } from "../../redux/operations/session/requestForgotPassword";
+import IOperation, {
+  areOperationsSameCheckStatus,
+  isOperationCompleted
+} from "../../redux/operations/operation";
+import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 
 const emailMismatchErrorMessage = "Email does not match";
 const successMessage = `
@@ -23,30 +26,54 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
+export interface IForgotPasswordFormData {
+  email: string;
+}
+
+interface IForgotPasswordFormInternalData extends IForgotPasswordFormData {
+  confirmEmail: string;
+}
+
 export interface IForgotPasswordProps {
-  operation: IOperation;
-  onSubmit: (values: IForgotPasswordData) => void | Promise<void>;
+  onSubmit: (values: IForgotPasswordFormData) => void | Promise<void>;
+  operation?: IOperation;
 }
 
 class ForgotPassword extends React.Component<IForgotPasswordProps> {
+  private formikRef: React.RefObject<
+    Formik<IForgotPasswordFormInternalData>
+  > = React.createRef();
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate(prevProps: IForgotPasswordProps) {
+    const { operation } = this.props;
+    applyOperationToFormik(operation, this.formikRef);
+
+    if (isOperationCompleted(operation)) {
+      if (!areOperationsSameCheckStatus(operation, prevProps.operation)) {
+        notification.success({
+          message: "Forgot Password",
+          description: successMessage,
+          duration: 0
+        });
+      }
+    }
+  }
+
   public render() {
     const { onSubmit } = this.props;
 
     return (
       <Formik
-        initialValues={{ email: undefined, confirmEmail: undefined }}
+        ref={this.formikRef}
+        initialValues={cast<IForgotPasswordFormInternalData>({})}
         validationSchema={validationSchema}
-        onSubmit={(values, props) => {
-          submitHandler(onSubmit, values, {
-            ...props,
-            fieldsToDelete: ["confirmEmail"],
-            onSuccess() {
-              notification.success({
-                message: "Forgot Password",
-                description: successMessage,
-                duration: 0
-              });
-            }
+        onSubmit={values => {
+          onSubmit({
+            email: values.email
           });
         }}
       >

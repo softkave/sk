@@ -12,7 +12,7 @@ import {
   isOperationStarted
 } from "../operation";
 import { loginUserOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getFirstOperationWithID } from "../selectors";
 
 export interface ILoginUserData {
   email: string;
@@ -27,17 +27,13 @@ export default async function loginUserOperation(
   dispatch: Dispatch,
   user: ILoginUserData
 ) {
-  const operation = getOperationWithIDForResource(
-    state,
-    loginUserOperationID,
-    user.email
-  );
+  const operation = getFirstOperationWithID(state, loginUserOperationID);
 
-  if (operation && isOperationStarted(operation)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, loginUserOperationID, user.email);
+  dispatchOperationStarted(dispatch, loginUserOperationID);
 
   try {
     const result = await userNet.login(user);
@@ -51,10 +47,10 @@ export default async function loginUserOperation(
       throw anErrorOccurred;
     }
 
-    dispatchOperationComplete(dispatch, loginUserOperationID, user.email);
+    dispatchOperationComplete(dispatch, loginUserOperationID);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(dispatch, loginUserOperationID, user.email, err);
+    dispatchOperationError(dispatch, loginUserOperationID, null, err);
   }
 }

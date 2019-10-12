@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Dispatch } from "redux";
-import { IACFItemValue } from "../../../components/collaborator/ACFItem";
+import { IAddCollaboratorFormItemData } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { IBlock } from "../../../models/block/block";
 
 import * as blockNet from "../../../net/block";
@@ -23,7 +23,7 @@ export default async function addCollaboratorsOperation(
   block: IBlock,
 
   // TODO: This is wrong, better declare type
-  requests: IACFItemValue[],
+  requests: IAddCollaboratorFormItemData[],
   message?: string,
   expiresAt?: number | Date
 ) {

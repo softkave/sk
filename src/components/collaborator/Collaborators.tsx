@@ -1,10 +1,11 @@
 import { Button, List, Tabs } from "antd";
 import React from "react";
-
 import { IBlock } from "../../models/block/block.js";
 import { INotification } from "../../models/notification/notification.js";
 import { IUser } from "../../models/user/user.js";
-import AC, { IACValue } from "./AC";
+import AddCollaboratorForm, {
+  IAddCollaboratorFormData
+} from "./AddCollaboratorForm";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
 import "./collaborators.css";
@@ -20,7 +21,7 @@ export interface ICollaboratorsProps {
   block: IBlock;
   error?: Error;
   onBack: () => void;
-  onAddCollaborators: (values: IACValue) => void;
+  onAddCollaborators: (values: IAddCollaboratorFormData) => void;
 }
 
 interface ICollaboratorsState {
@@ -105,7 +106,7 @@ export default class Collaborators extends React.Component<
 
     return (
       <div className="sk-collaborators">
-        <AC
+        <AddCollaboratorForm
           visible={showAddCollaboratorsForm}
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}

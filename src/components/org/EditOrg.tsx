@@ -2,8 +2,11 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
+import { BlockType } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
+import IOperation from "../../redux/operations/operation";
+import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import {
   FormBody,
@@ -12,7 +15,7 @@ import {
   FormScrollList,
   StyledForm
 } from "../form/FormInternals";
-import { getGlobalError, submitHandler } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../formik-utils";
 import modalWrap from "../modalWrap.jsx";
 
 const validationSchema = yup.object().shape({
@@ -27,40 +30,48 @@ const validationSchema = yup.object().shape({
     .matches(textPattern)
 });
 
-interface IEditOrgValues {
+interface IEditOrgData {
+  type: BlockType;
   name: string;
   description?: string;
 }
 
 export interface IEditOrgProps {
-  onSubmit: (values: IEditOrgValues) => void | Promise<void>;
+  onSubmit: (values: IEditOrgData) => void | Promise<void>;
   submitLabel?: string;
-  data?: IEditOrgValues;
+  data?: IEditOrgData;
+  operation?: IOperation;
 }
 
+// TODO: Move all stray strings to a central location
 const defaultSubmitLabel = "Create Organization";
-// const initialValues = {
-//   name: ""
-// };
 
 class EditOrg extends React.Component<IEditOrgProps> {
   public static defaultProps = {
     submitLabel: defaultSubmitLabel
   };
 
+  private formikRef: React.RefObject<Formik<IEditOrgData>> = React.createRef();
+
+  public componentDidMount() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
+  public componentDidUpdate() {
+    applyOperationToFormik(this.props.operation, this.formikRef);
+  }
+
   public render() {
     const { data, submitLabel, onSubmit } = this.props;
 
     return (
       <Formik
-        initialValues={data!}
+        ref={this.formikRef}
+        initialValues={cast<IEditOrgData>(data || {})}
         validationSchema={validationSchema}
-        onSubmit={(values, props) => {
-          // TODO: Implement right type
-          (values as any).type = "org";
-
-          // TODO: Find a better alternative
-          submitHandler(onSubmit, values, props);
+        onSubmit={values => {
+          values.type = "org";
+          onSubmit(values);
         }}
       >
         {({

@@ -11,7 +11,7 @@ import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock"
 import toggleTaskOperation from "../../redux/operations/block/toggleTask";
 import updateBlockOperation from "../../redux/operations/block/updateBlock";
 import { IReduxState } from "../../redux/store";
-import { IACFItemValue } from "../collaborator/ACFItem";
+import { IAddCollaboratorFormItemData } from "../collaborator/AddCollaboratorFormItem";
 
 export interface IBlockMethods {
   onAdd: (
@@ -26,7 +26,7 @@ export interface IBlockMethods {
     block: IBlock,
 
     // TODO: This is wrong, better declare type
-    requests: IACFItemValue[],
+    requests: IAddCollaboratorFormItemData[],
     message?: string,
     expiresAt?: number | Date
   ) => Promise<void>;
@@ -70,7 +70,7 @@ export function getBlockMethods(
       block: IBlock,
 
       // TODO: This is wrong, better declare type
-      requests: IACFItemValue[],
+      requests: IAddCollaboratorFormItemData[],
       message?: string,
       expiresAt?: number | Date
     ) {

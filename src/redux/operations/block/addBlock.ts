@@ -25,6 +25,9 @@ export default async function addBlockOperation(
   parent?: IBlock
 ) {
   const newBlock = { ...block } as IBlock;
+
+  // TODO: Move creation of ids ( any resource at all ) to the server
+  // Maybe get the id from the server when a form is created without an initial data, or without data with id
   newBlock.customId = newId();
 
   dispatchOperationStarted(dispatch, addBlockOperationID, newBlock.customId);
