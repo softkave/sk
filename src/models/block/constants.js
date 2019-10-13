@@ -74,8 +74,6 @@ const blockFieldNames = {
   createdBy: "createdBy",
   taskCollaborators: "taskCollaborators",
   priority: "priority",
-  position: "position",
-  positionTimestamp: "positionTimestamp",
   groups: "groups",
   projects: "projects",
   tasks: "tasks",

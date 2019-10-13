@@ -6,7 +6,6 @@ import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
 import * as userActions from "../../users/actions";

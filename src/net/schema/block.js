@@ -13,8 +13,6 @@ const blockFragment = `
     type
     parents
     createdBy
-    position
-    positionTimestamp
     tasks
     groups
     projects

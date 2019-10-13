@@ -3,11 +3,11 @@ import React from "react";
 import { IBlock } from "../../models/block/block.js";
 import { INotification } from "../../models/notification/notification.js";
 import { IUser } from "../../models/user/user.js";
-import AddCollaboratorForm, {
-  IAddCollaboratorFormData
-} from "./AddCollaboratorForm";
+import { IAddCollaboratorFormData } from "./AddCollaboratorForm";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
+import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs.js";
+import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer.jsx";
 import "./collaborators.css";
 
 // TODO: After adding collaborator, control unmounts Collaborator and goes back to board
@@ -72,8 +72,9 @@ export default class Collaborators extends React.Component<
     });
   }
 
-  // TODO: Define type
-  public renderCollaborationRequests(collaborationRequests: any[] = []) {
+  public renderCollaborationRequests(
+    collaborationRequests: INotification[] = []
+  ) {
     // TODO: Use the user's avatar color for the collaboration request also
     return this.renderList(collaborationRequests, request => {
       return (
@@ -106,7 +107,9 @@ export default class Collaborators extends React.Component<
 
     return (
       <div className="sk-collaborators">
-        <AddCollaboratorForm
+        <AddCollaboratorFormContainer
+          customId={block.customId}
+          operationID={addCollaboratorsOperationID}
           visible={showAddCollaboratorsForm}
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}
