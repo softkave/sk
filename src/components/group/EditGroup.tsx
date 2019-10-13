@@ -39,6 +39,7 @@ const validationSchema = yup.object().shape({
 // const requiredFields = ["name"];
 
 export interface IEditGroupData {
+  customId: string;
   type: BlockType;
   name: string;
   description?: string;

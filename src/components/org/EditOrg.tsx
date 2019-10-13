@@ -31,6 +31,7 @@ const validationSchema = yup.object().shape({
 });
 
 interface IEditOrgData {
+  customId: string;
   type: BlockType;
   name: string;
   description?: string;

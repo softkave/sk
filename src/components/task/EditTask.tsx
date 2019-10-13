@@ -36,6 +36,7 @@ const validationSchema = yup.object().shape({
 export interface IEditTaskData {
   // TODO: Should tasks have names and descriptions?
   // name: string;
+  customId: string;
   type: BlockType;
   description: string;
   priority: string;

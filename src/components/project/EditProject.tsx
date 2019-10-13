@@ -34,6 +34,7 @@ const validationSchema = yup.object().shape({
 });
 
 export interface IEditProjectData {
+  customId: string;
   type: BlockType;
   name: string;
   description?: string;

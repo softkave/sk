@@ -13,9 +13,11 @@ import * as userActions from "../../users/actions";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
-  dispatchOperationStarted
+  dispatchOperationStarted,
+  isOperationStarted
 } from "../operation";
 import { addBlockOperationID } from "../operationIDs";
+import { getOperationWithIDForResource } from "../selectors";
 
 export default async function addBlockOperation(
   state: IReduxState,
@@ -24,11 +26,21 @@ export default async function addBlockOperation(
   block: Partial<IBlock>,
   parent?: IBlock
 ) {
+  const operation = getOperationWithIDForResource(
+    state,
+    addBlockOperationID,
+    block.customId
+  );
+
+  if (operation && isOperationStarted(operation)) {
+    return;
+  }
+
   const newBlock = { ...block } as IBlock;
 
   // TODO: Move creation of ids ( any resource at all ) to the server
   // Maybe get the id from the server when a form is created without an initial data, or without data with id
-  newBlock.customId = newId();
+  // newBlock.customId = newId();
 
   dispatchOperationStarted(dispatch, addBlockOperationID, newBlock.customId);
 
