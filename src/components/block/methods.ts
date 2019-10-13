@@ -13,44 +13,43 @@ import updateBlockOperation from "../../redux/operations/block/updateBlock";
 import { IReduxState } from "../../redux/store";
 import { IAddCollaboratorFormItemData } from "../collaborator/AddCollaboratorFormItem";
 
-export interface IBlockMethods {
-  onAdd: (
-    user: IUser,
-    block: Partial<IBlock>,
-    parent?: IBlock
-  ) => Promise<void>;
-  onUpdate: (block: IBlock, data: Partial<IBlock>) => Promise<void>;
-  onToggle: (user: IUser, block: IBlock) => Promise<void>;
-  onDelete: (block: IBlock) => Promise<void>;
-  onAddCollaborators: (
-    block: IBlock,
+// export interface IBlockMethods {
+//   onAdd: (
+//     user: IUser,
+//     block: IBlock,
+//     parent?: IBlock
+//   ) => Promise<void>;
+//   onUpdate: (block: IBlock, data: Partial<IBlock>) => Promise<void>;
+//   onToggle: (user: IUser, block: IBlock) => Promise<void>;
+//   onDelete: (block: IBlock) => Promise<void>;
+//   onAddCollaborators: (
+//     block: IBlock,
 
-    // TODO: This is wrong, better declare type
-    requests: IAddCollaboratorFormItemData[],
-    message?: string,
-    expiresAt?: number | Date
-  ) => Promise<void>;
-  loadBlockChildren: (
-    block: IBlock,
-    types?: string[],
-    isBacklog?: boolean
-  ) => Promise<void>;
-  loadCollaborators: (block: IBlock) => Promise<void>;
-  loadCollaborationRequests: (block: IBlock) => Promise<void>;
-  loadRootData: () => Promise<void>;
-}
+//     // TODO: This is wrong, better declare type
+//     requests: IAddCollaboratorFormItemData[],
+//     message?: string,
+//     expiresAt?: number | Date
+//   ) => Promise<void>;
+//   loadBlockChildren: (
+//     block: IBlock,
+//     types?: string[],
+//     isBacklog?: boolean
+//   ) => Promise<void>;
+//   loadCollaborators: (block: IBlock) => Promise<void>;
+//   loadCollaborationRequests: (block: IBlock) => Promise<void>;
+//   loadRootData: () => Promise<void>;
+// }
+
+export type IBlockMethods = ReturnType<typeof getBlockMethods>;
 
 export interface IGetBlockMethodsParams {
   dispatch: Dispatch;
   state: IReduxState;
 }
 
-export function getBlockMethods(
-  state: IReduxState,
-  dispatch: Dispatch
-): IBlockMethods {
+export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
   return {
-    async onAdd(user: IUser, block: Partial<IBlock>, parent?: IBlock) {
+    async onAdd(user: IUser, block: IBlock, parent?: IBlock) {
       return addBlockOperation(state, dispatch, user, block, parent);
     },
 

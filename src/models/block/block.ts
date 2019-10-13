@@ -11,8 +11,22 @@ export interface IBlockRole {
   createdAt: number;
 }
 
-export type BlockPriority = "very important" | "important" | "not important";
-export type BlockType = "org" | "project" | "group" | "task" | "root";
+export const taskPriority = {
+  important: "important",
+  ["not important"]: "not important",
+  ["very important"]: "very important"
+};
+
+export const blockType = {
+  org: "org",
+  project: "project",
+  group: "group",
+  task: "task",
+  root: "root"
+};
+
+export type BlockPriority = keyof typeof taskPriority;
+export type BlockType = keyof typeof blockType;
 
 export interface IBlock {
   customId: string;

@@ -1,14 +1,20 @@
 import randomColor from "randomcolor";
-import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
+import {
+  BlockType,
+  IBlock,
+  ITaskCollaborator,
+  taskPriority
+} from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
+import cast from "../../utils/cast";
 import { newId } from "../../utils/utils";
 
 export default function getNewBlock(
   user: IUser,
   type: BlockType,
   parent?: IBlock
-) {
+): IBlock {
   const getParents = () => {
     if (parent) {
       const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
@@ -36,10 +42,18 @@ export default function getNewBlock(
       type === "task" ? ([] as ITaskCollaborator[]) : undefined,
     tasks: childrenTypes.indexOf("task") ? [] : undefined,
     projects: childrenTypes.indexOf("group") ? [] : undefined,
-    groups: childrenTypes.indexOf("project") ? [] : undefined
+    groups: childrenTypes.indexOf("project") ? [] : undefined,
+    name: undefined,
+    description: undefined,
+    expectedEndAt: undefined,
+    updatedAt: undefined,
+    priority: type === "task" ? taskPriority.important : undefined,
+    isBacklog: false,
+    roles: undefined,
+    collaborationRequests: type === "org" ? [] : undefined
   };
 
-  return newBlock;
+  return cast<IBlock>(newBlock);
 }
 
 export type INewBlock = ReturnType<typeof getNewBlock>;

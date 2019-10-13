@@ -307,7 +307,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     const formBlock = this.getFormBlock();
 
     if (!isFormForAddBlock) {
-      await this.props.blockHandlers.onUpdate(formBlock, data);
+      await this.props.blockHandlers.onUpdate(formBlock!, data);
     } else {
       await this.props.blockHandlers.onAdd(
         user,

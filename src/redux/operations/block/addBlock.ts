@@ -22,7 +22,7 @@ export default async function addBlockOperation(
   state: IReduxState,
   dispatch: Dispatch,
   user: IUser,
-  block: Partial<IBlock>,
+  block: IBlock,
   parent?: IBlock
 ) {
   const operation = getOperationWithIDForResource(
