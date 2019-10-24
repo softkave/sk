@@ -29,10 +29,10 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
   )[0];
 
   console.log({ sessionType, initializeOperation });
-  return {
-    view: { viewName: sessionInitializing },
-    initializingProps: { progress: 50 }
-  };
+  // return {
+  //   view: { viewName: sessionInitializing },
+  //   initializingProps: { progress: 50 }
+  // };
 
   if (sessionType === "initializing") {
     if (!initializeOperation) {
@@ -72,6 +72,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
         },
         readyProps: {
           error:
+            latestStatus &&
             latestStatus.status === defaultOperationStatusTypes.operationError
               ? latestStatus.data
               : undefined

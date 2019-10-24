@@ -3,16 +3,16 @@ import { Formik } from "formik";
 import moment from "moment";
 import React from "react";
 import * as yup from "yup";
-import { blockConstants } from "../../models/block/constants.js";
+import { blockConstants } from "../../models/block/constants";
 import { notificationConstants } from "../../models/notification/constants";
-import { INotification } from "../../models/notification/notification.js";
+import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
-import { IUser } from "../../models/user/user.js";
-import { userErrorMessages } from "../../models/user/userErrorMessages.js";
-import { getErrorMessageWithMax } from "../../models/validationErrorMessages.js";
-import IOperation from "../../redux/operations/operation.js";
-import cast from "../../utils/cast.js";
-import findItem from "../../utils/findItem.js";
+import { IUser } from "../../models/user/user";
+import { userErrorMessages } from "../../models/user/userErrorMessages";
+import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
+import IOperation from "../../redux/operations/operation";
+import cast from "../../utils/cast";
+import findItem from "../../utils/findItem";
 import FormError from "../form/FormError";
 import {
   FormBody,

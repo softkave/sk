@@ -1,14 +1,13 @@
 import { Button, List, Tabs } from "antd";
 import React from "react";
-import { IBlock } from "../../models/block/block.js";
-import { INotification } from "../../models/notification/notification.js";
+import { IBlock } from "../../models/block/block";
+import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user.js";
+import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
 import { IAddCollaboratorFormData } from "./AddCollaboratorForm";
-import CollaboratorThumbnail from "./CollaboratorThumbnail";
-
-import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs.js";
-import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer.jsx";
+import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer";
 import "./collaborators.css";
+import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
 // TODO: After adding collaborator, control unmounts Collaborator and goes back to board
 // This is not expected behaviour.

@@ -47,6 +47,7 @@ export default async function markNotificationReadOperation(
       throw result.errors;
     }
 
+    // TODO: Should control wait for net call, or should it happen before net call?
     dispatch(
       notificationActions.updateNotificationRedux(notification.customId, data, {
         arrayUpdateStrategy: "replace"

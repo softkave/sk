@@ -1,6 +1,10 @@
 import { Dispatch } from "redux";
+import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
-import { INotification } from "../../../models/notification/notification";
+import {
+  INotification,
+  NotificationStatusText
+} from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
@@ -22,24 +26,8 @@ export default async function respondToNotificationOperation(
   dispatch: Dispatch,
   user: IUser,
   request: INotification,
-  response: string
+  response: NotificationStatusText
 ) {
-  function requestIsValid(statusHistory) {
-    const invalidStatuses = {
-      accepted: true,
-      declined: true,
-      revoked: true
-    };
-
-    if (Array.isArray(statusHistory)) {
-      return !!!statusHistory.find(({ status }) => {
-        return invalidStatuses[status];
-      });
-    }
-
-    return false;
-  }
-
   const operation = getOperationWithIDForResource(
     state,
     respondToNotificationOperationID,
@@ -59,7 +47,7 @@ export default async function respondToNotificationOperation(
   try {
     const statusHistory = request.statusHistory;
 
-    if (!requestIsValid(statusHistory)) {
+    if (!canRespondToNotification(request)) {
       throw [{ field: "error", message: new Error("Request is not valid") }];
     }
 
