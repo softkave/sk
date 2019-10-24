@@ -45,9 +45,7 @@ export default async function respondToNotificationOperation(
   );
 
   try {
-    const statusHistory = request.statusHistory;
-
-    if (!canRespondToNotification(request)) {
+    if (canRespondToNotification(request)) {
       throw [{ field: "error", message: new Error("Request is not valid") }];
     }
 
@@ -60,7 +58,7 @@ export default async function respondToNotificationOperation(
       throw result.errors;
     }
 
-    request.statusHistory.concat({
+    const statusHistory = request.statusHistory.concat({
       status: response,
       date: Date.now()
     });

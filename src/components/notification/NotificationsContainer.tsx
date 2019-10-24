@@ -61,7 +61,9 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
             notifications={notifications!}
             onClickNotification={onClickNotification}
             user={user}
-            currentNotificationID={currentNotification!.customId}
+            currentNotificationID={
+              currentNotification && currentNotification.customId
+            }
           />
         );
       }

@@ -75,7 +75,9 @@ export default class Collaborators extends React.Component<
     collaborationRequests: INotification[] = []
   ) {
     // TODO: Use the user's avatar color for the collaboration request also
+    console.log({ collaborationRequests });
     return this.renderList(collaborationRequests, request => {
+      console.log(request);
       return (
         <List.Item key={request.customId}>
           <CollaboratorThumbnail collaborator={request} />

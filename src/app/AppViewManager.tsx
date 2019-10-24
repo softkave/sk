@@ -16,6 +16,7 @@ export interface IAppViewManagerProps {
 
 class AppViewManager extends React.Component<IAppViewManagerProps> {
   public render() {
+    console.log(this.props);
     const { currentView } = this.props;
     const renderViews: IRenderView[] = [
       { viewName: orgsViewName, component: OrgsContainer },

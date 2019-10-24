@@ -111,7 +111,8 @@ class Notifications extends React.Component<
 export default Notifications;
 
 const StyledNotificationsDesktop = styled(Row)({
-  height: "100%"
+  height: "100%",
+  width: "100%"
 });
 
 const StyledNotificationListDesktop = styled(Col)({

@@ -1,4 +1,4 @@
-import { getItem, setItem } from "../utils/storage";
+import { getItem, removeItem, setItem } from "../utils/storage";
 import { userTokenKey } from "./itemKeys";
 
 export function getUserTokenFromStorage() {
@@ -7,4 +7,8 @@ export function getUserTokenFromStorage() {
 
 export function saveUserTokenInStorage(token) {
   setItem(userTokenKey, token);
+}
+
+export function deleteUserTokenInStorage() {
+  removeItem(userTokenKey);
 }

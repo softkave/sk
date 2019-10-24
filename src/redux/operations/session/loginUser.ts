@@ -5,6 +5,8 @@ import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorIt
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
+import { pushView } from "../../view/actions";
+import { makeOrgsView } from "../../view/orgs";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -42,6 +44,7 @@ export default async function loginUserOperation(
       throw result.errors;
     } else if (result && result.token && result.user) {
       dispatch(addUserRedux(result.user));
+      dispatch(pushView(makeOrgsView()));
       dispatch(loginUserRedux(result.token, result.user.customId));
     } else {
       throw anErrorOccurred;

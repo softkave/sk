@@ -8,7 +8,6 @@ import {
 import { initializeAppSessionOperationID } from "../redux/operations/operationIDs";
 import { getOperationsWithID } from "../redux/operations/selectors";
 import initializeAppSessionOperation from "../redux/operations/session/initializeAppSession";
-import { sessionInitializing } from "../redux/session/reducer";
 import { getSessionType, isUserSignedIn } from "../redux/session/selectors";
 import { IReduxState } from "../redux/store";
 import IndexViewManager from "./IndexViewManager";

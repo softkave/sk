@@ -16,7 +16,7 @@ import { changePasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
 
 export interface IChangePasswordData {
-  email: string;
+  // email: string;
   password: string;
   token?: string;
 }
@@ -46,10 +46,20 @@ export default async function changePasswordOperation(
   dispatchOperationStarted(dispatch, changePasswordOperationID);
 
   try {
-    const result = await userNet.changePassword({
-      password: user.password,
-      token: user.token
-    });
+    // TODO: Change type
+    let result: any = null;
+
+    if (user.token) {
+      result = await userNet.changePasswordWithToken({
+        password: user.password,
+        token: user.token
+      });
+    } else {
+      result = await userNet.changePassword({
+        password: user.password,
+        token: user.token
+      });
+    }
 
     if (result && result.errors) {
       throw result.errors;

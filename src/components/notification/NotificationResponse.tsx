@@ -10,14 +10,14 @@ const NotificationResponse: React.SFC<INotificationResponseProps> = props => {
   const { response } = props;
   return (
     <p>
-      You - <StyledNotificationResponse>{response}</StyledNotificationResponse>.
+      You - <StyledNotificationResponse>{response}</StyledNotificationResponse>
     </p>
   );
 };
 
 export default NotificationResponse;
 
-const StyledNotificationResponse = styled.div({
+const StyledNotificationResponse = styled.span({
   backgroundColor: "#ccc",
   padding: "8px",
   borderRadius: "4px"

@@ -47,6 +47,8 @@ export default async function initializeAppSessionOperation(
       saveUserTokenInStorage(userToken);
       dispatch(addUserRedux(user));
       dispatch(loginUserRedux(userToken, user.customId));
+    } else {
+      dispatch(setSessionToWeb());
     }
 
     dispatchOperationComplete(dispatch, initializeAppSessionOperationID);

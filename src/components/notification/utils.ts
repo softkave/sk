@@ -43,7 +43,9 @@ export function canRespondToNotification(notification: INotification) {
 }
 
 export function isNotificationExpired(notification: INotification) {
-  return (
-    isNumber(notification.expiresAt) && notification.expiresAt < Date.now()
-  );
+  if (isNumber(notification.expiresAt)) {
+    return notification.expiresAt < Date.now();
+  }
+
+  return true;
 }

@@ -354,7 +354,7 @@ function getViewProps(state: IReduxState, block: IBlock, viewName: string) {
       return {
         ...blockChildren,
         collaborators,
-        requests
+        collaborationRequests: requests
       };
     }
 

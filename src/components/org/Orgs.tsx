@@ -3,6 +3,7 @@ import { Button } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import getNewBlock from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
 import ScrollList from "../ScrollList";
 import EditOrg from "./EditOrg";
@@ -37,7 +38,8 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
 
   public onCreateOrg = async org => {
     const { user, blockHandlers } = this.props;
-    await blockHandlers.onAdd(user, org);
+    const newBlock = getNewBlock(user, "org");
+    await blockHandlers.onAdd(user, { ...newBlock, ...org });
     this.toggleNewOrgForm();
   };
 

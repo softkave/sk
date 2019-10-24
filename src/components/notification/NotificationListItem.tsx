@@ -16,7 +16,7 @@ const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
       isSelected={isSelected}
       isRead={!!notification.readAt}
     >
-      <h5>Collaboration Request From {notification.from.blockName}</h5>
+      <h3>Collaboration Request From {notification.from.blockName}</h3>
       <span>{new Date(notification.createdAt).toDateString()}</span>
     </StyledNotificationListItem>
   );
@@ -34,7 +34,11 @@ const StyledNotificationListItem = (styled("div")(
     padding: "1em",
     cursor: "pointer",
     color: props.isSelected ? "white" : props.isRead ? "grey" : "black",
-    backgroundColor: props.isSelected ? "rgb(66,133,244)" : "inherit"
+    backgroundColor: props.isSelected ? "rgb(66,133,244)" : "inherit",
+
+    "& *": {
+      color: props.isSelected ? "white" : props.isRead ? "grey" : "black"
+    }
   })
 ) as unknown) as React.SFC<
   IStyledNotificationListItemProps & React.HTMLAttributes<HTMLDivElement>

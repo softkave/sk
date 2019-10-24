@@ -334,7 +334,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         parent,
         formAddBlock,
         formUpdateBlock,
-        formType: showForm ? null : type,
+        formType: showForm ? type : null,
         isFormForAddBlock: isAddBlock ? true : false
       };
     });

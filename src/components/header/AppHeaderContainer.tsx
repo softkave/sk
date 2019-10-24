@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-
-import { logoutUserRedux } from "../../redux/session/actions";
+import logoutUserOperation from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { replaceView } from "../../redux/view/actions";
@@ -9,19 +8,22 @@ import { getRootView } from "../../redux/view/selectors";
 import AppHeader from "./AppHeader";
 
 function mapStateToProps(state: IReduxState) {
+  return state;
+}
+
+function mapDispatchToProps(dispatch: Dispatch) {
+  return { dispatch };
+}
+
+function mergeProps(state, { dispatch }) {
   const user = getSignedInUserRequired(state);
   const view = getRootView(state);
 
   return {
     user,
-    currentViewName: view.viewName
-  };
-}
-
-function mapDispatchToProps(dispatch: Dispatch) {
-  return {
+    currentViewName: view.viewName,
     onLogout() {
-      dispatch(logoutUserRedux());
+      logoutUserOperation(state, dispatch);
     },
     onChangeView(currentViewName: string, newViewName: string) {
       dispatch(replaceView(currentViewName, { viewName: newViewName }));
@@ -31,5 +33,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  mergeProps
 )(AppHeader);

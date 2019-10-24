@@ -44,15 +44,6 @@ export default async function addCollaboratorsOperation(
   );
 
   try {
-    const result = await blockNet.addCollaborators({
-      block,
-      collaborators: requests
-    });
-
-    if (result && result.errors) {
-      throw result.errors;
-    }
-
     const proccessedCollaborators = requests.map(request => {
       return {
         ...request,
@@ -61,6 +52,15 @@ export default async function addCollaboratorsOperation(
         customId: newId()
       };
     });
+
+    const result = await blockNet.addCollaborators({
+      block,
+      collaborators: proccessedCollaborators
+    });
+
+    if (result && result.errors) {
+      throw result.errors;
+    }
 
     const requestIds = proccessedCollaborators.map(request => request.customId);
 
@@ -72,6 +72,7 @@ export default async function addCollaboratorsOperation(
      * create the notifications from the request and store it here, and not rely on reloading all the data,
      * as updates will be pushed as they occur
      */
+    // TODO: Block data loader is not reloading, look into why
     dispatch(
       blockActions.updateBlockRedux(
         block.customId,
