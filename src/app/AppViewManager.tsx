@@ -1,5 +1,4 @@
 import React from "react";
-
 import NotificationsContainer from "../components/notification/NotificationsContainer";
 import OrgsContainer from "../components/org/OrgsContainer";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";

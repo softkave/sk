@@ -1,4 +1,5 @@
 import { Icon, notification as uiNotification } from "antd";
+import React from "react";
 import { connect } from "react-redux";
 import { notificationStatus } from "../../models/notification/notification";
 import { getNotificationRequired } from "../../redux/notifications/selectors";

@@ -12,7 +12,6 @@ export interface ITaskListProps {
   selectedCollaborators: { [key: string]: boolean };
   user: IUser;
   tasks: IBlock[];
-  parent: IBlock;
   toggleForm: (type: BlockType, block?: IBlock) => void;
 }
 
@@ -30,8 +29,7 @@ export default class TaskList extends React.Component<ITaskListProps> {
       user,
       toggleForm,
       selectedCollaborators,
-      tasks,
-      parent
+      tasks
     } = this.props;
     const filteredTasks = !this.isAnyCollaboratorSelected()
       ? tasks

@@ -71,7 +71,6 @@ class Group extends React.PureComponent<IGroupProps> {
 
   private renderContext() {
     const {
-      group,
       context,
       projects,
       tasks,
@@ -101,7 +100,6 @@ class Group extends React.PureComponent<IGroupProps> {
             selectedCollaborators={selectedCollaborators}
             user={user}
             tasks={tasks}
-            parent={group}
             toggleForm={toggleForm}
             onViewMore={onViewMore}
           />
@@ -113,7 +111,6 @@ class Group extends React.PureComponent<IGroupProps> {
             selectedCollaborators={selectedCollaborators}
             user={user}
             tasks={tasks}
-            parent={group}
             toggleForm={toggleForm}
           />
         );

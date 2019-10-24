@@ -81,7 +81,6 @@ class TaskListWithViewMore extends React.PureComponent<
       blockHandlers,
       selectedCollaborators,
       user,
-      parent,
       toggleForm
     } = this.props;
     const stat = this.getRenderInfo(tasks);
@@ -93,7 +92,6 @@ class TaskListWithViewMore extends React.PureComponent<
           selectedCollaborators={selectedCollaborators}
           user={user}
           tasks={stat.tasksToRender}
-          parent={parent}
           toggleForm={toggleForm}
         />
         {stat.showViewMore && (

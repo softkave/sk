@@ -38,11 +38,11 @@ const StyledOrgListItem = styled.div({
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
-  ["&:last-of-type"]: {
+  "&:last-of-type": {
     borderBottom: 0
   },
 
-  ["&:hover"]: {
+  "&:hover": {
     backgroundColor: "#E6F7FF"
   }
 });

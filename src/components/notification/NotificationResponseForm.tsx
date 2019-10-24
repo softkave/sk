@@ -37,7 +37,7 @@ export default NotificationResponseForm;
 const StyledResponseButton = styled(Button)({
   marginLeft: "1em",
 
-  ["&:first-of-type"]: {
+  "&:first-of-type": {
     marginLeft: 0
   }
 });

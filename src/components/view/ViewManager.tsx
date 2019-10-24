@@ -12,7 +12,6 @@ export interface IRenderView extends IView {
 export interface IViewManagerProps {
   views: IRenderView[];
   currentViewName: string;
-  viewRenderProps?: any;
   onMount?: (props: IViewManagerProps) => void;
 }
 
@@ -26,21 +25,18 @@ export default class ViewManager extends React.Component<IViewManagerProps> {
   }
 
   public render() {
-    const { views, currentViewName, viewRenderProps } = this.props;
+    const { views, currentViewName } = this.props;
     const currentView = views.find(view => {
       return view.viewName === currentViewName;
     });
 
     if (currentView) {
       if (currentView.render) {
-        return currentView.render(viewRenderProps);
+        return currentView.render();
       } else if (currentView.renderedComponent) {
-        return React.cloneElement(
-          currentView.renderedComponent,
-          viewRenderProps
-        );
+        return React.cloneElement(currentView.renderedComponent);
       } else if (currentView.component) {
-        return React.createElement(currentView.component, viewRenderProps);
+        return React.createElement(currentView.component);
       }
     }
 

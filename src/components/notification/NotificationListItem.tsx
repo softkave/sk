@@ -29,12 +29,13 @@ interface IStyledNotificationListItemProps {
   isRead: boolean;
 }
 
-// TODO: Fix, it's not accepting prop type
-const StyledNotificationListItem = styled.div(
-  (props: IStyledNotificationListItemProps) => ({
+const StyledNotificationListItem = (styled("div")(
+  (props: IStyledNotificationListItemProps & any) => ({
     padding: "1em",
     cursor: "pointer",
     color: props.isSelected ? "white" : props.isRead ? "grey" : "black",
     backgroundColor: props.isSelected ? "rgb(66,133,244)" : "inherit"
   })
-);
+) as unknown) as React.SFC<
+  IStyledNotificationListItemProps & React.HTMLAttributes<HTMLDivElement>
+>;

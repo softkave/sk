@@ -87,7 +87,7 @@ const StyledContainer = styled.div({
 const StyledFormItem = styled.div({
   marginTop: "8px",
 
-  ["&:first-of-type"]: {
+  "&:first-of-type": {
     marginTop: 0
   }
 });
