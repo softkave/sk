@@ -2,8 +2,7 @@ import styled from "@emotion/styled";
 import { Col, Dropdown, Menu, Row } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
-
-import StyledAvatar from "../StyledAvatar";
+import ItemAvatar from "../ItemAvatar";
 
 export interface IAvatarItem {
   color?: string;
@@ -56,7 +55,7 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
     const { onClick } = this.props;
 
     const renderedAvatar = (
-      <StyledAvatar
+      <ItemAvatar
         clickable
         color={avatar.color}
         active={avatar.active}
@@ -103,7 +102,7 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
       return (
         <Dropdown overlay={menu}>
           <StyledMoreButtonContainer>
-            <StyledAvatar>{avatars.length} +</StyledAvatar>
+            <ItemAvatar>{avatars.length} +</ItemAvatar>
           </StyledMoreButtonContainer>
         </Dropdown>
       );

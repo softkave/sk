@@ -1,11 +1,12 @@
 import { IUser } from "../../models/user/user";
-import { CLEAR_STATE } from "../constants";
 import {
-  bulkAddReferenceCountedResources,
-  bulkDeleteReferenceCountedResources,
-  bulkUpdateReferenceCountedResources,
-  IReferenceCountedNormalizedResources
-} from "../referenceCounting";
+  bulkAddCollectionItems,
+  bulkDeleteCollectionItems,
+  bulkUpdateCollectionItems,
+  ICollectionMap
+} from "../collection";
+import { ILogoutUserAction } from "../session/actions";
+import { LOGOUT_USER } from "../session/constants";
 import { IUsersAction } from "./actions";
 import {
   ADD_USER,
@@ -18,46 +19,38 @@ import {
 
 // TODO: Remove unused node modules
 
-export type IUsersState = IReferenceCountedNormalizedResources<IUser>;
+export type IUsersState = ICollectionMap<IUser>;
 
 export function usersReducer(
   state: IUsersState = {},
-  action: IUsersAction
+  action: IUsersAction | ILogoutUserAction
 ): IUsersState {
   switch (action.type) {
     case ADD_USER: {
-      return bulkAddReferenceCountedResources(state, [action.payload]);
+      return bulkAddCollectionItems(state, [action.payload]);
     }
 
     case UPDATE_USER: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        [action.payload],
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, [action.payload], action.meta);
     }
 
     case DELETE_USER: {
-      return bulkDeleteReferenceCountedResources(state, [action.payload]);
+      return bulkDeleteCollectionItems(state, [action.payload]);
     }
 
     case BULK_ADD_USERS: {
-      return bulkAddReferenceCountedResources(state, action.payload);
+      return bulkAddCollectionItems(state, action.payload);
     }
 
     case BULK_UPDATE_USERS: {
-      return bulkUpdateReferenceCountedResources(
-        state,
-        action.payload,
-        action.meta
-      );
+      return bulkUpdateCollectionItems(state, action.payload, action.meta);
     }
 
     case BULK_DELETE_USERS: {
-      return bulkDeleteReferenceCountedResources(state, action.payload);
+      return bulkDeleteCollectionItems(state, action.payload);
     }
 
-    case CLEAR_STATE: {
+    case LOGOUT_USER: {
       return {};
     }
 

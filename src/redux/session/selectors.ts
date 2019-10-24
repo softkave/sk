@@ -24,6 +24,7 @@ export function isUserSignedIn(state: IReduxState) {
 
 export function assertUserSignedIn(state: IReduxState) {
   if (!isUserSignedIn(state)) {
+    // TODO: Change to operation error
     throw new Error("User is not signed in");
   }
 }
@@ -40,4 +41,8 @@ export function getUserTokenRequired(state: IReduxState) {
 
   const token = getUserToken(state)!;
   return token;
+}
+
+export function getSessionType(state: IReduxState) {
+  return state.session.sessionType;
 }

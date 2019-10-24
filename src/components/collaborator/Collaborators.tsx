@@ -1,13 +1,13 @@
 import { Button, List, Tabs } from "antd";
 import React from "react";
-
-import { IBlock } from "../../models/block/block.js";
-import { INotification } from "../../models/notification/notification.js";
+import { IBlock } from "../../models/block/block";
+import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user.js";
-import AC, { IACValue } from "./AC";
-import CollaboratorThumbnail from "./CollaboratorThumbnail";
-
+import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
+import { IAddCollaboratorFormData } from "./AddCollaboratorForm";
+import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer";
 import "./collaborators.css";
+import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
 // TODO: After adding collaborator, control unmounts Collaborator and goes back to board
 // This is not expected behaviour.
@@ -20,7 +20,7 @@ export interface ICollaboratorsProps {
   block: IBlock;
   error?: Error;
   onBack: () => void;
-  onAddCollaborators: (values: IACValue) => void;
+  onAddCollaborators: (values: IAddCollaboratorFormData) => void;
 }
 
 interface ICollaboratorsState {
@@ -71,10 +71,13 @@ export default class Collaborators extends React.Component<
     });
   }
 
-  // TODO: Define type
-  public renderCollaborationRequests(collaborationRequests: any[] = []) {
+  public renderCollaborationRequests(
+    collaborationRequests: INotification[] = []
+  ) {
     // TODO: Use the user's avatar color for the collaboration request also
+    console.log({ collaborationRequests });
     return this.renderList(collaborationRequests, request => {
+      console.log(request);
       return (
         <List.Item key={request.customId}>
           <CollaboratorThumbnail collaborator={request} />
@@ -105,7 +108,9 @@ export default class Collaborators extends React.Component<
 
     return (
       <div className="sk-collaborators">
-        <AC
+        <AddCollaboratorFormContainer
+          customId={block.customId}
+          operationID={addCollaboratorsOperationID}
           visible={showAddCollaboratorsForm}
           onClose={this.toggleCollaboratorForm}
           existingCollaborators={collaborators}

@@ -4,12 +4,12 @@ import set from "lodash/set";
 
 export function getDataFromObject(
   obj: object,
-  dataArr: string[],
+  fields: string[],
   addEmpty?: boolean
 ) {
   const result = {};
 
-  dataArr.forEach(field => {
+  fields.forEach(field => {
     const data = dotProp.get(obj, field);
 
     if ((data !== null && data !== undefined) || addEmpty) {

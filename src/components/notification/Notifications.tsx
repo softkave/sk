@@ -1,0 +1,124 @@
+import styled from "@emotion/styled";
+import { Col, Row } from "antd";
+import throttle from "lodash/throttle";
+import React from "react";
+import { INotification } from "../../models/notification/notification";
+import { IUser } from "../../models/user/user";
+import { getWindowWidth } from "../../utils/window";
+import NotificationBody from "./NotificationBody";
+import NotificationList from "./NotificationList";
+
+export interface INotificationListProps {
+  notifications: INotification[];
+  onClickNotification: (notification: INotification) => void;
+  user: IUser;
+  currentNotificationID?: string;
+}
+
+interface INotificationListState {
+  renderType: string;
+}
+
+class Notifications extends React.Component<
+  INotificationListProps,
+  INotificationListState
+> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      renderType: this.getRenderType()
+    };
+
+    this.setRenderType = throttle(this.setRenderType, 100, { leading: true });
+  }
+
+  public componentDidMount() {
+    window.addEventListener("resize", this.setRenderType);
+  }
+
+  public componentWillUnmount() {
+    window.removeEventListener("resize", this.setRenderType);
+  }
+
+  public render() {
+    const { currentNotificationID } = this.props;
+    const { renderType } = this.state;
+
+    if (renderType === "mobile") {
+      if (currentNotificationID) {
+        return this.renderCurrentNotification();
+      }
+
+      return this.renderNotificationList();
+    }
+
+    return (
+      <StyledNotificationsDesktop>
+        <StyledNotificationListDesktop span={8}>
+          {this.renderNotificationList()}
+        </StyledNotificationListDesktop>
+        <StyledCurrentNotificationDesktop span={16}>
+          {currentNotificationID ? this.renderCurrentNotification() : null}
+        </StyledCurrentNotificationDesktop>
+      </StyledNotificationsDesktop>
+    );
+  }
+
+  private findNotification(id: string) {
+    return this.props.notifications.find(
+      nextNotification => nextNotification.customId === id
+    )!;
+  }
+
+  private setRenderType() {
+    const renderType = this.getRenderType();
+    if (this.state.renderType !== renderType) {
+      this.setState({ renderType });
+    }
+  }
+
+  private getRenderType() {
+    return getWindowWidth() > 500 ? "desktop" : "mobile";
+  }
+
+  private renderCurrentNotification() {
+    const { currentNotificationID } = this.props;
+
+    return (
+      <NotificationBody
+        notification={this.findNotification(currentNotificationID!)}
+      />
+    );
+  }
+
+  private renderNotificationList() {
+    const {
+      notifications,
+      currentNotificationID,
+      onClickNotification
+    } = this.props;
+
+    return (
+      <NotificationList
+        notifications={notifications}
+        onClickNotification={onClickNotification}
+        currentNotificationID={currentNotificationID}
+      />
+    );
+  }
+}
+
+export default Notifications;
+
+const StyledNotificationsDesktop = styled(Row)({
+  height: "100%",
+  width: "100%"
+});
+
+const StyledNotificationListDesktop = styled(Col)({
+  height: "100%"
+});
+
+const StyledCurrentNotificationDesktop = styled(Col)({
+  height: "100%"
+});

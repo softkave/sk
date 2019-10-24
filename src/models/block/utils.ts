@@ -1,5 +1,5 @@
 import { IUser } from "../user/user";
-import { ITaskCollaborator } from "./block";
+import { BlockType, ITaskCollaborator } from "./block";
 
 export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
   return {
@@ -14,14 +14,11 @@ const validChildrenTypesMap = {
   root: ["project", "group", "task"],
   org: ["project", "group", "task"],
   project: ["group", "task"],
-  // root: ["group"],
-  // org: ["group"],
-  // project: ["group"],
   group: ["project", "task"],
   task: []
 };
 
-export function getBlockValidChildrenTypes(block) {
+export function getBlockValidChildrenTypes(block): BlockType[] {
   const types = validChildrenTypesMap[block.type] || [];
   return [...types];
 }

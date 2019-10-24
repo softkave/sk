@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Button, Switch } from "antd";
 import React from "react";
-import Priority from "../components/block/task/Priority";
+import Priority from "../components/task/Priority";
 
 export interface IWebPropTaskProps {
   priority?: string;

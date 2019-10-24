@@ -1,20 +1,33 @@
+import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import { devLog } from "../utils/log";
+import OperationError, {
+  defaultOperationError
+} from "../utils/operation-error/OperationError";
+import OperationErrorItem, {
+  anErrorOccurredMessage,
+  defaultOperationErrorItemField
+} from "../utils/operation-error/OperationErrorItem";
 import { IAnyObject } from "../utils/types";
+
+type NetResultProcessorFunction = (data: any) => any;
+export type NetResultProcessor = string | NetResultProcessorFunction;
 
 const serverAddr =
   process.env.NODE_ENV === "development"
     ? `http://localhost:5000/graphql`
     : "https://api.softkave.com/graphql";
 
-const errorOccurredMessage = "An error occurrred";
-const defaultQueryError = [{ field: "error", message: errorOccurredMessage }];
+const defaultQueryError = OperationError.fromAny(defaultOperationError);
 
-function makeSingleQueryError(message, field = "error") {
-  return [{ field, message }];
+function makeSingleQueryError(
+  message = anErrorOccurredMessage,
+  field = defaultOperationErrorItemField
+) {
+  return new OperationError([new OperationErrorItem(field, message, field)]);
 }
 
-function processQueryResult(resultBody, process) {
+function processQueryResult(resultBody: any, process: NetResultProcessor) {
   if (resultBody) {
     return typeof process === "string"
       ? get(resultBody, process)
@@ -24,7 +37,12 @@ function processQueryResult(resultBody, process) {
   }
 }
 
-export default async function query(headers, netQuery, variables, process) {
+export default async function query(
+  headers: OutgoingHttpHeaders | null,
+  netQuery: string,
+  variables: IAnyObject,
+  process: NetResultProcessor
+) {
   try {
     const hd = {
       "Content-Type": "application/json",
@@ -54,7 +72,7 @@ export default async function query(headers, netQuery, variables, process) {
       }
     }
 
-    throw makeSingleQueryError(result.statusText || errorOccurredMessage);
+    throw makeSingleQueryError(result.statusText);
   } catch (error) {
     devLog(__filename, error);
 

@@ -11,8 +11,22 @@ export interface IBlockRole {
   createdAt: number;
 }
 
-export type BlockPriority = "very important" | "important" | "not important";
-export type BlockType = "org" | "project" | "group" | "task" | "root";
+export const taskPriority = {
+  important: "important",
+  ["not important"]: "not important",
+  ["very important"]: "very important"
+};
+
+export const blockType = {
+  org: "org",
+  project: "project",
+  group: "group",
+  task: "task",
+  root: "root"
+};
+
+export type BlockPriority = keyof typeof taskPriority;
+export type BlockType = keyof typeof blockType;
 
 export interface IBlock {
   customId: string;
@@ -28,8 +42,6 @@ export interface IBlock {
   taskCollaborators: ITaskCollaborator[];
   priority: BlockPriority;
   isBacklog: boolean;
-  position: number;
-  positionTimestamp: number;
   tasks: string[];
   groups: string[];
   projects: string[];
@@ -38,8 +50,10 @@ export interface IBlock {
   roles: IBlockRole[];
   collaborators: string[];
   collaborationRequests: string[];
+}
 
-  loadingChildren?: boolean;
-  loadingCollaborators?: boolean;
-  loadingCollaborationRequests?: boolean;
+export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {
+  return blocks.find(block => {
+    return block.customId === id;
+  });
 }

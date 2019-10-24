@@ -1,27 +1,37 @@
-import { CLEAR_STATE } from "../constants";
 import { ISessionAction } from "./actions";
-import { LOGIN_USER, LOGOUT_USER } from "./constants";
+import { LOGIN_USER, LOGOUT_USER, SET_SESSION_TO_WEB } from "./constants";
 
-export interface ISessionReduxState {
+export const sessionInitializing = "initializing";
+export const sessionWeb = "web";
+export const sessionApp = "app";
+
+export type SessionType =
+  | typeof sessionInitializing
+  | typeof sessionWeb
+  | typeof sessionApp;
+
+export interface ISessionState {
+  sessionType: SessionType;
   token?: string;
   userId?: string;
 }
 
 export function sessionReducer(
-  state: ISessionReduxState = {},
+  state: ISessionState = { sessionType: sessionInitializing },
   action: ISessionAction
-): ISessionReduxState {
+): ISessionState {
   switch (action.type) {
     case LOGIN_USER: {
       return {
+        sessionType: sessionApp,
         token: action.payload.token,
         userId: action.payload.userId
       };
     }
 
-    case CLEAR_STATE:
-    case LOGOUT_USER: {
-      return {};
+    case LOGOUT_USER:
+    case SET_SESSION_TO_WEB: {
+      return { sessionType: sessionWeb };
     }
 
     default:

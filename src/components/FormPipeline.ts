@@ -1,13 +1,14 @@
+// TODO: delete pipelines
 import { Dispatch } from "redux";
 
 import { INetResult } from "../net/query";
-import { IReduxState } from "../redux/store";
-import { IAnyObject } from "../utils/types";
 import {
   filterErrorByBaseName,
   replaceErrorBaseName,
   stripFieldsFromError
-} from "./FOR";
+} from "../redux/operations/error";
+import { IReduxState } from "../redux/store";
+import { IAnyObject } from "../utils/types";
 
 export interface IHandleErrorParams {
   filterBaseNames?: string[];
