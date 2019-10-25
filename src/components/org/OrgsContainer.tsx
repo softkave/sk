@@ -47,10 +47,6 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   const orgs = getBlocksAsArray(state, user.orgs);
   const currentView = getCurrentView(state)!;
 
-  console.log({ currentView });
-
-  // return { view: { viewName: "error" } };
-
   if (currentView.viewName === orgsViewName) {
     const view = getViewFromOperations([loadInitialBlocksOperation]);
 
@@ -77,7 +73,6 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
           orgs,
           blockHandlers: getBlockMethods(state, dispatch),
           onSelectOrg(org: IBlock) {
-            console.log({ org });
             dispatch(setCurrentOrg(org));
           },
           onSelectProject(project: IBlock) {

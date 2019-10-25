@@ -156,18 +156,8 @@ function shouldLoadBlockChildren(
 ) {
   const loadChildrenOperation = getLoadChildrenOperation(state, block);
   const blockChildren = loadBlockChildrenFromRedux(state, block);
-  console.log({ block, loadChildrenOperation, blockChildren });
 
   if (areBlockChildrenLoaded(block, blockChildren) || loadChildrenOperation) {
-    // if (loadChildrenOperation && isOperationCompleted(loadChildrenOperation)) {
-    //   dispatch(
-    //     consumeOperation(
-    //       loadChildrenOperation.operationID,
-    //       loadChildrenOperation.resourceID
-    //     )
-    //   );
-    // }
-
     return false;
   }
 
@@ -194,15 +184,6 @@ function shouldLoadRequests(
     loadRequestsOperation ||
     areBlockCollaborationRequestsLoaded(block, requests)
   ) {
-    // if (loadRequestsOperation && isOperationCompleted(loadRequestsOperation)) {
-    //   dispatch(
-    //     consumeOperation(
-    //       loadRequestsOperation.operationID,
-    //       loadRequestsOperation.resourceID
-    //     )
-    //   );
-    // }
-
     return false;
   }
 
@@ -233,18 +214,6 @@ function shouldLoadCollaborators(
     areBlockCollaboratorsLoaded(block, collaborators) ||
     loadCollaboratorsOperation
   ) {
-    // if (
-    //   loadCollaboratorsOperation &&
-    //   isOperationCompleted(loadCollaboratorsOperation)
-    // ) {
-    //   dispatch(
-    //     consumeOperation(
-    //       loadCollaboratorsOperation.operationID,
-    //       loadCollaboratorsOperation.resourceID
-    //     )
-    //   );
-    // }
-
     return false;
   }
 
@@ -261,13 +230,11 @@ function getLoadCollaboratorsOperation(state: IReduxState, block: IBlock) {
 
 function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
   const dataToLoad = getBlockInternalDataToLoad(block.type);
-  console.log({ dataToLoad });
 
   if (
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    console.log({ block });
     loadBlockChildrenOperation(state, dispatch, block);
   }
 
@@ -287,19 +254,6 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
 }
 
 function getBlockView(state: IReduxState, dispatch: Dispatch, block: IBlock) {
-  // const loadChildrenOperation = getLoadChildrenOperation(state, block);
-  // const loadCollaboratorsOperation = getLoadCollaboratorsOperation(
-  //   state,
-  //   block
-  // );
-
-  // const loadRequestsOperation = getLoadRequestsOperation(state, block);
-  // const operations = [
-  //   loadChildrenOperation!,
-  //   loadCollaboratorsOperation!,
-  //   loadRequestsOperation!
-  // ];
-
   const dataToLoad = getBlockInternalDataToLoad(block.type);
   const operations: any[] = [];
 
@@ -381,7 +335,6 @@ export default function blockDataLoader(
   const block = ownProps.block;
   const view = getBlockView(state, dispatch, block);
   const blockData = getViewProps(state, block, view.viewName);
-  console.log({ view, blockData });
 
   loadData(state, dispatch, block);
 

@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import logoutUserOperation from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
-import { replaceView } from "../../redux/view/actions";
+import { setRootView } from "../../redux/view/actions";
 import { getRootView } from "../../redux/view/selectors";
 import AppHeader from "./AppHeader";
 
@@ -25,8 +25,8 @@ function mergeProps(state, { dispatch }) {
     onLogout() {
       logoutUserOperation(state, dispatch);
     },
-    onChangeView(currentViewName: string, newViewName: string) {
-      dispatch(replaceView(currentViewName, { viewName: newViewName }));
+    onChangeView(newViewName: string) {
+      dispatch(setRootView({ viewName: newViewName }));
     }
   };
 }

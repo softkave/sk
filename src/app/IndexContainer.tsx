@@ -27,12 +27,6 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
     initializeAppSessionOperationID
   )[0];
 
-  console.log({ sessionType, initializeOperation });
-  // return {
-  //   view: { viewName: sessionInitializing },
-  //   initializingProps: { progress: 50 }
-  // };
-
   if (sessionType === "initializing") {
     if (!initializeOperation) {
       initializeAppSessionOperation(state, dispatch);
@@ -56,14 +50,9 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
   } else if (sessionType === "web" || sessionType === "app") {
     if (initializeOperation && isUserSignedIn(state)) {
       const latestStatus = getOperationLastStatus(initializeOperation);
-      // dispatch(
-      //   consumeOperation(
-      //     initializeOperation.operationID,
-      //     initializeOperation.resourceID
-      //   )
-      // );
 
       // TODO: loading is not going to be completed, i don't like that, add the complete part
+      // TODO: Debug SoftkaveLoading
       return {
         view: { viewName: sessionType },
         initializingProps: {

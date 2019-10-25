@@ -1,11 +1,6 @@
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
-import {
-  CLEAR_VIEWS_FROM,
-  POP_VIEW,
-  PUSH_VIEW,
-  REPLACE_VIEW
-} from "./constants";
+import { POP_VIEW, PUSH_VIEW, SET_ROOT_VIEW } from "./constants";
 import { makeCurrentNotificationView } from "./notifications";
 import { makeCurrentOrgView } from "./orgs";
 import { makeCurrentProjectView } from "./project";
@@ -19,7 +14,6 @@ export interface IPushViewAction {
 }
 
 export function pushView(view: IView): IPushViewAction {
-  console.log({ view });
   return {
     type: PUSH_VIEW,
     payload: {
@@ -52,42 +46,20 @@ export function popView(): IPopViewAction {
   };
 }
 
-export interface IReplaceViewAction {
-  type: REPLACE_VIEW;
+export interface ISetRootViewAction {
+  type: SET_ROOT_VIEW;
   payload: {
-    viewName: string;
     view: IView;
   };
 }
 
-export function replaceView(viewName: string, view: IView): IReplaceViewAction {
+export function setRootView(view: IView): ISetRootViewAction {
   return {
-    type: REPLACE_VIEW,
+    type: SET_ROOT_VIEW,
     payload: {
-      viewName,
       view
     }
   };
 }
 
-export interface IClearViewsFromAction {
-  type: CLEAR_VIEWS_FROM;
-  payload: {
-    viewName: string;
-  };
-}
-
-export function clearViewsFrom(viewName: string): IClearViewsFromAction {
-  return {
-    type: CLEAR_VIEWS_FROM,
-    payload: {
-      viewName
-    }
-  };
-}
-
-export type IViewAction =
-  | IPushViewAction
-  | IPopViewAction
-  | IReplaceViewAction
-  | IClearViewsFromAction;
+export type IViewAction = IPushViewAction | IPopViewAction | ISetRootViewAction;

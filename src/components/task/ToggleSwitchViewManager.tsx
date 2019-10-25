@@ -15,7 +15,6 @@ class ToggleSwitchViewManager extends React.Component<
   IToggleSwitchViewManagerProps
 > {
   public render() {
-    // console.log(this.props);
     const { currentView, readyProps } = this.props;
     const renderViews: IRenderView[] = [
       {
