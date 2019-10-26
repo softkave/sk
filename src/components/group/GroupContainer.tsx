@@ -23,12 +23,10 @@ export interface IGroupContainerProps {
 }
 
 function mapStateToProps(state: IReduxState) {
-  console.log("map state");
   return state;
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
-  console.log("map dispatch");
   return { dispatch };
 }
 
@@ -37,7 +35,6 @@ function mergeProps(
   { dispatch }: DispatchProp,
   ownProps: IGroupContainerProps
 ) {
-  console.log("merge props");
   const user = getSignedInUserRequired(state);
   const { view, blockData } = blockDataLoader(state, dispatch, {
     block: ownProps.group

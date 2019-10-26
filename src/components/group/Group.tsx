@@ -38,7 +38,6 @@ export interface IGroupProps {
 class Group extends React.PureComponent<IGroupProps> {
   public render() {
     const { draggableID: draggableId, index, group } = this.props;
-    console.log(this.props);
 
     return (
       <Draggable

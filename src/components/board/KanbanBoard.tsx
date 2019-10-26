@@ -148,7 +148,6 @@ class KanbanBoard extends React.PureComponent<
       blockHandlers,
       groups: blockGroups
     } = this.props;
-    console.log(this.props);
     const sortedGroupIds =
       context === "task" ? block.groupTaskContext : block.groupProjectContext;
 
@@ -187,8 +186,6 @@ class KanbanBoard extends React.PureComponent<
       rendered.push(ungrouped);
     }
 
-    console.log({ GroupContainer });
-
     groups.forEach((group, index) => {
       const groupId = group.customId;
 
@@ -214,8 +211,6 @@ class KanbanBoard extends React.PureComponent<
         />
       );
     });
-
-    console.log({ rendered });
 
     return rendered;
   };

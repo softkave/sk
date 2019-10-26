@@ -47,7 +47,6 @@ function mergeProps(
     taskCollaborator && !!taskCollaborator.completedAt ? true : false;
 
   const blockHandlers = getBlockMethods(state, dispatch);
-  // console.log({ toggleSwitchOperation, view, task, taskCollaborator });
 
   return {
     currentView: view,

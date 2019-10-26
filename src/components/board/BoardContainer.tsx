@@ -28,9 +28,6 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
   const block = ownProps.block || getBlock(state, ownProps.blockID);
   const blockHandlers = getBlockMethods(state, dispatch);
   const { view, blockData } = blockDataLoader(state, dispatch, { block });
-  console.log({ view, blockData, block, user });
-
-  // return { block, currentView: { viewName: "loading" } };
 
   return {
     block,

@@ -24,7 +24,6 @@ export interface IIndexViewManagerProps {
 
 class IndexViewManager extends React.Component<IIndexViewManagerProps> {
   public render() {
-    console.log(this.props);
     const { initializingProps, readyProps, view: currentView } = this.props;
     const renderViews: IRenderView[] = [
       {

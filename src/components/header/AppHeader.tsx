@@ -1,7 +1,6 @@
 import { Col, Row } from "antd";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-
 import { IUser } from "../../models/user/user";
 import { notificationsViewName } from "../../redux/view/notifications";
 import { orgsViewName } from "../../redux/view/orgs";
@@ -12,7 +11,7 @@ export interface IAppHeaderProps extends RouteComponentProps {
   user: IUser;
   currentViewName: string;
   onLogout: () => void;
-  onChangeView: (viewName: string, newViewName: string) => void;
+  onChangeView: (newViewName: string) => void;
 }
 
 class AppHeader extends React.Component<IAppHeaderProps> {
@@ -33,9 +32,7 @@ class AppHeader extends React.Component<IAppHeaderProps> {
             label: "Orgs"
           }
         ]}
-        onSelectMenu={(viewName: string) =>
-          onChangeView(currentViewName, viewName)
-        }
+        onSelectMenu={(viewName: string) => onChangeView(viewName)}
         onLogout={onLogout}
       >
         <Row type="flex" align="middle" justify="center">

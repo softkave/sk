@@ -14,7 +14,6 @@ export interface IGroupViewManagerProps {
 
 class GroupViewManager extends React.Component<IGroupViewManagerProps> {
   public render() {
-    console.log(this.props);
     const { currentView, group, readyProps } = this.props;
     const renderViews: IRenderView[] = [
       {
