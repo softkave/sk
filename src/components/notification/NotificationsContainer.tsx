@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import loadUserNotificationsOperation from "../../redux/operations/notification/loadUserNotifications";
-import markNotificationReadOperation from "../../redux/operations/notification/markNotificationRead";
+import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
+import markNotificationReadOperationFunc from "../../redux/operations/notification/markNotificationRead";
 import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
 import { getFirstOperationWithID } from "../../redux/operations/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -34,7 +34,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   );
 
   const onClickNotification = (notification: INotification) => {
-    markNotificationReadOperation(state, dispatch, user, notification);
+    markNotificationReadOperationFunc(state, dispatch, user, notification);
     dispatch(setCurrentNotification(notification));
   };
 
@@ -73,7 +73,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   const currentView = getViewFromOperations([loadNotificationsOp]);
   const onMount = () => {
     if (!Array.isArray(user.notifications)) {
-      loadUserNotificationsOperation(state, dispatch, user);
+      loadUserNotificationsOperationFunc(state, dispatch, user);
     }
   };
 

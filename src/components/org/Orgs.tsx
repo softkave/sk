@@ -3,10 +3,11 @@ import { Button } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import { addBlockOperationID } from "../../redux/operations/operationIDs";
 import getNewBlock from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
 import ScrollList from "../ScrollList";
-import EditOrg from "./EditOrg";
+import EditOrgFormWithModal from "./EditOrgFormWithModal";
 import OrgList from "./OrgList";
 
 export interface IOrgsProps {
@@ -18,6 +19,7 @@ export interface IOrgsProps {
 
 interface IOrgsState {
   showNewOrgForm: boolean;
+  newOrg?: IBlock;
 }
 
 class Orgs extends React.Component<IOrgsProps, IOrgsState> {
@@ -29,36 +31,35 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
   }
 
   public toggleNewOrgForm = () => {
+    const { user } = this.props;
+
     this.setState(prevState => {
+      const showForm = !prevState.showNewOrgForm;
+      const newOrg = showForm ? getNewBlock(user, "org") : undefined;
+
       return {
-        showNewOrgForm: !prevState.showNewOrgForm
+        newOrg,
+        showNewOrgForm: showForm
       };
     });
   };
 
   public onCreateOrg = async org => {
     const { user, blockHandlers } = this.props;
-    const newBlock = getNewBlock(user, "org");
-    await blockHandlers.onAdd(user, { ...newBlock, ...org });
-    this.toggleNewOrgForm();
+    await blockHandlers.onAdd(user, { org });
   };
 
   public render() {
     const { orgs, onSelectOrg } = this.props;
-    const { showNewOrgForm } = this.state;
 
     return (
       <StyledOrgs>
-        <EditOrg
-          visible={showNewOrgForm}
-          onSubmit={this.onCreateOrg}
-          onClose={this.toggleNewOrgForm}
-        />
+        {this.renderNewOrgForm()}
         <ScrollList>
           <StyledOrgsContent>
             <StyledCreateOrgWrapper>
               <Button block onClick={this.toggleNewOrgForm} icon="plus">
-                Create Org
+                Create Organization
               </Button>
             </StyledCreateOrgWrapper>
             <OrgList orgs={orgs} onClick={org => onSelectOrg(org)} />
@@ -66,6 +67,27 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
         </ScrollList>
       </StyledOrgs>
     );
+  }
+
+  private renderNewOrgForm() {
+    const { showNewOrgForm, newOrg } = this.state;
+
+    if (showNewOrgForm && !!newOrg) {
+      return (
+        <EditOrgFormWithModal
+          visible={showNewOrgForm}
+          onSubmit={this.onCreateOrg}
+          onClose={this.toggleNewOrgForm}
+          customId={newOrg.customId}
+          initialValues={newOrg}
+          operationID={addBlockOperationID}
+          title="Create Organization"
+          submitLabel="Create Organization"
+        />
+      );
+    }
+
+    return null;
   }
 }
 

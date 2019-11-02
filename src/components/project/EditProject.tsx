@@ -8,15 +8,15 @@ import { textPattern } from "../../models/user/descriptor";
 import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../form/FormInternals";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
-import modalWrap from "../modalWrap.jsx";
+} from "../form/FormStyledComponents";
+import withModal from "../withModal.jsx";
 
 const projectExistsErrorMessage = "Project with the same name exists";
 
@@ -172,4 +172,4 @@ class EditProject extends React.Component<IEditProjectProps> {
   }
 }
 
-export default modalWrap(EditProject, "Project");
+export default withModal(EditProject, "Project");

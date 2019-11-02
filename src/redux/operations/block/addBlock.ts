@@ -1,8 +1,5 @@
-import moment from "moment";
-import randomColor from "randomcolor";
 import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
-import { getBlockValidChildrenTypes } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
@@ -13,68 +10,45 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { addBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function addBlockOperation(
+export interface IAddBlockOperationFuncDataProps {
+  user: IUser;
+  block: IBlock;
+  parent?: IBlock;
+}
+
+export default async function addBlockOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IUser,
-  block: IBlock,
-  parent?: IBlock
+  dataProps: IAddBlockOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { user, block, parent } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     addBlockOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
   const newBlock = { ...block } as IBlock;
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: addBlockOperationID,
+    resourceID: newBlock.customId
+  };
 
-  // TODO: Move creation of ids ( any resource at all ) to the server
-  // Maybe get the id from the server when a form is created without an initial data, or without data with id
-  // newBlock.customId = newId();
-
-  dispatchOperationStarted(dispatch, addBlockOperationID, newBlock.customId);
-
-  newBlock.createdAt = Date.now();
-  newBlock.createdBy = user.customId;
-  newBlock.color = randomColor();
-
-  if (newBlock.expectedEndAt && typeof newBlock.expectedEndAt !== "number") {
-    newBlock.expectedEndAt = moment(newBlock.expectedEndAt).valueOf();
-  }
-
-  newBlock.groupTaskContext = [];
-  newBlock.groupProjectContext = [];
-
-  const childrenTypes = getBlockValidChildrenTypes(newBlock);
-
-  if (parent) {
-    const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
-    newBlock.parents = [...ancestors, parent.customId];
-  }
-
-  if (newBlock.type === "org") {
-    newBlock.collaborators = [user.customId];
-  } else if (newBlock.type === "task") {
-    if (!newBlock.taskCollaborators) {
-      newBlock.taskCollaborators = [];
-    }
-  }
-
-  if (childrenTypes.length > 0) {
-    childrenTypes.forEach(type => {
-      const pluralType = `${type}s`;
-      newBlock[pluralType] = [];
-    });
-  }
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.addBlock({ block: newBlock });
@@ -83,7 +57,7 @@ export default async function addBlockOperation(
       throw result.errors;
     }
 
-    dispatch(blockActions.addBlockRedux(newBlock as IBlock));
+    dispatch(blockActions.addBlockRedux(newBlock));
 
     if (parent) {
       const pluralType = `${newBlock.type}s`;
@@ -111,17 +85,12 @@ export default async function addBlockOperation(
       );
     }
 
-    dispatchOperationComplete(dispatch, addBlockOperationID, newBlock.customId);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
       stripBaseNames: ["block"]
     });
 
-    dispatchOperationError(
-      dispatch,
-      addBlockOperationID,
-      newBlock.customId,
-      transformedError
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

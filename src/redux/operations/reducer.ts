@@ -1,7 +1,7 @@
 import { ILogoutUserAction } from "../session/actions";
 import { LOGOUT_USER } from "../session/constants";
 import { IOperationsAction } from "./actions";
-import { CONSUME_OPERATION, PUSH_OPERATION } from "./constants";
+import { PUSH_OPERATION } from "./constants";
 import IOperation from "./operation";
 
 function isOperation(
@@ -52,15 +52,6 @@ export default function operationsReducer(
 
         return { operations };
       }
-    }
-
-    case CONSUME_OPERATION: {
-      const { operationID, resourceID } = action.payload;
-      return {
-        operations: state.operations.filter(operation => {
-          return isOperation(operation, operationID, resourceID);
-        })
-      };
     }
 
     case LOGOUT_USER: {

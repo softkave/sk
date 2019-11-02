@@ -12,10 +12,13 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { changePasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
+import { saveUserTokenIfAlreadySaved } from "./utils";
 
 export interface IChangePasswordData {
   // email: string;
@@ -23,32 +26,44 @@ export interface IChangePasswordData {
   token?: string;
 }
 
-export default async function changePasswordOperation(
+export interface IChangePasswordOperationFuncDataProps {
+  user: IChangePasswordData;
+}
+
+export default async function changePasswordOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IChangePasswordData
+  dataProps: IChangePasswordOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { user } = dataProps;
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: changePasswordOperationID
+  };
+
   if (!user.token) {
-    dispatchOperationError(
-      dispatch,
-      changePasswordOperationID,
-      null,
-      OperationError.fromAny(new Error(userErrorMessages.invalidCredentials))
-    );
+    dispatchOperationError({
+      ...dispatchOptions,
+      error: OperationError.fromAny(
+        new Error(userErrorMessages.invalidCredentials)
+      )
+    });
 
     return;
   }
 
   const operation = getFirstOperationWithID(state, changePasswordOperationID);
 
-  if (isOperationStarted(operation)) {
+  if (isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, changePasswordOperationID);
+  dispatchOperationStarted(dispatchOptions);
 
   try {
-    // TODO: Change type
+    // TODO: define type
     let result: any = null;
 
     if (user.token) {
@@ -69,14 +84,16 @@ export default async function changePasswordOperation(
       dispatch(addUserRedux(result.user));
       dispatch(setRootView(makeOrgsView()));
       dispatch(loginUserRedux(result.token, result.user.customId));
+
+      saveUserTokenIfAlreadySaved(result.token);
     } else {
       throw anErrorOccurred;
     }
 
-    dispatchOperationComplete(dispatch, changePasswordOperationID);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(dispatch, changePasswordOperationID, null, err);
+    dispatchOperationError({ ...dispatchOptions, error: err });
   }
 }

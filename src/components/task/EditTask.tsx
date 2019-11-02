@@ -12,15 +12,15 @@ import cast from "../../utils/cast";
 import { indexArray } from "../../utils/object";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../form/FormInternals";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
-import modalWrap from "../modalWrap";
+} from "../form/FormStyledComponents";
+import withModal from "../withModal";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
@@ -305,4 +305,4 @@ class EditTask extends React.Component<IEditTaskProps> {
   };
 }
 
-export default modalWrap(EditTask, "Task");
+export default withModal(EditTask, "Task");

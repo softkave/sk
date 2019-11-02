@@ -3,25 +3,24 @@ import { Button, Input } from "antd";
 import moment from "moment";
 import React from "react";
 import FormError from "../form/FormError";
+import { IFormikFormErrors } from "../form/formik-utils";
 import ExpiresAt from "./ExpiresAt";
 import Message from "./Message";
 
-export interface IAddCollaboratorFormItemData {
+export interface IAddCollaboratorFormItemValues {
   email: string;
   body?: string;
   expiresAt?: number;
 }
 
-export interface IAddCollaboratorFormItemError {
-  email?: string;
-  body?: string;
-  expiresAt?: string;
-}
+export type IAddCollaboratorFormItemError = IFormikFormErrors<
+  IAddCollaboratorFormItemValues
+>;
 
 export interface IAddCollaboratorFormItemProps {
-  value: IAddCollaboratorFormItemData;
-  onChange: (value: IAddCollaboratorFormItemData) => void;
-  onDelete: (value: IAddCollaboratorFormItemData) => void;
+  value: IAddCollaboratorFormItemValues;
+  onChange: (value: IAddCollaboratorFormItemValues) => void;
+  onDelete: (value: IAddCollaboratorFormItemValues) => void;
   error?: IAddCollaboratorFormItemError;
 }
 

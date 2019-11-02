@@ -6,9 +6,9 @@ import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
-import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
-import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
+import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
+import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -235,21 +235,21 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    loadBlockChildrenOperation(state, dispatch, block);
+    loadBlockChildrenOperationFunc(state, dispatch, block);
   }
 
   if (
     dataToLoad.includes("collaborators") &&
     shouldLoadCollaborators(state, dispatch, block)
   ) {
-    loadBlockCollaboratorsOperation(state, dispatch, block);
+    loadBlockCollaboratorsOperationFunc(state, dispatch, block);
   }
 
   if (
     dataToLoad.includes("collaborationRequests") &&
     shouldLoadRequests(state, dispatch, block)
   ) {
-    loadBlockCollaborationRequestsOperation(state, dispatch, block);
+    loadBlockCollaborationRequestsOperationFunc(state, dispatch, block);
   }
 }
 

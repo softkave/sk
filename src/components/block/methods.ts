@@ -1,44 +1,17 @@
 import { Dispatch } from "redux";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import addBlockOperation from "../../redux/operations/block/addBlock";
-import addCollaboratorsOperation from "../../redux/operations/block/addCollaborators";
+import addBlockOperationFunc from "../../redux/operations/block/addBlock";
+import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import deleteBlockOperation from "../../redux/operations/block/deleteBlock";
-import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
-import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
-import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
-import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock";
-import toggleTaskOperation from "../../redux/operations/block/toggleTask";
-import updateBlockOperation from "../../redux/operations/block/updateBlock";
+import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
+import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlock";
+import toggleTaskOperationFunc from "../../redux/operations/block/toggleTask";
+import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { IReduxState } from "../../redux/store";
-import { IAddCollaboratorFormItemData } from "../collaborator/AddCollaboratorFormItem";
-
-// export interface IBlockMethods {
-//   onAdd: (
-//     user: IUser,
-//     block: IBlock,
-//     parent?: IBlock
-//   ) => Promise<void>;
-//   onUpdate: (block: IBlock, data: Partial<IBlock>) => Promise<void>;
-//   onToggle: (user: IUser, block: IBlock) => Promise<void>;
-//   onDelete: (block: IBlock) => Promise<void>;
-//   onAddCollaborators: (
-//     block: IBlock,
-
-//     // TODO: This is wrong, better declare type
-//     requests: IAddCollaboratorFormItemData[],
-//     message?: string,
-//     expiresAt?: number | Date
-//   ) => Promise<void>;
-//   loadBlockChildren: (
-//     block: IBlock,
-//     types?: string[],
-//     isBacklog?: boolean
-//   ) => Promise<void>;
-//   loadCollaborators: (block: IBlock) => Promise<void>;
-//   loadCollaborationRequests: (block: IBlock) => Promise<void>;
-//   loadRootData: () => Promise<void>;
-// }
+import { IAddCollaboratorFormItemValues } from "../collaborator/AddCollaboratorFormItem";
 
 export type IBlockMethods = ReturnType<typeof getBlockMethods>;
 
@@ -50,15 +23,15 @@ export interface IGetBlockMethodsParams {
 export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
   return {
     async onAdd(user: IUser, block: IBlock, parent?: IBlock) {
-      return addBlockOperation(state, dispatch, user, block, parent);
+      return addBlockOperationFunc(state, dispatch, user, block, parent);
     },
 
     async onUpdate(block: IBlock, data: Partial<IBlock>) {
-      return updateBlockOperation(state, dispatch, block, data);
+      return updateBlockOperationFunc(state, dispatch, block, data);
     },
 
     async onToggle(user: IUser, block: IBlock) {
-      return toggleTaskOperation(state, dispatch, user, block);
+      return toggleTaskOperationFunc(state, dispatch, user, block);
     },
 
     async onDelete(block: IBlock) {
@@ -69,11 +42,11 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       block: IBlock,
 
       // TODO: This is wrong, better declare type
-      requests: IAddCollaboratorFormItemData[],
+      requests: IAddCollaboratorFormItemValues[],
       message?: string,
       expiresAt?: number | Date
     ) {
-      return addCollaboratorsOperation(
+      return addCollaboratorsOperationFunc(
         state,
         dispatch,
         block,
@@ -88,7 +61,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       types?: string[],
       isBacklog?: boolean
     ) {
-      return loadBlockChildrenOperation(
+      return loadBlockChildrenOperationFunc(
         state,
         dispatch,
         block,
@@ -98,15 +71,19 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
     },
 
     async loadCollaborators(block: IBlock) {
-      return loadBlockCollaboratorsOperation(state, dispatch, block);
+      return loadBlockCollaboratorsOperationFunc(state, dispatch, block);
     },
 
     async loadCollaborationRequests(block: IBlock) {
-      return loadBlockCollaborationRequestsOperation(state, dispatch, block);
+      return loadBlockCollaborationRequestsOperationFunc(
+        state,
+        dispatch,
+        block
+      );
     },
 
     async loadRootData() {
-      return loadRootBlocksOperation(state, dispatch);
+      return loadRootBlocksOperationFunc(state, dispatch);
     }
   };
 }

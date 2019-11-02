@@ -4,14 +4,13 @@ import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user.js";
 import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IAddCollaboratorFormData } from "./AddCollaboratorForm";
-import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer";
+import { IAddCollaboratorFormValues } from "./AddCollaboratorForm";
+import AddCollaboratorFormWithModal from "./AddCollaboratorFormWithModal";
 import "./collaborators.css";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
 // TODO: After adding collaborator, control unmounts Collaborator and goes back to board
 // This is not expected behaviour.
-
 export interface ICollaboratorsProps {
   // TODO: Define collaborators' right type
   collaborators: IUser[];
@@ -20,7 +19,7 @@ export interface ICollaboratorsProps {
   block: IBlock;
   error?: Error;
   onBack: () => void;
-  onAddCollaborators: (values: IAddCollaboratorFormData) => void;
+  onAddCollaborators: (values: IAddCollaboratorFormValues) => void;
 }
 
 interface ICollaboratorsState {
@@ -106,17 +105,17 @@ export default class Collaborators extends React.Component<
 
     return (
       <div className="sk-collaborators">
-        <AddCollaboratorFormContainer
+        <AddCollaboratorFormWithModal
           customId={block.customId}
-          operationID={addCollaboratorsOperationID}
-          visible={showAddCollaboratorsForm}
-          onClose={this.toggleCollaboratorForm}
-          existingCollaborators={collaborators}
           existingCollaborationRequests={collaborationRequests}
-          onSendRequests={async data => {
+          existingCollaborators={collaborators}
+          onClose={this.toggleCollaboratorForm}
+          onSubmit={async data => {
             await onAddCollaborators(data);
-            this.toggleCollaboratorForm();
           }}
+          operationID={addCollaboratorsOperationID}
+          title="Add Collaborator"
+          visible={showAddCollaboratorsForm}
         />
         <div className="sk-collaborators-header">
           <Button icon="arrow-left" onClick={onBack} />

@@ -10,7 +10,7 @@ import IOperation, {
 } from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 
 // TODO: Move to a central place ( errorMessages )
 const changePasswordSuccessMessage = "Password changed successfully";

@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
-import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock";
+import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlock";
 import {
   isOperationCompleted,
   isOperationError,
@@ -52,7 +52,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
 
     if (!loadInitialBlocksOperation) {
       // TODO: move to componentDidMount
-      loadRootBlocksOperation(state, dispatch);
+      loadRootBlocksOperationFunc(state, dispatch);
 
       return {
         view

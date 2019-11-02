@@ -9,31 +9,42 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { getBlockCollaboratorsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function loadBlockCollaboratorsOperation(
+export interface ILoadBlockCollaboratorsOperationFuncDataProps {
+  block: IBlock;
+}
+
+export default async function loadBlockCollaboratorsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock
+  dataProps: ILoadBlockCollaboratorsOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { block } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     getBlockCollaboratorsOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    getBlockCollaboratorsOperationID,
-    block.customId
-  );
+    operationID: getBlockCollaboratorsOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getCollaborators({ block });
@@ -55,18 +66,10 @@ export default async function loadBlockCollaboratorsOperation(
       )
     );
 
-    dispatchOperationComplete(
-      dispatch,
-      getBlockCollaboratorsOperationID,
-      block.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      getBlockCollaboratorsOperationID,
-      block.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

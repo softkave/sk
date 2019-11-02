@@ -5,7 +5,7 @@ export function getUserTokenFromStorage() {
   return getItem(userTokenKey);
 }
 
-export function saveUserTokenInStorage(token) {
+export function saveUserTokenToStorage(token) {
   setItem(userTokenKey, token);
 }
 

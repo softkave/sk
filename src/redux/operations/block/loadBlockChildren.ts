@@ -7,19 +7,27 @@ import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
-  dispatchOperationStarted
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
-import updateBlockOperation from "./updateBlock";
+import updateBlockOperationFunc from "./updateBlock";
 
-export default async function loadBlockChildrenOperation(
+export interface ILoadBlockChildrenOperationFuncDataProps {
+  block: IBlock;
+  types?: string[];
+  isBacklog?: boolean;
+}
+
+export default async function loadBlockChildrenOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock,
-  types?: string[],
-  isBacklog?: boolean
+  dataProps: ILoadBlockChildrenOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { block, isBacklog, types } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     getBlockChildrenOperationID,
@@ -28,16 +36,20 @@ export default async function loadBlockChildrenOperation(
 
   if (
     operation
-    // && isOperationStarted(operation)
+    // TODO: Look into, this may be the reason why block is not reloading after saving collaboration requests
+    // && isOperationStarted(operation, options.scopeID)
   ) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    getBlockChildrenOperationID,
-    block.customId
-  );
+    operationID: getBlockChildrenOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getBlockChildren({
@@ -79,8 +91,14 @@ export default async function loadBlockChildrenOperation(
         !Array.isArray(block[key]) ||
         block[key].length !== typeContainer.length
       ) {
-        // TODO: Think on, this is currently fire and forget
-        updateBlockOperation(state, dispatch, block, parentUpdate);
+        // TODO: Think on, this is currently fire and forget, should we wait for it?
+        updateBlockOperationFunc(
+          state,
+          dispatch,
+          { block, data: parentUpdate },
+          options
+        );
+
         dispatch(
           blockActions.updateBlockRedux(block.customId, parentUpdate, {
             arrayUpdateStrategy: "replace"
@@ -91,18 +109,10 @@ export default async function loadBlockChildrenOperation(
       }
     }
 
-    dispatchOperationComplete(
-      dispatch,
-      getBlockChildrenOperationID,
-      block.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      getBlockChildrenOperationID,
-      block.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

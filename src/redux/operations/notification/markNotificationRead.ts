@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import { INotification } from "../../../models/notification/notification";
-import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
@@ -9,32 +8,42 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { updateNotificationOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function markNotificationReadOperation(
+export interface IMarkNotificationReadOperationFuncDataProps {
+  notification: INotification;
+}
+
+export default async function markNotificationReadOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IUser,
-  notification: INotification
+  dataProps: IMarkNotificationReadOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { notification } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     updateNotificationOperationID,
     notification.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    updateNotificationOperationID,
-    notification.customId
-  );
+    operationID: updateNotificationOperationID,
+    resourceID: notification.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const data = { readAt: Date.now() };
@@ -54,18 +63,10 @@ export default async function markNotificationReadOperation(
       })
     );
 
-    dispatchOperationComplete(
-      dispatch,
-      updateNotificationOperationID,
-      notification.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      updateNotificationOperationID,
-      notification.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

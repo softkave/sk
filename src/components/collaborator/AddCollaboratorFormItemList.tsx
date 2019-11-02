@@ -1,13 +1,14 @@
+import styled from "@emotion/styled";
 import { Button, Divider } from "antd";
 import React from "react";
 import AddCollaboratorFormItem, {
-  IAddCollaboratorFormItemData,
-  IAddCollaboratorFormItemError
+  IAddCollaboratorFormItemError,
+  IAddCollaboratorFormItemValues
 } from "./AddCollaboratorFormItem";
 
 export interface IAddCollaboratorFormItemListProps {
-  onChange: (value: IAddCollaboratorFormItemData[]) => void;
-  value: IAddCollaboratorFormItemData[];
+  onChange: (value: IAddCollaboratorFormItemValues[]) => void;
+  value: IAddCollaboratorFormItemValues[];
   maxRequests: number;
   errors?: Array<IAddCollaboratorFormItemError | undefined>;
 }
@@ -94,3 +95,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
     );
   }
 }
+
+const StyledList = styled.div({});
+
+const StyledItem = styled.div({});

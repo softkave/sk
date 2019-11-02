@@ -9,26 +9,40 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { loadUserNotificationsOperationID } from "../operationIDs";
 import { getOperationsWithID } from "../selectors";
 
-export default async function loadUserNotificationsOperation(
+export interface ILoadUserNotificationsOperationFuncDataProps {
+  user: IUser;
+}
+
+export default async function loadUserNotificationsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IUser
+  dataProps: ILoadUserNotificationsOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { user } = dataProps;
   const operations = getOperationsWithID(
     state,
     loadUserNotificationsOperationID
   );
 
-  if (operations[0] && isOperationStarted(operations[0])) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, loadUserNotificationsOperationID);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: loadUserNotificationsOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await userNet.getCollaborationRequests();
@@ -51,14 +65,10 @@ export default async function loadUserNotificationsOperation(
       )
     );
 
-    dispatchOperationComplete(dispatch, loadUserNotificationsOperationID);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      loadUserNotificationsOperationID,
-      null,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

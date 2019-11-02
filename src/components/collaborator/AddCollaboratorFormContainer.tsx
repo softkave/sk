@@ -1,21 +1,28 @@
 import { connect } from "react-redux";
 import { getOperationWithIDForResource } from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
-import AddCollaboratorForm from "./AddCollaboratorForm";
+import AddCollaboratorFormWithFormik from "./AddCollaboratorFormWithFormik";
 
-export interface IEditTaskContainerProps {
+export interface IAddCollaboratorFormContainerProps {
   customId: string;
   operationID: string;
 }
 
-function mapStateToProps(state: IReduxState, props: IEditTaskContainerProps) {
+function mapStateToProps(
+  state: IReduxState,
+  props: IAddCollaboratorFormContainerProps
+) {
   return {
     operation: getOperationWithIDForResource(
       state,
       props.operationID,
       props.customId
-    )
+    ),
+
+    getFormIdentifier() {
+      return "AddCollaboratorForm";
+    }
   };
 }
 
-export default connect(mapStateToProps)(AddCollaboratorForm);
+export default connect(mapStateToProps)(AddCollaboratorFormWithFormik);

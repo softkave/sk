@@ -6,6 +6,8 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { requestForgotPasswordOperationID } from "../operationIDs";
@@ -15,21 +17,33 @@ export interface IForgotPasswordData {
   email: string;
 }
 
-export default async function requestForgotPasswordOperation(
+export interface IRequestForgotPasswordOperationFuncDataProps {
+  user: IForgotPasswordData;
+}
+
+export default async function requestForgotPasswordOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IForgotPasswordData
+  dataProps: IRequestForgotPasswordOperationFuncDataProps,
+  options: IOperationFuncOptions
 ) {
+  const { user } = dataProps;
   const operation = getFirstOperationWithID(
     state,
     requestForgotPasswordOperationID
   );
 
-  if (isOperationStarted(operation)) {
+  if (isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, requestForgotPasswordOperationID);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: requestForgotPasswordOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await userNet.forgotPassword(user);
@@ -38,15 +52,10 @@ export default async function requestForgotPasswordOperation(
       throw result.errors;
     }
 
-    dispatchOperationComplete(dispatch, requestForgotPasswordOperationID);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(
-      dispatch,
-      requestForgotPasswordOperationID,
-      null,
-      err
-    );
+    dispatchOperationError({ ...dispatchOptions, error: err });
   }
 }
