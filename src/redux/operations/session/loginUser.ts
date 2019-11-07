@@ -35,7 +35,7 @@ export default async function loginUserOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: ILoginUserOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
   const operation = getFirstOperationWithID(state, loginUserOperationID);

@@ -24,8 +24,8 @@ import { getOperationsWithID } from "../selectors";
 export default async function initializeAppSessionOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  dataProps: {},
-  options: IOperationFuncOptions
+  dataProps: {} = {},
+  options: IOperationFuncOptions = {}
 ) {
   const operations = getOperationsWithID(
     state,

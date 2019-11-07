@@ -24,7 +24,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: ILoadBlockCollaboratorsOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
   const operation = getOperationWithIDForResource(

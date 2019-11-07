@@ -1,4 +1,6 @@
 import { Button, Form, Input } from "antd";
+import isArray from "lodash/isArray";
+import isString from "lodash/isString";
 import moment from "moment";
 import React from "react";
 import { blockConstants } from "../../models/block/constants";
@@ -82,7 +84,9 @@ export default class AddCollaboratorForm extends React.PureComponent<
               </Form.Item>
               <Form.Item
                 label="Default Expiration Date"
-                help={<FormError>{errors.expiresAt}</FormError>}
+                help={
+                  touched.expiresAt && <FormError>{errors.expiresAt}</FormError>
+                }
               >
                 <ExpiresAt
                   minDate={moment()
@@ -92,7 +96,15 @@ export default class AddCollaboratorForm extends React.PureComponent<
                   value={values.expiresAt}
                 />
               </Form.Item>
-              <Form.Item label="Requests">
+              <Form.Item
+                label="Requests"
+                help={
+                  touched.requests &&
+                  isString(errors.requests) && (
+                    <FormError>{errors.requests}</FormError>
+                  )
+                }
+              >
                 <AddCollaboratorFormItemList
                   value={values.requests}
                   maxRequests={blockConstants.maxAddCollaboratorValuesLength}
@@ -102,7 +114,9 @@ export default class AddCollaboratorForm extends React.PureComponent<
                       value
                     ) as any);
                   }}
-                  errors={errors.requests}
+                  errors={
+                    isArray(errors.requests) ? errors.requests : undefined
+                  }
                 />
               </Form.Item>
             </FormBody>
@@ -161,6 +175,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
       if (notification) {
         return { email: notificationErrorMessages.requestHasBeenSentBefore };
       }
+
+      return undefined;
     });
 
     return errors;

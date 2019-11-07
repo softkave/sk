@@ -23,7 +23,7 @@ export default async function markNotificationReadOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IMarkNotificationReadOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { notification } = dataProps;
   const operation = getOperationWithIDForResource(

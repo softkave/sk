@@ -13,21 +13,17 @@ import {
 import { requestForgotPasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
 
-export interface IForgotPasswordData {
-  email: string;
-}
-
 export interface IRequestForgotPasswordOperationFuncDataProps {
-  user: IForgotPasswordData;
+  email: string;
 }
 
 export default async function requestForgotPasswordOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IRequestForgotPasswordOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
-  const { user } = dataProps;
+  const { email } = dataProps;
   const operation = getFirstOperationWithID(
     state,
     requestForgotPasswordOperationID
@@ -46,7 +42,7 @@ export default async function requestForgotPasswordOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const result = await userNet.forgotPassword(user);
+    const result = await userNet.forgotPassword({ email });
 
     if (result && result.errors) {
       throw result.errors;

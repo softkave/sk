@@ -24,7 +24,7 @@ export default async function loadUserNotificationsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: ILoadUserNotificationsOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
   const operations = getOperationsWithID(

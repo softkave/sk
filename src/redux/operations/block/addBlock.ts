@@ -27,7 +27,7 @@ export default async function addBlockOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IAddBlockOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { user, block, parent } = dataProps;
   const operation = getOperationWithIDForResource(

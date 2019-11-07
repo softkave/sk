@@ -3,6 +3,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user.js";
+import { IOperationFuncOptions } from "../../redux/operations/operation";
 import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
 import { IAddCollaboratorFormValues } from "./AddCollaboratorForm";
 import AddCollaboratorFormWithModal from "./AddCollaboratorFormWithModal";
@@ -19,7 +20,10 @@ export interface ICollaboratorsProps {
   block: IBlock;
   error?: Error;
   onBack: () => void;
-  onAddCollaborators: (values: IAddCollaboratorFormValues) => void;
+  onAddCollaborators: (
+    values: IAddCollaboratorFormValues,
+    options: IOperationFuncOptions
+  ) => void;
 }
 
 interface ICollaboratorsState {
@@ -110,8 +114,8 @@ export default class Collaborators extends React.Component<
           existingCollaborationRequests={collaborationRequests}
           existingCollaborators={collaborators}
           onClose={this.toggleCollaboratorForm}
-          onSubmit={async data => {
-            await onAddCollaborators(data);
+          onSubmit={async (data, options) => {
+            await onAddCollaborators(data, options);
           }}
           operationID={addCollaboratorsOperationID}
           title="Add Collaborator"

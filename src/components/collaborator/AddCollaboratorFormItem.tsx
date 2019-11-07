@@ -76,19 +76,10 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
 
 export default AddCollaboratorFormItem;
 
-const StyledContainer = styled.div({
-  backgroundColor: "#e7e7e7",
-  padding: "16px",
-  borderRadius: "8px",
-  marginBottom: "16px"
-});
+const StyledContainer = styled.div({});
 
 const StyledFormItem = styled.div({
-  marginTop: "8px",
-
-  "&:first-of-type": {
-    marginTop: 0
-  }
+  marginTop: "8px"
 });
 
 const StyledFormItemButtonContainer = styled.div({

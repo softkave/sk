@@ -93,13 +93,11 @@ function mergeProps(
           return (
             <NotificationResponseForm
               onRespond={selectedResponse => {
-                respondToNotificationOperationFunc(
-                  state,
-                  dispatch,
+                respondToNotificationOperationFunc(state, dispatch, {
                   user,
-                  notification,
-                  selectedResponse
-                );
+                  response: selectedResponse,
+                  request: notification
+                });
               }}
             />
           );

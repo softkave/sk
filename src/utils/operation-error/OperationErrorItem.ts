@@ -1,21 +1,15 @@
 import isObject from "lodash/isObject";
+import testExistenceAndType from "../testExistenceAndType";
 
 // TODO: add calling captureStackTrace
+// It seems like it already has stack trace, but test further
 export default class OperationErrorItem extends Error {
   public static isOperationItem(item: any): item is OperationErrorItem {
     return item instanceof OperationErrorItem;
   }
 
   public static isLikeOperationErrorItem(item: any) {
-    const testValidity = (subject: any, required: boolean, type: string) => {
-      if (subject !== undefined) {
-        return typeof subject === type;
-      } else if (required) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+    const testValidity = testExistenceAndType;
 
     if (OperationErrorItem.isOperationItem(item)) {
       return true;
@@ -72,6 +66,8 @@ export default class OperationErrorItem extends Error {
   public type: string;
   public action?: string;
   public field?: string;
+  public message: string;
+  public errorMessage?: string;
 
   constructor(type: string, message?: string, field?: string, action?: string) {
     super(message);
@@ -79,6 +75,12 @@ export default class OperationErrorItem extends Error {
     this.field = field;
     this.action = action;
     this.name = "OperationErrorItem";
+    this.message = message || "";
+    this.errorMessage = message;
+  }
+
+  public isType(type: string) {
+    return this.type === type;
   }
 
   public hasField() {
@@ -86,7 +88,7 @@ export default class OperationErrorItem extends Error {
   }
 
   public getFieldNamesAsArray() {
-    return this.hasField() ? this.field!.split("") : [];
+    return this.hasField() ? this.field!.split(".") : [];
   }
 
   public getFieldNameIndex(searchFieldName: string) {
@@ -109,6 +111,7 @@ export default class OperationErrorItem extends Error {
 
   public removeCurrentBaseName() {
     let newField = this.field;
+
     if (this.hasField()) {
       const fieldNames = this.getFieldNamesAsArray();
       fieldNames.shift();

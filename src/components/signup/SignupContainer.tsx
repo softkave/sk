@@ -16,7 +16,7 @@ function mergeProps(state, { dispatch }) {
   return {
     operation: getFirstOperationWithID(state, signupUserOperationID),
     async onSubmit(user: ISignupFormData) {
-      return signupUserOperationFunc(state, dispatch, user);
+      return signupUserOperationFunc(state, dispatch, { user });
     }
   };
 }

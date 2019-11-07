@@ -52,7 +52,7 @@ class Task extends React.PureComponent<ITaskProps> {
                     className="sk-minitask-close"
                   />
                 }
-                onDelete={() => blockHandlers.onDelete(task)}
+                onDelete={() => blockHandlers.onDelete({ block: task })}
                 title="Are you sure you want to delete this task?"
               />
             </span>

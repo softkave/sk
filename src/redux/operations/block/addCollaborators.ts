@@ -31,7 +31,7 @@ export default async function addCollaboratorsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IAddCollaboratorOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { block, requests, message, expiresAt } = dataProps;
   const operation = getOperationWithIDForResource(
@@ -55,10 +55,14 @@ export default async function addCollaboratorsOperationFunc(
 
   try {
     const proccessedCollaborators = requests.map(request => {
+      const requestExpiresAt = request.expiresAt || expiresAt;
+
       return {
         ...request,
         body: request.body || message!,
-        expiresAt: moment(request.expiresAt || expiresAt).valueOf(),
+        expiresAt: requestExpiresAt
+          ? moment(requestExpiresAt).valueOf()
+          : undefined,
         customId: newId()
       };
     });

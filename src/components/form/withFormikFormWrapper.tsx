@@ -1,9 +1,10 @@
 import { Formik, FormikConfig } from "formik";
 import isFunction from "lodash/isFunction";
 import React from "react";
-import IOperation from "../../redux/operations/operation";
+import IOperation, {
+  IOperationFuncOptions
+} from "../../redux/operations/operation";
 import cast from "../../utils/cast";
-import { IAnyObject } from "../../utils/types";
 import { newId } from "../../utils/utils";
 import {
   getFormikFormStateFromOperation,
@@ -31,11 +32,15 @@ export default function withFormikFormWrapper(
 
     type Values = ComponentProps["values"];
     type FormikFormWrapperProps = RemainingComponentProps & {
-      onSubmit: (values: Values) => Promise<void>;
+      onSubmit: (
+        values: Values,
+        options: IOperationFuncOptions
+      ) => Promise<void>;
       onClose: () => void;
       operation?: IOperation;
       getFormIdentifier?: () => string;
       initialValues?: Values;
+      ignoreScopeID?: boolean;
     };
 
     type RefType = React.RefObject<ComponentType> | React.Ref<ComponentType>;
@@ -50,30 +55,41 @@ export default function withFormikFormWrapper(
     > {
       private formikRef: React.RefObject<Formik<Values>> = React.createRef();
 
-      public componentDidMount() {
-        const scopeID = this.getScopeID();
+      constructor(props) {
+        super(props);
 
-        if (scopeID) {
-          this.setState({ scopeID });
-        }
+        this.state = {
+          scopeID: undefined
+        };
 
-        this.setFormikFormState();
+        this.onSubmitForm = this.onSubmitForm.bind(this);
       }
 
-      public componentDidUpdate() {
+      public componentDidMount() {
+        const { ignoreScopeID } = this.props;
+
+        if (!ignoreScopeID) {
+          const scopeID = this.getScopeID();
+
+          if (scopeID) {
+            this.setState({ scopeID });
+          }
+
+          this.setFormikFormState();
+        }
+      }
+
+      public componentDidUpdate(prevProps: FormikFormWrapperProps) {
         const { operation, onClose } = this.props;
         const { scopeID } = this.state;
         const formikBag = this.getFormikBag();
 
         if (formikBag) {
-          if (
-            !formikBag.isSubmitting &&
-            shouldCloseFormikForm(operation, scopeID)
-          ) {
+          if (shouldCloseFormikForm(operation, scopeID)) {
             if (isFunction(onClose)) {
               onClose();
             }
-          } else {
+          } else if (this.props !== prevProps) {
             this.setFormikFormState();
           }
         }
@@ -96,13 +112,15 @@ export default function withFormikFormWrapper(
             initialValues={rest.initialValues}
             onSubmit={this.onSubmitForm}
           >
-            {props =>
-              React.createElement(component, {
+            {props => {
+              console.log(props, { options });
+              return React.createElement(component, {
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),
+                errors: props.errors || {},
                 ref: forwardedRef
-              })
-            }
+              });
+            }}
           </Formik>
         );
       }
@@ -117,6 +135,7 @@ export default function withFormikFormWrapper(
         const { operation } = this.props;
         const { scopeID } = this.state;
         const formikBag = this.getFormikBag();
+        console.log({ operation }, this);
         const state = getFormikFormStateFromOperation(operation, scopeID);
 
         if (formikBag) {
@@ -126,8 +145,9 @@ export default function withFormikFormWrapper(
 
       private onSubmitForm(values: Values) {
         const { onSubmit } = this.props;
+        const { scopeID } = this.state;
 
-        onSubmit(values);
+        onSubmit(values, { scopeID });
       }
 
       private getScopeID() {

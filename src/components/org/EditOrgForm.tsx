@@ -1,7 +1,11 @@
 import { Button, Form, Input } from "antd";
+import isArray from "lodash/isArray";
+import isObject from "lodash/isObject";
+import isString from "lodash/isString";
 import React from "react";
+import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import FormError from "../form/FormError";
-import { IFormikFormBaseProps } from "../form/formik-utils";
+import { IFormikFormBaseProps, IFormikFormErrors } from "../form/formik-utils";
 import {
   FormBody,
   FormBodyContainer,
@@ -9,6 +13,7 @@ import {
   FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
+import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
   name: string;
@@ -39,21 +44,25 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
       handleSubmit,
       touched
     } = this.props;
-    const formErrors = errors;
+    const formErrors = errors || {};
+    const orgExistsMessage = this.doesOrgExist(formErrors);
 
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
           <FormScrollList>
             <FormBody>
-              {formErrors.error && (
-                <Form.Item>
-                  <FormError error={formErrors.error} />
-                </Form.Item>
-              )}
+              {formErrors.error && <FormError error={formErrors.error} />}
               <Form.Item
                 label="Organization Name"
-                help={touched.name && <FormError>{formErrors.name}</FormError>}
+                help={
+                  touched.name &&
+                  (!!orgExistsMessage ? (
+                    <OrgExistsMessage message={orgExistsMessage} />
+                  ) : (
+                    <FormError error={formErrors.name} />
+                  ))
+                }
               >
                 <Input
                   autoComplete="off"
@@ -95,5 +104,23 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
         </FormBodyContainer>
       </StyledForm>
     );
+  }
+
+  private doesOrgExist(errorMessages: IFormikFormErrors<IEditOrgFormValues>) {
+    if (errorMessages) {
+      let messages: string[] = [];
+
+      if (errorMessages.error) {
+        messages = messages.concat(errorMessages.error);
+      }
+
+      if (errorMessages.name) {
+        messages = messages.concat(errorMessages.name);
+      }
+
+      return messages.find(message => {
+        return message === blockErrorMessages.orgExists;
+      });
+    }
   }
 }

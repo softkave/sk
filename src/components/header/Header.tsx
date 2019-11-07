@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Button, Col, Drawer, Dropdown, Icon, Menu, Row } from "antd";
 import React from "react";
-
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
 import ItemAvatar from "../ItemAvatar";
@@ -141,7 +140,7 @@ export default Header;
 const DrawerBody = styled("div")({
   padding: "24px",
 
-  ["& .ant-menu-vertical"]: {
+  "& .ant-menu-vertical": {
     borderRight: "0 !important"
   }
 });

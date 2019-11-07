@@ -34,7 +34,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   );
 
   const onClickNotification = (notification: INotification) => {
-    markNotificationReadOperationFunc(state, dispatch, user, notification);
+    markNotificationReadOperationFunc(state, dispatch, { notification });
     dispatch(setCurrentNotification(notification));
   };
 
@@ -73,7 +73,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
   const currentView = getViewFromOperations([loadNotificationsOp]);
   const onMount = () => {
     if (!Array.isArray(user.notifications)) {
-      loadUserNotificationsOperationFunc(state, dispatch, user);
+      loadUserNotificationsOperationFunc(state, dispatch, { user });
     }
   };
 

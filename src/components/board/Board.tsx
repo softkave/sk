@@ -6,6 +6,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { assignTask } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
+import { IOperationFuncOptions } from "../../redux/operations/operation";
 import {
   addBlockOperationID,
   updateBlockOperationID
@@ -152,7 +153,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             existingProjects={this.getExistingNames(projects)}
             initialValues={formBlock}
             onClose={() => this.toggleForm(formType)}
-            onSubmit={data => this.onSubmitData(data, formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
             operationID={blockFormOperationId}
             submitLabel={formTitle}
             title={formTitle}
@@ -163,7 +164,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             visible
             operationID={blockFormOperationId}
             customId={formBlock!.customId}
-            onSubmit={data => this.onSubmitData(data, formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
             onClose={() => this.toggleForm(formType)}
             initialValues={formBlock}
             existingGroups={this.getExistingNames(groups)}
@@ -177,7 +178,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             operationID={blockFormOperationId}
             customId={formBlock!.customId}
             collaborators={collaborators}
-            onSubmit={data => this.onSubmitData(data, formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
             onClose={() => this.toggleForm(formType)}
             initialValues={
               isFormForAddBlock && actLikeRootBlock
@@ -332,18 +333,24 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     });
   };
 
-  private onSubmitData = async (data, formType) => {
+  private onSubmitData = async (data, options: IOperationFuncOptions) => {
     const { user } = this.props;
     const { parent, isFormForAddBlock } = this.state;
     const formBlock = this.getFormBlock();
 
     if (!isFormForAddBlock) {
-      await this.props.blockHandlers.onUpdate(formBlock!, data);
+      await this.props.blockHandlers.onUpdate(
+        { data, block: formBlock! },
+        options
+      );
     } else {
       await this.props.blockHandlers.onAdd(
-        user,
-        { ...formBlock!, ...data },
-        parent!
+        {
+          user,
+          block: { ...formBlock!, ...data },
+          parent: parent!
+        },
+        options
       );
     }
 
@@ -404,12 +411,13 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         block={block}
         onBack={this.toggleShowCollaborators}
         collaborators={this.getCollaborators()}
-        onAddCollaborators={async data => {
+        onAddCollaborators={async (data, options) => {
           return blockHandlers.onAddCollaborators(
-            block,
-            data.requests,
-            data.message,
-            data.expiresAt
+            {
+              block,
+              ...data
+            },
+            options
           );
         }}
         collaborationRequests={collaborationRequests}

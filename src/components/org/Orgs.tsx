@@ -3,6 +3,7 @@ import { Button } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import { IOperationFuncOptions } from "../../redux/operations/operation";
 import { addBlockOperationID } from "../../redux/operations/operationIDs";
 import getNewBlock from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
@@ -44,9 +45,9 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
     });
   };
 
-  public onCreateOrg = async org => {
+  public onCreateOrg = async (org, options: IOperationFuncOptions) => {
     const { user, blockHandlers } = this.props;
-    await blockHandlers.onAdd(user, { org });
+    await blockHandlers.onAdd({ user, block: org }, options);
   };
 
   public render() {

@@ -20,14 +20,10 @@ import { changePasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
 import { saveUserTokenIfAlreadySaved } from "./utils";
 
-export interface IChangePasswordData {
+export interface IChangePasswordOperationFuncDataProps {
   // email: string;
   password: string;
   token?: string;
-}
-
-export interface IChangePasswordOperationFuncDataProps {
-  user: IChangePasswordData;
 }
 
 export default async function changePasswordOperationFunc(
@@ -36,14 +32,14 @@ export default async function changePasswordOperationFunc(
   dataProps: IChangePasswordOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { user } = dataProps;
+  const { password, token } = dataProps;
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
     operationID: changePasswordOperationID
   };
 
-  if (!user.token) {
+  if (!token) {
     dispatchOperationError({
       ...dispatchOptions,
       error: OperationError.fromAny(
@@ -66,15 +62,15 @@ export default async function changePasswordOperationFunc(
     // TODO: define type
     let result: any = null;
 
-    if (user.token) {
+    if (token) {
       result = await userNet.changePasswordWithToken({
-        password: user.password,
-        token: user.token
+        password,
+        token
       });
     } else {
       result = await userNet.changePassword({
-        password: user.password,
-        token: user.token
+        password,
+        token
       });
     }
 

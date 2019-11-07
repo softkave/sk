@@ -128,11 +128,14 @@ export function getOperationLastStatus(
   scopeID?: OperationStatusScopeID
 ) {
   if (operation && Array.isArray(operation.statusHistory)) {
+    console.log("is operation");
     if (scopeID) {
+      console.log("has scope id", scopeID);
       const scopeStatuses = getStatusesWithScope(operation, scopeID);
 
       return scopeStatuses[scopeStatuses.length - 1];
     } else {
+      console.log("has not scope id", operation.statusHistory);
       return operation.statusHistory[operation.statusHistory.length - 1];
     }
   }

@@ -23,7 +23,7 @@ export default async function deleteBlockOperation(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IDeleteBlockOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
   const operation = getOperationWithIDForResource(

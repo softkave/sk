@@ -3,7 +3,6 @@ import moment from "moment";
 import React from "react";
 import { BlockType, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import IOperation from "../../redux/operations/operation";
 import { indexArray } from "../../utils/object";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";

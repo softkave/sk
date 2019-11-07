@@ -25,7 +25,7 @@ export default async function loadBlockChildrenOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: ILoadBlockChildrenOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { block, isBacklog, types } = dataProps;
   const operation = getOperationWithIDForResource(

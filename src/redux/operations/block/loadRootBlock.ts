@@ -17,8 +17,8 @@ import { getOperationsWithID } from "../selectors";
 export default async function loadRootBlocksOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  dataProps: {},
-  options: IOperationFuncOptions
+  dataProps: {} = {},
+  options: IOperationFuncOptions = {}
 ) {
   const operations = getOperationsWithID(state, loadRootBlocksOperationID);
 

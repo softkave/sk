@@ -2,8 +2,6 @@ import { Formik, FormikActions, FormikErrors, FormikProps } from "formik";
 import IOperation, {
   getOperationLastError,
   getOperationLastStatus,
-  getStatusesWithScope,
-  IOperationStatus,
   isOperationPending,
   isOperationStarted,
   isStatusTypeCompleted,
@@ -98,6 +96,7 @@ export function getFormikFormStateFromOperation(
 ): IFormikFormState {
   if (operation) {
     const lastStatus = getOperationLastStatus(operation, scopeID);
+    console.log({ lastStatus });
 
     if (lastStatus) {
       const isLoading =
@@ -111,7 +110,7 @@ export function getFormikFormStateFromOperation(
     }
   }
 
-  return {};
+  return { isSubmitting: false, errors: {} };
 }
 
 export function shouldCloseFormikForm(

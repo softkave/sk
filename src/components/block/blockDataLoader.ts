@@ -235,21 +235,21 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    loadBlockChildrenOperationFunc(state, dispatch, block);
+    loadBlockChildrenOperationFunc(state, dispatch, { block });
   }
 
   if (
     dataToLoad.includes("collaborators") &&
     shouldLoadCollaborators(state, dispatch, block)
   ) {
-    loadBlockCollaboratorsOperationFunc(state, dispatch, block);
+    loadBlockCollaboratorsOperationFunc(state, dispatch, { block });
   }
 
   if (
     dataToLoad.includes("collaborationRequests") &&
     shouldLoadRequests(state, dispatch, block)
   ) {
-    loadBlockCollaborationRequestsOperationFunc(state, dispatch, block);
+    loadBlockCollaborationRequestsOperationFunc(state, dispatch, { block });
   }
 }
 

@@ -150,7 +150,7 @@ class Group extends React.PureComponent<IGroupProps> {
       cancelText: "No",
       okType: "danger",
       onOk() {
-        blockHandlers.onDelete(group);
+        blockHandlers.onDelete({ block: group });
       },
       onCancel() {
         // Do nothing

@@ -26,7 +26,7 @@ export default async function toggleTaskOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IToggleTaskOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { user, block } = dataProps;
   function findTaskCollaborator(

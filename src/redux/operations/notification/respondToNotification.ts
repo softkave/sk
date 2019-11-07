@@ -8,6 +8,7 @@ import {
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
+import OperationErrorItem from "../../../utils/operation-error/OperationErrorItem";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
 import { IReduxState } from "../../store";
@@ -33,7 +34,7 @@ export default async function respondToNotificationOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IRespondToNotificationOperationFuncDataProps,
-  options: IOperationFuncOptions
+  options: IOperationFuncOptions = {}
 ) {
   const { user, request, response } = dataProps;
   const operation = getOperationWithIDForResource(
@@ -57,7 +58,7 @@ export default async function respondToNotificationOperationFunc(
 
   try {
     if (canRespondToNotification(request)) {
-      throw [{ field: "error", message: new Error("Request is not valid") }];
+      throw new OperationErrorItem("error", "Request is not valid");
     }
 
     const result = await userNet.respondToCollaborationRequest({

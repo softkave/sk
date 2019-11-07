@@ -15,7 +15,10 @@ const validationSchema = yup.object().shape({
     .array()
     .of(
       yup.object().shape({
-        email: yup.string().email(userErrorMessages.invalidEmail),
+        email: yup
+          .string()
+          .email(userErrorMessages.invalidEmail)
+          .required("Email address is required"), // TODO: Central place for error messages
         body: yup
           .string()
           .max(notificationConstants.maxAddCollaboratorMessageLength, () => {
@@ -27,6 +30,7 @@ const validationSchema = yup.object().shape({
         expiresAt: yup.number()
       })
     )
+    .min(blockConstants.minAddCollaboratorValuesLength)
     .max(blockConstants.maxAddCollaboratorValuesLength)
     .required()
 });
