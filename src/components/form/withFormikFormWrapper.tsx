@@ -113,7 +113,8 @@ export default function withFormikFormWrapper(
             onSubmit={this.onSubmitForm}
           >
             {props => {
-              console.log(props, { options });
+              // TODO: clean console logs
+              // console.log(props, { options });
               return React.createElement(component, {
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),
@@ -135,7 +136,6 @@ export default function withFormikFormWrapper(
         const { operation } = this.props;
         const { scopeID } = this.state;
         const formikBag = this.getFormikBag();
-        console.log({ operation }, this);
         const state = getFormikFormStateFromOperation(operation, scopeID);
 
         if (formikBag) {

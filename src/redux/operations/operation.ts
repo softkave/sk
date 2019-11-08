@@ -128,14 +128,11 @@ export function getOperationLastStatus(
   scopeID?: OperationStatusScopeID
 ) {
   if (operation && Array.isArray(operation.statusHistory)) {
-    console.log("is operation");
     if (scopeID) {
-      console.log("has scope id", scopeID);
       const scopeStatuses = getStatusesWithScope(operation, scopeID);
 
       return scopeStatuses[scopeStatuses.length - 1];
     } else {
-      console.log("has not scope id", operation.statusHistory);
       return operation.statusHistory[operation.statusHistory.length - 1];
     }
   }
@@ -208,6 +205,16 @@ export function isOperationPending(
   scopeID?: OperationStatusScopeID
 ) {
   return getOperationLastStatusType(operation, scopeID) === operationPending;
+}
+
+export function isOperationStartedOrPending(
+  operation?: IOperation,
+  scopeID?: OperationStatusScopeID
+) {
+  return (
+    isOperationStarted(operation, scopeID) ||
+    isOperationPending(operation, scopeID)
+  );
 }
 
 export function isOperationCompleted(

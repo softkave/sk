@@ -9,6 +9,7 @@ import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import { isOperationStartedOrPending } from "../../redux/operations/operation";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -157,7 +158,10 @@ function shouldLoadBlockChildren(
   const loadChildrenOperation = getLoadChildrenOperation(state, block);
   const blockChildren = loadBlockChildrenFromRedux(state, block);
 
-  if (areBlockChildrenLoaded(block, blockChildren) || loadChildrenOperation) {
+  if (
+    isOperationStartedOrPending(loadChildrenOperation) ||
+    areBlockChildrenLoaded(block, blockChildren)
+  ) {
     return false;
   }
 
@@ -181,7 +185,7 @@ function shouldLoadRequests(
   const requests = loadBlockCollaborationRequestsFromRedux(state, block);
 
   if (
-    loadRequestsOperation ||
+    isOperationStartedOrPending(loadRequestsOperation) ||
     areBlockCollaborationRequestsLoaded(block, requests)
   ) {
     return false;
@@ -211,8 +215,8 @@ function shouldLoadCollaborators(
   const collaborators = loadBlockCollaboratorsFromRedux(state, block);
 
   if (
-    areBlockCollaboratorsLoaded(block, collaborators) ||
-    loadCollaboratorsOperation
+    isOperationStartedOrPending(loadCollaboratorsOperation) ||
+    areBlockCollaboratorsLoaded(block, collaborators)
   ) {
     return false;
   }

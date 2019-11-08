@@ -9,7 +9,8 @@ import {
   dispatchOperationError,
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
-  IOperationFuncOptions
+  IOperationFuncOptions,
+  isOperationStarted
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -34,11 +35,7 @@ export default async function loadBlockChildrenOperationFunc(
     block.customId
   );
 
-  if (
-    operation
-    // TODO: Look into, this may be the reason why block is not reloading after saving collaboration requests
-    // && isOperationStarted(operation, options.scopeID)
-  ) {
+  if (operation && isOperationStarted(operation)) {
     return;
   }
 
@@ -87,6 +84,8 @@ export default async function loadBlockChildrenOperationFunc(
     for (const key in parentUpdate) {
       const typeContainer = parentUpdate[key];
 
+      // To update children customIds if not present or some are missing
+      // { tasks: [], ... }
       if (
         !Array.isArray(block[key]) ||
         block[key].length !== typeContainer.length

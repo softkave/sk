@@ -1,7 +1,4 @@
 import { Button, Form, Input } from "antd";
-import isArray from "lodash/isArray";
-import isObject from "lodash/isObject";
-import isString from "lodash/isString";
 import React from "react";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import FormError from "../form/FormError";

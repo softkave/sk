@@ -51,7 +51,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
     if (initializeOperation && isUserSignedIn(state)) {
       const latestStatus = getOperationLastStatus(initializeOperation);
 
-      // TODO: loading is not going to be completed, i don't like that, add the complete part
+      // TODO: loading is not going to be completed, I don't like that, add the complete part
       // TODO: Debug SoftkaveLoading
       return {
         view: { viewName: sessionType },

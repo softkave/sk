@@ -96,7 +96,6 @@ export function getFormikFormStateFromOperation(
 ): IFormikFormState {
   if (operation) {
     const lastStatus = getOperationLastStatus(operation, scopeID);
-    console.log({ lastStatus });
 
     if (lastStatus) {
       const isLoading =

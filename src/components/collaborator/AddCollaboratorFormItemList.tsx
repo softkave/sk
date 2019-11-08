@@ -104,13 +104,13 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
 }
 
 const StyledList = styled.div({
-  backgroundColor: "#fafafa",
+  backgroundColor: "#f0f0f0",
   margin: "16px 0"
 });
 
 const StyledItem = styled.div(props => {
   return {
-    borderBottom: "1px solid #ccc",
+    borderBottom: "1px solid #bbb",
     padding: "16px",
 
     "&:last-of-type": {
