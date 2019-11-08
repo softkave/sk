@@ -8,15 +8,15 @@ import { textPattern } from "../../models/user/descriptor";
 import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 import {
   FormBody,
   FormBodyContainer,
   FormControls,
   FormScrollList,
   StyledForm
-} from "../form/FormInternals";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
-import modalWrap from "../modalWrap.jsx";
+} from "../form/FormStyledComponents";
+import withModal, { IModalWrapperProps } from "../withModal.jsx";
 
 const validationSchema = yup.object().shape({
   name: yup
@@ -37,7 +37,7 @@ interface IEditOrgData {
   description?: string;
 }
 
-export interface IEditOrgProps {
+export interface IEditOrgProps extends IModalWrapperProps {
   onSubmit: (values: IEditOrgData) => void | Promise<void>;
   submitLabel?: string;
   data?: IEditOrgData;
@@ -142,4 +142,4 @@ class EditOrg extends React.Component<IEditOrgProps> {
   }
 }
 
-export default modalWrap(EditOrg, "Org");
+export default withModal(EditOrg, "Org");

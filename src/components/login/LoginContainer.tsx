@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
 import { loginUserOperationID } from "../../redux/operations/operationIDs";
 import { getFirstOperationWithID } from "../../redux/operations/selectors";
-import loginUserOperation from "../../redux/operations/session/loginUser";
-import Login, { ILoginFormData } from "./Login";
+import loginUserOperationFunc from "../../redux/operations/session/loginUser";
+import Login, { ILoginFormValues } from "./Login";
 
 function mapStateToProps(state) {
   return state;
@@ -15,8 +15,8 @@ function mapDispatchToProps(dispatch) {
 function mergeProps(state, { dispatch }) {
   return {
     operation: getFirstOperationWithID(state, loginUserOperationID),
-    async onSubmit(user: ILoginFormData) {
-      return loginUserOperation(state, dispatch, user);
+    async onSubmit(user: ILoginFormValues) {
+      return loginUserOperationFunc(state, dispatch, { user });
     }
   };
 }

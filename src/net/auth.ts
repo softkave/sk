@@ -1,6 +1,7 @@
 import { OutgoingHttpHeaders } from "http";
 import { getUserToken } from "../redux/session/selectors";
 import store from "../redux/store";
+import { defaultOperationError } from "../utils/operation-error/OperationError";
 import { IAnyObject } from "../utils/types";
 import query, { NetResultProcessor } from "./query";
 
@@ -18,8 +19,7 @@ export default async function queryWithAuth(
   const requestToken = tokenParam || getToken();
 
   if (!requestToken) {
-    // throw new NetError("error, please try again");
-    throw [{ type: "error", message: new Error("An error occurred") }];
+    throw defaultOperationError;
   }
 
   return await query(

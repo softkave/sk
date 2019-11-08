@@ -1,5 +1,6 @@
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
+import { saveUserTokenToStorage } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
@@ -11,6 +12,8 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { loginUserOperationID } from "../operationIDs";
@@ -24,20 +27,33 @@ export interface ILoginUserData {
   remember: boolean;
 }
 
-export default async function loginUserOperation(
+export interface ILoginUserOperationFuncDataProps {
+  user: ILoginUserData;
+}
+
+export default async function loginUserOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: ILoginUserData
+  dataProps: ILoginUserOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { user } = dataProps;
   const operation = getFirstOperationWithID(state, loginUserOperationID);
 
-  if (isOperationStarted(operation)) {
+  if (isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, loginUserOperationID);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: loginUserOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
+    // TODO: define types for the result
     const result = await userNet.login(user);
 
     if (result && result.errors) {
@@ -46,14 +62,18 @@ export default async function loginUserOperation(
       dispatch(addUserRedux(result.user));
       dispatch(setRootView(makeOrgsView()));
       dispatch(loginUserRedux(result.token, result.user.customId));
+
+      if (user.remember) {
+        saveUserTokenToStorage(result.token);
+      }
     } else {
       throw anErrorOccurred;
     }
 
-    dispatchOperationComplete(dispatch, loginUserOperationID);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const err = OperationError.fromAny(error);
 
-    dispatchOperationError(dispatch, loginUserOperationID, null, err);
+    dispatchOperationError({ ...dispatchOptions, error: err });
   }
 }

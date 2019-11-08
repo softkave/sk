@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { changePasswordOperationID } from "../../redux/operations/operationIDs";
 import { getFirstOperationWithID } from "../../redux/operations/selectors";
-import changePasswordOperation from "../../redux/operations/session/changePassword";
+import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
 import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
 
 // TODO: Implement an endpoint to get user email from token ( forgot password and session token )
@@ -23,7 +23,7 @@ function mergeProps(state, { dispatch }) {
       const query = new URLSearchParams(window.location.search);
       const token = query.get("t");
 
-      return changePasswordOperation(state, dispatch, {
+      return changePasswordOperationFunc(state, dispatch, {
         password: data.password,
 
         // TODO: Fetch email using the token

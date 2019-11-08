@@ -55,7 +55,7 @@ function mergeProps(
       checked,
       disabled: !taskCollaborator,
       onToggle() {
-        return blockHandlers.onToggle(user, task);
+        return blockHandlers.onToggle({ user, block: task });
       }
     }
   };

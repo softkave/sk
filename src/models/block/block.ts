@@ -13,8 +13,8 @@ export interface IBlockRole {
 
 export const taskPriority = {
   important: "important",
-  ["not important"]: "not important",
-  ["very important"]: "very important"
+  "not important": "not important",
+  "very important": "very important"
 };
 
 export const blockType = {

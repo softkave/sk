@@ -6,6 +6,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { assignTask } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
+import { IOperationFuncOptions } from "../../redux/operations/operation";
 import {
   addBlockOperationID,
   updateBlockOperationID
@@ -15,10 +16,10 @@ import getNewBlock, { INewBlock } from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
 import AvatarList, { IAvatarItem } from "../collaborator/AvatarList";
 import Collaborators from "../collaborator/Collaborators";
-import EditGroupContainer from "../group/EditGroupContainer";
 import ExpandedGroup from "../group/ExpandedGroup";
-import EditProjectContainer from "../project/EditProjectContainer";
-import EditTaskContainer from "../task/EditTaskContainer";
+import GroupFormWithModal from "../group/GroupFormWithModal";
+import ProjectFormWithModal from "../project/ProjectFormWithModal";
+import TaskFormWithModal from "../task/TaskFormWithModal";
 import SplitView, { ISplit } from "../view/SplitView";
 import { getChildrenTypesForContext } from "./childrenTypes";
 import KanbanBoard from "./KanbanBoard";
@@ -137,6 +138,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       : updateBlockOperationID;
 
     const formBlock = this.getFormBlock();
+    const formTitle = this.getFormTitle();
 
     if (showCollaborators) {
       return this.renderCollaborators();
@@ -145,43 +147,50 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     return (
       <Content>
         {formType === "project" && (
-          <EditProjectContainer
+          <ProjectFormWithModal
             visible
-            operationID={blockFormOperationId}
             customId={formBlock!.customId}
-            onSubmit={data => this.onSubmitData(data, formType)}
-            onClose={() => this.toggleForm(formType)}
-            data={formBlock}
             existingProjects={this.getExistingNames(projects)}
-            submitLabel={
-              !isFormForAddBlock ? "Update Project" : "Create Project"
-            }
+            initialValues={formBlock}
+            onClose={() => this.toggleForm(formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
+            operationID={blockFormOperationId}
+            submitLabel={formTitle}
+            title={formTitle}
           />
         )}
         {formType === "group" && (
-          <EditGroupContainer
+          <GroupFormWithModal
             visible
             operationID={blockFormOperationId}
             customId={formBlock!.customId}
-            onSubmit={data => this.onSubmitData(data, formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
             onClose={() => this.toggleForm(formType)}
-            data={formBlock}
+            initialValues={formBlock}
             existingGroups={this.getExistingNames(groups)}
-            submitLabel={!isFormForAddBlock ? "Update Group" : "Create Group"}
+            submitLabel={formTitle}
+            title={formTitle}
           />
         )}
         {formType === "task" && (
-          <EditTaskContainer
+          <TaskFormWithModal
             visible
             operationID={blockFormOperationId}
             customId={formBlock!.customId}
-            defaultAssignedTo={actLikeRootBlock && [assignTask(user)]}
             collaborators={collaborators}
-            onSubmit={data => this.onSubmitData(data, formType)}
+            onSubmit={(data, options) => this.onSubmitData(data, options)}
             onClose={() => this.toggleForm(formType)}
-            data={formBlock}
+            initialValues={
+              isFormForAddBlock && actLikeRootBlock
+                ? {
+                    ...formBlock!,
+                    taskCollaborators: [assignTask(user)]
+                  }
+                : formBlock
+            }
             user={user}
-            submitLabel={!isFormForAddBlock ? "Update Task" : "Create Task"}
+            submitLabel={formTitle}
+            title={formTitle}
           />
         )}
         <Header>
@@ -256,6 +265,29 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     );
   };
 
+  private getFormTitle() {
+    const { formType, isFormForAddBlock } = this.state;
+
+    switch (formType) {
+      case "group":
+        return isFormForAddBlock ? "Create Group" : "Update Group";
+
+      case "org":
+        return isFormForAddBlock
+          ? "Create Organization"
+          : "Update Organization";
+
+      case "project":
+        return isFormForAddBlock ? "Create Project" : "Update Project";
+
+      case "task":
+        return isFormForAddBlock ? "Create Task" : "Update Task";
+
+      default:
+        return "Form";
+    }
+  }
+
   private getFormBlock = () => {
     const {
       formAddBlock,
@@ -301,22 +333,28 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     });
   };
 
-  private onSubmitData = async (data, formType) => {
+  private onSubmitData = async (data, options: IOperationFuncOptions) => {
     const { user } = this.props;
     const { parent, isFormForAddBlock } = this.state;
     const formBlock = this.getFormBlock();
 
     if (!isFormForAddBlock) {
-      await this.props.blockHandlers.onUpdate(formBlock!, data);
+      await this.props.blockHandlers.onUpdate(
+        { data, block: formBlock! },
+        options
+      );
     } else {
       await this.props.blockHandlers.onAdd(
-        user,
-        { ...formBlock!, ...data },
-        parent!
+        {
+          user,
+          block: { ...formBlock!, ...data },
+          parent: parent!
+        },
+        options
       );
     }
 
-    this.toggleForm(formType);
+    // this.toggleForm(formType);
   };
 
   private toggleForm = (type: BlockType, parent?: IBlock, block?: IBlock) => {
@@ -373,12 +411,13 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         block={block}
         onBack={this.toggleShowCollaborators}
         collaborators={this.getCollaborators()}
-        onAddCollaborators={async data => {
+        onAddCollaborators={async (data, options) => {
           return blockHandlers.onAddCollaborators(
-            block,
-            data.requests,
-            data.message,
-            data.expiresAt
+            {
+              block,
+              ...data
+            },
+            options
           );
         }}
         collaborationRequests={collaborationRequests}

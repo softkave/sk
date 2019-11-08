@@ -8,27 +8,42 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
+export interface IDeleteBlockOperationFuncDataProps {
+  block: IBlock;
+}
+
 export default async function deleteBlockOperation(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock
+  dataProps: IDeleteBlockOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { block } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     deleteBlockOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, deleteBlockOperationID, block.customId);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: deleteBlockOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.deleteBlock({ block });
@@ -38,14 +53,10 @@ export default async function deleteBlockOperation(
     }
 
     dispatch(deleteBlockRedux(block.customId));
-    dispatchOperationComplete(dispatch, deleteBlockOperationID, block.customId);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      deleteBlockOperationID,
-      block.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

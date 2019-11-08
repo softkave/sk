@@ -1,3 +1,4 @@
+import isArray from "lodash/isArray";
 import isObject from "lodash/isObject";
 import { indexArray } from "../object";
 import testExistenceAndType from "../testExistenceAndType";
@@ -46,6 +47,10 @@ export default class OperationError extends Error {
       return new OperationError(item.errors, item.message);
     } else if (OperationErrorItem.isLikeOperationErrorItem(item)) {
       return new OperationError([item]);
+    } else if (isArray(item)) {
+      return new OperationError(
+        item.map(next => OperationErrorItem.fromAny(next))
+      );
     }
 
     return OperationError.fromAny(defaultOperationError);
@@ -93,7 +98,7 @@ export default class OperationError extends Error {
     const errors = this.errors.map(error => {
       const errorBaseName = error.getBaseName();
 
-      if (baseNames.indexOf(errorBaseName)) {
+      if (baseNames.indexOf(errorBaseName) !== -1) {
         return error.removeCurrentBaseName();
       } else {
         return error;
@@ -157,8 +162,12 @@ export default class OperationError extends Error {
   public throwErrors() {
     throw this.errors;
   }
+
+  public findOneWithType(type: string) {
+    return this.errors.find(error => {
+      return error.isType(type);
+    });
+  }
 }
 
-export const defaultOperationError = new OperationError([
-  OperationErrorItem.fromAny(anErrorOccurred)
-]);
+export const defaultOperationError = new OperationError([anErrorOccurred]);

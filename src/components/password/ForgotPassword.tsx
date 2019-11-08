@@ -8,7 +8,7 @@ import IOperation, {
 } from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 
 const emailMismatchErrorMessage = "Email does not match";
 const successMessage = `

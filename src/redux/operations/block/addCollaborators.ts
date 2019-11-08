@@ -1,8 +1,7 @@
 import moment from "moment";
 import { Dispatch } from "redux";
-import { IAddCollaboratorFormItemData } from "../../../components/collaborator/AddCollaboratorFormItem";
+import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { IBlock } from "../../../models/block/block";
-
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { newId } from "../../../utils/utils";
@@ -12,43 +11,58 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { addCollaboratorsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function addCollaboratorsOperation(
+export interface IAddCollaboratorOperationFuncDataProps {
+  block: IBlock;
+
+  // TODO: better declare type, don't rely on form values
+  requests: IAddCollaboratorFormItemValues[];
+  message?: string;
+  expiresAt?: number | Date;
+}
+
+export default async function addCollaboratorsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock,
-
-  // TODO: This is wrong, better declare type
-  requests: IAddCollaboratorFormItemData[],
-  message?: string,
-  expiresAt?: number | Date
+  dataProps: IAddCollaboratorOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { block, requests, message, expiresAt } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     addCollaboratorsOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    addCollaboratorsOperationID,
-    block.customId
-  );
+    operationID: addCollaboratorsOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const proccessedCollaborators = requests.map(request => {
+      const requestExpiresAt = request.expiresAt || expiresAt;
+
       return {
         ...request,
         body: request.body || message!,
-        expiresAt: moment(request.expiresAt || expiresAt).valueOf(),
+        expiresAt: requestExpiresAt
+          ? moment(requestExpiresAt).valueOf()
+          : undefined,
         customId: newId()
       };
     });
@@ -83,21 +97,12 @@ export default async function addCollaboratorsOperation(
       )
     );
 
-    dispatchOperationComplete(
-      dispatch,
-      addCollaboratorsOperationID,
-      block.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
       replaceBaseNames: [{ from: "collaborators", to: "requests" }]
     });
 
-    dispatchOperationError(
-      dispatch,
-      addCollaboratorsOperationID,
-      block.customId,
-      transformedError
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

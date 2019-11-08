@@ -10,17 +10,25 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { toggleTaskOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function toggleTaskOperation(
+export interface IToggleTaskOperationFuncDataProps {
+  user: IUser;
+  block: IBlock;
+}
+
+export default async function toggleTaskOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IUser,
-  block: IBlock
+  dataProps: IToggleTaskOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { user, block } = dataProps;
   function findTaskCollaborator(
     taskCollaborators: ITaskCollaborator[],
     userId: string
@@ -38,11 +46,18 @@ export default async function toggleTaskOperation(
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, toggleTaskOperationID, block.customId);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: toggleTaskOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const taskCollaborator = findTaskCollaborator(
@@ -87,14 +102,10 @@ export default async function toggleTaskOperation(
       )
     );
 
-    dispatchOperationComplete(dispatch, toggleTaskOperationID, block.customId);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      toggleTaskOperationID,
-      block.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

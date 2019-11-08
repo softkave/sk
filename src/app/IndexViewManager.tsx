@@ -1,5 +1,6 @@
 import { notification } from "antd";
 import React from "react";
+import { Redirect } from "react-router-dom";
 import SoftkaveLoadingView from "../components/view/SoftkaveLoadingView";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {
@@ -61,8 +62,18 @@ class IndexViewManager extends React.Component<IIndexViewManagerProps> {
     ];
 
     return (
-      <ViewManager views={renderViews} currentViewName={currentView.viewName} />
+      <React.Fragment>
+        {this.shouldNavigateToHome() && <Redirect to="/" />}
+        <ViewManager
+          views={renderViews}
+          currentViewName={currentView.viewName}
+        />
+      </React.Fragment>
     );
+  }
+
+  private shouldNavigateToHome() {
+    return window.location.pathname !== "/";
   }
 }
 

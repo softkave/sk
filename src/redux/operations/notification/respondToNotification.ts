@@ -8,6 +8,7 @@ import {
 import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
+import OperationErrorItem from "../../../utils/operation-error/OperationErrorItem";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
 import { IReduxState } from "../../store";
@@ -16,37 +17,48 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { respondToNotificationOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function respondToNotificationOperation(
+export interface IRespondToNotificationOperationFuncDataProps {
+  user: IUser;
+  request: INotification;
+  response: NotificationStatusText;
+}
+
+export default async function respondToNotificationOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  user: IUser,
-  request: INotification,
-  response: NotificationStatusText
+  dataProps: IRespondToNotificationOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { user, request, response } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     respondToNotificationOperationID,
     request.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    respondToNotificationOperationID,
-    request.customId
-  );
+    operationID: respondToNotificationOperationID,
+    resourceID: request.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     if (canRespondToNotification(request)) {
-      throw [{ field: "error", message: new Error("Request is not valid") }];
+      throw new OperationErrorItem("error", "Request is not valid");
     }
 
     const result = await userNet.respondToCollaborationRequest({
@@ -86,18 +98,10 @@ export default async function respondToNotificationOperation(
       }
     }
 
-    dispatchOperationComplete(
-      dispatch,
-      respondToNotificationOperationID,
-      request.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      respondToNotificationOperationID,
-      request.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

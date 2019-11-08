@@ -6,9 +6,10 @@ import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
-import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
-import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
+import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
+import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import { isOperationStartedOrPending } from "../../redux/operations/operation";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -157,7 +158,10 @@ function shouldLoadBlockChildren(
   const loadChildrenOperation = getLoadChildrenOperation(state, block);
   const blockChildren = loadBlockChildrenFromRedux(state, block);
 
-  if (areBlockChildrenLoaded(block, blockChildren) || loadChildrenOperation) {
+  if (
+    isOperationStartedOrPending(loadChildrenOperation) ||
+    areBlockChildrenLoaded(block, blockChildren)
+  ) {
     return false;
   }
 
@@ -181,7 +185,7 @@ function shouldLoadRequests(
   const requests = loadBlockCollaborationRequestsFromRedux(state, block);
 
   if (
-    loadRequestsOperation ||
+    isOperationStartedOrPending(loadRequestsOperation) ||
     areBlockCollaborationRequestsLoaded(block, requests)
   ) {
     return false;
@@ -211,8 +215,8 @@ function shouldLoadCollaborators(
   const collaborators = loadBlockCollaboratorsFromRedux(state, block);
 
   if (
-    areBlockCollaboratorsLoaded(block, collaborators) ||
-    loadCollaboratorsOperation
+    isOperationStartedOrPending(loadCollaboratorsOperation) ||
+    areBlockCollaboratorsLoaded(block, collaborators)
   ) {
     return false;
   }
@@ -235,21 +239,21 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    loadBlockChildrenOperation(state, dispatch, block);
+    loadBlockChildrenOperationFunc(state, dispatch, { block });
   }
 
   if (
     dataToLoad.includes("collaborators") &&
     shouldLoadCollaborators(state, dispatch, block)
   ) {
-    loadBlockCollaboratorsOperation(state, dispatch, block);
+    loadBlockCollaboratorsOperationFunc(state, dispatch, { block });
   }
 
   if (
     dataToLoad.includes("collaborationRequests") &&
     shouldLoadRequests(state, dispatch, block)
   ) {
-    loadBlockCollaborationRequestsOperation(state, dispatch, block);
+    loadBlockCollaborationRequestsOperationFunc(state, dispatch, { block });
   }
 }
 

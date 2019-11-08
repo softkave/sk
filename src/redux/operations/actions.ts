@@ -1,4 +1,4 @@
-import { CONSUME_OPERATION, PUSH_OPERATION } from "./constants";
+import { PUSH_OPERATION } from "./constants";
 import { IOperationStatus } from "./operation";
 
 export interface IPushOperationAction {
@@ -25,25 +25,4 @@ export function pushOperation(
   };
 }
 
-export interface IConsumeOperationAction {
-  type: CONSUME_OPERATION;
-  payload: {
-    operationID: string;
-    resourceID?: string | null;
-  };
-}
-
-export function consumeOperation(
-  operationID: string,
-  resourceID?: string | null
-): IConsumeOperationAction {
-  return {
-    type: CONSUME_OPERATION,
-    payload: {
-      operationID,
-      resourceID
-    }
-  };
-}
-
-export type IOperationsAction = IPushOperationAction | IConsumeOperationAction;
+export type IOperationsAction = IPushOperationAction;

@@ -9,24 +9,32 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function updateBlockOperation(
+export interface IUpdateBlockOperationFuncDataProps {
+  block: IBlock;
+  data: Partial<IBlock>;
+}
+
+export default async function updateBlockOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock,
-  data: Partial<IBlock>
+  dataProps: IUpdateBlockOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { block, data } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     updateBlockOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
@@ -34,7 +42,14 @@ export default async function updateBlockOperation(
     data.expectedEndAt = moment(data.expectedEndAt).valueOf();
   }
 
-  dispatchOperationStarted(dispatch, updateBlockOperationID, block.customId);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: updateBlockOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.updateBlock({ block, data });
@@ -49,18 +64,12 @@ export default async function updateBlockOperation(
       })
     );
 
-    dispatchOperationComplete(dispatch, updateBlockOperationID, block.customId);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
-      // filterBaseNames: ["block"],
       stripBaseNames: ["data"]
     });
 
-    dispatchOperationError(
-      dispatch,
-      updateBlockOperationID,
-      block.customId,
-      transformedError
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

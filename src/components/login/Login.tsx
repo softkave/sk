@@ -6,7 +6,7 @@ import { userConstants } from "../../models/user/constants";
 import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../formik-utils";
+import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 
 const validationSchema = yup.object().shape({
   email: yup
@@ -19,22 +19,20 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-export interface ILoginFormData {
+export interface ILoginFormValues {
   email: string;
   password: string;
   remember: boolean;
 }
 
-interface ILoginFormInternalData extends ILoginFormData {}
-
 export interface ILoginProps {
-  onSubmit: (values: ILoginFormData) => void | Promise<void>;
+  onSubmit: (values: ILoginFormValues) => void | Promise<void>;
   operation?: IOperation;
 }
 
 class Login extends React.Component<ILoginProps> {
   private formikRef: React.RefObject<
-    Formik<ILoginFormInternalData>
+    Formik<ILoginFormValues>
   > = React.createRef();
 
   public componentDidMount() {
@@ -51,7 +49,7 @@ class Login extends React.Component<ILoginProps> {
     return (
       <Formik
         ref={this.formikRef}
-        initialValues={cast<ILoginFormInternalData>({})}
+        initialValues={cast<ILoginFormValues>({})}
         onSubmit={onSubmit}
         validationSchema={validationSchema}
       >

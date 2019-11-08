@@ -3,13 +3,19 @@ const testExistenceAndType = (
   required: boolean,
   type: string
 ) => {
-  if (subject !== undefined) {
-    return typeof subject === type;
-  } else if (required) {
-    return false;
-  } else {
-    return true;
+  if (type === "undefined") {
+    return subject === undefined;
   }
+
+  if (subject !== undefined && subject !== null) {
+    return typeof subject === type;
+  }
+
+  if (required) {
+    return false;
+  }
+
+  return true;
 };
 
 export default testExistenceAndType;

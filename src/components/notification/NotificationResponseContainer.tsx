@@ -3,7 +3,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { notificationStatus } from "../../models/notification/notification";
 import { getNotificationRequired } from "../../redux/notifications/selectors";
-import respondToNotificationOperation from "../../redux/operations/notification/respondToNotification";
+import respondToNotificationOperationFunc from "../../redux/operations/notification/respondToNotification";
 import {
   isOperationCompleted,
   isOperationError,
@@ -93,13 +93,11 @@ function mergeProps(
           return (
             <NotificationResponseForm
               onRespond={selectedResponse => {
-                respondToNotificationOperation(
-                  state,
-                  dispatch,
+                respondToNotificationOperationFunc(state, dispatch, {
                   user,
-                  notification,
-                  selectedResponse
-                );
+                  response: selectedResponse,
+                  request: notification
+                });
               }}
             />
           );

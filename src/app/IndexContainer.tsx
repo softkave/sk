@@ -7,7 +7,7 @@ import {
 } from "../redux/operations/operation";
 import { initializeAppSessionOperationID } from "../redux/operations/operationIDs";
 import { getOperationsWithID } from "../redux/operations/selectors";
-import initializeAppSessionOperation from "../redux/operations/session/initializeAppSession";
+import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
 import { getSessionType, isUserSignedIn } from "../redux/session/selectors";
 import { IReduxState } from "../redux/store";
 import IndexViewManager from "./IndexViewManager";
@@ -29,7 +29,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
 
   if (sessionType === "initializing") {
     if (!initializeOperation) {
-      initializeAppSessionOperation(state, dispatch);
+      initializeAppSessionOperationFunc(state, dispatch);
 
       return {
         view: { viewName: sessionType },
@@ -51,7 +51,7 @@ function mergeProps(state, { dispatch }: { dispatch: Dispatch }) {
     if (initializeOperation && isUserSignedIn(state)) {
       const latestStatus = getOperationLastStatus(initializeOperation);
 
-      // TODO: loading is not going to be completed, i don't like that, add the complete part
+      // TODO: loading is not going to be completed, I don't like that, add the complete part
       // TODO: Debug SoftkaveLoading
       return {
         view: { viewName: sessionType },

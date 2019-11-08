@@ -9,31 +9,42 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { getBlockCollaborationRequestsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
-export default async function loadBlockCollaborationRequestsOperation(
+export interface ILoadBlockCollaborationRequestsOperationFuncDataProps {
+  block: IBlock;
+}
+
+export default async function loadBlockCollaborationRequestsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  block: IBlock
+  dataProps: ILoadBlockCollaborationRequestsOperationFuncDataProps,
+  options: IOperationFuncOptions = {}
 ) {
+  const { block } = dataProps;
   const operation = getOperationWithIDForResource(
     state,
     getBlockCollaborationRequestsOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
     dispatch,
-    getBlockCollaborationRequestsOperationID,
-    block.customId
-  );
+    operationID: getBlockCollaborationRequestsOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getCollabRequests({ block });
@@ -55,18 +66,10 @@ export default async function loadBlockCollaborationRequestsOperation(
       )
     );
 
-    dispatchOperationComplete(
-      dispatch,
-      getBlockCollaborationRequestsOperationID,
-      block.customId
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
-    dispatchOperationError(
-      dispatch,
-      getBlockCollaborationRequestsOperationID,
-      block.customId,
-      transformedError
-    );
+
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

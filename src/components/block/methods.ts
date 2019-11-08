@@ -1,44 +1,31 @@
 import { Dispatch } from "redux";
-import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
-import addBlockOperation from "../../redux/operations/block/addBlock";
-import addCollaboratorsOperation from "../../redux/operations/block/addCollaborators";
-import deleteBlockOperation from "../../redux/operations/block/deleteBlock";
-import loadBlockChildrenOperation from "../../redux/operations/block/loadBlockChildren";
-import loadBlockCollaborationRequestsOperation from "../../redux/operations/block/loadBlockCollaborationRequests";
-import loadBlockCollaboratorsOperation from "../../redux/operations/block/loadBlockCollaborators";
-import loadRootBlocksOperation from "../../redux/operations/block/loadRootBlock";
-import toggleTaskOperation from "../../redux/operations/block/toggleTask";
-import updateBlockOperation from "../../redux/operations/block/updateBlock";
+import addBlockOperationFunc, {
+  IAddBlockOperationFuncDataProps
+} from "../../redux/operations/block/addBlock";
+import addCollaboratorsOperationFunc, {
+  IAddCollaboratorOperationFuncDataProps
+} from "../../redux/operations/block/addCollaborators";
+import deleteBlockOperation, {
+  IDeleteBlockOperationFuncDataProps
+} from "../../redux/operations/block/deleteBlock";
+import loadBlockChildrenOperationFunc, {
+  ILoadBlockChildrenOperationFuncDataProps
+} from "../../redux/operations/block/loadBlockChildren";
+import loadBlockCollaborationRequestsOperationFunc, {
+  ILoadBlockCollaborationRequestsOperationFuncDataProps
+} from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperationFunc, {
+  ILoadBlockCollaboratorsOperationFuncDataProps
+} from "../../redux/operations/block/loadBlockCollaborators";
+import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlock";
+import toggleTaskOperationFunc, {
+  IToggleTaskOperationFuncDataProps
+} from "../../redux/operations/block/toggleTask";
+import updateBlockOperationFunc, {
+  IUpdateBlockOperationFuncDataProps
+} from "../../redux/operations/block/updateBlock";
+import { IOperationFuncOptions } from "../../redux/operations/operation";
 import { IReduxState } from "../../redux/store";
-import { IAddCollaboratorFormItemData } from "../collaborator/AddCollaboratorFormItem";
-
-// export interface IBlockMethods {
-//   onAdd: (
-//     user: IUser,
-//     block: IBlock,
-//     parent?: IBlock
-//   ) => Promise<void>;
-//   onUpdate: (block: IBlock, data: Partial<IBlock>) => Promise<void>;
-//   onToggle: (user: IUser, block: IBlock) => Promise<void>;
-//   onDelete: (block: IBlock) => Promise<void>;
-//   onAddCollaborators: (
-//     block: IBlock,
-
-//     // TODO: This is wrong, better declare type
-//     requests: IAddCollaboratorFormItemData[],
-//     message?: string,
-//     expiresAt?: number | Date
-//   ) => Promise<void>;
-//   loadBlockChildren: (
-//     block: IBlock,
-//     types?: string[],
-//     isBacklog?: boolean
-//   ) => Promise<void>;
-//   loadCollaborators: (block: IBlock) => Promise<void>;
-//   loadCollaborationRequests: (block: IBlock) => Promise<void>;
-//   loadRootData: () => Promise<void>;
-// }
 
 export type IBlockMethods = ReturnType<typeof getBlockMethods>;
 
@@ -49,64 +36,74 @@ export interface IGetBlockMethodsParams {
 
 export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
   return {
-    async onAdd(user: IUser, block: IBlock, parent?: IBlock) {
-      return addBlockOperation(state, dispatch, user, block, parent);
+    async onAdd(
+      props: IAddBlockOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return addBlockOperationFunc(state, dispatch, props, options);
     },
 
-    async onUpdate(block: IBlock, data: Partial<IBlock>) {
-      return updateBlockOperation(state, dispatch, block, data);
+    async onUpdate(
+      props: IUpdateBlockOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return updateBlockOperationFunc(state, dispatch, props, options);
     },
 
-    async onToggle(user: IUser, block: IBlock) {
-      return toggleTaskOperation(state, dispatch, user, block);
+    async onToggle(
+      props: IToggleTaskOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return toggleTaskOperationFunc(state, dispatch, props, options);
     },
 
-    async onDelete(block: IBlock) {
-      return deleteBlockOperation(state, dispatch, block);
+    async onDelete(
+      props: IDeleteBlockOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return deleteBlockOperation(state, dispatch, props, options);
     },
 
     async onAddCollaborators(
-      block: IBlock,
-
-      // TODO: This is wrong, better declare type
-      requests: IAddCollaboratorFormItemData[],
-      message?: string,
-      expiresAt?: number | Date
+      props: IAddCollaboratorOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
     ) {
-      return addCollaboratorsOperation(
-        state,
-        dispatch,
-        block,
-        requests,
-        message,
-        expiresAt
-      );
+      return addCollaboratorsOperationFunc(state, dispatch, props, options);
     },
 
     async loadBlockChildren(
-      block: IBlock,
-      types?: string[],
-      isBacklog?: boolean
+      props: ILoadBlockChildrenOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
     ) {
-      return loadBlockChildrenOperation(
+      return loadBlockChildrenOperationFunc(state, dispatch, props, options);
+    },
+
+    async loadCollaborators(
+      props: ILoadBlockCollaboratorsOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return loadBlockCollaboratorsOperationFunc(
         state,
         dispatch,
-        block,
-        types,
-        isBacklog
+        props,
+        options
       );
     },
 
-    async loadCollaborators(block: IBlock) {
-      return loadBlockCollaboratorsOperation(state, dispatch, block);
-    },
-
-    async loadCollaborationRequests(block: IBlock) {
-      return loadBlockCollaborationRequestsOperation(state, dispatch, block);
+    async loadCollaborationRequests(
+      props: ILoadBlockCollaborationRequestsOperationFuncDataProps,
+      options: IOperationFuncOptions = {}
+    ) {
+      return loadBlockCollaborationRequestsOperationFunc(
+        state,
+        dispatch,
+        props,
+        options
+      );
     },
 
     async loadRootData() {
-      return loadRootBlocksOperation(state, dispatch);
+      return loadRootBlocksOperationFunc(state, dispatch);
     }
   };
 }

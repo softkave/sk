@@ -35,21 +35,13 @@ export async function signup({ user }) {
   return result;
 }
 
-export async function login({ email, password, remember }) {
+export async function login({ email, password }) {
   const result = await query(
     null,
     userLoginMutation,
     { email, password },
     "data.user.login"
   );
-
-  if (!result.errors) {
-    const prevToken = getItem(tokenStorageName);
-
-    if (remember || prevToken) {
-      setItem(tokenStorageName, result.token, "local");
-    }
-  }
 
   return result;
 }

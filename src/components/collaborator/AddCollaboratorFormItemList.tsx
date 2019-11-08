@@ -1,13 +1,14 @@
-import { Button, Divider } from "antd";
+import styled from "@emotion/styled";
+import { Button } from "antd";
 import React from "react";
 import AddCollaboratorFormItem, {
-  IAddCollaboratorFormItemData,
-  IAddCollaboratorFormItemError
+  IAddCollaboratorFormItemError,
+  IAddCollaboratorFormItemValues
 } from "./AddCollaboratorFormItem";
 
 export interface IAddCollaboratorFormItemListProps {
-  onChange: (value: IAddCollaboratorFormItemData[]) => void;
-  value: IAddCollaboratorFormItemData[];
+  onChange: (value: IAddCollaboratorFormItemValues[]) => void;
+  value: IAddCollaboratorFormItemValues[];
   maxRequests: number;
   errors?: Array<IAddCollaboratorFormItemError | undefined>;
 }
@@ -18,7 +19,8 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
   IAddCollaboratorFormItemListProps
 > {
   public static defaultProps = {
-    errors: []
+    errors: [],
+    value: []
   };
 
   public onUpdate = (index, data) => {
@@ -47,17 +49,32 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
   };
 
   public render() {
-    const { value, errors, maxRequests } = this.props;
-    const requestErrors = errors!;
+    const { value, maxRequests } = this.props;
 
     return (
       <React.Fragment>
+        {this.renderList()}
+        <Button
+          block
+          icon="plus"
+          onClick={this.onAdd}
+          disabled={value.length >= maxRequests}
+        >
+          Add Collaborator
+        </Button>
+      </React.Fragment>
+    );
+  }
+
+  private renderList() {
+    const { value, errors } = this.props;
+    const requestErrors = errors!;
+
+    return (
+      <StyledList>
         {value.map((request, index) => {
           return (
-            <React.Fragment
-              // key={(request as any).id}
-              key={index}
-            >
+            <StyledItem key={index}>
               <AddCollaboratorFormItem
                 value={request}
                 error={requestErrors[index]}
@@ -78,19 +95,26 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
                 }}
                 onDelete={() => this.onDelete(index)}
               />
-              {index < value.length - 1 && <Divider />}
-            </React.Fragment>
+            </StyledItem>
           );
         })}
-        <Button
-          block
-          icon="plus"
-          onClick={this.onAdd}
-          disabled={value.length >= maxRequests}
-        >
-          Add Collaborator
-        </Button>
-      </React.Fragment>
+      </StyledList>
     );
   }
 }
+
+const StyledList = styled.div({
+  backgroundColor: "#f0f0f0",
+  margin: "16px 0"
+});
+
+const StyledItem = styled.div(props => {
+  return {
+    borderBottom: "1px solid #bbb",
+    padding: "16px",
+
+    "&:last-of-type": {
+      borderBottom: "none"
+    }
+  };
+});

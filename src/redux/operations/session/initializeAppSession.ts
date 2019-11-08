@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { getUserData } from "../../../net/user";
 import {
   getUserTokenFromStorage,
-  saveUserTokenInStorage
+  saveUserTokenToStorage
 } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
@@ -14,25 +14,35 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
+  IDispatchOperationFuncProps,
+  IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
 import { getOperationsWithID } from "../selectors";
 
-export default async function initializeAppSessionOperation(
+export default async function initializeAppSessionOperationFunc(
   state: IReduxState,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  dataProps: {} = {},
+  options: IOperationFuncOptions = {}
 ) {
   const operations = getOperationsWithID(
     state,
     initializeAppSessionOperationID
   );
 
-  if (operations[0] && isOperationStarted(operations[0])) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
-  dispatchOperationStarted(dispatch, initializeAppSessionOperationID);
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: initializeAppSessionOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const token = getUserTokenFromStorage();
@@ -46,23 +56,21 @@ export default async function initializeAppSessionOperation(
 
       const { user, token: userToken } = result;
 
-      saveUserTokenInStorage(userToken);
+      saveUserTokenToStorage(userToken);
       dispatch(addUserRedux(user));
       dispatch(setRootView(makeOrgsView()));
       dispatch(loginUserRedux(userToken, user.customId));
+
+      saveUserTokenToStorage(userToken);
     } else {
       dispatch(setSessionToWeb());
     }
 
-    dispatchOperationComplete(dispatch, initializeAppSessionOperationID);
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
+
     dispatch(setSessionToWeb());
-    dispatchOperationError(
-      dispatch,
-      initializeAppSessionOperationID,
-      null,
-      transformedError
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

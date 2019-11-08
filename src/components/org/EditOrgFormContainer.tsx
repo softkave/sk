@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { getOperationWithIDForResource } from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
-import EditOrg from "./EditOrg";
+import EditOrgFormWithFormik from "./EditOrgFormWithFormik";
 
 export interface IEditOrgContainerProps {
   customId: string;
@@ -14,8 +14,12 @@ function mapStateToProps(state: IReduxState, props: IEditOrgContainerProps) {
       state,
       props.operationID,
       props.customId
-    )
+    ),
+
+    getFormIdentifier() {
+      return "OrgForm";
+    }
   };
 }
 
-export default connect(mapStateToProps)(EditOrg);
+export default connect(mapStateToProps)(EditOrgFormWithFormik);
