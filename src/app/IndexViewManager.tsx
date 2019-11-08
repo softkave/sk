@@ -26,6 +26,9 @@ export interface IIndexViewManagerProps {
 class IndexViewManager extends React.Component<IIndexViewManagerProps> {
   public render() {
     const { initializingProps, readyProps, view: currentView } = this.props;
+
+    const shouldNavigateToHome = this.shouldNavigateToHome();
+
     const renderViews: IRenderView[] = [
       {
         // TODO: Test this view
@@ -56,19 +59,18 @@ class IndexViewManager extends React.Component<IIndexViewManagerProps> {
       {
         viewName: sessionApp,
         render() {
-          return <AppContainer />;
+          return (
+            <React.Fragment>
+              {shouldNavigateToHome && <Redirect to="/" />}
+              <AppContainer />
+            </React.Fragment>
+          );
         }
       }
     ];
 
     return (
-      <React.Fragment>
-        {this.shouldNavigateToHome() && <Redirect to="/" />}
-        <ViewManager
-          views={renderViews}
-          currentViewName={currentView.viewName}
-        />
-      </React.Fragment>
+      <ViewManager views={renderViews} currentViewName={currentView.viewName} />
     );
   }
 
