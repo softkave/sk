@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "antd";
 import styled from "@emotion/styled";
-import StyledCenterContainer from "./styled/Center";
+import StyledCenterContainer from "./styled/CenterContainer";
 
 export default function Loading() {
   return (
