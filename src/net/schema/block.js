@@ -282,6 +282,40 @@ const assignRoleMutation = `
   }
 `;
 
+export const getBlocksWithCustomIDsQuery = `
+  ${blockFragment}
+  ${errorFragment}
+  query GetBlocksWithCustomIDsQuery {
+    block {
+      getBlocksWithCustomIDs (customIDs: [String!]!) {
+        errors {
+          ...errorFragment
+        }
+        blocks {
+          ...blockFragment
+        }
+      }
+    }
+  }
+`;
+
+export const getTasksAssignedToUserQuery = `
+  ${blockFragment}
+  ${errorFragment}
+  query GetTasksAssignedToUserQuery {
+    block {
+      getTasksAssignedToUser {
+        errors {
+          ...errorFragment
+        }
+        blocks {
+          ...blockFragment
+        }
+      }
+    }
+  }
+`;
+
 export {
   addBlockMutation,
   updateBlockMutation,

@@ -12,6 +12,10 @@ export const getBlockCollaboratorsOperationID =
 export const getBlockCollaborationRequestsOperationID =
   "getBlockCollaborationRequestsOperationID";
 export const transferBlockOperationID = "transferBlockOperationID";
+export const getTasksAssignedToUserOperationID =
+  "getTasksAssignedToUserOperationID";
+export const getBlocksWithCustomIDsOperationID =
+  "getBlocksWithCustomIDsOperationID";
 
 // notification
 export const loadUserNotificationsOperationID =

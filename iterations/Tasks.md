@@ -1,4 +1,4 @@
-# Plumbing tasks
+# Tasks
 
 - Move all id generation to the server side
 - Show errors consistently in forms when save fails, and handle touched bug
@@ -11,3 +11,8 @@
 - Implement or find an open source ( check AntD ) text with text overflow component for your text components
   - Select org
 - Some mysterious API calls are failing in the production build, look into them
+- Vertical scroll, plus toggle scroll type for Kanbanboard
+- Implement fetching all groups children together and not individually as it is now
+- Add scope id to all operation function calls
+- Monitor and log all crashes
+- Implement a way to reduce or monitor memory usage to avoid a browser crash
