@@ -6,9 +6,11 @@ import {
   assignRoleMutation,
   deleteBlockMutation,
   getBlockChildrenQuery,
+  getBlocksWithCustomIDsQuery,
   getCollaboratorsQuery,
   getCollabRequestsQuery,
   getRoleBlocksQuery,
+  getTasksAssignedToUserQuery,
   removeCollaboratorMutation,
   revokeRequestMutation,
   toggleTaskMutation,
@@ -237,5 +239,23 @@ export function assignRole({ block, collaborator, roleName }) {
       block: getDataFromObject(block, blockParamFields)
     },
     "data.block.assignRole"
+  );
+}
+
+export function getTasksAssignedToUser() {
+  return auth(
+    null,
+    getTasksAssignedToUserQuery,
+    {},
+    "data.block.getAssignedTasks"
+  );
+}
+
+export function getBlocksWithCustomIDs(props: { customIDs: string[] }) {
+  return auth(
+    null,
+    getBlocksWithCustomIDsQuery,
+    { customIDs: props.customIDs },
+    "data.block.getBlocksWithCustomIDs"
   );
 }

@@ -15,6 +15,7 @@ import {
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
+import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IUpdateBlockOperationFuncDataProps {
   block: IBlock;
@@ -57,6 +58,8 @@ export default async function updateBlockOperationFunc(
     if (result && result.errors) {
       throw result.errors;
     }
+
+    addTaskToUserIfAssigned(state, dispatch, block);
 
     dispatch(
       blockActions.updateBlockRedux(block.customId, data, {

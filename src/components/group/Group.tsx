@@ -124,22 +124,22 @@ class Group extends React.PureComponent<IGroupProps> {
     );
   }
 
-  private filterTasks() {
-    const { selectedCollaborators, tasks } = this.props;
-    const filteredTasks = !this.isAnyCollaboratorSelected()
-      ? tasks
-      : tasks.filter(task => {
-          const tc = task.taskCollaborators;
+  // private filterTasks() {
+  //   const { selectedCollaborators, tasks } = this.props;
+  //   const filteredTasks = !this.isAnyCollaboratorSelected()
+  //     ? tasks
+  //     : tasks.filter(task => {
+  //         const tc = task.taskCollaborators;
 
-          if (Array.isArray(tc) && tc.length > 0) {
-            return tc.find(c => selectedCollaborators[c.userId]);
-          }
+  //         if (Array.isArray(tc) && tc.length > 0) {
+  //           return tc.find(c => selectedCollaborators[c.userId]);
+  //         }
 
-          return false;
-        });
+  //         return false;
+  //       });
 
-    return filteredTasks;
-  }
+  //   return filteredTasks;
+  // }
 
   private promptDeleteGroup() {
     const { blockHandlers, group } = this.props;

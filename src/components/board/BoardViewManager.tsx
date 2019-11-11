@@ -12,6 +12,7 @@ export interface IBoardViewManagerProps {
   readyProps?: IBoardProps;
 }
 
+// TODO: Get rid of view managers
 class BoardViewManager extends React.Component<IBoardViewManagerProps> {
   public render() {
     const { currentView, block, readyProps } = this.props;

@@ -20,4 +20,5 @@ export interface IUser {
   color: string;
   roles: IUserRole[];
   notifications?: string[];
+  assignedTasks?: string[];
 }

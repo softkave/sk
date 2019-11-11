@@ -1,18 +1,16 @@
-import styled from "@emotion/styled";
+import { Result } from "antd";
 import React from "react";
 import BoardShell, { IBoardShellProps } from "./BoardShell";
 
+// TODO: Display the original error that occurred
 const BoardError: React.SFC<IBoardShellProps> = props => {
   return (
     <BoardShell {...props}>
-      <StyledError>Error loading data</StyledError>
+      <Result status="error" title="Error">
+        Error loading data
+      </Result>
     </BoardShell>
   );
 };
 
 export default BoardError;
-
-const StyledError = styled.p({
-  fontSize: "18px",
-  color: "red"
-});

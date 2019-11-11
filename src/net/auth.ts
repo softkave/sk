@@ -1,4 +1,3 @@
-import { OutgoingHttpHeaders } from "http";
 import { getUserToken } from "../redux/session/selectors";
 import store from "../redux/store";
 import { defaultOperationError } from "../utils/operation-error/OperationError";
@@ -10,7 +9,7 @@ function getToken() {
 }
 
 export default async function queryWithAuth(
-  headers: OutgoingHttpHeaders | null,
+  headers: { [key: string]: string } | null,
   netQuery: string,
   variables: IAnyObject,
   process: NetResultProcessor,

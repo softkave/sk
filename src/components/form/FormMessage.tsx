@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
+import OperationError from "../../utils/operation-error/OperationError";
 
 function getFontColor(type) {
   switch (type) {
@@ -31,7 +32,14 @@ export interface IFormMessageProps {
 
 const FormMessage: React.SFC<IFormMessageProps> = props => {
   const { children, message, type } = props;
-  const messages = Array.isArray(message) ? message : message ? [message] : [];
+  // const messages = Array.isArray(message) ? message : message ? [message] : [];
+  const messages = Array.isArray(message)
+    ? message
+    : OperationError.isOperationError(message)
+    ? message.errors
+    : message
+    ? [message]
+    : [];
   const isVisible = React.Children.count(children) > 0 || messages.length > 0;
 
   if (!isVisible) {

@@ -104,30 +104,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 />
               </Form.Item>
               <Form.Item label="Assigned To">
-                <List
-                  dataSource={values.taskCollaborators}
-                  renderItem={item => {
-                    return (
-                      <List.Item>
-                        <TaskCollaboratorThumbnail
-                          key={item.userId}
-                          collaborator={this.indexedCollaborators[item.userId]}
-                          taskCollaborator={item}
-                          onToggle={null}
-                          onUnassign={() =>
-                            setFieldValue(
-                              "taskCollaborators",
-                              this.unassignCollaborator(
-                                item,
-                                values.taskCollaborators
-                              )
-                            )
-                          }
-                        />
-                      </List.Item>
-                    );
-                  }}
-                />
+                {this.renderTaskCollaborators()}
               </Form.Item>
               <Form.Item>
                 <Select
@@ -168,12 +145,18 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   placeholder="Complete At"
-                  onChange={value =>
+                  onChange={value => {
                     setFieldValue(
                       "expectedEndAt",
-                      value ? value.valueOf() : null
-                    )
-                  }
+                      value
+                        ? value
+                            .hour(23)
+                            .minute(59)
+                            .second(0)
+                            .valueOf()
+                        : null
+                    );
+                  }}
                   value={
                     values.expectedEndAt
                       ? moment(values.expectedEndAt)
@@ -196,6 +179,41 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         </FormBodyContainer>
       </StyledForm>
     );
+  }
+
+  private renderTaskCollaborators() {
+    const { values, setFieldValue } = this.props;
+
+    if (
+      Array.isArray(values.taskCollaborators) &&
+      values.taskCollaborators.length > 0
+    ) {
+      return (
+        <List
+          dataSource={values.taskCollaborators}
+          renderItem={item => {
+            return (
+              <List.Item>
+                <TaskCollaboratorThumbnail
+                  key={item.userId}
+                  collaborator={this.indexedCollaborators[item.userId]}
+                  taskCollaborator={item}
+                  onToggle={null}
+                  onUnassign={() =>
+                    setFieldValue(
+                      "taskCollaborators",
+                      this.unassignCollaborator(item, values.taskCollaborators)
+                    )
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
+      );
+    }
+
+    return null;
   }
 
   private assignCollaborator = (

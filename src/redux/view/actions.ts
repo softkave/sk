@@ -1,8 +1,9 @@
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
+// import { makeAssignedTasksView } from "./assignedTasks";
 import { POP_VIEW, PUSH_VIEW, SET_ROOT_VIEW } from "./constants";
 import { makeCurrentNotificationView } from "./notifications";
-import { makeCurrentOrgView } from "./orgs";
+import { makeCurrentOrgView, makeOrgsView } from "./orgs";
 import { makeCurrentProjectView } from "./project";
 import IView from "./view";
 
@@ -60,6 +61,10 @@ export function setRootView(view: IView): ISetRootViewAction {
       view
     }
   };
+}
+
+export function setDefaultView() {
+  return setRootView(makeOrgsView());
 }
 
 export type IViewAction = IPushViewAction | IPopViewAction | ISetRootViewAction;

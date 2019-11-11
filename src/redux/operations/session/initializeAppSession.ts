@@ -8,8 +8,7 @@ import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
-import { setRootView } from "../../view/actions";
-import { makeOrgsView } from "../../view/orgs";
+import { setDefaultView } from "../../view/actions";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -58,7 +57,7 @@ export default async function initializeAppSessionOperationFunc(
 
       saveUserTokenToStorage(userToken);
       dispatch(addUserRedux(user));
-      dispatch(setRootView(makeOrgsView()));
+      dispatch(setDefaultView());
       dispatch(loginUserRedux(userToken, user.customId));
 
       saveUserTokenToStorage(userToken);

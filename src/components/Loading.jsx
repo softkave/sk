@@ -1,15 +1,17 @@
 import React from "react";
-import { Icon, Row, Col } from "antd";
+import { Icon } from "antd";
+import styled from "@emotion/styled";
+import StyledCenterContainer from "./styled/CenterContainer";
 
 export default function Loading() {
   return (
-    <Row type="flex" align="middle" justify="center">
-      <Col span="24" style={{ textAlign: "center" }}>
-        <Icon
-          type="loading"
-          style={{ fontSize: "2em", color: "rgb(66,133,244)" }}
-        />
-      </Col>
-    </Row>
+    <StyledCenterContainer>
+      <StyledIcon type="loading" />
+    </StyledCenterContainer>
   );
 }
+
+const StyledIcon = styled(Icon)({
+  fontSize: "2em",
+  color: "rgb(66,133,244)"
+});

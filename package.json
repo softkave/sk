@@ -7,6 +7,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.17",
     "@emotion/styled": "^10.0.17",
+    "@types/ua-parser-js": "^0.7.33",
     "antd": "^3.23.5",
     "async-validator": "^1.12.2",
     "dot-prop-immutable": "^1.5.0",
@@ -29,6 +30,7 @@
     "simplebar": "^4.2.3",
     "simplebar-react": "^0.1.6",
     "styled-components": "^4.4.0",
+    "ua-parser-js": "^0.7.20",
     "uuid": "^3.3.3",
     "validator": "^10.11.0",
     "yup": "^0.27.0"

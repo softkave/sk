@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { deleteBlockRedux } from "../../blocks/actions";
+import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
@@ -12,49 +11,48 @@ import {
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
-import { deleteBlockOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
-import { removeTaskFromUserIfAssigned } from "./getTasksAssignedToUser";
+import { getBlocksWithCustomIDsOperationID } from "../operationIDs";
+import { getOperationsWithID } from "../selectors";
 
-export interface IDeleteBlockOperationFuncDataProps {
-  block: IBlock;
+export interface IGetBlocksWithCustomIDsOperationFuncProps {
+  customIDs: string[];
 }
 
-export default async function deleteBlockOperation(
+export default async function getBlocksWithCustomIDsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  dataProps: IDeleteBlockOperationFuncDataProps,
+  dataProps: IGetBlocksWithCustomIDsOperationFuncProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { block } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operations = getOperationsWithID(
     state,
-    deleteBlockOperationID,
-    block.customId
+    getBlocksWithCustomIDsOperationID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: deleteBlockOperationID,
-    resourceID: block.customId
+    operationID: getBlocksWithCustomIDsOperationID
   };
 
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const result = await blockNet.deleteBlock({ block });
+    const result = await blockNet.getBlocksWithCustomIDs({
+      customIDs: dataProps.customIDs
+    });
 
     if (result && result.errors) {
       throw result.errors;
     }
 
-    removeTaskFromUserIfAssigned(state, dispatch, block);
-    dispatch(deleteBlockRedux(block.customId));
+    const { blocks } = result;
+
+    dispatch(blockActions.bulkAddBlocksRedux(blocks));
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
