@@ -12,7 +12,7 @@ export interface ITaskListProps {
   selectedCollaborators: { [key: string]: boolean };
   user: IUser;
   tasks: IBlock[];
-  toggleForm: (type: BlockType, block?: IBlock) => void;
+  toggleForm?: (type: BlockType, block?: IBlock) => void;
 }
 
 export default class TaskList extends React.Component<ITaskListProps> {
@@ -51,7 +51,11 @@ export default class TaskList extends React.Component<ITaskListProps> {
             user={user}
             task={task}
             blockHandlers={blockHandlers}
-            onEdit={editedTask => toggleForm("task", editedTask)}
+            onEdit={
+              toggleForm
+                ? editedTask => toggleForm("task", editedTask)
+                : undefined
+            }
           />
         </BlockThumbnailContainer>
       );

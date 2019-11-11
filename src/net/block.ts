@@ -247,7 +247,7 @@ export function getTasksAssignedToUser() {
     null,
     getTasksAssignedToUserQuery,
     {},
-    "data.block.getTasksAssignedToUser"
+    "data.block.getAssignedTasks"
   );
 }
 

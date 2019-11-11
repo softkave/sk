@@ -2,7 +2,6 @@ import isString from "lodash/isString";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import { assignTask } from "../../models/block/utils";
-import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import {
@@ -28,7 +27,7 @@ export interface IBoardProps {
 
   // TODO: Define the right type for collaborators
   collaborators: IUser[];
-  collaborationRequests: INotification[];
+  renderMain: () => React.ReactNode;
 }
 
 export type BoardContext = "task" | "project";

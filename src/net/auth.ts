@@ -1,4 +1,3 @@
-import { OutgoingHttpHeaders } from "http";
 import { getUserToken } from "../redux/session/selectors";
 import store from "../redux/store";
 import { defaultOperationError } from "../utils/operation-error/OperationError";

@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 
 import { IBlock } from "../../models/block/block";
+import GeneralError from "../GeneralError";
 import GroupBody from "./GroupBody";
 import GroupHeader from "./GroupHeader";
 import {
@@ -21,18 +22,11 @@ const GroupError = React.memo<IGroupErrorProps>(props => {
       <StyledGroupContainerInner>
         <GroupHeader disabled name={group.name} />
         <GroupBody>
-          <StyledGroupLoadingBody>Error loading data</StyledGroupLoadingBody>
+          <GeneralError>Error loading data</GeneralError>
         </GroupBody>
       </StyledGroupContainerInner>
     </StyledGroupContainer>
   );
-});
-
-const StyledGroupLoadingBody = styled.div({
-  padding: "32px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center"
 });
 
 export default GroupError;

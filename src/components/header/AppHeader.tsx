@@ -2,6 +2,7 @@ import { Col, Row } from "antd";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { IUser } from "../../models/user/user";
+import { assignedTasksViewName } from "../../redux/view/assignedTasks";
 import { notificationsViewName } from "../../redux/view/notifications";
 import { orgsViewName } from "../../redux/view/orgs";
 import SelectOrgContainer from "../select-org/SelectOrgContainer";
@@ -30,6 +31,10 @@ class AppHeader extends React.Component<IAppHeaderProps> {
           {
             key: orgsViewName,
             label: "Orgs"
+          },
+          {
+            key: assignedTasksViewName,
+            label: "Assigned Tasks"
           }
         ]}
         onSelectMenu={(viewName: string) => onChangeView(viewName)}

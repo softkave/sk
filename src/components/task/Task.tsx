@@ -14,7 +14,7 @@ export interface ITaskProps {
   task: IBlock;
   user: IUser;
   blockHandlers: IBlockMethods;
-  onEdit: (task: IBlock) => void;
+  onEdit?: (task: IBlock) => void;
 }
 
 class Task extends React.PureComponent<ITaskProps> {
@@ -38,11 +38,13 @@ class Task extends React.PureComponent<ITaskProps> {
         </Row>
         <Row>
           <Col span={24} className="sk-minitask-footer-right">
-            <Button
-              icon="edit"
-              onClick={() => onEdit(task)}
-              title="edit task"
-            />
+            {onEdit && (
+              <Button
+                icon="edit"
+                onClick={() => onEdit(task)}
+                title="edit task"
+              />
+            )}
             <span style={{ marginLeft: "4px" }}>
               <DeleteButton
                 deleteButton={

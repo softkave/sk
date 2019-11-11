@@ -16,6 +16,7 @@ import {
 } from "../operation";
 import { addBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
+import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IAddBlockOperationFuncDataProps {
   user: IUser;
@@ -85,6 +86,7 @@ export default async function addBlockOperationFunc(
       );
     }
 
+    addTaskToUserIfAssigned(state, dispatch, block);
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({

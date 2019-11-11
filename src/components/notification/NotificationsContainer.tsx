@@ -11,6 +11,8 @@ import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { setCurrentNotification } from "../../redux/view/actions";
 import { getCurrentNotification } from "../../redux/view/selectors";
+import GeneralError from "../GeneralError";
+import Loading from "../Loading";
 import getViewFromOperations from "../view/getViewFromOperations";
 import ViewManager from "../view/ViewManager";
 import Notifications from "./Notifications";
@@ -42,13 +44,13 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
     {
       viewName: "loading",
       render() {
-        return "Loading";
+        return <Loading />;
       }
     },
     {
       viewName: "error",
       render() {
-        return "An error occurred";
+        return <GeneralError />;
       }
     },
     {

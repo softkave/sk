@@ -14,6 +14,7 @@ import {
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
+import { removeTaskFromUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IDeleteBlockOperationFuncDataProps {
   block: IBlock;
@@ -52,6 +53,7 @@ export default async function deleteBlockOperation(
       throw result.errors;
     }
 
+    removeTaskFromUserIfAssigned(state, dispatch, block);
     dispatch(deleteBlockRedux(block.customId));
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {

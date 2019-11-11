@@ -14,6 +14,7 @@ import { getTasksAssignedToUserOperationID } from "../../redux/operations/operat
 import { getFirstOperationWithID } from "../../redux/operations/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { getBlockMethods } from "../block/methods";
 import AssignedTasks from "./AssignedTasks";
 
 function mapStateToProps(state: IReduxState) {
@@ -44,6 +45,8 @@ function getAssignedTasksAndParents(state: IReduxState) {
 }
 
 function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
+  const user = getSignedInUserRequired(state);
+  const blockHandlers = getBlockMethods(state, dispatch);
   const operation = getFirstOperationWithID(
     state,
     getTasksAssignedToUserOperationID
@@ -60,6 +63,8 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
 
   return {
     error,
+    user,
+    blockHandlers,
     fetchAssignedTasksAndParents,
     isDataLoaded,
     isDataLoading,

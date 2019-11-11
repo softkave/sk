@@ -1,6 +1,9 @@
 import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
-import { aggregateBlocksParentIDs } from "../../../models/block/utils";
+import {
+  aggregateBlocksParentIDs,
+  getUserTaskCollaborator
+} from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -45,6 +48,7 @@ export default async function getTasksAssignedToUserOperationFunc(
     const result = await blockNet.getTasksAssignedToUser();
 
     if (result && result.errors) {
+      console.log("Result has error");
       throw result.errors;
     }
 
@@ -61,6 +65,7 @@ export default async function getTasksAssignedToUserOperationFunc(
       });
 
       if (parentsResult && parentsResult.errors) {
+        console.log("Parents has error");
         throw parentsResult.errors;
       }
 
@@ -83,8 +88,74 @@ export default async function getTasksAssignedToUserOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
+    console.log(error);
     const transformedError = OperationError.fromAny(error);
 
     dispatchOperationError({ ...dispatchOptions, error: transformedError });
+  }
+}
+
+export function addTaskToUserIfAssigned(
+  state: IReduxState,
+  dispatch: Dispatch,
+  block: IBlock
+) {
+  if (block.type === "task") {
+    const user = getSignedInUserRequired(state);
+
+    if (Array.isArray(user.assignedTasks)) {
+      const assignedTaskIDs = [...user.assignedTasks];
+      const isAssignedToUser = !!getUserTaskCollaborator(block, user);
+      const taskIDIndex = assignedTaskIDs.indexOf(block.customId);
+
+      if (isAssignedToUser) {
+        if (taskIDIndex === -1) {
+          assignedTaskIDs.push(block.customId);
+        }
+      } else {
+        if (taskIDIndex !== -1) {
+          assignedTaskIDs.splice(taskIDIndex, 1);
+        }
+      }
+
+      dispatch(
+        userActions.updateUserRedux(
+          user.customId,
+          {
+            assignedTasks: assignedTaskIDs
+          },
+          { arrayUpdateStrategy: "replace" }
+        )
+      );
+    }
+  }
+}
+
+export function removeTaskFromUserIfAssigned(
+  state: IReduxState,
+  dispatch: Dispatch,
+  block: IBlock
+) {
+  if (block.type === "task") {
+    const user = getSignedInUserRequired(state);
+
+    if (Array.isArray(user.assignedTasks)) {
+      const assignedTaskIDs = [...user.assignedTasks];
+      const taskIDIndex = assignedTaskIDs.indexOf(block.customId);
+
+      if (taskIDIndex !== -1) {
+        assignedTaskIDs.splice(taskIDIndex, 1);
+      }
+
+      dispatch(
+        userActions.updateUserRedux(
+          user.customId,
+          {
+            assignedTasks: assignedTaskIDs
+          },
+          { arrayUpdateStrategy: "replace" }
+        )
+      );
+    }
   }
 }

@@ -145,12 +145,18 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   placeholder="Complete At"
-                  onChange={value =>
+                  onChange={value => {
                     setFieldValue(
                       "expectedEndAt",
-                      value ? value.valueOf() : null
-                    )
-                  }
+                      value
+                        ? value
+                            .hour(23)
+                            .minute(59)
+                            .second(0)
+                            .valueOf()
+                        : null
+                    );
+                  }}
                   value={
                     values.expectedEndAt
                       ? moment(values.expectedEndAt)

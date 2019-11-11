@@ -285,9 +285,9 @@ const assignRoleMutation = `
 export const getBlocksWithCustomIDsQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlocksWithCustomIDsQuery {
+  query GetBlocksWithCustomIDsQuery ($customIDs: [String!]!) {
     block {
-      getBlocksWithCustomIDs (customIDs: [String!]!) {
+      getBlocksWithCustomIDs (customIDs: $customIDs) {
         errors {
           ...errorFragment
         }
@@ -304,7 +304,7 @@ export const getTasksAssignedToUserQuery = `
   ${errorFragment}
   query GetTasksAssignedToUserQuery {
     block {
-      getTasksAssignedToUser {
+      getAssignedTasks {
         errors {
           ...errorFragment
         }

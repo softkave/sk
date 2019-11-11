@@ -1,7 +1,9 @@
 import React from "react";
+import AssignedTasksContainer from "../components/assigned-tasks/AssignedTasksContainer";
 import NotificationsContainer from "../components/notification/NotificationsContainer";
 import OrgsContainer from "../components/org/OrgsContainer";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
+import { assignedTasksViewName } from "../redux/view/assignedTasks";
 import {
   currentNotificationViewName,
   notificationsViewName
@@ -26,7 +28,8 @@ class AppViewManager extends React.Component<IAppViewManagerProps> {
         component: NotificationsContainer
       },
       // TODO: Split functionality, single responsibility principle
-      { viewName: currentProjectViewName, component: OrgsContainer }
+      { viewName: currentProjectViewName, component: OrgsContainer },
+      { viewName: assignedTasksViewName, component: AssignedTasksContainer }
     ];
 
     return (
