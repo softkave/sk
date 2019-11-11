@@ -4,7 +4,7 @@ import React from "react";
 
 export interface IColumnHeaderProps {
   controls?: React.ReactNode;
-  title?: string;
+  title?: React.ReactNode;
   disabled?: boolean;
 }
 

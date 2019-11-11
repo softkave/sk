@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Badge } from "antd";
 import moment from "moment";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -16,6 +17,8 @@ export interface IAssignedTasksKanbanBoardProps {
   blockHandlers: IBlockMethods;
   user: IUser;
 }
+
+const badgeColor = "rgba(0, 0, 0, 0.25)";
 
 class AssignedTasksKanbanBoard extends React.Component<
   IAssignedTasksKanbanBoardProps
@@ -70,9 +73,19 @@ class AssignedTasksKanbanBoard extends React.Component<
 
     const renderColumn = (title: string, columnTasks: IBlock[]) => {
       if (columnTasks.length > 0) {
+        const columnTitle = (
+          <React.Fragment>
+            {title}{" "}
+            <StyledBadge
+              count={columnTasks.length}
+              style={{ backgroundColor: badgeColor }}
+            />
+          </React.Fragment>
+        );
+
         return (
           <StyledColumn>
-            <ColumnHeader title={title} />
+            <ColumnHeader title={columnTitle} />
             <ColumnBody>
               <TaskList
                 blockHandlers={blockHandlers}
@@ -89,10 +102,14 @@ class AssignedTasksKanbanBoard extends React.Component<
     };
 
     const hasNoneDue = rest.length === tasks.length;
+    const total = tasks.length;
 
     return (
       <StyledAssignedTasksKanbanBoard>
-        <StyledHeader>Assigned Tasks</StyledHeader>
+        <StyledHeader>
+          Assigned Tasks{" "}
+          <StyledBadge count={total} style={{ backgroundColor: badgeColor }} />
+        </StyledHeader>
         <StyledTasksContainer>
           <StyledTasksContainerInner>
             {renderColumn("Due Today", dueToday)}
@@ -140,3 +157,7 @@ const StyledTasksContainerInner = styled.div`
   padding: 16px;
   box-sizing: border-box;
 `;
+
+const StyledBadge = styled(Badge)({
+  marginLeft: 8
+});

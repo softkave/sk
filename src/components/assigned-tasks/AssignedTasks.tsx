@@ -1,5 +1,4 @@
-import styled from "@emotion/styled";
-import { Alert, Result } from "antd";
+import { Result } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -69,5 +68,3 @@ class AssignedTasks extends React.Component<IAssignedTasksProps> {
 }
 
 export default AssignedTasks;
-
-const StyledAlert = styled(Alert)({});
