@@ -10,6 +10,11 @@ import { IUser } from "../../models/user/user";
 import cast from "../../utils/cast";
 import { newId } from "../../utils/utils";
 
+export function makeBlockParentIDs(parent: IBlock) {
+  const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
+  return [...ancestors, parent.customId];
+}
+
 export default function getNewBlock(
   user: IUser,
   type: BlockType,
@@ -17,14 +22,11 @@ export default function getNewBlock(
 ): IBlock {
   const getParents = () => {
     if (parent) {
-      const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
-      return [...ancestors, parent.customId];
-    } else {
-      return [] as string[];
+      return makeBlockParentIDs(parent);
     }
   };
 
-  const childrenTypes = getBlockValidChildrenTypes({ type });
+  const childrenTypes = getBlockValidChildrenTypes(type);
 
   // TODO: Move creation of ids ( any resource at all ) to the server
   // Maybe get the id from the server when a form is created without an initial data, or without data with id

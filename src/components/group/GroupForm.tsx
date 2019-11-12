@@ -1,6 +1,7 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
-import { BlockType } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
+import BlockParentSelection from "../block/BlockParentSelection";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
 import {
@@ -19,12 +20,14 @@ export interface IGroupFormValues {
   type: BlockType;
   name: string;
   description?: string;
+  parents?: string[];
 }
 
 export interface IGroupFormProps
   extends IFormikFormBaseProps<IGroupFormValues> {
   submitLabel?: string;
   existingGroups?: string[];
+  parents: IBlock[];
 }
 
 const defaultSubmitLabel = "Create Group";
@@ -46,7 +49,8 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldError,
-      setFieldValue
+      setFieldValue,
+      parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -61,6 +65,18 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
                   <FormError error={globalError} />
                 </Form.Item>
               )}
+              <Form.Item
+                label="Parent"
+                help={
+                  touched.parents && <FormError>{errors.parents}</FormError>
+                }
+              >
+                <BlockParentSelection
+                  value={values.parents}
+                  parents={parents}
+                  onChange={parentIDs => setFieldValue("parents", parentIDs)}
+                />
+              </Form.Item>
               <Form.Item
                 label="Group Name"
                 help={touched.name && <FormError>{errors.name}</FormError>}

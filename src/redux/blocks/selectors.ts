@@ -1,4 +1,9 @@
-import { getCollectionItemsAsArray } from "../collection";
+import { IBlock } from "../../models/block/block";
+import { isBlockParentOf } from "../../models/block/utils";
+import {
+  filterCollectionItemsWith,
+  getCollectionItemsAsArray
+} from "../collection";
 import { IReduxState } from "../store";
 
 export function getBlock(state: IReduxState, blockID: string) {
@@ -8,4 +13,13 @@ export function getBlock(state: IReduxState, blockID: string) {
 
 export function getBlocksAsArray(state: IReduxState, ids: string[]) {
   return getCollectionItemsAsArray(state.blocks, ids);
+}
+
+export function getEveryBlockChildrenInState(
+  state: IReduxState,
+  block: IBlock
+) {
+  return filterCollectionItemsWith(state.blocks, next =>
+    isBlockParentOf(block, next)
+  );
 }

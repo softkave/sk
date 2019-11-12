@@ -16,3 +16,13 @@
 - Add scope id to all operation function calls
 - Monitor and log all crashes
 - Implement a way to reduce or monitor memory usage to avoid a browser crash
+- Implement Empty if no collaborator is assigned to tasks yet, if no parent is selected yet, if no notifications, or collaboration requests, or blocks exist in a group or kanban board, or org list, etc. Basically any list
+- Move the count badge to the right in lists with count
+- Implement breadcrumb for nested boards ( projects )
+- Hide select org in Notifications
+- Show Softkave in header, maybe hide select org on mobile for this
+- Redesign task collaborator thumbnail
+- Make columns flat UI
+- Delete the children of a block that has been deleted and remove it and them from user assigned tasks
+- Open select options don't follow Select when user scrolls
+- Add error message to all validation schemas ( Joi in server and Yup in client )

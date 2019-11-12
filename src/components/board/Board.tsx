@@ -21,7 +21,7 @@ import GroupFormWithModal from "../group/GroupFormWithModal";
 import ProjectFormWithModal from "../project/ProjectFormWithModal";
 import TaskFormWithModal from "../task/TaskFormWithModal";
 import SplitView, { ISplit } from "../view/SplitView";
-import { getChildrenTypesForContext } from "./childrenTypes";
+import { getChildrenTypesForContext } from "./context-utils";
 import KanbanBoard from "./KanbanBoard";
 
 export interface IBoardProps {
@@ -209,13 +209,13 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                   onClick={() => this.toggleContext("task")}
                   type={boardContext === "task" ? "primary" : "default"}
                 >
-                  Task
+                  Tasks
                 </Button>
                 <Button
                   onClick={() => this.toggleContext("project")}
                   type={boardContext === "project" ? "primary" : "default"}
                 >
-                  Project
+                  Projects
                 </Button>
               </Button.Group>
             </ContextButtons>

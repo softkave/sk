@@ -4,6 +4,7 @@ import React from "react";
 import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
+import BlockParentSelection from "../block/BlockParentSelection";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
@@ -27,6 +28,7 @@ export interface ITaskFormValues {
   priority: string;
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
+  parents?: string[];
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
@@ -66,7 +68,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleBlur,
       handleSubmit,
       isSubmitting,
-      setFieldValue
+      setFieldValue,
+      parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -81,8 +84,17 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   <FormError error={globalError} />
                 </Form.Item>
               )}
-              <Form.Item label="Parent">
-                <Select placeholder="Parent"></Select>
+              <Form.Item
+                label="Parent"
+                help={
+                  touched.parents && <FormError>{errors.parents}</FormError>
+                }
+              >
+                <BlockParentSelection
+                  value={values.parents}
+                  parents={parents}
+                  onChange={parentIDs => setFieldValue("parents", parentIDs)}
+                />
               </Form.Item>
               <Form.Item
                 label="Description"
@@ -203,7 +215,6 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   key={item.userId}
                   collaborator={this.indexedCollaborators[item.userId]}
                   taskCollaborator={item}
-                  onToggle={null}
                   onUnassign={() =>
                     setFieldValue(
                       "taskCollaborators",

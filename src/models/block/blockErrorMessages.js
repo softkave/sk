@@ -5,11 +5,12 @@ const errorMessages = {
   taskExists: "Task exists",
   rootExists: "Root block exists",
   projectExists: "Project exists",
-  transferSourceBlockMissing: "Transfer - source block missing",
-  transferDraggedBlockMissing: "Transfer - transfered block missing",
-  transferDestinationBlockMissing: "Transfer - destination block missing",
+  transferSourceBlockMissing: "Source block missing",
+  transferDraggedBlockMissing: "Transfered block missing",
+  transferDestinationBlockMissing: "Destination block missing",
   transferDraggedBlockNotFoundInParent:
-    "Transfer - transfered block not found in the source block",
+    "Transfered block not found in the source block",
+  transferDropPositionNotProvided: "Block drop position not provided",
   blockNotFound: "Block not found"
 };
 

@@ -16,6 +16,7 @@ const constants = {
   maxNameLength: 300,
   minDescriptionLength: 0,
   maxDescriptionLength: 1000,
+  minNonRootBlockParentsLength: 1,
   maxParentsLength: 10,
   minRequiredStringLength: 1,
   minTaskCollaboratorsLength: 0,

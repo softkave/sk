@@ -280,7 +280,7 @@ class KanbanBoard extends React.PureComponent<
     if (context) {
       return checkChildren(context);
     } else {
-      const childrenTypes = getBlockValidChildrenTypes(block);
+      const childrenTypes = getBlockValidChildrenTypes(block.type);
       return !!childrenTypes.find(checkChildren);
     }
   }

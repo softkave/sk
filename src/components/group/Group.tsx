@@ -6,7 +6,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import { BoardContext } from "../board/Board";
-import { getChildrenTypesForContext } from "../board/childrenTypes";
+import { getChildrenTypesForContext } from "../board/context-utils";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
