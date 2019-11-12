@@ -5,6 +5,7 @@ import React from "react";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
+import StyledCenterContainer from "../styled/CenterContainer";
 import NotificationBody from "./NotificationBody";
 import NotificationList from "./NotificationList";
 
@@ -45,7 +46,11 @@ class Notifications extends React.Component<
     const { renderType } = this.state;
 
     if (notifications.length === 0) {
-      return <Empty description="You are all set!" />;
+      return (
+        <StyledCenterContainer>
+          <Empty description="You are all set!" />
+        </StyledCenterContainer>
+      );
     }
 
     if (renderType === "mobile") {

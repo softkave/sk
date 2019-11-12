@@ -222,7 +222,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             <CreateButton
               types={childrenTypes}
               label="Create"
-              onClick={type => this.toggleForm(type as BlockType, block)}
+              onClick={type => this.toggleForm(type as BlockType)}
             />
           )}
           {this.canHaveContext(block) && (

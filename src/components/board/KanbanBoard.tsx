@@ -9,6 +9,7 @@ import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPosition } from "../block/sortBlocks";
 import Group from "../group/Group";
 import GroupContainer from "../group/GroupContainer";
+import StyledCenterContainer from "../styled/CenterContainer";
 import { BoardContext } from "./Board";
 
 export interface IKanbanBoardProps {
@@ -224,10 +225,16 @@ class KanbanBoard extends React.PureComponent<
   };
 
   private renderBlockChildren = () => {
+    const { block } = this.props;
+
     const renderedGroups = this.renderGroups();
 
-    if (renderedGroups.length === 0) {
-      return <Empty description="Hit the create button to get started" />;
+    if (!this.blockHasUngrouped(block) && renderedGroups.length === 0) {
+      return (
+        <StyledCenterContainer>
+          <Empty description="Hit the create button to get started" />
+        </StyledCenterContainer>
+      );
     }
 
     return <React.Fragment>{renderedGroups}</React.Fragment>;
@@ -308,6 +315,7 @@ const KanbanBoardDroppable = styled.div`
   display: flex;
   padding: 12px 16px;
   box-sizing: border-box;
+  min-width: 100%;
 `;
 
 const SpinContainer = styled.div`

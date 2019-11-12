@@ -5,8 +5,10 @@ import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user.js";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
+import StyledCenterContainer from "../styled/CenterContainer";
 import { IAddCollaboratorFormValues } from "./AddCollaboratorForm";
 import AddCollaboratorFormWithModal from "./AddCollaboratorFormWithModal";
+import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
 import "./collaborators.css";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
@@ -52,7 +54,11 @@ export default class Collaborators extends React.Component<
     message?: string
   ) {
     if (items.length === 0 && message) {
-      return <Empty description={message} />;
+      return (
+        <StyledCenterContainer>
+          <Empty description={message} />
+        </StyledCenterContainer>
+      );
     }
 
     return (
@@ -95,7 +101,7 @@ export default class Collaborators extends React.Component<
       request => {
         return (
           <List.Item key={request.customId}>
-            <CollaboratorThumbnail collaborator={request} />
+            <CollaborationRequestThumbnail request={request} />
           </List.Item>
         );
       },

@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import moment from "moment";
 import React from "react";
@@ -121,9 +122,9 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 />
               </Form.Item>
               <Form.Item label="Assigned To">
-                {this.renderTaskCollaborators()}
-              </Form.Item>
-              <Form.Item>
+                <StyledTaskCollaboaratorsContainer>
+                  {this.renderTaskCollaborators()}
+                </StyledTaskCollaboaratorsContainer>
                 <Select
                   placeholder="Assign Collaborator"
                   value={undefined}
@@ -273,3 +274,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     return taskCollaborators;
   };
 }
+
+const StyledTaskCollaboaratorsContainer = styled.div({
+  marginBottom: 16
+});

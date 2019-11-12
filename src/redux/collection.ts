@@ -1,4 +1,4 @@
-import { forEach, isArray, mapValues, merge, mergeWith } from "lodash";
+import { forEach, isArray, merge, mergeWith } from "lodash";
 
 export interface IUpdateResourceMeta {
   arrayUpdateStrategy?: "merge" | "concat" | "replace";

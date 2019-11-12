@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
+import { getBlock, getBlockParents } from "../../redux/blocks/selectors";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import blockDataLoader from "../block/blockDataLoader";
 import { getBlockMethods } from "../block/methods";
@@ -36,14 +36,15 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
       view.viewName === "ready"
         ? {
             ...ownProps,
+            block,
+            user,
+            blockHandlers,
             tasks: blockData.tasks!,
             projects: blockData.projects!,
             groups: blockData.groups!,
             collaborators: blockData.collaborators!,
             collaborationRequests: blockData.collaborationRequests!,
-            block,
-            user,
-            blockHandlers
+            parents: getBlockParents(state, block)
           }
         : undefined
   };

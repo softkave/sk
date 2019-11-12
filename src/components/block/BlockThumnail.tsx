@@ -1,44 +1,81 @@
 import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
+import { SizeMe } from "react-sizeme";
 import { IBlock } from "../../models/block/block";
-import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
+import ItemAvatar from "../ItemAvatar";
 
-export interface IBlockThumbnailProps extends IItemAvatarProps {
+export interface IBlockThumbnailProps {
   block: IBlock;
   className?: string;
 }
 
 const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
   const { block, className } = props;
-  const color = props.color || block.color;
+  const color = block.color;
 
   return (
     <StyledContainer className={className}>
-      <ItemAvatar {...props} color={color} />
-      <StyledBlockDescription>
-        {block.name && (
-          <Typography.Text strong ellipsis>
-            {block.name}
-          </Typography.Text>
+      <StyledItemAvatarContainer>
+        <ItemAvatar color={color} />
+      </StyledItemAvatarContainer>
+      <SizeMe>
+        {({ size }) => (
+          <StyledBlockDescriptionContainer>
+            <StyledDescriptionItem
+              style={{ width: getBlockDescriptionWidth(size.width) }}
+            >
+              <Typography.Text>{block.type}</Typography.Text>
+            </StyledDescriptionItem>
+            {block.name && (
+              <StyledDescriptionItem
+                style={{ width: getBlockDescriptionWidth(size.width) }}
+              >
+                <Typography.Text strong ellipsis>
+                  {block.name}
+                </Typography.Text>
+              </StyledDescriptionItem>
+            )}
+            {block.description && (
+              <StyledDescriptionItem
+                style={{ width: getBlockDescriptionWidth(size.width) }}
+              >
+                <Typography.Text>{block.description}</Typography.Text>
+              </StyledDescriptionItem>
+            )}
+          </StyledBlockDescriptionContainer>
         )}
-        {block.description && (
-          <Typography.Text>{block.description}</Typography.Text>
-        )}
-        <Typography.Text>{block.type}</Typography.Text>
-      </StyledBlockDescription>
+      </SizeMe>
     </StyledContainer>
   );
 };
 
 export default BlockThumbnail;
 
+function getBlockDescriptionWidth(width?: number | null) {
+  if (width) {
+    return width - blockDescriptionMarginWidth;
+  }
+}
+
 const StyledContainer = styled.div({
-  display: "flex",
-  flexDirection: "column"
+  display: "flex"
 });
 
-const StyledBlockDescription = styled.div({
+const blockDescriptionMarginWidth = 16;
+
+const StyledBlockDescriptionContainer = styled.div({
   flex: 1,
-  marginLeft: 8
+  marginLeft: blockDescriptionMarginWidth,
+  flexDirection: "column",
+  boxSizing: "border-box"
+});
+
+const StyledDescriptionItem = styled.div({
+  lineHeight: "1.25em !important",
+  display: "flex"
+});
+
+const StyledItemAvatarContainer = styled.div({
+  lineHeight: "32px"
 });

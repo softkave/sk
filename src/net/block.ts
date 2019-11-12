@@ -70,6 +70,8 @@ export function updateBlock({ block, data }) {
     "groupProjectContext"
   ];
 
+  console.log({ data });
+
   return auth(
     null,
     updateBlockMutation,

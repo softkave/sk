@@ -14,8 +14,15 @@ export interface IBlockParentSelectionProps {
 const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
   const { value, parents, onChange } = props;
   let block: IBlock | undefined;
+  const hasValue = Array.isArray(value) && value.length > 0;
 
-  if (Array.isArray(value) && value.length > 0) {
+  React.useEffect(() => {
+    if (!hasValue && parents.length === 1 && onChange) {
+      onChange(makeBlockParentIDs(parents[0]));
+    }
+  });
+
+  if (hasValue) {
     block = value && findBlock(parents, value[value.length - 1]);
   }
 
@@ -55,5 +62,5 @@ const StyledContainer = styled.div({
 });
 
 const StyledParentContainer = styled.div({
-  marginBottom: 8
+  marginBottom: 16
 });

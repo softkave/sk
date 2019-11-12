@@ -4,6 +4,7 @@ import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
+import { getBlock } from "../../blocks/selectors";
 import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
@@ -20,7 +21,6 @@ import {
   hasBlockParentsChanged,
   transferBlockStateHelper
 } from "./transferBlock";
-import { getBlock } from "../../blocks/selectors";
 
 export interface IUpdateBlockOperationFuncDataProps {
   block: IBlock;
@@ -33,6 +33,7 @@ export default async function updateBlockOperationFunc(
   dataProps: IUpdateBlockOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
+  console.log(dataProps);
   const { block, data } = dataProps;
   const operation = getOperationWithIDForResource(
     state,

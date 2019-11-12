@@ -15,6 +15,7 @@ const validationSchema = yup.object().shape({
     .of(yup.string())
     .min(blockConstants.minNonRootBlockParentsLength)
     .max(blockConstants.maxParentsLength)
+    .required()
 });
 
 const TaskFormWithFormik = withFormikFormWrapper({ validationSchema })(

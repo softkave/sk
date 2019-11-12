@@ -23,8 +23,11 @@
 - Show Softkave in header, maybe hide select org on mobile for this
 - Redesign task collaborator thumbnail
 - Make columns flat UI
-- Delete the children of a block that has been deleted and remove it and them from user assigned tasks
 - Open select options don't follow Select when user scrolls
 - Add error message to all validation schemas ( Joi in server and Yup in client )
 - Show empty or hidden groups view
 - Mobile: Org ( board ) -> projects ( -> board ) -> groups -> tasks | projects
+- Uniformly center Empty in all lists
+- Show a generic error in forms when they fail
+- Generate colors for collaboration requests and assign the colors to the users when they eventually signup. Use the user's color avatar if the user already exists
+- Small Github like label as badges and Github style labels for priority in task form

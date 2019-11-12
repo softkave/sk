@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Button, Switch, Typography } from "antd";
 import React from "react";
+import { SizeMe } from "react-sizeme";
 import { ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
@@ -11,26 +12,30 @@ export interface ITaskCollaboratorThumbnailProps {
   onUnassign: () => void;
 }
 
-const TaskCollaboratorThumbnail: React.SFC<
-  ITaskCollaboratorThumbnailProps
-> = props => {
+const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = props => {
   const { collaborator, taskCollaborator, onUnassign } = props;
 
   return (
     <StyledContainer>
       <ItemAvatar color={collaborator.color} />
-      <StyledCollaboratorNameContainer>
-        <Typography.Text strong ellipsis>
-          {collaborator.name}
-        </Typography.Text>
-      </StyledCollaboratorNameContainer>
-      <Switch
-        disabled={true}
-        checked={!!taskCollaborator.completedAt}
-        onChange={() => null}
-        style={{ marginRight: "16px" }}
-      />
-      <Button type="danger" icon="close" onClick={onUnassign} />
+      <SizeMe>
+        {({ size }) => (
+          <StyledCollaboratorNameContainer style={{ width: size.width! }}>
+            <Typography.Text strong ellipsis>
+              {collaborator.name}
+            </Typography.Text>
+          </StyledCollaboratorNameContainer>
+        )}
+      </SizeMe>
+      <div>
+        <Switch
+          disabled={true}
+          checked={!!taskCollaborator.completedAt}
+          onChange={() => null}
+          style={{ marginRight: "16px" }}
+        />
+        <Button type="danger" icon="delete" onClick={onUnassign} />
+      </div>
     </StyledContainer>
   );
 };
@@ -38,9 +43,13 @@ const TaskCollaboratorThumbnail: React.SFC<
 export default TaskCollaboratorThumbnail;
 
 const StyledContainer = styled.div({
-  display: "flex"
+  display: "flex",
+  width: "100%"
 });
 
 const StyledCollaboratorNameContainer = styled.div({
-  flex: 1
+  flex: 1,
+  marginLeft: 16,
+  marginRight: 16,
+  display: "flex"
 });
