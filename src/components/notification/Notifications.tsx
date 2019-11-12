@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Col, Row } from "antd";
+import { Col, Empty, Row } from "antd";
 import throttle from "lodash/throttle";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
@@ -41,8 +41,12 @@ class Notifications extends React.Component<
   }
 
   public render() {
-    const { currentNotificationID } = this.props;
+    const { currentNotificationID, notifications } = this.props;
     const { renderType } = this.state;
+
+    if (notifications.length === 0) {
+      return <Empty description="You are all set!" />;
+    }
 
     if (renderType === "mobile") {
       if (currentNotificationID) {

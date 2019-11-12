@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Icon, Spin } from "antd";
+import { Empty, Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -225,6 +225,11 @@ class KanbanBoard extends React.PureComponent<
 
   private renderBlockChildren = () => {
     const renderedGroups = this.renderGroups();
+
+    if (renderedGroups.length === 0) {
+      return <Empty description="Hit the create button to get started" />;
+    }
+
     return <React.Fragment>{renderedGroups}</React.Fragment>;
   };
 

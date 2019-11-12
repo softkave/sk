@@ -23,3 +23,7 @@ export function getEveryBlockChildrenInState(
     isBlockParentOf(block, next)
   );
 }
+
+export function getBlockParents(state: IReduxState, block: IBlock) {
+  return getBlocksAsArray(state, block.parents);
+}

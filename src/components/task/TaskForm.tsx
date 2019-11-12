@@ -201,10 +201,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
   private renderTaskCollaborators() {
     const { values, setFieldValue } = this.props;
 
-    if (
-      Array.isArray(values.taskCollaborators) &&
-      values.taskCollaborators.length > 0
-    ) {
+    if (Array.isArray(values.taskCollaborators)) {
+      if (values.taskCollaborators.length === 0) {
+        return "This task is not yet assigned";
+      }
+
       return (
         <List
           dataSource={values.taskCollaborators}

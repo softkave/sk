@@ -3,7 +3,10 @@ import { Button } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
-import { assignTask } from "../../models/block/utils";
+import {
+  assignTask,
+  filterValidParentsForBlockType
+} from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
@@ -35,10 +38,11 @@ export interface IBoardProps {
   projects: IBlock[];
   groups: IBlock[];
   tasks: IBlock[];
+  collaborationRequests: INotification[];
+  parents: IBlock[];
 
   // TODO: Define the right type for collaborators
   collaborators: IUser[];
-  collaborationRequests: INotification[];
 }
 
 export type BoardContext = "task" | "project";
@@ -117,7 +121,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       projects,
       groups,
       tasks,
-      onSelectProject
+      onSelectProject,
+      parents
     } = this.props;
     const {
       formType,
@@ -126,6 +131,10 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       selectedCollaborators,
       isFormForAddBlock
     } = this.state;
+
+    if (showCollaborators) {
+      return this.renderCollaborators();
+    }
 
     const collaborators = this.getCollaborators();
     const childrenTypes = getChildrenTypesForContext(
@@ -137,62 +146,76 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       ? addBlockOperationID
       : updateBlockOperationID;
 
-    const formBlock = this.getFormBlock();
-    const formTitle = this.getFormTitle();
+    let formsRender: React.ReactNode = null;
 
-    if (showCollaborators) {
-      return this.renderCollaborators();
+    if (formType) {
+      const formBlock = this.getFormBlock();
+      const formTitle = this.getFormTitle();
+      const availableParents = [...parents, block, ...groups, ...projects];
+      const formBlockParents = filterValidParentsForBlockType(
+        availableParents,
+        formBlock!.type
+      );
+
+      formsRender = (
+        <React.Fragment>
+          {formType === "project" && (
+            <ProjectFormWithModal
+              visible
+              customId={formBlock!.customId}
+              existingProjects={this.getExistingNames(projects)}
+              initialValues={formBlock}
+              onClose={() => this.toggleForm(formType)}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              operationID={blockFormOperationId}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+          {formType === "group" && (
+            <GroupFormWithModal
+              visible
+              operationID={blockFormOperationId}
+              customId={formBlock!.customId}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              onClose={() => this.toggleForm(formType)}
+              initialValues={formBlock}
+              existingGroups={this.getExistingNames(groups)}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+          {formType === "task" && (
+            <TaskFormWithModal
+              visible
+              operationID={blockFormOperationId}
+              customId={formBlock!.customId}
+              collaborators={collaborators}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              onClose={() => this.toggleForm(formType)}
+              initialValues={
+                isFormForAddBlock && actLikeRootBlock
+                  ? {
+                      ...formBlock!,
+                      taskCollaborators: [assignTask(user)]
+                    }
+                  : formBlock
+              }
+              user={user}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+        </React.Fragment>
+      );
     }
 
     return (
       <Content>
-        {formType === "project" && (
-          <ProjectFormWithModal
-            visible
-            customId={formBlock!.customId}
-            existingProjects={this.getExistingNames(projects)}
-            initialValues={formBlock}
-            onClose={() => this.toggleForm(formType)}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            operationID={blockFormOperationId}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
-        {formType === "group" && (
-          <GroupFormWithModal
-            visible
-            operationID={blockFormOperationId}
-            customId={formBlock!.customId}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            onClose={() => this.toggleForm(formType)}
-            initialValues={formBlock}
-            existingGroups={this.getExistingNames(groups)}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
-        {formType === "task" && (
-          <TaskFormWithModal
-            visible
-            operationID={blockFormOperationId}
-            customId={formBlock!.customId}
-            collaborators={collaborators}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            onClose={() => this.toggleForm(formType)}
-            initialValues={
-              isFormForAddBlock && actLikeRootBlock
-                ? {
-                    ...formBlock!,
-                    taskCollaborators: [assignTask(user)]
-                  }
-                : formBlock
-            }
-            user={user}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
+        {formsRender}
         <Header>
           {onBack && <Button onClick={onBack} icon="arrow-left" />}
           {childrenTypes.length > 0 && (

@@ -1,4 +1,4 @@
-import { Button, List, Tabs } from "antd";
+import { Button, Empty, List, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
@@ -46,7 +46,15 @@ export default class Collaborators extends React.Component<
     });
   };
 
-  public renderList(items, renderItem) {
+  public renderList(
+    items: any[],
+    renderItem: (item: any) => React.ReactNode,
+    message?: string
+  ) {
+    if (items.length === 0 && message) {
+      return <Empty description={message} />;
+    }
+
     return (
       <List
         dataSource={items}
@@ -64,27 +72,35 @@ export default class Collaborators extends React.Component<
   }
 
   // TODO: Define type
-  public renderCollaborators(collaborators: any[] = []) {
-    return this.renderList(collaborators, collaborator => {
-      return (
-        <List.Item key={collaborator.customId}>
-          <CollaboratorThumbnail collaborator={collaborator} />
-        </List.Item>
-      );
-    });
+  public renderCollaborators(collaborators: IUser[] = []) {
+    return this.renderList(
+      collaborators,
+      collaborator => {
+        return (
+          <List.Item key={collaborator.customId}>
+            <CollaboratorThumbnail collaborator={collaborator} />
+          </List.Item>
+        );
+      },
+      "No collaborators available"
+    );
   }
 
   public renderCollaborationRequests(
     collaborationRequests: INotification[] = []
   ) {
     // TODO: Use the user's avatar color for the collaboration request also
-    return this.renderList(collaborationRequests, request => {
-      return (
-        <List.Item key={request.customId}>
-          <CollaboratorThumbnail collaborator={request} />
-        </List.Item>
-      );
-    });
+    return this.renderList(
+      collaborationRequests,
+      request => {
+        return (
+          <List.Item key={request.customId}>
+            <CollaboratorThumbnail collaborator={request} />
+          </List.Item>
+        );
+      },
+      "No collaboration requests available"
+    );
   }
 
   public render() {
