@@ -1,7 +1,7 @@
 import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import moment from "moment";
 import React from "react";
-import { BlockType, ITaskCollaborator } from "../../models/block/block";
+import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
@@ -33,6 +33,7 @@ export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
   submitLabel: string;
   user: IUser;
   collaborators: IUser[];
+  parents: IBlock[];
 }
 
 const defaultSubmitLabel = "Create Task";
@@ -80,6 +81,9 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   <FormError error={globalError} />
                 </Form.Item>
               )}
+              <Form.Item label="Parent">
+                <Select placeholder="Parent"></Select>
+              </Form.Item>
               <Form.Item
                 label="Description"
                 help={
@@ -92,6 +96,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   autosize={{ minRows: 2, maxRows: 6 }}
                   autoComplete="off"
                   name="description"
+                  placeholder="Description"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.description}
