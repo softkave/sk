@@ -54,7 +54,6 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
     } = this.props;
 
     const globalError = getGlobalError(errors);
-    console.log(values);
 
     return (
       <StyledForm onSubmit={handleSubmit}>
@@ -76,7 +75,6 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
                   value={values.parents}
                   parents={parents}
                   onChange={parentIDs => {
-                    console.log(parentIDs);
                     setFieldValue("parents", parentIDs);
                   }}
                 />

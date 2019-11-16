@@ -33,7 +33,6 @@ export default async function updateBlockOperationFunc(
   dataProps: IUpdateBlockOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  console.log(dataProps);
   const { block, data } = dataProps;
   const operation = getOperationWithIDForResource(
     state,

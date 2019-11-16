@@ -31,3 +31,7 @@
 - Show a generic error in forms when they fail
 - Generate colors for collaboration requests and assign the colors to the users when they eventually signup. Use the user's color avatar if the user already exists
 - Small Github like label as badges and Github style labels for priority in task form
+
+## Hiding empty groups/block transfer
+
+- Add groups field to Board and the field that has children should be auto-selected or the field the user selects

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button } from "antd";
 import isString from "lodash/isString";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
+import { BlockType, findBlock, IBlock } from "../../models/block/block";
 import {
   assignTask,
   filterValidParentsForBlockType
@@ -53,7 +53,6 @@ interface IBoardState {
   boardContext: BoardContext;
   selectedCollaborators: { [key: string]: boolean };
   selectedGroup: IBlock | null;
-  parent?: IBlock | null;
   isFormForAddBlock?: boolean;
   formAddBlock?: INewBlock;
   formUpdateBlock?: IBlock;
@@ -64,7 +63,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     super(props);
     this.state = {
       formType: null,
-      parent: null,
       showCollaborators: false,
       boardContext: "task",
       selectedCollaborators: {},
@@ -356,9 +354,21 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     });
   };
 
+  private getAvailableParents = () => {
+    const { block, projects, groups, parents } = this.props;
+    const availableParents = [...parents, block, ...groups, ...projects];
+    return availableParents;
+  };
+
+  private getBlockParent = (block: IBlock) => {
+    const availableParents = this.getAvailableParents();
+    const parentID = block.parents[block.parents.length - 1];
+    return findBlock(availableParents, parentID);
+  };
+
   private onSubmitData = async (data, options: IOperationFuncOptions) => {
     const { user } = this.props;
-    const { parent, isFormForAddBlock } = this.state;
+    const { isFormForAddBlock } = this.state;
     const formBlock = this.getFormBlock();
 
     if (!isFormForAddBlock) {
@@ -367,17 +377,17 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         options
       );
     } else {
+      const newBlock = { ...formBlock!, ...data };
+      const parent = this.getBlockParent(newBlock);
       await this.props.blockHandlers.onAdd(
         {
+          parent,
           user,
-          block: { ...formBlock!, ...data },
-          parent: parent!
+          block: { ...formBlock!, ...data }
         },
         options
       );
     }
-
-    // this.toggleForm(formType);
   };
 
   private toggleForm = (type: BlockType, parent?: IBlock, block?: IBlock) => {
@@ -392,7 +402,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       const formUpdateBlock = showForm ? block : undefined;
 
       return {
-        parent,
         formAddBlock,
         formUpdateBlock,
         formType: showForm ? type : null,
