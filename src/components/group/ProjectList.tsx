@@ -1,53 +1,24 @@
-import styled from "@emotion/styled";
 import React from "react";
-
 import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
-import { IBlockMethods } from "../block/methods";
-import ProjectThumbnail from "../project/ProjectThumbnail";
-import ScrollList from "../ScrollList";
+import BlockList from "../block/BlockList";
 
 export interface IProjectListProps {
-  blockHandlers: IBlockMethods;
-  user: IUser;
   projects: IBlock[];
   setCurrentProject: (project: IBlock) => void;
 }
 
-class ProjectList extends React.PureComponent<IProjectListProps> {
-  public renderProjects() {
-    const { setCurrentProject, projects } = this.props;
-    const projectsToRender = projects;
-    const renderedProjects = projectsToRender.map(project => {
-      return (
-        <BlockThumbnailContainer key={project.customId}>
-          <ProjectThumbnail
-            project={project}
-            onClick={() => setCurrentProject(project)}
-          />
-        </BlockThumbnailContainer>
-      );
-    });
+const ProjectList: React.SFC<IProjectListProps> = props => {
+  const { setCurrentProject, projects } = props;
 
-    return renderedProjects;
-  }
-
-  public render() {
-    return (
-      <ScrollList>
-        <Projects>{this.renderProjects()}</Projects>
-      </ScrollList>
-    );
-  }
-}
-
-const BlockThumbnailContainer = styled.div`
-  margin-top: 12px;
-  margin-bottom: 12px;
-`;
-
-const Projects = styled.div`
-  padding: 0 12px;
-`;
+  return (
+    <BlockList
+      blocks={projects}
+      onClick={setCurrentProject}
+      showFields={["name"]}
+      emptyDescription="No projects available"
+      itemStyle={{ padding: "16px" }}
+    />
+  );
+};
 
 export default ProjectList;

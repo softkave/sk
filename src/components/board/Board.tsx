@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
-import isString from "lodash/isString";
+import { defaultTo, isString } from "lodash";
 import React from "react";
 import { BlockType, findBlock, IBlock } from "../../models/block/block";
 import {
@@ -14,6 +14,7 @@ import {
   addBlockOperationID,
   updateBlockOperationID
 } from "../../redux/operations/operationIDs";
+import cast from "../../utils/cast";
 import AddDropdownButton from "../AddDropdownButton";
 import getNewBlock, { INewBlock } from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
@@ -149,7 +150,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     if (formType) {
       const formBlock = this.getFormBlock();
       const formTitle = this.getFormTitle();
-      const availableParents = [...parents, block, ...groups, ...projects];
+      const availableParents = this.getAvailableParents();
       const formBlockParents = filterValidParentsForBlockType(
         availableParents,
         formBlock!.type
@@ -356,7 +357,16 @@ class Board extends React.Component<IBoardProps, IBoardState> {
 
   private getAvailableParents = () => {
     const { block, projects, groups, parents } = this.props;
-    const availableParents = [...parents, block, ...groups, ...projects];
+    const availableParents: IBlock[] = cast<IBlock[]>([]).concat(
+      // TODO: Should we include the org or project group parent in here?
+      // defaultTo(parents, []),
+      block,
+      defaultTo(groups, [])
+
+      // TODO: Should we include the projects too?
+      // defaultTo(projects, [])
+    );
+
     return availableParents;
   };
 
@@ -379,6 +389,11 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     } else {
       const newBlock = { ...formBlock!, ...data };
       const parent = this.getBlockParent(newBlock);
+      console.log({
+        newBlock,
+        parent,
+        availableParents: this.getAvailableParents()
+      });
       await this.props.blockHandlers.onAdd(
         {
           parent,

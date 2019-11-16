@@ -158,11 +158,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   Assign To Me
                 </Button>
               </Form.Item>
-              <Form.Item label="Complete At">
+              <Form.Item label="Due Date">
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="Complete At"
+                  placeholder="Due Date"
                   onChange={value => {
                     setFieldValue(
                       "expectedEndAt",

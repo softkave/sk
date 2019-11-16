@@ -5,49 +5,65 @@ import { SizeMe } from "react-sizeme";
 import { IBlock } from "../../models/block/block";
 import ItemAvatar from "../ItemAvatar";
 
+export type BlockThumbnailShowField = "name" | "type" | "description";
+
 export interface IBlockThumbnailProps {
   block: IBlock;
+  showFields?: BlockThumbnailShowField[];
   className?: string;
+  onClick?: () => void;
 }
 
+const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
+
 const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
-  const { block, className } = props;
+  const { block, className, onClick, showFields } = props;
   const color = block.color;
 
+  const showField = (field: BlockThumbnailShowField) => {
+    return (showFields || defaultFields).indexOf(field) !== -1 && block[field];
+  };
+
+  const renderBlockItem = (node: React.ReactNode, width?: number | null) => (
+    <StyledDescriptionItem style={{ width: getBlockDescriptionWidth(width) }}>
+      {node}
+    </StyledDescriptionItem>
+  );
+
   return (
-    <StyledContainer className={className}>
+    <StyledContainer className={className} onClick={onClick}>
       <StyledItemAvatarContainer>
         <ItemAvatar color={color} />
       </StyledItemAvatarContainer>
       <SizeMe>
         {({ size }) => (
           <StyledBlockDescriptionContainer>
-            <StyledDescriptionItem
-              style={{ width: getBlockDescriptionWidth(size.width) }}
-            >
-              <Typography.Text>{block.type}</Typography.Text>
-            </StyledDescriptionItem>
-            {block.name && (
-              <StyledDescriptionItem
-                style={{ width: getBlockDescriptionWidth(size.width) }}
-              >
+            {showField("type") &&
+              renderBlockItem(
+                <Typography.Text>{block.type}</Typography.Text>,
+                size.width
+              )}
+            {showField("name") &&
+              renderBlockItem(
                 <Typography.Text strong ellipsis>
                   {block.name}
-                </Typography.Text>
-              </StyledDescriptionItem>
-            )}
-            {block.description && (
-              <StyledDescriptionItem
-                style={{ width: getBlockDescriptionWidth(size.width) }}
-              >
-                <Typography.Text>{block.description}</Typography.Text>
-              </StyledDescriptionItem>
-            )}
+                </Typography.Text>,
+                size.width
+              )}
+            {showField("description") &&
+              renderBlockItem(
+                <Typography.Text>{block.description}</Typography.Text>,
+                size.width
+              )}
           </StyledBlockDescriptionContainer>
         )}
       </SizeMe>
     </StyledContainer>
   );
+};
+
+BlockThumbnail.defaultProps = {
+  showFields: defaultFields
 };
 
 export default BlockThumbnail;

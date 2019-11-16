@@ -9,7 +9,8 @@ const ColumnBody = React.memo(props => {
 
   return (
     <StyledColumnBody>
-      {isOSWindows() ? <ScrollList>{children}</ScrollList> : children}
+      {/* {isOSWindows() ? <ScrollList>{children}</ScrollList> : children} */}
+      {children}
     </StyledColumnBody>
   );
 });
