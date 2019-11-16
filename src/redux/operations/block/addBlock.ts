@@ -59,7 +59,6 @@ export default async function addBlockOperationFunc(
     }
 
     dispatch(blockActions.addBlockRedux(newBlock));
-    console.log({ newBlock });
 
     if (parent) {
       const pluralType = `${newBlock.type}s`;

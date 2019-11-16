@@ -389,11 +389,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     } else {
       const newBlock = { ...formBlock!, ...data };
       const parent = this.getBlockParent(newBlock);
-      console.log({
-        newBlock,
-        parent,
-        availableParents: this.getAvailableParents()
-      });
       await this.props.blockHandlers.onAdd(
         {
           parent,
