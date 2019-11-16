@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
+import { Empty } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import StyledCenterContainer from "../styled/CenterContainer";
 import OrgListItem from "./OrgListItem";
 
 export interface IOrgListProps {
@@ -10,6 +12,14 @@ export interface IOrgListProps {
 
 const OrgList: React.SFC<IOrgListProps> = props => {
   const { orgs, onClick } = props;
+
+  if (orgs.length === 0) {
+    return (
+      <StyledEmptyContainer>
+        <Empty description="Create an organization to get started" />
+      </StyledEmptyContainer>
+    );
+  }
 
   return (
     <StyledOrgList>
@@ -45,4 +55,8 @@ const StyledOrgListItem = styled.div({
   "&:hover": {
     backgroundColor: "#E6F7FF"
   }
+});
+
+const StyledEmptyContainer = styled(StyledCenterContainer)({
+  marginTop: 64
 });

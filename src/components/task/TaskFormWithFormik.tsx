@@ -9,6 +9,12 @@ const validationSchema = yup.object().shape({
     .string()
     .max(blockConstants.maxDescriptionLength)
     .matches(textPattern)
+    .required(),
+  parents: yup
+    .array()
+    .of(yup.string())
+    .min(blockConstants.minNonRootBlockParentsLength)
+    .max(blockConstants.maxParentsLength)
     .required()
 });
 

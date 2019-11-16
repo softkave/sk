@@ -10,22 +10,24 @@ export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
   };
 }
 
-const validChildrenTypesMap = {
-  root: ["project", "group", "task"],
-  org: ["project", "group", "task"],
-  project: ["group", "task"],
-  group: ["project", "task"],
-  task: []
-};
+type BlockTypeToTypesMap = { [key in BlockType]: BlockType[] };
 
-export function getBlockValidChildrenTypes(block): BlockType[] {
-  const types = validChildrenTypesMap[block.type] || [];
+export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
+  const validChildrenTypesMap: BlockTypeToTypesMap = {
+    root: ["project", "group", "task"],
+    org: ["project", "group", "task"],
+    project: ["group", "task"],
+    group: ["project", "task"],
+    task: []
+  };
+
+  const types = validChildrenTypesMap[type] || [];
   return [...types];
 }
 
 export function aggregateBlocksParentIDs(blocks: IBlock[]) {
-  const mappedParentIDs = blocks.reduce((accumulator, task) => {
-    task.parents.forEach(parentID => (accumulator[parentID] = parentID));
+  const mappedParentIDs = blocks.reduce((accumulator, block) => {
+    block.parents.forEach(parentID => (accumulator[parentID] = parentID));
     return accumulator;
   }, {});
 
@@ -40,4 +42,42 @@ export function getUserTaskCollaborator(task: IBlock, user: IUser) {
         return item.userId === user.customId;
       })
     : null;
+}
+
+export function getBlockValidParentTypes(type: BlockType): BlockType[] {
+  const validParentsMap: BlockTypeToTypesMap = {
+    root: [],
+    org: [],
+    project: ["root", "org", "group"],
+    group: ["root", "org", "project"],
+    task: ["root", "org", "project", "group"]
+  };
+
+  const types = validParentsMap[type] || [];
+  return [...types];
+}
+
+export function filterBlocksWithTypes(blocks: IBlock[], types: BlockType[]) {
+  return blocks.filter(block => types.indexOf(block.type) !== -1);
+}
+
+export function filterValidParentsForBlockType(
+  parents: IBlock[],
+  type: BlockType
+) {
+  const validParentTypes = getBlockValidParentTypes(type);
+  return filterBlocksWithTypes(parents, validParentTypes);
+}
+
+export function isBlockParentOf(parent: IBlock, block: IBlock) {
+  return parent.customId === block.parents[block.parents.length - 1];
+}
+
+export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
+  const blockTypeContainerName = `${block.type}s`;
+  const blockTypeContainer = parent[blockTypeContainerName];
+
+  if (Array.isArray(blockTypeContainer)) {
+    return blockTypeContainer.indexOf(block.customId);
+  }
 }

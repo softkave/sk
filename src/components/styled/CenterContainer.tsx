@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
+import StyledFlexContainer from "./FlexContainer";
 
-const StyledCenterContainer = styled.div({
-  display: "flex",
+const StyledCenterContainer = styled(StyledFlexContainer)({
   alignItems: "center",
-  justifyContent: "center",
-  width: "100%"
+  justifyContent: "center"
 });
 
 export default StyledCenterContainer;

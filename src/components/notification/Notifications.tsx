@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
-import { Col, Row } from "antd";
+import { Col, Empty, Row } from "antd";
 import throttle from "lodash/throttle";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getWindowWidth } from "../../utils/window";
+import StyledCenterContainer from "../styled/CenterContainer";
 import NotificationBody from "./NotificationBody";
 import NotificationList from "./NotificationList";
 
@@ -41,8 +42,16 @@ class Notifications extends React.Component<
   }
 
   public render() {
-    const { currentNotificationID } = this.props;
+    const { currentNotificationID, notifications } = this.props;
     const { renderType } = this.state;
+
+    if (notifications.length === 0) {
+      return (
+        <StyledCenterContainer>
+          <Empty description="You are all set!" />
+        </StyledCenterContainer>
+      );
+    }
 
     if (renderType === "mobile") {
       if (currentNotificationID) {

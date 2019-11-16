@@ -2,7 +2,8 @@ import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { deleteBlockRedux } from "../../blocks/actions";
+import { bulkDeleteBlocksRedux, deleteBlockRedux } from "../../blocks/actions";
+import { getEveryBlockChildrenInState } from "../../blocks/selectors";
 import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
@@ -53,6 +54,8 @@ export default async function deleteBlockOperation(
       throw result.errors;
     }
 
+    const blockChildren = getEveryBlockChildrenInState(state, block);
+    dispatch(bulkDeleteBlocksRedux(blockChildren.map(child => child.customId)));
     removeTaskFromUserIfAssigned(state, dispatch, block);
     dispatch(deleteBlockRedux(block.customId));
     dispatchOperationComplete(dispatchOptions);

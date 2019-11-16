@@ -1,9 +1,11 @@
+import styled from "@emotion/styled";
 import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import moment from "moment";
 import React from "react";
-import { BlockType, ITaskCollaborator } from "../../models/block/block";
+import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
+import BlockParentSelection from "../block/BlockParentSelection";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
@@ -27,12 +29,14 @@ export interface ITaskFormValues {
   priority: string;
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
+  parents?: string[];
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
   submitLabel: string;
   user: IUser;
   collaborators: IUser[];
+  parents: IBlock[];
 }
 
 const defaultSubmitLabel = "Create Task";
@@ -65,7 +69,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleBlur,
       handleSubmit,
       isSubmitting,
-      setFieldValue
+      setFieldValue,
+      parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -81,6 +86,18 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 </Form.Item>
               )}
               <Form.Item
+                label="Parent"
+                help={
+                  touched.parents && <FormError>{errors.parents}</FormError>
+                }
+              >
+                <BlockParentSelection
+                  value={values.parents}
+                  parents={parents}
+                  onChange={parentIDs => setFieldValue("parents", parentIDs)}
+                />
+              </Form.Item>
+              <Form.Item
                 label="Description"
                 help={
                   touched.description && (
@@ -92,6 +109,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   autosize={{ minRows: 2, maxRows: 6 }}
                   autoComplete="off"
                   name="description"
+                  placeholder="Description"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.description}
@@ -104,9 +122,9 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 />
               </Form.Item>
               <Form.Item label="Assigned To">
-                {this.renderTaskCollaborators()}
-              </Form.Item>
-              <Form.Item>
+                <StyledTaskCollaboaratorsContainer>
+                  {this.renderTaskCollaborators()}
+                </StyledTaskCollaboaratorsContainer>
                 <Select
                   placeholder="Assign Collaborator"
                   value={undefined}
@@ -140,11 +158,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   Assign To Me
                 </Button>
               </Form.Item>
-              <Form.Item label="Complete At">
+              <Form.Item label="Due Date">
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
-                  placeholder="Complete At"
+                  placeholder="Due Date"
                   onChange={value => {
                     setFieldValue(
                       "expectedEndAt",
@@ -184,10 +202,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
   private renderTaskCollaborators() {
     const { values, setFieldValue } = this.props;
 
-    if (
-      Array.isArray(values.taskCollaborators) &&
-      values.taskCollaborators.length > 0
-    ) {
+    if (Array.isArray(values.taskCollaborators)) {
+      if (values.taskCollaborators.length === 0) {
+        return "This task is not yet assigned";
+      }
+
       return (
         <List
           dataSource={values.taskCollaborators}
@@ -198,7 +217,6 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   key={item.userId}
                   collaborator={this.indexedCollaborators[item.userId]}
                   taskCollaborator={item}
-                  onToggle={null}
                   onUnassign={() =>
                     setFieldValue(
                       "taskCollaborators",
@@ -256,3 +274,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     return taskCollaborators;
   };
 }
+
+const StyledTaskCollaboaratorsContainer = styled.div({
+  marginBottom: 16
+});

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Badge } from "antd";
+import { Badge, Empty } from "antd";
 import moment from "moment";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -9,6 +9,7 @@ import Column from "../board/Column";
 import ColumnBody from "../board/ColumnBody";
 import ColumnHeader from "../board/ColumnHeader";
 import TaskList from "../group/TaskList";
+import StyledCenterContainer from "../styled/CenterContainer";
 import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 
 export interface IAssignedTasksKanbanBoardProps {
@@ -25,6 +26,14 @@ class AssignedTasksKanbanBoard extends React.Component<
 > {
   public render() {
     const { tasks, blockHandlers, user } = this.props;
+
+    if (tasks.length === 0) {
+      return (
+        <StyledCenterContainer>
+          <Empty description="You have no assigned tasks" />
+        </StyledCenterContainer>
+      );
+    }
 
     const endOfDay = moment()
       .hour(23)

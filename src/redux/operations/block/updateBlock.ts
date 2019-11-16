@@ -4,6 +4,7 @@ import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
+import { getBlock } from "../../blocks/selectors";
 import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
@@ -16,6 +17,10 @@ import {
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
+import {
+  hasBlockParentsChanged,
+  transferBlockStateHelper
+} from "./transferBlock";
 
 export interface IUpdateBlockOperationFuncDataProps {
   block: IBlock;
@@ -60,6 +65,18 @@ export default async function updateBlockOperationFunc(
     }
 
     addTaskToUserIfAssigned(state, dispatch, block);
+    const forTransferBlockOnly = { ...block, ...data };
+
+    if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
+      transferBlockStateHelper(state, dispatch, {
+        draggedBlock: forTransferBlockOnly,
+        sourceBlock: getBlock(state, block.parents[block.parents.length - 1]),
+        destinationBlock: getBlock(
+          state,
+          forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
+        )
+      });
+    }
 
     dispatch(
       blockActions.updateBlockRedux(block.customId, data, {

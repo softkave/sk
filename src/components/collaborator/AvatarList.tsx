@@ -17,7 +17,7 @@ export interface IAvatarListProps {
 }
 
 const avatarWidthPx = 32;
-const avatarMarginPx = 16;
+const avatarMarginPx = 8;
 
 export default class AvatarList extends React.Component<IAvatarListProps> {
   public static defaultProps = {
@@ -124,7 +124,7 @@ const StyledAvatarListContainer = styled.div`
 
 const StyledAvatarContainer = styled.div`
   display: inline-block;
-  margin-right: 16px;
+  margin-right: ${avatarMarginPx};
 `;
 
 const StyledMoreButtonContainer = styled.div`

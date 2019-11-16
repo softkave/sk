@@ -41,7 +41,7 @@ export default async function addBlockOperationFunc(
     return;
   }
 
-  const newBlock = { ...block } as IBlock;
+  const newBlock = block;
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,

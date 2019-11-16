@@ -15,7 +15,12 @@ const validationSchema = yup.object().shape({
   description: yup
     .string()
     .max(blockConstants.maxDescriptionLength)
-    .matches(textPattern)
+    .matches(textPattern),
+  parents: yup
+    .array()
+    .of(yup.string())
+    .min(blockConstants.minNonRootBlockParentsLength)
+    .max(blockConstants.maxParentsLength)
 });
 
 export default withFormikFormWrapper({ validationSchema })(GroupForm);

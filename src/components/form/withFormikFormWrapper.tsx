@@ -113,8 +113,6 @@ export default function withFormikFormWrapper(
             onSubmit={this.onSubmitForm}
           >
             {props => {
-              // TODO: clean console logs
-              // console.log(props, { options });
               return React.createElement(component, {
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),

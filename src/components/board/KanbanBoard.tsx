@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
-import { Icon, Spin } from "antd";
+import { Empty, Icon, Spin } from "antd";
 import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { BlockType, IBlock } from "../../models/block/block";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import { sortBlocksByPosition } from "../block/sortBlocks";
 import Group from "../group/Group";
 import GroupContainer from "../group/GroupContainer";
+import StyledCenterContainer from "../styled/CenterContainer";
+import { BoardContext } from "./Board";
 
 export interface IKanbanBoardProps {
   blockHandlers: IBlockMethods;
@@ -20,7 +23,7 @@ export interface IKanbanBoardProps {
   // TODO: define collaborators' type, it's slightly different from IUser
   collaborators: IUser[];
   selectedCollaborators: { [key: string]: boolean };
-  context: "task" | "project";
+  context: BoardContext;
   toggleForm: (type: BlockType, parent?: IBlock, block?: IBlock) => void;
   setCurrentProject: (project: IBlock) => void;
   onClickAddChild: (type: BlockType, parent: IBlock) => void;
@@ -188,35 +191,52 @@ class KanbanBoard extends React.PureComponent<
 
     groups.forEach((group, index) => {
       const groupId = group.customId;
-
-      rendered.push(
-        <GroupContainer
-          withViewMore={false}
-          key={groupId}
-          group={group}
-          draggableID={groupId}
-          onClickAddChild={onClickAddChild}
-          toggleForm={(type: BlockType, child?: IBlock) =>
-            toggleForm(
-              type,
-              child && child.customId === group.customId ? block : group,
-              child
-            )
-          }
-          index={blockHasUngrouped ? index + 1 : index}
-          context={context}
-          selectedCollaborators={selectedCollaborators}
-          setCurrentProject={setCurrentProject}
-          onViewMore={() => onSelectGroup(group, false)}
-        />
+      const groupHasChildrenInContext = this.doesBlockHaveChildren(
+        group,
+        context
       );
+
+      if (groupHasChildrenInContext) {
+        rendered.push(
+          <GroupContainer
+            withViewMore={false}
+            key={groupId}
+            group={group}
+            draggableID={groupId}
+            onClickAddChild={onClickAddChild}
+            toggleForm={(type: BlockType, child?: IBlock) =>
+              toggleForm(
+                type,
+                child && child.customId === group.customId ? block : group,
+                child
+              )
+            }
+            index={blockHasUngrouped ? index + 1 : index}
+            context={context}
+            selectedCollaborators={selectedCollaborators}
+            setCurrentProject={setCurrentProject}
+            onViewMore={() => onSelectGroup(group, false)}
+          />
+        );
+      }
     });
 
     return rendered;
   };
 
   private renderBlockChildren = () => {
+    const { block } = this.props;
+
     const renderedGroups = this.renderGroups();
+
+    if (!this.blockHasUngrouped(block) && renderedGroups.length === 0) {
+      return (
+        <StyledCenterContainer>
+          <Empty description="Hit the create button to get started" />
+        </StyledCenterContainer>
+      );
+    }
+
     return <React.Fragment>{renderedGroups}</React.Fragment>;
   };
 
@@ -262,6 +282,20 @@ class KanbanBoard extends React.PureComponent<
 
     return rendered;
   };
+
+  private doesBlockHaveChildren(block: IBlock, context?: BoardContext) {
+    const checkChildren = (type: string) => {
+      const plural = `${type}s`;
+      return Array.isArray(block[plural]) && block[plural].length > 0;
+    };
+
+    if (context) {
+      return checkChildren(context);
+    } else {
+      const childrenTypes = getBlockValidChildrenTypes(block.type);
+      return !!childrenTypes.find(checkChildren);
+    }
+  }
 }
 
 const KanbanBoardInner = styled.div`
@@ -281,6 +315,7 @@ const KanbanBoardDroppable = styled.div`
   display: flex;
   padding: 12px 16px;
   box-sizing: border-box;
+  min-width: 100%;
 `;
 
 const SpinContainer = styled.div`

@@ -6,7 +6,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { IBlockMethods } from "../block/methods";
 import { BoardContext } from "../board/Board";
-import { getChildrenTypesForContext } from "../board/childrenTypes";
+import { getChildrenTypesForContext } from "../board/context-utils";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 import GroupHeader from "./GroupHeader";
 import ProjectList from "./ProjectList";
@@ -85,8 +85,6 @@ class Group extends React.PureComponent<IGroupProps> {
     if (context === "project") {
       return (
         <ProjectList
-          blockHandlers={blockHandlers}
-          user={user}
           projects={projects}
           setCurrentProject={setCurrentProject}
         />
@@ -117,12 +115,12 @@ class Group extends React.PureComponent<IGroupProps> {
     }
   }
 
-  private isAnyCollaboratorSelected() {
-    const { selectedCollaborators } = this.props;
-    return (
-      selectedCollaborators && Object.keys(selectedCollaborators).length > 0
-    );
-  }
+  // private isAnyCollaboratorSelected() {
+  //   const { selectedCollaborators } = this.props;
+  //   return (
+  //     selectedCollaborators && Object.keys(selectedCollaborators).length > 0
+  //   );
+  // }
 
   // private filterTasks() {
   //   const { selectedCollaborators, tasks } = this.props;

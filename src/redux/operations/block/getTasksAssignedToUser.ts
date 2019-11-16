@@ -48,7 +48,6 @@ export default async function getTasksAssignedToUserOperationFunc(
     const result = await blockNet.getTasksAssignedToUser();
 
     if (result && result.errors) {
-      console.log("Result has error");
       throw result.errors;
     }
 
@@ -65,7 +64,6 @@ export default async function getTasksAssignedToUserOperationFunc(
       });
 
       if (parentsResult && parentsResult.errors) {
-        console.log("Parents has error");
         throw parentsResult.errors;
       }
 
@@ -88,7 +86,6 @@ export default async function getTasksAssignedToUserOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    console.log(error);
     const transformedError = OperationError.fromAny(error);
 
     dispatchOperationError({ ...dispatchOptions, error: transformedError });

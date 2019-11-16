@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
-import isString from "lodash/isString";
+import { defaultTo, isString } from "lodash";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
-import { assignTask } from "../../models/block/utils";
+import { BlockType, findBlock, IBlock } from "../../models/block/block";
+import {
+  assignTask,
+  filterValidParentsForBlockType
+} from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
@@ -11,6 +14,7 @@ import {
   addBlockOperationID,
   updateBlockOperationID
 } from "../../redux/operations/operationIDs";
+import cast from "../../utils/cast";
 import AddDropdownButton from "../AddDropdownButton";
 import getNewBlock, { INewBlock } from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
@@ -21,7 +25,7 @@ import GroupFormWithModal from "../group/GroupFormWithModal";
 import ProjectFormWithModal from "../project/ProjectFormWithModal";
 import TaskFormWithModal from "../task/TaskFormWithModal";
 import SplitView, { ISplit } from "../view/SplitView";
-import { getChildrenTypesForContext } from "./childrenTypes";
+import { getChildrenTypesForContext } from "./context-utils";
 import KanbanBoard from "./KanbanBoard";
 
 export interface IBoardProps {
@@ -35,10 +39,11 @@ export interface IBoardProps {
   projects: IBlock[];
   groups: IBlock[];
   tasks: IBlock[];
+  collaborationRequests: INotification[];
+  parents: IBlock[];
 
   // TODO: Define the right type for collaborators
   collaborators: IUser[];
-  collaborationRequests: INotification[];
 }
 
 export type BoardContext = "task" | "project";
@@ -49,7 +54,6 @@ interface IBoardState {
   boardContext: BoardContext;
   selectedCollaborators: { [key: string]: boolean };
   selectedGroup: IBlock | null;
-  parent?: IBlock | null;
   isFormForAddBlock?: boolean;
   formAddBlock?: INewBlock;
   formUpdateBlock?: IBlock;
@@ -60,7 +64,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     super(props);
     this.state = {
       formType: null,
-      parent: null,
       showCollaborators: false,
       boardContext: "task",
       selectedCollaborators: {},
@@ -117,7 +120,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       projects,
       groups,
       tasks,
-      onSelectProject
+      onSelectProject,
+      parents
     } = this.props;
     const {
       formType,
@@ -126,6 +130,10 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       selectedCollaborators,
       isFormForAddBlock
     } = this.state;
+
+    if (showCollaborators) {
+      return this.renderCollaborators();
+    }
 
     const collaborators = this.getCollaborators();
     const childrenTypes = getChildrenTypesForContext(
@@ -137,69 +145,83 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       ? addBlockOperationID
       : updateBlockOperationID;
 
-    const formBlock = this.getFormBlock();
-    const formTitle = this.getFormTitle();
+    let formsRender: React.ReactNode = null;
 
-    if (showCollaborators) {
-      return this.renderCollaborators();
+    if (formType) {
+      const formBlock = this.getFormBlock();
+      const formTitle = this.getFormTitle();
+      const availableParents = this.getAvailableParents();
+      const formBlockParents = filterValidParentsForBlockType(
+        availableParents,
+        formBlock!.type
+      );
+
+      formsRender = (
+        <React.Fragment>
+          {formType === "project" && (
+            <ProjectFormWithModal
+              visible
+              customId={formBlock!.customId}
+              existingProjects={this.getExistingNames(projects)}
+              initialValues={formBlock}
+              onClose={() => this.toggleForm(formType)}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              operationID={blockFormOperationId}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+          {formType === "group" && (
+            <GroupFormWithModal
+              visible
+              operationID={blockFormOperationId}
+              customId={formBlock!.customId}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              onClose={() => this.toggleForm(formType)}
+              initialValues={formBlock}
+              existingGroups={this.getExistingNames(groups)}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+          {formType === "task" && (
+            <TaskFormWithModal
+              visible
+              operationID={blockFormOperationId}
+              customId={formBlock!.customId}
+              collaborators={collaborators}
+              onSubmit={(data, options) => this.onSubmitData(data, options)}
+              onClose={() => this.toggleForm(formType)}
+              initialValues={
+                isFormForAddBlock && actLikeRootBlock
+                  ? {
+                      ...formBlock!,
+                      taskCollaborators: [assignTask(user)]
+                    }
+                  : formBlock
+              }
+              user={user}
+              submitLabel={formTitle}
+              title={formTitle}
+              parents={formBlockParents}
+            />
+          )}
+        </React.Fragment>
+      );
     }
 
     return (
       <Content>
-        {formType === "project" && (
-          <ProjectFormWithModal
-            visible
-            customId={formBlock!.customId}
-            existingProjects={this.getExistingNames(projects)}
-            initialValues={formBlock}
-            onClose={() => this.toggleForm(formType)}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            operationID={blockFormOperationId}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
-        {formType === "group" && (
-          <GroupFormWithModal
-            visible
-            operationID={blockFormOperationId}
-            customId={formBlock!.customId}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            onClose={() => this.toggleForm(formType)}
-            initialValues={formBlock}
-            existingGroups={this.getExistingNames(groups)}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
-        {formType === "task" && (
-          <TaskFormWithModal
-            visible
-            operationID={blockFormOperationId}
-            customId={formBlock!.customId}
-            collaborators={collaborators}
-            onSubmit={(data, options) => this.onSubmitData(data, options)}
-            onClose={() => this.toggleForm(formType)}
-            initialValues={
-              isFormForAddBlock && actLikeRootBlock
-                ? {
-                    ...formBlock!,
-                    taskCollaborators: [assignTask(user)]
-                  }
-                : formBlock
-            }
-            user={user}
-            submitLabel={formTitle}
-            title={formTitle}
-          />
-        )}
+        {formsRender}
         <Header>
           {onBack && <Button onClick={onBack} icon="arrow-left" />}
           {childrenTypes.length > 0 && (
             <CreateButton
               types={childrenTypes}
               label="Create"
-              onClick={type => this.toggleForm(type as BlockType, block)}
+              onClick={type => this.toggleForm(type as BlockType)}
             />
           )}
           {this.canHaveContext(block) && (
@@ -209,13 +231,13 @@ class Board extends React.Component<IBoardProps, IBoardState> {
                   onClick={() => this.toggleContext("task")}
                   type={boardContext === "task" ? "primary" : "default"}
                 >
-                  Task
+                  Tasks
                 </Button>
                 <Button
                   onClick={() => this.toggleContext("project")}
                   type={boardContext === "project" ? "primary" : "default"}
                 >
-                  Project
+                  Projects
                 </Button>
               </Button.Group>
             </ContextButtons>
@@ -333,9 +355,30 @@ class Board extends React.Component<IBoardProps, IBoardState> {
     });
   };
 
+  private getAvailableParents = () => {
+    const { block, projects, groups, parents } = this.props;
+    const availableParents: IBlock[] = cast<IBlock[]>([]).concat(
+      // TODO: Should we include the org or project group parent in here?
+      // defaultTo(parents, []),
+      block,
+      defaultTo(groups, [])
+
+      // TODO: Should we include the projects too?
+      // defaultTo(projects, [])
+    );
+
+    return availableParents;
+  };
+
+  private getBlockParent = (block: IBlock) => {
+    const availableParents = this.getAvailableParents();
+    const parentID = block.parents[block.parents.length - 1];
+    return findBlock(availableParents, parentID);
+  };
+
   private onSubmitData = async (data, options: IOperationFuncOptions) => {
     const { user } = this.props;
-    const { parent, isFormForAddBlock } = this.state;
+    const { isFormForAddBlock } = this.state;
     const formBlock = this.getFormBlock();
 
     if (!isFormForAddBlock) {
@@ -344,17 +387,17 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         options
       );
     } else {
+      const newBlock = { ...formBlock!, ...data };
+      const parent = this.getBlockParent(newBlock);
       await this.props.blockHandlers.onAdd(
         {
+          parent,
           user,
-          block: { ...formBlock!, ...data },
-          parent: parent!
+          block: { ...formBlock!, ...data }
         },
         options
       );
     }
-
-    // this.toggleForm(formType);
   };
 
   private toggleForm = (type: BlockType, parent?: IBlock, block?: IBlock) => {
@@ -369,7 +412,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       const formUpdateBlock = showForm ? block : undefined;
 
       return {
-        parent,
         formAddBlock,
         formUpdateBlock,
         formType: showForm ? type : null,

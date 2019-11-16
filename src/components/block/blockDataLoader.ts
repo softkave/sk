@@ -88,7 +88,7 @@ function areBlockDataLoaded(
 }
 
 function areBlockChildrenLoaded(block: IBlock, blockChildren: IBlockData) {
-  const childrenTypes = getBlockValidChildrenTypes(block);
+  const childrenTypes = getBlockValidChildrenTypes(block.type);
   const pluralTypes = pluralize(childrenTypes);
 
   return areBlockDataLoaded(block, blockChildren, pluralTypes);
@@ -118,7 +118,7 @@ function areBlockCollaborationRequestsLoaded(
 
 function loadBlockChildrenFromRedux(state: IReduxState, block: IBlock) {
   const childrenByPluralType: IBlockData = {};
-  const childrenTypes = getBlockValidChildrenTypes(block);
+  const childrenTypes = getBlockValidChildrenTypes(block.type);
   const pluralTypes = pluralize(childrenTypes);
 
   pluralTypes.forEach(typePropName => {

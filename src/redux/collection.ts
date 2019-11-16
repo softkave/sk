@@ -1,6 +1,4 @@
-import isArray from "lodash/isArray";
-import merge from "lodash/merge";
-import mergeWith from "lodash/mergeWith";
+import { forEach, isArray, merge, mergeWith } from "lodash";
 
 export interface IUpdateResourceMeta {
   arrayUpdateStrategy?: "merge" | "concat" | "replace";
@@ -148,4 +146,18 @@ export function getCollectionItemsAsArray<ResourceType>(
     },
     [] as ResourceType[]
   );
+}
+
+export function filterCollectionItemsWith<ResourceType>(
+  resources: ICollectionMap<ResourceType>,
+  filterFunc: (item: ResourceType) => boolean
+) {
+  const result: ResourceType[] = [];
+  forEach(resources, item => {
+    if (filterFunc(item.resource)) {
+      result.push(item.resource);
+    }
+  });
+
+  return result;
 }

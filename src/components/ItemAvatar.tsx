@@ -4,12 +4,16 @@ import React from "react";
 
 export interface IItemAvatarProps {
   color?: string;
-  onClick?: () => void;
   active?: boolean;
   clickable?: boolean;
+  size?: number | "small" | "default" | "large";
+  shape?: "square" | "circle";
+  onClick?: () => void;
 }
 
 const ItemAvatar: React.SFC<IItemAvatarProps> = props => {
+  const { size, shape } = props;
+
   return (
     <StyledAvatarContainer
       active={props.active}
@@ -18,8 +22,8 @@ const ItemAvatar: React.SFC<IItemAvatarProps> = props => {
       type={props.clickable && props.onClick ? "thumbnail" : "regular"}
     >
       <Avatar
-        size="default"
-        shape="square"
+        size={size}
+        shape={shape}
         style={{
           backgroundColor: props.color,
           cursor: props.clickable && props.onClick ? "pointer" : undefined
@@ -32,7 +36,9 @@ const ItemAvatar: React.SFC<IItemAvatarProps> = props => {
 };
 
 ItemAvatar.defaultProps = {
-  color: "#999"
+  color: "#999",
+  size: "default",
+  shape: "square"
 };
 
 interface IAvatarContainerProps {
@@ -51,9 +57,10 @@ const StyledAvatarContainer = styled("span")<IAvatarContainerProps>(props => {
     case "thumbnail": {
       return {
         ...styles,
-        border: props.active
+        borderBottom: props.active
           ? "2px solid rgb(66,133,244)"
-          : "2px solid rgba(255,255,255,1)",
+          : // : "2px solid rgba(255,255,255,1)",
+            "none",
         padding: props.active ? "2px" : undefined,
         borderRadius: props.active ? "4px" : undefined,
         cursor: "pointer",
