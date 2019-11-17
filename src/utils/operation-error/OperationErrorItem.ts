@@ -142,6 +142,8 @@ export default class OperationErrorItem extends Error {
 export const defaultOperationErrorItemType = "error";
 export const defaultOperationErrorItemField = "error";
 export const anErrorOccurredMessage = "An error occurred";
+
+// TODO: Throw default error or make it where it is to be thrown, not here. Maybe prodie a function throw defaultError
 export const anErrorOccurred = new OperationErrorItem(
   defaultOperationErrorItemType,
   anErrorOccurredMessage,
