@@ -66,7 +66,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
                 </Form.Item>
               )}
               <Form.Item
-                label="Parent"
+                label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
                 }

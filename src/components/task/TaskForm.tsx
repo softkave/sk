@@ -86,7 +86,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 </Form.Item>
               )}
               <Form.Item
-                label="Parent"
+                label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
                 }
