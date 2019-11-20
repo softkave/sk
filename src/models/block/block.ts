@@ -28,6 +28,11 @@ export const blockType = {
 export type BlockPriority = keyof typeof taskPriority;
 export type BlockType = keyof typeof blockType;
 
+export interface ISubTask {
+  customId: string;
+  description: string;
+}
+
 export interface IBlock {
   customId: string;
   name: string;
@@ -50,6 +55,7 @@ export interface IBlock {
   roles: IBlockRole[];
   collaborators: string[];
   collaborationRequests: string[];
+  subTasks?: ISubTask[];
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

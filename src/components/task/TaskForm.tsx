@@ -18,6 +18,8 @@ import {
 } from "../form/FormStyledComponents";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
+import { ISubTaskValues } from "./SubTask";
+import SubTaskList from "./SubTaskList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 
 export interface ITaskFormValues {
@@ -30,6 +32,7 @@ export interface ITaskFormValues {
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
   parents?: string[];
+  subTasks?: ISubTaskValues[];
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
@@ -120,6 +123,16 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   onChange={(value: string) => setFieldValue("priority", value)}
                   value={values.priority as TaskPriority}
                 />
+              </Form.Item>
+              <Form.Item label="Sub Tasks">
+                {!values.subTasks || values.subTasks.length === 0 ? (
+                  "This task has no subtasks"
+                ) : (
+                  <SubTaskList
+                    subTasks={values.subTasks}
+                    onChange={value => setFieldValue("subTasks", value)}
+                  />
+                )}
               </Form.Item>
               <Form.Item label="Assigned To">
                 <StyledTaskCollaboaratorsContainer>
