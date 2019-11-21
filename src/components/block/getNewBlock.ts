@@ -52,7 +52,11 @@ export default function getNewBlock(
     priority: type === "task" ? taskPriority.important : undefined,
     isBacklog: false,
     roles: undefined,
-    collaborationRequests: type === "org" ? [] : undefined
+    collaborationRequests: type === "org" ? [] : undefined,
+    subTasks: [
+      { description: "I am a sub task" },
+      { description: "I am a sub task" }
+    ]
   };
 
   return cast<IBlock>(newBlock);

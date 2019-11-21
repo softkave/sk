@@ -129,6 +129,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   "This task has no subtasks"
                 ) : (
                   <SubTaskList
+                    canAddSubTasks
                     subTasks={values.subTasks}
                     onChange={value => setFieldValue("subTasks", value)}
                   />
