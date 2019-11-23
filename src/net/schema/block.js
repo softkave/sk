@@ -24,6 +24,10 @@ const blockFragment = `
       assignedBy
       completedAt
     }
+    subTasks {
+      customId
+      description
+    }
   }
 `;
 

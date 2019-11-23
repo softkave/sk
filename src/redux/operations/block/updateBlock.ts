@@ -1,5 +1,6 @@
 import moment from "moment";
 import { Dispatch } from "redux";
+import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
@@ -46,6 +47,8 @@ export default async function updateBlockOperationFunc(
 
   if (data.expectedEndAt && typeof data.expectedEndAt !== "number") {
     data.expectedEndAt = moment(data.expectedEndAt).valueOf();
+  } else if (data.type === "task") {
+    data.subTasks = addCustomIDToSubTasks(data.subTasks);
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {

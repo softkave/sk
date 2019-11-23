@@ -1,4 +1,5 @@
 import { Dispatch } from "redux";
+import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
@@ -52,6 +53,13 @@ export default async function addBlockOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
+    console.log({ ...newBlock });
+    if (newBlock.type === "task") {
+      newBlock.subTasks = addCustomIDToSubTasks(newBlock.subTasks);
+    }
+
+    console.log({ ...newBlock });
+
     const result = await blockNet.addBlock({ block: newBlock });
 
     if (result && result.errors) {

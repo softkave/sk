@@ -2,6 +2,7 @@ import randomColor from "randomcolor";
 import {
   BlockType,
   IBlock,
+  ISubTask,
   ITaskCollaborator,
   taskPriority
 } from "../../models/block/block";
@@ -59,3 +60,12 @@ export default function getNewBlock(
 }
 
 export type INewBlock = ReturnType<typeof getNewBlock>;
+
+export function addCustomIDToSubTasks(subTasks?: ISubTask[]) {
+  return Array.isArray(subTasks)
+    ? subTasks.map(subTask => ({
+        ...subTask,
+        customId: subTask.customId || newId()
+      }))
+    : [];
+}
