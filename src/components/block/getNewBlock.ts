@@ -2,6 +2,7 @@ import randomColor from "randomcolor";
 import {
   BlockType,
   IBlock,
+  ISubTask,
   ITaskCollaborator,
   taskPriority
 } from "../../models/block/block";
@@ -52,14 +53,19 @@ export default function getNewBlock(
     priority: type === "task" ? taskPriority.important : undefined,
     isBacklog: false,
     roles: undefined,
-    collaborationRequests: type === "org" ? [] : undefined,
-    subTasks: [
-      { description: "I am a sub task" },
-      { description: "I am a sub task" }
-    ]
+    collaborationRequests: type === "org" ? [] : undefined
   };
 
   return cast<IBlock>(newBlock);
 }
 
 export type INewBlock = ReturnType<typeof getNewBlock>;
+
+export function addCustomIDToSubTasks(subTasks?: ISubTask[]) {
+  return Array.isArray(subTasks)
+    ? subTasks.map(subTask => ({
+        ...subTask,
+        customId: subTask.customId || newId()
+      }))
+    : [];
+}

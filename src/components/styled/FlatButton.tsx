@@ -3,7 +3,8 @@ import { Button } from "antd";
 
 const StyledFlatButton = styled(Button)({
   border: "none",
-  backgroundColor: "inherit"
+  backgroundColor: "inherit",
+  boxShadow: "none"
 });
 
 export default StyledFlatButton;

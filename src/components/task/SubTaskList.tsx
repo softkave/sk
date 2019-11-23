@@ -1,9 +1,10 @@
-import { Divider } from "antd";
+import styled from "@emotion/styled";
+import { Button, Divider } from "antd";
+import { forIn, values } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
-import StyledFlatButton from "../styled/FlatButton";
 import SubTask, { ISubTaskValues } from "./SubTask";
 import SubTaskForm from "./SubTaskForm";
 
@@ -16,13 +17,14 @@ export interface ISubTaskListProps {
 interface ISubTaskState {
   subTask: ISubTaskValues;
   errorMessage?: string | null;
+  index: string | number;
 }
 
 const descriptionValidationSchema = yup
   .string()
+  .required()
   .max(blockConstants.maxDescriptionLength)
-  .matches(textPattern)
-  .required();
+  .matches(textPattern);
 
 const SubTaskList: React.SFC<ISubTaskListProps> = props => {
   const { subTasks: value, onChange, canAddSubTasks } = props;
@@ -44,18 +46,80 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     }
   };
 
-  const onDeleteSubTask = (index: number) => {
+  const onDeleteSubTask = (index: string | number) => {
     const newSubTasks = [...subTasks];
-    newSubTasks.splice(index, 1);
+    newSubTasks.splice(Number(index), 1);
     removeSubTaskFromSubTasksBeingEdited(index);
     onChange(newSubTasks);
   };
 
-  const onCommitSubTaskUpdate = (index: number) => {
-    const newSubTasks = [...subTasks];
-    const subTask = subTasksBeingEdited[index];
+  const validateSubTask = (subTask: ISubTaskValues) => {
+    try {
+      descriptionValidationSchema.validateSync(subTask.description);
+    } catch (error) {
+      return error;
+    }
+  };
 
-    if (!subTask.errorMessage) {
+  const onBeginEditSubTask = (index: string | number) => {
+    const subTask = subTasks[index];
+
+    if (subTask) {
+      const newSubTasksBeingEdited = { ...subTasksBeingEdited };
+      newSubTasksBeingEdited[index] = {
+        subTask,
+        index,
+        errorMessage: undefined
+      };
+
+      setSubTasksBeingEdited(newSubTasksBeingEdited);
+    }
+  };
+
+  const onUpdateSubTask = (index: string | number, update: ISubTaskValues) => {
+    if (isSubTaskBeingEdited(index)) {
+      const newSubTasksBeingEdited = { ...subTasksBeingEdited };
+      const oldSubTaskState = { ...newSubTasksBeingEdited[index] };
+      const subTask = { ...oldSubTaskState.subTask, ...update };
+      const error = validateSubTask(subTask);
+      const newSubTaskState = {
+        ...oldSubTaskState,
+        subTask,
+        errorMessage: error
+      };
+
+      newSubTasksBeingEdited[index] = newSubTaskState;
+      setSubTasksBeingEdited(newSubTasksBeingEdited);
+    }
+  };
+
+  const onAddSubTask = () => {
+    const subTasksLength = subTasks.length;
+    const newSubTasksBeingEdited = { ...subTasksBeingEdited };
+    let newSubTaskIndex = subTasksLength;
+
+    while (isSubTaskBeingEdited(newSubTaskIndex)) {
+      newSubTaskIndex += 1;
+    }
+
+    newSubTasksBeingEdited[newSubTaskIndex] = {
+      errorMessage: undefined,
+      index: newSubTaskIndex,
+      subTask: { description: "" }
+    };
+
+    setSubTasksBeingEdited(newSubTasksBeingEdited);
+  };
+
+  const onCommitSubTaskUpdate = (index: string | number) => {
+    const subTask = subTasksBeingEdited[index];
+    const error = validateSubTask(subTask.subTask);
+
+    if (error) {
+      onUpdateSubTask(index, subTask.subTask);
+    } else {
+      const newSubTasks = [...subTasks];
+
       if (Number(index) >= newSubTasks.length) {
         newSubTasks.push(subTask.subTask);
       } else {
@@ -67,51 +131,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     }
   };
 
-  const onBeginEditSubTask = (index: string | number) => {
-    const subTask = subTasks[index];
-
-    if (subTask) {
-      const newSubTasksBeingEdited = { ...subTasksBeingEdited };
-      newSubTasksBeingEdited[index] = {
-        subTask,
-        errorMessage: undefined
-      };
-
-      setSubTasksBeingEdited(newSubTasksBeingEdited);
-    }
-  };
-
-  const onUpdateSubTask = (index: string | number, update: ISubTaskValues) => {
-    if (isSubTaskBeingEdited(index)) {
-      const newSubTasksBeingEdited = { ...subTasksBeingEdited };
-      const subTaskState = { ...newSubTasksBeingEdited[index] };
-      const subTask = { ...subTaskState.subTask, ...update };
-      const error = descriptionValidationSchema.validateSync(
-        subTask.description
-      );
-
-      if (error) {
-        subTaskState.errorMessage = error;
-      }
-
-      subTaskState.subTask = subTask;
-      newSubTasksBeingEdited[index] = subTaskState;
-      setSubTasksBeingEdited(newSubTasksBeingEdited);
-    }
-  };
-
-  const onAddSubTask = () => {
-    const subTasksLength = subTasks.length;
-    const newSubTasksBeingEdited = { ...subTasksBeingEdited };
-    newSubTasksBeingEdited[subTasksLength] = {
-      errorMessage: undefined,
-      subTask: { description: "" }
-    };
-
-    setSubTasksBeingEdited(newSubTasksBeingEdited);
-  };
-
-  const renderSubTask = (subTask: ISubTaskValues, index: number) => {
+  const renderSubTask = (subTask: ISubTaskValues, index: string | number) => {
     const isEditing = isSubTaskBeingEdited(index);
 
     if (isEditing) {
@@ -138,21 +158,52 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     }
   };
 
+  const renderSubTaskList = () => {
+    const newSubTasks: ISubTaskState[] = [];
+
+    forIn(subTasksBeingEdited, (subTaskState, key) => {
+      const index = Number(key);
+
+      if (index >= subTasks.length) {
+        newSubTasks.push(subTaskState);
+      }
+    });
+
+    return (
+      <React.Fragment>
+        {subTasks.map((subTask, index) => (
+          <React.Fragment>
+            {renderSubTask(subTask, index)}
+            <Divider />
+          </React.Fragment>
+        ))}
+        {newSubTasks.map(subTaskState => (
+          <React.Fragment>
+            {renderSubTask(subTaskState.subTask, subTaskState.index)}
+            <Divider />
+          </React.Fragment>
+        ))}
+      </React.Fragment>
+    );
+  };
+
   return (
     <div>
-      {subTasks.map((subTask, index) => (
-        <React.Fragment>
-          {renderSubTask(subTask, index)}
-          <Divider />
-        </React.Fragment>
-      ))}
+      {renderSubTaskList()}
       {canAddSubTasks && (
-        <StyledFlatButton icon="plus" onClick={() => onAddSubTask()}>
+        <StyledAddTaskButton icon="plus" onClick={() => onAddSubTask()}>
           Add sub-task
-        </StyledFlatButton>
+        </StyledAddTaskButton>
       )}
     </div>
   );
 };
 
 export default SubTaskList;
+
+const StyledAddTaskButton = styled(Button)({
+  border: "none",
+  backgroundColor: "inherit",
+  padding: 0,
+  boxShadow: "none"
+});

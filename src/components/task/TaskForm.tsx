@@ -125,15 +125,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 />
               </Form.Item>
               <Form.Item label="Sub Tasks">
-                {!values.subTasks || values.subTasks.length === 0 ? (
-                  "This task has no subtasks"
-                ) : (
-                  <SubTaskList
-                    canAddSubTasks
-                    subTasks={values.subTasks}
-                    onChange={value => setFieldValue("subTasks", value)}
-                  />
-                )}
+                <SubTaskList
+                  canAddSubTasks
+                  subTasks={values.subTasks || []}
+                  onChange={value => setFieldValue("subTasks", value)}
+                />
               </Form.Item>
               <Form.Item label="Assigned To">
                 <StyledTaskCollaboaratorsContainer>

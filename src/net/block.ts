@@ -41,7 +41,8 @@ export function addBlock({ block }) {
     "groups",
     "projects",
     "groupTaskContext",
-    "groupProjectContext"
+    "groupProjectContext",
+    "subTasks"
   ];
 
   return auth(
@@ -67,7 +68,8 @@ export function updateBlock({ block, data }) {
     "groups",
     "projects",
     "groupTaskContext",
-    "groupProjectContext"
+    "groupProjectContext",
+    "subTasks"
   ];
 
   return auth(

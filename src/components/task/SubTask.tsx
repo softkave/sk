@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import { Button, Typography } from "antd";
 import React from "react";
-import StyledFlatButton from "../styled/FlatButton";
 
 export interface ISubTaskValues {
   description: string;
@@ -19,8 +18,8 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
   const renderControls = () => {
     return (
       <React.Fragment>
-        <StyledFlatButton icon="edit" onClick={onEdit} />
-        <StyledFlatButton icon="delete" onClick={onDelete} />
+        <StyledButton type="danger" icon="delete" onClick={onDelete} />
+        <StyledButton icon="edit" onClick={onEdit} />
       </React.Fragment>
     );
   };
@@ -42,7 +41,8 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
 export default SubTask;
 
 const StyledSubTaskContainer = styled.div({
-  display: "flex"
+  display: "flex",
+  flexDirection: "column"
 });
 
 const StyledDescriptionContainer = styled.div({
@@ -51,5 +51,10 @@ const StyledDescriptionContainer = styled.div({
 });
 
 const StyledControlsContainer = styled.div({
-  marginLeft: "16px"
+  display: "flex",
+  flexDirection: "row-reverse"
+});
+
+const StyledButton = styled(Button)({
+  marginLeft: "8px"
 });
