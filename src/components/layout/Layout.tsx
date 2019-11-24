@@ -8,9 +8,9 @@ import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getWindowWidth } from "../../utils/window";
-import AssignedTasks from "../assigned-tasks/AssignedTasksMain";
-import Notifications from "../notification/NotificationsMain";
-import Organizations from "../organizations/Organizations";
+import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
+import NotificationsMain from "../notification/NotificationsMain";
+import OrganizationsMain from "../organizations/Organizations";
 import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
 import Header from "./Header";
@@ -89,9 +89,9 @@ const Layout: React.SFC<{}> = props => {
   const renderBody = () => {
     return (
       <Switch>
-        <Route path="/notifications" component={Notifications} />
-        <Route path="/assigned-tasks" component={AssignedTasks} />
-        <Route path="/organizations" component={Organizations} />
+        <Route path="/notifications" component={NotificationsMain} />
+        <Route path="/assigned-tasks" component={AssignedTasksMain} />
+        <Route path="/organizations" component={OrganizationsMain} />
       </Switch>
     );
   };

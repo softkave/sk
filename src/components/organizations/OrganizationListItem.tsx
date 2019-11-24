@@ -3,12 +3,12 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import ItemAvatar from "../ItemAvatar";
 
-export interface IOrgListItemProps {
+export interface IOrganizationListItemProps {
   org: IBlock;
   onClick: (org: IBlock) => void;
 }
 
-const OrgListItem: React.SFC<IOrgListItemProps> = props => {
+const OrganizationListItem: React.SFC<IOrganizationListItemProps> = props => {
   const { org, onClick } = props;
 
   return (
@@ -21,7 +21,7 @@ const OrgListItem: React.SFC<IOrgListItemProps> = props => {
   );
 };
 
-export default OrgListItem;
+export default OrganizationListItem;
 
 const StyledOrgListItem = styled.div({
   display: "flex",

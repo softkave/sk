@@ -1,7 +1,7 @@
 import React from "react";
 
-const AssignedTasks: React.SFC<{}> = props => {
+const AssignedTasksMain: React.SFC<{}> = props => {
   return null;
 };
 
-export default AssignedTasks;
+export default AssignedTasksMain;

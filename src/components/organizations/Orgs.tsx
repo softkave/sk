@@ -9,7 +9,7 @@ import getNewBlock from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
 import ScrollList from "../ScrollList";
 import EditOrgFormWithModal from "./EditOrgFormWithModal";
-import OrgList from "./OrgList";
+import OrganizationList from "./OrganizationList";
 
 export interface IOrgsProps {
   blockHandlers: IBlockMethods;
@@ -63,7 +63,7 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
                 Create Organization
               </Button>
             </StyledCreateOrgWrapper>
-            <OrgList orgs={orgs} onClick={org => onSelectOrg(org)} />
+            <OrganizationList orgs={orgs} onClick={org => onSelectOrg(org)} />
           </StyledOrgsContent>
         </ScrollList>
       </StyledOrgs>

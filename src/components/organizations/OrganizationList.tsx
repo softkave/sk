@@ -3,14 +3,14 @@ import { Empty } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledCenterContainer from "../styled/CenterContainer";
-import OrgListItem from "./OrgListItem";
+import OrganizationListItem from "./OrganizationListItem";
 
-export interface IOrgListProps {
+export interface IOrganizationListProps {
   orgs: IBlock[];
   onClick: (org: IBlock) => void;
 }
 
-const OrgList: React.SFC<IOrgListProps> = props => {
+const OrganizationList: React.SFC<IOrganizationListProps> = props => {
   const { orgs, onClick } = props;
 
   if (orgs.length === 0) {
@@ -26,7 +26,7 @@ const OrgList: React.SFC<IOrgListProps> = props => {
       {orgs.map(org => {
         return (
           <StyledOrgListItem key={org.customId}>
-            <OrgListItem org={org} onClick={onClick} />
+            <OrganizationListItem org={org} onClick={onClick} />
           </StyledOrgListItem>
         );
       })}
@@ -34,7 +34,7 @@ const OrgList: React.SFC<IOrgListProps> = props => {
   );
 };
 
-export default OrgList;
+export default OrganizationList;
 
 const StyledOrgList = styled.div({
   display: "flex",
