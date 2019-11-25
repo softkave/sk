@@ -43,7 +43,7 @@ const Header: React.SFC<IHeaderProps> = props => {
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
-            <Icon type="down" />
+            <Icon type="caret-down" />
           </StyledFlatButton>
         </Dropdown>
       </div>

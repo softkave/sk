@@ -1,23 +1,44 @@
 import styled from "@emotion/styled";
 import React from "react";
+import ScrollList from "../ScrollList";
 
 export interface IColumnProps {
   className?: string;
+  header?: React.ReactNode;
+  body?: React.ReactNode;
 }
 
 const Column: React.SFC<IColumnProps> = props => {
-  const { children, className } = props;
+  const { className, header, body } = props;
 
-  return <ColumnContainer className={className}>{children}</ColumnContainer>;
+  return (
+    <ColumnContainer className={className}>
+      <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
+      <StyledColumnBodyContainer>
+        <ScrollList>{body}</ScrollList>
+      </StyledColumnBodyContainer>
+    </ColumnContainer>
+  );
 };
 
 const ColumnContainer = styled.div`
   display: flex;
   height: 100%;
   width: 300px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
   flex-direction: column;
+`;
+
+const StyledColumnHeaderContainer = styled.div`
+  display: flex;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  flex-direction: row;
+`;
+
+const StyledColumnBodyContainer = styled.div`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 `;
 
 export default Column;

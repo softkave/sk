@@ -50,13 +50,6 @@ class List<T> extends React.Component<IListProps<T>> {
 
 export default List;
 
-const StyledListContainer = styled.div({
-  display: "flex",
-  width: "100%",
-  height: "100%",
-  flexDirection: "column"
-});
-
 const StyledListItemContainer = styled.div({
   borderBottom: "1px solid #DDD",
   cursor: "pointer",

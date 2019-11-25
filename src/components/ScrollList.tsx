@@ -31,12 +31,10 @@ const ScrollContainer = styled(SimpleBar)`
 `;
 
 const ScrollContainerInner = styled.div`
-  // padding: 0 12px;
   overflow-x: hidden;
 `;
 
 const BodyContainer = styled.div`
   flex: 1;
   height: 100%;
-  // overflow: hidden;
 `;

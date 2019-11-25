@@ -9,7 +9,7 @@ import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
 import NotificationsMain from "../notifications/NotificationsMain";
-import OrganizationsMain from "../organizations/Organizations";
+import OrganizationsMain from "../organizations/OrganizationsMain";
 import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
 import Header from "./Header";

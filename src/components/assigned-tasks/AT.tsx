@@ -3,8 +3,8 @@ import React from "react";
 import Media from "react-media";
 import { useDispatch, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { INotification } from "../../models/notification/notification";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import { aggregateBlocksParentIDs } from "../../models/block/utils";
+import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
 import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -14,44 +14,34 @@ import theme from "../theme";
 import OperationHelper, {
   IOperationHelperDerivedProps
 } from "../utils/OperationHelper";
-import Notification from "./Notification";
-import NotificationList from "./NotificationList";
 
 export interface INotificationsPathParams {
   notificationID?: string;
 }
 
-const Notifications: React.SFC<{}> = props => {
+const AssignedTasks: React.SFC<{}> = props => {
   const history = useHistory();
   const routeMatch = useRouteMatch<INotificationsPathParams>()!;
   const store = useStore<IReduxState>();
   const dispatch = useDispatch();
   const state = store.getState();
   const user = getSignedInUserRequired(state);
-  const areNotificationsLoaded = Array.isArray(user.notifications);
-  const notifications = getNotificationsAsArray(
-    state,
-    user.notifications || []
-  );
-  const userHasNoNotifications = notifications.length === 0;
-  const currentNotificationID =
-    routeMatch && routeMatch.params
-      ? routeMatch.params.notificationID
-      : undefined;
 
-  const onClickNotification = (notification: INotification) => {
-    history.push(`${routeMatch.url}/${notification.customId}`);
-  };
+  const areAssignedTasksLoaded = Array.isArray(user.assignedTasks);
+  const assignedTasks =
+    areAssignedTasksLoaded && getBlocksAsArray(state, user.assignedTasks!);
+  const parentIDs = assignedTasks && aggregateBlocksParentIDs(assignedTasks);
+  const parents = parentIDs && getBlocksAsArray(state, parentIDs);
 
-  const loadNotifications = (helperProps: IOperationHelperDerivedProps) => {
-    const shouldLoadNotifications = () => {
+  const loadAssignedTasks = (helperProps: IOperationHelperDerivedProps) => {
+    const shouldLoadAssignedTasks = () => {
       return (
-        !areNotificationsLoaded &&
+        !areAssignedTasksLoaded &&
         !(helperProps.isLoading || helperProps.isError)
       );
     };
 
-    if (shouldLoadNotifications()) {
+    if (shouldLoadAssignedTasks()) {
       loadUserNotificationsOperationFunc(state, dispatch, { user });
     }
   };
@@ -64,51 +54,16 @@ const Notifications: React.SFC<{}> = props => {
     );
   };
 
-  const renderNotificationList = () => {
-    return (
-      <NotificationList
-        currentNotificationID={currentNotificationID}
-        notifications={notifications}
-        onClickNotification={onClickNotification}
-      />
-    );
-  };
-
-  const renderCurrentNotification = () => {
-    return <Notification />;
-  };
-
-  const renderCurrentNotificationForDesktop = () => {
-    if (currentNotificationID) {
-      return renderCurrentNotification();
-    }
-
+  const renderNotificationsForMobile = () => {
     return null;
   };
 
-  const renderNotificationsForMobile = () => {
-    if (currentNotificationID) {
-      return renderCurrentNotification();
-    }
-
-    return renderNotificationList();
-  };
-
   const renderNotificationsForDesktop = () => {
-    return (
-      <div>
-        <div>{renderNotificationList()}</div>
-        <div>{renderCurrentNotificationForDesktop()}</div>
-      </div>
-    );
+    return null;
   };
 
   // TODO: Should we refactor this, it is used in multiple places?
   const render = () => {
-    if (userHasNoNotifications) {
-      return renderEmptyList();
-    }
-
     return (
       <Media queries={{ mobile: `(min-width: ${theme.breakpoints.md})` }}>
         {matches => (
@@ -125,12 +80,12 @@ const Notifications: React.SFC<{}> = props => {
     <OperationHelper
       operationID={loadUserNotificationsOperationID}
       render={render}
-      loadFunc={loadNotifications}
+      loadFunc={loadAssignedTasks}
     />
   );
 };
 
-export default Notifications;
+export default AssignedTasks;
 
 // TODO: Global header for desktop
 // TODO: Shadow header for mobile
