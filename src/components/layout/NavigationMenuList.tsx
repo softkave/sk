@@ -18,8 +18,16 @@ export const getCurrentBaseNavPath = () => {
   }
 };
 
-export const getBaseNavPath = (path: string) => {
-  return `/${appPath}${path[0] !== pathSeparator ? "/" : ""}${path}`;
+export const getBaseNavPath = (path?: string) => {
+  if (path) {
+    return `/${appPath}${path[0] !== pathSeparator ? "/" : ""}${path}`;
+  }
+
+  return `/${appPath}`;
+};
+
+export const getFullBaseNavPath = () => {
+  return getBaseNavPath(getCurrentBaseNavPath());
 };
 
 export interface INavigationMenuListProps {

@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { canRespondToNotification } from "../../../components/notification/utils";
+import { canRespondToNotification } from "../../../components/notifications/utils";
 import { IBlock } from "../../../models/block/block";
 import {
   INotification,

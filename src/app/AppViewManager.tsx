@@ -1,6 +1,6 @@
 import React from "react";
 import AssignedTasksContainer from "../components/assigned-tasks/AssignedTasksContainer";
-import NotificationsContainer from "../components/notification/NotificationsContainer";
+import NotificationsContainer from "../components/notifications/NotificationsContainer";
 import OrgsContainer from "../components/organizations/OrgsContainer";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import { assignedTasksViewName } from "../redux/view/assignedTasks";
