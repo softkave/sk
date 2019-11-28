@@ -28,6 +28,8 @@
     "react-scripts": "^3.2.0",
     "react-sizeme": "^2.6.7",
     "redux": "^4.0.4",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
     "simplebar": "^4.2.3",
     "simplebar-react": "^0.1.6",
     "styled-components": "^4.4.0",

@@ -1,4 +1,3 @@
-import { Dispatch } from "redux";
 import { getUserData } from "../../../net/user";
 import {
   getUserTokenFromStorage,
@@ -6,70 +5,55 @@ import {
 } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
-import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import { setDefaultView } from "../../view/actions";
-import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
-  IOperationFuncOptions,
-  isOperationStarted
-} from "../operation";
+import { IOperationFuncOptions } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
-import { getOperationsWithID } from "../selectors";
+import operationWrapper from "../operationWrapper";
 
 export default async function initializeAppSessionOperationFunc(
-  state: IReduxState,
-  dispatch: Dispatch,
-  dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
-  const operations = getOperationsWithID(
-    state,
-    initializeAppSessionOperationID
-  );
+  const main = () => {
+    return async (dispatch, getState) => {
+      const token = getUserTokenFromStorage();
 
-  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
-    return;
-  }
+      if (token) {
+        const result = await getUserData(token);
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: initializeAppSessionOperationID
+        if (result && result.errors) {
+          throw result.errors;
+        }
+
+        const { user, token: userToken } = result;
+
+        saveUserTokenToStorage(userToken);
+        dispatch(addUserRedux(user));
+        dispatch(setDefaultView());
+        dispatch(loginUserRedux(userToken, user.customId));
+
+        saveUserTokenToStorage(userToken);
+      } else {
+        dispatch(setSessionToWeb());
+      }
+    };
   };
 
-  dispatchOperationStarted(dispatchOptions);
-
-  try {
-    const token = getUserTokenFromStorage();
-
-    if (token) {
-      const result = await getUserData(token);
-
-      if (result && result.errors) {
-        throw result.errors;
-      }
-
-      const { user, token: userToken } = result;
-
-      saveUserTokenToStorage(userToken);
-      dispatch(addUserRedux(user));
-      dispatch(setDefaultView());
-      dispatch(loginUserRedux(userToken, user.customId));
-
-      saveUserTokenToStorage(userToken);
-    } else {
+  const onError = error => {
+    return (dispatch, getState) => {
       dispatch(setSessionToWeb());
-    }
+      return OperationError.fromAny(error);
+    };
+  };
 
-    dispatchOperationComplete(dispatchOptions);
-  } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
-    dispatch(setSessionToWeb());
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
-  }
+  return async (dispatch, getState) => {
+    return dispatch(
+      operationWrapper({
+        main,
+        onError,
+        operationID: initializeAppSessionOperationID,
+        scopeID: options.scopeID
+      })
+    );
+  };
 }

@@ -1,5 +1,6 @@
-import { combineReducers, createStore } from "redux";
-
+import { applyMiddleware, combineReducers, createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import thunk from "redux-thunk";
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
 import {
   INotificationsState,
@@ -33,8 +34,7 @@ const storeData = {};
 const store = createStore(
   reducers,
   storeData,
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+  composeWithDevTools(applyMiddleware(thunk))
 );
 
 export default store;
