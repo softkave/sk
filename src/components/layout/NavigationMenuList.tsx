@@ -1,6 +1,8 @@
+import styled from "@emotion/styled";
 import { Icon, Menu } from "antd";
 import React from "react";
-import StyledCenterContainer from "../styled/CenterContainer";
+import StyledFlexColumnContainer from "../styled/ColumnContainer";
+import StyledFlexFillContainer from "../styled/FillContainer";
 
 const appPath = "app";
 const pathSeparator = "/";
@@ -38,9 +40,9 @@ export interface INavigationMenuListProps {
 const NavigationMenuList: React.SFC<INavigationMenuListProps> = props => {
   const { currentItemKey, onClick } = props;
 
-  return (
-    <StyledCenterContainer>
-      <Menu
+  const renderMenuWithContainer = () => (
+    <StyledFlexFillContainer>
+      <StyledMenu
         selectedKeys={currentItemKey ? [currentItemKey] : []}
         onClick={event => onClick(event.key)}
       >
@@ -56,10 +58,28 @@ const NavigationMenuList: React.SFC<INavigationMenuListProps> = props => {
           <Icon type="block" />
           <span>Organizations</span>
         </Menu.Item>
-      </Menu>
-      <p>&copy; Abayomi Akintomide {new Date().getFullYear()}</p>
-    </StyledCenterContainer>
+      </StyledMenu>
+    </StyledFlexFillContainer>
+  );
+
+  return (
+    <StyledFlexFillContainer>
+      <StyledFlexColumnContainer>
+        {renderMenuWithContainer()}
+        <StyledFooter>
+          &copy; Abayomi Akintomide {new Date().getFullYear()}
+        </StyledFooter>
+      </StyledFlexColumnContainer>
+    </StyledFlexFillContainer>
   );
 };
 
 export default NavigationMenuList;
+
+const StyledMenu = styled(Menu)({
+  borderRight: "none !important"
+});
+
+const StyledFooter = styled.footer({
+  margin: "16px"
+});

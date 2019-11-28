@@ -1,23 +1,33 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import Loading from "../components/Loading";
 import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
 import { getSessionType } from "../redux/session/selectors";
+import App from "./App";
 import Routes from "./Routes";
 
 const Main: React.SFC<{}> = props => {
+  const history = useHistory();
   const sessionType = useSelector(getSessionType);
-  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (sessionType === "uninitialized") {
-      dispatch(initializeAppSessionOperationFunc());
+      initializeAppSessionOperationFunc();
     }
   });
 
+  // React.useEffect(() => {
+  //   if (sessionType === "app") {
+  //     if ()
+  //   } else {
+
+  //   }
+  // });
+
   switch (sessionType) {
     case "app":
-      return <p>Logged In</p>;
+      return <App />;
 
     case "web":
       return <Routes />;

@@ -17,6 +17,7 @@ import Header from "./Header";
 import NavigationMenuList, {
   getCurrentBaseNavPath
 } from "./NavigationMenuList";
+import StyledFlexColumnContainer from "../styled/ColumnContainer";
 
 const Layout: React.SFC<{}> = props => {
   const dispatch = useDispatch();
@@ -82,24 +83,26 @@ const Layout: React.SFC<{}> = props => {
     };
 
     return (
-      <div>
-        <Header
-          user={user}
-          onLogout={onLogout}
-          onToggleMenu={toggleDesktopMenu}
-        />
-        <StyledFlexFillContainer>
-          {isDesktopMenuOpen && (
-            <div>
-              <NavigationMenuList
-                currentItemKey={currentBaseNav}
-                onClick={navigateToPath}
-              />
-            </div>
-          )}
-          <StyledFlexFillContainer>{renderBody()}</StyledFlexFillContainer>
-        </StyledFlexFillContainer>
-      </div>
+      <StyledFlexFillContainer>
+        <StyledFlexColumnContainer>
+          <Header
+            user={user}
+            onLogout={onLogout}
+            onToggleMenu={toggleDesktopMenu}
+          />
+          <StyledFlexFillContainer>
+            {isDesktopMenuOpen && (
+              <div>
+                <NavigationMenuList
+                  currentItemKey={currentBaseNav}
+                  onClick={navigateToPath}
+                />
+              </div>
+            )}
+            <StyledFlexFillContainer>{renderBody()}</StyledFlexFillContainer>
+          </StyledFlexFillContainer>
+        </StyledFlexColumnContainer>
+      </StyledFlexFillContainer>
     );
   };
 

@@ -49,7 +49,7 @@ const OperationHelper: React.SFC<IOperationHelperProps> = props => {
     if (isFunction(loadFunc)) {
       loadFunc(derivedProps);
     }
-  }, [loadFunc, operation]);
+  }, [loadFunc, operation, derivedProps]);
 
   if (isLoading) {
     return <Loading />;

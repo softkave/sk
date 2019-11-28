@@ -1,4 +1,5 @@
-import { applyMiddleware, combineReducers, createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { applyMiddleware, combineReducers } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
@@ -20,7 +21,7 @@ export interface IReduxState {
   operations: IOperationState;
 }
 
-const reducers = combineReducers({
+const reducer = combineReducers({
   blocks: blocksReducer,
   users: usersReducer,
   notifications: notificationsReducer,
@@ -29,12 +30,8 @@ const reducers = combineReducers({
   operations: operationsReducer
 });
 
-const storeData = {};
-
-const store = createStore(
-  reducers,
-  storeData,
-  composeWithDevTools(applyMiddleware(thunk))
-);
+const store = configureStore({
+  reducer
+});
 
 export default store;

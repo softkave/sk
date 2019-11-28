@@ -23,7 +23,7 @@ const Header: React.SFC<IHeaderProps> = props => {
   };
 
   return (
-    <StyledFlexContainer>
+    <StyledHeaderContainer>
       <div>
         <StyledFlatButton icon="menu" onClick={onToggleMenu} />
       </div>
@@ -47,7 +47,7 @@ const Header: React.SFC<IHeaderProps> = props => {
           </StyledFlatButton>
         </Dropdown>
       </div>
-    </StyledFlexContainer>
+    </StyledHeaderContainer>
   );
 };
 
@@ -57,4 +57,10 @@ const StyledApplicationNameContainer = styled.h1({
   justifyContent: "center",
   display: "flex",
   flex: 1
+});
+
+const StyledHeaderContainer = styled.div({
+  display: "flex",
+  width: "100%",
+  padding: "16px"
 });

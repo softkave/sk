@@ -5,55 +5,92 @@ import {
 } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
+import store from "../../store";
 import { addUserRedux } from "../../users/actions";
 import { setDefaultView } from "../../view/actions";
-import { IOperationFuncOptions } from "../operation";
+import { pushOperation } from "../actions";
+import {
+  defaultOperationStatusTypes,
+  IOperationFuncOptions,
+  isOperationStarted
+} from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
 import operationWrapper from "../operationWrapper";
+import { getFirstOperationWithID } from "../selectors";
 
 export default async function initializeAppSessionOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
-  const main = () => {
-    return async (dispatch, getState) => {
-      const token = getUserTokenFromStorage();
+  const state = store.getState();
+  const operation = getFirstOperationWithID(
+    state,
+    initializeAppSessionOperationID
+  );
 
-      if (token) {
-        const result = await getUserData(token);
+  if (operation && isOperationStarted(operation, options.scopeID)) {
+    return;
+  }
 
-        if (result && result.errors) {
-          throw result.errors;
-        }
+  store.dispatch(
+    pushOperation(
+      initializeAppSessionOperationID,
+      {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      options.resourceID
+    )
+  );
 
-        const { user, token: userToken } = result;
+  try {
+    const token = getUserTokenFromStorage();
 
-        saveUserTokenToStorage(userToken);
-        dispatch(addUserRedux(user));
-        dispatch(setDefaultView());
-        dispatch(loginUserRedux(userToken, user.customId));
+    if (token) {
+      const result = await getUserData(token);
 
-        saveUserTokenToStorage(userToken);
-      } else {
-        dispatch(setSessionToWeb());
+      if (result && result.errors) {
+        throw result.errors;
       }
-    };
-  };
 
-  const onError = error => {
-    return (dispatch, getState) => {
-      dispatch(setSessionToWeb());
-      return OperationError.fromAny(error);
-    };
-  };
+      const { user, token: userToken } = result;
 
-  return async (dispatch, getState) => {
-    return dispatch(
-      operationWrapper({
-        main,
-        onError,
-        operationID: initializeAppSessionOperationID,
-        scopeID: options.scopeID
-      })
+      saveUserTokenToStorage(userToken);
+      store.dispatch(addUserRedux(user));
+      store.dispatch(setDefaultView());
+      store.dispatch(loginUserRedux(userToken, user.customId));
+
+      saveUserTokenToStorage(userToken);
+    } else {
+      store.dispatch(setSessionToWeb());
+    }
+
+    store.dispatch(
+      pushOperation(
+        initializeAppSessionOperationID,
+        {
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        options.resourceID
+      )
     );
-  };
+  } catch (error) {
+    store.dispatch(setSessionToWeb());
+    const finalError = OperationError.fromAny(error);
+
+    store.dispatch(
+      pushOperation(
+        initializeAppSessionOperationID,
+        {
+          error: finalError,
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        options.resourceID
+      )
+    );
+  }
 }
