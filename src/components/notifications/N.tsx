@@ -13,6 +13,7 @@ import { IReduxState } from "../../redux/store";
 import StyledCenterContainer from "../styled/CenterContainer";
 import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
+import OH from "../utils/OH";
 import OperationHelper, {
   IOperationHelperDerivedProps
 } from "../utils/OperationHelper";
@@ -46,10 +47,7 @@ const Notifications: React.SFC<{}> = props => {
 
   const loadNotifications = (helperProps: IOperationHelperDerivedProps) => {
     const shouldLoadNotifications = () => {
-      return (
-        !areNotificationsLoaded &&
-        !(helperProps.isLoading || helperProps.isError)
-      );
+      return !!!helperProps.operation;
     };
 
     if (shouldLoadNotifications()) {
@@ -127,7 +125,7 @@ const Notifications: React.SFC<{}> = props => {
   };
 
   return (
-    <OperationHelper
+    <OH
       operationID={loadUserNotificationsOperationID}
       render={render}
       loadFunc={loadNotifications}

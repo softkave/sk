@@ -67,7 +67,7 @@ export default async function updateBlockOperationFunc(
       throw result.errors;
     }
 
-    addTaskToUserIfAssigned(state, dispatch, block);
+    addTaskToUserIfAssigned(block);
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentsChanged(block, forTransferBlockOnly)) {

@@ -14,9 +14,7 @@ const Column: React.SFC<IColumnProps> = props => {
   return (
     <ColumnContainer className={className}>
       <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
-      <StyledColumnBodyContainer>
-        <ScrollList>{body}</ScrollList>
-      </StyledColumnBodyContainer>
+      <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
     </ColumnContainer>
   );
 };

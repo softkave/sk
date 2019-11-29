@@ -49,7 +49,7 @@ const Layout: React.SFC<{}> = props => {
 
     const navigateToPath = (path: string) => {
       toggleMobileMenu();
-      history.push(`${routeMatch.url}/${path}`);
+      history.push(`/app/${path}`);
     };
 
     return (
@@ -78,7 +78,7 @@ const Layout: React.SFC<{}> = props => {
     };
 
     const navigateToPath = (path: string) => {
-      history.push(`${window.location.pathname}/${path}`);
+      history.push(`/app/${path}`);
     };
 
     return (

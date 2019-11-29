@@ -32,10 +32,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
 
   const loadOrganizations = (helperProps: IOperationHelperDerivedProps) => {
     const shouldLoadOrganizations = () => {
-      return (
-        !areOrganizationsLoaded &&
-        !(helperProps.isLoading || helperProps.isError)
-      );
+      return !!!helperProps.operation;
     };
 
     if (shouldLoadOrganizations()) {

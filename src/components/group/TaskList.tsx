@@ -48,9 +48,7 @@ export default class TaskList extends React.Component<ITaskListProps> {
       return (
         <BlockThumbnailContainer key={task.customId}>
           <Task
-            user={user}
             task={task}
-            blockHandlers={blockHandlers}
             onEdit={
               toggleForm
                 ? editedTask => toggleForm("task", editedTask)

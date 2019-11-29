@@ -5,7 +5,7 @@ import addBlockOperationFunc, {
 import addCollaboratorsOperationFunc, {
   IAddCollaboratorOperationFuncDataProps
 } from "../../redux/operations/block/addCollaborators";
-import deleteBlockOperation, {
+import deleteBlockOperationFunc, {
   IDeleteBlockOperationFuncDataProps
 } from "../../redux/operations/block/deleteBlock";
 import loadBlockChildrenOperationFunc, {
@@ -61,7 +61,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IDeleteBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return deleteBlockOperation(state, dispatch, props, options);
+      return deleteBlockOperationFunc(props, options);
     },
 
     async onAddCollaborators(

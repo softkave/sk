@@ -1,7 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { applyMiddleware, combineReducers } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import thunk from "redux-thunk";
+import { combineReducers } from "redux";
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
 import {
   INotificationsState,

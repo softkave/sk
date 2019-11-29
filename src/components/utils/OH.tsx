@@ -10,6 +10,8 @@ import IOperation, {
 } from "../../redux/operations/operation";
 import { getFirstOperationWithID } from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
+import GeneralError from "../GeneralError";
+import Loading from "../Loading";
 
 export interface IOHDerivedProps {
   isLoading: boolean;
@@ -24,11 +26,12 @@ export interface IOperationHelperProps {
   operationID: string;
   render: (props: IOHDerivedProps) => React.ReactElement | null;
   scopeID?: string;
+  dontManageRender?: boolean;
   loadFunc?: (props: IOHDerivedProps) => void;
 }
 
 const OH: React.SFC<IOperationHelperProps> = props => {
-  const { operationID, render, loadFunc, scopeID } = props;
+  const { operationID, render, loadFunc, scopeID, dontManageRender } = props;
   const store = useStore<IReduxState>();
   const operation = useSelector<IReduxState, IOperation>(state =>
     getFirstOperationWithID(state, operationID)
@@ -48,11 +51,32 @@ const OH: React.SFC<IOperationHelperProps> = props => {
 
   React.useEffect(() => {
     if (isFunction(loadFunc)) {
-      loadFunc(derivedProps);
+      loadFunc({
+        operation,
+        isLoading,
+        isCompleted,
+        isError: !!error,
+        currentStatus: status,
+        state: store.getState()
+      });
     }
-  }, [loadFunc, operation, derivedProps]);
+  }, [loadFunc, operation]);
 
-  return render(derivedProps);
+  const managedRender = () => {
+    if (isLoading || operation === undefined || operation === null) {
+      return <Loading />;
+    } else if (!!error) {
+      return <GeneralError />;
+    } else {
+      return render(derivedProps);
+    }
+  };
+
+  if (dontManageRender) {
+    return render(derivedProps);
+  }
+
+  return managedRender();
 };
 
 export default OH;
