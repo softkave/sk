@@ -5,6 +5,7 @@ import { useDispatch, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { aggregateBlocksParentIDs } from "../../models/block/utils";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
+import getTasksAssignedToUserOperationFunc from "../../redux/operations/block/getTasksAssignedToUser";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
 import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -42,7 +43,7 @@ const AssignedTasks: React.SFC<{}> = props => {
     };
 
     if (shouldLoadAssignedTasks()) {
-      loadUserNotificationsOperationFunc(state, dispatch, { user });
+      getTasksAssignedToUserOperationFunc(state, dispatch);
     }
   };
 

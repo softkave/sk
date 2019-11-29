@@ -1,7 +1,8 @@
+import styled from "@emotion/styled";
 import { Empty } from "antd";
 import React from "react";
 import Media from "react-media";
-import { useDispatch, useStore } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
@@ -10,6 +11,7 @@ import { loadUserNotificationsOperationID } from "../../redux/operations/operati
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import StyledCenterContainer from "../styled/CenterContainer";
+import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
 import OperationHelper, {
   IOperationHelperDerivedProps
@@ -23,20 +25,19 @@ export interface INotificationsPathParams {
 
 const Notifications: React.SFC<{}> = props => {
   const history = useHistory();
-  const routeMatch = useRouteMatch<INotificationsPathParams>()!;
-  const store = useStore<IReduxState>();
-  const dispatch = useDispatch();
-  const state = store.getState();
-  const user = getSignedInUserRequired(state);
+  const routeMatch = useRouteMatch()!;
+  const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(
+    "/app/notifications/:notificationID"
+  );
+  const user = useSelector(getSignedInUserRequired);
   const areNotificationsLoaded = Array.isArray(user.notifications);
-  const notifications = getNotificationsAsArray(
-    state,
-    user.notifications || []
+  const notifications = useSelector<IReduxState, INotification[]>(state =>
+    getNotificationsAsArray(state, user.notifications || [])
   );
   const userHasNoNotifications = notifications.length === 0;
   const currentNotificationID =
-    routeMatch && routeMatch.params
-      ? routeMatch.params.notificationID
+    currentNotificationRouteMatch && currentNotificationRouteMatch.params
+      ? currentNotificationRouteMatch.params.notificationID
       : undefined;
 
   const onClickNotification = (notification: INotification) => {
@@ -52,7 +53,7 @@ const Notifications: React.SFC<{}> = props => {
     };
 
     if (shouldLoadNotifications()) {
-      loadUserNotificationsOperationFunc(state, dispatch, { user });
+      loadUserNotificationsOperationFunc();
     }
   };
 
@@ -96,10 +97,14 @@ const Notifications: React.SFC<{}> = props => {
 
   const renderNotificationsForDesktop = () => {
     return (
-      <div>
-        <div>{renderNotificationList()}</div>
-        <div>{renderCurrentNotificationForDesktop()}</div>
-      </div>
+      <StyledDesktopNotificationContainer>
+        <StyledDesktopNotificationListContainer>
+          {renderNotificationList()}
+        </StyledDesktopNotificationListContainer>
+        <StyledDesktopNotificationBodyContainer>
+          {renderCurrentNotificationForDesktop()}
+        </StyledDesktopNotificationBodyContainer>
+      </StyledDesktopNotificationContainer>
     );
   };
 
@@ -134,3 +139,23 @@ export default Notifications;
 
 // TODO: Global header for desktop
 // TODO: Shadow header for mobile
+
+const StyledDesktopNotificationContainer = styled.div({
+  display: "flex",
+  flex: 1,
+  width: "100%",
+  height: "100%",
+  padding: "26px 0",
+  boxSizing: "border-box"
+});
+
+const StyledDesktopNotificationBodyContainer = styled.div({
+  display: "flex",
+  flex: 1
+});
+
+const StyledDesktopNotificationListContainer = styled.div({
+  width: "300px"
+  // padding: "0 16px",
+  // boxSizing: "border-box"
+});

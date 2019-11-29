@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { isPath0App, makePath, paths } from "../components/layout/path";
 import Loading from "../components/Loading";
 import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
 import { getSessionType } from "../redux/session/selectors";
@@ -17,13 +18,18 @@ const Main: React.SFC<{}> = props => {
     }
   });
 
-  // React.useEffect(() => {
-  //   if (sessionType === "app") {
-  //     if ()
-  //   } else {
-
-  //   }
-  // });
+  React.useEffect(() => {
+    if (sessionType === "app") {
+      if (!isPath0App()) {
+        console.log("i moved it");
+        history.push(makePath(paths.appPath));
+      }
+    } else if (sessionType === "web") {
+      if (isPath0App()) {
+        history.push("/");
+      }
+    }
+  }, [sessionType, history]);
 
   switch (sessionType) {
     case "app":

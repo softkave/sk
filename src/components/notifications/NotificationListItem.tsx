@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Typography } from "antd";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 
@@ -16,8 +17,12 @@ const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
       isSelected={isSelected}
       isRead={!!notification.readAt}
     >
-      <h3>Collaboration Request From {notification.from.blockName}</h3>
-      <span>{new Date(notification.createdAt).toDateString()}</span>
+      <Typography.Text strong>
+        Collaboration Request From {notification.from.blockName}
+      </Typography.Text>
+      <Typography.Text>
+        {new Date(notification.createdAt).toDateString()}
+      </Typography.Text>
     </StyledNotificationListItem>
   );
 };
@@ -29,17 +34,28 @@ interface IStyledNotificationListItemProps {
   isRead: boolean;
 }
 
-const StyledNotificationListItem = (styled("div")(
-  (props: IStyledNotificationListItemProps & any) => ({
-    padding: "1em",
-    cursor: "pointer",
-    color: props.isSelected ? "white" : props.isRead ? "grey" : "black",
-    backgroundColor: props.isSelected ? "rgb(66,133,244)" : "inherit",
+const childrenSelector = "& *";
+const seenNotificationColor = "#777";
 
-    "& *": {
-      color: props.isSelected ? "white" : props.isRead ? "grey" : "black"
-    }
-  })
-) as unknown) as React.SFC<
-  IStyledNotificationListItemProps & React.HTMLAttributes<HTMLDivElement>
->;
+const StyledNotificationListItem = styled("div")<
+  IStyledNotificationListItemProps
+>(props => ({
+  padding: "16px",
+  cursor: "pointer",
+  color: props.isSelected
+    ? "white"
+    : props.isRead
+    ? seenNotificationColor
+    : "black",
+  backgroundColor: props.isSelected ? "#e6f7ff" : "inherit",
+  display: "flex",
+  flexDirection: "column"
+
+  // [childrenSelector]: {
+  //   color: props.isSelected
+  //     ? "white"
+  //     : props.isRead
+  //     ? seenNotificationColor
+  //     : "black"
+  // }
+}));

@@ -15,7 +15,6 @@ import {
   isOperationStarted
 } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
-import operationWrapper from "../operationWrapper";
 import { getFirstOperationWithID } from "../selectors";
 
 export default async function initializeAppSessionOperationFunc(

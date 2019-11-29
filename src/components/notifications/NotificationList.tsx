@@ -30,18 +30,21 @@ class NotificationList extends React.Component<INotificationListProps> {
 
     return (
       <StyledNotificationList>
-        {notifications.map(notification => {
-          return (
-            <NotificationListItem
-              key={notification.customId}
-              notification={notification}
-              onClick={() => this.onClickNotication(notification.customId)}
-              isSelected={
-                currentNotificationID === notification.customId ? true : false
-              }
-            />
-          );
-        })}
+        <StyledHeader>Notifications</StyledHeader>
+        <StyledList>
+          {notifications.map(notification => {
+            return (
+              <NotificationListItem
+                key={notification.customId}
+                notification={notification}
+                onClick={() => this.onClickNotication(notification.customId)}
+                isSelected={
+                  currentNotificationID === notification.customId ? true : false
+                }
+              />
+            );
+          })}
+        </StyledList>
       </StyledNotificationList>
     );
   }
@@ -50,7 +53,18 @@ class NotificationList extends React.Component<INotificationListProps> {
 export default NotificationList;
 
 const StyledNotificationList = styled.div({
-  borderRight: "1px solid #ccc",
+  // borderRight: "1px solid #ccc",
   height: "100%",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column"
+});
+
+const StyledHeader = styled.h1({
+  padding: "0 16px",
+  marginBottom: 0
+});
+
+const StyledList = styled.div({
+  overflow: "auto"
 });

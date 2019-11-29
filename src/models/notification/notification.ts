@@ -50,7 +50,7 @@ export interface INotification {
   createdAt: number;
   body: string;
   to: INotificationTo;
-  expiresAt: number;
+  expiresAt?: number;
   type: NotificationType;
   statusHistory: INotificationStatusHistory[];
   sentEmailHistory: INotificationSentEmailHistory[];

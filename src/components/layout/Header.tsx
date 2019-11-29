@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
-import { Dropdown, Icon, Menu } from "antd";
+import { Button, Dropdown, Icon, Menu } from "antd";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import StyledFlatButton from "../styled/FlatButton";
-import StyledFlexContainer from "../styled/FlexContainer";
 import theme from "../theme";
 
 export interface IHeaderProps {
@@ -25,9 +24,11 @@ const Header: React.SFC<IHeaderProps> = props => {
   return (
     <StyledHeaderContainer>
       <div>
-        <StyledFlatButton icon="menu" onClick={onToggleMenu} />
+        <StyledMenuButton icon="menu" onClick={onToggleMenu} />
       </div>
-      <StyledApplicationNameContainer>Softkave</StyledApplicationNameContainer>
+      <StyledApplicationNameContainer>
+        <StyledH1>Softkave</StyledH1>
+      </StyledApplicationNameContainer>
       <div>
         <Dropdown
           overlay={
@@ -37,14 +38,15 @@ const Header: React.SFC<IHeaderProps> = props => {
           }
           trigger={["click"]}
         >
-          <StyledFlatButton>
+          <StyledAvatarButton>
             <ItemAvatar
               clickable
+              size="small"
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
             <Icon type="caret-down" />
-          </StyledFlatButton>
+          </StyledAvatarButton>
         </Dropdown>
       </div>
     </StyledHeaderContainer>
@@ -53,14 +55,36 @@ const Header: React.SFC<IHeaderProps> = props => {
 
 export default Header;
 
-const StyledApplicationNameContainer = styled.h1({
+const StyledApplicationNameContainer = styled.div({
   justifyContent: "center",
   display: "flex",
-  flex: 1
+  flex: 1,
+  marginBottom: 0,
+  alignItems: "start"
+});
+
+const StyledH1 = styled.h1({
+  marginBottom: 0,
+  lineHeight: "32px",
+  fontSize: "18px"
 });
 
 const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
   padding: "16px"
+});
+
+const StyledAvatarButton = styled(Button)({
+  border: "none",
+  backgroundColor: "inherit",
+  boxShadow: "none",
+  padding: 0
+});
+
+const StyledMenuButton = styled(Button)({
+  width: "14px !important",
+  border: "none",
+  backgroundColor: "inherit",
+  boxShadow: "none"
 });

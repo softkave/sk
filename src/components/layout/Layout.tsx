@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Drawer } from "antd";
 import React from "react";
 import Media from "react-media";
@@ -11,13 +12,12 @@ import { IReduxState } from "../../redux/store";
 import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
 import NotificationsMain from "../notifications/NotificationsMain";
 import OrganizationsMain from "../organizations/OrganizationsMain";
+import StyledFlexColumnContainer from "../styled/ColumnContainer";
 import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
 import Header from "./Header";
-import NavigationMenuList, {
-  getCurrentBaseNavPath
-} from "./NavigationMenuList";
-import StyledFlexColumnContainer from "../styled/ColumnContainer";
+import NavigationMenuList from "./NavigationMenuList";
+import { getCurrentBaseNavPath } from "./path";
 
 const Layout: React.SFC<{}> = props => {
   const dispatch = useDispatch();
@@ -35,9 +35,9 @@ const Layout: React.SFC<{}> = props => {
   const renderBody = () => {
     return (
       <Switch>
-        <Route path="/notifications" component={NotificationsMain} />
-        <Route path="/assigned-tasks" component={AssignedTasksMain} />
-        <Route path="/organizations" component={OrganizationsMain} />
+        <Route path="/app/notifications" component={NotificationsMain} />
+        <Route path="/app/assigned-tasks" component={AssignedTasksMain} />
+        <Route path="/app/organizations" component={OrganizationsMain} />
       </Switch>
     );
   };
@@ -74,12 +74,11 @@ const Layout: React.SFC<{}> = props => {
 
   const renderForDesktop = () => {
     const toggleDesktopMenu = () => {
-      setDesktopMenuOpen(!isMobileMenuOpen);
+      setDesktopMenuOpen(!isDesktopMenuOpen);
     };
 
     const navigateToPath = (path: string) => {
-      toggleDesktopMenu();
-      history.push(`${routeMatch.url}/${path}`);
+      history.push(`${window.location.pathname}/${path}`);
     };
 
     return (
@@ -92,12 +91,12 @@ const Layout: React.SFC<{}> = props => {
           />
           <StyledFlexFillContainer>
             {isDesktopMenuOpen && (
-              <div>
+              <StyledDesktopMenuContainer>
                 <NavigationMenuList
                   currentItemKey={currentBaseNav}
                   onClick={navigateToPath}
                 />
-              </div>
+              </StyledDesktopMenuContainer>
             )}
             <StyledFlexFillContainer>{renderBody()}</StyledFlexFillContainer>
           </StyledFlexFillContainer>
@@ -123,3 +122,8 @@ const Layout: React.SFC<{}> = props => {
 };
 
 export default Layout;
+
+const StyledDesktopMenuContainer = styled.div({
+  marginTop: "64px",
+  width: "240px"
+});
