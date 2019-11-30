@@ -2,12 +2,11 @@ import styled from "@emotion/styled";
 import { Button, Col, Row } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButton from "../DeleteButton";
 import Priority from "./Priority";
-import ToggleSwitchContainer from "./ToggleSwitchContainer";
-
-import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import "./task.css";
+import ToggleSwitch from "./ToggleSwitch";
 
 export interface ITaskProps {
   task: IBlock;
@@ -25,7 +24,7 @@ const Task: React.SFC<ITaskProps> = props => {
     <div className="sk-minitask">
       <Row>
         <Col span={4}>
-          <ToggleSwitchContainer task={task} />
+          <ToggleSwitch task={task} />
         </Col>
         <Col span={20} className="sk-minitask-priority">
           <Priority level={task.priority} cover />

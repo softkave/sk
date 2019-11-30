@@ -16,7 +16,7 @@ const NavigationMenuList: React.SFC<INavigationMenuListProps> = props => {
       onClick={event => onClick(event.key)}
     >
       <Menu.Item key="notifications">
-        <Icon type="notification" />
+        <Icon type="mail" />
         <span>Notifications</span>
       </Menu.Item>
       <Menu.Item key="assigned-tasks">

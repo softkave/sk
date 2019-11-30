@@ -53,9 +53,7 @@ class NotificationList extends React.Component<INotificationListProps> {
 export default NotificationList;
 
 const StyledNotificationList = styled.div({
-  // borderRight: "1px solid #ccc",
   height: "100%",
-  boxSizing: "border-box",
   display: "flex",
   flexDirection: "column"
 });

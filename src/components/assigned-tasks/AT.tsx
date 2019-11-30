@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Badge, Empty, Typography } from "antd";
+import { Badge, Empty } from "antd";
 import React from "react";
 import Media from "react-media";
 import { useSelector } from "react-redux";
@@ -7,24 +7,17 @@ import { IBlock } from "../../models/block/block";
 // import { aggregateBlocksParentIDs } from "../../models/block/utils";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import getTasksAssignedToUserOperationFunc from "../../redux/operations/block/getTasksAssignedToUser";
-import {
-  getTasksAssignedToUserOperationID,
-  loadUserNotificationsOperationID
-} from "../../redux/operations/operationIDs";
+import { getTasksAssignedToUserOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import Column from "../board/Column";
-import Loading from "../Loading";
 import StyledCenterContainer from "../styled/CenterContainer";
 import StyledFlexFillContainer from "../styled/FillContainer";
 import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 import TaskList from "../task/TaskList";
 import theme from "../theme";
 import OH, { IOHDerivedProps } from "../utils/OH";
-import OperationHelper, {
-  IOperationHelperDerivedProps
-} from "../utils/OperationHelper";
 import { sortAssignedTasksByDueDate } from "./sortAssignedTasks";
 
 export interface INotificationsPathParams {
@@ -44,7 +37,7 @@ const AssignedTasks: React.SFC<{}> = props => {
   //   getBlocksAsArray(state, parentIDs)
   // );
 
-  const loadAssignedTasks = (helperProps: IOperationHelperDerivedProps) => {
+  const loadAssignedTasks = (helperProps: IOHDerivedProps) => {
     console.log("load function called", { helperProps });
     const shouldLoadAssignedTasks = () => {
       return !!!helperProps.operation;

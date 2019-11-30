@@ -54,7 +54,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IToggleTaskOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return toggleTaskOperationFunc(state, dispatch, props, options);
+      return toggleTaskOperationFunc(props, options);
     },
 
     async onDelete(

@@ -11,12 +11,8 @@ import { loadUserNotificationsOperationID } from "../../redux/operations/operati
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import StyledCenterContainer from "../styled/CenterContainer";
-import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
-import OH from "../utils/OH";
-import OperationHelper, {
-  IOperationHelperDerivedProps
-} from "../utils/OperationHelper";
+import OH, { IOHDerivedProps } from "../utils/OH";
 import Notification from "./Notification";
 import NotificationList from "./NotificationList";
 
@@ -31,7 +27,6 @@ const Notifications: React.SFC<{}> = props => {
     "/app/notifications/:notificationID"
   );
   const user = useSelector(getSignedInUserRequired);
-  const areNotificationsLoaded = Array.isArray(user.notifications);
   const notifications = useSelector<IReduxState, INotification[]>(state =>
     getNotificationsAsArray(state, user.notifications || [])
   );
@@ -45,7 +40,7 @@ const Notifications: React.SFC<{}> = props => {
     history.push(`${routeMatch.url}/${notification.customId}`);
   };
 
-  const loadNotifications = (helperProps: IOperationHelperDerivedProps) => {
+  const loadNotifications = (helperProps: IOHDerivedProps) => {
     const shouldLoadNotifications = () => {
       return !!!helperProps.operation;
     };
@@ -154,6 +149,4 @@ const StyledDesktopNotificationBodyContainer = styled.div({
 
 const StyledDesktopNotificationListContainer = styled.div({
   width: "300px"
-  // padding: "0 16px",
-  // boxSizing: "border-box"
 });

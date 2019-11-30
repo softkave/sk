@@ -1,6 +1,7 @@
 import React from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import {  useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import styled from "@emotion/styled"
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlock";
@@ -8,16 +9,11 @@ import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import GeneralError from "../GeneralError";
-import OperationHelper, {
-  IOperationHelperDerivedProps
-} from "../utils/OperationHelper";
 import OrganizationList from "./OrganizationList";
+import OH, { IOHDerivedProps } from "../utils/OH";
 
 const OrganizationListContainer: React.SFC<{}> = props => {
   const history = useHistory();
-  const store = useStore<IReduxState>();
-  const dispatch = useDispatch();
-  const state = store.getState();
   const user = useSelector(getSignedInUserRequired);
   const organizations = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.orgs)
@@ -32,7 +28,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
     history.push(organizationPath);
   };
 
-  const loadOrganizations = (helperProps: IOperationHelperDerivedProps) => {
+  const loadOrganizations = (helperProps: IOHDerivedProps) => {
     const shouldLoadOrganizations = () => {
       return !!!helperProps.operation;
     };
@@ -45,7 +41,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
   const render = () => {
     if (areOrganizationsLoaded) {
       return (
-        <OrganizationList orgs={organizations} onClick={onClickOrganization} />
+        <StyledOrganizationsListContainer><OrganizationList orgs={organizations} onClick={onClickOrganization} /></StyledOrganizationsListContainer>
       );
     }
 
@@ -53,7 +49,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
   };
 
   return (
-    <OperationHelper
+    <OH
       operationID={loadRootBlocksOperationID}
       render={render}
       loadFunc={loadOrganizations}
@@ -62,3 +58,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
 };
 
 export default OrganizationListContainer;
+
+const StyledOrganizationsListContainer = styled.div({
+  width: "300px"
+})

@@ -23,13 +23,16 @@ const OrganizationList: React.SFC<IOrganizationListProps> = props => {
 
   return (
     <StyledOrgList>
-      {orgs.map(org => {
-        return (
-          <StyledOrgListItem key={org.customId}>
-            <OrganizationListItem org={org} onClick={onClick} />
-          </StyledOrgListItem>
-        );
-      })}
+      <StyledHeader>Organizations</StyledHeader>
+      <StyledList>
+        {orgs.map(org => {
+          return (
+            <StyledOrgListItem key={org.customId}>
+              <OrganizationListItem org={org} onClick={onClick} />
+            </StyledOrgListItem>
+          );
+        })}
+      </StyledList>
     </StyledOrgList>
   );
 };
@@ -43,20 +46,31 @@ const StyledOrgList = styled.div({
   flexDirection: "column"
 });
 
+const lastOfTypeSelector = "&:last-of-type";
+const hoverSelector = "&:hover";
 const StyledOrgListItem = styled.div({
   padding: "24px 16px",
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
-  "&:last-of-type": {
+  [lastOfTypeSelector]: {
     borderBottom: 0
   },
 
-  "&:hover": {
+  [hoverSelector]: {
     backgroundColor: "#E6F7FF"
   }
 });
 
 const StyledEmptyContainer = styled(StyledCenterContainer)({
   marginTop: 64
+});
+
+const StyledHeader = styled.h1({
+  padding: "0 16px",
+  marginBottom: 0
+});
+
+const StyledList = styled.div({
+  overflow: "auto"
 });
