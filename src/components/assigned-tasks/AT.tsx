@@ -10,7 +10,9 @@ import getTasksAssignedToUserOperationFunc from "../../redux/operations/block/ge
 import { getTasksAssignedToUserOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import cast from "../../utils/cast";
 import { sortBlocksByPriority } from "../block/sortBlocks";
+import B, { IBBasket } from "../board/B";
 import Column from "../board/Column";
 import StyledCenterContainer from "../styled/CenterContainer";
 import StyledFlexFillContainer from "../styled/FillContainer";
@@ -20,8 +22,8 @@ import theme from "../theme";
 import OH, { IOHDerivedProps } from "../utils/OH";
 import { sortAssignedTasksByDueDate } from "./sortAssignedTasks";
 
-export interface INotificationsPathParams {
-  notificationID?: string;
+interface IAssignedTasksBasket extends IBBasket {
+  title: string;
 }
 
 const AssignedTasks: React.SFC<{}> = props => {
@@ -29,7 +31,7 @@ const AssignedTasks: React.SFC<{}> = props => {
   const assignedTasks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.assignedTasks || [])
   );
-  // const total = assignedTasks.length;
+  const total = assignedTasks.length;
   // const parentIDs = assignedTasks && aggregateBlocksParentIDs(assignedTasks);
   // const parents = useSelector<IReduxState, IBlock[]>(state =>
   //   getBlocksAsArray(state, parentIDs)
@@ -80,6 +82,34 @@ const AssignedTasks: React.SFC<{}> = props => {
     return null;
   };
 
+  const getBaskets = () => {
+    const {
+      dueAlready,
+      dueToday,
+      dueTomorrow,
+      dueThisWeek,
+      dueThisMonth,
+      rest
+    } = sortAssignedTasksByDueDate(assignedTasks);
+
+    const hasNoneDue = rest.length === assignedTasks.length;
+    const remainingTasksTitle = hasNoneDue ? "Assigned Tasks" : "Remaining";
+    const baskets: IAssignedTasksBasket[] = [
+      { key: "dueAlready", title: "Due Already", blocks: dueAlready },
+      { key: "dueToday", title: "Due Today", blocks: dueToday },
+      { key: "dueTomorrow", title: "Due Tomorrow", blocks: dueTomorrow },
+      { key: "dueThisWeek", title: "Due This Week", blocks: dueThisWeek },
+      { key: "dueThisMonth", title: "Due This Month", blocks: dueThisMonth },
+      { key: "rest", title: remainingTasksTitle, blocks: rest }
+    ];
+
+    return baskets;
+  };
+
+  const renderBasket = (basket: IAssignedTasksBasket) => {
+    return renderColumn(basket.title, sortBlocksByPriority(basket.blocks));
+  };
+
   const renderNotificationsForMobile = () => {
     return null;
   };
@@ -89,41 +119,48 @@ const AssignedTasks: React.SFC<{}> = props => {
       return renderEmptyList();
     }
 
-    const sortResult = sortAssignedTasksByDueDate(assignedTasks);
-    const hasNoneDue = sortResult.rest.length === assignedTasks.length;
+    // const sortResult = sortAssignedTasksByDueDate(assignedTasks);
+    // const hasNoneDue = sortResult.rest.length === assignedTasks.length;
 
     return (
-      <StyledHorizontalScrollContainer>
-        <StyledTasksContainerInner>
-          {renderColumn(
-            "Due Already",
-            sortBlocksByPriority(sortResult.dueAlready)
-          )}
-          {renderColumn("Due Today", sortBlocksByPriority(sortResult.dueToday))}
-          {renderColumn(
-            "Due Tomorrow",
-            sortBlocksByPriority(sortResult.dueTomorrow)
-          )}
-          {renderColumn(
-            "Due This Week",
-            sortBlocksByPriority(sortResult.dueThisWeek)
-          )}
-          {renderColumn(
-            "Due This Month",
-            sortBlocksByPriority(sortResult.dueThisMonth)
-          )}
-          {renderColumn(
-            hasNoneDue ? "Assigned Tasks" : "Rest",
-            sortBlocksByPriority(sortResult.rest)
-          )}
-        </StyledTasksContainerInner>
-      </StyledHorizontalScrollContainer>
+      <B
+        blocks={assignedTasks}
+        getBaskets={getBaskets}
+        renderBasket={renderBasket}
+      />
     );
+
+    // return (
+    //   <StyledHorizontalScrollContainer>
+    //     <StyledTasksContainerInner>
+    //       {renderColumn(
+    //         "Due Already",
+    //         sortBlocksByPriority(sortResult.dueAlready)
+    //       )}
+    //       {renderColumn("Due Today", sortBlocksByPriority(sortResult.dueToday))}
+    //       {renderColumn(
+    //         "Due Tomorrow",
+    //         sortBlocksByPriority(sortResult.dueTomorrow)
+    //       )}
+    //       {renderColumn(
+    //         "Due This Week",
+    //         sortBlocksByPriority(sortResult.dueThisWeek)
+    //       )}
+    //       {renderColumn(
+    //         "Due This Month",
+    //         sortBlocksByPriority(sortResult.dueThisMonth)
+    //       )}
+    //       {renderColumn(
+    //         hasNoneDue ? "Assigned Tasks" : "Rest",
+    //         sortBlocksByPriority(sortResult.rest)
+    //       )}
+    //     </StyledTasksContainerInner>
+    //   </StyledHorizontalScrollContainer>
+    // );
   };
 
   // TODO: Should we refactor this, it is used in multiple places?
   const render = (renderProps: IOHDerivedProps) => {
-    console.log({ renderProps });
     return (
       <Media queries={{ mobile: `(min-width: ${theme.breakpoints.md})` }}>
         {matches => (

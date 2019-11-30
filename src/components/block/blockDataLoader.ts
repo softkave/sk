@@ -137,7 +137,7 @@ function loadBlockCollaboratorsFromRedux(state: IReduxState, block: IBlock) {
     return getUsersAsArray(state, block.collaborators);
   } else if (Array.isArray(block.parents) && block.parents.length > 0) {
     const block0 = getBlock(state, block.parents[0]);
-    return loadBlockCollaboratorsFromRedux(state, block0);
+    return loadBlockCollaboratorsFromRedux(state, block0!)!;
   }
 }
 

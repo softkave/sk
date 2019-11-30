@@ -81,7 +81,7 @@ const Layout: React.SFC<{}> = props => {
     };
 
     return (
-      <StyledFlexFillContainer>
+      <StyledDesktopContainer>
         <StyledFlexColumnContainer>
           <Header
             user={user}
@@ -102,7 +102,7 @@ const Layout: React.SFC<{}> = props => {
             </StyledDesktopBodyContainer>
           </StyledFlexFillContainer>
         </StyledFlexColumnContainer>
-      </StyledFlexFillContainer>
+      </StyledDesktopContainer>
     );
   };
 
@@ -133,4 +133,12 @@ const StyledDesktopBodyContainer = styled.div({
   display: "flex",
   flex: 1,
   padding: "26px 0"
+});
+
+const StyledDesktopContainer = styled.div({
+  overflow: "hidden",
+  display: "flex",
+  flex: 1,
+  width: "100%",
+  height: "100%"
 });

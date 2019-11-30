@@ -71,14 +71,22 @@ export default async function updateBlockOperationFunc(
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
-      transferBlockStateHelper(state, dispatch, {
-        draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(state, block.parents[block.parents.length - 1]),
-        destinationBlock: getBlock(
-          state,
-          forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
-        )
-      });
+      const sourceBlock = getBlock(
+        state,
+        block.parents[block.parents.length - 1]
+      );
+      const destinationBlock = getBlock(
+        state,
+        forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
+      );
+
+      if (sourceBlock && destinationBlock) {
+        transferBlockStateHelper(state, dispatch, {
+          sourceBlock,
+          destinationBlock,
+          draggedBlock: forTransferBlockOnly
+        });
+      }
     }
 
     dispatch(

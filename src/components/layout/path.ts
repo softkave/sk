@@ -22,7 +22,6 @@ export const getAppPathIndex = (pathArray: string[]) => {
 export const isPath0App = () => {
   const pathArray = getSplitPath();
   const appPathIndex = getAppPathIndex(pathArray);
-  console.log({ p0: pathArray[appPathIndex], appPathIndex });
 
   if (appPathIndex !== -1) {
     return pathArray[appPathIndex] === appPath;

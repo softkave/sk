@@ -9,7 +9,6 @@ export interface ILoadingProps {
 }
 
 const Loading: React.SFC<ILoadingProps> = props => {
-  console.log(props);
   return (
     <StyledFlexFillContainer>
       <StyledCenterContainer>

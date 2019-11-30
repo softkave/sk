@@ -30,7 +30,7 @@ class AssignedTasksKanbanBoard extends React.Component<
     if (tasks.length === 0) {
       return (
         <StyledCenterContainer>
-          <Empty description="You have no assigned tasks" />
+          <Empty description="You have no assigned tasks." />
         </StyledCenterContainer>
       );
     }

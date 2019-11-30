@@ -16,7 +16,7 @@ const OrganizationList: React.SFC<IOrganizationListProps> = props => {
   if (orgs.length === 0) {
     return (
       <StyledEmptyContainer>
-        <Empty description="Create an organization to get started" />
+        <Empty description="Create an organization to get started." />
       </StyledEmptyContainer>
     );
   }

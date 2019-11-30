@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Icon, Typography } from "antd";
+import { Button, Empty, Icon, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -19,6 +19,7 @@ import { getOperationWithIDForResource } from "../../redux/operations/selectors"
 import { IReduxState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
+import StyledCenterContainer from "../styled/CenterContainer";
 import { INotificationsPathParams } from "./N";
 import { getNotificationLatestStatus, isNotificationExpired } from "./utils";
 
@@ -31,8 +32,8 @@ const Notification: React.SFC<{}> = props => {
     routeMatch && routeMatch.params
       ? routeMatch.params.notificationID
       : undefined;
-  const notification = useSelector<IReduxState, INotification>(state =>
-    getNotification(state, currentNotificationID!)
+  const notification = useSelector<IReduxState, INotification | undefined>(
+    state => getNotification(state, currentNotificationID!)
   );
   const operation = useSelector<IReduxState, IOperation | undefined>(state =>
     getOperationWithIDForResource(
@@ -50,19 +51,23 @@ const Notification: React.SFC<{}> = props => {
   const isNotificationLoaded = !!notification;
 
   if (!isNotificationLoaded) {
-    return null;
+    return (
+      <StyledCenterContainer>
+        <Empty description="Notification not found." />
+      </StyledCenterContainer>
+    );
   }
 
   const onRespond = (selectedResponse: NotificationStatusText) => {
     respondToNotificationOperationFunc({
       response: selectedResponse,
-      request: notification
+      request: notification!
     });
   };
 
   const renderNotificationResponse = () => {
-    const response = getNotificationLatestStatus(notification);
-    const notificationExpired = isNotificationExpired(notification);
+    const response = getNotificationLatestStatus(notification!);
+    const notificationExpired = isNotificationExpired(notification!);
 
     if (response) {
       const hasRespondedToNotification =
@@ -117,13 +122,13 @@ const Notification: React.SFC<{}> = props => {
     <StyledNotificationBody>
       <StyledNotificationBodyHead>
         <StyledTitle>
-          Collaboration Request From {notification.from.blockName}
+          Collaboration Request From {notification!.from.blockName}
         </StyledTitle>
         <Typography.Text>
-          {new Date(notification.createdAt).toDateString()}
+          {new Date(notification!.createdAt).toDateString()}
         </Typography.Text>
       </StyledNotificationBodyHead>
-      <StyledMessage>{notification.body}</StyledMessage>
+      <StyledMessage>{notification!.body}</StyledMessage>
       {renderNotificationResponse()}
     </StyledNotificationBody>
   );
