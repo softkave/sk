@@ -1,4 +1,3 @@
-import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import {
   aggregateBlocksParentIDs,
@@ -8,7 +7,7 @@ import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
-import store, { IReduxState } from "../../store";
+import store from "../../store";
 import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {

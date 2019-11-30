@@ -1,5 +1,6 @@
 # Tasks
 
+- Change all align-items to align-content
 - Write a method ot consume operation statuses, so that we can show notification modals or messages when an operation fails. Also, add a topbar status icon that when clicked, shows a list of all the operations and their current status, and the user can filter and sort.
 - Move all id generation to the server side
 - Show errors consistently in forms when save fails, and handle touched bug

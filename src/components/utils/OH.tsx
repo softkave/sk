@@ -52,15 +52,11 @@ const OH: React.SFC<IOperationHelperProps> = props => {
   React.useEffect(() => {
     if (isFunction(loadFunc)) {
       loadFunc({
-        operation,
-        isLoading,
-        isCompleted,
-        isError: !!error,
-        currentStatus: status,
+        ...derivedProps,
         state: store.getState()
       });
     }
-  }, [loadFunc, operation]);
+  }, [loadFunc, derivedProps, store]);
 
   const managedRender = () => {
     if (isLoading || operation === undefined || operation === null) {

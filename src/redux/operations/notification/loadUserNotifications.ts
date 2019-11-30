@@ -1,4 +1,3 @@
-import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
@@ -14,10 +13,8 @@ import {
 import { loadUserNotificationsOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
 
-export interface ILoadUserNotificationsOperationFuncDataProps {}
-
 export default async function loadUserNotificationsOperationFunc(
-  dataProps: ILoadUserNotificationsOperationFuncDataProps = {},
+  dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
   const user = getSignedInUserRequired(store.getState());

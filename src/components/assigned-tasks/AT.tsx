@@ -26,12 +26,10 @@ export interface INotificationsPathParams {
 
 const AssignedTasks: React.SFC<{}> = props => {
   const user = useSelector(getSignedInUserRequired);
-
-  const areAssignedTasksLoaded = Array.isArray(user.assignedTasks);
   const assignedTasks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.assignedTasks || [])
   );
-  const total = assignedTasks.length;
+  // const total = assignedTasks.length;
   // const parentIDs = assignedTasks && aggregateBlocksParentIDs(assignedTasks);
   // const parents = useSelector<IReduxState, IBlock[]>(state =>
   //   getBlocksAsArray(state, parentIDs)

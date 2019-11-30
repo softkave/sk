@@ -3,7 +3,7 @@ import { Drawer } from "antd";
 import React from "react";
 import Media from "react-media";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useRouteMatch } from "react-router";
+import { useHistory } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
@@ -22,7 +22,6 @@ import { getCurrentBaseNavPath } from "./path";
 const Layout: React.SFC<{}> = props => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const routeMatch = useRouteMatch()!;
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isDesktopMenuOpen, setDesktopMenuOpen] = React.useState(true);
   const user = useSelector<IReduxState, IUser>(getSignedInUserRequired);

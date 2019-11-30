@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-import ScrollList from "../ScrollList";
 
 export interface IColumnProps {
   className?: string;

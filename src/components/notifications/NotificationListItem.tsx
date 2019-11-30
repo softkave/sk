@@ -34,7 +34,6 @@ interface IStyledNotificationListItemProps {
   isRead: boolean;
 }
 
-const childrenSelector = "& *";
 const seenNotificationColor = "#777";
 
 const StyledNotificationListItem = styled("div")<

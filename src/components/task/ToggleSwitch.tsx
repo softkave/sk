@@ -28,12 +28,8 @@ const ToggleSwitch: React.SFC<IToggleSwitchProps> = props => {
   };
 
   const render = (opProps: IOHDerivedProps) => {
-    if (
-      opProps.isLoading ||
-      opProps.operation === undefined ||
-      opProps.operation === null
-    ) {
-      return <Loading />;
+    if (opProps.isLoading) {
+      return <Loading fontSize="16px" />;
     }
 
     return <Switch checked={checked} onChange={onToggle} disabled={disabled} />;

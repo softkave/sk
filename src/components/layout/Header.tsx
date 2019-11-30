@@ -3,7 +3,6 @@ import { Button, Dropdown, Icon, Menu } from "antd";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
-import StyledFlatButton from "../styled/FlatButton";
 import theme from "../theme";
 
 export interface IHeaderProps {
