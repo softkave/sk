@@ -1,4 +1,5 @@
-import { Empty } from "antd";
+import styled from "@emotion/styled";
+import { Badge, Empty, Typography } from "antd";
 import React from "react";
 import Media from "react-media";
 import { useSelector } from "react-redux";
@@ -16,6 +17,8 @@ import { sortBlocksByPriority } from "../block/sortBlocks";
 import Column from "../board/Column";
 import Loading from "../Loading";
 import StyledCenterContainer from "../styled/CenterContainer";
+import StyledFlexFillContainer from "../styled/FillContainer";
+import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 import TaskList from "../task/TaskList";
 import theme from "../theme";
 import OH, { IOHDerivedProps } from "../utils/OH";
@@ -63,7 +66,16 @@ const AssignedTasks: React.SFC<{}> = props => {
 
   const renderColumn = (title: string, columnTasks: IBlock[]) => {
     const renderHeader = () => {
-      return <span>{title}</span>;
+      return (
+        <StyledFlexFillContainer>
+          <StyledFlexFillContainer>
+            <StyledTitle>{title}</StyledTitle>
+          </StyledFlexFillContainer>
+          <StyledColumnOtherContainer>
+            <Badge count={columnTasks.length} />
+          </StyledColumnOtherContainer>
+        </StyledFlexFillContainer>
+      );
     };
 
     const renderBody = () => {
@@ -71,7 +83,7 @@ const AssignedTasks: React.SFC<{}> = props => {
     };
 
     if (columnTasks.length > 0) {
-      return <Column header={renderHeader()} body={renderBody()} />;
+      return <StyledColumn header={renderHeader()} body={renderBody()} />;
     }
 
     return null;
@@ -88,32 +100,33 @@ const AssignedTasks: React.SFC<{}> = props => {
 
     const sortResult = sortAssignedTasksByDueDate(assignedTasks);
     const hasNoneDue = sortResult.rest.length === assignedTasks.length;
-    console.log({ sortResult });
 
     return (
-      <div>
-        {renderColumn(
-          "Due Already",
-          sortBlocksByPriority(sortResult.dueAlready)
-        )}
-        {renderColumn("Due Today", sortBlocksByPriority(sortResult.dueToday))}
-        {renderColumn(
-          "Due Tomorrow",
-          sortBlocksByPriority(sortResult.dueTomorrow)
-        )}
-        {renderColumn(
-          "Due This Week",
-          sortBlocksByPriority(sortResult.dueThisWeek)
-        )}
-        {renderColumn(
-          "Due This Month",
-          sortBlocksByPriority(sortResult.dueThisMonth)
-        )}
-        {renderColumn(
-          hasNoneDue ? "Assigned Tasks" : "Rest",
-          sortBlocksByPriority(sortResult.rest)
-        )}
-      </div>
+      <StyledHorizontalScrollContainer>
+        <StyledTasksContainerInner>
+          {renderColumn(
+            "Due Already",
+            sortBlocksByPriority(sortResult.dueAlready)
+          )}
+          {renderColumn("Due Today", sortBlocksByPriority(sortResult.dueToday))}
+          {renderColumn(
+            "Due Tomorrow",
+            sortBlocksByPriority(sortResult.dueTomorrow)
+          )}
+          {renderColumn(
+            "Due This Week",
+            sortBlocksByPriority(sortResult.dueThisWeek)
+          )}
+          {renderColumn(
+            "Due This Month",
+            sortBlocksByPriority(sortResult.dueThisMonth)
+          )}
+          {renderColumn(
+            hasNoneDue ? "Assigned Tasks" : "Rest",
+            sortBlocksByPriority(sortResult.rest)
+          )}
+        </StyledTasksContainerInner>
+      </StyledHorizontalScrollContainer>
     );
   };
 
@@ -145,3 +158,27 @@ export default AssignedTasks;
 
 // TODO: Global header for desktop
 // TODO: Shadow header for mobile
+
+const StyledTasksContainerInner = styled.div`
+  height: 100%;
+  display: flex;
+  padding: 16px;
+  box-sizing: border-box;
+`;
+
+const lastOfTypeSelector = "&:last-of-type";
+const StyledColumn = styled(Column)({
+  marginRight: 16,
+
+  [lastOfTypeSelector]: {
+    marginRight: 0
+  }
+});
+
+const StyledColumnOtherContainer = styled.div({
+  marginLeft: "16px"
+});
+
+const StyledTitle = styled.div({
+  fontWeight: "bold"
+});

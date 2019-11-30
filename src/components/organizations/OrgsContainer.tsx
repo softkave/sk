@@ -52,7 +52,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
 
     if (!loadInitialBlocksOperation) {
       // TODO: move to componentDidMount
-      loadRootBlocksOperationFunc(state, dispatch);
+      loadRootBlocksOperationFunc();
 
       return {
         view

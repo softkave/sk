@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
@@ -18,8 +18,10 @@ const OrganizationListContainer: React.SFC<{}> = props => {
   const store = useStore<IReduxState>();
   const dispatch = useDispatch();
   const state = store.getState();
-  const user = getSignedInUserRequired(state);
-  const organizations = getBlocksAsArray(state, user.orgs);
+  const user = useSelector(getSignedInUserRequired);
+  const organizations = useSelector<IReduxState, IBlock[]>(state =>
+    getBlocksAsArray(state, user.orgs)
+  );
 
   // TODO: Trim organizations not found when root blocks are loaded ( in the loadRootBlocks function )
   // TODO: Should we use length comparison or operation status?
@@ -36,7 +38,7 @@ const OrganizationListContainer: React.SFC<{}> = props => {
     };
 
     if (shouldLoadOrganizations()) {
-      loadRootBlocksOperationFunc(state, dispatch);
+      loadRootBlocksOperationFunc();
     }
   };
 

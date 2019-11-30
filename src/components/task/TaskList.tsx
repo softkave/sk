@@ -39,7 +39,7 @@ const TaskList: React.SFC<ITaskListProps> = props => {
     console.log({ tasksToRender, filteredTasks, tasks });
     const renderedTasks = tasksToRender.map(task => {
       return (
-        <BlockThumbnailContainer key={task.customId}>
+        <StyledBlockThumbnailContainer key={task.customId}>
           <Task
             task={task}
             onEdit={
@@ -48,27 +48,19 @@ const TaskList: React.SFC<ITaskListProps> = props => {
                 : undefined
             }
           />
-        </BlockThumbnailContainer>
+        </StyledBlockThumbnailContainer>
       );
     });
 
     return renderedTasks;
   };
 
-  return (
-    <ScrollList>
-      <Tasks>{renderTasks()}</Tasks>
-    </ScrollList>
-  );
+  return <ScrollList>{renderTasks()}</ScrollList>;
 };
 
 export default TaskList;
 
-const BlockThumbnailContainer = styled.div`
+const StyledBlockThumbnailContainer = styled.div`
   margin-top: 12px;
   margin-bottom: 12px;
-`;
-
-const Tasks = styled.div`
-  padding: 0 12px;
 `;

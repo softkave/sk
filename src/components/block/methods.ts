@@ -103,7 +103,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
     },
 
     async loadRootData() {
-      return loadRootBlocksOperationFunc(state, dispatch);
+      return loadRootBlocksOperationFunc();
     }
   };
 }

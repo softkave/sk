@@ -28,8 +28,6 @@ const ColumnContainer = styled.div`
 
 const StyledColumnHeaderContainer = styled.div`
   display: flex;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
   flex-direction: row;
 `;
 

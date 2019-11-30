@@ -98,7 +98,9 @@ const Layout: React.SFC<{}> = props => {
                 />
               </StyledDesktopMenuContainer>
             )}
-            <StyledFlexFillContainer>{renderBody()}</StyledFlexFillContainer>
+            <StyledDesktopBodyContainer>
+              {renderBody()}
+            </StyledDesktopBodyContainer>
           </StyledFlexFillContainer>
         </StyledFlexColumnContainer>
       </StyledFlexFillContainer>
@@ -126,4 +128,10 @@ export default Layout;
 const StyledDesktopMenuContainer = styled.div({
   marginTop: "64px",
   width: "240px"
+});
+
+const StyledDesktopBodyContainer = styled.div({
+  display: "flex",
+  flex: 1,
+  padding: "26px 0"
 });
