@@ -246,14 +246,14 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("collaborators") &&
     shouldLoadCollaborators(state, dispatch, block)
   ) {
-    loadBlockCollaboratorsOperationFunc(state, dispatch, { block });
+    loadBlockCollaboratorsOperationFunc({ block });
   }
 
   if (
     dataToLoad.includes("collaborationRequests") &&
     shouldLoadRequests(state, dispatch, block)
   ) {
-    loadBlockCollaborationRequestsOperationFunc(state, dispatch, { block });
+    loadBlockCollaborationRequestsOperationFunc({ block });
   }
 }
 

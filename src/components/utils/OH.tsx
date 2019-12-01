@@ -8,7 +8,10 @@ import IOperation, {
   isOperationCompleted,
   isOperationStartedOrPending
 } from "../../redux/operations/operation";
-import { getFirstOperationWithID } from "../../redux/operations/selectors";
+import {
+  getFirstOperationWithID,
+  getOperationWithIDForResource
+} from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
 import GeneralError from "../GeneralError";
 import Loading from "../Loading";
@@ -18,6 +21,7 @@ export interface IOHDerivedProps {
   isError: boolean;
   isCompleted: boolean;
   state: IReduxState;
+  error?: any;
   operation?: IOperation;
   currentStatus?: IOperationStatus;
 }
@@ -25,16 +29,26 @@ export interface IOHDerivedProps {
 export interface IOperationHelperProps {
   operationID: string;
   render: (props: IOHDerivedProps) => React.ReactElement | null;
+  resourceID?: string;
   scopeID?: string;
   dontManageRender?: boolean;
   loadFunc?: (props: IOHDerivedProps) => void;
 }
 
 const OH: React.SFC<IOperationHelperProps> = props => {
-  const { operationID, render, loadFunc, scopeID, dontManageRender } = props;
+  const {
+    operationID,
+    render,
+    loadFunc,
+    scopeID,
+    dontManageRender,
+    resourceID
+  } = props;
   const store = useStore<IReduxState>();
-  const operation = useSelector<IReduxState, IOperation>(state =>
-    getFirstOperationWithID(state, operationID)
+  const operation = useSelector<IReduxState, IOperation | undefined>(state =>
+    resourceID
+      ? getOperationWithIDForResource(state, operationID, resourceID)
+      : getFirstOperationWithID(state, operationID)
   );
   const isLoading = isOperationStartedOrPending(operation, scopeID);
   const isCompleted = isOperationCompleted(operation, scopeID);
@@ -44,6 +58,7 @@ const OH: React.SFC<IOperationHelperProps> = props => {
     operation,
     isLoading,
     isCompleted,
+    error,
     isError: !!error,
     currentStatus: status,
     state: store.getState()
@@ -62,7 +77,7 @@ const OH: React.SFC<IOperationHelperProps> = props => {
     if (isLoading || operation === undefined || operation === null) {
       return <Loading />;
     } else if (!!error) {
-      return <GeneralError />;
+      return <GeneralError error={error} />;
     } else {
       return render(derivedProps);
     }

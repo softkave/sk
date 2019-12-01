@@ -4,7 +4,15 @@ import React from "react";
 import { useHistory } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
-import StyledFlexFillContainer from "../styled/FillContainer";
+import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
+import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import {
+  getBlockCollaborationRequestsOperationID,
+  getBlockCollaboratorsOperationID
+} from "../../redux/operations/operationIDs";
+import GeneralErrorList from "../GeneralErrorList";
+import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import Loading from "../Loading";
 import List from "../styled/List";
 
 export interface IOrganizationProps {
@@ -15,6 +23,34 @@ const Organization: React.SFC<IOrganizationProps> = props => {
   const { organization } = props;
   const history = useHistory();
   const organizationPath = "/app/organizations/:organizationID";
+
+  const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
+    if (!!!loadProps.operation) {
+      loadBlockCollaboratorsOperationFunc({ block: organization });
+    }
+  };
+
+  const loadOrgCollaborationRequests = (loadProps: IUseOperationStatus) => {
+    if (!!!loadProps.operation) {
+      loadBlockCollaborationRequestsOperationFunc({ block: organization });
+    }
+  };
+
+  const loadCollaboratorsOperation = useOperation(
+    {
+      operationID: getBlockCollaboratorsOperationID,
+      resourceID: organization.customId
+    },
+    loadOrgCollaborators
+  );
+
+  const loadCollaborationRequestsOperation = useOperation(
+    {
+      operationID: getBlockCollaborationRequestsOperationID,
+      resourceID: organization.customId
+    },
+    loadOrgCollaborationRequests
+  );
 
   const renderOrganizationLandingMenu = () => {
     type MenuType = "groups" | "tasks" | "projects" | "collaborators";
@@ -80,26 +116,62 @@ const Organization: React.SFC<IOrganizationProps> = props => {
     return null;
   };
 
-  return (
-    <Switch>
-      <Route
-        exact
-        path={organizationPath}
-        render={renderOrganizationLandingMenu}
-      />
-      <Route path={`${organizationPath}/tasks`} render={renderTasks} />
-      <Route path={`${organizationPath}/groups`} render={renderGroups} />
-      <Route path={`${organizationPath}/projects`} render={renderProjects} />
-      <Route
-        path={`${organizationPath}/collaborators`}
-        render={renderCollaborators}
-      />
-      <Route
-        path={`${organizationPath}/*`}
-        render={() => <Redirect to={organizationPath} />}
-      />
-    </Switch>
-  );
+  const shouldRenderLoading = () => {
+    return (
+      loadCollaboratorsOperation.isLoading ||
+      !!!loadCollaboratorsOperation.operation ||
+      loadCollaborationRequestsOperation.isLoading ||
+      !!!loadCollaborationRequestsOperation.operation
+    );
+  };
+
+  const getLoadErrors = () => {
+    const loadErrors: any[] = [];
+
+    if (loadCollaboratorsOperation.error) {
+      loadErrors.push(loadCollaboratorsOperation.error);
+    }
+
+    if (loadCollaborationRequestsOperation.error) {
+      loadErrors.push(loadCollaborationRequestsOperation.error);
+    }
+
+    return loadErrors;
+  };
+
+  const render = () => {
+    const showLoading = shouldRenderLoading();
+    const loadErrors = getLoadErrors();
+
+    if (showLoading) {
+      return <Loading />;
+    } else if (loadErrors.length > 0) {
+      return <GeneralErrorList errors={loadErrors} />;
+    }
+
+    return (
+      <Switch>
+        <Route
+          exact
+          path={organizationPath}
+          render={renderOrganizationLandingMenu}
+        />
+        <Route path={`${organizationPath}/tasks`} render={renderTasks} />
+        <Route path={`${organizationPath}/groups`} render={renderGroups} />
+        <Route path={`${organizationPath}/projects`} render={renderProjects} />
+        <Route
+          path={`${organizationPath}/collaborators`}
+          render={renderCollaborators}
+        />
+        <Route
+          path={`${organizationPath}/*`}
+          render={() => <Redirect to={organizationPath} />}
+        />
+      </Switch>
+    );
+  };
+
+  return render();
 };
 
 export default Organization;

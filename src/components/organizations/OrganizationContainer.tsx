@@ -24,15 +24,6 @@ const OrganizationContainer: React.SFC<{}> = props => {
     getBlock(state, organizationID)
   );
 
-  const loadCollaborators = () => {};
-
-  const loadCollaborationRequests = () => {};
-
-  const load = () => {
-    loadCollaborators();
-    loadCollaborationRequests();
-  };
-
   if (!organization) {
     return (
       <StyledCenterContainer>

@@ -82,24 +82,14 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: ILoadBlockCollaboratorsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaboratorsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaboratorsOperationFunc(props, options);
     },
 
     async loadCollaborationRequests(
       props: ILoadBlockCollaborationRequestsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaborationRequestsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaborationRequestsOperationFunc(props, options);
     },
 
     async loadRootData() {
