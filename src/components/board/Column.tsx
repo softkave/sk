@@ -7,7 +7,7 @@ export interface IColumnProps {
   body?: React.ReactNode;
 }
 
-const Column: React.SFC<IColumnProps> = props => {
+const Column: React.FC<IColumnProps> = props => {
   const { className, header, body } = props;
 
   return (

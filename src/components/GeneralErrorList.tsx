@@ -6,7 +6,7 @@ export interface IGeneralErrorListProps {
   errors: Array<IGeneralErrorProps["error"]>;
 }
 
-const GeneralErrorList: React.SFC<IGeneralErrorListProps> = props => {
+const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
   const { errors } = props;
 
   return (

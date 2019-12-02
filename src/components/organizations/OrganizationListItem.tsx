@@ -8,7 +8,7 @@ export interface IOrganizationListItemProps {
   onClick: (org: IBlock) => void;
 }
 
-const OrganizationListItem: React.SFC<IOrganizationListItemProps> = props => {
+const OrganizationListItem: React.FC<IOrganizationListItemProps> = props => {
   const { org, onClick } = props;
 
   return (

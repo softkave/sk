@@ -40,7 +40,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
         status: defaultOperationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
-      options.resourceID
+      block.customId
     )
   );
 
@@ -72,7 +72,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   } catch (error) {
@@ -87,7 +87,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   }

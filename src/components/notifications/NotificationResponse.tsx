@@ -6,7 +6,7 @@ export interface INotificationResponseProps {
   response: NotificationStatusText;
 }
 
-const NotificationResponse: React.SFC<INotificationResponseProps> = props => {
+const NotificationResponse: React.FC<INotificationResponseProps> = props => {
   const { response } = props;
   return (
     <p>

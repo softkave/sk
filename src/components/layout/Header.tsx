@@ -11,7 +11,7 @@ export interface IHeaderProps {
   onLogout: () => void;
 }
 
-const Header: React.SFC<IHeaderProps> = props => {
+const Header: React.FC<IHeaderProps> = props => {
   const { user, onToggleMenu, onLogout } = props;
 
   const onSelectAvatarMenu = event => {

@@ -11,7 +11,7 @@ export interface IBlockParentSelectionProps {
   onChange?: (parentIDs: string[]) => void;
 }
 
-const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
+const BlockParentSelection: React.FC<IBlockParentSelectionProps> = props => {
   const { value, parents, onChange } = props;
   let block: IBlock | undefined;
   const hasValue = Array.isArray(value) && value.length > 0;

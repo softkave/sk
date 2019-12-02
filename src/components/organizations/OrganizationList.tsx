@@ -10,7 +10,7 @@ export interface IOrganizationListProps {
   onClick: (org: IBlock) => void;
 }
 
-const OrganizationList: React.SFC<IOrganizationListProps> = props => {
+const OrganizationList: React.FC<IOrganizationListProps> = props => {
   const { orgs, onClick } = props;
 
   if (orgs.length === 0) {

@@ -32,15 +32,11 @@ export default async function getTasksAssignedToUserOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(
-      getTasksAssignedToUserOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      options.resourceID
-    )
+    pushOperation(getTasksAssignedToUserOperationID, {
+      scopeID: options.scopeID,
+      status: defaultOperationStatusTypes.operationStarted,
+      timestamp: Date.now()
+    })
   );
 
   try {
@@ -84,30 +80,22 @@ export default async function getTasksAssignedToUserOperationFunc(
     );
 
     store.dispatch(
-      pushOperation(
-        getTasksAssignedToUserOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(getTasksAssignedToUserOperationID, {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
     store.dispatch(
-      pushOperation(
-        getTasksAssignedToUserOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(getTasksAssignedToUserOperationID, {
+        error: transformedError,
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   }
 }

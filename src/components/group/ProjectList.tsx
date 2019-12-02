@@ -7,7 +7,7 @@ export interface IProjectListProps {
   setCurrentProject: (project: IBlock) => void;
 }
 
-const ProjectList: React.SFC<IProjectListProps> = props => {
+const ProjectList: React.FC<IProjectListProps> = props => {
   const { setCurrentProject, projects } = props;
 
   return (

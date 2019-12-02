@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-const ViewShell: React.SFC<{}> = props => {
+const ViewShell: React.FC<{}> = props => {
   const { children } = props;
 
   return <StyledViewShell>{children}</StyledViewShell>;

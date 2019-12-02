@@ -25,15 +25,11 @@ export default async function loadRootBlocksOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(
-      loadRootBlocksOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      options.resourceID
-    )
+    pushOperation(loadRootBlocksOperationID, {
+      scopeID: options.scopeID,
+      status: defaultOperationStatusTypes.operationStarted,
+      timestamp: Date.now()
+    })
   );
 
   try {
@@ -47,31 +43,23 @@ export default async function loadRootBlocksOperationFunc(
 
     store.dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
     store.dispatch(
-      pushOperation(
-        loadRootBlocksOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(loadRootBlocksOperationID, {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   } catch (error) {
     // TODO: Only save the error, not OperationError
     const transformedError = OperationError.fromAny(error);
 
     store.dispatch(
-      pushOperation(
-        loadRootBlocksOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(loadRootBlocksOperationID, {
+        error: transformedError,
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   }
 }

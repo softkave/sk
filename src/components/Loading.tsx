@@ -8,7 +8,7 @@ export interface ILoadingProps {
   fontSize?: string | number;
 }
 
-const Loading: React.SFC<ILoadingProps> = props => {
+const Loading: React.FC<ILoadingProps> = props => {
   return (
     <StyledFlexFillContainer>
       <StyledCenterContainer>

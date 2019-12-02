@@ -8,7 +8,7 @@ export interface IOrgExistsMessageProps {
   message?: string;
 }
 
-const OrgExistsMessage: React.SFC<IOrgExistsMessageProps> = props => {
+const OrgExistsMessage: React.FC<IOrgExistsMessageProps> = props => {
   const { message } = props;
 
   return (

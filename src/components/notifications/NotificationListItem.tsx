@@ -9,7 +9,7 @@ export interface INotificationListItemProps {
   onClick: () => void;
 }
 
-const NotificationListItem: React.SFC<INotificationListItemProps> = props => {
+const NotificationListItem: React.FC<INotificationListItemProps> = props => {
   const { notification, isSelected, onClick } = props;
   return (
     <StyledNotificationListItem

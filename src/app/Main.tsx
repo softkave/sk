@@ -8,7 +8,7 @@ import { getSessionType } from "../redux/session/selectors";
 import App from "./App";
 import Routes from "./Routes";
 
-const Main: React.SFC<{}> = props => {
+const Main: React.FC<{}> = props => {
   const history = useHistory();
   const sessionType = useSelector(getSessionType);
 

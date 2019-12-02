@@ -50,7 +50,7 @@ export default async function respondToNotificationOperationFunc(
         status: defaultOperationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
-      options.resourceID
+      request.customId
     )
   );
 
@@ -104,7 +104,7 @@ export default async function respondToNotificationOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        request.customId
       )
     );
   } catch (error) {
@@ -119,7 +119,7 @@ export default async function respondToNotificationOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        request.customId
       )
     );
   }

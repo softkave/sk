@@ -1,6 +1,6 @@
 import React from "react";
 
-const NotificationRevoked: React.SFC<{}> = props => {
+const NotificationRevoked: React.FC<{}> = props => {
   return <p>Notification has been revoked.</p>;
 };
 

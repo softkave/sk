@@ -51,7 +51,7 @@ export default async function toggleTaskOperationFunc(
         status: defaultOperationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
-      options.resourceID
+      block.customId
     )
   );
 
@@ -101,7 +101,7 @@ export default async function toggleTaskOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   } catch (error) {
@@ -116,7 +116,7 @@ export default async function toggleTaskOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   }

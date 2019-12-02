@@ -1,7 +1,7 @@
 import React from "react";
 import AssignedTasks from "./AT";
 
-const AssignedTasksMain: React.SFC<{}> = props => {
+const AssignedTasksMain: React.FC<{}> = props => {
   return <AssignedTasks />;
 };
 

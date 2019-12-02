@@ -41,7 +41,7 @@ export default async function deleteBlockOperationFunc(
         status: defaultOperationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
-      options.resourceID
+      block.customId
     )
   );
 
@@ -67,7 +67,7 @@ export default async function deleteBlockOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   } catch (error) {
@@ -82,7 +82,7 @@ export default async function deleteBlockOperationFunc(
           status: defaultOperationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
-        options.resourceID
+        block.customId
       )
     );
   }

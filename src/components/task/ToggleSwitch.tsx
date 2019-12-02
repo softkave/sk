@@ -14,7 +14,7 @@ export interface IToggleSwitchProps {
   disabled?: boolean;
 }
 
-const ToggleSwitch: React.SFC<IToggleSwitchProps> = props => {
+const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   const { disabled, task } = props;
   const user = useSelector(getSignedInUserRequired);
   const userTaskCollaboratorData = getUserTaskCollaborator(task, user);

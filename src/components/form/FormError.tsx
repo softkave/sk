@@ -5,7 +5,7 @@ export interface IFormErrorProps {
   error?: string | string[] | Error | Error[];
 }
 
-const FormError: React.SFC<IFormErrorProps> = props => {
+const FormError: React.FC<IFormErrorProps> = props => {
   return (
     <FormMessage type="error" message={props.error}>
       {props.children}

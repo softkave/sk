@@ -20,7 +20,7 @@ export interface INotificationsPathParams {
   notificationID?: string;
 }
 
-const Notifications: React.SFC<{}> = props => {
+const Notifications: React.FC<{}> = props => {
   const history = useHistory();
   const routeMatch = useRouteMatch()!;
   const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(

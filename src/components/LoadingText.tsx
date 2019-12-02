@@ -7,7 +7,7 @@ export interface ILoadingTextProps {
 
 const maxPercent = 100;
 
-const LoadingText: React.SFC<ILoadingTextProps> = props => {
+const LoadingText: React.FC<ILoadingTextProps> = props => {
   const { percent, children } = props;
   // TODO: Clean unused comment codes
   // const progressFlex = Math.round(maxPercent / (maxPercent - percent));

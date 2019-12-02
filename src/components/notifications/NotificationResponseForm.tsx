@@ -10,7 +10,7 @@ export interface INotificationResponseFormProps {
   onRespond: (response: NotificationStatusText) => void;
 }
 
-const NotificationResponseForm: React.SFC<
+const NotificationResponseForm: React.FC<
   INotificationResponseFormProps
 > = props => {
   const { onRespond } = props;

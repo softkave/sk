@@ -28,15 +28,11 @@ export default async function loadUserNotificationsOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(
-      loadUserNotificationsOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      options.resourceID
-    )
+    pushOperation(loadUserNotificationsOperationID, {
+      scopeID: options.scopeID,
+      status: defaultOperationStatusTypes.operationStarted,
+      timestamp: Date.now()
+    })
   );
 
   try {
@@ -61,30 +57,22 @@ export default async function loadUserNotificationsOperationFunc(
     );
 
     store.dispatch(
-      pushOperation(
-        loadUserNotificationsOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(loadUserNotificationsOperationID, {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
     store.dispatch(
-      pushOperation(
-        loadUserNotificationsOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(loadUserNotificationsOperationID, {
+        error: transformedError,
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   }
 }

@@ -19,7 +19,7 @@ import Header from "./Header";
 import NavigationMenuList from "./NavigationMenuList";
 import { getCurrentBaseNavPath } from "./path";
 
-const Layout: React.SFC<{}> = props => {
+const Layout: React.FC<{}> = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);

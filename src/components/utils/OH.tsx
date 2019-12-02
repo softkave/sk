@@ -35,7 +35,7 @@ export interface IOperationHelperProps {
   loadFunc?: (props: IOHDerivedProps) => void;
 }
 
-const OH: React.SFC<IOperationHelperProps> = props => {
+const OH: React.FC<IOperationHelperProps> = props => {
   const {
     operationID,
     render,

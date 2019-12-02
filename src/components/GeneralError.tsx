@@ -7,7 +7,7 @@ export interface IGeneralErrorProps {
   error?: Error | string;
 }
 
-const GeneralError: React.SFC<IGeneralErrorProps> = props => {
+const GeneralError: React.FC<IGeneralErrorProps> = props => {
   const { error, children } = props;
 
   let errorMessage: React.ReactNode = children || "An error occurred.";

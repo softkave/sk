@@ -23,7 +23,7 @@ import StyledCenterContainer from "../styled/CenterContainer";
 import { INotificationsPathParams } from "./N";
 import { getNotificationLatestStatus, isNotificationExpired } from "./utils";
 
-const Notification: React.SFC<{}> = props => {
+const Notification: React.FC<{}> = props => {
   const history = useHistory();
   const routeMatch = useRouteMatch<INotificationsPathParams>(
     "/app/notifications/:notificationID"

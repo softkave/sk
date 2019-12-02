@@ -7,7 +7,7 @@ export interface INavigationMenuListProps {
   onClick: (key: string) => void;
 }
 
-const NavigationMenuList: React.SFC<INavigationMenuListProps> = props => {
+const NavigationMenuList: React.FC<INavigationMenuListProps> = props => {
   const { currentItemKey, onClick } = props;
 
   const renderMenu = () => (

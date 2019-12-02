@@ -5,7 +5,7 @@ export interface IOrganizationsPathParams {
   organizationID?: string;
 }
 
-const OrganizationsMain: React.SFC<{}> = props => {
+const OrganizationsMain: React.FC<{}> = props => {
   return <OrganizationListContainer />;
 };
 

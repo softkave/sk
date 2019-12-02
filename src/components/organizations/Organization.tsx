@@ -19,10 +19,11 @@ export interface IOrganizationProps {
   organization: IBlock;
 }
 
-const Organization: React.SFC<IOrganizationProps> = props => {
+const Organization: React.FC<IOrganizationProps> = props => {
   const { organization } = props;
   const history = useHistory();
   const organizationPath = "/app/organizations/:organizationID";
+  console.log(props);
 
   const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
@@ -71,6 +72,9 @@ const Organization: React.SFC<IOrganizationProps> = props => {
 
         case "projects":
           return <Badge count={organization.projects.length} />;
+
+        case "collaborators":
+          return <Badge count={organization.collaborators.length} />;
 
         default:
           return null;

@@ -28,7 +28,7 @@ export interface IOperationHelperProps {
   loadFunc?: (props: IOperationHelperDerivedProps) => void;
 }
 
-const OperationHelper: React.SFC<IOperationHelperProps> = props => {
+const OperationHelper: React.FC<IOperationHelperProps> = props => {
   const { operationID, render, loadFunc, scopeID } = props;
   const store = useStore<IReduxState>();
   const state = store.getState();

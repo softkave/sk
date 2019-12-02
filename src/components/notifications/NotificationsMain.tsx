@@ -1,7 +1,7 @@
 import React from "react";
 import Notifications from "./N";
 
-const NotificationsMain: React.SFC<{}> = props => {
+const NotificationsMain: React.FC<{}> = props => {
   return <Notifications />;
 };
 

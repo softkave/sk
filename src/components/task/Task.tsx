@@ -13,7 +13,7 @@ export interface ITaskProps {
   onEdit?: (task: IBlock) => void;
 }
 
-const Task: React.SFC<ITaskProps> = props => {
+const Task: React.FC<ITaskProps> = props => {
   const { task, onEdit } = props;
 
   const onDeleteTask = () => {

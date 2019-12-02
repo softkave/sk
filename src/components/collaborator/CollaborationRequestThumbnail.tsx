@@ -13,7 +13,7 @@ export interface ICollaborationRequestThumbnailProps {
   onClick?: () => void;
 }
 
-const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailProps> = props => {
+const CollaborationRequestThumbnail: React.FC<ICollaborationRequestThumbnailProps> = props => {
   const { request, style, onClick, className } = props;
   const latestStatus = request.statusHistory[request.statusHistory.length - 1];
 

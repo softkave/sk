@@ -26,7 +26,7 @@ interface IAssignedTasksBasket extends IBBasket {
   title: string;
 }
 
-const AssignedTasks: React.SFC<{}> = props => {
+const AssignedTasks: React.FC<{}> = props => {
   const user = useSelector(getSignedInUserRequired);
   const assignedTasks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.assignedTasks || [])

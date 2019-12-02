@@ -18,7 +18,7 @@ interface IPriorityProps {
   className?: string;
 }
 
-const Priority: React.SFC<IPriorityProps> = props => {
+const Priority: React.FC<IPriorityProps> = props => {
   const { level, cover, className } = props;
 
   return (

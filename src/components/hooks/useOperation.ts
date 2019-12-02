@@ -35,14 +35,14 @@ type UseOperation = (
   loadOperation?: LoadOperation
 ) => IUseOperationStatus;
 
-const getOperationStatus = (
+export const getOperationDetailedStatus = (
   operation: IOperation | undefined,
-  selector: IOperationSelector
+  scopeID?: string
 ): IUseOperationStatus => {
-  const isLoading = isOperationStartedOrPending(operation, selector.scopeID);
-  const isCompleted = isOperationCompleted(operation, selector.scopeID);
-  const status = getOperationLastStatus(operation, selector.scopeID);
-  const error = getOperationLastError(operation, selector.scopeID);
+  const isLoading = isOperationStartedOrPending(operation, scopeID);
+  const isCompleted = isOperationCompleted(operation, scopeID);
+  const status = getOperationLastStatus(operation, scopeID);
+  const error = getOperationLastError(operation, scopeID);
 
   return {
     isLoading,
@@ -68,13 +68,13 @@ const useOperation: UseOperation = (selector, loadOperation) => {
   const operation = useSelector<IReduxState, IOperation | undefined>(state =>
     getOperation(state, selector)
   );
-  const statusData = getOperationStatus(operation, selector);
+  const statusData = getOperationDetailedStatus(operation, selector.scopeID);
 
   React.useEffect(() => {
     if (isFunction(loadOperation)) {
       loadOperation(statusData);
     }
-  }, [statusData]);
+  }, [statusData, loadOperation]);
 
   return statusData;
 };

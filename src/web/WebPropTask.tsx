@@ -9,7 +9,7 @@ export interface IWebPropTaskProps {
   checked?: boolean;
 }
 
-const WebPropTask: React.SFC<IWebPropTaskProps> = props => {
+const WebPropTask: React.FC<IWebPropTaskProps> = props => {
   return (
     <StyledPropTask>
       <StyledPropTaskHeader>

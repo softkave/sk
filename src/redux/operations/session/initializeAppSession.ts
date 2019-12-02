@@ -31,15 +31,11 @@ export default async function initializeAppSessionOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(
-      initializeAppSessionOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      options.resourceID
-    )
+    pushOperation(initializeAppSessionOperationID, {
+      scopeID: options.scopeID,
+      status: defaultOperationStatusTypes.operationStarted,
+      timestamp: Date.now()
+    })
   );
 
   try {
@@ -65,31 +61,23 @@ export default async function initializeAppSessionOperationFunc(
     }
 
     store.dispatch(
-      pushOperation(
-        initializeAppSessionOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(initializeAppSessionOperationID, {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   } catch (error) {
     store.dispatch(setSessionToWeb());
     const finalError = OperationError.fromAny(error);
 
     store.dispatch(
-      pushOperation(
-        initializeAppSessionOperationID,
-        {
-          error: finalError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        options.resourceID
-      )
+      pushOperation(initializeAppSessionOperationID, {
+        error: finalError,
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
     );
   }
 }

@@ -9,7 +9,7 @@ export interface IScrollListProps {
   scrollClassName?: string;
 }
 
-const ScrollList: React.SFC<IScrollListProps> = React.memo(props => {
+const ScrollList: React.FC<IScrollListProps> = React.memo(props => {
   const { children, className } = props;
 
   return (

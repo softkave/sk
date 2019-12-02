@@ -18,7 +18,7 @@ interface IRouteMatchParams {
   organizationID?: string;
 }
 
-const OrganizationListContainer: React.SFC<{}> = props => {
+const OrganizationListContainer: React.FC<{}> = props => {
   const history = useHistory();
   const organizationPath = "/app/organizations/:organizationID";
   const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(

@@ -12,7 +12,7 @@ export interface ITaskListProps {
   toggleForm?: (type: BlockType, block?: IBlock) => void;
 }
 
-const TaskList: React.SFC<ITaskListProps> = props => {
+const TaskList: React.FC<ITaskListProps> = props => {
   const { toggleForm, selectedCollaborators, tasks } = props;
 
   const isAnyCollaboratorSelected = () => {
