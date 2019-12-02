@@ -1,5 +1,3 @@
-import styled from "@emotion/styled";
-import { Icon } from "antd";
 import React from "react";
 import StyledCenterContainer from "./styled/CenterContainer";
 import StyledFlexFillContainer from "./styled/FillContainer";
@@ -12,7 +10,8 @@ const Loading: React.FC<ILoadingProps> = props => {
   return (
     <StyledFlexFillContainer>
       <StyledCenterContainer>
-        <StyledIcon type="loading" {...props} />
+        Loading
+        {/* <StyledIcon type="loading" {...props} /> */}
       </StyledCenterContainer>
     </StyledFlexFillContainer>
   );
@@ -24,7 +23,7 @@ Loading.defaultProps = {
 
 export default Loading;
 
-const StyledIcon = styled(Icon)<ILoadingProps>(props => ({
-  fontSize: props.fontSize,
-  color: "rgb(66,133,244)"
-}));
+// const StyledIcon = styled(Icon)<ILoadingProps>(props => ({
+//   fontSize: props.fontSize,
+//   color: "rgb(66,133,244)"
+// }));

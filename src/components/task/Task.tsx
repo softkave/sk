@@ -88,5 +88,3 @@ const StyledPriorityContainer = styled.div({
 const StyledControlsContainer = styled.div({
   textAlign: "right"
 });
-
-const StyledTaskSwitchContainer = styled.div({});

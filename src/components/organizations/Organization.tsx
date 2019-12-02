@@ -11,6 +11,8 @@ import {
   getBlockCollaboratorsOperationID
 } from "../../redux/operations/operationIDs";
 import BlockChildren from "../board/BC";
+import C from "../collaborator/C";
+import CR from "../collaborator/CR";
 import GeneralErrorList from "../GeneralErrorList";
 import GroupList from "../group/GroupList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
@@ -18,6 +20,17 @@ import Loading from "../Loading";
 import ProjectList from "../project/ProjectList";
 import List from "../styled/List";
 import TaskList from "../task/TaskList";
+
+type MenuType =
+  | "groups"
+  | "tasks"
+  | "projects"
+  | "collaborators"
+  | "collaboration-requests";
+interface IMenuItemType {
+  key: MenuType;
+  label: string;
+}
 
 export interface IOrganizationProps {
   organization: IBlock;
@@ -27,7 +40,6 @@ const Organization: React.FC<IOrganizationProps> = props => {
   const { organization } = props;
   const history = useHistory();
   const organizationPath = "/app/organizations/:organizationID";
-  console.log(props);
 
   const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
@@ -58,12 +70,12 @@ const Organization: React.FC<IOrganizationProps> = props => {
   );
 
   const renderOrganizationLandingMenu = () => {
-    type MenuType = "groups" | "tasks" | "projects" | "collaborators";
-    const menuItems: MenuType[] = [
-      "groups",
-      "tasks",
-      "projects",
-      "collaborators"
+    const menuItems: IMenuItemType[] = [
+      { key: "groups", label: "Groups" },
+      { key: "tasks", label: "Tasks" },
+      { key: "projects", label: "Projects" },
+      { key: "collaborators", label: "Collaborators" },
+      { key: "collaboration-requests", label: "Collaboration Requests" }
     ];
 
     const renderBadge = (item: MenuType) => {
@@ -80,6 +92,9 @@ const Organization: React.FC<IOrganizationProps> = props => {
         case "collaborators":
           return <Badge count={organization.collaborators.length} />;
 
+        case "collaboration-requests":
+          return <Badge count={organization.collaborationRequests.length} />;
+
         default:
           return null;
       }
@@ -94,9 +109,9 @@ const Organization: React.FC<IOrganizationProps> = props => {
         <List
           dataSource={menuItems}
           renderItem={item => (
-            <StyledMenuItem onClick={() => onClickItem(item)}>
-              <StyledMenuItemTitle>{item}</StyledMenuItemTitle>
-              {renderBadge(item)}
+            <StyledMenuItem onClick={() => onClickItem(item.key)}>
+              <StyledMenuItemTitle>{item.label}</StyledMenuItemTitle>
+              {renderBadge(item.key)}
             </StyledMenuItem>
           )}
         />
@@ -112,6 +127,7 @@ const Organization: React.FC<IOrganizationProps> = props => {
     return (
       <BlockChildren
         parent={organization}
+        emptyMessage="No tasks yet."
         getChildrenIDs={() => organization.tasks}
         renderChildren={tasks => <TaskList tasks={tasks} />}
       />
@@ -122,6 +138,7 @@ const Organization: React.FC<IOrganizationProps> = props => {
     return (
       <BlockChildren
         parent={organization}
+        emptyMessage="No projects yet."
         getChildrenIDs={() => organization.projects}
         renderChildren={projects => (
           <ProjectList projects={projects} setCurrentProject={() => null} />
@@ -134,6 +151,7 @@ const Organization: React.FC<IOrganizationProps> = props => {
     return (
       <BlockChildren
         parent={organization}
+        emptyMessage="No groups yet."
         getChildrenIDs={() => organization.groups}
         renderChildren={groups => <GroupList groups={groups} />}
       />
@@ -141,7 +159,11 @@ const Organization: React.FC<IOrganizationProps> = props => {
   };
 
   const renderCollaborators = () => {
-    return null;
+    return <C organization={organization} />;
+  };
+
+  const renderCollaborationRequests = () => {
+    return <CR organization={organization} />;
   };
 
   const shouldRenderLoading = () => {
@@ -190,6 +212,10 @@ const Organization: React.FC<IOrganizationProps> = props => {
         <Route
           path={`${organizationPath}/collaborators`}
           render={renderCollaborators}
+        />
+        <Route
+          path={`${organizationPath}/collaboration-requests`}
+          render={renderCollaborationRequests}
         />
         <Route
           path={`${organizationPath}/*`}

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useSelector } from "react-redux";
-import { useHistory, useRouteMatch } from "react-router";
+import { useHistory } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
@@ -14,19 +14,8 @@ import OH, { IOHDerivedProps } from "../utils/OH";
 import OrganizationContainer from "./OrganizationContainer";
 import OrganizationList from "./OrganizationList";
 
-interface IRouteMatchParams {
-  organizationID?: string;
-}
-
 const OrganizationListContainer: React.FC<{}> = props => {
   const history = useHistory();
-  const organizationPath = "/app/organizations/:organizationID";
-  const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
-    organizationPath
-  );
-  const organizationID =
-    selectedOrganizationRouteMatch &&
-    selectedOrganizationRouteMatch.params.organizationID;
   const user = useSelector(getSignedInUserRequired);
   const organizations = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.orgs)

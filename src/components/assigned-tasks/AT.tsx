@@ -1,5 +1,4 @@
-import styled from "@emotion/styled";
-import { Badge, Empty } from "antd";
+import { Empty } from "antd";
 import React from "react";
 import Media from "react-media";
 import { useSelector } from "react-redux";
@@ -12,9 +11,8 @@ import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import B, { IBBasket } from "../board/B";
-import Column from "../board/Column";
+import ColumnWithTitleAndCount from "../board/ColumnWithTitleAndCount";
 import StyledCenterContainer from "../styled/CenterContainer";
-import StyledFlexFillContainer from "../styled/FillContainer";
 import TaskList from "../task/TaskList";
 import theme from "../theme";
 import OH, { IOHDerivedProps } from "../utils/OH";
@@ -56,28 +54,17 @@ const AssignedTasks: React.FC<{}> = props => {
   };
 
   const renderColumn = (title: string, columnTasks: IBlock[]) => {
-    const renderHeader = () => {
-      return (
-        <StyledFlexFillContainer>
-          <StyledFlexFillContainer>
-            <StyledTitle>{title}</StyledTitle>
-          </StyledFlexFillContainer>
-          <StyledColumnOtherContainer>
-            <Badge count={columnTasks.length} />
-          </StyledColumnOtherContainer>
-        </StyledFlexFillContainer>
-      );
-    };
-
     const renderBody = () => {
       return <TaskList selectedCollaborators={{}} tasks={columnTasks} />;
     };
 
-    if (columnTasks.length > 0) {
-      return <Column header={renderHeader()} body={renderBody()} />;
-    }
-
-    return null;
+    return (
+      <ColumnWithTitleAndCount
+        title={title}
+        count={columnTasks.length}
+        body={renderBody()}
+      />
+    );
   };
 
   const getBaskets = () => {
@@ -156,11 +143,3 @@ export default AssignedTasks;
 
 // TODO: Global header for desktop
 // TODO: Shadow header for mobile
-
-const StyledColumnOtherContainer = styled.div({
-  marginLeft: "16px"
-});
-
-const StyledTitle = styled.div({
-  fontWeight: "bold"
-});

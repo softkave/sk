@@ -15,10 +15,11 @@ export interface IBlockChildrenProps {
   parent: IBlock;
   getChildrenIDs: () => string[];
   renderChildren: (blocks: IBlock[]) => React.ReactNode;
+  emptyMessage?: string;
 }
 
 const BlockChildren: React.FC<IBlockChildrenProps> = props => {
-  const { parent, renderChildren, getChildrenIDs } = props;
+  const { parent, renderChildren, getChildrenIDs, emptyMessage } = props;
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, blockIDs)
@@ -57,7 +58,8 @@ const BlockChildren: React.FC<IBlockChildrenProps> = props => {
   return (
     <B
       blocks={blocks}
-      getBaskets={() => [{ key: "tasks", blocks }]}
+      emptyMessage={emptyMessage}
+      getBaskets={() => (blocks.length > 0 ? [{ key: "blocks", blocks }] : [])}
       renderBasket={renderBasket}
     />
   );
