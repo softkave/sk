@@ -1,14 +1,11 @@
-import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
-import { IReduxState } from "../../store";
+import store from "../../store";
+import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  defaultOperationStatusTypes,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -23,14 +20,12 @@ export interface ILoadBlockChildrenOperationFuncDataProps {
 }
 
 export default async function loadBlockChildrenOperationFunc(
-  state: IReduxState,
-  dispatch: Dispatch,
   dataProps: ILoadBlockChildrenOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { block, isBacklog, types } = dataProps;
   const operation = getOperationWithIDForResource(
-    state,
+    store.getState(),
     getBlockChildrenOperationID,
     block.customId
   );
@@ -39,14 +34,17 @@ export default async function loadBlockChildrenOperationFunc(
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: getBlockChildrenOperationID,
-    resourceID: block.customId
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  store.dispatch(
+    pushOperation(
+      getBlockChildrenOperationID,
+      {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      block.customId
+    )
+  );
 
   try {
     const result = await blockNet.getBlockChildren({
@@ -78,7 +76,7 @@ export default async function loadBlockChildrenOperationFunc(
       }
     });
 
-    dispatch(blockActions.bulkAddBlocksRedux(blocks));
+    store.dispatch(blockActions.bulkAddBlocksRedux(blocks));
 
     // tslint:disable-next-line: forin
     for (const key in parentUpdate) {
@@ -91,14 +89,9 @@ export default async function loadBlockChildrenOperationFunc(
         block[key].length !== typeContainer.length
       ) {
         // TODO: Think on, this is currently fire and forget, should we wait for it?
-        updateBlockOperationFunc(
-          state,
-          dispatch,
-          { block, data: parentUpdate },
-          options
-        );
+        updateBlockOperationFunc({ block, data: parentUpdate }, options);
 
-        dispatch(
+        store.dispatch(
           blockActions.updateBlockRedux(block.customId, parentUpdate, {
             arrayUpdateStrategy: "replace"
           })
@@ -108,10 +101,31 @@ export default async function loadBlockChildrenOperationFunc(
       }
     }
 
-    dispatchOperationComplete(dispatchOptions);
+    store.dispatch(
+      pushOperation(
+        getBlockChildrenOperationID,
+        {
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    store.dispatch(
+      pushOperation(
+        getBlockChildrenOperationID,
+        {
+          error: transformedError,
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   }
 }

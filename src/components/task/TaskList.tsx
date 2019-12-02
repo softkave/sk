@@ -7,23 +7,17 @@ import ScrollList from "../ScrollList";
 import Task from "../task/Task";
 
 export interface ITaskListProps {
-  selectedCollaborators: { [key: string]: boolean };
   tasks: IBlock[];
   toggleForm?: (type: BlockType, block?: IBlock) => void;
+  selectedCollaborators?: { [key: string]: boolean };
 }
 
 const TaskList: React.FC<ITaskListProps> = props => {
   const { toggleForm, selectedCollaborators, tasks } = props;
 
-  const isAnyCollaboratorSelected = () => {
-    return (
-      isObject(selectedCollaborators) &&
-      Object.keys(selectedCollaborators).length > 0
-    );
-  };
-
-  const renderTasks = () => {
-    const filteredTasks = isAnyCollaboratorSelected()
+  const filteredTasks =
+    isObject(selectedCollaborators) &&
+    Object.keys(selectedCollaborators).length > 0
       ? tasks.filter(task => {
           const tc = task.taskCollaborators;
 
@@ -35,8 +29,8 @@ const TaskList: React.FC<ITaskListProps> = props => {
         })
       : tasks;
 
+  const renderTasks = () => {
     const tasksToRender = sortBlocksByPriority(filteredTasks);
-    console.log({ tasksToRender, filteredTasks, tasks });
     const renderedTasks = tasksToRender.map(task => {
       return (
         <StyledBlockThumbnailContainer key={task.customId}>

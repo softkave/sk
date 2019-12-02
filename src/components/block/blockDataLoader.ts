@@ -239,7 +239,7 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    loadBlockChildrenOperationFunc(state, dispatch, { block });
+    loadBlockChildrenOperationFunc({ block });
   }
 
   if (

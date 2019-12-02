@@ -10,10 +10,14 @@ import {
   getBlockCollaborationRequestsOperationID,
   getBlockCollaboratorsOperationID
 } from "../../redux/operations/operationIDs";
+import BlockChildren from "../board/BC";
 import GeneralErrorList from "../GeneralErrorList";
+import GroupList from "../group/GroupList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import Loading from "../Loading";
+import ProjectList from "../project/ProjectList";
 import List from "../styled/List";
+import TaskList from "../task/TaskList";
 
 export interface IOrganizationProps {
   organization: IBlock;
@@ -37,7 +41,7 @@ const Organization: React.FC<IOrganizationProps> = props => {
     }
   };
 
-  const loadCollaboratorsOperation = useOperation(
+  const loadCollaboratorsStatus = useOperation(
     {
       operationID: getBlockCollaboratorsOperationID,
       resourceID: organization.customId
@@ -45,7 +49,7 @@ const Organization: React.FC<IOrganizationProps> = props => {
     loadOrgCollaborators
   );
 
-  const loadCollaborationRequestsOperation = useOperation(
+  const loadRequestsStatus = useOperation(
     {
       operationID: getBlockCollaborationRequestsOperationID,
       resourceID: organization.customId
@@ -105,15 +109,35 @@ const Organization: React.FC<IOrganizationProps> = props => {
   };
 
   const renderTasks = () => {
-    return null;
+    return (
+      <BlockChildren
+        parent={organization}
+        getChildrenIDs={() => organization.tasks}
+        renderChildren={tasks => <TaskList tasks={tasks} />}
+      />
+    );
   };
 
   const renderProjects = () => {
-    return null;
+    return (
+      <BlockChildren
+        parent={organization}
+        getChildrenIDs={() => organization.projects}
+        renderChildren={projects => (
+          <ProjectList projects={projects} setCurrentProject={() => null} />
+        )}
+      />
+    );
   };
 
   const renderGroups = () => {
-    return null;
+    return (
+      <BlockChildren
+        parent={organization}
+        getChildrenIDs={() => organization.groups}
+        renderChildren={groups => <GroupList groups={groups} />}
+      />
+    );
   };
 
   const renderCollaborators = () => {
@@ -122,22 +146,22 @@ const Organization: React.FC<IOrganizationProps> = props => {
 
   const shouldRenderLoading = () => {
     return (
-      loadCollaboratorsOperation.isLoading ||
-      !!!loadCollaboratorsOperation.operation ||
-      loadCollaborationRequestsOperation.isLoading ||
-      !!!loadCollaborationRequestsOperation.operation
+      loadCollaboratorsStatus.isLoading ||
+      !!!loadCollaboratorsStatus.operation ||
+      loadRequestsStatus.isLoading ||
+      !!!loadRequestsStatus.operation
     );
   };
 
   const getLoadErrors = () => {
     const loadErrors: any[] = [];
 
-    if (loadCollaboratorsOperation.error) {
-      loadErrors.push(loadCollaboratorsOperation.error);
+    if (loadCollaboratorsStatus.error) {
+      loadErrors.push(loadCollaboratorsStatus.error);
     }
 
-    if (loadCollaborationRequestsOperation.error) {
-      loadErrors.push(loadCollaborationRequestsOperation.error);
+    if (loadRequestsStatus.error) {
+      loadErrors.push(loadRequestsStatus.error);
     }
 
     return loadErrors;

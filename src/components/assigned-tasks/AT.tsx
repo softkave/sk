@@ -10,13 +10,11 @@ import getTasksAssignedToUserOperationFunc from "../../redux/operations/block/ge
 import { getTasksAssignedToUserOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
-import cast from "../../utils/cast";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import B, { IBBasket } from "../board/B";
 import Column from "../board/Column";
 import StyledCenterContainer from "../styled/CenterContainer";
 import StyledFlexFillContainer from "../styled/FillContainer";
-import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 import TaskList from "../task/TaskList";
 import theme from "../theme";
 import OH, { IOHDerivedProps } from "../utils/OH";
@@ -31,7 +29,7 @@ const AssignedTasks: React.FC<{}> = props => {
   const assignedTasks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, user.assignedTasks || [])
   );
-  const total = assignedTasks.length;
+  // const total = assignedTasks.length;
   // const parentIDs = assignedTasks && aggregateBlocksParentIDs(assignedTasks);
   // const parents = useSelector<IReduxState, IBlock[]>(state =>
   //   getBlocksAsArray(state, parentIDs)
@@ -76,7 +74,7 @@ const AssignedTasks: React.FC<{}> = props => {
     };
 
     if (columnTasks.length > 0) {
-      return <StyledColumn header={renderHeader()} body={renderBody()} />;
+      return <Column header={renderHeader()} body={renderBody()} />;
     }
 
     return null;
@@ -129,38 +127,10 @@ const AssignedTasks: React.FC<{}> = props => {
         renderBasket={renderBasket}
       />
     );
-
-    // return (
-    //   <StyledHorizontalScrollContainer>
-    //     <StyledTasksContainerInner>
-    //       {renderColumn(
-    //         "Due Already",
-    //         sortBlocksByPriority(sortResult.dueAlready)
-    //       )}
-    //       {renderColumn("Due Today", sortBlocksByPriority(sortResult.dueToday))}
-    //       {renderColumn(
-    //         "Due Tomorrow",
-    //         sortBlocksByPriority(sortResult.dueTomorrow)
-    //       )}
-    //       {renderColumn(
-    //         "Due This Week",
-    //         sortBlocksByPriority(sortResult.dueThisWeek)
-    //       )}
-    //       {renderColumn(
-    //         "Due This Month",
-    //         sortBlocksByPriority(sortResult.dueThisMonth)
-    //       )}
-    //       {renderColumn(
-    //         hasNoneDue ? "Assigned Tasks" : "Rest",
-    //         sortBlocksByPriority(sortResult.rest)
-    //       )}
-    //     </StyledTasksContainerInner>
-    //   </StyledHorizontalScrollContainer>
-    // );
   };
 
   // TODO: Should we refactor this, it is used in multiple places?
-  const render = (renderProps: IOHDerivedProps) => {
+  const render = () => {
     return (
       <Media queries={{ mobile: `(min-width: ${theme.breakpoints.md})` }}>
         {matches => (
@@ -186,22 +156,6 @@ export default AssignedTasks;
 
 // TODO: Global header for desktop
 // TODO: Shadow header for mobile
-
-const StyledTasksContainerInner = styled.div`
-  height: 100%;
-  display: flex;
-  padding: 16px;
-  box-sizing: border-box;
-`;
-
-const lastOfTypeSelector = "&:last-of-type";
-const StyledColumn = styled(Column)({
-  marginRight: 16,
-
-  [lastOfTypeSelector]: {
-    marginRight: 0
-  }
-});
 
 const StyledColumnOtherContainer = styled.div({
   marginLeft: "16px"

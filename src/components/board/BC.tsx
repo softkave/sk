@@ -10,17 +10,18 @@ import ColumnWithTitleAndCount from "../board/ColumnWithTitleAndCount";
 import GeneralError from "../GeneralError";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import Loading from "../Loading";
-import TaskList from "./TaskList";
 
-export interface ITProps {
+export interface IBlockChildrenProps {
   parent: IBlock;
+  getChildrenIDs: () => string[];
+  renderChildren: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const T: React.FC<ITProps> = props => {
-  const { parent } = props;
-  const taskIDs = parent.tasks;
-  const tasks = useSelector<IReduxState, IBlock[]>(state =>
-    getBlocksAsArray(state, taskIDs)
+const BlockChildren: React.FC<IBlockChildrenProps> = props => {
+  const { parent, renderChildren, getChildrenIDs } = props;
+  const blockIDs = getChildrenIDs();
+  const blocks = useSelector<IReduxState, IBlock[]>(state =>
+    getBlocksAsArray(state, blockIDs)
   );
 
   const loadParentChildren = (loadProps: IUseOperationStatus) => {
@@ -33,8 +34,8 @@ const T: React.FC<ITProps> = props => {
     return (
       <ColumnWithTitleAndCount
         title={parent.name}
-        count={tasks.length}
-        body={<TaskList tasks={tasks} />}
+        count={blocks.length}
+        body={renderChildren(basket.blocks)}
       />
     );
   };
@@ -55,11 +56,11 @@ const T: React.FC<ITProps> = props => {
 
   return (
     <B
-      blocks={tasks}
-      getBaskets={() => [{ key: "tasks", blocks: tasks }]}
+      blocks={blocks}
+      getBaskets={() => [{ key: "tasks", blocks }]}
       renderBasket={renderBasket}
     />
   );
 };
 
-export default T;
+export default BlockChildren;

@@ -47,7 +47,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IUpdateBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return updateBlockOperationFunc(state, dispatch, props, options);
+      return updateBlockOperationFunc(props, options);
     },
 
     async onToggle(
@@ -75,7 +75,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: ILoadBlockChildrenOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockChildrenOperationFunc(state, dispatch, props, options);
+      return loadBlockChildrenOperationFunc(props, options);
     },
 
     async loadCollaborators(
