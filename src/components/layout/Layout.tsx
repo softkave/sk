@@ -125,14 +125,14 @@ const Layout: React.FC<{}> = props => {
 export default Layout;
 
 const StyledDesktopMenuContainer = styled.div({
-  marginTop: "64px",
+  marginTop: "12px",
   width: "240px"
 });
 
 const StyledDesktopBodyContainer = styled.div({
   display: "flex",
   flex: 1,
-  padding: "26px 0"
+  padding: "12px 0"
 });
 
 const StyledDesktopContainer = styled.div({

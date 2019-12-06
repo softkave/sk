@@ -2,10 +2,9 @@ import styled from "@emotion/styled";
 import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import moment from "moment";
 import React from "react";
-import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
+import { BlockType, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
-import BlockParentSelection from "../block/BlockParentSelection";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
@@ -36,10 +35,10 @@ export interface ITaskFormValues {
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
-  submitLabel: string;
   user: IUser;
   collaborators: IUser[];
-  parents: IBlock[];
+  // parents: IBlock[];
+  submitLabel?: React.ReactNode;
 }
 
 const defaultSubmitLabel = "Create Task";
@@ -72,8 +71,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleBlur,
       handleSubmit,
       isSubmitting,
-      setFieldValue,
-      parents
+      setFieldValue
+      // parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -88,7 +87,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   <FormError error={globalError} />
                 </Form.Item>
               )}
-              <Form.Item
+              {/* <Form.Item
                 label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
@@ -99,7 +98,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   parents={parents}
                   onChange={parentIDs => setFieldValue("parents", parentIDs)}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 label="Description"
                 help={

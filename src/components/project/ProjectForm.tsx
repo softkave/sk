@@ -1,7 +1,6 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
-import BlockParentSelection from "../block/BlockParentSelection";
+import { BlockType } from "../../models/block/block";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
 import {
@@ -25,8 +24,8 @@ export interface IProjectFormValues {
 
 export interface IProjectFormProps
   extends IFormikFormBaseProps<IProjectFormValues> {
-  parents: IBlock[];
-  submitLabel?: string;
+  // parents: IBlock[];
+  submitLabel?: React.ReactNode;
   existingProjects?: string[];
 }
 
@@ -49,8 +48,8 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldError,
-      setFieldValue,
-      parents
+      setFieldValue
+      // parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -65,7 +64,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
                   <FormError error={globalError} />
                 </Form.Item>
               )}
-              <Form.Item
+              {/* <Form.Item
                 label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
@@ -76,7 +75,7 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
                   parents={parents}
                   onChange={parentIDs => setFieldValue("parents", parentIDs)}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 label="Project Name"
                 help={touched.name && <FormError>{errors.name}</FormError>}

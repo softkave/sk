@@ -4,16 +4,16 @@ import BlockList from "../block/BlockList";
 
 export interface IProjectListProps {
   projects: IBlock[];
-  setCurrentProject: (project: IBlock) => void;
+  onClick?: (project: IBlock) => void; 
 }
 
 const ProjectList: React.FC<IProjectListProps> = props => {
-  const { setCurrentProject, projects } = props;
+  const { onClick, projects } = props;
 
   return (
     <BlockList
       blocks={projects}
-      onClick={setCurrentProject}
+      onClick={onClick}
       showFields={["name"]}
       emptyDescription="No projects available."
       itemStyle={{ padding: "16px" }}

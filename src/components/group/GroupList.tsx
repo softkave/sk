@@ -4,10 +4,11 @@ import BlockList from "../block/BlockList";
 
 export interface IGroupListProps {
   groups: IBlock[];
+  onClick?: (group: IBlock) => void; 
 }
 
 const GroupList: React.FC<IGroupListProps> = props => {
-  const { groups } = props;
+  const { groups, onClick } = props;
 
   return (
     <BlockList
@@ -15,6 +16,7 @@ const GroupList: React.FC<IGroupListProps> = props => {
       showFields={["name"]}
       emptyDescription="No groups available."
       itemStyle={{ padding: "16px" }}
+      onClick={onClick}
     />
   );
 };

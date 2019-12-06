@@ -3,7 +3,7 @@ import { Button } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
-import DeleteButton from "../DeleteButton";
+import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
 import StyledFlexContainer from "../styled/FlexContainer";
 import Priority from "./Priority";
 import ToggleSwitch from "./ToggleSwitch";
@@ -38,17 +38,12 @@ const Task: React.FC<ITaskProps> = props => {
           <Button icon="edit" onClick={() => onEdit(task)} title="edit task" />
         )}
         <span style={{ marginLeft: "4px" }}>
-          <DeleteButton
-            deleteButton={
-              <Button
-                icon="delete"
-                type="danger"
-                className="sk-minitask-close"
-              />
-            }
+          <DeleteButtonWithPrompt
             onDelete={onDeleteTask}
             title="Are you sure you want to delete this task?"
-          />
+          >
+            <Button icon="delete" type="danger" className="sk-minitask-close" />
+          </DeleteButtonWithPrompt>
         </span>
       </StyledControlsContainer>
     </StyledTask>
