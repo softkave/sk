@@ -37,3 +37,11 @@
 ## Hiding empty groups/block transfer
 
 - Add groups field to Board and the field that has children should be auto-selected or the field the user selects
+
+## Redesign
+
+- virtualized list
+- move the child route name like "Tasks" to the top with the org or board block name
+  Block name | Tasks | + \*
+- have the name visible for empty routes too
+- add icons to all types, and add the icons to their create buttons, like "# Create Task"

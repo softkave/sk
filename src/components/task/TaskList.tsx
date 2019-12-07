@@ -4,6 +4,7 @@ import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import ScrollList from "../ScrollList";
+import StyledFlexColumnContainer from "../styled/ColumnContainer";
 import Task from "../task/Task";
 
 export interface ITaskListProps {
@@ -49,7 +50,12 @@ const TaskList: React.FC<ITaskListProps> = props => {
     return renderedTasks;
   };
 
-  return <ScrollList>{renderTasks()}</ScrollList>;
+  return (
+    <StyledFlexColumnContainer>
+      <h1>Tasks</h1>
+      {renderTasks()}
+    </StyledFlexColumnContainer>
+  );
 };
 
 export default TaskList;

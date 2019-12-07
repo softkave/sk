@@ -5,8 +5,8 @@ import StyledFlexFillContainer from "../styled/FillContainer";
 import Column from "./Column";
 
 export interface IColumnWithTitleAndCountProps {
-  title: string;
   count: number;
+  title?: React.ReactNode;
   body?: React.ReactNode;
 }
 
@@ -15,14 +15,16 @@ const ColumnWithTitleAndCount: React.FC<IColumnWithTitleAndCountProps> = props =
 
   const renderHeader = () => {
     return (
-      <StyledFlexFillContainer>
+      title && (
         <StyledFlexFillContainer>
-          <StyledTitle>{title}</StyledTitle>
+          <StyledFlexFillContainer>
+            <StyledTitle>{title}</StyledTitle>
+          </StyledFlexFillContainer>
+          <StyledColumnOtherContainer>
+            <Badge count={count} />
+          </StyledColumnOtherContainer>
         </StyledFlexFillContainer>
-        <StyledColumnOtherContainer>
-          <Badge count={count} />
-        </StyledColumnOtherContainer>
-      </StyledFlexFillContainer>
+      )
     );
   };
 

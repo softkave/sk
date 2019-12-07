@@ -16,10 +16,17 @@ export interface IBlockChildrenProps {
   getChildrenIDs: () => string[];
   renderChildren: (blocks: IBlock[]) => React.ReactNode;
   emptyMessage?: string;
+  hideTitle?: boolean;
 }
 
 const BlockChildren: React.FC<IBlockChildrenProps> = props => {
-  const { parent, renderChildren, getChildrenIDs, emptyMessage } = props;
+  const {
+    parent,
+    renderChildren,
+    getChildrenIDs,
+    emptyMessage,
+    hideTitle
+  } = props;
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, blockIDs)
@@ -34,7 +41,7 @@ const BlockChildren: React.FC<IBlockChildrenProps> = props => {
   const renderBasket = (basket: IBBasket) => {
     return (
       <ColumnWithTitleAndCount
-        title={parent.name}
+        title={!hideTitle && parent.name}
         count={blocks.length}
         body={renderChildren(basket.blocks)}
       />

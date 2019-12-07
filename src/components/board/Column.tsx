@@ -12,7 +12,9 @@ const Column: React.FC<IColumnProps> = props => {
 
   return (
     <ColumnContainer className={className}>
-      <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
+      {header && (
+        <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
+      )}
       <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
     </ColumnContainer>
   );

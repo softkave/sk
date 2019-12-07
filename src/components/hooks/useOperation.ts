@@ -32,7 +32,7 @@ export interface IOperationSelector {
 type LoadOperation = (statusData: IUseOperationStatus) => void;
 type UseOperation = (
   selector: IOperationSelector,
-  loadOperation?: LoadOperation
+  loadOperation?: LoadOperation | false | null
 ) => IUseOperationStatus;
 
 export const getOperationDetailedStatus = (

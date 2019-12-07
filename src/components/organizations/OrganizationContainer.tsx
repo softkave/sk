@@ -7,7 +7,7 @@ import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import BA from "../board/BA";
 import StyledCenterContainer from "../styled/CenterContainer";
-import Organization from "./Organization";
+// import Organization from "./Organization";
 
 interface IRouteMatchParams {
   organizationID?: string;

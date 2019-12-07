@@ -7,7 +7,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
+import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
@@ -67,7 +67,37 @@ const BA: React.FC<IBAProps> = props => {
     null
   );
 
-  const blockPath = window.location.pathname;
+  const getBlockTypeFullName = (type: BlockType) => {
+    switch (type) {
+      case "org":
+        return "organization";
+      case "group":
+        return "group";
+      case "project":
+        return "project";
+      case "task":
+        return "task";
+      default:
+        return "block";
+    }
+  };
+
+  const pluralize = (str: string) => {
+    return `${str}s`;
+  };
+
+  const getPath = (b: IBlock) => {
+    const bTypeFullName = getBlockTypeFullName(b.type);
+    return `/${pluralize(bTypeFullName)}/${b.customId}`;
+  };
+
+  const parentIDs = Array.isArray(block.parents) ? block.parents : [];
+  const parents = useSelector<IReduxState, IBlock[]>(state =>
+    getBlocksAsArray(state, parentIDs)
+  );
+  const parentPath = parents.map(getPath).join("");
+  const blockPath = `/app${parentPath}${getPath(block)}`;
+
   const showBlockForm = !!blockForm;
   const user = useSelector(getSignedInUserRequired);
 
@@ -96,49 +126,30 @@ const BA: React.FC<IBAProps> = props => {
   const collaborators = useSelector<IReduxState, IUser[]>(state =>
     getUsersAsArray(state, collaboratorIDs)
   );
-  const loadCollaboratorsStatus =
-    hasCollaborators &&
-    useOperation(
-      {
-        operationID: getBlockCollaboratorsOperationID,
-        resourceID: block.customId
-      },
-      loadOrgCollaborators
-    );
+  const loadCollaboratorsStatus = useOperation(
+    {
+      operationID: getBlockCollaboratorsOperationID,
+      resourceID: block.customId
+    },
+    hasCollaborators && loadOrgCollaborators
+  );
 
   const isLoadingCollaborators =
     loadCollaboratorsStatus &&
     (loadCollaboratorsStatus.isLoading || !!!loadCollaboratorsStatus.operation);
 
   const hasRequests = block.type === "org";
-  const loadRequestsStatus =
-    hasRequests &&
-    useOperation(
-      {
-        operationID: getBlockCollaborationRequestsOperationID,
-        resourceID: block.customId
-      },
-      loadOrgCollaborationRequests
-    );
+  const loadRequestsStatus = useOperation(
+    {
+      operationID: getBlockCollaborationRequestsOperationID,
+      resourceID: block.customId
+    },
+    hasRequests && loadOrgCollaborationRequests
+  );
 
   const isLoadingRequests =
     loadRequestsStatus &&
     (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
-
-  const getBlockTypeFullName = (type: BlockType) => {
-    switch (type) {
-      case "org":
-        return "organization";
-      case "group":
-        return "group";
-      case "project":
-        return "project";
-      case "task":
-        return "task";
-      default:
-        return "block";
-    }
-  };
 
   const childrenTypes = getBlockValidChildrenTypes(block.type);
   const hasTasks = childrenTypes.includes("task");
@@ -214,9 +225,10 @@ const BA: React.FC<IBAProps> = props => {
     };
 
     const onClickItem = (item: MenuType) => {
-      history.push(`${window.location.pathname}/${item}`);
+      history.push(`${blockPath}/${item}`);
     };
 
+    // TODO: show selected child route, like by adding background color or something
     return (
       <StyledNavContainer>
         <List
@@ -365,6 +377,7 @@ const BA: React.FC<IBAProps> = props => {
   const renderTasks = () => {
     return (
       <BlockChildren
+        hideTitle
         parent={block}
         emptyMessage="No tasks yet."
         getChildrenIDs={() => block.tasks}
@@ -376,12 +389,11 @@ const BA: React.FC<IBAProps> = props => {
   const renderProjects = () => {
     return (
       <BlockChildren
+        hideTitle
         parent={block}
         emptyMessage="No projects yet."
         getChildrenIDs={() => block.projects}
-        renderChildren={projects => (
-          <ProjectList projects={projects} />
-        )}
+        renderChildren={projects => <ProjectList projects={projects} />}
       />
     );
   };
@@ -389,6 +401,7 @@ const BA: React.FC<IBAProps> = props => {
   const renderGroups = () => {
     return (
       <BlockChildren
+        hideTitle
         parent={block}
         emptyMessage="No groups yet."
         getChildrenIDs={() => block.groups}
@@ -423,12 +436,14 @@ const BA: React.FC<IBAProps> = props => {
     return loadErrors;
   };
 
+  console.log({ hasGroups, showBlockForm, blockPath });
+
   const renderChildrenRoutes = (addLandingMenu: boolean = true) => {
-    return (
+    const routes = (
       <Switch>
-        {addLandingMenu && (
+        {addLandingMenu ? (
           <Route exact path={blockPath} render={renderLandingMenu} />
-        )}
+        ) : null}
         {hasTasks && <Route path={`${blockPath}/tasks`} render={renderTasks} />}
         {hasGroups && (
           <Route path={`${blockPath}/groups`} render={renderGroups} />
@@ -454,6 +469,8 @@ const BA: React.FC<IBAProps> = props => {
         />
       </Switch>
     );
+
+    return routes;
   };
 
   const renderMobile = () => {
@@ -470,14 +487,15 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const renderDesktop = () => {
+    // TODO: render form without nav menu and have a back or cancelbutton
     return (
       <StyledContainer>
         {renderHeader()}
         <StyledBodyContainer>
           <div>{renderLandingMenu()}</div>
-          <div>
+          <StyledChildrenContainer>
             {showBlockForm ? renderForms() : renderChildrenRoutes(false)}
-          </div>
+          </StyledChildrenContainer>
         </StyledBodyContainer>
       </StyledContainer>
     );
@@ -531,7 +549,7 @@ const StyledMenuItemTitle = styled.div({
   marginRight: "16px"
 });
 
-const StyledHeaderName = styled.div({
+const StyledHeaderName = styled.h1({
   display: "flex",
   flex: 1,
   marginRight: "16px"
@@ -546,5 +564,10 @@ const StyledContainer = styled.div({
   display: "flex",
   flexDirection: "column",
   padding: "0 16px",
+  flex: 1
+});
+
+const StyledChildrenContainer = styled.div({
+  display: "flex",
   flex: 1
 });
