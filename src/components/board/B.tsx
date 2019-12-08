@@ -60,7 +60,6 @@ export default B;
 const StyledBasketsContainerInner = styled.div({
   height: "100%",
   display: "flex",
-  padding: "0 16px",
   boxSizing: "border-box"
 });
 

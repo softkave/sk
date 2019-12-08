@@ -7,7 +7,6 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
 
@@ -57,14 +56,13 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              {/* <Form.Item
+          <FormBody>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {/* <Form.Item
                 label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
@@ -76,47 +74,46 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
                   onChange={parentIDs => setFieldValue("parents", parentIDs)}
                 />
               </Form.Item> */}
-              <Form.Item
-                label="Project Name"
-                help={touched.name && <FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = event.target.value;
+            <Form.Item
+              label="Project Name"
+              help={touched.name && <FormError>{errors.name}</FormError>}
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
 
-                    setFieldValue("name", value);
+                  setFieldValue("name", value);
 
-                    if (value && value.length > 0) {
-                      if (this.projectExists(value)) {
-                        setFieldError("name", projectExistsErrorMessage);
-                      }
+                  if (value && value.length > 0) {
+                    if (this.projectExists(value)) {
+                      setFieldError("name", projectExistsErrorMessage);
                     }
-                  }}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+                  }
+                }}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block

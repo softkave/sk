@@ -68,7 +68,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IAddCollaboratorOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return addCollaboratorsOperationFunc(state, dispatch, props, options);
+      return addCollaboratorsOperationFunc(props, options);
     },
 
     async loadBlockChildren(

@@ -1,15 +1,14 @@
 import styled from "@emotion/styled";
 import isObject from "lodash/isObject";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
-import ScrollList from "../ScrollList";
 import StyledFlexColumnContainer from "../styled/ColumnContainer";
 import Task from "../task/Task";
 
 export interface ITaskListProps {
   tasks: IBlock[];
-  toggleForm?: (type: BlockType, block?: IBlock) => void;
+  toggleForm?: (block: IBlock) => void;
   selectedCollaborators?: { [key: string]: boolean };
 }
 
@@ -38,9 +37,7 @@ const TaskList: React.FC<ITaskListProps> = props => {
           <Task
             task={task}
             onEdit={
-              toggleForm
-                ? editedTask => toggleForm("task", editedTask)
-                : undefined
+              toggleForm ? editedTask => toggleForm(editedTask) : undefined
             }
           />
         </StyledBlockThumbnailContainer>

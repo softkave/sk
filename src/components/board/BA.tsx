@@ -2,18 +2,22 @@ import styled from "@emotion/styled";
 import { Badge, Dropdown, Menu, Modal } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useRouteMatch } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import {
   addBlockOperationID,
+  addCollaboratorsOperationID,
   getBlockCollaborationRequestsOperationID,
   getBlockCollaboratorsOperationID,
   updateBlockOperationID
@@ -21,7 +25,9 @@ import {
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
+import getNewBlock from "../block/getNewBlock";
 import BlockChildren from "../board/BC";
+import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
 import C from "../collaborator/C";
 import CR from "../collaborator/CR";
 import GeneralErrorList from "../GeneralErrorList";
@@ -32,12 +38,17 @@ import RenderForDevice from "../layout/RenderForDevice";
 import Loading from "../Loading";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import ProjectList from "../project/ProjectList";
+import StyledFlexColumnContainer from "../styled/ColumnContainer";
+import StyledFlexFillContainer from "../styled/FillContainer";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import List from "../styled/List";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
 import TaskList from "../task/TaskList";
+import B, { IBBasket } from "./B";
+import BD from "./BD";
+import Column from "./Column";
 
 type MenuType =
   | "groups"
@@ -56,6 +67,14 @@ interface IBlockFormState {
   isUpdateBlock?: boolean;
 }
 
+interface IGroupChildPathMatch {
+  groupID: string;
+}
+
+interface IProjectChildPathMatch {
+  projectID: string;
+}
+
 export interface IBAProps {
   block: IBlock;
 }
@@ -66,6 +85,10 @@ const BA: React.FC<IBAProps> = props => {
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
     null
   );
+  const [
+    showAddCollaboratorsForm,
+    setShowAddCollaboratorsForm
+  ] = React.useState(false);
 
   const getBlockTypeFullName = (type: BlockType) => {
     switch (type) {
@@ -98,6 +121,13 @@ const BA: React.FC<IBAProps> = props => {
   const parentPath = parents.map(getPath).join("");
   const blockPath = `/app${parentPath}${getPath(block)}`;
 
+  const childGroupMatch = useRouteMatch<IGroupChildPathMatch>(
+    `${blockPath}/groups/:groupID`
+  );
+  const childProjectMatch = useRouteMatch<IProjectChildPathMatch>(
+    `${blockPath}/projects/:projectID`
+  );
+
   const showBlockForm = !!blockForm;
   const user = useSelector(getSignedInUserRequired);
 
@@ -114,14 +144,12 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const hasCollaborators = block.type === "org";
-  const blockWithCollaboratorsID = hasCollaborators
-    ? block.customId
-    : block.parents[0];
-  const blockWithCollaborators = useSelector<IReduxState, IBlock>(
-    state => getBlock(state, blockWithCollaboratorsID)!
+  const organizationID = hasCollaborators ? block.customId : block.parents[0];
+  const organization = useSelector<IReduxState, IBlock>(
+    state => getBlock(state, organizationID)!
   );
-  const collaboratorIDs = Array.isArray(blockWithCollaborators.collaborators)
-    ? blockWithCollaborators.collaborators
+  const collaboratorIDs = Array.isArray(organization.collaborators)
+    ? organization.collaborators
     : [];
   const collaborators = useSelector<IReduxState, IUser[]>(state =>
     getUsersAsArray(state, collaboratorIDs)
@@ -135,9 +163,15 @@ const BA: React.FC<IBAProps> = props => {
   );
 
   const isLoadingCollaborators =
-    loadCollaboratorsStatus &&
+    hasCollaborators &&
     (loadCollaboratorsStatus.isLoading || !!!loadCollaboratorsStatus.operation);
 
+  const requestIDs = Array.isArray(organization.collaborationRequests)
+    ? organization.collaborationRequests
+    : [];
+  const requests = useSelector<IReduxState, INotification[]>(state =>
+    getNotificationsAsArray(state, requestIDs)
+  );
   const hasRequests = block.type === "org";
   const loadRequestsStatus = useOperation(
     {
@@ -148,7 +182,7 @@ const BA: React.FC<IBAProps> = props => {
   );
 
   const isLoadingRequests =
-    loadRequestsStatus &&
+    hasRequests &&
     (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
 
   const childrenTypes = getBlockValidChildrenTypes(block.type);
@@ -266,23 +300,40 @@ const BA: React.FC<IBAProps> = props => {
     });
   };
 
+  const renderAddCollaboratorForm = () => {
+    return (
+      <AddCollaboratorFormContainer
+        customId={block.customId}
+        existingCollaborationRequests={requests}
+        existingCollaborators={collaborators}
+        onClose={() => setShowAddCollaboratorsForm(false)}
+        onSubmit={(data, options) =>
+          addCollaboratorsOperationFunc({ block, ...data }, options)
+        }
+        operationID={addCollaboratorsOperationID}
+      />
+    );
+  };
+
   const renderForms = () => {
     if (blockForm) {
       const formBlock = blockForm.block;
       const showFormType = blockForm.block.type;
       const formType = blockForm.isAddBlock ? "create" : "edit";
+      const blockFormTypeFullName = getBlockTypeFullName(formBlock.type);
       const blockFormOperationId = blockForm.isAddBlock
         ? addBlockOperationID
         : updateBlockOperationID;
       const formLabel = (
         <StyledCapitalizeText>
-          {formType} {blockTypeFullName}
+          {formType} {blockFormTypeFullName}
         </StyledCapitalizeText>
       );
 
       return (
-        <div>
-          <h1>{formLabel}</h1>
+        <StyledFlexColumnContainer>
+          <h2>{formLabel}</h2>
+          <StyledFormContainer>
           {showFormType === "project" && (
             <ProjectFormContainer
               customId={formBlock.customId}
@@ -315,7 +366,8 @@ const BA: React.FC<IBAProps> = props => {
               collaborators={collaborators}
             />
           )}
-        </div>
+          </StyledFormContainer>
+        </StyledFlexColumnContainer>
       );
     }
   };
@@ -325,26 +377,53 @@ const BA: React.FC<IBAProps> = props => {
     type SettingsMenuKey = "edit" | "delete";
     const onSelectCreateMenuItem = (key: CreateMenuKey) => {
       switch (key) {
+        case "group":
+        case "project":
+        case "task":
+        case "org":
+          setBlockForm({
+            block: getNewBlock(user, key, block),
+            isAddBlock: true
+          });
+          break;
+
+        case "collaborator":
+          setShowAddCollaboratorsForm(true);
+          break;
       }
     };
+
+    const createMenuItems = childrenTypes.map(type => (
+      <StyledMenuItem key={type}>Create {type}</StyledMenuItem>
+    ));
+
+    if (hasCollaborators) {
+      createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
+      createMenuItems.push(
+        <StyledMenuItem key="collaborator">Add Collaborator</StyledMenuItem>
+      );
+    }
 
     const createMenu = (
       <Menu
         onClick={event => onSelectCreateMenuItem(event.key as CreateMenuKey)}
       >
-        {childrenTypes.map(type => (
-          <StyledMenuItem key={type}>Create {type}</StyledMenuItem>
-        ))}
-        <Menu.Divider />
-        <StyledMenuItem key="collaborator">Add Collaborator</StyledMenuItem>
+        {createMenuItems}
       </Menu>
     );
 
     const onSelectSettingsMenuItem = (key: SettingsMenuKey) => {
       switch (key) {
+        case "edit":
+          setBlockForm({
+            block,
+            isUpdateBlock: true
+          });
+          break;
+
         case "delete":
           promptConfirmDelete();
-          return;
+          break;
       }
     };
 
@@ -374,14 +453,42 @@ const BA: React.FC<IBAProps> = props => {
     );
   };
 
+  const onClickChild = (childBlock: IBlock) => {
+    history.push(`${window.location.pathname}/${childBlock.customId}`);
+  };
+
+  const renderChildrenGroup = (
+    blocks: IBlock[],
+    emptyMessage: string,
+    renderBasketFunc: (basket: IBBasket) => React.ReactNode
+  ) => {
+    return (
+      <B
+        blocks={blocks}
+        emptyMessage={emptyMessage}
+        getBaskets={() =>
+          blocks.length > 0 ? [{ key: "blocks", blocks }] : []
+        }
+        renderBasket={basket => <Column body={renderBasketFunc(basket)} />}
+      />
+    );
+  };
+
   const renderTasks = () => {
     return (
       <BlockChildren
-        hideTitle
         parent={block}
-        emptyMessage="No tasks yet."
         getChildrenIDs={() => block.tasks}
-        renderChildren={tasks => <TaskList tasks={tasks} />}
+        render={tasks =>
+          renderChildrenGroup(tasks, "No tasks yet.", () => (
+            <TaskList
+              tasks={tasks}
+              toggleForm={task =>
+                setBlockForm({ block: task, isUpdateBlock: true })
+              }
+            />
+          ))
+        }
       />
     );
   };
@@ -389,11 +496,13 @@ const BA: React.FC<IBAProps> = props => {
   const renderProjects = () => {
     return (
       <BlockChildren
-        hideTitle
         parent={block}
-        emptyMessage="No projects yet."
         getChildrenIDs={() => block.projects}
-        renderChildren={projects => <ProjectList projects={projects} />}
+        render={projects =>
+          renderChildrenGroup(projects, "No projects yet.", () => (
+            <ProjectList projects={projects} onClick={onClickChild} />
+          ))
+        }
       />
     );
   };
@@ -401,11 +510,13 @@ const BA: React.FC<IBAProps> = props => {
   const renderGroups = () => {
     return (
       <BlockChildren
-        hideTitle
         parent={block}
-        emptyMessage="No groups yet."
         getChildrenIDs={() => block.groups}
-        renderChildren={groups => <GroupList groups={groups} />}
+        render={groups =>
+          renderChildrenGroup(groups, "No groups yet.", () => (
+            <GroupList groups={groups} onClick={onClickChild} />
+          ))
+        }
       />
     );
   };
@@ -419,6 +530,7 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const shouldRenderLoading = () => {
+    console.log({ isLoadingCollaborators, isLoadingRequests });
     return isLoadingCollaborators || isLoadingRequests;
   };
 
@@ -479,6 +591,8 @@ const BA: React.FC<IBAProps> = props => {
         {renderHeader()}
         {showBlockForm ? (
           renderForms()
+        ) : showAddCollaboratorsForm ? (
+          renderAddCollaboratorForm()
         ) : (
           <StyledBodyContainer>{renderChildrenRoutes()}</StyledBodyContainer>
         )}
@@ -492,12 +606,48 @@ const BA: React.FC<IBAProps> = props => {
       <StyledContainer>
         {renderHeader()}
         <StyledBodyContainer>
-          <div>{renderLandingMenu()}</div>
-          <StyledChildrenContainer>
-            {showBlockForm ? renderForms() : renderChildrenRoutes(false)}
-          </StyledChildrenContainer>
+          {showBlockForm ? (
+            renderForms()
+          ) : showAddCollaboratorsForm ? (
+            renderAddCollaboratorForm()
+          ) : (
+            <React.Fragment>
+              <div>{renderLandingMenu()}</div>
+              <StyledChildrenContainer>
+                {showBlockForm ? renderForms() : renderChildrenRoutes(false)}
+              </StyledChildrenContainer>
+            </React.Fragment>
+          )}
         </StyledBodyContainer>
       </StyledContainer>
+    );
+  };
+
+  const renderChild = () => {
+    let childID: string | null = null;
+    let message: string = "";
+    let getChildrenIDsFunc: () => string[] = () => [];
+
+    if (childGroupMatch) {
+      childID = childGroupMatch.params.groupID;
+      message = "Group not found.";
+      getChildrenIDsFunc = () => block.groups;
+    } else if (childProjectMatch) {
+      childID = childProjectMatch.params.projectID;
+      message = "Project not found.";
+      getChildrenIDsFunc = () => block.projects;
+    }
+
+    if (childID === null) {
+      return null;
+    }
+
+    return (
+      <BlockChildren
+        parent={block}
+        getChildrenIDs={getChildrenIDsFunc}
+        render={() => <BD blockID={childID!} notFoundMessage={message} />}
+      />
     );
   };
 
@@ -510,6 +660,12 @@ const BA: React.FC<IBAProps> = props => {
     } else if (loadErrors.length > 0) {
       return <GeneralErrorList errors={loadErrors} />;
     }
+
+    if (childGroupMatch || childProjectMatch) {
+      return renderChild();
+    }
+
+    console.log("In BA");
 
     return (
       <RenderForDevice
@@ -571,3 +727,7 @@ const StyledChildrenContainer = styled.div({
   display: "flex",
   flex: 1
 });
+
+const StyledFormContainer = styled.div({
+  maxWidth: "300px"
+})

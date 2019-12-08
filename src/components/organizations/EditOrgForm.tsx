@@ -47,47 +47,45 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {formErrors.error && <FormError error={formErrors.error} />}
-              <Form.Item
-                label="Organization Name"
-                help={
-                  touched.name &&
-                  (!!orgExistsMessage ? (
-                    <OrgExistsMessage message={orgExistsMessage} />
-                  ) : (
-                    <FormError error={formErrors.name} />
-                  ))
-                }
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+          <FormBody>
+            {formErrors.error && <FormError error={formErrors.error} />}
+            <Form.Item
+              label="Organization Name"
+              help={
+                touched.name &&
+                (!!orgExistsMessage ? (
+                  <OrgExistsMessage message={orgExistsMessage} />
+                ) : (
+                  <FormError error={formErrors.name} />
+                ))
+              }
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block
