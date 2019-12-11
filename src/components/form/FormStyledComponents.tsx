@@ -14,12 +14,13 @@ export const FormScrollList = styled(ScrollList)({
 });
 
 export const FormBody = styled("div")({
-  padding: "24px 0",
+  padding: "24px",
   width: "100%"
 });
 
 export const FormControls = styled("div")({
-  display: "flex"
+  display: "flex",
+  padding: "24px"
 });
 
 export const StyledForm = styled("form")`

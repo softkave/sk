@@ -14,14 +14,14 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
 
     const menu = (
       <Menu onClick={({ key }) => onChange(key)}>
-        <Menu.Item key="very important">
-          <Priority level="very important" />
+        <Menu.Item key="not important">
+          <Priority level="not important" />
         </Menu.Item>
         <Menu.Item key="important">
           <Priority level="important" />
         </Menu.Item>
-        <Menu.Item key="not important">
-          <Priority level="not important" />
+        <Menu.Item key="very important">
+          <Priority level="very important" />
         </Menu.Item>
       </Menu>
     );

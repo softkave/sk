@@ -1,3 +1,4 @@
+import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import {
   aggregateBlocksParentIDs,
@@ -7,37 +8,41 @@ import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
+import { IReduxState } from "../../store";
 import * as userActions from "../../users/actions";
-import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { getTasksAssignedToUserOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { getOperationsWithID } from "../selectors";
 
 export default async function getTasksAssignedToUserOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
-  const operation = getFirstOperationWithID(
-    store.getState(),
+  const operations = getOperationsWithID(
+    state,
     getTasksAssignedToUserOperationID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(getTasksAssignedToUserOperationID, {
-      scopeID: options.scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
-      timestamp: Date.now()
-    })
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: getTasksAssignedToUserOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getTasksAssignedToUser();
@@ -66,10 +71,10 @@ export default async function getTasksAssignedToUserOperationFunc(
     }
 
     const taskIDs = tasks.map(block => block.customId);
-    const user = getSignedInUserRequired(store.getState());
+    const user = getSignedInUserRequired(state);
 
-    store.dispatch(blockActions.bulkAddBlocksRedux(tasks.concat(parents)));
-    store.dispatch(
+    dispatch(blockActions.bulkAddBlocksRedux(tasks.concat(parents)));
+    dispatch(
       userActions.updateUserRedux(
         user.customId,
         {
@@ -79,30 +84,21 @@ export default async function getTasksAssignedToUserOperationFunc(
       )
     );
 
-    store.dispatch(
-      pushOperation(getTasksAssignedToUserOperationID, {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    store.dispatch(
-      pushOperation(getTasksAssignedToUserOperationID, {
-        error: transformedError,
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }
 
-export function addTaskToUserIfAssigned(block: IBlock) {
+export function addTaskToUserIfAssigned(
+  state: IReduxState,
+  dispatch: Dispatch,
+  block: IBlock
+) {
   if (block.type === "task") {
-    const user = getSignedInUserRequired(store.getState());
+    const user = getSignedInUserRequired(state);
 
     if (Array.isArray(user.assignedTasks)) {
       const assignedTaskIDs = [...user.assignedTasks];
@@ -119,7 +115,7 @@ export function addTaskToUserIfAssigned(block: IBlock) {
         }
       }
 
-      store.dispatch(
+      dispatch(
         userActions.updateUserRedux(
           user.customId,
           {
@@ -132,9 +128,13 @@ export function addTaskToUserIfAssigned(block: IBlock) {
   }
 }
 
-export function removeTaskFromUserIfAssigned(block: IBlock) {
+export function removeTaskFromUserIfAssigned(
+  state: IReduxState,
+  dispatch: Dispatch,
+  block: IBlock
+) {
   if (block.type === "task") {
-    const user = getSignedInUserRequired(store.getState());
+    const user = getSignedInUserRequired(state);
 
     if (Array.isArray(user.assignedTasks)) {
       const assignedTaskIDs = [...user.assignedTasks];
@@ -144,7 +144,7 @@ export function removeTaskFromUserIfAssigned(block: IBlock) {
         assignedTaskIDs.splice(taskIDIndex, 1);
       }
 
-      store.dispatch(
+      dispatch(
         userActions.updateUserRedux(
           user.customId,
           {

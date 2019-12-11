@@ -1,36 +1,38 @@
+import { Dispatch } from "redux";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { IReduxState } from "../../store";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { loadRootBlocksOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { getOperationsWithID } from "../selectors";
 
 export default async function loadRootBlocksOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
-  const operation = getFirstOperationWithID(
-    store.getState(),
-    loadRootBlocksOperationID
-  );
+  const operations = getOperationsWithID(state, loadRootBlocksOperationID);
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(loadRootBlocksOperationID, {
-      scopeID: options.scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
-      timestamp: Date.now()
-    })
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: loadRootBlocksOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getRoleBlocks();
@@ -40,26 +42,11 @@ export default async function loadRootBlocksOperationFunc(
     }
 
     const { blocks: rootBlocks } = result;
-
-    store.dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
-    store.dispatch(
-      pushOperation(loadRootBlocksOperationID, {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    // TODO: Only save the error, not OperationError
     const transformedError = OperationError.fromAny(error);
 
-    store.dispatch(
-      pushOperation(loadRootBlocksOperationID, {
-        error: transformedError,
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

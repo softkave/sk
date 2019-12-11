@@ -1,85 +1,72 @@
 import styled from "@emotion/styled";
-import { Button } from "antd";
+import { Button, Col, Row } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
-import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
-import StyledFlexContainer from "../styled/FlexContainer";
+import { IUser } from "../../models/user/user";
+import { IBlockMethods } from "../block/methods";
+import DeleteButton from "../DeleteButton";
 import Priority from "./Priority";
-import ToggleSwitch from "./ToggleSwitch";
+import ToggleSwitchContainer from "./ToggleSwitchContainer";
+
+import "./task.css";
 
 export interface ITaskProps {
   task: IBlock;
+  user: IUser;
+  blockHandlers: IBlockMethods;
   onEdit?: (task: IBlock) => void;
 }
 
-const Task: React.FC<ITaskProps> = props => {
-  const { task, onEdit } = props;
+class Task extends React.PureComponent<ITaskProps> {
+  public render() {
+    const { task, blockHandlers, onEdit } = this.props;
 
-  const onDeleteTask = () => {
-    deleteBlockOperationFunc({ block: task });
-  };
-
-  return (
-    <StyledTask>
-      <StyledFlexContainer>
-        <div>
-          <ToggleSwitch task={task} />
-        </div>
-        <StyledPriorityContainer>
-          <Priority level={task.priority} />
-        </StyledPriorityContainer>
-      </StyledFlexContainer>
-      <StyledDescriptionContainer>
-        <StyledTaskDescription>{task.description}</StyledTaskDescription>
-      </StyledDescriptionContainer>
-      <StyledControlsContainer>
-        {onEdit && (
-          <Button icon="edit" onClick={() => onEdit(task)} title="edit task" />
-        )}
-        <span style={{ marginLeft: "4px" }}>
-          <DeleteButtonWithPrompt
-            onDelete={onDeleteTask}
-            title="Are you sure you want to delete this task?"
-          >
-            <Button icon="delete" type="danger" className="sk-minitask-close" />
-          </DeleteButtonWithPrompt>
-        </span>
-      </StyledControlsContainer>
-    </StyledTask>
-  );
-};
+    return (
+      <div className="sk-minitask">
+        <Row>
+          <Col span={4}>
+            <ToggleSwitchContainer task={task} />
+          </Col>
+          <Col span={20} className="sk-minitask-priority">
+            <Priority level={task.priority} cover />
+          </Col>
+        </Row>
+        <Row className="sk-minitask-desc">
+          <Col span={24} offset={0}>
+            <StyledTaskDescription>{task.description}</StyledTaskDescription>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24} className="sk-minitask-footer-right">
+            {onEdit && (
+              <Button
+                icon="edit"
+                onClick={() => onEdit(task)}
+                title="edit task"
+              />
+            )}
+            <span style={{ marginLeft: "4px" }}>
+              <DeleteButton
+                deleteButton={
+                  <Button
+                    icon="delete"
+                    type="danger"
+                    className="sk-minitask-close"
+                  />
+                }
+                onDelete={() => blockHandlers.onDelete({ block: task })}
+                title="Are you sure you want to delete this task?"
+              />
+            </span>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+}
 
 export default Task;
 
 const StyledTaskDescription = styled.p({
-  padding: 0,
-  margin: 0,
-  whiteSpace: "pre-wrap",
-  wordBreak: "normal",
-  overflowWrap: "break-word",
-  hyphens: "auto"
-});
-
-const StyledTask = styled.div({
-  padding: "8px",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
-  backgroundColor: "white",
-  display: "flex",
-  flexDirection: "column"
-});
-
-const StyledDescriptionContainer = styled.div({
-  margin: "16px 0"
-});
-
-const StyledPriorityContainer = styled.div({
-  display: "flex",
-  flex: 1,
-  marginLeft: "8px"
-});
-
-const StyledControlsContainer = styled.div({
-  textAlign: "right"
+  padding: 0
 });

@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
+import logoutUserOperation from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { setRootView } from "../../redux/view/actions";
@@ -23,7 +23,7 @@ function mergeProps(state, { dispatch }) {
     user,
     currentViewName: view.viewName,
     onLogout() {
-      // logoutUserOperationFunc(state, dispatch);
+      logoutUserOperation(state, dispatch);
     },
     onChangeView(newViewName: string) {
       dispatch(setRootView({ viewName: newViewName }));

@@ -7,7 +7,7 @@ export interface ISoftkaveLoadingViewProps {
   percent?: number;
 }
 
-const SoftkaveLoadingView: React.FC<ISoftkaveLoadingViewProps> = props => {
+const SoftkaveLoadingView: React.SFC<ISoftkaveLoadingViewProps> = props => {
   return (
     <ViewShell>
       <SoftkaveLoadingText percent={props.percent!} />

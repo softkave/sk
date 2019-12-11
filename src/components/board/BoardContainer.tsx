@@ -25,14 +25,12 @@ export interface IBoardContainerProps {
 
 function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
   const user = getSignedInUserRequired(state);
-  const block = ownProps.block || getBlock(state, ownProps.blockID)!;
+  const block = ownProps.block || getBlock(state, ownProps.blockID);
   const blockHandlers = getBlockMethods(state, dispatch);
-  const { view, blockData } = blockDataLoader(state, dispatch, {
-    block: block!
-  });
+  const { view, blockData } = blockDataLoader(state, dispatch, { block });
 
   return {
-    block: block!,
+    block,
     currentView: view,
     readyProps:
       view.viewName === "ready"
@@ -46,7 +44,7 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
             groups: blockData.groups!,
             collaborators: blockData.collaborators!,
             collaborationRequests: blockData.collaborationRequests!,
-            parents: getBlockParents(state, block!)
+            parents: getBlockParents(state, block)
           }
         : undefined
   };

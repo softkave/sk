@@ -4,7 +4,7 @@ import IView from "../../redux/view/view";
 import NotFoundView from "./NotFoundView";
 
 export interface IRenderView extends IView {
-  component?: React.ComponentClass | React.FC;
+  component?: React.ComponentClass | React.SFC;
   renderedComponent?: React.ReactElement;
   render?: (props?: any) => React.ReactNode;
 }

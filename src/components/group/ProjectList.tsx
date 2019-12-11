@@ -7,7 +7,7 @@ export interface IProjectListProps {
   setCurrentProject: (project: IBlock) => void;
 }
 
-const ProjectList: React.FC<IProjectListProps> = props => {
+const ProjectList: React.SFC<IProjectListProps> = props => {
   const { setCurrentProject, projects } = props;
 
   return (
@@ -15,7 +15,7 @@ const ProjectList: React.FC<IProjectListProps> = props => {
       blocks={projects}
       onClick={setCurrentProject}
       showFields={["name"]}
-      emptyDescription="No projects available."
+      emptyDescription="No projects available"
       itemStyle={{ padding: "16px" }}
     />
   );

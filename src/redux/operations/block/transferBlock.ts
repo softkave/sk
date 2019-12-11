@@ -1,10 +1,11 @@
+import { Dispatch } from "redux";
 import { makeBlockParentIDs } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { blockErrorMessages } from "../../../models/block/blockErrorMessages";
 import { blockConstants } from "../../../models/block/constants";
 import * as blockActions from "../../blocks/actions";
 import { getEveryBlockChildrenInState } from "../../blocks/selectors";
-import store from "../../store";
+import { IReduxState } from "../../store";
 
 export default async function transferBlockOperation() {
   throw new Error("Not implemented yet");
@@ -191,15 +192,23 @@ function updateDraggedBlockInSourceAndDestination(
   };
 }
 
-function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
-  store.dispatch(
+function updateBlockInStore(
+  dispatch: Dispatch,
+  block: IBlock,
+  updates: Partial<IBlock>
+) {
+  dispatch(
     blockActions.updateBlockRedux(block.customId, updates, {
       arrayUpdateStrategy: "replace"
     })
   );
 }
 
-export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
+export function transferBlockStateHelper(
+  state: IReduxState,
+  dispatch: Dispatch,
+  props: ITransferBlockReduxProps
+) {
   checkBlocks(props);
 
   const sourceBlock = props.sourceBlock;
@@ -208,7 +217,7 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
 
   if (sourceBlock.customId === destinationBlock.customId) {
     const sourceBlockUpdates = updateDraggedBlockPositionInSource(props);
-    updateBlockInStore(sourceBlock, sourceBlockUpdates);
+    updateBlockInStore(dispatch, sourceBlock, sourceBlockUpdates);
   } else {
     // Ignores paremeters' groupContext and dropPosition
     const {
@@ -217,20 +226,17 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
       draggedBlockUpdates
     } = updateDraggedBlockInSourceAndDestination(props);
 
-    updateBlockInStore(sourceBlock, sourceBlockUpdates);
-    updateBlockInStore(draggedBlock, draggedBlockUpdates);
-    updateBlockInStore(destinationBlock, destinationBlockUpdates);
+    updateBlockInStore(dispatch, sourceBlock, sourceBlockUpdates);
+    updateBlockInStore(dispatch, draggedBlock, draggedBlockUpdates);
+    updateBlockInStore(dispatch, destinationBlock, destinationBlockUpdates);
 
     if (draggedBlock.type !== "task") {
-      const blockChildren = getEveryBlockChildrenInState(
-        store.getState(),
-        draggedBlock
-      );
+      const blockChildren = getEveryBlockChildrenInState(state, draggedBlock);
       const draggedBlockChildrenUpdates: Partial<IBlock> = {
         parents: makeBlockParentIDs({ ...draggedBlock, ...draggedBlockUpdates })
       };
 
-      store.dispatch(
+      dispatch(
         blockActions.bulkUpdateBlocksRedux(
           blockChildren.map(child => {
             return {

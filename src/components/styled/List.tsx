@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Empty, List as AntDesignList } from "antd";
+import { Empty, List as AntDList } from "antd";
 import React from "react";
 import StyledCenterContainer from "../styled/CenterContainer";
 
@@ -10,7 +10,7 @@ export interface IListProps<T> {
   emptyDescription?: string | React.ReactNode;
 }
 
-const defaultEmptyDescription = "No data.";
+const defaultEmptyDescription = "No data";
 
 class List<T> extends React.Component<IListProps<T>> {
   public static defaultProps: Partial<IListProps<any>> = {
@@ -29,11 +29,10 @@ class List<T> extends React.Component<IListProps<T>> {
     }
 
     return (
-      <AntDesignList
+      <AntDList
         dataSource={dataSource}
         rowKey={rowKey}
         renderItem={this.renderItem}
-        style={{ width: "100%" }}
       />
     );
   }
@@ -51,18 +50,22 @@ class List<T> extends React.Component<IListProps<T>> {
 
 export default List;
 
-const lastOfTypeSelector = "&:last-of-type";
-const hoverSelector = "&:hover";
+const StyledListContainer = styled.div({
+  display: "flex",
+  width: "100%",
+  height: "100%",
+  flexDirection: "column"
+});
 
 const StyledListItemContainer = styled.div({
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
-  [lastOfTypeSelector]: {
+  "&:last-of-type": {
     borderBottom: 0
   },
 
-  [hoverSelector]: {
+  "&:hover": {
     backgroundColor: "#E6F7FF"
   }
 });

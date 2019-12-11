@@ -3,8 +3,7 @@ import StyledFlexContainer from "./FlexContainer";
 
 const StyledCenterContainer = styled(StyledFlexContainer)({
   alignItems: "center",
-  justifyContent: "center",
-  flex: 1
+  justifyContent: "center"
 });
 
 export default StyledCenterContainer;

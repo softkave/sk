@@ -5,7 +5,7 @@ import WebBody from "./WebBody";
 import WebFooter from "./WebFooter";
 import WebHeader from "./WebHeader";
 
-const Web: React.FC<{}> = () => {
+const Web: React.SFC<{}> = () => {
   return (
     <StyledWeb>
       <StyledWebHeader>

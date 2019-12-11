@@ -30,7 +30,7 @@ export interface IFormMessageProps {
   type?: "error" | "message";
 }
 
-const FormMessage: React.FC<IFormMessageProps> = props => {
+const FormMessage: React.SFC<IFormMessageProps> = props => {
   const { children, message, type } = props;
   // const messages = Array.isArray(message) ? message : message ? [message] : [];
   const messages = Array.isArray(message)

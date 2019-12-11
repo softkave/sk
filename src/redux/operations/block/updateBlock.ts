@@ -1,14 +1,17 @@
 import moment from "moment";
+import { Dispatch } from "redux";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getBlock } from "../../blocks/selectors";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { IReduxState } from "../../store";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -26,12 +29,14 @@ export interface IUpdateBlockOperationFuncDataProps {
 }
 
 export default async function updateBlockOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: IUpdateBlockOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { block, data } = dataProps;
   const operation = getOperationWithIDForResource(
-    store.getState(),
+    state,
     updateBlockOperationID,
     block.customId
   );
@@ -46,17 +51,14 @@ export default async function updateBlockOperationFunc(
     data.subTasks = addCustomIDToSubTasks(data.subTasks);
   }
 
-  store.dispatch(
-    pushOperation(
-      updateBlockOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      block.customId
-    )
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: updateBlockOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.updateBlock({ block, data });
@@ -65,61 +67,32 @@ export default async function updateBlockOperationFunc(
       throw result.errors;
     }
 
-    addTaskToUserIfAssigned(block);
+    addTaskToUserIfAssigned(state, dispatch, block);
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
-      const sourceBlock = getBlock(
-        store.getState(),
-        block.parents[block.parents.length - 1]
-      );
-      const destinationBlock = getBlock(
-        store.getState(),
-        forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
-      );
-
-      if (sourceBlock && destinationBlock) {
-        transferBlockStateHelper({
-          sourceBlock,
-          destinationBlock,
-          draggedBlock: forTransferBlockOnly
-        });
-      }
+      transferBlockStateHelper(state, dispatch, {
+        draggedBlock: forTransferBlockOnly,
+        sourceBlock: getBlock(state, block.parents[block.parents.length - 1]),
+        destinationBlock: getBlock(
+          state,
+          forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
+        )
+      });
     }
 
-    store.dispatch(
+    dispatch(
       blockActions.updateBlockRedux(block.customId, data, {
         arrayUpdateStrategy: "replace"
       })
     );
 
-    store.dispatch(
-      pushOperation(
-        updateBlockOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
       stripBaseNames: ["data"]
     });
 
-    store.dispatch(
-      pushOperation(
-        updateBlockOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

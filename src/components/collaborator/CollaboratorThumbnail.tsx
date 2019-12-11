@@ -13,7 +13,7 @@ export interface ICollaboratorThumbnailProps {
   onClick?: () => void;
 }
 
-const CollaboratorThumbnail: React.FC<ICollaboratorThumbnailProps> = props => {
+const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = props => {
   const { collaborator, style, onClick, className } = props;
 
   return (

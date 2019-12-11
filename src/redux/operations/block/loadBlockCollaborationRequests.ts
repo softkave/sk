@@ -1,12 +1,15 @@
+import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { IReduxState } from "../../store";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -18,12 +21,14 @@ export interface ILoadBlockCollaborationRequestsOperationFuncDataProps {
 }
 
 export default async function loadBlockCollaborationRequestsOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: ILoadBlockCollaborationRequestsOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
   const operation = getOperationWithIDForResource(
-    store.getState(),
+    state,
     getBlockCollaborationRequestsOperationID,
     block.customId
   );
@@ -32,17 +37,14 @@ export default async function loadBlockCollaborationRequestsOperationFunc(
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      getBlockCollaborationRequestsOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      block.customId
-    )
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: getBlockCollaborationRequestsOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await blockNet.getCollabRequests({ block });
@@ -53,8 +55,8 @@ export default async function loadBlockCollaborationRequestsOperationFunc(
 
     const { requests } = result;
     const ids = requests.map(request => request.customId);
-    store.dispatch(notificationActions.bulkAddNotificationsRedux(requests));
-    store.dispatch(
+    dispatch(notificationActions.bulkAddNotificationsRedux(requests));
+    dispatch(
       blockActions.updateBlockRedux(
         block.customId,
         {
@@ -64,31 +66,10 @@ export default async function loadBlockCollaborationRequestsOperationFunc(
       )
     );
 
-    store.dispatch(
-      pushOperation(
-        getBlockCollaborationRequestsOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    store.dispatch(
-      pushOperation(
-        getBlockCollaborationRequestsOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

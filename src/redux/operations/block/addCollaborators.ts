@@ -1,14 +1,17 @@
 import moment from "moment";
+import { Dispatch } from "redux";
 import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { IReduxState } from "../../store";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -25,12 +28,14 @@ export interface IAddCollaboratorOperationFuncDataProps {
 }
 
 export default async function addCollaboratorsOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: IAddCollaboratorOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { block, requests, message, expiresAt } = dataProps;
   const operation = getOperationWithIDForResource(
-    store.getState(),
+    state,
     addCollaboratorsOperationID,
     block.customId
   );
@@ -39,17 +44,14 @@ export default async function addCollaboratorsOperationFunc(
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      addCollaboratorsOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      block.customId
-    )
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: addCollaboratorsOperationID,
+    resourceID: block.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const proccessedCollaborators = requests.map(request => {
@@ -85,7 +87,7 @@ export default async function addCollaboratorsOperationFunc(
      * as updates will be pushed as they occur
      */
     // TODO: Block data loader is not reloading, look into why
-    store.dispatch(
+    dispatch(
       blockActions.updateBlockRedux(
         block.customId,
         {
@@ -95,33 +97,12 @@ export default async function addCollaboratorsOperationFunc(
       )
     );
 
-    store.dispatch(
-      pushOperation(
-        addCollaboratorsOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
       replaceBaseNames: [{ from: "collaborators", to: "requests" }]
     });
 
-    store.dispatch(
-      pushOperation(
-        addCollaboratorsOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        block.customId
-      )
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }
