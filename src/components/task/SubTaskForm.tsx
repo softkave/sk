@@ -13,7 +13,7 @@ export interface ISubTaskFormProps {
   errorMessage?: string | null;
 }
 
-const SubTaskForm: React.SFC<ISubTaskFormProps> = props => {
+const SubTaskForm: React.FC<ISubTaskFormProps> = props => {
   const {
     subTask,
     onChange,

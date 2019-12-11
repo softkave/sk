@@ -26,7 +26,7 @@ const descriptionValidationSchema = yup
   .max(blockConstants.maxDescriptionLength)
   .matches(textPattern);
 
-const SubTaskList: React.SFC<ISubTaskListProps> = props => {
+const SubTaskList: React.FC<ISubTaskListProps> = props => {
   const { subTasks: value, onChange, canAddSubTasks } = props;
   const subTasks = value || [];
 

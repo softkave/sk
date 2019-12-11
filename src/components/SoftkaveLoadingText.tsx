@@ -3,7 +3,7 @@ import React from "react";
 
 import LoadingText, { ILoadingTextProps } from "./LoadingText";
 
-const SoftkaveLoadingText: React.SFC<ILoadingTextProps> = props => {
+const SoftkaveLoadingText: React.FC<ILoadingTextProps> = props => {
   return (
     <LoadingText {...props}>
       <StyledText>Softkave</StyledText>

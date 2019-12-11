@@ -1,4 +1,3 @@
-import { Dispatch } from "redux";
 import { getUserData } from "../../../net/user";
 import {
   getUserTokenFromStorage,
@@ -6,42 +5,38 @@ import {
 } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
-import { IReduxState } from "../../store";
+import store from "../../store";
 import { addUserRedux } from "../../users/actions";
 import { setDefaultView } from "../../view/actions";
+import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  defaultOperationStatusTypes,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
-import { getOperationsWithID } from "../selectors";
+import { getFirstOperationWithID } from "../selectors";
 
 export default async function initializeAppSessionOperationFunc(
-  state: IReduxState,
-  dispatch: Dispatch,
-  dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
-  const operations = getOperationsWithID(
+  const state = store.getState();
+  const operation = getFirstOperationWithID(
     state,
     initializeAppSessionOperationID
   );
 
-  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeID)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: initializeAppSessionOperationID
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  store.dispatch(
+    pushOperation(initializeAppSessionOperationID, {
+      scopeID: options.scopeID,
+      status: defaultOperationStatusTypes.operationStarted,
+      timestamp: Date.now()
+    })
+  );
 
   try {
     const token = getUserTokenFromStorage();
@@ -56,20 +51,33 @@ export default async function initializeAppSessionOperationFunc(
       const { user, token: userToken } = result;
 
       saveUserTokenToStorage(userToken);
-      dispatch(addUserRedux(user));
-      dispatch(setDefaultView());
-      dispatch(loginUserRedux(userToken, user.customId));
+      store.dispatch(addUserRedux(user));
+      store.dispatch(setDefaultView());
+      store.dispatch(loginUserRedux(userToken, user.customId));
 
       saveUserTokenToStorage(userToken);
     } else {
-      dispatch(setSessionToWeb());
+      store.dispatch(setSessionToWeb());
     }
 
-    dispatchOperationComplete(dispatchOptions);
+    store.dispatch(
+      pushOperation(initializeAppSessionOperationID, {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
+    );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
+    store.dispatch(setSessionToWeb());
+    const finalError = OperationError.fromAny(error);
 
-    dispatch(setSessionToWeb());
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    store.dispatch(
+      pushOperation(initializeAppSessionOperationID, {
+        error: finalError,
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationComplete,
+        timestamp: Date.now()
+      })
+    );
   }
 }

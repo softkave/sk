@@ -12,7 +12,7 @@ export interface ISubTaskProps {
   onDelete: () => void;
 }
 
-const SubTask: React.SFC<ISubTaskProps> = props => {
+const SubTask: React.FC<ISubTaskProps> = props => {
   const { subTask, onEdit, onDelete } = props;
 
   const renderControls = () => {

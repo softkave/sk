@@ -5,7 +5,7 @@ import addBlockOperationFunc, {
 import addCollaboratorsOperationFunc, {
   IAddCollaboratorOperationFuncDataProps
 } from "../../redux/operations/block/addCollaborators";
-import deleteBlockOperation, {
+import deleteBlockOperationFunc, {
   IDeleteBlockOperationFuncDataProps
 } from "../../redux/operations/block/deleteBlock";
 import loadBlockChildrenOperationFunc, {
@@ -47,63 +47,53 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IUpdateBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return updateBlockOperationFunc(state, dispatch, props, options);
+      return updateBlockOperationFunc(props, options);
     },
 
     async onToggle(
       props: IToggleTaskOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return toggleTaskOperationFunc(state, dispatch, props, options);
+      return toggleTaskOperationFunc(props, options);
     },
 
     async onDelete(
       props: IDeleteBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return deleteBlockOperation(state, dispatch, props, options);
+      return deleteBlockOperationFunc(props, options);
     },
 
     async onAddCollaborators(
       props: IAddCollaboratorOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return addCollaboratorsOperationFunc(state, dispatch, props, options);
+      return addCollaboratorsOperationFunc(props, options);
     },
 
     async loadBlockChildren(
       props: ILoadBlockChildrenOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockChildrenOperationFunc(state, dispatch, props, options);
+      return loadBlockChildrenOperationFunc(props, options);
     },
 
     async loadCollaborators(
       props: ILoadBlockCollaboratorsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaboratorsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaboratorsOperationFunc(props, options);
     },
 
     async loadCollaborationRequests(
       props: ILoadBlockCollaborationRequestsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaborationRequestsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaborationRequestsOperationFunc(props, options);
     },
 
     async loadRootData() {
-      return loadRootBlocksOperationFunc(state, dispatch);
+      return loadRootBlocksOperationFunc();
     }
   };
 }

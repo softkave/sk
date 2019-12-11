@@ -1,7 +1,6 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
-import BlockParentSelection from "../block/BlockParentSelection";
+import { BlockType } from "../../models/block/block";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
 import {
@@ -25,9 +24,9 @@ export interface IGroupFormValues {
 
 export interface IGroupFormProps
   extends IFormikFormBaseProps<IGroupFormValues> {
-  submitLabel?: string;
+  submitLabel?: React.ReactNode;
   existingGroups?: string[];
-  parents: IBlock[];
+  // parents: IBlock[];
 }
 
 const defaultSubmitLabel = "Create Group";
@@ -49,8 +48,8 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldError,
-      setFieldValue,
-      parents
+      setFieldValue
+      // parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -58,15 +57,14 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Parent"
+          <FormBody>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {/* <Form.Item
+                label="Parent Block"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
                 }
@@ -78,48 +76,47 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
                     setFieldValue("parents", parentIDs);
                   }}
                 />
-              </Form.Item>
-              <Form.Item
-                label="Group Name"
-                help={touched.name && <FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = event.target.value;
+              </Form.Item> */}
+            <Form.Item
+              label="Group Name"
+              help={touched.name && <FormError>{errors.name}</FormError>}
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
 
-                    setFieldValue("name", value);
+                  setFieldValue("name", value);
 
-                    if (value && value.length > 0) {
-                      if (this.groupExists(value)) {
-                        setFieldError("name", groupExistsErrorMessage);
-                      }
+                  if (value && value.length > 0) {
+                    if (this.groupExists(value)) {
+                      setFieldError("name", groupExistsErrorMessage);
                     }
-                  }}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+                  }
+                }}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block

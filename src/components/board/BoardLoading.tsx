@@ -4,7 +4,7 @@ import React from "react";
 
 import BoardShell, { IBoardShellProps } from "./BoardShell";
 
-const BoardLoading: React.SFC<IBoardShellProps> = props => {
+const BoardLoading: React.FC<IBoardShellProps> = props => {
   return (
     <BoardShell {...props}>
       <StyledLoadingIcon type="loading" />

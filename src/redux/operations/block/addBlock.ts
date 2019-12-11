@@ -94,7 +94,7 @@ export default async function addBlockOperationFunc(
       );
     }
 
-    addTaskToUserIfAssigned(state, dispatch, block);
+    addTaskToUserIfAssigned(block);
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
