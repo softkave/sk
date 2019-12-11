@@ -10,10 +10,12 @@ import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import {
   addBlockOperationID,
@@ -39,7 +41,6 @@ import Loading from "../Loading";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import ProjectList from "../project/ProjectList";
 import StyledFlexColumnContainer from "../styled/ColumnContainer";
-import StyledFlexFillContainer from "../styled/FillContainer";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import List from "../styled/List";
@@ -191,16 +192,19 @@ const BA: React.FC<IBAProps> = props => {
   const hasGroups = childrenTypes.includes("group");
   const blockTypeFullName = getBlockTypeFullName(block.type);
 
-  const onBeginCreateBlock = () => {};
-
-  const onCompleteCreateBlock = () => {};
-
-  const onBeginEditBlock = () => {};
-
-  const onCompleteEditBlock = (
-    values: any,
-    options: IOperationFuncOptions
-  ) => {};
+  const onCompleteEditBlock = (values: any, options: IOperationFuncOptions) => {
+    if (blockForm) {
+      if (blockForm.isAddBlock) {
+        const newBlock = { ...blockForm.block, ...values };
+        addBlockOperationFunc({ user, block: newBlock, parent: block });
+      } else {
+        updateBlockOperationFunc(
+          { block: blockForm.block, data: values },
+          options
+        );
+      }
+    }
+  };
 
   const onDeleteBlock = () => {
     deleteBlockOperationFunc({ block });
@@ -208,6 +212,8 @@ const BA: React.FC<IBAProps> = props => {
 
   const resetBlockForm = () => {
     // TODO: prompt the user if she has unsaved changes
+    console.log("hide foprm");
+    setBlockForm(null);
   };
 
   const renderLandingMenu = () => {
@@ -334,38 +340,38 @@ const BA: React.FC<IBAProps> = props => {
         <StyledFlexColumnContainer>
           <h2>{formLabel}</h2>
           <StyledFormContainer>
-          {showFormType === "project" && (
-            <ProjectFormContainer
-              customId={formBlock.customId}
-              initialValues={formBlock}
-              onClose={resetBlockForm}
-              onSubmit={onCompleteEditBlock}
-              operationID={blockFormOperationId}
-              submitLabel={formLabel}
-            />
-          )}
-          {showFormType === "group" && (
-            <GroupFormContainer
-              operationID={blockFormOperationId}
-              customId={formBlock.customId}
-              onClose={resetBlockForm}
-              onSubmit={onCompleteEditBlock}
-              initialValues={formBlock}
-              submitLabel={formLabel}
-            />
-          )}
-          {showFormType === "task" && (
-            <TaskFormContainer
-              operationID={blockFormOperationId}
-              customId={formBlock.customId}
-              onClose={resetBlockForm}
-              onSubmit={onCompleteEditBlock}
-              initialValues={formBlock}
-              user={user}
-              submitLabel={formLabel}
-              collaborators={collaborators}
-            />
-          )}
+            {showFormType === "project" && (
+              <ProjectFormContainer
+                customId={formBlock.customId}
+                initialValues={formBlock}
+                onClose={resetBlockForm}
+                onSubmit={onCompleteEditBlock}
+                operationID={blockFormOperationId}
+                submitLabel={formLabel}
+              />
+            )}
+            {showFormType === "group" && (
+              <GroupFormContainer
+                operationID={blockFormOperationId}
+                customId={formBlock.customId}
+                onClose={resetBlockForm}
+                onSubmit={onCompleteEditBlock}
+                initialValues={formBlock}
+                submitLabel={formLabel}
+              />
+            )}
+            {showFormType === "task" && (
+              <TaskFormContainer
+                operationID={blockFormOperationId}
+                customId={formBlock.customId}
+                onClose={resetBlockForm}
+                onSubmit={onCompleteEditBlock}
+                initialValues={formBlock}
+                user={user}
+                submitLabel={formLabel}
+                collaborators={collaborators}
+              />
+            )}
           </StyledFormContainer>
         </StyledFlexColumnContainer>
       );
@@ -614,7 +620,7 @@ const BA: React.FC<IBAProps> = props => {
             <React.Fragment>
               <div>{renderLandingMenu()}</div>
               <StyledChildrenContainer>
-                {showBlockForm ? renderForms() : renderChildrenRoutes(false)}
+                {renderChildrenRoutes(false)}
               </StyledChildrenContainer>
             </React.Fragment>
           )}
@@ -713,13 +719,13 @@ const StyledHeaderName = styled.h1({
 
 const StyledBodyContainer = styled.div({
   display: "flex",
-  flex: 1
+  flex: 1,
+  overflow: "auto"
 });
 
 const StyledContainer = styled.div({
   display: "flex",
   flexDirection: "column",
-  padding: "0 16px",
   flex: 1
 });
 
@@ -729,5 +735,5 @@ const StyledChildrenContainer = styled.div({
 });
 
 const StyledFormContainer = styled.div({
-  maxWidth: "300px"
-})
+  maxWidth: "400px"
+});

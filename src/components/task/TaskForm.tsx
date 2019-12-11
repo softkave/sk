@@ -14,6 +14,7 @@ import {
   FormControls,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import { ISubTaskValues } from "./SubTask";
@@ -37,6 +38,7 @@ export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
   user: IUser;
   collaborators: IUser[];
   // parents: IBlock[];
+  onClose: () => void;
   submitLabel?: React.ReactNode;
 }
 
@@ -70,7 +72,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleBlur,
       handleSubmit,
       isSubmitting,
-      setFieldValue
+      setFieldValue,
+      onClose
       // parents
     } = this.props;
 
@@ -191,6 +194,15 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              htmlType="button"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"

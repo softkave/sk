@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { isPath0App, makePath, paths } from "../components/layout/path";
-// import Loading from "../components/Loading";
 import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
 import { getSessionType } from "../redux/session/selectors";
 import App from "./App";
@@ -44,7 +43,6 @@ const Main: React.FC<{}> = props => {
       // TODO: should we change this to "logging in?"
       // TODO: should we show something here? And if we do, it's kind of breaking the layout for that split second
       return null;
-    // return <Loading />;
   }
 };
 

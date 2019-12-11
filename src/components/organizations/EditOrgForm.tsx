@@ -7,9 +7,9 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
@@ -19,6 +19,7 @@ export interface IEditOrgFormValues {
 
 export interface IEditOrgProps
   extends IFormikFormBaseProps<IEditOrgFormValues> {
+  onClose: () => void;
   submitLabel?: string;
 }
 
@@ -39,7 +40,8 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
       handleChange,
       values,
       handleSubmit,
-      touched
+      touched,
+      onClose
     } = this.props;
     const formErrors = errors || {};
     const orgExistsMessage = this.doesOrgExist(formErrors);
@@ -87,6 +89,15 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              htmlType="button"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"

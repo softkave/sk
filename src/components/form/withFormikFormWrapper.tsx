@@ -113,6 +113,7 @@ export default function withFormikFormWrapper(
               return React.createElement(component, {
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),
+                onClose,
                 errors: props.errors || {},
                 ref: forwardedRef
               });

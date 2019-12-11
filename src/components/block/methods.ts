@@ -40,7 +40,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IAddBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return addBlockOperationFunc(state, dispatch, props, options);
+      return addBlockOperationFunc(props, options);
     },
 
     async onUpdate(

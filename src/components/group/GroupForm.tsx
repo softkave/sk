@@ -7,9 +7,9 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 
 // TODO: Move to a central location
 const groupExistsErrorMessage = "Group with the same name exists";
@@ -24,6 +24,7 @@ export interface IGroupFormValues {
 
 export interface IGroupFormProps
   extends IFormikFormBaseProps<IGroupFormValues> {
+  onClose: () => void;
   submitLabel?: React.ReactNode;
   existingGroups?: string[];
   // parents: IBlock[];
@@ -48,7 +49,8 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldError,
-      setFieldValue
+      setFieldValue,
+      onClose
       // parents
     } = this.props;
 
@@ -118,6 +120,15 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              htmlType="button"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"
