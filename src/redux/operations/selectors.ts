@@ -10,9 +10,9 @@ export function getFirstOperationWithID(
   state: IReduxState,
   operationID: string
 ) {
-  return state.operations.operations.find(operation => {
+  return state.operations.operations.filter(operation => {
     return operation.operationID === operationID;
-  });
+  })[0];
 }
 
 export function getOperationsForResource(

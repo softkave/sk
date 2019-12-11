@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 import { Button, DatePicker, Form, Input, List, Select } from "antd";
 import moment from "moment";
 import React from "react";
-import { BlockType, ITaskCollaborator } from "../../models/block/block";
+import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
+import BlockParentSelection from "../block/BlockParentSelection";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
@@ -12,9 +13,9 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
+  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
-import StyledButton from "../styled/Button";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import { ISubTaskValues } from "./SubTask";
@@ -35,11 +36,10 @@ export interface ITaskFormValues {
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
+  submitLabel: string;
   user: IUser;
   collaborators: IUser[];
-  // parents: IBlock[];
-  onClose: () => void;
-  submitLabel?: React.ReactNode;
+  parents: IBlock[];
 }
 
 const defaultSubmitLabel = "Create Task";
@@ -73,8 +73,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldValue,
-      onClose
-      // parents
+      parents
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -82,14 +81,15 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormBody>
-            {globalError && (
-              <Form.Item>
-                <FormError error={globalError} />
-              </Form.Item>
-            )}
-            {/* <Form.Item
-                label="Parent Block"
+          <FormScrollList>
+            <FormBody>
+              {globalError && (
+                <Form.Item>
+                  <FormError error={globalError} />
+                </Form.Item>
+              )}
+              <Form.Item
+                label="Parent"
                 help={
                   touched.parents && <FormError>{errors.parents}</FormError>
                 }
@@ -99,110 +99,102 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                   parents={parents}
                   onChange={parentIDs => setFieldValue("parents", parentIDs)}
                 />
-              </Form.Item> */}
-            <Form.Item
-              label="Description"
-              help={
-                touched.description && (
-                  <FormError>{errors.description}</FormError>
-                )
-              }
-            >
-              <Input.TextArea
-                autosize={{ minRows: 2, maxRows: 6 }}
-                autoComplete="off"
-                name="description"
-                placeholder="Description"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.description}
-              />
-            </Form.Item>
-            <Form.Item label="Priority">
-              <EditPriority
-                onChange={(value: string) => setFieldValue("priority", value)}
-                value={values.priority as TaskPriority}
-              />
-            </Form.Item>
-            <Form.Item label="Sub Tasks">
-              <SubTaskList
-                canAddSubTasks
-                subTasks={values.subTasks || []}
-                onChange={value => setFieldValue("subTasks", value)}
-              />
-            </Form.Item>
-            <Form.Item label="Assigned To">
-              <StyledTaskCollaboaratorsContainer>
-                {this.renderTaskCollaborators()}
-              </StyledTaskCollaboaratorsContainer>
-              <Select
-                placeholder="Assign Collaborator"
-                value={undefined}
-                onChange={index =>
-                  setFieldValue(
-                    "taskCollaborators",
-                    this.assignCollaborator(
-                      collaborators[Number(index)],
-                      values.taskCollaborators
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                help={
+                  touched.description && (
+                    <FormError>{errors.description}</FormError>
+                  )
+                }
+              >
+                <Input.TextArea
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                  autoComplete="off"
+                  name="description"
+                  placeholder="Description"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.description}
+                />
+              </Form.Item>
+              <Form.Item label="Priority">
+                <EditPriority
+                  onChange={(value: string) => setFieldValue("priority", value)}
+                  value={values.priority as TaskPriority}
+                />
+              </Form.Item>
+              <Form.Item label="Sub Tasks">
+                <SubTaskList
+                  canAddSubTasks
+                  subTasks={values.subTasks || []}
+                  onChange={value => setFieldValue("subTasks", value)}
+                />
+              </Form.Item>
+              <Form.Item label="Assigned To">
+                <StyledTaskCollaboaratorsContainer>
+                  {this.renderTaskCollaborators()}
+                </StyledTaskCollaboaratorsContainer>
+                <Select
+                  placeholder="Assign Collaborator"
+                  value={undefined}
+                  onChange={index =>
+                    setFieldValue(
+                      "taskCollaborators",
+                      this.assignCollaborator(
+                        collaborators[Number(index)],
+                        values.taskCollaborators
+                      )
                     )
-                  )
-                }
-              >
-                {collaborators.map((collaborator, index) => {
-                  return (
-                    <Select.Option value={index} key={collaborator.customId}>
-                      <CollaboratorThumbnail collaborator={collaborator} />
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-              <Button
-                block
-                onClick={() =>
-                  setFieldValue(
-                    "taskCollaborators",
-                    this.assignCollaborator(user, values.taskCollaborators)
-                  )
-                }
-              >
-                Assign To Me
-              </Button>
-            </Form.Item>
-            <Form.Item label="Due Date">
-              <DatePicker
-                showTime
-                format="YYYY-MM-DD HH:mm:ss"
-                placeholder="Due Date"
-                onChange={value => {
-                  setFieldValue(
-                    "expectedEndAt",
-                    value
-                      ? value
-                          .hour(23)
-                          .minute(59)
-                          .second(0)
-                          .valueOf()
-                      : null
-                  );
-                }}
-                value={
-                  values.expectedEndAt
-                    ? moment(values.expectedEndAt)
-                    : undefined
-                }
-              />
-            </Form.Item>
-          </FormBody>
+                  }
+                >
+                  {collaborators.map((collaborator, index) => {
+                    return (
+                      <Select.Option value={index} key={collaborator.customId}>
+                        <CollaboratorThumbnail collaborator={collaborator} />
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+                <Button
+                  block
+                  onClick={() =>
+                    setFieldValue(
+                      "taskCollaborators",
+                      this.assignCollaborator(user, values.taskCollaborators)
+                    )
+                  }
+                >
+                  Assign To Me
+                </Button>
+              </Form.Item>
+              <Form.Item label="Due Date">
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  placeholder="Due Date"
+                  onChange={value => {
+                    setFieldValue(
+                      "expectedEndAt",
+                      value
+                        ? value
+                            .hour(23)
+                            .minute(59)
+                            .second(0)
+                            .valueOf()
+                        : null
+                    );
+                  }}
+                  value={
+                    values.expectedEndAt
+                      ? moment(values.expectedEndAt)
+                      : undefined
+                  }
+                />
+              </Form.Item>
+            </FormBody>
+          </FormScrollList>
           <FormControls>
-            <StyledButton
-              block
-              type="danger"
-              htmlType="button"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
-            </StyledButton>
             <Button
               block
               type="primary"

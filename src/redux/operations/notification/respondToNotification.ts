@@ -1,20 +1,23 @@
-import { canRespondToNotification } from "../../../components/notifications/utils";
+import { Dispatch } from "redux";
+import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
 import {
   INotification,
   NotificationStatusText
 } from "../../../models/notification/notification";
+import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
 import OperationErrorItem from "../../../utils/operation-error/OperationErrorItem";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
-import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
+import { IReduxState } from "../../store";
 import * as userActions from "../../users/actions";
-import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -22,18 +25,20 @@ import { respondToNotificationOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
+  user: IUser;
   request: INotification;
   response: NotificationStatusText;
 }
 
 export default async function respondToNotificationOperationFunc(
+  state: IReduxState,
+  dispatch: Dispatch,
   dataProps: IRespondToNotificationOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const user = getSignedInUserRequired(store.getState());
-  const { request, response } = dataProps;
+  const { user, request, response } = dataProps;
   const operation = getOperationWithIDForResource(
-    store.getState(),
+    state,
     respondToNotificationOperationID,
     request.customId
   );
@@ -42,17 +47,14 @@ export default async function respondToNotificationOperationFunc(
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      respondToNotificationOperationID,
-      {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
-        timestamp: Date.now()
-      },
-      request.customId
-    )
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: respondToNotificationOperationID,
+    resourceID: request.customId
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     if (canRespondToNotification(request)) {
@@ -75,7 +77,7 @@ export default async function respondToNotificationOperationFunc(
 
     const update = { statusHistory };
 
-    store.dispatch(
+    dispatch(
       notificationActions.updateNotificationRedux(request.customId, update, {
         arrayUpdateStrategy: "replace"
       })
@@ -85,8 +87,8 @@ export default async function respondToNotificationOperationFunc(
       const { block } = result as { block: IBlock };
 
       if (block) {
-        store.dispatch(blockActions.addBlockRedux(block));
-        store.dispatch(
+        dispatch(blockActions.addBlockRedux(block));
+        dispatch(
           userActions.updateUserRedux(
             user.customId,
             { orgs: [block.customId] },
@@ -96,31 +98,10 @@ export default async function respondToNotificationOperationFunc(
       }
     }
 
-    store.dispatch(
-      pushOperation(
-        respondToNotificationOperationID,
-        {
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        request.customId
-      )
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    store.dispatch(
-      pushOperation(
-        respondToNotificationOperationID,
-        {
-          error: transformedError,
-          scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
-          timestamp: Date.now()
-        },
-        request.customId
-      )
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

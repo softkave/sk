@@ -169,7 +169,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               operationID={blockFormOperationId}
               submitLabel={formTitle}
               title={formTitle}
-              // parents={formBlockParents}
+              parents={formBlockParents}
             />
           )}
           {formType === "group" && (
@@ -183,7 +183,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               existingGroups={this.getExistingNames(groups)}
               submitLabel={formTitle}
               title={formTitle}
-              // parents={formBlockParents}
+              parents={formBlockParents}
             />
           )}
           {formType === "task" && (
@@ -205,7 +205,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               user={user}
               submitLabel={formTitle}
               title={formTitle}
-              // parents={formBlockParents}
+              parents={formBlockParents}
             />
           )}
         </React.Fragment>

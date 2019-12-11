@@ -59,7 +59,7 @@ function mergeProps(state: IReduxState, { dispatch }: { dispatch: Dispatch }) {
     : undefined;
   const data = isDataLoaded ? getAssignedTasksAndParents(state) : undefined;
   const fetchAssignedTasksAndParents = () =>
-    getTasksAssignedToUserOperationFunc();
+    getTasksAssignedToUserOperationFunc(state, dispatch);
 
   return {
     error,

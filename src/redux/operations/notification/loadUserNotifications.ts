@@ -1,39 +1,48 @@
+import { Dispatch } from "redux";
+import { IUser } from "../../../models/user/user";
 import * as userNet from "../../../net/user";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
-import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
+import { IReduxState } from "../../store";
 import * as userActions from "../../users/actions";
-import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
+  dispatchOperationComplete,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
 import { loadUserNotificationsOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { getOperationsWithID } from "../selectors";
+
+export interface ILoadUserNotificationsOperationFuncDataProps {
+  user: IUser;
+}
 
 export default async function loadUserNotificationsOperationFunc(
-  dataProps: {} = {},
+  state: IReduxState,
+  dispatch: Dispatch,
+  dataProps: ILoadUserNotificationsOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const user = getSignedInUserRequired(store.getState());
-  const operation = getFirstOperationWithID(
-    store.getState(),
+  const { user } = dataProps;
+  const operations = getOperationsWithID(
+    state,
     loadUserNotificationsOperationID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(loadUserNotificationsOperationID, {
-      scopeID: options.scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
-      timestamp: Date.now()
-    })
-  );
+  const dispatchOptions: IDispatchOperationFuncProps = {
+    ...options,
+    dispatch,
+    operationID: loadUserNotificationsOperationID
+  };
+
+  dispatchOperationStarted(dispatchOptions);
 
   try {
     const result = await userNet.getCollaborationRequests();
@@ -45,8 +54,8 @@ export default async function loadUserNotificationsOperationFunc(
     const { requests } = result;
     const ids = requests.map(request => request.customId);
 
-    store.dispatch(notificationActions.bulkAddNotificationsRedux(requests));
-    store.dispatch(
+    dispatch(notificationActions.bulkAddNotificationsRedux(requests));
+    dispatch(
       userActions.updateUserRedux(
         user.customId,
         {
@@ -56,23 +65,10 @@ export default async function loadUserNotificationsOperationFunc(
       )
     );
 
-    store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatchOperationComplete(dispatchOptions);
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
-        error: transformedError,
-        scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
-        timestamp: Date.now()
-      })
-    );
+    dispatchOperationError({ ...dispatchOptions, error: transformedError });
   }
 }

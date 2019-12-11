@@ -9,7 +9,7 @@ export interface IProjectThumbnailProps {
   className?: string;
 }
 
-const ProjectThumbnail: React.FC<IProjectThumbnailProps> = props => {
+const ProjectThumbnail: React.SFC<IProjectThumbnailProps> = props => {
   const { project, onClick, className } = props;
   return (
     <StyledThumbnail

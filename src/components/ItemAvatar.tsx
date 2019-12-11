@@ -11,7 +11,7 @@ export interface IItemAvatarProps {
   onClick?: () => void;
 }
 
-const ItemAvatar: React.FC<IItemAvatarProps> = props => {
+const ItemAvatar: React.SFC<IItemAvatarProps> = props => {
   const { size, shape } = props;
 
   return (

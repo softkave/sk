@@ -4,13 +4,11 @@ import { LOGIN_USER, LOGOUT_USER, SET_SESSION_TO_WEB } from "./constants";
 export const sessionInitializing = "initializing";
 export const sessionWeb = "web";
 export const sessionApp = "app";
-export const sessionUninitialized = "uninitialized";
 
 export type SessionType =
   | typeof sessionInitializing
   | typeof sessionWeb
-  | typeof sessionApp
-  | typeof sessionUninitialized;
+  | typeof sessionApp;
 
 export interface ISessionState {
   sessionType: SessionType;
@@ -19,7 +17,7 @@ export interface ISessionState {
 }
 
 export function sessionReducer(
-  state: ISessionState = { sessionType: sessionUninitialized },
+  state: ISessionState = { sessionType: sessionInitializing },
   action: ISessionAction
 ): ISessionState {
   switch (action.type) {

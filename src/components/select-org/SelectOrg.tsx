@@ -16,7 +16,7 @@ export interface ISelectOrgProps {
   placeholder?: string;
 }
 
-const SelectOrg: React.FC<ISelectOrgProps> = props => {
+const SelectOrg: React.SFC<ISelectOrgProps> = props => {
   const {
     currentOrgID,
     orgs,

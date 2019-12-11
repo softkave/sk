@@ -11,7 +11,7 @@ export interface IBlockParentSelectionProps {
   onChange?: (parentIDs: string[]) => void;
 }
 
-const BlockParentSelection: React.FC<IBlockParentSelectionProps> = props => {
+const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
   const { value, parents, onChange } = props;
   let block: IBlock | undefined;
   const hasValue = Array.isArray(value) && value.length > 0;
@@ -30,10 +30,10 @@ const BlockParentSelection: React.FC<IBlockParentSelectionProps> = props => {
     <StyledContainer>
       <StyledParentContainer>
         {block && <BlockThumbnail block={block} />}
-        {!block && <Typography.Text>No parent block selected</Typography.Text>}
+        {!block && <Typography.Text>No parent selected</Typography.Text>}
       </StyledParentContainer>
       <Select
-        placeholder="Select parent block"
+        placeholder="Select parent"
         value={undefined}
         onChange={(id: string) => {
           if (onChange) {

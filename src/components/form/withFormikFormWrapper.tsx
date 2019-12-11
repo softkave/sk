@@ -32,7 +32,10 @@ export default function withFormikFormWrapper(
 
     type Values = ComponentProps["values"];
     type FormikFormWrapperProps = RemainingComponentProps & {
-      onSubmit: (values: Values, options: IOperationFuncOptions) => void;
+      onSubmit: (
+        values: Values,
+        options: IOperationFuncOptions
+      ) => Promise<void>;
       onClose: () => void;
       operation?: IOperation;
       getFormIdentifier?: () => string;
@@ -113,7 +116,6 @@ export default function withFormikFormWrapper(
               return React.createElement(component, {
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),
-                onClose,
                 errors: props.errors || {},
                 ref: forwardedRef
               });

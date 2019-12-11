@@ -17,7 +17,7 @@ export interface IAddDropdownButtonProps {
   className?: string;
 }
 
-const AddDropdownButton: React.FC<IAddDropdownButtonProps> = props => {
+const AddDropdownButton: React.SFC<IAddDropdownButtonProps> = props => {
   const { types, onClick, label, className } = props;
   const mappedTypes = (types as any).map((type: Label) => {
     return typeof type === "string" ? { label: type } : type;

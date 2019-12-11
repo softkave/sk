@@ -12,7 +12,7 @@ export interface ITaskCollaboratorThumbnailProps {
   onUnassign: () => void;
 }
 
-const TaskCollaboratorThumbnail: React.FC<ITaskCollaboratorThumbnailProps> = props => {
+const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = props => {
   const { collaborator, taskCollaborator, onUnassign } = props;
 
   return (

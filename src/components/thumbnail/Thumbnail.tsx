@@ -22,7 +22,7 @@ export interface IThumbnailProps {
   color?: string;
 }
 
-const Thumbnail: React.FC<IThumbnailProps> = props => {
+const Thumbnail: React.SFC<IThumbnailProps> = props => {
   const {
     data,
     renderInfo,

@@ -3,7 +3,7 @@ import React from "react";
 import BoardShell, { IBoardShellProps } from "./BoardShell";
 
 // TODO: Display the original error that occurred
-const BoardError: React.FC<IBoardShellProps> = props => {
+const BoardError: React.SFC<IBoardShellProps> = props => {
   return (
     <BoardShell {...props}>
       <Result status="error" title="Error">

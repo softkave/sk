@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Icon } from "antd";
 import React from "react";
 
-const ToggleSwitchLoading: React.FC<{}> = () => {
+const ToggleSwitchLoading: React.SFC<{}> = () => {
   return <StyledToggleSwitchLoadingIcon type="loading" />;
 };
 

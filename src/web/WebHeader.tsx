@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import Logo from "../components/Logo";
 
-const WebHeader: React.FC<{}> = () => {
+const WebHeader: React.SFC<{}> = () => {
   return (
     <StyledWebHeader>
       <StyledLeftButtons>

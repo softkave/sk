@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Button, Divider } from "antd";
-import { forIn } from "lodash";
+import { forIn, values } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
@@ -26,7 +26,7 @@ const descriptionValidationSchema = yup
   .max(blockConstants.maxDescriptionLength)
   .matches(textPattern);
 
-const SubTaskList: React.FC<ISubTaskListProps> = props => {
+const SubTaskList: React.SFC<ISubTaskListProps> = props => {
   const { subTasks: value, onChange, canAddSubTasks } = props;
   const subTasks = value || [];
 

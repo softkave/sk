@@ -1,11 +1,9 @@
 import { getCollectionItemsAsArray } from "../collection";
 import { IReduxState } from "../store";
 
-export function getNotification(state: IReduxState, id?: string) {
-  if (id) {
-    const notifications = getCollectionItemsAsArray(state.notifications, [id]);
-    return notifications[0];
-  }
+export function getNotification(state: IReduxState, id: string) {
+  const notifications = getCollectionItemsAsArray(state.notifications, [id]);
+  return notifications[0];
 }
 
 export function getNotificationRequired(state: IReduxState, id: string) {

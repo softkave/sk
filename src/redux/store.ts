@@ -1,5 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from "redux";
+import { combineReducers, createStore } from "redux";
+
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
 import {
   INotificationsState,
@@ -19,7 +19,7 @@ export interface IReduxState {
   operations: IOperationState;
 }
 
-const reducer = combineReducers({
+const reducers = combineReducers({
   blocks: blocksReducer,
   users: usersReducer,
   notifications: notificationsReducer,
@@ -28,8 +28,13 @@ const reducer = combineReducers({
   operations: operationsReducer
 });
 
-const store = configureStore({
-  reducer
-});
+const storeData = {};
+
+const store = createStore(
+  reducers,
+  storeData,
+  (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
+    (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 export default store;

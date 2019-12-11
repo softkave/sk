@@ -3,7 +3,7 @@ import React from "react";
 
 import WebPropTask from "./WebPropTask";
 
-const WebBody: React.FC<{}> = () => {
+const WebBody: React.SFC<{}> = () => {
   return (
     <StyledWebBody>
       <StyledWebBodyContent>

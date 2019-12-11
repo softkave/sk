@@ -16,7 +16,7 @@ export interface IBlockThumbnailProps {
 
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
 
-const BlockThumbnail: React.FC<IBlockThumbnailProps> = props => {
+const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
   const { block, className, onClick, showFields } = props;
   const color = block.color;
 
