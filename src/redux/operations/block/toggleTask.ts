@@ -1,16 +1,16 @@
-import { Dispatch } from "redux";
 import { IBlock, ITaskCollaborator } from "../../../models/block/block";
-import { assignTask } from "../../../models/block/utils";
+import {
+  assignTask,
+  getUserTaskCollaborator
+} from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
-import { IReduxState } from "../../store";
+import store from "../../store";
+import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  defaultOperationStatusTypes,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -23,25 +23,12 @@ export interface IToggleTaskOperationFuncDataProps {
 }
 
 export default async function toggleTaskOperationFunc(
-  state: IReduxState,
-  dispatch: Dispatch,
   dataProps: IToggleTaskOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { user, block } = dataProps;
-  function findTaskCollaborator(
-    taskCollaborators: ITaskCollaborator[],
-    userId: string
-  ) {
-    const collaboratorIndex = taskCollaborators.findIndex(
-      c => c.userId === userId
-    );
-
-    return taskCollaborators[collaboratorIndex];
-  }
-
   const operation = getOperationWithIDForResource(
-    state,
+    store.getState(),
     toggleTaskOperationID,
     block.customId
   );
@@ -50,21 +37,25 @@ export default async function toggleTaskOperationFunc(
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: toggleTaskOperationID,
-    resourceID: block.customId
-  };
+  const taskCollaborator = getUserTaskCollaborator(block, user);
 
-  dispatchOperationStarted(dispatchOptions);
+  if (!taskCollaborator) {
+    return;
+  }
+
+  store.dispatch(
+    pushOperation(
+      toggleTaskOperationID,
+      {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      block.customId
+    )
+  );
 
   try {
-    const taskCollaborator = findTaskCollaborator(
-      block.taskCollaborators,
-      user.customId
-    );
-
     const result = await blockNet.toggleTask({
       block,
       data: taskCollaborator.completedAt ? false : true
@@ -94,7 +85,7 @@ export default async function toggleTaskOperationFunc(
       taskCollaborators.push(collaborator);
     }
 
-    dispatch(
+    store.dispatch(
       blockActions.updateBlockRedux(
         block.customId,
         { taskCollaborators },
@@ -102,10 +93,31 @@ export default async function toggleTaskOperationFunc(
       )
     );
 
-    dispatchOperationComplete(dispatchOptions);
+    store.dispatch(
+      pushOperation(
+        toggleTaskOperationID,
+        {
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    store.dispatch(
+      pushOperation(
+        toggleTaskOperationID,
+        {
+          error: transformedError,
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   }
 }

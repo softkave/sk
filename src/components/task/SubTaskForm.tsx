@@ -13,7 +13,7 @@ export interface ISubTaskFormProps {
   errorMessage?: string | null;
 }
 
-const SubTaskForm: React.SFC<ISubTaskFormProps> = props => {
+const SubTaskForm: React.FC<ISubTaskFormProps> = props => {
   const {
     subTask,
     onChange,
@@ -26,7 +26,7 @@ const SubTaskForm: React.SFC<ISubTaskFormProps> = props => {
   const renderEditingControls = () => {
     return (
       <React.Fragment>
-        <StyledCancelEditingButton icon="close-circle" onClick={onCancelEdit} />
+        <StyledCancelEditingButton icon="close" onClick={onCancelEdit} />
         <StyledUpdateTaskButton icon="check" onClick={onCommitUpdates} />
       </React.Fragment>
     );

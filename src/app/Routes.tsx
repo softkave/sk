@@ -1,7 +1,6 @@
 import { Col, Row } from "antd";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-
 import LoginContainer from "../components/login/LoginContainer";
 import ChangePasswordWithTokenContainer from "../components/password/ChangePasswordWithTokenContainer";
 import ForgotPasswordContainer from "../components/password/ForgotPasswordContainer";

@@ -5,6 +5,11 @@ const theme = {
     md: 960,
     lg: 1280,
     xl: 1920
+  },
+  colors: {
+    defaults: {
+      avatar: "#aaa"
+    }
   }
 };
 

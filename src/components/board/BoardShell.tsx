@@ -7,7 +7,7 @@ export interface IBoardShellProps {
   block?: IBlock;
 }
 
-const BoardShell: React.SFC<IBoardShellProps> = props => {
+const BoardShell: React.FC<IBoardShellProps> = props => {
   const { children, block } = props;
 
   return (
