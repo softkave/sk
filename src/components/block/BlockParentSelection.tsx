@@ -30,10 +30,10 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
     <StyledContainer>
       <StyledParentContainer>
         {block && <BlockThumbnail block={block} />}
-        {!block && <Typography.Text>No parent selected</Typography.Text>}
+        {!block && <Typography.Text>No parent block selected</Typography.Text>}
       </StyledParentContainer>
       <Select
-        placeholder="Select parent"
+        placeholder="Select parent block"
         value={undefined}
         onChange={(id: string) => {
           if (onChange) {

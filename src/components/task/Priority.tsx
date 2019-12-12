@@ -1,21 +1,34 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { BlockPriority } from "../../models/block/block";
 
-export type TaskPriority = "very important" | "important" | "not important";
+export type TaskPriority = BlockPriority;
 
+const notImportantKey = "not important";
+const veryImportantKey = "very important";
 export const priorityToColorMap = {
-  "not important": "#EACA2C",
+  [notImportantKey]: "#EACA2C",
   important: "#7ED321",
-  // "very important": "#EB5424"
-  "very important": "rgb(255, 77, 79)"
+  [veryImportantKey]: "rgb(255, 77, 79)"
 };
 
-interface IStyledPriorityProps {
+interface IPriorityProps {
   level: TaskPriority;
-  cover: "background-color" | "color";
+  cover?: "background-color" | "color";
+  className?: string;
 }
 
-const StyledPriority = styled("span")<IStyledPriorityProps>({}, props => {
+const Priority: React.FC<IPriorityProps> = props => {
+  const { level, cover, className } = props;
+
+  return (
+    <StyledPriority level={level} cover={cover} className={className}>
+      {level}
+    </StyledPriority>
+  );
+};
+
+const StyledPriority = styled("span")<IPriorityProps>(props => {
   const coverProp = props.cover === "color" ? "color" : "backgroundColor";
   const color = priorityToColorMap[props.level];
 
@@ -28,12 +41,4 @@ const StyledPriority = styled("span")<IStyledPriorityProps>({}, props => {
   };
 });
 
-export default function Priority(props) {
-  const { level, cover } = props;
-
-  return (
-    <StyledPriority level={level} cover={cover}>
-      {level}
-    </StyledPriority>
-  );
-}
+export default Priority;
