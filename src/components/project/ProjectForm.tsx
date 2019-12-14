@@ -10,6 +10,7 @@ import {
   FormControls,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 
 // TODO: Move to error messages file
 const projectExistsErrorMessage = "Project with the same name exists";
@@ -116,6 +117,14 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"
@@ -123,14 +132,6 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
-            </Button>
-            <Button
-              block
-              type="danger"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>

@@ -5,6 +5,7 @@ export interface IStyledContainerProps {
 }
 
 const StyledContainer = styled("div")<IStyledContainerProps>(props => ({
+  display: "flex",
   ...(props.s || {})
 }));
 

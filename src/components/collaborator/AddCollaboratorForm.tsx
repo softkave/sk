@@ -16,6 +16,7 @@ import {
   FormControls,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 import {
   IAddCollaboratorFormItemError,
   IAddCollaboratorFormItemValues
@@ -36,6 +37,7 @@ export interface IAddCollaboratorFormProps
   extends IFormikFormBaseProps<IAddCollaboratorFormValues> {
   existingCollaborators: IUser[];
   existingCollaborationRequests: INotification[];
+  onClose: () => void;
 }
 
 export default class AddCollaboratorForm extends React.PureComponent<
@@ -51,7 +53,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
       handleSubmit,
       isSubmitting,
       setFieldValue,
-      setFieldError
+      setFieldError,
+      onClose
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -116,6 +119,14 @@ export default class AddCollaboratorForm extends React.PureComponent<
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"

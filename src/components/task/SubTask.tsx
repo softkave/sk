@@ -3,6 +3,7 @@ import { Button, Typography } from "antd";
 import React from "react";
 
 export interface ISubTaskValues {
+  customId: string;
   description: string;
 }
 

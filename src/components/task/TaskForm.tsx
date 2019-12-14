@@ -15,6 +15,7 @@ import {
   FormControls,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import { ISubTaskValues } from "./SubTask";
@@ -188,10 +189,19 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                     ? moment(values.expectedEndAt)
                     : undefined
                 }
+                style={{ width: "100%" }}
               />
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"
@@ -199,14 +209,6 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
-            </Button>
-            <Button
-              block
-              type="danger"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>

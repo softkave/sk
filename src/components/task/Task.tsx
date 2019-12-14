@@ -5,6 +5,7 @@ import { useDispatch, useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
+import StyledButton from "../styled/Button";
 import StyledFlexContainer from "../styled/FlexContainer";
 import Text from "../Text";
 import Priority from "./Priority";
@@ -35,37 +36,29 @@ const Task: React.FC<ITaskProps> = props => {
         </StyledPriorityContainer>
       </StyledFlexContainer>
       <StyledDescriptionContainer>
-        <StyledTaskDescription>
-          <Text text={task.description} rows={3} />
-        </StyledTaskDescription>
+        <Text text={task.description} rows={3} />
       </StyledDescriptionContainer>
       <StyledControlsContainer>
         {onEdit && (
-          <Button icon="edit" onClick={() => onEdit(task)} title="edit task" />
+          <StyledButton
+            icon="edit"
+            onClick={() => onEdit(task)}
+            title="edit task"
+            style={{ marginRight: "8px" }}
+          />
         )}
-        <span style={{ marginLeft: "4px" }}>
-          <DeleteButtonWithPrompt
-            onDelete={onDeleteTask}
-            title="Are you sure you want to delete this task?"
-          >
-            <Button icon="delete" type="danger" className="sk-minitask-close" />
-          </DeleteButtonWithPrompt>
-        </span>
+        <DeleteButtonWithPrompt
+          onDelete={onDeleteTask}
+          title="Are you sure you want to delete this task?"
+        >
+          <Button icon="delete" type="danger" className="sk-minitask-close" />
+        </DeleteButtonWithPrompt>
       </StyledControlsContainer>
     </StyledTask>
   );
 };
 
 export default Task;
-
-const StyledTaskDescription = styled.p({
-  padding: 0,
-  margin: 0,
-  whiteSpace: "pre-wrap",
-  wordBreak: "normal",
-  overflowWrap: "break-word",
-  hyphens: "auto"
-});
 
 const StyledTask = styled.div({
   padding: "8px",
@@ -81,8 +74,6 @@ const StyledDescriptionContainer = styled.div({
 });
 
 const StyledPriorityContainer = styled.div({
-  display: "flex",
-  flex: 1,
   marginLeft: "8px"
 });
 

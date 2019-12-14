@@ -51,5 +51,6 @@ const StyledCollaboratorNameContainer = styled.div({
   flex: 1,
   marginLeft: 16,
   marginRight: 16,
-  display: "flex"
+  display: "flex",
+  alignItems: "center"
 });

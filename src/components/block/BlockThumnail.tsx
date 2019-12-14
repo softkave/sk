@@ -3,6 +3,7 @@ import { Typography } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
 import { IBlock } from "../../models/block/block";
+import { getBlockTypeFullName } from "../../models/block/utils";
 import ItemAvatar from "../ItemAvatar";
 
 export type BlockThumbnailShowField = "name" | "type" | "description";
@@ -38,15 +39,17 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
       <SizeMe>
         {({ size }) => (
           <StyledBlockDescriptionContainer>
-            {showField("type") &&
-              renderBlockItem(
-                <Typography.Text>{block.type}</Typography.Text>,
-                size.width
-              )}
             {showField("name") &&
               renderBlockItem(
                 <Typography.Text strong ellipsis>
                   {block.name}
+                </Typography.Text>,
+                size.width
+              )}
+            {showField("type") &&
+              renderBlockItem(
+                <Typography.Text>
+                  {getBlockTypeFullName(block.type)}
                 </Typography.Text>,
                 size.width
               )}
@@ -75,7 +78,8 @@ function getBlockDescriptionWidth(width?: number | null) {
 }
 
 const StyledContainer = styled.div({
-  display: "flex"
+  display: "flex",
+  flex: 1
 });
 
 const blockDescriptionMarginWidth = 16;

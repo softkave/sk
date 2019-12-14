@@ -5,6 +5,7 @@ import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
+import { newId } from "../../utils/utils";
 import SubTask, { ISubTaskValues } from "./SubTask";
 import SubTaskForm from "./SubTaskForm";
 
@@ -105,7 +106,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     newSubTasksBeingEdited[newSubTaskIndex] = {
       errorMessage: undefined,
       index: newSubTaskIndex,
-      subTask: { description: "" }
+      subTask: { description: "", customId: newId() }
     };
 
     setSubTasksBeingEdited(newSubTasksBeingEdited);
@@ -172,13 +173,13 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     return (
       <React.Fragment>
         {subTasks.map((subTask, index) => (
-          <React.Fragment>
+          <React.Fragment key={subTask.customId}>
             {renderSubTask(subTask, index)}
             <Divider />
           </React.Fragment>
         ))}
         {newSubTasks.map(subTaskState => (
-          <React.Fragment>
+          <React.Fragment key={subTaskState.subTask.customId}>
             {renderSubTask(subTaskState.subTask, subTaskState.index)}
             <Divider />
           </React.Fragment>

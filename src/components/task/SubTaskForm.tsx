@@ -50,7 +50,12 @@ const SubTaskForm: React.SFC<ISubTaskFormProps> = props => {
           autoComplete="off"
           name="description"
           placeholder="Description"
-          onChange={event => onChange({ description: event.target.value })}
+          onChange={event =>
+            onChange({
+              customId: subTask.customId,
+              description: event.target.value
+            })
+          }
           value={subTask.description}
         />
         {errorMessage && <FormError error={errorMessage} />}

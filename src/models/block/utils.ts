@@ -81,3 +81,18 @@ export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
     return blockTypeContainer.indexOf(block.customId);
   }
 }
+
+export const getBlockTypeFullName = (type: BlockType) => {
+  switch (type) {
+    case "org":
+      return "organization";
+    case "group":
+      return "group";
+    case "project":
+      return "project";
+    case "task":
+      return "task";
+    default:
+      return "block";
+  }
+};

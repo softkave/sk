@@ -8,12 +8,17 @@ export const FormBodyContainer = styled("div")({
 
 export const FormBody = styled("div")({
   padding: "24px",
-  width: "100%"
+  width: "100%",
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  overflow: "auto"
 });
 
 export const FormControls = styled("div")({
   display: "flex",
-  padding: "24px"
+  padding: "24px",
+  borderTop: "1px solid #e8e8e8"
 });
 
 export const StyledForm = styled("form")`

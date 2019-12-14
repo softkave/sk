@@ -9,6 +9,7 @@ import {
   FormControls,
   StyledForm
 } from "../form/FormStyledComponents";
+import StyledButton from "../styled/Button";
 import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
@@ -88,6 +89,14 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
             </Form.Item>
           </FormBody>
           <FormControls>
+            <StyledButton
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
             <Button
               block
               type="primary"
@@ -95,14 +104,6 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
-            </Button>
-            <Button
-              block
-              type="danger"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>
