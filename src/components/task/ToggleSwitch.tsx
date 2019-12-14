@@ -24,8 +24,15 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   const store = useStore();
   const dispatch = useDispatch();
   const userTaskCollaboratorData = getUserTaskCollaborator(task, user);
+  const taskCollaborators = task.taskCollaborators;
+  const hasCompleted = taskCollaborators.filter(
+    collaborator => !!collaborator.completedAt && collaborator.completedAt > 0
+  );
+  const isUserAssigned = !!userTaskCollaboratorData;
   const checked =
     userTaskCollaboratorData && !!userTaskCollaboratorData.completedAt
+      ? true
+      : taskCollaborators.length === hasCompleted.length
       ? true
       : false;
 
@@ -37,7 +44,13 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
     return <Loading fontSize="16px" />;
   }
 
-  return <Switch checked={checked} onChange={onToggle} disabled={disabled} />;
+  return (
+    <Switch
+      checked={checked}
+      onChange={onToggle}
+      disabled={disabled || !isUserAssigned}
+    />
+  );
 };
 
 export default ToggleSwitch;

@@ -51,7 +51,7 @@ const Text: React.FC<ITextProps> = props => {
       return (
         <StyledHideTextContainer>
           {renderedText}
-          {"..."}
+          {"... "}
           {renderControl("more", "down")}
         </StyledHideTextContainer>
       );
@@ -77,6 +77,5 @@ const StyledHideTextContainer = styled(StyledTextContainer)({
 });
 
 const StyledControlIcon = styled(Icon)({
-  paddingLeft: "4px",
   fontSize: "11px"
 });
