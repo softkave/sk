@@ -14,7 +14,6 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
 import {
@@ -60,67 +59,62 @@ export default class AddCollaboratorForm extends React.PureComponent<
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Default Message"
-                help={
-                  touched.message && <FormError>{errors.message}</FormError>
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="message"
-                  value={values.message}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+          <FormBody>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
               </Form.Item>
-              <Form.Item
-                label="Default Expiration Date"
-                help={
-                  touched.expiresAt && <FormError>{errors.expiresAt}</FormError>
-                }
-              >
-                <ExpiresAt
-                  minDate={moment()
-                    .subtract(1, "day")
-                    .endOf("day")}
-                  onChange={value => setFieldValue("expiresAt", value)}
-                  value={values.expiresAt}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Requests"
-                help={
-                  touched.requests &&
-                  isString(errors.requests) && (
-                    <FormError>{errors.requests}</FormError>
-                  )
-                }
-              >
-                <AddCollaboratorFormItemList
-                  value={values.requests}
-                  maxRequests={blockConstants.maxAddCollaboratorValuesLength}
-                  onChange={value => {
-                    setFieldValue("requests", value);
-                    setFieldError("requests", this.getErrorFromRequests(
-                      value
-                    ) as any);
-                  }}
-                  errors={
-                    isArray(errors.requests) ? errors.requests : undefined
-                  }
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+            )}
+            <Form.Item
+              label="Default Message"
+              help={touched.message && <FormError>{errors.message}</FormError>}
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="message"
+                value={values.message}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Default Expiration Date"
+              help={
+                touched.expiresAt && <FormError>{errors.expiresAt}</FormError>
+              }
+            >
+              <ExpiresAt
+                minDate={moment()
+                  .subtract(1, "day")
+                  .endOf("day")}
+                onChange={value => setFieldValue("expiresAt", value)}
+                value={values.expiresAt}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Requests"
+              help={
+                touched.requests &&
+                isString(errors.requests) && (
+                  <FormError>{errors.requests}</FormError>
+                )
+              }
+            >
+              <AddCollaboratorFormItemList
+                value={values.requests}
+                maxRequests={blockConstants.maxAddCollaboratorValuesLength}
+                onChange={value => {
+                  setFieldValue("requests", value);
+                  setFieldError(
+                    "requests",
+                    this.getErrorFromRequests(value) as any
+                  );
+                }}
+                errors={isArray(errors.requests) ? errors.requests : undefined}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block

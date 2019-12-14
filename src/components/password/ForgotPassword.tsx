@@ -97,7 +97,7 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
               )}
               <Form.Item
                 label="Email Address"
-                help={<FormError>{errors.email}</FormError>}
+                help={touched.email && <FormError>{errors.email}</FormError>}
               >
                 <Input
                   autoComplete="email"
@@ -109,7 +109,11 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
               </Form.Item>
               <Form.Item
                 label="Confirm Email Address"
-                help={<FormError>{errors.confirmEmail}</FormError>}
+                help={
+                  touched.confirmEmail && (
+                    <FormError>{errors.confirmEmail}</FormError>
+                  )
+                }
               >
                 <Input
                   autoComplete="email"

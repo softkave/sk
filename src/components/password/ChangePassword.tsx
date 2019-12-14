@@ -101,7 +101,9 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
               )}
               <Form.Item
                 label="Password"
-                help={<FormError>{errors.password}</FormError>}
+                help={
+                  touched.password && <FormError>{errors.password}</FormError>
+                }
               >
                 <Input.Password
                   visibilityToggle
@@ -114,7 +116,11 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
               </Form.Item>
               <Form.Item
                 label="Confirm Password"
-                help={<FormError>{errors.confirmPassword}</FormError>}
+                help={
+                  touched.confirmPassword && (
+                    <FormError>{errors.confirmPassword}</FormError>
+                  )
+                }
               >
                 <Input.Password
                   visibilityToggle

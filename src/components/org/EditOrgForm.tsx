@@ -7,7 +7,6 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
 import OrgExistsMessage from "./OrgExistsMessage";
@@ -20,6 +19,7 @@ export interface IEditOrgFormValues {
 export interface IEditOrgProps
   extends IFormikFormBaseProps<IEditOrgFormValues> {
   submitLabel?: string;
+  onClose: () => void;
 }
 
 // TODO: Move all stray strings to a central location
@@ -39,7 +39,8 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
       handleChange,
       values,
       handleSubmit,
-      touched
+      touched,
+      onClose
     } = this.props;
     const formErrors = errors || {};
     const orgExistsMessage = this.doesOrgExist(formErrors);
@@ -47,47 +48,45 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {formErrors.error && <FormError error={formErrors.error} />}
-              <Form.Item
-                label="Organization Name"
-                help={
-                  touched.name &&
-                  (!!orgExistsMessage ? (
-                    <OrgExistsMessage message={orgExistsMessage} />
-                  ) : (
-                    <FormError error={formErrors.name} />
-                  ))
-                }
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+          <FormBody>
+            {formErrors.error && <FormError error={formErrors.error} />}
+            <Form.Item
+              label="Organization Name"
+              help={
+                touched.name &&
+                (!!orgExistsMessage ? (
+                  <OrgExistsMessage message={orgExistsMessage} />
+                ) : (
+                  <FormError error={formErrors.name} />
+                ))
+              }
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block
@@ -96,6 +95,14 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
+            </Button>
+            <Button
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>

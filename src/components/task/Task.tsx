@@ -6,6 +6,7 @@ import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
 import StyledFlexContainer from "../styled/FlexContainer";
+import Text from "../Text";
 import Priority from "./Priority";
 import ToggleSwitch from "./ToggleSwitch";
 
@@ -34,7 +35,9 @@ const Task: React.FC<ITaskProps> = props => {
         </StyledPriorityContainer>
       </StyledFlexContainer>
       <StyledDescriptionContainer>
-        <StyledTaskDescription>{task.description}</StyledTaskDescription>
+        <StyledTaskDescription>
+          <Text text={task.description} rows={3} />
+        </StyledTaskDescription>
       </StyledDescriptionContainer>
       <StyledControlsContainer>
         {onEdit && (

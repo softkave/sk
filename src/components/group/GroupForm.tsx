@@ -8,7 +8,6 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
 
@@ -28,6 +27,7 @@ export interface IGroupFormProps
   submitLabel?: string;
   existingGroups?: string[];
   parents: IBlock[];
+  onClose: () => void;
 }
 
 const defaultSubmitLabel = "Create Group";
@@ -50,7 +50,8 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
       isSubmitting,
       setFieldError,
       setFieldValue,
-      parents
+      parents,
+      onClose
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -58,68 +59,64 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Parent"
-                help={
-                  touched.parents && <FormError>{errors.parents}</FormError>
-                }
-              >
-                <BlockParentSelection
-                  value={values.parents}
-                  parents={parents}
-                  onChange={parentIDs => {
-                    setFieldValue("parents", parentIDs);
-                  }}
-                />
+          <FormBody>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
               </Form.Item>
-              <Form.Item
-                label="Group Name"
-                help={touched.name && <FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = event.target.value;
+            )}
+            <Form.Item
+              label="Parent"
+              help={touched.parents && <FormError>{errors.parents}</FormError>}
+            >
+              <BlockParentSelection
+                value={values.parents}
+                parents={parents}
+                onChange={parentIDs => {
+                  setFieldValue("parents", parentIDs);
+                }}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Group Name"
+              help={touched.name && <FormError>{errors.name}</FormError>}
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
 
-                    setFieldValue("name", value);
+                  setFieldValue("name", value);
 
-                    if (value && value.length > 0) {
-                      if (this.groupExists(value)) {
-                        setFieldError("name", groupExistsErrorMessage);
-                      }
+                  if (value && value.length > 0) {
+                    if (this.groupExists(value)) {
+                      setFieldError("name", groupExistsErrorMessage);
                     }
-                  }}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+                  }
+                }}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block
@@ -128,6 +125,14 @@ export default class GroupForm extends React.Component<IGroupFormProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
+            </Button>
+            <Button
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>

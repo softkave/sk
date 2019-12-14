@@ -8,7 +8,6 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  FormScrollList,
   StyledForm
 } from "../form/FormStyledComponents";
 
@@ -28,6 +27,7 @@ export interface IProjectFormProps
   parents: IBlock[];
   submitLabel?: string;
   existingProjects?: string[];
+  onClose: () => void;
 }
 
 const defaultSubmitLabel = "Create Project";
@@ -50,7 +50,8 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
       isSubmitting,
       setFieldError,
       setFieldValue,
-      parents
+      parents,
+      onClose
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -58,66 +59,62 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
     return (
       <StyledForm onSubmit={handleSubmit}>
         <FormBodyContainer>
-          <FormScrollList>
-            <FormBody>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Parent"
-                help={
-                  touched.parents && <FormError>{errors.parents}</FormError>
-                }
-              >
-                <BlockParentSelection
-                  value={values.parents}
-                  parents={parents}
-                  onChange={parentIDs => setFieldValue("parents", parentIDs)}
-                />
+          <FormBody>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
               </Form.Item>
-              <Form.Item
-                label="Project Name"
-                help={touched.name && <FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="off"
-                  name="name"
-                  onBlur={handleBlur}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    const value = event.target.value;
+            )}
+            <Form.Item
+              label="Parent"
+              help={touched.parents && <FormError>{errors.parents}</FormError>}
+            >
+              <BlockParentSelection
+                value={values.parents}
+                parents={parents}
+                onChange={parentIDs => setFieldValue("parents", parentIDs)}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Project Name"
+              help={touched.name && <FormError>{errors.name}</FormError>}
+            >
+              <Input
+                autoComplete="off"
+                name="name"
+                onBlur={handleBlur}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = event.target.value;
 
-                    setFieldValue("name", value);
+                  setFieldValue("name", value);
 
-                    if (value && value.length > 0) {
-                      if (this.projectExists(value)) {
-                        setFieldError("name", projectExistsErrorMessage);
-                      }
+                  if (value && value.length > 0) {
+                    if (this.projectExists(value)) {
+                      setFieldError("name", projectExistsErrorMessage);
                     }
-                  }}
-                  value={values.name}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description"
-                help={
-                  touched.description && (
-                    <FormError>{errors.description}</FormError>
-                  )
-                }
-              >
-                <Input.TextArea
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  autoComplete="off"
-                  name="description"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.description}
-                />
-              </Form.Item>
-            </FormBody>
-          </FormScrollList>
+                  }
+                }}
+                value={values.name}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Description"
+              help={
+                touched.description && (
+                  <FormError>{errors.description}</FormError>
+                )
+              }
+            >
+              <Input.TextArea
+                autosize={{ minRows: 2, maxRows: 6 }}
+                autoComplete="off"
+                name="description"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.description}
+              />
+            </Form.Item>
+          </FormBody>
           <FormControls>
             <Button
               block
@@ -126,6 +123,14 @@ export default class ProjectForm extends React.Component<IProjectFormProps> {
               loading={isSubmitting}
             >
               {submitLabel || defaultSubmitLabel}
+            </Button>
+            <Button
+              block
+              type="danger"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
             </Button>
           </FormControls>
         </FormBodyContainer>
