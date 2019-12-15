@@ -1,7 +1,7 @@
 import { notification } from "antd";
 import React from "react";
 import { Redirect } from "react-router-dom";
-import SoftkaveLoadingView from "../components/view/SoftkaveLoadingView";
+import Loading from "../components/Loading";
 import ViewManager, { IRenderView } from "../components/view/ViewManager";
 import {
   sessionApp,
@@ -34,11 +34,7 @@ class IndexViewManager extends React.Component<IIndexViewManagerProps> {
         // TODO: Test this view
         viewName: sessionInitializing,
         render() {
-          return (
-            <SoftkaveLoadingView
-              percent={initializingProps && initializingProps.progress}
-            />
-          );
+          return <Loading />;
         }
       },
       {

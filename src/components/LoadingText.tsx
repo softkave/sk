@@ -7,6 +7,7 @@ export interface ILoadingTextProps {
 
 const maxPercent = 100;
 
+// TODO: Fix
 const LoadingText: React.SFC<ILoadingTextProps> = props => {
   const { percent, children } = props;
   // TODO: Clean unused comment codes
