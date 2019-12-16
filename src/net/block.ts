@@ -25,6 +25,7 @@ const blockParamFields = ["customId"];
 export function addBlock({ block }) {
   // TODO: Find a way to define central structures that'll be used by server and client, including
   // mongo schemas, graphql schemas, extract functions, and other places.
+  // TODO: define the type of the arguments, so that we can avoid using fields
   const fields = [
     "name",
     "customId",
@@ -36,6 +37,7 @@ export function addBlock({ block }) {
     "parents",
     "data",
     "priority",
+    "taskCollaborationType",
     "taskCollaborators",
     "tasks",
     "groups",
@@ -62,6 +64,7 @@ export function updateBlock({ block, data }) {
     "color",
     "priority",
     "data",
+    "taskCollaborationType",
     "taskCollaborators",
     "parents",
     "tasks",

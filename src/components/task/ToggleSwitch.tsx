@@ -1,7 +1,7 @@
 import { Switch } from "antd";
 import React from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { IBlock, ITaskCollaborator } from "../../models/block/block";
 import { getUserTaskCollaborator } from "../../models/block/utils";
 import toggleTaskOperationFunc from "../../redux/operations/block/toggleTask";
 import { toggleTaskOperationID } from "../../redux/operations/operationIDs";
@@ -25,16 +25,21 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   const dispatch = useDispatch();
   const userTaskCollaboratorData = getUserTaskCollaborator(task, user);
   const taskCollaborators = task.taskCollaborators || [];
-  const hasCompleted = taskCollaborators.filter(
-    collaborator => !!collaborator.completedAt && collaborator.completedAt > 0
-  );
-  const isUserAssigned = !!userTaskCollaboratorData;
-  const checked =
-    userTaskCollaboratorData && !!userTaskCollaboratorData.completedAt
-      ? true
-      : taskCollaborators.length === hasCompleted.length
-      ? true
-      : false;
+
+  const isTaskCompleted = () => {
+    if (task.taskCollaborationType!.collaborationType === "collective") {
+      return !!task.taskCollaborationType!.completedAt;
+    } else {
+      const hasCompleted = taskCollaborators.filter(
+        collaborator => !!collaborator.completedAt
+      );
+      return userTaskCollaboratorData && !!userTaskCollaboratorData.completedAt
+        ? true
+        : taskCollaborators.length === hasCompleted.length
+        ? true
+        : false;
+    }
+  };
 
   const onToggle = () => {
     toggleTaskOperationFunc(store.getState(), dispatch, { user, block: task });
@@ -43,6 +48,9 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   if (toggleTaskOperation.isLoading) {
     return <Loading fontSize="16px" />;
   }
+
+  const checked = isTaskCompleted();
+  const isUserAssigned = !!userTaskCollaboratorData;
 
   return (
     <Switch
