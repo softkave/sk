@@ -2,6 +2,7 @@ import moment from "moment";
 import { Dispatch } from "redux";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
+import { getBlockParentIDs } from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -67,16 +68,29 @@ export default async function updateBlockOperationFunc(
       throw result.errors;
     }
 
+    if (
+      block.type === "task" &&
+      block.taskCollaborationType!.collaborationType !==
+        data.taskCollaborationType!.collaborationType
+    ) {
+      // strip previous data
+      data.taskCollaborationType = {
+        collaborationType: data.taskCollaborationType!.collaborationType
+      };
+    }
+
     addTaskToUserIfAssigned(state, dispatch, block);
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
+      const blockParentIDs = getBlockParentIDs(block);
+      const transferBlockParentIDs = getBlockParentIDs(forTransferBlockOnly);
       transferBlockStateHelper(state, dispatch, {
         draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(state, block.parents[block.parents.length - 1]),
+        sourceBlock: getBlock(state, blockParentIDs[blockParentIDs.length - 1]),
         destinationBlock: getBlock(
           state,
-          forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
+          transferBlockParentIDs[transferBlockParentIDs.length - 1]
         )
       });
     }

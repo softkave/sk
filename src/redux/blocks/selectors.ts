@@ -1,5 +1,5 @@
 import { IBlock } from "../../models/block/block";
-import { isBlockParentOf } from "../../models/block/utils";
+import { isBlockParentOf, getBlockParentIDs } from "../../models/block/utils";
 import {
   filterCollectionItemsWith,
   getCollectionItemsAsArray
@@ -25,5 +25,5 @@ export function getEveryBlockChildrenInState(
 }
 
 export function getBlockParents(state: IReduxState, block: IBlock) {
-  return getBlocksAsArray(state, block.parents);
+  return getBlocksAsArray(state, getBlockParentIDs(block));
 }

@@ -16,7 +16,7 @@ const OrgList: React.SFC<IOrgListProps> = props => {
   if (orgs.length === 0) {
     return (
       <StyledEmptyContainer>
-        <Empty description="Create an organization to get started" />
+        <Empty description="Create an organization to get started." />
       </StyledEmptyContainer>
     );
   }
@@ -43,16 +43,19 @@ const StyledOrgList = styled.div({
   flexDirection: "column"
 });
 
+const lastOfTypeSelector = "&:last-of-type";
+const hoverSelector = "&:hover";
 const StyledOrgListItem = styled.div({
-  padding: "24px 16px",
+  // padding: "24px 16px",
+  padding: "24px",
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
-  "&:last-of-type": {
+  [lastOfTypeSelector]: {
     borderBottom: 0
   },
 
-  "&:hover": {
+  [hoverSelector]: {
     backgroundColor: "#E6F7FF"
   }
 });

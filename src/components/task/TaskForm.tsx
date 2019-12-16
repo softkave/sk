@@ -1,8 +1,14 @@
 import styled from "@emotion/styled";
-import { Button, DatePicker, Form, Input, List, Select } from "antd";
+import { Button, DatePicker, Form, Input, List, Radio, Select } from "antd";
 import moment from "moment";
 import React from "react";
-import { BlockType, IBlock, ITaskCollaborator } from "../../models/block/block";
+import {
+  blockTaskCollaborationTypes,
+  BlockType,
+  IBlock,
+  ITaskCollaborationTypeData,
+  ITaskCollaborator
+} from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
 import BlockParentSelection from "../block/BlockParentSelection";
@@ -27,12 +33,13 @@ export interface ITaskFormValues {
   // name: string;
   customId: string;
   type: BlockType;
-  description: string;
-  priority: string;
+  taskCollaborationType: ITaskCollaborationTypeData;
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
+  description?: string;
   parents?: string[];
   subTasks?: ISubTaskValues[];
+  priority?: string;
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
@@ -123,12 +130,50 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 value={values.priority as TaskPriority}
               />
             </Form.Item>
-            <Form.Item label="Sub Tasks">
-              <SubTaskList
-                canAddSubTasks
-                subTasks={values.subTasks || []}
-                onChange={value => setFieldValue("subTasks", value)}
+            <Form.Item label="Due Date">
+              <DatePicker
+                showTime
+                format="YYYY-MM-DD HH:mm:ss"
+                placeholder="Due Date"
+                onChange={value => {
+                  setFieldValue(
+                    "expectedEndAt",
+                    value
+                      ? value
+                          .hour(23)
+                          .minute(59)
+                          .second(0)
+                          .valueOf()
+                      : null
+                  );
+                }}
+                value={
+                  values.expectedEndAt
+                    ? moment(values.expectedEndAt)
+                    : undefined
+                }
+                style={{ width: "100%" }}
               />
+            </Form.Item>
+            <Form.Item label="Collaboration Type">
+              <Radio.Group
+                value={values.taskCollaborationType.collaborationType}
+                onChange={e =>
+                  setFieldValue("taskCollaborationType", {
+                    ...values.taskCollaborationType,
+                    collaborationType: e.target.value
+                  })
+                }
+              >
+                <StyledRadio
+                  key={blockTaskCollaborationTypes.individual}
+                  value={blockTaskCollaborationTypes.individual}
+                ></StyledRadio>
+                <StyledRadio
+                  key={blockTaskCollaborationTypes.collective}
+                  value={blockTaskCollaborationTypes.collective}
+                ></StyledRadio>
+              </Radio.Group>
             </Form.Item>
             <Form.Item label="Assigned To">
               <StyledTaskCollaboaratorsContainer>
@@ -167,29 +212,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
                 Assign To Me
               </Button>
             </Form.Item>
-            <Form.Item label="Due Date">
-              <DatePicker
-                showTime
-                format="YYYY-MM-DD HH:mm:ss"
-                placeholder="Due Date"
-                onChange={value => {
-                  setFieldValue(
-                    "expectedEndAt",
-                    value
-                      ? value
-                          .hour(23)
-                          .minute(59)
-                          .second(0)
-                          .valueOf()
-                      : null
-                  );
-                }}
-                value={
-                  values.expectedEndAt
-                    ? moment(values.expectedEndAt)
-                    : undefined
-                }
-                style={{ width: "100%" }}
+            <Form.Item label="Sub Tasks">
+              <SubTaskList
+                canAddSubTasks
+                subTasks={values.subTasks || []}
+                onChange={value => setFieldValue("subTasks", value)}
               />
             </Form.Item>
           </FormBody>
@@ -294,4 +321,10 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
 
 const StyledTaskCollaboaratorsContainer = styled.div({
   marginBottom: 16
+});
+
+const StyledRadio = styled(Radio)({
+  display: "block",
+  height: "30px",
+  lineHeight: "30px"
 });

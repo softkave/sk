@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Button, Divider } from "antd";
-import { forIn, values } from "lodash";
+import { forIn } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";

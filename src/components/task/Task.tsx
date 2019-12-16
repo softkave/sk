@@ -32,11 +32,11 @@ const Task: React.FC<ITaskProps> = props => {
           <ToggleSwitch task={task} />
         </div>
         <StyledPriorityContainer>
-          <Priority level={task.priority} />
+          <Priority level={task.priority!} />
         </StyledPriorityContainer>
       </StyledFlexContainer>
       <StyledDescriptionContainer>
-        <Text text={task.description} rows={3} />
+        <Text text={task.description!} rows={3} />
       </StyledDescriptionContainer>
       <StyledControlsContainer>
         {onEdit && (

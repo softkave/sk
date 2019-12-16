@@ -15,7 +15,7 @@ const ProjectList: React.SFC<IProjectListProps> = props => {
       blocks={projects}
       onClick={setCurrentProject}
       showFields={["name"]}
-      emptyDescription="No projects available"
+      emptyDescription="No projects available."
       itemStyle={{ padding: "16px" }}
     />
   );

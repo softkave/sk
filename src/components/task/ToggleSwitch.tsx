@@ -24,7 +24,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   const store = useStore();
   const dispatch = useDispatch();
   const userTaskCollaboratorData = getUserTaskCollaborator(task, user);
-  const taskCollaborators = task.taskCollaborators;
+  const taskCollaborators = task.taskCollaborators || [];
   const hasCompleted = taskCollaborators.filter(
     collaborator => !!collaborator.completedAt && collaborator.completedAt > 0
   );

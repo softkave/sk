@@ -25,7 +25,7 @@ export interface IIndexViewManagerProps {
 
 class IndexViewManager extends React.Component<IIndexViewManagerProps> {
   public render() {
-    const { initializingProps, readyProps, view: currentView } = this.props;
+    const { readyProps, view: currentView } = this.props;
 
     const shouldNavigateToHome = this.shouldNavigateToHome();
 

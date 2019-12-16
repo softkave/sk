@@ -61,7 +61,7 @@ export default async function toggleTaskOperationFunc(
 
   try {
     const taskCollaborator = findTaskCollaborator(
-      block.taskCollaborators,
+      block.taskCollaborators || [],
       user.customId
     );
 
@@ -74,7 +74,7 @@ export default async function toggleTaskOperationFunc(
       throw result.errors;
     }
 
-    const taskCollaborators = [...block.taskCollaborators];
+    const taskCollaborators = [...(block.taskCollaborators || [])];
     const collaboratorIndex = taskCollaborators.findIndex(
       c => c.userId === user.customId
     );

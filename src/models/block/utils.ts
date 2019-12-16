@@ -27,7 +27,8 @@ export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
 
 export function aggregateBlocksParentIDs(blocks: IBlock[]) {
   const mappedParentIDs = blocks.reduce((accumulator, block) => {
-    block.parents.forEach(parentID => (accumulator[parentID] = parentID));
+    const blockParentIDs = getBlockParentIDs(block);
+    blockParentIDs.forEach(parentID => (accumulator[parentID] = parentID));
     return accumulator;
   }, {});
 
@@ -70,7 +71,8 @@ export function filterValidParentsForBlockType(
 }
 
 export function isBlockParentOf(parent: IBlock, block: IBlock) {
-  return parent.customId === block.parents[block.parents.length - 1];
+  const parentIDs = getBlockParentIDs(block);
+  return parent.customId === parentIDs[parentIDs.length - 1];
 }
 
 export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
@@ -96,3 +98,7 @@ export const getBlockTypeFullName = (type: BlockType) => {
       return "block";
   }
 };
+
+export function getBlockParentIDs(block: IBlock) {
+  return Array.isArray(block.parents) ? block.parents : [];
+}
