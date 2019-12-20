@@ -136,7 +136,11 @@ export const getTaskCompletionData = (task: IBlock, user: IUser): IC => {
       collaborator => !!collaborator.completedAt
     );
     userHasCompleted = userData && userData.completedAt;
-    isCompeleted = taskCollaborators.length === completed.length ? true : false;
+    isCompeleted =
+      taskCollaborators.length > 0 &&
+      taskCollaborators.length === completed.length
+        ? true
+        : false;
     hasCompleted = completed.length;
   }
 
