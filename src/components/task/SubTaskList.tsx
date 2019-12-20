@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
-import { Button, Divider } from "antd";
+import { Button, Divider, Icon } from "antd";
 import { forIn } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
 import { textPattern } from "../../models/user/descriptor";
 import { newId } from "../../utils/utils";
+import StyledContainer from "../styled/Container";
 import SubTask, { ISubTaskValues } from "./SubTask";
 import SubTaskForm from "./SubTaskForm";
+
+const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 export interface ISubTaskListProps {
   subTasks: ISubTaskValues[];
@@ -178,10 +181,10 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
             <Divider />
           </React.Fragment>
         ))}
-        {newSubTasks.map(subTaskState => (
+        {newSubTasks.map((subTaskState, index) => (
           <React.Fragment key={subTaskState.subTask.customId}>
             {renderSubTask(subTaskState.subTask, subTaskState.index)}
-            <Divider />
+            {index > newSubTasks.length - 1 && <Divider />}
           </React.Fragment>
         ))}
       </React.Fragment>
@@ -190,21 +193,18 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
 
   return (
     <div>
-      {renderSubTaskList()}
       {canAddSubTasks && (
-        <StyledAddTaskButton icon="plus" onClick={() => onAddSubTask()}>
-          Add sub-task
-        </StyledAddTaskButton>
+        <StyledContainerAsLink
+          role="button"
+          onClick={onAddSubTask}
+          s={{ display: "block", lineHeight: "16px", marginBottom: "16px" }}
+        >
+          <Icon type="plus-circle" theme="twoTone" /> Add sub-task
+        </StyledContainerAsLink>
       )}
+      {renderSubTaskList()}
     </div>
   );
 };
 
 export default SubTaskList;
-
-const StyledAddTaskButton = styled(Button)({
-  border: "none",
-  backgroundColor: "inherit",
-  padding: 0,
-  boxShadow: "none"
-});

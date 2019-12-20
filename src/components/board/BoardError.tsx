@@ -1,14 +1,12 @@
-import { Result } from "antd";
 import React from "react";
+import GeneralError from "../GeneralError";
 import BoardShell, { IBoardShellProps } from "./BoardShell";
 
 // TODO: Display the original error that occurred
 const BoardError: React.SFC<IBoardShellProps> = props => {
   return (
     <BoardShell {...props}>
-      <Result status="error" title="Error">
-        Error loading data
-      </Result>
+      <GeneralError error="Error loading blocks." />
     </BoardShell>
   );
 };

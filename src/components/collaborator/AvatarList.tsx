@@ -124,7 +124,7 @@ const StyledAvatarListContainer = styled.div`
 
 const StyledAvatarContainer = styled.div`
   display: inline-block;
-  margin-right: ${avatarMarginPx};
+  margin-right: ${avatarMarginPx}px;
 `;
 
 const StyledMoreButtonContainer = styled.div`

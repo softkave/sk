@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
+import styled, { CSSObject } from "@emotion/styled";
 
 export interface IStyledContainerProps {
-  s?: React.CSSProperties;
+  s?: CSSObject;
 }
 
 const StyledContainer = styled("div")<IStyledContainerProps>(props => ({

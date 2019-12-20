@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { IBlock, ITaskCollaborator } from "../../../models/block/block";
-import { assignTask } from "../../../models/block/utils";
+import { assignTask, isTaskCompleted } from "../../../models/block/utils";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
@@ -29,17 +29,6 @@ export default async function toggleTaskOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { user, block } = dataProps;
-  function findTaskCollaborator(
-    taskCollaborators: ITaskCollaborator[],
-    userId: string
-  ) {
-    const collaboratorIndex = taskCollaborators.findIndex(
-      c => c.userId === userId
-    );
-
-    return taskCollaborators[collaboratorIndex];
-  }
-
   const operation = getOperationWithIDForResource(
     state,
     toggleTaskOperationID,
@@ -60,47 +49,59 @@ export default async function toggleTaskOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const taskCollaborator = findTaskCollaborator(
-      block.taskCollaborators || [],
-      user.customId
-    );
-
+    const isCompleted = isTaskCompleted(block, user);
     const result = await blockNet.toggleTask({
       block,
-      data: taskCollaborator.completedAt ? false : true
+      data: isCompleted ? false : true
     });
 
     if (result && result.errors) {
       throw result.errors;
     }
 
-    const taskCollaborators = [...(block.taskCollaborators || [])];
-    const collaboratorIndex = taskCollaborators.findIndex(
-      c => c.userId === user.customId
-    );
+    if (block.taskCollaborationType!.collaborationType === "individual") {
+      const taskCollaborators = [...(block.taskCollaborators || [])];
+      const collaboratorIndex = taskCollaborators.findIndex(
+        c => c.userId === user.customId
+      );
 
-    let collaborator: ITaskCollaborator;
+      let collaborator: ITaskCollaborator;
 
-    if (collaboratorIndex !== -1) {
-      collaborator = { ...taskCollaborators[collaboratorIndex] };
-      collaborator.completedAt = collaborator.completedAt
-        ? undefined
-        : Date.now();
+      if (collaboratorIndex !== -1) {
+        collaborator = { ...taskCollaborators[collaboratorIndex] };
+        collaborator.completedAt = collaborator.completedAt
+          ? undefined
+          : Date.now();
 
-      taskCollaborators[collaboratorIndex] = collaborator;
+        taskCollaborators[collaboratorIndex] = collaborator;
+      } else {
+        collaborator = assignTask(user);
+        collaborator.completedAt = Date.now();
+        taskCollaborators.push(collaborator);
+      }
+
+      dispatch(
+        blockActions.updateBlockRedux(
+          block.customId,
+          { taskCollaborators },
+          { arrayUpdateStrategy: "replace" }
+        )
+      );
     } else {
-      collaborator = assignTask(user);
-      collaborator.completedAt = Date.now();
-      taskCollaborators.push(collaborator);
+      dispatch(
+        blockActions.updateBlockRedux(
+          block.customId,
+          {
+            taskCollaborationType: {
+              ...block.taskCollaborationType!,
+              completedAt: isCompleted ? 0 : Date.now(),
+              completedBy: user.customId
+            }
+          },
+          { arrayUpdateStrategy: "replace" }
+        )
+      );
     }
-
-    dispatch(
-      blockActions.updateBlockRedux(
-        block.customId,
-        { taskCollaborators },
-        { arrayUpdateStrategy: "replace" }
-      )
-    );
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {

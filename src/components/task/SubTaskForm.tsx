@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Input } from "antd";
 import React from "react";
 import FormError from "../form/FormError";
+import StyledContainer from "../styled/Container";
 import { ISubTaskValues } from "./SubTask";
 
 export interface ISubTaskFormProps {
@@ -23,20 +24,24 @@ const SubTaskForm: React.SFC<ISubTaskFormProps> = props => {
     errorMessage
   } = props;
 
-  const renderEditingControls = () => {
-    return (
-      <React.Fragment>
-        <StyledCancelEditingButton icon="close-circle" onClick={onCancelEdit} />
-        <StyledUpdateTaskButton icon="check" onClick={onCommitUpdates} />
-      </React.Fragment>
-    );
-  };
-
   const renderControls = () => {
     return (
       <React.Fragment>
-        <StyledButton type="danger" icon="delete" onClick={onDelete} />
-        {renderEditingControls()}
+        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+          <Button block type="danger" onClick={onDelete}>
+            Delete
+          </Button>
+        </StyledContainer>
+        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+          <Button block onClick={onCancelEdit}>
+            Cancel
+          </Button>
+        </StyledContainer>
+        <StyledContainer s={{ flex: 1 }}>
+          <Button block type="primary" onClick={onCommitUpdates}>
+            Save
+          </Button>
+        </StyledContainer>
       </React.Fragment>
     );
   };
@@ -88,23 +93,5 @@ const StyledDescriptionContainer = styled.div({
 
 const StyledControlsContainer = styled.div({
   display: "flex",
-  flexDirection: "row-reverse"
-});
-
-// TODO: All of these color and constants should be kept in a theme file
-// TODO: Replace these colors with attractive versions (hsla)
-const StyledUpdateTaskButton = styled(Button)({
-  border: "none",
-  backgroundColor: "green !important",
-  color: "white !important",
-  marginLeft: "8px"
-});
-
-const StyledCancelEditingButton = styled(Button)({
-  color: "red !important",
-  marginLeft: "8px"
-});
-
-const StyledButton = styled(Button)({
-  marginLeft: "8px"
+  marginTop: "8px"
 });

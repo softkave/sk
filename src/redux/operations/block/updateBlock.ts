@@ -62,21 +62,38 @@ export default async function updateBlockOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
+    if (block.type === "task") {
+      if (data.taskCollaborationType!.collaborationType === null) {
+        data.taskCollaborationType!.collaborationType = "collective";
+      }
+
+      // if (
+      //   block.taskCollaborationType!.collaborationType !==
+      //   data.taskCollaborationType!.collaborationType
+      // ) {
+      //   // strip previous task collaboration type data
+      //   data.taskCollaborationType = {
+      //     collaborationType: data.taskCollaborationType!.collaborationType,
+      //     completedAt: null,
+      //     completedBy: null
+      //   };
+
+      //   if (data.taskCollaborationType.collaborationType === "collective") {
+      //     // remove completed information in exisiting task collaborators data
+      //     data.taskCollaborators = data.taskCollaborators!.map(
+      //       taskCollaborator => ({
+      //         ...taskCollaborator,
+      //         completedAt: 0
+      //       })
+      //     );
+      //   }
+      // }
+    }
+
     const result = await blockNet.updateBlock({ block, data });
 
     if (result && result.errors) {
       throw result.errors;
-    }
-
-    if (
-      block.type === "task" &&
-      block.taskCollaborationType!.collaborationType !==
-        data.taskCollaborationType!.collaborationType
-    ) {
-      // strip previous data
-      data.taskCollaborationType = {
-        collaborationType: data.taskCollaborationType!.collaborationType
-      };
     }
 
     addTaskToUserIfAssigned(state, dispatch, block);

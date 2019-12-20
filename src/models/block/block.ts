@@ -43,8 +43,8 @@ export const blockTaskCollaborationTypes = {
 export type TaskCollaborationType = "individual" | "collective";
 export interface ITaskCollaborationTypeData {
   collaborationType: TaskCollaborationType;
-  completedAt?: number;
-  completedBy?: string;
+  completedAt?: number | null;
+  completedBy?: string | null;
 }
 
 export interface IBlock {

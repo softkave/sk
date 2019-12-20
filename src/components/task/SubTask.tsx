@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Button, Typography } from "antd";
 import React from "react";
+import StyledContainer from "../styled/Container";
 
 export interface ISubTaskValues {
   customId: string;
@@ -19,8 +20,18 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
   const renderControls = () => {
     return (
       <React.Fragment>
-        <StyledButton type="danger" icon="delete" onClick={onDelete} />
-        <StyledButton icon="edit" onClick={onEdit} />
+        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+          <Button block type="danger" onClick={onDelete}>
+            Delete
+          </Button>
+        </StyledContainer>
+        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+          <Button block onClick={onEdit}>
+            Edit
+          </Button>
+        </StyledContainer>
+        {/* <StyledButton type="danger" icon="delete" onClick={onDelete} />
+        <StyledButton icon="edit" onClick={onEdit} /> */}
       </React.Fragment>
     );
   };
@@ -52,10 +63,5 @@ const StyledDescriptionContainer = styled.div({
 });
 
 const StyledControlsContainer = styled.div({
-  display: "flex",
-  flexDirection: "row-reverse"
-});
-
-const StyledButton = styled(Button)({
-  marginLeft: "8px"
+  display: "flex"
 });
