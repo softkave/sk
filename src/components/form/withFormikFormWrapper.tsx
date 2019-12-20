@@ -106,11 +106,18 @@ export default function withFormikFormWrapper(
           ...rest
         } = this.props;
 
+        const derivedInitialValue = merge(
+          {},
+          (options || {}).initialValues,
+          initialValues
+        );
+        console.log({ derivedInitialValue, initialValues, options });
+
         return (
           <Formik
             {...options}
             ref={this.formikRef}
-            initialValues={merge((options || {}).initialValues, initialValues)}
+            initialValues={derivedInitialValue}
             onSubmit={this.onSubmitForm}
           >
             {props => {

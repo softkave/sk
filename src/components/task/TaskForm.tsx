@@ -3,12 +3,12 @@ import {
   Button,
   DatePicker,
   Form,
+  Icon,
   Input,
   List,
   Radio,
   Select,
-  Switch,
-  Icon
+  Switch
 } from "antd";
 import moment from "moment";
 import React from "react";
@@ -101,6 +101,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     } = this.props;
 
     const globalError = getGlobalError(errors);
+    console.log({ values });
 
     return (
       <StyledForm onSubmit={handleSubmit}>

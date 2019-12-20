@@ -157,6 +157,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
         formBlock!.type
       );
 
+      console.log({ formBlock });
+
       formsRender = (
         <React.Fragment>
           {formType === "project" && (

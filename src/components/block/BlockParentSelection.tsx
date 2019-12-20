@@ -67,7 +67,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
             fontSize: "16px"
           }}
         >
-          <Icon type="down" />
+          <Icon type="caret-down" />
         </StyledContainer>
       </StyledContainer>
     </Dropdown>
