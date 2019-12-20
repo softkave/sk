@@ -3,8 +3,7 @@ import {
   BlockType,
   IBlock,
   ISubTask,
-  ITaskCollaborator,
-  taskPriority
+  ITaskCollaborator
 } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
@@ -31,7 +30,7 @@ export default function getNewBlock(
 
   // TODO: Move creation of ids ( any resource at all ) to the server
   // Maybe get the id from the server when a form is created without an initial data, or without data with id
-  const newBlock = {
+  const newBlock: IBlock = {
     type,
     customId: newId(),
     createdAt: Date.now(),
@@ -41,16 +40,20 @@ export default function getNewBlock(
     groupProjectContext: [],
     parents: getParents(),
     collaborators: type === "org" ? [user.customId] : undefined,
+    taskCollaborationType:
+      type === "task" ? { collaborationType: "collective" } : undefined,
     taskCollaborators:
       type === "task" ? ([] as ITaskCollaborator[]) : undefined,
     tasks: childrenTypes.indexOf("task") ? [] : undefined,
     projects: childrenTypes.indexOf("group") ? [] : undefined,
     groups: childrenTypes.indexOf("project") ? [] : undefined,
+
+    // @ts-ignore
     name: undefined,
     description: undefined,
     expectedEndAt: undefined,
     updatedAt: undefined,
-    priority: type === "task" ? taskPriority.important : undefined,
+    priority: type === "task" ? "important" : undefined,
     isBacklog: false,
     roles: undefined,
     collaborationRequests: type === "org" ? [] : undefined

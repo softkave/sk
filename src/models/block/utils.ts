@@ -1,5 +1,10 @@
 import { IUser } from "../user/user";
-import { BlockType, IBlock, ITaskCollaborator } from "./block";
+import {
+  BlockType,
+  IBlock,
+  ITaskCollaborator,
+  TaskCollaborationType
+} from "./block";
 
 export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
   return {
@@ -27,7 +32,8 @@ export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
 
 export function aggregateBlocksParentIDs(blocks: IBlock[]) {
   const mappedParentIDs = blocks.reduce((accumulator, block) => {
-    block.parents.forEach(parentID => (accumulator[parentID] = parentID));
+    const blockParentIDs = getBlockParentIDs(block);
+    blockParentIDs.forEach(parentID => (accumulator[parentID] = parentID));
     return accumulator;
   }, {});
 
@@ -70,7 +76,8 @@ export function filterValidParentsForBlockType(
 }
 
 export function isBlockParentOf(parent: IBlock, block: IBlock) {
-  return parent.customId === block.parents[block.parents.length - 1];
+  const parentIDs = getBlockParentIDs(block);
+  return parent.customId === parentIDs[parentIDs.length - 1];
 }
 
 export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
@@ -94,5 +101,71 @@ export const getBlockTypeFullName = (type: BlockType) => {
       return "task";
     default:
       return "block";
+  }
+};
+
+export function getBlockParentIDs(block: IBlock) {
+  return Array.isArray(block.parents) ? block.parents : [];
+}
+
+export interface IC {
+  type: TaskCollaborationType;
+  isCompeleted: boolean;
+  total: number;
+  hasCompleted: number;
+  userHasCompleted: boolean;
+  userIsAssigned: boolean;
+}
+
+export const getTaskCompletionData = (task: IBlock, user: IUser): IC => {
+  const userData = getUserTaskCollaborator(task, user);
+  const taskCollaborators = task.taskCollaborators || [];
+  const type = task.taskCollaborationType!.collaborationType || "collective";
+  const total = taskCollaborators.length;
+  const userIsAssigned = !!userData;
+  let userHasCompleted;
+  let isCompeleted;
+  let hasCompleted;
+
+  if (type === "collective") {
+    isCompeleted = !!task.taskCollaborationType!.completedAt;
+    hasCompleted = total;
+    userHasCompleted = isCompeleted && userIsAssigned;
+  } else {
+    const completed = taskCollaborators.filter(
+      collaborator => !!collaborator.completedAt
+    );
+    userHasCompleted = userData && userData.completedAt;
+    isCompeleted = taskCollaborators.length === completed.length ? true : false;
+    hasCompleted = completed.length;
+  }
+
+  return {
+    type,
+    total,
+    isCompeleted,
+    userHasCompleted,
+    hasCompleted,
+    userIsAssigned
+  };
+};
+
+export const isTaskCompleted = (task: IBlock, user: IUser) => {
+  const userTaskCollaboratorData = getUserTaskCollaborator(task, user);
+  const taskCollaborators = task.taskCollaborators || [];
+  const collaborationType =
+    task.taskCollaborationType!.collaborationType || "collective";
+
+  if (collaborationType === "collective") {
+    return !!task.taskCollaborationType!.completedAt;
+  } else {
+    const hasCompleted = taskCollaborators.filter(
+      collaborator => !!collaborator.completedAt
+    );
+    return userTaskCollaboratorData && !!userTaskCollaboratorData.completedAt
+      ? true
+      : taskCollaborators.length === hasCompleted.length
+      ? true
+      : false;
   }
 };

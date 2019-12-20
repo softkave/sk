@@ -11,10 +11,12 @@ export interface IBlockRole {
   createdAt: number;
 }
 
+const notImportantkey = "not important";
+const veryImportantKey = "very important";
 export const taskPriority = {
   important: "important",
-  "not important": "not important",
-  "very important": "very important"
+  [notImportantkey]: "not important",
+  [veryImportantKey]: "very important"
 };
 
 export const blockType = {
@@ -33,28 +35,41 @@ export interface ISubTask {
   description: string;
 }
 
+export const blockTaskCollaborationTypes = {
+  individual: "individual",
+  collective: "collective"
+};
+
+export type TaskCollaborationType = "individual" | "collective";
+export interface ITaskCollaborationTypeData {
+  collaborationType: TaskCollaborationType;
+  completedAt?: number | null;
+  completedBy?: string | null;
+}
+
 export interface IBlock {
   customId: string;
   name: string;
-  description: string;
-  expectedEndAt: number;
+  description?: string;
+  expectedEndAt?: number;
   createdAt: number;
   color: string;
-  updatedAt: number;
+  updatedAt?: number;
   type: BlockType;
-  parents: string[];
+  parents?: string[];
   createdBy: string;
-  taskCollaborators: ITaskCollaborator[];
-  priority: BlockPriority;
+  taskCollaborationType?: ITaskCollaborationTypeData;
+  taskCollaborators?: ITaskCollaborator[];
+  priority?: BlockPriority;
   isBacklog: boolean;
-  tasks: string[];
-  groups: string[];
-  projects: string[];
-  groupTaskContext: string[];
-  groupProjectContext: string[];
-  roles: IBlockRole[];
-  collaborators: string[];
-  collaborationRequests: string[];
+  tasks?: string[];
+  groups?: string[];
+  projects?: string[];
+  groupTaskContext?: string[];
+  groupProjectContext?: string[];
+  roles?: IBlockRole[];
+  collaborators?: string[];
+  collaborationRequests?: string[];
   subTasks?: ISubTask[];
 }
 

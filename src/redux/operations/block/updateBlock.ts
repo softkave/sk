@@ -2,6 +2,7 @@ import moment from "moment";
 import { Dispatch } from "redux";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
+import { getBlockParentIDs } from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -61,6 +62,34 @@ export default async function updateBlockOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
+    if (block.type === "task") {
+      if (data.taskCollaborationType!.collaborationType === null) {
+        data.taskCollaborationType!.collaborationType = "collective";
+      }
+
+      // if (
+      //   block.taskCollaborationType!.collaborationType !==
+      //   data.taskCollaborationType!.collaborationType
+      // ) {
+      //   // strip previous task collaboration type data
+      //   data.taskCollaborationType = {
+      //     collaborationType: data.taskCollaborationType!.collaborationType,
+      //     completedAt: null,
+      //     completedBy: null
+      //   };
+
+      //   if (data.taskCollaborationType.collaborationType === "collective") {
+      //     // remove completed information in exisiting task collaborators data
+      //     data.taskCollaborators = data.taskCollaborators!.map(
+      //       taskCollaborator => ({
+      //         ...taskCollaborator,
+      //         completedAt: 0
+      //       })
+      //     );
+      //   }
+      // }
+    }
+
     const result = await blockNet.updateBlock({ block, data });
 
     if (result && result.errors) {
@@ -71,12 +100,14 @@ export default async function updateBlockOperationFunc(
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
+      const blockParentIDs = getBlockParentIDs(block);
+      const transferBlockParentIDs = getBlockParentIDs(forTransferBlockOnly);
       transferBlockStateHelper(state, dispatch, {
         draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(state, block.parents[block.parents.length - 1]),
+        sourceBlock: getBlock(state, blockParentIDs[blockParentIDs.length - 1]),
         destinationBlock: getBlock(
           state,
-          forTransferBlockOnly.parents[forTransferBlockOnly.parents.length - 1]
+          transferBlockParentIDs[transferBlockParentIDs.length - 1]
         )
       });
     }

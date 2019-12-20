@@ -18,8 +18,9 @@ const validationSchema = yup.object().shape({
     .required()
 });
 
-const TaskFormWithFormik = withFormikFormWrapper({ validationSchema })(
-  TaskForm
-);
+const TaskFormWithFormik = withFormikFormWrapper({
+  validationSchema,
+  initialValues: { taskCollaborationType: { collaborationType: "collective" } }
+})(TaskForm);
 
 export default TaskFormWithFormik;

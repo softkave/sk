@@ -24,13 +24,7 @@ export default class TaskList extends React.Component<ITaskListProps> {
   }
 
   public renderTasks() {
-    const {
-      blockHandlers,
-      user,
-      toggleForm,
-      selectedCollaborators,
-      tasks
-    } = this.props;
+    const { toggleForm, selectedCollaborators, tasks } = this.props;
     const filteredTasks = !this.isAnyCollaboratorSelected()
       ? tasks
       : tasks.filter(task => {

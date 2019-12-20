@@ -1,4 +1,5 @@
 import { Formik, FormikConfig } from "formik";
+import { merge } from "lodash";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import IOperation, {
@@ -14,9 +15,8 @@ import {
 } from "./formik-utils";
 
 export default function withFormikFormWrapper(
-  options?: Omit<
-    FormikConfig<any>,
-    "component" | "render" | "children" | "onSubmit" | "initialValues"
+  options?: Partial<
+    Omit<FormikConfig<any>, "component" | "render" | "children" | "onSubmit">
   >
 ) {
   return function wrapComponent<
@@ -102,6 +102,7 @@ export default function withFormikFormWrapper(
           getFormIdentifier,
           onClose,
           onSubmit,
+          initialValues,
           ...rest
         } = this.props;
 
@@ -109,7 +110,7 @@ export default function withFormikFormWrapper(
           <Formik
             {...options}
             ref={this.formikRef}
-            initialValues={rest.initialValues}
+            initialValues={merge((options || {}).initialValues, initialValues)}
             onSubmit={this.onSubmitForm}
           >
             {props => {

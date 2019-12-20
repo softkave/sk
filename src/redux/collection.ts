@@ -86,7 +86,7 @@ export function bulkUpdateCollectionItems<ResourceType extends object>(
               return srcValue;
             }
 
-            // merge arrayUpdateStrategy happens by default
+            // "merge" arrayUpdateStrategy happens by default
           }
         }
       );
@@ -134,18 +134,15 @@ export function getCollectionItemsAsArray<ResourceType>(
   resources: ICollectionMap<ResourceType>,
   ids: string[] = []
 ) {
-  return ids.reduce(
-    (accumulator, id) => {
-      const resource = resources[id];
+  return ids.reduce((accumulator, id) => {
+    const resource = resources[id];
 
-      if (resource) {
-        accumulator.push(resource.resource);
-      }
+    if (resource) {
+      accumulator.push(resource.resource);
+    }
 
-      return accumulator;
-    },
-    [] as ResourceType[]
-  );
+    return accumulator;
+  }, [] as ResourceType[]);
 }
 
 export function filterCollectionItemsWith<ResourceType>(

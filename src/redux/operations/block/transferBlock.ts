@@ -3,6 +3,7 @@ import { makeBlockParentIDs } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { blockErrorMessages } from "../../../models/block/blockErrorMessages";
 import { blockConstants } from "../../../models/block/constants";
+import { getBlockParentIDs } from "../../../models/block/utils";
 import * as blockActions from "../../blocks/actions";
 import { getEveryBlockChildrenInState } from "../../blocks/selectors";
 import { IReduxState } from "../../store";
@@ -252,5 +253,7 @@ export function transferBlockStateHelper(
 }
 
 export function hasBlockParentsChanged(block: IBlock, update: IBlock) {
-  return !!block.parents.find((id, index) => id !== update.parents[index]);
+  const blockParentIDs = getBlockParentIDs(block);
+  const updateParentIDs = getBlockParentIDs(update);
+  return !!blockParentIDs.find((id, index) => id !== updateParentIDs[index]);
 }

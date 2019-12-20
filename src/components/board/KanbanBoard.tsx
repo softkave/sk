@@ -232,7 +232,7 @@ class KanbanBoard extends React.PureComponent<
     if (!this.blockHasUngrouped(block) && renderedGroups.length === 0) {
       return (
         <StyledCenterContainer>
-          <Empty description="Hit the create button to get started" />
+          <Empty description="Hit the create button to get started." />
         </StyledCenterContainer>
       );
     }

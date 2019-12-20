@@ -64,7 +64,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
         <StyledContainer
           s={{
             alignItems: "center",
-            fontSize: "18px"
+            fontSize: "16px"
           }}
         >
           <Icon type="down" />

@@ -18,6 +18,11 @@ const blockFragment = `
     projects
     groupTaskContext
     groupProjectContext
+    taskCollaborationType {
+      collaborationType
+      completedAt
+      completedBy
+    }
     taskCollaborators {
       userId
       assignedAt

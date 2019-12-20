@@ -3,6 +3,7 @@ import { Button } from "antd";
 import { defaultTo, isString } from "lodash";
 import React from "react";
 import { BlockType, findBlock, IBlock } from "../../models/block/block";
+import { getBlockParentIDs } from "../../models/block/utils";
 import {
   assignTask,
   filterValidParentsForBlockType
@@ -23,6 +24,7 @@ import Collaborators from "../collaborator/Collaborators";
 import ExpandedGroup from "../group/ExpandedGroup";
 import GroupFormWithModal from "../group/GroupFormWithModal";
 import ProjectFormWithModal from "../project/ProjectFormWithModal";
+import { ITaskFormValues } from "../task/TaskForm";
 import TaskFormWithModal from "../task/TaskFormWithModal";
 import SplitView, { ISplit } from "../view/SplitView";
 import { getChildrenTypesForContext } from "./context-utils";
@@ -120,8 +122,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
       projects,
       groups,
       tasks,
-      onSelectProject,
-      parents
+      onSelectProject
     } = this.props;
     const {
       formType,
@@ -194,14 +195,14 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               collaborators={collaborators}
               onSubmit={(data, options) => this.onSubmitData(data, options)}
               onClose={() => this.toggleForm(formType)}
-              initialValues={
+              initialValues={cast<ITaskFormValues>(
                 isFormForAddBlock && actLikeRootBlock
                   ? {
                       ...formBlock!,
                       taskCollaborators: [assignTask(user)]
                     }
                   : formBlock
-              }
+              )}
               user={user}
               submitLabel={formTitle}
               title={formTitle}
@@ -220,7 +221,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
           {childrenTypes.length > 0 && (
             <CreateButton
               types={childrenTypes}
-              label="Create"
+              label="New"
               onClick={type => this.toggleForm(type as BlockType)}
             />
           )}
@@ -356,7 +357,7 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   };
 
   private getAvailableParents = () => {
-    const { block, projects, groups, parents } = this.props;
+    const { block, groups } = this.props;
     const availableParents: IBlock[] = cast<IBlock[]>([]).concat(
       // TODO: Should we include the org or project group parent in here?
       // defaultTo(parents, []),
@@ -372,7 +373,8 @@ class Board extends React.Component<IBoardProps, IBoardState> {
 
   private getBlockParent = (block: IBlock) => {
     const availableParents = this.getAvailableParents();
-    const parentID = block.parents[block.parents.length - 1];
+    const blockParentIDs = getBlockParentIDs(block);
+    const parentID = blockParentIDs[blockParentIDs.length - 1];
     return findBlock(availableParents, parentID);
   };
 

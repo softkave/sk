@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import { Icon } from "antd";
 import isString from "lodash/isString";
 import React from "react";
+import StyledContainer from "./styled/Container";
+import StyledFillAndCenterContainer from "./styled/FillAndCenterContainer";
 
 export interface IGeneralErrorProps {
   error?: Error | string;
@@ -19,28 +21,21 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
   }
 
   return (
-    <StyledContainer>
-      <StyledIcon type="close-circle" />
-      <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
-    </StyledContainer>
+    <StyledFillAndCenterContainer>
+      <StyledContainer s={{ maxWidth: "300px", fontWeight: "bold" }}>
+        <StyledContainer s={{ color: "red", fontSize: "20px" }}>
+          <Icon type="close-circle" theme="filled" />
+        </StyledContainer>
+        <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
+      </StyledContainer>
+    </StyledFillAndCenterContainer>
   );
 };
 
 export default GeneralError;
 
-const StyledContainer = styled.div({
-  alignItems: "center",
-  justifyContent: "center",
-  flex: 1,
-  margin: "16px 0"
-});
-
 const StyledErrorMessage = styled.div({
   display: "flex",
   flex: 1,
   marginLeft: "8px"
-});
-
-const StyledIcon = styled(Icon)({
-  color: "red"
 });

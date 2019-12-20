@@ -1,4 +1,5 @@
 import { IBlock } from "../../models/block/block";
+import { getBlockParentIDs } from "../../models/block/utils";
 import IView from "./view";
 
 export const currentProjectViewName = "current_project";
@@ -10,9 +11,10 @@ export interface ICurrentProjectView extends IView {
 }
 
 export function makeCurrentProjectView(project: IBlock): ICurrentProjectView {
+  const projectParentIDs = getBlockParentIDs(project);
   return {
     viewName: currentProjectViewName,
-    parentBlockID: project.parents[project.parents.length - 1],
+    parentBlockID: projectParentIDs[projectParentIDs.length - 1],
     projectID: project.customId
   };
 }

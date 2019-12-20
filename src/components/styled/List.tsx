@@ -50,22 +50,17 @@ class List<T> extends React.Component<IListProps<T>> {
 
 export default List;
 
-const StyledListContainer = styled.div({
-  display: "flex",
-  width: "100%",
-  height: "100%",
-  flexDirection: "column"
-});
-
+const lastOfTypeSelector = "&:last-of-type";
+const hoverSelector = "&:hover";
 const StyledListItemContainer = styled.div({
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
-  "&:last-of-type": {
+  [lastOfTypeSelector]: {
     borderBottom: 0
   },
 
-  "&:hover": {
+  [hoverSelector]: {
     backgroundColor: "#E6F7FF"
   }
 });
