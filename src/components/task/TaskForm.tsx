@@ -284,7 +284,6 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderSubTasks = () => (
       <Form.Item label="Sub Tasks">
         <SubTaskList
-          canAddSubTasks
           subTasks={values.subTasks || []}
           errors={touched.subTasks && (errors.subTasks as any)}
           onChange={onChangeSubTasks}

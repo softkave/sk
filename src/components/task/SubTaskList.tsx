@@ -2,6 +2,7 @@ import { Divider, Icon } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { ISubTask } from "../../models/block/block";
+import { blockConstants } from "../../models/block/constants";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { newId } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
@@ -12,7 +13,6 @@ const StyledContainerAsLink = StyledContainer.withComponent("a");
 export interface ISubTaskListProps {
   subTasks: ISubTask[];
   onChange: (value: ISubTask[]) => void;
-  canAddSubTasks?: boolean;
   errors?: ISubTaskErrors[];
 }
 
@@ -22,12 +22,7 @@ interface ISubTaskState {
 }
 
 const SubTaskList: React.SFC<ISubTaskListProps> = props => {
-  const {
-    subTasks: value,
-    onChange,
-    canAddSubTasks,
-    errors: subTaskErrors
-  } = props;
+  const { subTasks: value, onChange, errors: subTaskErrors } = props;
   const subTasks = value || [];
   const errors = subTaskErrors || [];
 
@@ -166,7 +161,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
 
   return (
     <div>
-      {canAddSubTasks && (
+      {subTasks.length < blockConstants.maxSubTasksLength && (
         <StyledContainerAsLink
           role="button"
           onClick={onAddSubTask}

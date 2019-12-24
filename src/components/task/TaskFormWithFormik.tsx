@@ -26,7 +26,10 @@ const validationSchema = yup.object().shape({
     .required(),
 
   // TODO: what should be the max?
-  subTasks: yup.array().of(subTaskSchema)
+  subTasks: yup
+    .array()
+    .of(subTaskSchema)
+    .max(blockConstants.maxSubTasksLength)
 });
 
 const TaskFormWithFormik = withFormikFormWrapper({
