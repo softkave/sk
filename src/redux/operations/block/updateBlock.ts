@@ -76,11 +76,14 @@ export default async function updateBlockOperationFunc(
       const transferBlockParentIDs = getBlockParentIDs(forTransferBlockOnly);
       transferBlockStateHelper(state, dispatch, {
         draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(state, blockParentIDs[blockParentIDs.length - 1]),
+        sourceBlock: getBlock(
+          state,
+          blockParentIDs[blockParentIDs.length - 1]
+        )!,
         destinationBlock: getBlock(
           state,
           transferBlockParentIDs[transferBlockParentIDs.length - 1]
-        )
+        )!
       });
     }
 

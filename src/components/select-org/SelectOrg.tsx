@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Dropdown, Icon, Menu } from "antd";
 import React from "react";
-
 import { findBlock, IBlock } from "../../models/block/block";
 import { orgsViewName } from "../../redux/view/orgs";
 import { getWindowWidth } from "../../utils/window";

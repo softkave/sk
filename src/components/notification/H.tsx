@@ -6,7 +6,7 @@
 // import { IUser } from "../../models/user/user";
 // import { getWindowWidth } from "../../utils/window";
 // import StyledCenterContainer from "../styled/CenterContainer";
-// import NotificationBody from "./NotificationBody";
+// import Notification from "./Notification";
 // import NotificationList from "./NotificationList";
 
 // export interface INotificationListProps {
@@ -93,11 +93,7 @@
 //   private renderCurrentNotification() {
 //     const { currentNotificationID } = this.props;
 
-//     return (
-//       <NotificationBody
-//         notification={this.findNotification(currentNotificationID!)}
-//       />
-//     );
+//     return <Notification />;
 //   }
 
 //   private renderNotificationList() {

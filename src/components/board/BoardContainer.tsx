@@ -27,7 +27,9 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
   const user = getSignedInUserRequired(state);
   const block = ownProps.block || getBlock(state, ownProps.blockID);
   const blockHandlers = getBlockMethods(state, dispatch);
-  const { view, blockData } = blockDataLoader(state, dispatch, { block });
+  const { view, blockData } = blockDataLoader(state, dispatch, {
+    block: block!
+  });
 
   return {
     block,
@@ -36,7 +38,7 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
       view.viewName === "ready"
         ? {
             ...ownProps,
-            block,
+            block: block!,
             user,
             blockHandlers,
             tasks: blockData.tasks!,
@@ -44,7 +46,7 @@ function mergeProps(state, { dispatch }, ownProps: IBoardContainerProps) {
             groups: blockData.groups!,
             collaborators: blockData.collaborators!,
             collaborationRequests: blockData.collaborationRequests!,
-            parents: getBlockParents(state, block)
+            parents: getBlockParents(state, block!)
           }
         : undefined
   };
@@ -54,4 +56,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
+  // @ts-ignore
 )(BlockViewManager);

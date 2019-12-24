@@ -75,7 +75,7 @@
 //   const currentView = getViewFromOperations([loadNotificationsOp]);
 //   const onMount = () => {
 //     if (!Array.isArray(user.notifications)) {
-//       loadUserNotificationsOperationFunc(state, dispatch, { user });
+//       // loadUserNotificationsOperationFunc(state, dispatch, { user });
 //     }
 //   };
 

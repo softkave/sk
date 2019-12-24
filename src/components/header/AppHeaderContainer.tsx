@@ -23,7 +23,7 @@ function mergeProps(state, { dispatch }) {
     user,
     currentViewName: view.viewName,
     onLogout() {
-      logoutUserOperation(state, dispatch);
+      logoutUserOperation();
     },
     onChangeView(newViewName: string) {
       dispatch(setRootView({ viewName: newViewName }));

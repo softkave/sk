@@ -1,14 +1,16 @@
 import { IBlock } from "../../models/block/block";
-import { isBlockParentOf, getBlockParentIDs } from "../../models/block/utils";
+import { isBlockParentOf } from "../../models/block/utils";
 import {
   filterCollectionItemsWith,
   getCollectionItemsAsArray
 } from "../collection";
 import { IReduxState } from "../store";
 
-export function getBlock(state: IReduxState, blockID: string) {
-  const blocks = getCollectionItemsAsArray(state.blocks, [blockID]);
-  return blocks[0];
+export function getBlock(state: IReduxState, blockID?: string | null) {
+  if (blockID) {
+    const blocks = getCollectionItemsAsArray(state.blocks, [blockID]);
+    return blocks[0];
+  }
 }
 
 export function getBlocksAsArray(state: IReduxState, ids: string[]) {
@@ -25,5 +27,5 @@ export function getEveryBlockChildrenInState(
 }
 
 export function getBlockParents(state: IReduxState, block: IBlock) {
-  return getBlocksAsArray(state, getBlockParentIDs(block));
+  return getBlocksAsArray(state, block.parents || []);
 }
