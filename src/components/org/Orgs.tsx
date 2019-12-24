@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button } from "antd";
+import { Button, Icon } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -8,6 +8,8 @@ import { addBlockOperationID } from "../../redux/operations/operationIDs";
 import getNewBlock from "../block/getNewBlock";
 import { IBlockMethods } from "../block/methods";
 import ScrollList from "../ScrollList";
+import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
 import EditOrgFormWithModal from "./EditOrgFormWithModal";
 import OrgList from "./OrgList";
 
@@ -59,6 +61,17 @@ class Orgs extends React.Component<IOrgsProps, IOrgsState> {
         <ScrollList>
           <StyledOrgsContent>
             <StyledCreateOrgWrapper>
+              {/* <StyledContainer
+                s={{
+                  lineHeight: "16px",
+                  padding: "0 24px"
+                }}
+              >
+                <StyledFlatButton style={{ color: "#1890ff" }}>
+                  <Icon type="plus-circle" theme="twoTone" />
+                  Create Organization
+                </StyledFlatButton>
+              </StyledContainer> */}
               <Button block onClick={this.toggleNewOrgForm} icon="plus">
                 Create Organization
               </Button>

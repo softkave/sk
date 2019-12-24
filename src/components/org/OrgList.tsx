@@ -46,7 +46,6 @@ const StyledOrgList = styled.div({
 const lastOfTypeSelector = "&:last-of-type";
 const hoverSelector = "&:hover";
 const StyledOrgListItem = styled.div({
-  // padding: "24px 16px",
   padding: "24px",
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
