@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Icon, Switch, Typography } from "antd";
+import { Icon, Switch, Typography } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
 import {
@@ -9,8 +9,7 @@ import {
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
-
-const StyledContainerAsButton = StyledContainer.withComponent(Button);
+import StyledFlatButton from "../styled/FlatButton";
 
 export interface ITaskCollaboratorThumbnailProps {
   collaborator: IUser;
@@ -37,7 +36,7 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = pr
           </StyledCollaboratorNameContainer>
         )}
       </SizeMe>
-      <StyledContainer>
+      <StyledContainer s={{ alignItems: "center" }}>
         {collaborationType === "individual" && (
           <Switch
             disabled={true}
@@ -46,19 +45,12 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = pr
             style={{ marginRight: "16px" }}
           />
         )}
-        <StyledContainerAsButton
-          type="danger"
-          size="small"
-          icon="delete"
+        <StyledFlatButton
           onClick={onUnassign}
-          s={{
-            alignItems: "center",
-            justifyContent: "center",
-            ["& .anticon"]: {
-              fontSize: "13.33px"
-            }
-          }}
-        />
+          style={{ color: "rgb(255, 77, 79)" }}
+        >
+          <Icon type="delete" theme="filled" />
+        </StyledFlatButton>
       </StyledContainer>
     </StyledMainContainer>
   );

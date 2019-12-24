@@ -1,51 +1,135 @@
 import styled from "@emotion/styled";
-import { Button, Typography } from "antd";
+import { Icon, Input, Switch } from "antd";
+import { FormikErrors } from "formik";
 import React from "react";
+import { ISubTask } from "../../models/block/block";
+import FormError from "../form/FormError";
 import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
 
-export interface ISubTaskValues {
-  customId: string;
-  description: string;
-}
+export type ISubTaskErrors = FormikErrors<ISubTask>;
 
 export interface ISubTaskProps {
-  subTask: ISubTaskValues;
-  onEdit: () => void;
+  subTask: ISubTask;
+  onChange: (subTask: ISubTask) => void;
   onDelete: () => void;
+  onToggle: () => void;
+  onEdit: () => void;
+  onSave: () => void;
+  isEditing?: boolean;
+  onCancelEdit?: () => void;
+  errorMessage?: string | null;
 }
 
 const SubTask: React.SFC<ISubTaskProps> = props => {
-  const { subTask, onEdit, onDelete } = props;
+  const {
+    subTask,
+    onChange,
+    onDelete,
+    onCancelEdit,
+    errorMessage,
+    onToggle,
+    onEdit,
+    isEditing,
+    onSave
+  } = props;
 
-  const renderControls = () => {
+  const renderDeleteBtn = () => (
+    <StyledFlatButton onClick={onDelete} style={{ color: "rgb(255, 77, 79)" }}>
+      <Icon type="delete" theme="filled" /> Delete
+    </StyledFlatButton>
+  );
+
+  const renderMainControls = () => {
     return (
-      <React.Fragment>
-        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
-          <Button block type="danger" onClick={onDelete}>
-            Delete
-          </Button>
-        </StyledContainer>
-        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
-          <Button block onClick={onEdit}>
-            Edit
-          </Button>
-        </StyledContainer>
-        {/* <StyledButton type="danger" icon="delete" onClick={onDelete} />
-        <StyledButton icon="edit" onClick={onEdit} /> */}
-      </React.Fragment>
+      <StyledContainer s={{ flex: 1, marginTop: "8px" }}>
+        {renderDeleteBtn()}
+        <StyledFlatButton onClick={onEdit} style={{ marginLeft: "48px" }}>
+          <Icon
+            type="edit"
+            // theme="twoTone"
+            // twoToneColor="rgba(0, 0, 0, 0.65)"
+            style={{ color: "rgba(0, 0, 0, 0.45)" }}
+          />{" "}
+          Edit
+        </StyledFlatButton>
+      </StyledContainer>
     );
   };
 
   const renderDescriptionText = () => {
-    return <Typography.Text ellipsis>{subTask.description}</Typography.Text>;
+    return (
+      <StyledContainer
+        s={{
+          lineHeight: "24px"
+        }}
+      >
+        {subTask.description}
+      </StyledContainer>
+    );
+  };
+
+  const renderEditControls = () => {
+    return (
+      <StyledContainer s={{ marginTop: "6px" }}>
+        {renderDeleteBtn()}
+        {onCancelEdit && (
+          <StyledFlatButton
+            onClick={onCancelEdit}
+            style={{ marginLeft: "48px", color: "rgb(255, 77, 79)" }}
+          >
+            <Icon
+              type="close-circle"
+              theme="twoTone"
+              twoToneColor="rgb(255, 77, 79)"
+            />{" "}
+            Cancel
+          </StyledFlatButton>
+        )}
+        {subTask.description.length > 0 && (
+          <StyledFlatButton
+            onClick={onSave}
+            style={{ marginLeft: "48px", color: "#1890ff" }}
+          >
+            <Icon type="save" theme="twoTone" /> Save
+          </StyledFlatButton>
+        )}
+      </StyledContainer>
+    );
+  };
+
+  const renderDescriptionInput = () => {
+    return (
+      <React.Fragment>
+        <Input.TextArea
+          // TODO: These constants should go in a theme file
+          autosize={{ minRows: 2, maxRows: 6 }}
+          autoComplete="off"
+          name="description"
+          placeholder="Description"
+          onChange={event =>
+            onChange({
+              ...subTask,
+              description: event.target.value
+            })
+          }
+          value={subTask.description}
+          style={{ marginBottom: 0 }}
+        />
+        {errorMessage && <FormError error={errorMessage} />}
+      </React.Fragment>
+    );
   };
 
   return (
     <StyledSubTaskContainer>
+      <StyledContainer s={{ marginBottom: "12px" }}>
+        <Switch checked={!!subTask.completedAt} onChange={onToggle} />
+      </StyledContainer>
       <StyledDescriptionContainer>
-        {renderDescriptionText()}
+        {isEditing ? renderDescriptionInput() : renderDescriptionText()}
       </StyledDescriptionContainer>
-      <StyledControlsContainer>{renderControls()}</StyledControlsContainer>
+      {isEditing ? renderEditControls() : renderMainControls()}
     </StyledSubTaskContainer>
   );
 };
@@ -59,9 +143,6 @@ const StyledSubTaskContainer = styled.div({
 
 const StyledDescriptionContainer = styled.div({
   display: "flex",
-  flex: "1"
-});
-
-const StyledControlsContainer = styled.div({
-  display: "flex"
+  flex: "1",
+  flexDirection: "column"
 });

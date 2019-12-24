@@ -9,7 +9,7 @@ import StyledButton from "../styled/Button";
 import StyledFlexContainer from "../styled/FlexContainer";
 import Text from "../Text";
 import Priority from "./Priority";
-import ToggleSwitch from "./ToggleSwitch";
+import ToggleSwitchContainer from "./ToggleSwitch";
 
 export interface ITaskProps {
   task: IBlock;
@@ -29,7 +29,7 @@ const Task: React.FC<ITaskProps> = props => {
     <StyledTask>
       <StyledFlexContainer>
         <div>
-          <ToggleSwitch task={task} />
+          <ToggleSwitchContainer task={task} />
         </div>
         <StyledPriorityContainer>
           <Priority level={task.priority!} />

@@ -40,7 +40,7 @@ export default function getNewBlock(
     groupProjectContext: [],
     parents: getParents(),
     collaborators: type === "org" ? [user.customId] : undefined,
-    taskCollaborationType:
+    taskCollaborationData:
       type === "task" ? { collaborationType: "collective" } : undefined,
     taskCollaborators:
       type === "task" ? ([] as ITaskCollaborator[]) : undefined,

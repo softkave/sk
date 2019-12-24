@@ -111,7 +111,6 @@ export default function withFormikFormWrapper(
           (options || {}).initialValues,
           initialValues
         );
-        console.log({ derivedInitialValue, initialValues, options });
 
         return (
           <Formik

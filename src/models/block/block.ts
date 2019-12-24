@@ -33,6 +33,8 @@ export type BlockType = keyof typeof blockType;
 export interface ISubTask {
   customId: string;
   description: string;
+  completedBy?: string | null;
+  completedAt?: number | null;
 }
 
 export const blockTaskCollaborationTypes = {
@@ -41,7 +43,7 @@ export const blockTaskCollaborationTypes = {
 };
 
 export type TaskCollaborationType = "individual" | "collective";
-export interface ITaskCollaborationTypeData {
+export interface ITaskCollaborationData {
   collaborationType: TaskCollaborationType;
   completedAt?: number | null;
   completedBy?: string | null;
@@ -58,7 +60,7 @@ export interface IBlock {
   type: BlockType;
   parents?: string[];
   createdBy: string;
-  taskCollaborationType?: ITaskCollaborationTypeData;
+  taskCollaborationData?: ITaskCollaborationData;
   taskCollaborators?: ITaskCollaborator[];
   priority?: BlockPriority;
   isBacklog: boolean;
