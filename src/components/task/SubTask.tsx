@@ -44,14 +44,11 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
     return (
       <StyledContainer s={{ flex: 1, marginTop: "8px" }}>
         {renderDeleteBtn()}
-        <StyledFlatButton onClick={onEdit} style={{ marginLeft: "48px" }}>
-          <Icon
-            type="edit"
-            // theme="twoTone"
-            // twoToneColor="rgba(0, 0, 0, 0.65)"
-            style={{ color: "rgba(0, 0, 0, 0.45)" }}
-          />{" "}
-          Edit
+        <StyledFlatButton
+          onClick={onEdit}
+          style={{ marginLeft: "48px", color: "#1890ff" }}
+        >
+          <Icon type="edit" theme="twoTone" /> Edit
         </StyledFlatButton>
       </StyledContainer>
     );

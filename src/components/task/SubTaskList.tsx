@@ -119,9 +119,8 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     const subTaskIndex = getSubTaskIDIndexFromSubTasks(id);
     const error = errors[subTaskIndex];
     const subTask = subTasks[subTaskIndex];
-    const subTaskState = subTasksBeingEdited[getSubTaskIndexFromState(id)];
 
-    if (error || subTaskState.description.length === 0) {
+    if (error || subTask.description.length === 0) {
       onUpdateSubTask(id, subTask);
     } else {
       removeSubTaskFromSubTasksBeingEdited(id);
