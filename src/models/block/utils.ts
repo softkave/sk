@@ -108,28 +108,31 @@ export function getBlockParentIDs(block: IBlock) {
   return Array.isArray(block.parents) ? block.parents : [];
 }
 
-export interface IC {
+export interface ITaskCompletionData {
   type: TaskCollaborationType;
   isCompeleted: boolean;
-  total: number;
-  hasCompleted: number;
+  totalCollaboratorsNum: number;
+  hasCompletedNum: number;
   userHasCompleted: boolean;
   userIsAssigned: boolean;
 }
 
-export const getTaskCompletionData = (task: IBlock, user: IUser): IC => {
+export const getTaskCompletionData = (
+  task: IBlock,
+  user: IUser
+): ITaskCompletionData => {
   const userData = getUserTaskCollaborator(task, user);
   const taskCollaborators = task.taskCollaborators || [];
-  const type = task.taskCollaborationType!.collaborationType || "collective";
-  const total = taskCollaborators.length;
+  const type = task.taskCollaborationData!.collaborationType || "collective";
+  const totalCollaboratorsNum = taskCollaborators.length;
   const userIsAssigned = !!userData;
   let userHasCompleted;
   let isCompeleted;
-  let hasCompleted;
+  let hasCompletedNum;
 
   if (type === "collective") {
-    isCompeleted = !!task.taskCollaborationType!.completedAt;
-    hasCompleted = total;
+    isCompeleted = !!task.taskCollaborationData!.completedAt;
+    hasCompletedNum = totalCollaboratorsNum;
     userHasCompleted = isCompeleted && userIsAssigned;
   } else {
     const completed = taskCollaborators.filter(
@@ -141,15 +144,15 @@ export const getTaskCompletionData = (task: IBlock, user: IUser): IC => {
       taskCollaborators.length === completed.length
         ? true
         : false;
-    hasCompleted = completed.length;
+    hasCompletedNum = completed.length;
   }
 
   return {
     type,
-    total,
+    totalCollaboratorsNum,
     isCompeleted,
     userHasCompleted,
-    hasCompleted,
+    hasCompletedNum,
     userIsAssigned
   };
 };
@@ -158,10 +161,10 @@ export const isTaskCompleted = (task: IBlock, user: IUser) => {
   const userTaskCollaboratorData = getUserTaskCollaborator(task, user);
   const taskCollaborators = task.taskCollaborators || [];
   const collaborationType =
-    task.taskCollaborationType!.collaborationType || "collective";
+    task.taskCollaborationData!.collaborationType || "collective";
 
   if (collaborationType === "collective") {
-    return !!task.taskCollaborationType!.completedAt;
+    return !!task.taskCollaborationData!.completedAt;
   } else {
     const hasCompleted = taskCollaborators.filter(
       collaborator => !!collaborator.completedAt

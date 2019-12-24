@@ -1,13 +1,12 @@
-import { Icon, Switch } from "antd";
+import { message, Switch } from "antd";
 import React from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import { getTaskCompletionData } from "../../models/block/utils";
 import toggleTaskOperationFunc from "../../redux/operations/block/toggleTask";
 import { toggleTaskOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import OperationError from "../../utils/operation-error/OperationError";
 import useOperation from "../hooks/useOperation";
-import StyledContainer from "../styled/Container";
 
 export interface IToggleSwitchProps {
   task: IBlock;
@@ -23,48 +22,40 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   });
   const store = useStore();
   const dispatch = useDispatch();
-  const completionData = getTaskCompletionData(task, user);
+  const [lastStatusTimestamp, setLastStatusTimestamp] = React.useState(
+    Date.now()
+  );
+  const isCompeleted = !!task.taskCollaborationData!.completedAt;
 
-  const renderUncheckedChildren = () => {
-    if (completionData.type === "individual") {
-      return `${completionData.hasCompleted} | ${completionData.total}`;
+  React.useEffect(() => {
+    if (
+      toggleTaskOperation.currentStatus &&
+      toggleTaskOperation.currentStatus.timestamp >= lastStatusTimestamp
+    ) {
+      setLastStatusTimestamp(Date.now());
     }
+  });
 
-    return null;
-  };
-
-  const renderUserHasCompletedMarker = () => {
-    if (completionData.type === "individual") {
-      if (completionData.userHasCompleted) {
-        return (
-          <Icon
-            type="check-circle"
-            theme="twoTone"
-            style={{ color: "green", marginLeft: "4px", fontSize: "16px" }}
-          />
-        );
-      }
-    }
-  };
+  if (
+    toggleTaskOperation.isError &&
+    toggleTaskOperation.currentStatus!.timestamp >= lastStatusTimestamp
+  ) {
+    const error = OperationError.fromAny(toggleTaskOperation.error);
+    const flattenedError = error.flatten();
+    message.error(flattenedError.error);
+  }
 
   const onToggle = () => {
     toggleTaskOperationFunc(store.getState(), dispatch, { user, block: task });
   };
 
-  const renderedCompletionInformation = renderUncheckedChildren();
-
   return (
-    <StyledContainer s={{ alignItems: "center" }}>
-      <Switch
-        loading={toggleTaskOperation.isLoading}
-        checked={completionData.isCompeleted}
-        onChange={onToggle}
-        disabled={disabled}
-        unCheckedChildren={renderedCompletionInformation}
-        checkedChildren={renderedCompletionInformation}
-      />
-      {renderUserHasCompletedMarker()}
-    </StyledContainer>
+    <Switch
+      loading={toggleTaskOperation.isLoading}
+      checked={isCompeleted}
+      onChange={onToggle}
+      disabled={disabled}
+    />
   );
 };
 

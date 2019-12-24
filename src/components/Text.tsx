@@ -3,6 +3,8 @@ import { Icon } from "antd";
 import React from "react";
 import StyledContainer from "./styled/Container";
 
+const StyledButton = StyledContainer.withComponent("button");
+
 export interface ITextProps {
   text: string;
   rows: number;
@@ -19,10 +21,7 @@ const Text: React.FC<ITextProps> = props => {
   const toggleExpand = () => setExpand(!expand);
 
   const renderControl = (controlText: string, icon: string) => (
-    // @ts-ignore
-    <StyledContainer
-      // @ts-ignore
-      as="button"
+    <StyledButton
       s={{
         display: "inline-block",
         border: "none",
@@ -34,7 +33,7 @@ const Text: React.FC<ITextProps> = props => {
     >
       {controlText}
       <StyledControlIcon type={icon} />
-    </StyledContainer>
+    </StyledButton>
   );
 
   if (shouldShowControls) {
@@ -51,7 +50,7 @@ const Text: React.FC<ITextProps> = props => {
       return (
         <StyledHideTextContainer>
           {renderedText}
-          {"... "}
+          {"..."}
           {renderControl("more", "down")}
         </StyledHideTextContainer>
       );

@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
+import ErrorMessages from "../../models/errorMessages";
 import { notificationConstants } from "../../models/notification/constants";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
@@ -18,7 +19,7 @@ const validationSchema = yup.object().shape({
         email: yup
           .string()
           .email(userErrorMessages.invalidEmail)
-          .required("Email address is required"), // TODO: Central place for error messages
+          .required(ErrorMessages.emailAddressRequired), // TODO: Central place for error messages
         body: yup
           .string()
           .max(notificationConstants.maxAddCollaboratorMessageLength, () => {

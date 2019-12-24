@@ -18,7 +18,7 @@ const blockFragment = `
     projects
     groupTaskContext
     groupProjectContext
-    taskCollaborationType {
+    taskCollaborationData {
       collaborationType
       completedAt
       completedBy
@@ -32,6 +32,8 @@ const blockFragment = `
     subTasks {
       customId
       description
+      completedAt
+      completedBy
     }
   }
 `;
