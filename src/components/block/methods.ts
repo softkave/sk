@@ -17,7 +17,7 @@ import loadBlockCollaborationRequestsOperationFunc, {
 import loadBlockCollaboratorsOperationFunc, {
   ILoadBlockCollaboratorsOperationFuncDataProps
 } from "../../redux/operations/block/loadBlockCollaborators";
-import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlock";
+import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
 import toggleTaskOperationFunc, {
   IToggleTaskOperationFuncDataProps
 } from "../../redux/operations/block/toggleTask";
@@ -40,14 +40,14 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IAddBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return addBlockOperationFunc(state, dispatch, props, options);
+      return addBlockOperationFunc(props, options);
     },
 
     async onUpdate(
       props: IUpdateBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return updateBlockOperationFunc(state, dispatch, props, options);
+      return updateBlockOperationFunc(props, options);
     },
 
     async onToggle(
@@ -75,7 +75,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: ILoadBlockChildrenOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockChildrenOperationFunc(state, dispatch, props, options);
+      return loadBlockChildrenOperationFunc(props, options);
     },
 
     async loadCollaborators(
@@ -103,7 +103,7 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
     },
 
     async loadRootData() {
-      return loadRootBlocksOperationFunc(state, dispatch);
+      return loadRootBlocksOperationFunc();
     }
   };
 }

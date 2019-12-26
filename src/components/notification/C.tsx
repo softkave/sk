@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
-import NotificationListItem from "./NotificationListItem";
+import NotificationListItem from "./D";
 
 export interface INotificationListProps {
   notifications: INotification[];

@@ -35,7 +35,16 @@ const Header: React.FC<IHeaderProps> = props => {
         <Dropdown
           overlay={
             <Menu onClick={onSelectAvatarMenu} style={{ minWidth: "120px" }}>
-              <Menu.Item key="logout">Logout</Menu.Item>
+              <StyledMenuItem key="logout">
+                <StyledContainer
+                  s={{ color: "rgb(255, 77, 79)", alignItems: "center" }}
+                >
+                  <Icon type="logout" />
+                  <StyledContainer s={{ flex: 1, marginLeft: "10px" }}>
+                    Logout
+                  </StyledContainer>
+                </StyledContainer>
+              </StyledMenuItem>
             </Menu>
           }
           trigger={["click"]}
@@ -47,7 +56,7 @@ const Header: React.FC<IHeaderProps> = props => {
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
-            <Icon type="caret-down" theme="filled" />
+            {/* <Icon type="caret-down" theme="filled" /> */}
           </StyledAvatarButton>
         </Dropdown>
       </StyledContainer>
@@ -90,3 +99,5 @@ const StyledMenuButton = styled(Button)({
   backgroundColor: "inherit",
   boxShadow: "none"
 });
+
+const StyledMenuItem = styled(Menu.Item)({});

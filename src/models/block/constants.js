@@ -54,7 +54,7 @@ const constants = {
     [blockTypeTask]: blockTypeTask
   },
   minSubTasksLength: 0,
-  maxSubTasksLength: 20
+  maxSubTasksLength: 50
 };
 
 const blockTaskCollaboratorFieldNames = {

@@ -56,7 +56,7 @@ export default async function deleteBlockOperation(
 
     const blockChildren = getEveryBlockChildrenInState(state, block);
     dispatch(bulkDeleteBlocksRedux(blockChildren.map(child => child.customId)));
-    removeTaskFromUserIfAssigned(state, dispatch, block);
+    removeTaskFromUserIfAssigned(block);
     dispatch(deleteBlockRedux(block.customId));
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {

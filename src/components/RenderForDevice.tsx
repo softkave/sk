@@ -11,7 +11,7 @@ const RenderForDevice: React.FC<IRenderForDeviceProps> = props => {
   const { renderForDesktop, renderForMobile } = props;
 
   return (
-    <Media queries={{ mobile: `(min-width: ${theme.breakpoints.md})` }}>
+    <Media queries={{ mobile: `(max-width: ${theme.breakpoints.sm}px)` }}>
       {matches => (
         <React.Fragment>
           {matches.mobile && renderForMobile()}

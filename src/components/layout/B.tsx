@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Drawer, Icon, Menu } from "antd";
 import React from "react";
 import Media from "react-media";
@@ -8,18 +9,15 @@ import { IUser } from "../../models/user/user";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
-// import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
-// import NotificationsMain from "../notifications/NotificationsMain";
-// import OrganizationsMain from "../organizations/OrganizationsMain";
-// import StyledFlexColumnContainer from "../styled/ColumnContainer";
+import Notifications from "../notification/A";
+import OrganizationListContainer from "../org/OLC";
 import StyledContainer from "../styled/Container";
-// import StyledFlexFillContainer from "../styled/FillContainer";
 import theme from "../theme";
 import Header from "./Header";
-// import NavigationMenuList from "./NavigationMenuList";
 import { getCurrentBaseNavPath } from "./path";
 
 const StyledMenu = StyledContainer.withComponent(Menu);
+// const StyledMenuItem = StyledContainer.withComponent(Menu.Item);
 
 type DesktopMenuRenderType = "drawer" | "side";
 
@@ -27,7 +25,7 @@ const Layout: React.FC<{}> = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [isDesktopMenuOpen, setDesktopMenuOpen] = React.useState(true);
+  const [isDesktopMenuOpen, setDesktopMenuOpen] = React.useState(false);
 
   // TODO: put in local storage or save in user in server
   const [desktopMenuRenderType, setDesktopMenuRenderType] = React.useState<
@@ -40,58 +38,72 @@ const Layout: React.FC<{}> = props => {
     dispatch(logoutUserOperationFunc());
   };
 
-  // const renderBody = () => {
-  //   return (
-  //     <Switch>
-  //       <Route path="/app/notifications" component={NotificationsMain} />
-  //       <Route path="/app/assigned-tasks" component={AssignedTasksMain} />
-  //       <Route path="/app/organizations" component={OrganizationsMain} />
-  //     </Switch>
-  //   );
-  // };
+  const renderRoutes = () => {
+    return (
+      <Switch>
+        <Route path="/app/notifications" component={Notifications} />
+        {/* <Route path="/app/assigned-tasks" component={AssignedTasksMain} /> */}
+        <Route
+          path="/app/organizations"
+          component={OrganizationListContainer}
+        />
+      </Switch>
+    );
+  };
 
-  const renderMenu = () => (
-    <StyledMenu s={{ borderRight: "none !important" }}>
-      <Menu.Item key="notifications">
+  const navigateToPath = (key: string) => {
+    const path = `/app/${key}`;
+    history.push(path);
+  };
+
+  const renderMenu = (onClick: (key: string) => void) => (
+    <StyledMenu
+      mode="vertical"
+      s={{
+        borderRight: "none !important",
+        flexDirection: "column",
+        fontSize: "18px"
+      }}
+      onClick={event => onClick(event.key)}
+    >
+      <StyledMenuItem key="notifications" style={{ marginTop: "32px" }}>
         <Icon type="mail" />
         <span>Notifications</span>
-      </Menu.Item>
-      <Menu.Item key="assigned-tasks">
+      </StyledMenuItem>
+      <StyledMenuItem key="assigned-tasks">
         <Icon type="schedule" />
         <span>Assigned Tasks</span>
-      </Menu.Item>
-      <Menu.Item key="organizations">
+      </StyledMenuItem>
+      <StyledMenuItem key="organizations" style={{ marginBottom: "32px" }}>
         <Icon type="block" />
         <span>Organizations</span>
-      </Menu.Item>
+      </StyledMenuItem>
       <Menu.Divider />
-      <Menu.Item key="logout">
-        <Icon type="power" />
+      <StyledMenuItem
+        key="logout"
+        style={{ color: "rgb(255, 77, 79)", marginTop: "32px" }}
+      >
+        <Icon type="logout" />
         <span>Logout</span>
-      </Menu.Item>
+      </StyledMenuItem>
     </StyledMenu>
   );
 
   const renderMenuControls = () => <StyledContainer></StyledContainer>;
 
-  const renderMenuWithControlsInDrawer = () => (
-    <Drawer visible>
-      {renderMenuControls()}
-      {renderMenu()}
-    </Drawer>
-  );
-
   const renderMain = () => (
-    <StyledContainer
-      s={{
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center"
-      }}
-    >
+    <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
       <Header user={user} onLogout={onLogout} />
-      {renderMenu()}
+      <StyledContainer
+        s={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1
+        }}
+      >
+        {renderMenu(navigateToPath)}
+      </StyledContainer>
     </StyledContainer>
   );
 
@@ -100,21 +112,27 @@ const Layout: React.FC<{}> = props => {
       setMobileMenuOpen(!isMobileMenuOpen);
     };
 
-    const navigateToPath = (path: string) => {
+    const mobileNavigateToPath = (path: string) => {
       toggleMobileMenu();
-      history.push(`/app/${path}`);
+      navigateToPath(path);
     };
 
     return (
-      <StyledContainer s={{ flexDirection: "column" }}>
+      <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
         <Header
           user={user}
           onLogout={onLogout}
           onToggleMenu={toggleMobileMenu}
         />
-        <Drawer visible={isMobileMenuOpen} onClose={toggleMobileMenu}>
-          {renderMenu()}
+        <Drawer
+          visible={isMobileMenuOpen}
+          onClose={toggleMobileMenu}
+          title="Softkave"
+          placement="left"
+        >
+          {renderMenu(mobileNavigateToPath)}
         </Drawer>
+        {renderRoutes()}
       </StyledContainer>
     );
   };
@@ -124,24 +142,36 @@ const Layout: React.FC<{}> = props => {
       setDesktopMenuOpen(!isDesktopMenuOpen);
     };
 
-    const navigateToPath = (path: string) => {
-      history.push(`/app/${path}`);
+    const desktopNavigateToPath = (path: string) => {
+      if (desktopMenuRenderType === "drawer") {
+        toggleDesktopMenu();
+      }
+
+      navigateToPath(path);
     };
 
     const renderMenuContentForDesktop = () => (
       <React.Fragment>
         {renderMenuControls()}
-        {renderMenu()}
+        {renderMenu(desktopNavigateToPath)}
       </React.Fragment>
     );
 
     const renderMenuTypeDrawer = () => (
-      <Drawer visible>{renderMenuContentForDesktop()}</Drawer>
+      <Drawer
+        visible={isDesktopMenuOpen}
+        title="Softkave"
+        placement="left"
+        onClose={toggleDesktopMenu}
+      >
+        {renderMenuContentForDesktop()}
+      </Drawer>
     );
 
-    const renderMenuTypeSide = () => (
-      <StyledContainer>{renderMenuContentForDesktop()}</StyledContainer>
-    );
+    const renderMenuTypeSide = () =>
+      isDesktopMenuOpen && (
+        <StyledContainer>{renderMenuContentForDesktop()}</StyledContainer>
+      );
 
     const renderMenuDesktop = () =>
       desktopMenuRenderType === "side"
@@ -149,15 +179,17 @@ const Layout: React.FC<{}> = props => {
         : renderMenuTypeDrawer();
 
     return (
-      <StyledContainer>
+      <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
         <Header
           user={user}
           onLogout={onLogout}
           onToggleMenu={toggleDesktopMenu}
         />
-        <StyledContainer>
-          {isDesktopMenuOpen && renderMenuDesktop()}
-          <StyledContainer></StyledContainer>
+        <StyledContainer s={{ flex: 1 }}>
+          {renderMenuDesktop()}
+          <StyledContainer s={{ width: "100%" }}>
+            {renderRoutes()}
+          </StyledContainer>
         </StyledContainer>
       </StyledContainer>
     );
@@ -165,7 +197,7 @@ const Layout: React.FC<{}> = props => {
 
   const render = () => {
     return (
-      <Media queries={{ mobile: `(min-width: ${theme.breakpoints.md})` }}>
+      <Media queries={{ mobile: `(max-width: ${theme.breakpoints.sm}px)` }}>
         {matches => (
           <React.Fragment>
             {matches.mobile && renderForMobile()}
@@ -185,3 +217,7 @@ const Layout: React.FC<{}> = props => {
 };
 
 export default Layout;
+
+const StyledMenuItem = styled(Menu.Item)({
+  fontSize: "16px !important"
+});
