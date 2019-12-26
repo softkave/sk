@@ -18,11 +18,9 @@ export interface ITaskProps {
 
 const Task: React.FC<ITaskProps> = props => {
   const { task, onEdit } = props;
-  const store = useStore();
-  const dispatch = useDispatch();
 
   const onDeleteTask = () => {
-    deleteBlockOperationFunc(store.getState(), dispatch, { block: task });
+    deleteBlockOperationFunc({ block: task });
   };
 
   return (

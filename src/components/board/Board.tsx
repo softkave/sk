@@ -163,7 +163,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
             <ProjectFormWithModal
               visible
               customId={formBlock!.customId}
-              existingProjects={this.getExistingNames(projects)}
               initialValues={formBlock}
               onClose={() => this.toggleForm(formType)}
               onSubmit={(data, options) => this.onSubmitData(data, options)}
@@ -181,7 +180,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
               onSubmit={(data, options) => this.onSubmitData(data, options)}
               onClose={() => this.toggleForm(formType)}
               initialValues={formBlock}
-              existingGroups={this.getExistingNames(groups)}
               submitLabel={formTitle}
               title={formTitle}
               parents={formBlockParents}
@@ -437,14 +435,6 @@ class Board extends React.Component<IBoardProps, IBoardState> {
   private getCollaborators() {
     const { user, collaborators } = this.props;
     return collaborators || [user];
-  }
-
-  private getExistingNames(blocks?: IBlock[]) {
-    if (Array.isArray(blocks)) {
-      return blocks.map(block => block.name);
-    }
-
-    return [];
   }
 
   private renderCollaborators = () => {
