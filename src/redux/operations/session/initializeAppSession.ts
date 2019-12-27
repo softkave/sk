@@ -75,7 +75,7 @@ export default async function initializeAppSessionOperationFunc(
       pushOperation(initializeAppSessionOperationID, {
         error: finalError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: defaultOperationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

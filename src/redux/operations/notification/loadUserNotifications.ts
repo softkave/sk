@@ -70,7 +70,7 @@ export default async function loadUserNotificationsOperationFunc(
       pushOperation(loadUserNotificationsOperationID, {
         error: transformedError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: defaultOperationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

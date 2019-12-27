@@ -116,7 +116,7 @@ export default async function respondToNotificationOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: defaultOperationStatusTypes.operationError,
           timestamp: Date.now()
         },
         request.customId

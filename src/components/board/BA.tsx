@@ -46,6 +46,7 @@ import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import List from "../styled/List";
+import StyledDrawerMenu from "../styled/StyledDrawerMenu";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
 import TaskList from "../task/TL";
@@ -304,22 +305,44 @@ const BA: React.FC<IBAProps> = props => {
       });
     }
 
-    const renderBadge = (item: MenuType) => {
+    // const renderBadge = (item: MenuType) => {
+    //   switch (item) {
+    //     case "groups":
+    //       return <Badge count={block.groups!.length} />;
+
+    //     case "tasks":
+    //       return <Badge count={block.tasks!.length} />;
+
+    //     case "projects":
+    //       return <Badge count={block.projects!.length} />;
+
+    //     case "collaborators":
+    //       return <Badge count={block.collaborators!.length} />;
+
+    //     case "collaboration-requests":
+    //       return <Badge count={block.collaborationRequests!.length} />;
+
+    //     default:
+    //       return null;
+    //   }
+    // };
+
+    const renderCount = (item: MenuType) => {
       switch (item) {
         case "groups":
-          return <Badge count={block.groups!.length} />;
+          return block.groups!.length;
 
         case "tasks":
-          return <Badge count={block.tasks!.length} />;
+          return block.tasks!.length;
 
         case "projects":
-          return <Badge count={block.projects!.length} />;
+          return block.projects!.length;
 
         case "collaborators":
-          return <Badge count={block.collaborators!.length} />;
+          return block.collaborators!.length;
 
         case "collaboration-requests":
-          return <Badge count={block.collaborationRequests!.length} />;
+          return block.collaborationRequests!.length;
 
         default:
           return null;
@@ -331,6 +354,7 @@ const BA: React.FC<IBAProps> = props => {
     };
 
     // TODO: show selected child route, like by adding background color or something
+    // TODO: show count and use badges only for new unseen entries
     return (
       <StyledNavContainer>
         <List
@@ -338,7 +362,8 @@ const BA: React.FC<IBAProps> = props => {
           renderItem={item => (
             <StyledNavItem onClick={() => onClickItem(item.key)}>
               <StyledMenuItemTitle>{item.label}</StyledMenuItemTitle>
-              {renderBadge(item.key)}
+              {/* {renderBadge(item.key)} */}
+              {renderCount(item.key) || null}
             </StyledNavItem>
           )}
         />
@@ -401,7 +426,7 @@ const BA: React.FC<IBAProps> = props => {
 
       return (
         <StyledFlexColumnContainer>
-          <h2>{formLabel}</h2>
+          <h3 style={{ padding: "0 24px" }}>{formLabel}</h3>
           <StyledFormContainer>
             {showFormType === "project" && (
               <ProjectFormContainer
@@ -477,11 +502,11 @@ const BA: React.FC<IBAProps> = props => {
     }
 
     const createMenu = (
-      <Menu
+      <StyledDrawerMenu
         onClick={event => onSelectCreateMenuItem(event.key as CreateMenuKey)}
       >
         {createMenuItems}
-      </Menu>
+      </StyledDrawerMenu>
     );
 
     const onSelectSettingsMenuItem = (key: SettingsMenuKey) => {
@@ -500,30 +525,46 @@ const BA: React.FC<IBAProps> = props => {
     };
 
     const settingsMenu = (
-      <Menu
+      <StyledDrawerMenu
         onClick={event =>
           onSelectSettingsMenuItem(event.key as SettingsMenuKey)
         }
       >
-        <StyledMenuItem key="edit">Edit {blockTypeFullName}</StyledMenuItem>
-        <StyledMenuItem key="delete">Delete {blockTypeFullName}</StyledMenuItem>
-      </Menu>
+        <StyledMenuItem key="edit">
+          {/* <Icon type="edit" /> */}
+          Edit {blockTypeFullName}
+        </StyledMenuItem>
+        <StyledMenuItem key="delete">
+          {/* <Icon type="delete" /> */}
+          Delete {blockTypeFullName}
+        </StyledMenuItem>
+      </StyledDrawerMenu>
     );
 
     return (
-      <StyledFlexContainer>
+      <StyledContainer
+        s={{ width: "100%", alignItems: "center", marginBottom: "12px" }}
+      >
+        {blockForm && (
+          <StyledFlatButton
+            style={{ paddingRight: "16px" }}
+            onClick={resetBlockForm}
+          >
+            <Icon type="caret-left" theme="filled" />
+          </StyledFlatButton>
+        )}
         <StyledHeaderName>{block.name}</StyledHeaderName>
         <div>
           <Dropdown overlay={createMenu} trigger={["click"]}>
             <StyledFlatButton icon="plus" />
           </Dropdown>
           <Dropdown overlay={settingsMenu} trigger={["click"]}>
-            <StyledFlatButton style={{ paddingLeft: "8px" }}>
+            <StyledFlatButton style={{ paddingLeft: "16px" }}>
               <Icon type="setting" />
             </StyledFlatButton>
           </Dropdown>
         </div>
-      </StyledFlexContainer>
+      </StyledContainer>
     );
   };
 
@@ -604,11 +645,6 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const shouldRenderLoading = () => {
-    console.log({
-      isLoadingCollaborators,
-      isLoadingRequests,
-      isLoadingChildren
-    });
     return isLoadingCollaborators || isLoadingRequests || isLoadingChildren;
   };
 
@@ -625,8 +661,6 @@ const BA: React.FC<IBAProps> = props => {
 
     return loadErrors;
   };
-
-  console.log({ hasGroups, showBlockForm, blockPath });
 
   const renderChildrenRoutes = (addLandingMenu: boolean = true) => {
     const routes = (
@@ -665,16 +699,16 @@ const BA: React.FC<IBAProps> = props => {
 
   const renderMobile = () => {
     return (
-      <StyledContainer
-        s={{ flex: 1, flexDirection: "column", padding: "0 16px" }}
-      >
-        <StyledContainer>{renderHeader()}</StyledContainer>
+      <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
+        <StyledContainer s={{ padding: "0 24px" }}>
+          {renderHeader()}
+        </StyledContainer>
         {showBlockForm ? (
           renderForms()
         ) : showAddCollaboratorsForm ? (
           renderAddCollaboratorForm()
         ) : (
-          <StyledContainer s={{ flex: 1 }}>
+          <StyledContainer s={{ flex: 1, padding: "0 24px" }}>
             {renderChildrenRoutes()}
           </StyledContainer>
         )}
@@ -786,7 +820,8 @@ export default BA;
 const StyledNavContainer = styled.div({
   display: "flex",
   flexDirection: "column",
-  width: "300px"
+  maxWidth: "500px",
+  width: "100%"
 });
 
 const StyledNavItem = styled.div({
@@ -811,7 +846,9 @@ const StyledMenuItemTitle = styled.div({
 const StyledHeaderName = styled.h1({
   display: "flex",
   flex: 1,
-  marginRight: "16px"
+  marginRight: "16px",
+  fontSize: "24px",
+  marginBottom: "0"
 });
 
 const StyledBodyContainer = styled.div({

@@ -83,7 +83,7 @@ const StyledH1 = styled.h1({
 const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
-  padding: "16px"
+  padding: "16px 24px"
 });
 
 const StyledAvatarButton = styled(Button)({

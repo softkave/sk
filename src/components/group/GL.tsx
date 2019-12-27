@@ -12,8 +12,8 @@ const GroupList: React.FC<IGroupListProps> = props => {
   const { groups, onClick } = props;
 
   return (
-    <StyledContainer s={{ flexDirection: "column" }}>
-      <h1>Groups</h1>
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3>Groups</h3>
       <BlockList
         blocks={groups}
         showFields={["name"]}

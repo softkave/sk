@@ -189,8 +189,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderDueDateInput = () => (
       <Form.Item
         label="Due Date"
-        labelCol={{ span: 12 }}
-        wrapperCol={{ span: 12 }}
+        labelCol={{ span: 12, xs: { span: 24 } }}
+        wrapperCol={{ span: 12, xs: { span: 24 } }}
         labelAlign="left"
       >
         <DatePicker

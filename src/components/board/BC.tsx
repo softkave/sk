@@ -8,6 +8,7 @@ import { IReduxState } from "../../redux/store";
 import GeneralError from "../GeneralError";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import Loading from "../Loading";
+import StyledContainer from "../styled/Container";
 
 export interface IBlockChildrenProps {
   parent: IBlock;
@@ -37,9 +38,32 @@ const BlockChildren: React.FC<IBlockChildrenProps> = props => {
     loadParentChildrenStatus.isLoading ||
     !!!loadParentChildrenStatus.operation
   ) {
-    return <Loading />;
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Loading />
+      </StyledContainer>
+    );
   } else if (loadParentChildrenStatus.error) {
-    return <GeneralError error={loadParentChildrenStatus.error} />;
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "16px"
+        }}
+      >
+        <GeneralError error={loadParentChildrenStatus.error} />
+      </StyledContainer>
+    );
   }
 
   return <React.Fragment>{render(blocks)}</React.Fragment>;

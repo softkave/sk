@@ -79,7 +79,7 @@ export default async function deleteBlockOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: defaultOperationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

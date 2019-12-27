@@ -93,7 +93,7 @@ export default async function getTasksAssignedToUserOperationFunc(
       pushOperation(getTasksAssignedToUserOperationID, {
         error: transformedError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: defaultOperationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

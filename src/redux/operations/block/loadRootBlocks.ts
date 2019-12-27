@@ -57,7 +57,7 @@ export default async function loadRootBlocksOperationFunc(
       pushOperation(loadRootBlocksOperationID, {
         error: transformedError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: defaultOperationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

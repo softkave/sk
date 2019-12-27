@@ -114,7 +114,7 @@ export default async function addBlockOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: defaultOperationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

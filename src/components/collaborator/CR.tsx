@@ -8,6 +8,7 @@ import { IReduxState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
 import GeneralError from "../GeneralError";
 import useOperation from "../hooks/useOperation";
+import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
 
@@ -26,13 +27,28 @@ const CR: React.FC<ICRProps> = props => {
   });
 
   if (requestsStatus.error) {
-    return <GeneralError error={requestsStatus.error} />;
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <GeneralError error={requestsStatus.error} />
+      </StyledContainer>
+    );
   } else if (requests.length === 0) {
     return <EmptyMessage>No collaboration requests yet.</EmptyMessage>;
   }
 
   const renderItem = (request: INotification) => {
-    return <CollaborationRequestThumbnail request={request} />;
+    return (
+      <StyledContainer s={{ padding: "16px 0" }}>
+        <CollaborationRequestThumbnail request={request} />
+      </StyledContainer>
+    );
   };
 
   const getCollaboratorID = (request: INotification) => {
@@ -40,11 +56,14 @@ const CR: React.FC<ICRProps> = props => {
   };
 
   return (
-    <List
-      dataSource={requests}
-      rowKey={getCollaboratorID}
-      renderItem={renderItem}
-    />
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3>Collaboration Requests</h3>
+      <List
+        dataSource={requests}
+        rowKey={getCollaboratorID}
+        renderItem={renderItem}
+      />
+    </StyledContainer>
   );
 };
 

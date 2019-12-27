@@ -12,8 +12,8 @@ const ProjectList: React.FC<IProjectListProps> = props => {
   const { onClick, projects } = props;
 
   return (
-    <StyledContainer s={{ flexDirection: "column" }}>
-      <h1>Projects</h1>
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3>Projects</h3>
       <BlockList
         blocks={projects}
         onClick={onClick}

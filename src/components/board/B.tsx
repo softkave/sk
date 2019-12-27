@@ -58,11 +58,13 @@ export default B;
 const StyledBasketsContainerInner = styled.div({
   height: "100%",
   display: "flex",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  width: "100%"
 });
 
 const lastOfTypeSelector = "&:last-of-type";
 const StyledColumn = styled.div({
+  width: "100%",
   marginRight: 16,
 
   [lastOfTypeSelector]: {

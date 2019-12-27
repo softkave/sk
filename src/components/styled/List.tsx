@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Empty, List as AntDList } from "antd";
 import React from "react";
+import EmptyMessage from "../EmptyMessage";
 import StyledCenterContainer from "../styled/CenterContainer";
 
 export interface IListProps<T> {
@@ -8,6 +9,7 @@ export interface IListProps<T> {
   rowKey: ((item: T) => string) | string;
   renderItem: (item: T, index: number) => React.ReactNode;
   emptyDescription?: string | React.ReactNode;
+  // style: React.CSSProperties;
 }
 
 const defaultEmptyDescription = "No data";
@@ -21,11 +23,7 @@ class List<T> extends React.Component<IListProps<T>> {
     const { dataSource, emptyDescription, rowKey } = this.props;
 
     if (dataSource.length === 0) {
-      return (
-        <StyledEmptyContainer>
-          <Empty description={emptyDescription} />
-        </StyledEmptyContainer>
-      );
+      return <EmptyMessage>{emptyDescription}</EmptyMessage>;
     }
 
     return (
@@ -33,6 +31,7 @@ class List<T> extends React.Component<IListProps<T>> {
         dataSource={dataSource}
         rowKey={rowKey}
         renderItem={this.renderItem}
+        style={{ width: "100%" }}
       />
     );
   }

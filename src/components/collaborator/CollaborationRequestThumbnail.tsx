@@ -44,7 +44,6 @@ export default CollaborationRequestThumbnail;
 
 const StyledRequestDataContainer = styled.div({
   flex: 1,
-  marginLeft: 16,
   display: "flex",
   flexDirection: "column"
 });

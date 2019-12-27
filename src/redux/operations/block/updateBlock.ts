@@ -113,7 +113,7 @@ export default async function updateBlockOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: defaultOperationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

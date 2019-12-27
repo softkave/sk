@@ -8,6 +8,7 @@ import { getUsersAsArray } from "../../redux/users/selectors";
 import EmptyMessage from "../EmptyMessage";
 import GeneralError from "../GeneralError";
 import useOperation from "../hooks/useOperation";
+import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
@@ -26,13 +27,24 @@ const C: React.FC<ICProps> = props => {
   });
 
   if (collaboratorsStatus.error) {
-    return <GeneralError error={collaboratorsStatus.error} />;
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <GeneralError error={collaboratorsStatus.error} />
+      </StyledContainer>
+    );
   } else if (collaborators.length === 0) {
     return <EmptyMessage>No collaborators yet.</EmptyMessage>;
   }
 
   const renderItem = (collaborator: IUser) => {
-    return <CollaboratorThumbnail collaborator={collaborator} />;
+    return <StyledContainer s={{ padding: "16px 0" }}><CollaboratorThumbnail collaborator={collaborator} /></StyledContainer>;
   };
 
   const getCollaboratorID = (collaborator: IUser) => {
@@ -40,11 +52,14 @@ const C: React.FC<ICProps> = props => {
   };
 
   return (
-    <List
-      dataSource={collaborators}
-      rowKey={getCollaboratorID}
-      renderItem={renderItem}
-    />
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3>Collaborators</h3>
+      <List
+        dataSource={collaborators}
+        rowKey={getCollaboratorID}
+        renderItem={renderItem}
+      />
+    </StyledContainer>
   );
 };
 

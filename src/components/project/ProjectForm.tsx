@@ -63,15 +63,74 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
 
   const globalError = getGlobalError(errors);
 
-  const projectExists = (name: string) => {
-    name = name.toLowerCase();
+  // TODO: is ther a way to validate the name on every render, so that when the parent changes,
+  // it shows the error, rather than only when the name changes
+  const getProjectExistsError = (name: string) => {
+    if (name && name.length > 0) {
+      name = name.toLowerCase();
 
-    if (
-      projects.findIndex(project => project.name.toLowerCase() === name) !== -1
-    ) {
-      return true;
+      if (
+        projects.findIndex(project => project.name.toLowerCase() === name) !==
+        -1
+      ) {
+        console.log("project exists");
+        return projectExistsErrorMessage;
+      }
     }
   };
+
+  const renderParentInput = () => (
+    <Form.Item
+      label="Parent"
+      help={touched.parents && <FormError>{errors.parents}</FormError>}
+    >
+      <BlockParentSelection
+        value={values.parents}
+        parents={parents}
+        onChange={value => setFieldValue("parents", value)}
+      />
+    </Form.Item>
+  );
+
+  const renderNameInput = () => (
+    <Form.Item
+      label="Project Name"
+      help={
+        touched.name && (
+          <FormError>
+            {errors.name || getProjectExistsError(values.name)}
+          </FormError>
+        )
+      }
+    >
+      <Input
+        autoComplete="off"
+        name="name"
+        onBlur={handleBlur}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          const value = event.target.value;
+          setFieldValue("name", value);
+        }}
+        value={values.name}
+      />
+    </Form.Item>
+  );
+
+  const renderDescriptionInput = () => (
+    <Form.Item
+      label="Description"
+      help={touched.description && <FormError>{errors.description}</FormError>}
+    >
+      <Input.TextArea
+        autosize={{ minRows: 2, maxRows: 6 }}
+        autoComplete="off"
+        name="description"
+        onBlur={handleBlur}
+        onChange={handleChange}
+        value={values.description}
+      />
+    </Form.Item>
+  );
 
   return (
     <StyledForm onSubmit={handleSubmit}>
@@ -82,53 +141,9 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
               <FormError error={globalError} />
             </Form.Item>
           )}
-          <Form.Item
-            label="Parent"
-            help={touched.parents && <FormError>{errors.parents}</FormError>}
-          >
-            <BlockParentSelection
-              value={values.parents}
-              parents={parents}
-              onChange={value => setFieldValue("parents", value)}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Project Name"
-            help={touched.name && <FormError>{errors.name}</FormError>}
-          >
-            <Input
-              autoComplete="off"
-              name="name"
-              onBlur={handleBlur}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                const value = event.target.value;
-
-                setFieldValue("name", value);
-
-                if (value && value.length > 0) {
-                  if (projectExists(value)) {
-                    setFieldError("name", projectExistsErrorMessage);
-                  }
-                }
-              }}
-              value={values.name}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Description"
-            help={
-              touched.description && <FormError>{errors.description}</FormError>
-            }
-          >
-            <Input.TextArea
-              autosize={{ minRows: 2, maxRows: 6 }}
-              autoComplete="off"
-              name="description"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.description}
-            />
-          </Form.Item>
+          {renderParentInput()}
+          {renderNameInput()}
+          {renderDescriptionInput()}
         </FormBody>
         <FormControls>
           <StyledButton

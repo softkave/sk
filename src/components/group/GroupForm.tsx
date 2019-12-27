@@ -63,13 +63,70 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
 
   const globalError = getGlobalError(errors);
 
-  const groupExists = (name: string) => {
-    name = name.toLowerCase();
+  const getGroupExistsError = (name: string) => {
+    if (name && name.length > 0) {
+      name = name.toLowerCase();
 
-    if (groups.findIndex(group => group.name.toLowerCase() === name) !== -1) {
-      return true;
+      if (groups.findIndex(group => group.name.toLowerCase() === name) !== -1) {
+        return groupExistsErrorMessage;
+      }
     }
   };
+
+  const renderParentInput = () => (
+    <Form.Item
+      label="Parent"
+      help={touched.parents && <FormError>{errors.parents}</FormError>}
+    >
+      <BlockParentSelection
+        value={values.parents}
+        parents={parents}
+        onChange={value => {
+          setFieldValue("parents", value);
+        }}
+      />
+    </Form.Item>
+  );
+
+  const renderNameInput = () => (
+    <Form.Item
+      label="Group Name"
+      help={
+        touched.name && (
+          <FormError>
+            {errors.name || getGroupExistsError(values.name)}
+          </FormError>
+        )
+      }
+    >
+      <Input
+        autoComplete="off"
+        name="name"
+        onBlur={handleBlur}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          const value = event.target.value;
+          setFieldValue("name", value);
+        }}
+        value={values.name}
+      />
+    </Form.Item>
+  );
+
+  const renderDescriptionInput = () => (
+    <Form.Item
+      label="Description"
+      help={touched.description && <FormError>{errors.description}</FormError>}
+    >
+      <Input.TextArea
+        autosize={{ minRows: 2, maxRows: 6 }}
+        autoComplete="off"
+        name="description"
+        onBlur={handleBlur}
+        onChange={handleChange}
+        value={values.description}
+      />
+    </Form.Item>
+  );
 
   return (
     <StyledForm onSubmit={handleSubmit}>
@@ -80,55 +137,9 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
               <FormError error={globalError} />
             </Form.Item>
           )}
-          <Form.Item
-            label="Parent"
-            help={touched.parents && <FormError>{errors.parents}</FormError>}
-          >
-            <BlockParentSelection
-              value={values.parents}
-              parents={parents}
-              onChange={value => {
-                setFieldValue("parents", value);
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Group Name"
-            help={touched.name && <FormError>{errors.name}</FormError>}
-          >
-            <Input
-              autoComplete="off"
-              name="name"
-              onBlur={handleBlur}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                const value = event.target.value;
-
-                setFieldValue("name", value);
-
-                if (value && value.length > 0) {
-                  if (groupExists(value)) {
-                    setFieldError("name", groupExistsErrorMessage);
-                  }
-                }
-              }}
-              value={values.name}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Description"
-            help={
-              touched.description && <FormError>{errors.description}</FormError>
-            }
-          >
-            <Input.TextArea
-              autosize={{ minRows: 2, maxRows: 6 }}
-              autoComplete="off"
-              name="description"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.description}
-            />
-          </Form.Item>
+          {renderParentInput()}
+          {renderNameInput()}
+          {renderDescriptionInput()}
         </FormBody>
         <FormControls>
           <StyledButton

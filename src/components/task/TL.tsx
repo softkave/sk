@@ -48,8 +48,8 @@ const TaskList: React.FC<ITaskListProps> = props => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection:  "column" }}>
-      <h1>Tasks</h1>
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3>Tasks</h3>
       {renderTasks()}
     </StyledContainer>
   );
@@ -59,6 +59,5 @@ export default TaskList;
 
 const StyledBlockThumbnailContainer = styled.div`
   margin-top: 12px;
-  margin-bottom: 
-12px;
+  margin-bottom: 12px;
 `;
