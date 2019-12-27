@@ -34,7 +34,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
     ) {
       setLastStatusTimestamp(Date.now());
     }
-  });
+  }, [setLastStatusTimestamp, lastStatusTimestamp, toggleTaskOperation]);
 
   if (
     toggleTaskOperation.isError &&

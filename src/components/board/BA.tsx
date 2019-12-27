@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Badge, Dropdown, Menu, Modal } from "antd";
+import { Badge, Dropdown, Icon, Menu, Modal } from "antd";
 import React from "react";
 import { useSelector, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -42,6 +42,7 @@ import Loading from "../Loading";
 import ProjectList from "../project/PL";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import RenderForDevice from "../RenderForDevice";
+import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import List from "../styled/List";
@@ -517,7 +518,9 @@ const BA: React.FC<IBAProps> = props => {
             <StyledFlatButton icon="plus" />
           </Dropdown>
           <Dropdown overlay={settingsMenu} trigger={["click"]}>
-            <StyledFlatButton icon="setting" />
+            <StyledFlatButton style={{ paddingLeft: "8px" }}>
+              <Icon type="setting" />
+            </StyledFlatButton>
           </Dropdown>
         </div>
       </StyledFlexContainer>
@@ -662,16 +665,20 @@ const BA: React.FC<IBAProps> = props => {
 
   const renderMobile = () => {
     return (
-      <StyledFillContainer>
-        {renderHeader()}
+      <StyledContainer
+        s={{ flex: 1, flexDirection: "column", padding: "0 16px" }}
+      >
+        <StyledContainer>{renderHeader()}</StyledContainer>
         {showBlockForm ? (
           renderForms()
         ) : showAddCollaboratorsForm ? (
           renderAddCollaboratorForm()
         ) : (
-          <StyledBodyContainer>{renderChildrenRoutes()}</StyledBodyContainer>
+          <StyledContainer s={{ flex: 1 }}>
+            {renderChildrenRoutes()}
+          </StyledContainer>
         )}
-      </StyledFillContainer>
+      </StyledContainer>
     );
   };
 
@@ -731,16 +738,37 @@ const BA: React.FC<IBAProps> = props => {
     const loadErrors = getLoadErrors();
 
     if (showLoading) {
-      return <Loading />;
+      return (
+        <StyledContainer
+          s={{
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <Loading />
+        </StyledContainer>
+      );
     } else if (loadErrors.length > 0) {
-      return <GeneralErrorList errors={loadErrors} />;
+      return (
+        <StyledContainer
+          s={{
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "16px"
+          }}
+        >
+          <GeneralErrorList errors={loadErrors} />
+        </StyledContainer>
+      );
     }
 
     if (childGroupMatch || childProjectMatch) {
       return renderChild();
     }
-
-    console.log("In BA");
 
     return (
       <RenderForDevice

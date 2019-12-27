@@ -20,8 +20,6 @@ const BD: React.FC<IBDProps> = props => {
     getBlock(state, blockID)
   );
 
-  console.log({ block, blockID }, "in BD");
-
   if (!block) {
     return (
       <StyledCenterContainer>

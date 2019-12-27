@@ -53,3 +53,10 @@ export const makeBaseNavPath = (path?: string) => {
 export const getFullBaseNavPath = () => {
   return makeBaseNavPath(getCurrentBaseNavPath());
 };
+
+export const concatPaths = (pathA: string, pathB: string) => {
+  pathA =
+    pathA[pathA.length - 1] === "/" ? pathA.slice(0, pathA.length - 1) : pathA;
+  pathB = pathB[0] === "/" ? pathB.slice(1) : pathB;
+  return `${pathA}/${pathB}`;
+};

@@ -9,6 +9,7 @@ import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import GeneralError from "../GeneralError";
+import { concatPaths } from "../layout/path";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps
 } from "../OperationHelper";
@@ -28,7 +29,10 @@ const OrganizationListContainer: React.FC<{}> = props => {
   const areOrganizationsLoaded = organizations.length === user.orgs.length;
 
   const onClickOrganization = (organization: IBlock) => {
-    const selectedOrganizationPath = `${window.location.pathname}/${organization.customId}`;
+    const selectedOrganizationPath = concatPaths(
+      window.location.pathname,
+      organization.customId
+    );
     history.push(selectedOrganizationPath);
   };
 

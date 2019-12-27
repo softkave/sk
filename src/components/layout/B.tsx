@@ -14,10 +14,8 @@ import OrganizationListContainer from "../org/OLC";
 import StyledContainer from "../styled/Container";
 import theme from "../theme";
 import Header from "./Header";
-import { getCurrentBaseNavPath } from "./path";
 
 const StyledMenu = StyledContainer.withComponent(Menu);
-// const StyledMenuItem = StyledContainer.withComponent(Menu.Item);
 
 type DesktopMenuRenderType = "drawer" | "side";
 
@@ -32,7 +30,6 @@ const Layout: React.FC<{}> = props => {
     DesktopMenuRenderType
   >("drawer");
   const user = useSelector<IReduxState, IUser>(getSignedInUserRequired);
-  const currentBaseNav = getCurrentBaseNavPath();
 
   const onLogout = () => {
     dispatch(logoutUserOperationFunc());
@@ -118,7 +115,9 @@ const Layout: React.FC<{}> = props => {
     };
 
     return (
-      <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <StyledContainer
+        s={{ flexDirection: "column", width: "100%", height: "100%" }}
+      >
         <Header
           user={user}
           onLogout={onLogout}
@@ -132,7 +131,9 @@ const Layout: React.FC<{}> = props => {
         >
           {renderMenu(mobileNavigateToPath)}
         </Drawer>
-        {renderRoutes()}
+        <StyledContainer s={{ width: "100%", flex: 1 }}>
+          {renderRoutes()}
+        </StyledContainer>
       </StyledContainer>
     );
   };

@@ -52,7 +52,6 @@ export default async function addBlockOperationFunc(
   );
 
   try {
-    console.log({ ...newBlock });
     if (newBlock.type === "task") {
       newBlock.subTasks = addCustomIDToSubTasks(newBlock.subTasks);
     }

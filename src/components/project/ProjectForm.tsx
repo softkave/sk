@@ -1,6 +1,6 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
-import { useSelector, useStore } from "react-redux";
+import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";

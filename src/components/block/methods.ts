@@ -61,14 +61,14 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: IDeleteBlockOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return deleteBlockOperation(state, dispatch, props, options);
+      return deleteBlockOperation(props, options);
     },
 
     async onAddCollaborators(
       props: IAddCollaboratorOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return addCollaboratorsOperationFunc(state, dispatch, props, options);
+      return addCollaboratorsOperationFunc(props, options);
     },
 
     async loadBlockChildren(
@@ -82,24 +82,14 @@ export function getBlockMethods(state: IReduxState, dispatch: Dispatch) {
       props: ILoadBlockCollaboratorsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaboratorsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaboratorsOperationFunc(props, options);
     },
 
     async loadCollaborationRequests(
       props: ILoadBlockCollaborationRequestsOperationFuncDataProps,
       options: IOperationFuncOptions = {}
     ) {
-      return loadBlockCollaborationRequestsOperationFunc(
-        state,
-        dispatch,
-        props,
-        options
-      );
+      return loadBlockCollaborationRequestsOperationFunc(props, options);
     },
 
     async loadRootData() {

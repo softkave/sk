@@ -65,6 +65,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
         maxWidth: "400px"
       }}
     >
+      {renderOrgForm()}
       <StyledH1 s={{ margin: "16px 0", marginBottom: "32px" }}>
         Organizations
       </StyledH1>

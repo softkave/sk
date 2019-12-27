@@ -6,8 +6,9 @@ import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import { popView, setCurrentProject } from "../../redux/view/actions";
+import BA from "../board/BA";
 import BoardContainer from "../board/BoardContainer";
-// import BA from "../board/BA";
+import RenderForDevice from "../RenderForDevice";
 import StyledCenterContainer from "../styled/CenterContainer";
 
 interface IRouteMatchParams {
@@ -35,7 +36,9 @@ const OrganizationContainer: React.FC<{}> = props => {
     );
   }
 
-  return (
+  const renderForMobile = () => <BA block={organization} />;
+
+  const renderForDesktop = () => (
     <BoardContainer
       blockID={organization.customId}
       block={organization}
@@ -47,7 +50,13 @@ const OrganizationContainer: React.FC<{}> = props => {
       onBack={() => dispatch(popView())}
     />
   );
-  // return <BA block={organization} />;
+
+  return (
+    <RenderForDevice
+      renderForMobile={renderForMobile}
+      renderForDesktop={renderForDesktop}
+    />
+  );
 };
 
 export default OrganizationContainer;
