@@ -45,7 +45,6 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     handleBlur,
     handleSubmit,
     isSubmitting,
-    setFieldError,
     setFieldValue,
     parents,
     onClose
@@ -63,8 +62,6 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
 
   const globalError = getGlobalError(errors);
 
-  // TODO: is ther a way to validate the name on every render, so that when the parent changes,
-  // it shows the error, rather than only when the name changes
   const getProjectExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
@@ -92,16 +89,12 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     </Form.Item>
   );
 
+  // TODO: can this be more efficient?
+  const projectNameError = errors.name || getProjectExistsError(values.name);
   const renderNameInput = () => (
     <Form.Item
       label="Project Name"
-      help={
-        touched.name && (
-          <FormError>
-            {errors.name || getProjectExistsError(values.name)}
-          </FormError>
-        )
-      }
+      help={touched.name && <FormError>{projectNameError}</FormError>}
     >
       <Input
         autoComplete="off"
@@ -132,8 +125,16 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     </Form.Item>
   );
 
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!projectNameError) {
+      handleSubmit(event);
+    }
+  };
+
   return (
-    <StyledForm onSubmit={handleSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <FormBodyContainer>
         <FormBody>
           {globalError && (

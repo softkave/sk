@@ -1,8 +1,8 @@
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { bulkDeleteBlocksRedux, deleteBlockRedux } from "../../blocks/actions";
-import { getEveryBlockChildrenInState } from "../../blocks/selectors";
+import { bulkDeleteBlocksRedux, deleteBlockRedux, updateBlockRedux } from "../../blocks/actions";
+import { getEveryBlockChildrenInState, getBlock } from "../../blocks/selectors";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
@@ -52,10 +52,40 @@ export default async function deleteBlockOperationFunc(
       throw result.errors;
     }
 
+    // TODO: find a more efficient way to do this
     const blockChildren = getEveryBlockChildrenInState(store.getState(), block);
-    store.dispatch(
-      bulkDeleteBlocksRedux(blockChildren.map(child => child.customId))
-    );
+    
+    if (blockChildren.length > 0) {
+      store.dispatch(
+        bulkDeleteBlocksRedux(blockChildren.map(child => child.customId))
+      );
+    }
+
+    const parentIDs = block.parents || [];
+
+    if (parentIDs.length > 0) {
+      const parent = getBlock(store.getState(), parentIDs[parentIDs.length - 1]);
+
+      if (parent) {
+        const pluralType = `${block.type}s`;
+        const container = parent[pluralType] || [];
+        const parentUpdate = { [pluralType]: container.filter(id => id !== block.customId) };
+  
+        if (block.type === "group") {
+          const groupTaskContext = parent.groupTaskContext || [];
+          const groupProjectContext = parent.groupProjectContext || [];
+          parentUpdate.groupTaskContext = groupTaskContext.filter(id => id !== block.customId);
+          parentUpdate.groupProjectContext = groupProjectContext.filter(id => id !== block.customId);
+        }
+  
+        store.dispatch(
+          updateBlockRedux(parent.customId, parentUpdate, {
+            arrayUpdateStrategy: "replace"
+          })
+        );
+      }
+    }
+
     removeTaskFromUserIfAssigned(block);
     store.dispatch(deleteBlockRedux(block.customId));
 

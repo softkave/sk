@@ -38,13 +38,13 @@ import GeneralErrorList from "../GeneralErrorList";
 import GroupList from "../group/GL";
 import GroupFormContainer from "../group/GroupFormContainer";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import { concatPaths } from "../layout/path";
 import Loading from "../Loading";
 import ProjectList from "../project/PL";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
-import StyledFlexContainer from "../styled/FlexContainer";
 import List from "../styled/List";
 import StyledDrawerMenu from "../styled/StyledDrawerMenu";
 import StyledCapitalizeText from "../StyledCapitalizeText";
@@ -123,8 +123,13 @@ const BA: React.FC<IBAProps> = props => {
   const parents = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, parentIDs)
   );
-  const parentPath = parents.map(getPath).join("");
-  const blockPath = `/app${parentPath}${getPath(block)}`;
+  const parentPath = `/app${parents.map(getPath).join("")}`;
+  const blockPath = `${parentPath}${getPath(block)}`;
+  const hasParents = parents.length > 0;
+
+  // immediate parent
+  const parent0 = hasParents ? parents[parents.length - 1] : null;
+  const hasParent0 = !!parent0;
 
   const childGroupMatch = useRouteMatch<IGroupChildPathMatch>(
     `${blockPath}/groups/:groupID`
@@ -190,7 +195,14 @@ const BA: React.FC<IBAProps> = props => {
     hasRequests &&
     (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
 
-  const childrenTypes = getBlockValidChildrenTypes(block.type);
+  let childrenTypes = getBlockValidChildrenTypes(block.type);
+
+  if (block.type === "group") {
+    if (parent0 && parent0.type === "project") {
+      childrenTypes = childrenTypes.filter(type => type !== "project");
+    }
+  }
+
   const hasTasks = childrenTypes.includes("task");
   const hasProjects = childrenTypes.includes("project");
   const hasGroups = childrenTypes.includes("group");
@@ -214,7 +226,7 @@ const BA: React.FC<IBAProps> = props => {
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
   const getFormParents = (formBlock: IBlock) => {
-    if (formBlock.customId === block.customId) {
+    if (formBlock.customId !== block.customId) {
       const blockGroups = getBlocksAsArray(
         store.getState(),
         block.groups || []
@@ -222,18 +234,12 @@ const BA: React.FC<IBAProps> = props => {
       return [block].concat(blockGroups);
     }
 
-    const hasParents = parents.length > 0;
-
     if (hasParents) {
-      // TODO: move into the render forms function
-      // immediate parent
-      const parent0 = hasParents ? parents[parents.length - 1] : null;
-      const hasParent0 = !!parent0;
-
       if (hasParent0) {
-        const parent0Groups = hasParent0
-          ? getBlocksAsArray(store.getState(), parent0!.groups || [])
-          : [];
+        const parent0Groups =
+          hasParent0 && formBlock.type !== "group"
+            ? getBlocksAsArray(store.getState(), parent0!.groups || [])
+            : [];
 
         // immediate parent's parent
         const parent1 =
@@ -243,9 +249,10 @@ const BA: React.FC<IBAProps> = props => {
         const hasParent1 = !!parent1;
 
         if (hasParent1) {
-          const parent1Groups = hasParent1
-            ? getBlocksAsArray(store.getState(), parent1!.groups || [])
-            : [];
+          const parent1Groups =
+            hasParent1 && formBlock.type !== "group"
+              ? getBlocksAsArray(store.getState(), parent1!.groups || [])
+              : [];
           return [parent1!].concat(parent1Groups);
         }
 
@@ -260,7 +267,10 @@ const BA: React.FC<IBAProps> = props => {
     if (blockForm) {
       if (blockForm.isAddBlock) {
         const newBlock = { ...blockForm.block, ...values };
-        addBlockOperationFunc({ user, block: newBlock, parent: block });
+        addBlockOperationFunc(
+          { user, block: newBlock, parent: block },
+          options
+        );
       } else {
         updateBlockOperationFunc(
           { block: blockForm.block, data: values },
@@ -271,6 +281,7 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const onDeleteBlock = () => {
+    history.push(parentPath);
     deleteBlockOperationFunc({ block });
   };
 
@@ -373,10 +384,7 @@ const BA: React.FC<IBAProps> = props => {
 
   const promptConfirmDelete = () => {
     const onDeletePromptMessage = (
-      <div>
-        Are you sure you want to delete this{" "}
-        <StyledCapitalizeText>{blockTypeFullName}</StyledCapitalizeText>?
-      </div>
+      <div>Are you sure you want to delete this {blockTypeFullName}?</div>
     );
 
     Modal.confirm({
@@ -569,7 +577,8 @@ const BA: React.FC<IBAProps> = props => {
   };
 
   const onClickChild = (childBlock: IBlock) => {
-    history.push(`${window.location.pathname}/${childBlock.customId}`);
+    const path = concatPaths(window.location.pathname, childBlock.customId);
+    history.push(path);
   };
 
   const renderChildrenGroup = (

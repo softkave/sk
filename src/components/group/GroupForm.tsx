@@ -45,7 +45,6 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     handleBlur,
     handleSubmit,
     isSubmitting,
-    setFieldError,
     setFieldValue,
     parents,
     onClose
@@ -88,16 +87,11 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     </Form.Item>
   );
 
+  const groupNameError = errors.name || getGroupExistsError(values.name);
   const renderNameInput = () => (
     <Form.Item
       label="Group Name"
-      help={
-        touched.name && (
-          <FormError>
-            {errors.name || getGroupExistsError(values.name)}
-          </FormError>
-        )
-      }
+      help={touched.name && <FormError>{groupNameError}</FormError>}
     >
       <Input
         autoComplete="off"
@@ -128,8 +122,16 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     </Form.Item>
   );
 
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!groupNameError) {
+      handleSubmit(event);
+    }
+  };
+
   return (
-    <StyledForm onSubmit={handleSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <FormBodyContainer>
         <FormBody>
           {globalError && (

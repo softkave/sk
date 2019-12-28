@@ -83,10 +83,9 @@ export default function withFormikFormWrapper(
 
         if (formikBag) {
           if (shouldCloseFormikForm(operation, scopeID)) {
-            console.log("close form");
-            // if (isFunction(onClose)) {
-            //   onClose();
-            // }
+            if (isFunction(onClose)) {
+              onClose();
+            }
           } else if (this.props !== prevProps) {
             this.setFormikFormState();
           }
