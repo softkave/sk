@@ -374,7 +374,7 @@ const BA: React.FC<IBAProps> = props => {
             <StyledNavItem onClick={() => onClickItem(item.key)}>
               <StyledMenuItemTitle>{item.label}</StyledMenuItemTitle>
               {/* {renderBadge(item.key)} */}
-              {renderCount(item.key) || null}
+              {renderCount(item.key)}
             </StyledNavItem>
           )}
         />

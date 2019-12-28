@@ -2,13 +2,14 @@ import styled from "@emotion/styled";
 import { Drawer, Icon, Menu } from "antd";
 import React from "react";
 import Media from "react-media";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import AssignedTasksMain from "../assigned-tasks/AT";
 import Notifications from "../notification/A";
 import OrganizationListContainer from "../org/OLC";
 import StyledContainer from "../styled/Container";
@@ -20,7 +21,6 @@ const StyledMenu = StyledContainer.withComponent(Menu);
 type DesktopMenuRenderType = "drawer" | "side";
 
 const Layout: React.FC<{}> = props => {
-  const dispatch = useDispatch();
   const history = useHistory();
   const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [isDesktopMenuOpen, setDesktopMenuOpen] = React.useState(false);
@@ -32,14 +32,14 @@ const Layout: React.FC<{}> = props => {
   const user = useSelector<IReduxState, IUser>(getSignedInUserRequired);
 
   const onLogout = () => {
-    dispatch(logoutUserOperationFunc());
+    logoutUserOperationFunc();
   };
 
   const renderRoutes = () => {
     return (
       <Switch>
         <Route path="/app/notifications" component={Notifications} />
-        {/* <Route path="/app/assigned-tasks" component={AssignedTasksMain} /> */}
+        <Route path="/app/assigned-tasks" component={AssignedTasksMain} />
         <Route
           path="/app/organizations"
           component={OrganizationListContainer}
@@ -186,7 +186,7 @@ const Layout: React.FC<{}> = props => {
           onLogout={onLogout}
           onToggleMenu={toggleDesktopMenu}
         />
-        <StyledContainer s={{ flex: 1 }}>
+        <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
           {renderMenuDesktop()}
           <StyledContainer s={{ width: "100%" }}>
             {renderRoutes()}

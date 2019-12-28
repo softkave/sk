@@ -23,7 +23,8 @@ const Column: React.FC<IColumnProps> = props => {
 const ColumnContainer = styled.div`
   display: flex;
   height: 100%;
-  max-width: 500px;
+  max-width: 400px;
+  min-width: 300px;
   width: 100%;
   flex-direction: column;
 `;
@@ -31,12 +32,13 @@ const ColumnContainer = styled.div`
 const StyledColumnHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
+  margin-bottom: 8px;
 `;
 
 const StyledColumnBodyContainer = styled.div`
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
 `;
 
 export default Column;

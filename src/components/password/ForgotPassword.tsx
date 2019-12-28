@@ -9,6 +9,7 @@ import IOperation, {
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { FormBody } from "../form/FormStyledComponents";
 
 const emailMismatchErrorMessage = "Email does not match";
 const successMessage = `
@@ -89,51 +90,53 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
           const globalError = getGlobalError(errors);
 
           return (
-            <form onSubmit={handleSubmit}>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Email Address"
-                help={touched.email && <FormError>{errors.email}</FormError>}
-              >
-                <Input
-                  autoComplete="email"
-                  name="email"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Confirm Email Address"
-                help={
-                  touched.confirmEmail && (
-                    <FormError>{errors.confirmEmail}</FormError>
-                  )
-                }
-              >
-                <Input
-                  autoComplete="email"
-                  name="confirmEmail"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.confirmEmail}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  loading={isSubmitting}
+            <FormBody>
+              <form onSubmit={handleSubmit}>
+                {globalError && (
+                  <Form.Item>
+                    <FormError error={globalError} />
+                  </Form.Item>
+                )}
+                <Form.Item
+                  label="Email Address"
+                  help={touched.email && <FormError>{errors.email}</FormError>}
                 >
-                  Change Password
-                </Button>
-              </Form.Item>
-            </form>
+                  <Input
+                    autoComplete="email"
+                    name="email"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.email}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Confirm Email Address"
+                  help={
+                    touched.confirmEmail && (
+                      <FormError>{errors.confirmEmail}</FormError>
+                    )
+                  }
+                >
+                  <Input
+                    autoComplete="email"
+                    name="confirmEmail"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.confirmEmail}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                  >
+                    Change Password
+                  </Button>
+                </Form.Item>
+              </form>
+            </FormBody>
           );
         }}
       </Formik>

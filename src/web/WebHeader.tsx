@@ -38,7 +38,7 @@ const WebHeader: React.SFC<{}> = () => {
 export default WebHeader;
 
 const StyledWebHeader = styled.div`
-  padding: 16px;
+  padding: 16px 24px;
 `;
 
 const StyledRightButtons = styled.div`

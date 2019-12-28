@@ -8,6 +8,7 @@ import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { FormBody } from "../form/FormStyledComponents";
 
 // TODO: Add minimum and maximum to input helper
 const passwordExtraInfo = "Minimum of 5 characters";
@@ -101,100 +102,102 @@ class Signup extends React.Component<ISignupProps> {
           const globalError = getGlobalError(errors);
 
           return (
-            <form onSubmit={handleSubmit}>
-              {globalError && (
-                <Form.Item>
-                  <FormError error={globalError} />
-                </Form.Item>
-              )}
-              <Form.Item
-                label="Name"
-                help={touched.name && <FormError>{errors.name}</FormError>}
-              >
-                <Input
-                  autoComplete="name"
-                  name="name"
-                  value={values.name}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Email Address"
-                help={touched.email && <FormError>{errors.email}</FormError>}
-              >
-                <Input
-                  autoComplete="email"
-                  name="email"
-                  value={values.email}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Confirm Email Address"
-                help={
-                  touched.confirmEmail && (
-                    <FormError>{errors.confirmEmail}</FormError>
-                  )
-                }
-              >
-                <Input
-                  autoComplete="email"
-                  name="confirmEmail"
-                  value={values.confirmEmail}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Password"
-                // extra={passwordExtraInfo}
-                help={
-                  touched.password && errors.password ? (
-                    <FormError>{errors.password}</FormError>
-                  ) : (
-                    passwordExtraInfo
-                  )
-                }
-              >
-                <Input.Password
-                  visibilityToggle
-                  autoComplete="new-password"
-                  name="password"
-                  value={values.password}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Confirm Password"
-                help={
-                  touched.confirmPassword && (
-                    <FormError>{errors.confirmPassword}</FormError>
-                  )
-                }
-              >
-                <Input.Password
-                  visibilityToggle
-                  autoComplete="new-password"
-                  name="confirmPassword"
-                  value={values.confirmPassword}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  loading={isSubmitting}
+            <FormBody>
+              <form onSubmit={handleSubmit}>
+                {globalError && (
+                  <Form.Item>
+                    <FormError error={globalError} />
+                  </Form.Item>
+                )}
+                <Form.Item
+                  label="Name"
+                  help={touched.name && <FormError>{errors.name}</FormError>}
                 >
-                  Create Account
-                </Button>
-              </Form.Item>
-            </form>
+                  <Input
+                    autoComplete="name"
+                    name="name"
+                    value={values.name}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Email Address"
+                  help={touched.email && <FormError>{errors.email}</FormError>}
+                >
+                  <Input
+                    autoComplete="email"
+                    name="email"
+                    value={values.email}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Confirm Email Address"
+                  help={
+                    touched.confirmEmail && (
+                      <FormError>{errors.confirmEmail}</FormError>
+                    )
+                  }
+                >
+                  <Input
+                    autoComplete="email"
+                    name="confirmEmail"
+                    value={values.confirmEmail}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Password"
+                  // extra={passwordExtraInfo}
+                  help={
+                    touched.password && errors.password ? (
+                      <FormError>{errors.password}</FormError>
+                    ) : (
+                      passwordExtraInfo
+                    )
+                  }
+                >
+                  <Input.Password
+                    visibilityToggle
+                    autoComplete="new-password"
+                    name="password"
+                    value={values.password}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Confirm Password"
+                  help={
+                    touched.confirmPassword && (
+                      <FormError>{errors.confirmPassword}</FormError>
+                    )
+                  }
+                >
+                  <Input.Password
+                    visibilityToggle
+                    autoComplete="new-password"
+                    name="confirmPassword"
+                    value={values.confirmPassword}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                  >
+                    Create Account
+                  </Button>
+                </Form.Item>
+              </form>
+            </FormBody>
           );
         }}
       </Formik>

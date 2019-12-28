@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import EmptyMessage from "../EmptyMessage";
-import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
+// import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 
 const defaultEmptyMessage = "No blocks yet.";
 
@@ -44,11 +44,9 @@ class B<T extends IBBasket> extends React.Component<IBProps<T>> {
     }
 
     return (
-      <StyledHorizontalScrollContainer>
-        <StyledBasketsContainerInner>
-          {renderBaskets()}
-        </StyledBasketsContainerInner>
-      </StyledHorizontalScrollContainer>
+      <StyledBasketsContainerInner>
+        {renderBaskets()}
+      </StyledBasketsContainerInner>
     );
   }
 }
@@ -65,7 +63,7 @@ const StyledBasketsContainerInner = styled.div({
 const lastOfTypeSelector = "&:last-of-type";
 const StyledColumn = styled.div({
   width: "100%",
-  marginRight: 16,
+  marginRight: "24px",
 
   [lastOfTypeSelector]: {
     marginRight: 0

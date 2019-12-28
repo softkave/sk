@@ -166,7 +166,7 @@ const Notification: React.FC<{}> = props => {
 export default Notification;
 
 const StyledNotificationBody = styled.div({
-  padding: "0 16px",
+  padding: "0 24px",
   backgroundColor: "white",
   height: "100%"
 });
