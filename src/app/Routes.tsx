@@ -1,11 +1,10 @@
-import { Col, Row } from "antd";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-
 import LoginContainer from "../components/login/LoginContainer";
 import ChangePasswordWithTokenContainer from "../components/password/ChangePasswordWithTokenContainer";
 import ForgotPasswordContainer from "../components/password/ForgotPasswordContainer";
 import SignupContainer from "../components/signup/SignupContainer";
+import StyledContainer from "../components/styled/Container";
 import Web from "../web/Web";
 import WebHeader from "../web/WebHeader";
 
@@ -13,14 +12,18 @@ function renderComponent(component) {
   return () => {
     const ComponentX = component;
     return (
-      <div>
+      <StyledContainer s={{ flexDirection: "column" }}>
         <WebHeader />
-        <Row type="flex" justify="center">
-          <Col sm={24} md={12} lg={8} style={{ padding: "1em" }}>
-            <ComponentX />
-          </Col>
-        </Row>
-      </div>
+        <StyledContainer
+          s={{
+            width: "100%",
+            maxWidth: "400px",
+            justifyContent: "center"
+          }}
+        >
+          <ComponentX />
+        </StyledContainer>
+      </StyledContainer>
     );
   };
 }

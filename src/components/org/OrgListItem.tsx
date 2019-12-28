@@ -26,7 +26,8 @@ export default OrgListItem;
 const StyledOrgListItem = styled.div({
   display: "flex",
   width: "100%",
-  height: "100%"
+  height: "100%",
+  alignItems: "center"
 });
 
 const StyledOrgAvatar = styled.div({});

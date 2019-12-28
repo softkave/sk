@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
@@ -18,11 +17,9 @@ export interface ITaskProps {
 
 const Task: React.FC<ITaskProps> = props => {
   const { task, onEdit } = props;
-  const store = useStore();
-  const dispatch = useDispatch();
 
   const onDeleteTask = () => {
-    deleteBlockOperationFunc(store.getState(), dispatch, { block: task });
+    deleteBlockOperationFunc({ block: task });
   };
 
   return (

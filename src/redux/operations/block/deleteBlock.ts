@@ -1,15 +1,12 @@
-import { Dispatch } from "redux";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { bulkDeleteBlocksRedux, deleteBlockRedux } from "../../blocks/actions";
-import { getEveryBlockChildrenInState } from "../../blocks/selectors";
-import { IReduxState } from "../../store";
+import { bulkDeleteBlocksRedux, deleteBlockRedux, updateBlockRedux } from "../../blocks/actions";
+import { getEveryBlockChildrenInState, getBlock } from "../../blocks/selectors";
+import store from "../../store";
+import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  defaultOperationStatusTypes,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -21,15 +18,13 @@ export interface IDeleteBlockOperationFuncDataProps {
   block: IBlock;
 }
 
-export default async function deleteBlockOperation(
-  state: IReduxState,
-  dispatch: Dispatch,
+export default async function deleteBlockOperationFunc(
   dataProps: IDeleteBlockOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
   const operation = getOperationWithIDForResource(
-    state,
+    store.getState(),
     deleteBlockOperationID,
     block.customId
   );
@@ -38,14 +33,17 @@ export default async function deleteBlockOperation(
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: deleteBlockOperationID,
-    resourceID: block.customId
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  store.dispatch(
+    pushOperation(
+      deleteBlockOperationID,
+      {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      block.customId
+    )
+  );
 
   try {
     const result = await blockNet.deleteBlock({ block });
@@ -54,14 +52,68 @@ export default async function deleteBlockOperation(
       throw result.errors;
     }
 
-    const blockChildren = getEveryBlockChildrenInState(state, block);
-    dispatch(bulkDeleteBlocksRedux(blockChildren.map(child => child.customId)));
-    removeTaskFromUserIfAssigned(state, dispatch, block);
-    dispatch(deleteBlockRedux(block.customId));
-    dispatchOperationComplete(dispatchOptions);
+    // TODO: find a more efficient way to do this
+    const blockChildren = getEveryBlockChildrenInState(store.getState(), block);
+    
+    if (blockChildren.length > 0) {
+      store.dispatch(
+        bulkDeleteBlocksRedux(blockChildren.map(child => child.customId))
+      );
+    }
+
+    const parentIDs = block.parents || [];
+
+    if (parentIDs.length > 0) {
+      const parent = getBlock(store.getState(), parentIDs[parentIDs.length - 1]);
+
+      if (parent) {
+        const pluralType = `${block.type}s`;
+        const container = parent[pluralType] || [];
+        const parentUpdate = { [pluralType]: container.filter(id => id !== block.customId) };
+  
+        if (block.type === "group") {
+          const groupTaskContext = parent.groupTaskContext || [];
+          const groupProjectContext = parent.groupProjectContext || [];
+          parentUpdate.groupTaskContext = groupTaskContext.filter(id => id !== block.customId);
+          parentUpdate.groupProjectContext = groupProjectContext.filter(id => id !== block.customId);
+        }
+  
+        store.dispatch(
+          updateBlockRedux(parent.customId, parentUpdate, {
+            arrayUpdateStrategy: "replace"
+          })
+        );
+      }
+    }
+
+    removeTaskFromUserIfAssigned(block);
+    store.dispatch(deleteBlockRedux(block.customId));
+
+    store.dispatch(
+      pushOperation(
+        deleteBlockOperationID,
+        {
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   } catch (error) {
     const transformedError = OperationError.fromAny(error);
 
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    store.dispatch(
+      pushOperation(
+        deleteBlockOperationID,
+        {
+          error: transformedError,
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationError,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   }
 }

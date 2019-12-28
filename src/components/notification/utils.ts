@@ -49,3 +49,7 @@ export function isNotificationExpired(notification: INotification) {
 
   return true;
 }
+
+export interface INotificationsPathParams {
+  notificationID?: string;
+}

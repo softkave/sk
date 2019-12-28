@@ -1,17 +1,14 @@
-import { Dispatch } from "redux";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
-import { IReduxState } from "../../store";
+import store from "../../store";
 import * as userActions from "../../users/actions";
+import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  defaultOperationStatusTypes,
   IOperationFuncOptions,
   isOperationStarted
 } from "../operation";
@@ -26,14 +23,12 @@ export interface IAddBlockOperationFuncDataProps {
 }
 
 export default async function addBlockOperationFunc(
-  state: IReduxState,
-  dispatch: Dispatch,
   dataProps: IAddBlockOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { user, block, parent } = dataProps;
   const operation = getOperationWithIDForResource(
-    state,
+    store.getState(),
     addBlockOperationID,
     block.customId
   );
@@ -43,14 +38,18 @@ export default async function addBlockOperationFunc(
   }
 
   const newBlock = block;
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationID: addBlockOperationID,
-    resourceID: newBlock.customId
-  };
 
-  dispatchOperationStarted(dispatchOptions);
+  store.dispatch(
+    pushOperation(
+      addBlockOperationID,
+      {
+        scopeID: options.scopeID,
+        status: defaultOperationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      block.customId
+    )
+  );
 
   try {
     if (newBlock.type === "task") {
@@ -63,7 +62,7 @@ export default async function addBlockOperationFunc(
       throw result.errors;
     }
 
-    dispatch(blockActions.addBlockRedux(newBlock));
+    store.dispatch(blockActions.addBlockRedux(newBlock));
 
     if (parent) {
       const pluralType = `${newBlock.type}s`;
@@ -74,7 +73,7 @@ export default async function addBlockOperationFunc(
         parentUpdate.groupProjectContext = [newBlock.customId!];
       }
 
-      dispatch(
+      store.dispatch(
         blockActions.updateBlockRedux(parent.customId, parentUpdate, {
           arrayUpdateStrategy: "concat"
         })
@@ -82,7 +81,7 @@ export default async function addBlockOperationFunc(
     }
 
     if (newBlock.type === "org") {
-      dispatch(
+      store.dispatch(
         userActions.updateUserRedux(
           user.customId,
           { orgs: [newBlock.customId] },
@@ -91,13 +90,35 @@ export default async function addBlockOperationFunc(
       );
     }
 
-    addTaskToUserIfAssigned(state, dispatch, block);
-    dispatchOperationComplete(dispatchOptions);
+    addTaskToUserIfAssigned(block);
+
+    store.dispatch(
+      pushOperation(
+        addBlockOperationID,
+        {
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
       stripBaseNames: ["block"]
     });
 
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    store.dispatch(
+      pushOperation(
+        addBlockOperationID,
+        {
+          error: transformedError,
+          scopeID: options.scopeID,
+          status: defaultOperationStatusTypes.operationError,
+          timestamp: Date.now()
+        },
+        block.customId
+      )
+    );
   }
 }

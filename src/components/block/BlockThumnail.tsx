@@ -88,12 +88,15 @@ const StyledBlockDescriptionContainer = styled.div({
   flex: 1,
   marginLeft: blockDescriptionMarginWidth,
   flexDirection: "column",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  display: "flex",
+  alignItems: "center"
 });
 
 const StyledDescriptionItem = styled.div({
   lineHeight: "1.25em !important",
-  display: "flex"
+  display: "flex",
+  alignItems: "center"
 });
 
 const StyledItemAvatarContainer = styled.div({

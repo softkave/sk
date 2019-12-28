@@ -3,7 +3,6 @@ import { Icon } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import StyledContainer from "./styled/Container";
-import StyledFillAndCenterContainer from "./styled/FillAndCenterContainer";
 
 export interface IGeneralErrorProps {
   error?: Error | string;
@@ -21,14 +20,14 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
   }
 
   return (
-    <StyledFillAndCenterContainer>
+    <StyledContainer>
       <StyledContainer s={{ maxWidth: "300px", fontWeight: "bold" }}>
         <StyledContainer s={{ color: "red", fontSize: "20px" }}>
-          <Icon type="close-circle" theme="filled" />
+          <Icon type="close-circle" theme="twoTone" twoToneColor="red" />
         </StyledContainer>
         <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
       </StyledContainer>
-    </StyledFillAndCenterContainer>
+    </StyledContainer>
   );
 };
 

@@ -137,7 +137,7 @@ function loadBlockCollaboratorsFromRedux(state: IReduxState, block: IBlock) {
     return getUsersAsArray(state, block.collaborators);
   } else if (Array.isArray(block.parents) && block.parents.length > 0) {
     const block0 = getBlock(state, block.parents[0]);
-    return loadBlockCollaboratorsFromRedux(state, block0);
+    return loadBlockCollaboratorsFromRedux(state, block0!);
   }
 }
 
@@ -239,21 +239,21 @@ function loadData(state: IReduxState, dispatch: Dispatch, block: IBlock) {
     dataToLoad.includes("children") &&
     shouldLoadBlockChildren(state, dispatch, block)
   ) {
-    loadBlockChildrenOperationFunc(state, dispatch, { block });
+    loadBlockChildrenOperationFunc({ block });
   }
 
   if (
     dataToLoad.includes("collaborators") &&
     shouldLoadCollaborators(state, dispatch, block)
   ) {
-    loadBlockCollaboratorsOperationFunc(state, dispatch, { block });
+    loadBlockCollaboratorsOperationFunc({ block });
   }
 
   if (
     dataToLoad.includes("collaborationRequests") &&
     shouldLoadRequests(state, dispatch, block)
   ) {
-    loadBlockCollaborationRequestsOperationFunc(state, dispatch, { block });
+    loadBlockCollaborationRequestsOperationFunc({ block });
   }
 }
 
