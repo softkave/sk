@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Badge, Dropdown, Icon, Menu, Modal } from "antd";
+import { Dropdown, Icon, Menu, Modal } from "antd";
 import React from "react";
 import { useSelector, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";

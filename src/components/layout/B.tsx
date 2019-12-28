@@ -26,9 +26,9 @@ const Layout: React.FC<{}> = props => {
   const [isDesktopMenuOpen, setDesktopMenuOpen] = React.useState(false);
 
   // TODO: put in local storage or save in user in server
-  const [desktopMenuRenderType, setDesktopMenuRenderType] = React.useState<
-    DesktopMenuRenderType
-  >("drawer");
+  const [desktopMenuRenderType] = React.useState<DesktopMenuRenderType>(
+    "drawer"
+  );
   const user = useSelector<IReduxState, IUser>(getSignedInUserRequired);
 
   const onLogout = () => {

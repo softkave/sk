@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { Empty, List as AntDList } from "antd";
+import { List as AntDList } from "antd";
 import React from "react";
 import EmptyMessage from "../EmptyMessage";
-import StyledCenterContainer from "../styled/CenterContainer";
 
 export interface IListProps<T> {
   dataSource: T[];
@@ -62,8 +61,4 @@ const StyledListItemContainer = styled.div({
   [hoverSelector]: {
     backgroundColor: "#E6F7FF"
   }
-});
-
-const StyledEmptyContainer = styled(StyledCenterContainer)({
-  marginTop: 64
 });

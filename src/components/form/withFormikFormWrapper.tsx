@@ -140,7 +140,6 @@ export default function withFormikFormWrapper(
         const { scopeID } = this.state;
         const formikBag = this.getFormikBag();
         const state = getFormikFormStateFromOperation(operation, scopeID);
-        console.log({ state });
 
         if (formikBag) {
           setFormikFormStateFromProps(formikBag, state);

@@ -70,7 +70,6 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
         projects.findIndex(project => project.name.toLowerCase() === name) !==
         -1
       ) {
-        console.log("project exists");
         return projectExistsErrorMessage;
       }
     }

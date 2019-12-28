@@ -118,7 +118,6 @@ export function shouldCloseFormikForm(
 ) {
   if (operation) {
     const lastStatus = getOperationLastStatus(operation, scopeID);
-    console.log({ lastStatus, operation: { ...operation }, scopeID });
 
     if (lastStatus) {
       return isStatusTypeCompleted(lastStatus);
