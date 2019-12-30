@@ -10,13 +10,13 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import Loading from "../Loading";
 import StyledContainer from "../styled/Container";
 
-export interface IBlockChildrenProps {
+export interface IBoardBlockChildrenProps {
   parent: IBlock;
   getChildrenIDs: () => string[];
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const BlockChildren: React.FC<IBlockChildrenProps> = props => {
+const BoardBlockChildren: React.FC<IBoardBlockChildrenProps> = props => {
   const { parent, render, getChildrenIDs } = props;
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>(state =>
@@ -69,4 +69,4 @@ const BlockChildren: React.FC<IBlockChildrenProps> = props => {
   return <React.Fragment>{render(blocks)}</React.Fragment>;
 };
 
-export default BlockChildren;
+export default BoardBlockChildren;

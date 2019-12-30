@@ -16,7 +16,7 @@ export interface ICProps {
   organization: IBlock;
 }
 
-const C: React.FC<ICProps> = props => {
+const CollaboratorList: React.FC<ICProps> = props => {
   const { organization } = props;
   const collaborators = useSelector<IReduxState, IUser[]>(state =>
     getUsersAsArray(state, organization.collaborators!)
@@ -44,7 +44,11 @@ const C: React.FC<ICProps> = props => {
   }
 
   const renderItem = (collaborator: IUser) => {
-    return <StyledContainer s={{ padding: "16px 0" }}><CollaboratorThumbnail collaborator={collaborator} /></StyledContainer>;
+    return (
+      <StyledContainer s={{ padding: "16px 0" }}>
+        <CollaboratorThumbnail collaborator={collaborator} />
+      </StyledContainer>
+    );
   };
 
   const getCollaboratorID = (collaborator: IUser) => {
@@ -63,4 +67,4 @@ const C: React.FC<ICProps> = props => {
   );
 };
 
-export default C;
+export default CollaboratorList;

@@ -2,16 +2,15 @@ import styled from "@emotion/styled";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import EmptyMessage from "../EmptyMessage";
-// import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
 
 const defaultEmptyMessage = "No blocks yet.";
 
-export interface IBBasket {
+export interface IBoardBasket {
   key: string;
   blocks: IBlock[];
 }
 
-export interface IBProps<BasketType extends IBBasket> {
+export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
   blocks: IBlock[];
   getBaskets: (blocks: IBlock[]) => BasketType[];
   renderBasket: (
@@ -22,7 +21,9 @@ export interface IBProps<BasketType extends IBBasket> {
   emptyMessage?: string;
 }
 
-class B<T extends IBBasket> extends React.Component<IBProps<T>> {
+class BoardBaskets<T extends IBoardBasket> extends React.Component<
+  IBoardBasketsProps<T>
+> {
   public render() {
     const { blocks, getBaskets, renderBasket, emptyMessage } = this.props;
     const baskets = getBaskets(blocks);
@@ -51,7 +52,7 @@ class B<T extends IBBasket> extends React.Component<IBProps<T>> {
   }
 }
 
-export default B;
+export default BoardBaskets;
 
 const StyledBasketsContainerInner = styled.div({
   height: "100%",

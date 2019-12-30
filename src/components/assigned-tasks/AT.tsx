@@ -10,7 +10,7 @@ import { getTasksAssignedToUserOperationID } from "../../redux/operations/operat
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { sortBlocksByPriority } from "../block/sortBlocks";
-import B, { IBBasket } from "../board/B";
+import BoardBaskets, { IBoardBasket } from "../board/BoardBaskets";
 import ColumnWithTitleAndCount from "../board/ColumnWithTitleAndContent";
 import { concatPaths } from "../layout/path";
 import SingleOperationHelper, {
@@ -22,7 +22,7 @@ import StyledContainer from "../styled/Container";
 import TaskList from "../task/TL";
 import { sortAssignedTasksByDueDate } from "./sortAssignedTasks";
 
-interface IAssignedTasksBasket extends IBBasket {
+interface IAssignedTasksBasket extends IBoardBasket {
   title: string;
 }
 
@@ -215,7 +215,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
     return (
       <StyledContainer s={{ overflowX: "auto", marginLeft: "24px" }}>
-        <B
+        <BoardBaskets
           blocks={assignedTasks}
           getBaskets={getBaskets}
           renderBasket={renderBasket}

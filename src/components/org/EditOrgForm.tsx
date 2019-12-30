@@ -19,7 +19,7 @@ export interface IEditOrgFormValues {
 
 export interface IEditOrgProps
   extends IFormikFormBaseProps<IEditOrgFormValues> {
-  submitLabel?: string;
+  submitLabel?: React.ReactNode;
   onClose: () => void;
 }
 

@@ -6,8 +6,8 @@ import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import { popView, setCurrentProject } from "../../redux/view/actions";
-import BA from "../board/BA";
 import BoardContainer from "../board/BoardContainer";
+import BoardForBlock from "../board/BoardForBlock";
 import RenderForDevice from "../RenderForDevice";
 import StyledCenterContainer from "../styled/CenterContainer";
 
@@ -36,7 +36,7 @@ const OrganizationContainer: React.FC<{}> = props => {
     );
   }
 
-  const renderForMobile = () => <BA block={organization} />;
+  const renderForMobile = () => <BoardForBlock block={organization} />;
 
   const renderForDesktop = () => (
     <BoardContainer
