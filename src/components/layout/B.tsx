@@ -61,7 +61,7 @@ const Layout: React.FC<{}> = props => {
         flexDirection: "column",
         fontSize: "18px"
       }}
-      onClick={event => event.key == event.logout ? onLogout() : onClick(event.key)}
+      onClick={event => onClick(event.key) == event.logout ? onLogout() : onClick(event.key)}
     >
       <StyledMenuItem key="notifications" style={{ marginTop: "32px" }}>
         <Icon type="mail" />
