@@ -164,6 +164,7 @@ const Layout: React.FC<{}> = props => {
         title="Softkave"
         placement="left"
         onClose={toggleDesktopMenu}
+        width={400}
       >
         {renderMenuContentForDesktop()}
       </Drawer>
