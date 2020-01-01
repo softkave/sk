@@ -7,6 +7,7 @@ import SignupContainer from "../components/signup/SignupContainer";
 import StyledContainer from "../components/styled/Container";
 import Web from "../web/Web";
 import WebHeader from "../web/WebHeader";
+import MainLayout from "../components/layout/MainLayout";
 
 function renderComponent(component) {
   return () => {
@@ -18,7 +19,8 @@ function renderComponent(component) {
           s={{
             width: "100%",
             maxWidth: "400px",
-            justifyContent: "center"
+            justifyContent: "center",
+            margin: "auto"
           }}
         >
           <ComponentX />
@@ -30,20 +32,19 @@ function renderComponent(component) {
 
 export default function Routes() {
   return (
-    <div style={{ height: "100%" }}>
-      <Switch>
-        <Route path="/signup" render={renderComponent(SignupContainer)} />
-        <Route path="/login" render={renderComponent(LoginContainer)} />
-        <Route
-          path="/forgot-password"
-          render={renderComponent(ForgotPasswordContainer)}
-        />
-        <Route
-          path="/change-password"
-          render={renderComponent(ChangePasswordWithTokenContainer)}
-        />
-        <Route path="/" exact component={Web} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route path="/signup" render={renderComponent(SignupContainer)} />
+      <Route path="/login" render={renderComponent(LoginContainer)} />
+      <Route
+        path="/forgot-password"
+        render={renderComponent(ForgotPasswordContainer)}
+      />
+      <Route
+        path="/change-password"
+        render={renderComponent(ChangePasswordWithTokenContainer)}
+      />
+      <Route path="/app" component={MainLayout} />
+      <Route exact path="/" component={Web} />
+    </Switch>
   );
 }

@@ -1,14 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import MainLayout from "../components/layout/MainLayout";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
 import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
 import { getSessionType } from "../redux/session/selectors";
 import Routes from "./Routes";
 
-const Main: React.FC<{}> = props => {
+const Main: React.FC<{}> = () => {
   const history = useHistory();
   const sessionType = useSelector(getSessionType);
 
@@ -46,15 +45,12 @@ const Main: React.FC<{}> = props => {
 
   switch (sessionType) {
     case "app":
-      return <MainLayout />;
-
     case "web":
       return <Routes />;
 
     case "uninitialized":
     case "initializing":
     default:
-      // TODO: it's kind of breaking the layout for that split second
       return renderInitializing();
   }
 };
