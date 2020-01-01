@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Icon, Menu } from "antd";
+import { Icon } from "antd";
 import React from "react";
 import { BlockType } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";

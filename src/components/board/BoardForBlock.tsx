@@ -23,6 +23,7 @@ import {
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
+import { pluralize } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
 import GeneralErrorList from "../GeneralErrorList";
@@ -35,6 +36,7 @@ import BoardBodyMobile from "./BoardBodyMobile";
 import BoardBlockChildren from "./BoardChildren";
 import BoardEntryForBlock from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
 interface IBlockFormState {
   block: IBlock;
@@ -63,10 +65,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     showAddCollaboratorsForm,
     setShowAddCollaboratorsForm
   ] = React.useState(false);
-
-  const pluralize = (str: string) => {
-    return `${str}s`;
-  };
 
   const getPath = (b: IBlock) => {
     const bTypeFullName = getBlockTypeFullName(b.type);
@@ -330,32 +328,9 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     const loadErrors = getLoadErrors();
 
     if (showLoading) {
-      return (
-        <StyledContainer
-          s={{
-            width: "100%",
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Loading />
-        </StyledContainer>
-      );
+      return <LoadingEllipsis />;
     } else if (loadErrors.length > 0) {
-      return (
-        <StyledContainer
-          s={{
-            width: "100%",
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: "16px"
-          }}
-        >
-          <GeneralErrorList errors={loadErrors} />
-        </StyledContainer>
-      );
+      return <GeneralErrorList fill errors={loadErrors} />;
     }
 
     if (childGroupMatch || childProjectMatch) {

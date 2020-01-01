@@ -1,8 +1,10 @@
-import styled from "@emotion/styled";
-import { Menu } from "antd";
+import { defaultTo } from "lodash";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import StyledContainer from "../styled/Container";
+import Text from "../Text";
+import MenuItem from "../utilities/MenuItem";
 import { BoardLandingMenuType } from "./types";
 
 export interface IBoardLandingMenuProps {
@@ -12,79 +14,72 @@ export interface IBoardLandingMenuProps {
 
 const BoardLandingMenu: React.FC<IBoardLandingMenuProps> = props => {
   const { block, onClick } = props;
+
   const childrenTypes = useBlockChildrenTypes(block);
   const hasTasks = childrenTypes.includes("task");
   const hasProjects = childrenTypes.includes("project");
   const hasGroups = childrenTypes.includes("group");
   const hasRequests = block.type === "org";
   const hasCollaborators = block.type === "org";
-
-  const renderCount = (item: BoardLandingMenuType) => {
-    switch (item) {
-      case "groups":
-        return block.groups!.length;
-
-      case "tasks":
-        return block.tasks!.length;
-
-      case "projects":
-        return block.projects!.length;
-
-      case "collaborators":
-        return block.collaborators!.length;
-
-      case "collaboration-requests":
-        return block.collaborationRequests!.length;
-
-      default:
-        return null;
-    }
-  };
+  const tasksCount = defaultTo(block.tasks, []).length;
+  const groupsCount = defaultTo(block.groups, []).length;
+  const projectsCount = defaultTo(block.projects, []).length;
+  const collaboratorsCount = defaultTo(block.collaborators, []).length;
+  const requestsCount = defaultTo(block.collaborationRequests, []).length;
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries
+  // TODO: sort the entries by count?
 
   return (
-    <Menu onClick={event => onClick(event.key as BoardLandingMenuType)}>
+    <StyledContainer>
+      {block.description && <Text rows={3} text={block.description} />}
       {hasGroups && (
-        <Menu.Item key="groups">
-          <StyledMenuItemTitle>Groups</StyledMenuItemTitle>
-          {renderCount("groups")}
-        </Menu.Item>
+        <MenuItem
+          key="groups"
+          name={groupsCount > 0 ? "Groups" : "Group"}
+          count={groupsCount}
+          onClick={() => onClick("groups")}
+        />
       )}
       {hasTasks && (
-        <Menu.Item key="tasks">
-          <StyledMenuItemTitle>Tasks</StyledMenuItemTitle>
-          {renderCount("tasks")}
-        </Menu.Item>
+        <MenuItem
+          key="tasks"
+          name={tasksCount > 0 ? "Tasks" : "Task"}
+          count={tasksCount}
+          onClick={() => onClick("tasks")}
+        />
       )}
       {hasProjects && (
-        <Menu.Item key="projects">
-          <StyledMenuItemTitle>Projects</StyledMenuItemTitle>
-          {renderCount("projects")}
-        </Menu.Item>
+        <MenuItem
+          key="projects"
+          name={projectsCount > 0 ? "Projects" : "Project"}
+          count={projectsCount}
+          onClick={() => onClick("projects")}
+        />
       )}
       {hasCollaborators && (
-        <Menu.Item key="collaborators">
-          <StyledMenuItemTitle>Collaborators</StyledMenuItemTitle>
-          {renderCount("collaborators")}
-        </Menu.Item>
+        <MenuItem
+          key="collaborators"
+          name={collaboratorsCount > 0 ? "Collaborators" : "Collaborator"}
+          count={collaboratorsCount}
+          onClick={() => onClick("collaborators")}
+        />
       )}
       {hasRequests && (
-        <Menu.Item key="requests">
-          <StyledMenuItemTitle>Collaboration Requests</StyledMenuItemTitle>
-          {renderCount("collaboration-requests")}
-        </Menu.Item>
+        <MenuItem
+          key="collaboration-requests"
+          name={
+            requestsCount > 0
+              ? "collaboration-requests"
+              : "collaboration-requests"
+          }
+          count={requestsCount}
+          onClick={() => onClick("collaboration-requests")}
+        />
       )}
-    </Menu>
+    </StyledContainer>
   );
 };
 
 export default BoardLandingMenu;
-
-const StyledMenuItemTitle = styled.div({
-  display: "flex",
-  flex: 1,
-  marginRight: "16px",
-  textTransform: "capitalize"
-});

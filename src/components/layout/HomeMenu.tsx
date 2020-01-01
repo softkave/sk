@@ -39,7 +39,7 @@ const HomeMenu: React.FC<{}> = () => {
   if (sessionDetailsOperation.isLoading) {
     return <LoadingEllipsis />;
   } else if (sessionDetailsOperation.isError) {
-    return <GeneralErrorList errors={sessionDetailsOperation.error} />;
+    return <GeneralErrorList fill errors={sessionDetailsOperation.error} />;
   }
 
   return (

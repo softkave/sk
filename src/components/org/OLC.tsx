@@ -17,7 +17,7 @@ import StyledContainer from "../styled/Container";
 import OrganizationContainer from "./OC";
 import OrganizationList from "./OL";
 
-const OrganizationListContainer: React.FC<{}> = props => {
+const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
   const organizations = useSelector<IReduxState, IBlock[]>(state =>
