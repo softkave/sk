@@ -5,12 +5,13 @@ import StyledContainer from "./styled/Container";
 
 export interface IGeneralErrorListProps {
   errors: Array<IGeneralErrorProps["error"]>;
+  fill?: boolean;
 }
 
 const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
-  const { errors } = props;
+  const { errors, fill } = props;
 
-  return (
+  const a = (
     <StyledContainer
       s={{
         flexDirection: "column",
@@ -28,6 +29,24 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
       ))}
     </StyledContainer>
   );
+
+  if (fill) {
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "16px"
+        }}
+      >
+        {a}
+      </StyledContainer>
+    );
+  }
+
+  return a;
 };
 
 export default GeneralErrorList;

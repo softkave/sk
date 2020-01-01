@@ -1,19 +1,21 @@
 import styled from "@emotion/styled";
 import { Button, Dropdown, Icon, Menu } from "antd";
 import React from "react";
-import { IUser } from "../../models/user/user";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import theme from "../theme";
 
-export interface IHeaderProps {
-  user: IUser;
-  onLogout: () => void;
-  onToggleMenu?: () => void;
-}
+const StyledContainerAsLink = StyledContainer.withComponent(Link);
 
-const Header: React.FC<IHeaderProps> = props => {
-  const { user, onToggleMenu, onLogout } = props;
+const Header: React.FC<{}> = () => {
+  const user = useSelector(getSignedInUserRequired);
+  const onLogout = () => {
+    logoutUserOperationFunc();
+  };
 
   const onSelectAvatarMenu = event => {
     if (event.key === "logout") {
@@ -23,11 +25,9 @@ const Header: React.FC<IHeaderProps> = props => {
 
   return (
     <StyledHeaderContainer>
-      {onToggleMenu && (
-        <StyledContainer>
-          <StyledMenuButton icon="menu" onClick={onToggleMenu} />
-        </StyledContainer>
-      )}
+      <StyledContainerAsLink to="/app">
+        <StyledMenuButton icon="home" />
+      </StyledContainerAsLink>
       <StyledApplicationNameContainer>
         <StyledH1>Softkave</StyledH1>
       </StyledApplicationNameContainer>
@@ -56,7 +56,7 @@ const Header: React.FC<IHeaderProps> = props => {
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
-            {/* <Icon type="caret-down" theme="filled" /> */}
+            <Icon type="caret-down" theme="filled" />
           </StyledAvatarButton>
         </Dropdown>
       </StyledContainer>

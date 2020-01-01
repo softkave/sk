@@ -6,10 +6,11 @@ import StyledContainer from "./styled/Container";
 
 export interface IGeneralErrorProps {
   error?: Error | string;
+  fill?: boolean;
 }
 
 const GeneralError: React.FC<IGeneralErrorProps> = props => {
-  const { error, children } = props;
+  const { error, children, fill } = props;
 
   let errorMessage: React.ReactNode = children || "An error occurred.";
 
@@ -19,7 +20,7 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
     errorMessage = error.message;
   }
 
-  return (
+  const a = (
     <StyledContainer>
       <StyledContainer s={{ maxWidth: "300px", fontWeight: "bold" }}>
         <StyledContainer s={{ color: "red", fontSize: "20px" }}>
@@ -29,6 +30,24 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
       </StyledContainer>
     </StyledContainer>
   );
+
+  if (fill) {
+    return (
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "16px"
+        }}
+      >
+        {a}
+      </StyledContainer>
+    );
+  }
+
+  return a;
 };
 
 export default GeneralError;
