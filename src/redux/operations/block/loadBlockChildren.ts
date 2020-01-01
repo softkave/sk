@@ -5,9 +5,9 @@ import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -39,7 +39,7 @@ export default async function loadBlockChildrenOperationFunc(
       getBlockChildrenOperationID,
       {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
+        status: operationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
       block.customId
@@ -106,7 +106,7 @@ export default async function loadBlockChildrenOperationFunc(
         getBlockChildrenOperationID,
         {
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: operationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
         block.customId
@@ -121,7 +121,7 @@ export default async function loadBlockChildrenOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationError,
+          status: operationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

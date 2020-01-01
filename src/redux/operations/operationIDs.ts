@@ -66,4 +66,5 @@ export default class OperationIDs {
   public static loginUser = loginUserOperationID;
   public static requestForgotPassword = requestForgotPasswordOperationID;
   public static changePassword = changePasswordOperationID;
+  public static getSessionDetails = "getSessionDetails";
 }

@@ -30,11 +30,11 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import Loading from "../Loading";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import BoardBlockHeader from "./BoardBlockHeader";
 import BoardBodyMobile from "./BoardBodyMobile";
 import BoardBlockChildren from "./BoardChildren";
 import BoardEntryForBlock from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
-import BoardHeader from "./BoardHeader";
 
 interface IBlockFormState {
   block: IBlock;
@@ -216,7 +216,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   );
 
   const renderHeader = () => (
-    <BoardHeader
+    <BoardBlockHeader
       block={block}
       onClickAddCollaborator={() => setShowAddCollaboratorsForm(true)}
       onClickCreateNewBlock={blockType => {

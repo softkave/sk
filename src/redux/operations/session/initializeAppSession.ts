@@ -10,9 +10,9 @@ import { addUserRedux } from "../../users/actions";
 import { setDefaultView } from "../../view/actions";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -33,7 +33,7 @@ export default async function initializeAppSessionOperationFunc(
   store.dispatch(
     pushOperation(initializeAppSessionOperationID, {
       scopeID: options.scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
+      status: operationStatusTypes.operationStarted,
       timestamp: Date.now()
     })
   );
@@ -63,7 +63,7 @@ export default async function initializeAppSessionOperationFunc(
     store.dispatch(
       pushOperation(initializeAppSessionOperationID, {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: operationStatusTypes.operationComplete,
         timestamp: Date.now()
       })
     );
@@ -75,7 +75,7 @@ export default async function initializeAppSessionOperationFunc(
       pushOperation(initializeAppSessionOperationID, {
         error: finalError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationError,
+        status: operationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

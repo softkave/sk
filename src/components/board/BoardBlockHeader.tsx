@@ -11,7 +11,7 @@ import StyledDrawerMenu from "../styled/StyledDrawerMenu";
 type CreateMenuKey = BlockType | "collaborator";
 type SettingsMenuKey = "edit" | "delete";
 
-export interface IBoardHeaderProps {
+export interface IBoardBlockHeaderProps {
   block: IBlock;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
@@ -20,7 +20,7 @@ export interface IBoardHeaderProps {
   onNavigateBack?: (() => void) | null;
 }
 
-const BoardHeader: React.FC<IBoardHeaderProps> = props => {
+const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   const {
     onNavigateBack,
     block,
@@ -114,7 +114,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = props => {
   );
 };
 
-export default BoardHeader;
+export default BoardBlockHeader;
 
 const StyledMenuItem = styled(Menu.Item)({
   fontSize: "14px",

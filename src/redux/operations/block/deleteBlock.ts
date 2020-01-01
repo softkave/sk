@@ -1,14 +1,18 @@
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
-import { bulkDeleteBlocksRedux, deleteBlockRedux, updateBlockRedux } from "../../blocks/actions";
-import { getEveryBlockChildrenInState, getBlock } from "../../blocks/selectors";
+import {
+  bulkDeleteBlocksRedux,
+  deleteBlockRedux,
+  updateBlockRedux
+} from "../../blocks/actions";
+import { getBlock, getEveryBlockChildrenInState } from "../../blocks/selectors";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -38,7 +42,7 @@ export default async function deleteBlockOperationFunc(
       deleteBlockOperationID,
       {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
+        status: operationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
       block.customId
@@ -54,7 +58,7 @@ export default async function deleteBlockOperationFunc(
 
     // TODO: find a more efficient way to do this
     const blockChildren = getEveryBlockChildrenInState(store.getState(), block);
-    
+
     if (blockChildren.length > 0) {
       store.dispatch(
         bulkDeleteBlocksRedux(blockChildren.map(child => child.customId))
@@ -64,20 +68,29 @@ export default async function deleteBlockOperationFunc(
     const parentIDs = block.parents || [];
 
     if (parentIDs.length > 0) {
-      const parent = getBlock(store.getState(), parentIDs[parentIDs.length - 1]);
+      const parent = getBlock(
+        store.getState(),
+        parentIDs[parentIDs.length - 1]
+      );
 
       if (parent) {
         const pluralType = `${block.type}s`;
         const container = parent[pluralType] || [];
-        const parentUpdate = { [pluralType]: container.filter(id => id !== block.customId) };
-  
+        const parentUpdate = {
+          [pluralType]: container.filter(id => id !== block.customId)
+        };
+
         if (block.type === "group") {
           const groupTaskContext = parent.groupTaskContext || [];
           const groupProjectContext = parent.groupProjectContext || [];
-          parentUpdate.groupTaskContext = groupTaskContext.filter(id => id !== block.customId);
-          parentUpdate.groupProjectContext = groupProjectContext.filter(id => id !== block.customId);
+          parentUpdate.groupTaskContext = groupTaskContext.filter(
+            id => id !== block.customId
+          );
+          parentUpdate.groupProjectContext = groupProjectContext.filter(
+            id => id !== block.customId
+          );
         }
-  
+
         store.dispatch(
           updateBlockRedux(parent.customId, parentUpdate, {
             arrayUpdateStrategy: "replace"
@@ -94,7 +107,7 @@ export default async function deleteBlockOperationFunc(
         deleteBlockOperationID,
         {
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: operationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
         block.customId
@@ -109,7 +122,7 @@ export default async function deleteBlockOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationError,
+          status: operationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

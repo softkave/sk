@@ -190,3 +190,24 @@ export const respondToCollaborationRequestMutation = `
     }
   }
 `;
+
+export const getSessionDetailsQuery = `
+  ${errorFragment}
+  query GetSessionDetailsQuery () {
+    user {
+      getSessionDetails () {
+        errors {
+          ...errorFragment
+        }
+        details {
+          notificationsCount
+          unseenNotificationsCount
+          organizationsCount
+          unseenOrganizationsCount
+          assignedTasksCount
+          unseenAssignedTasksCount
+        }
+      }
+    }
+  }
+`;

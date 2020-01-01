@@ -14,9 +14,9 @@ import store from "../../store";
 import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { respondToNotificationOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -47,7 +47,7 @@ export default async function respondToNotificationOperationFunc(
       respondToNotificationOperationID,
       {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
+        status: operationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
       request.customId
@@ -101,7 +101,7 @@ export default async function respondToNotificationOperationFunc(
         respondToNotificationOperationID,
         {
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: operationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
         request.customId
@@ -116,7 +116,7 @@ export default async function respondToNotificationOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationError,
+          status: operationStatusTypes.operationError,
           timestamp: Date.now()
         },
         request.customId
