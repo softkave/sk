@@ -193,20 +193,15 @@ export const respondToCollaborationRequestMutation = `
 
 export const getSessionDetailsQuery = `
   ${errorFragment}
-  query GetSessionDetailsQuery () {
+  query GetSessionDetailsQuery {
     user {
-      getSessionDetails () {
+      getSessionDetails {
         errors {
           ...errorFragment
         }
-        details {
-          notificationsCount
-          unseenNotificationsCount
-          organizationsCount
-          unseenOrganizationsCount
-          assignedTasksCount
-          unseenAssignedTasksCount
-        }
+        notificationsCount
+        organizationsCount
+        assignedTasksCount
       }
     }
   }

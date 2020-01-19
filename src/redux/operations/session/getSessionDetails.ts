@@ -39,7 +39,7 @@ export default async function getSessionDetailsOperationFunc(
       throw result.errors;
     }
 
-    setSessionDetails(result.details);
+    store.dispatch(setSessionDetails(result));
     store.dispatch(
       pushOperation(OperationIDs.getSessionDetails, {
         scopeID: options.scopeID,

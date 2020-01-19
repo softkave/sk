@@ -45,7 +45,7 @@ const CollaboratorList: React.FC<ICProps> = props => {
 
   const renderItem = (collaborator: IUser) => {
     return (
-      <StyledContainer s={{ padding: "16px 0" }}>
+      <StyledContainer s={{ padding: "24px" }}>
         <CollaboratorThumbnail collaborator={collaborator} />
       </StyledContainer>
     );

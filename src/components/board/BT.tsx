@@ -6,20 +6,22 @@ import CollaboratorList from "../collaborator/CollaboratorList";
 import GroupList from "../group/GL";
 import { concatPaths } from "../layout/path";
 import ProjectList from "../project/PL";
+import StyledContainer from "../styled/Container";
 import TaskList from "../task/TL";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
+import BoardBlockTypeHeader from "./BoardBlockTypeHeader";
 import BoardBlockChildren from "./BoardChildren";
-import BoardLandingMenu from "./BoardLandingMenu";
 import Column from "./C";
 
 export interface IBoardBodyMobileProps {
   block: IBlock;
   onClickUpdateBlock: (block: IBlock) => void;
+  onClickAddBlock: () => void;
 }
 
 const BoardBodyMobile: React.FC<IBoardBodyMobileProps> = props => {
-  const { block, onClickUpdateBlock } = props;
+  const { block, onClickUpdateBlock, onClickAddBlock } = props;
   const history = useHistory();
 
   const onClickChild = (childBlock: IBlock) => {
@@ -97,25 +99,7 @@ const BoardBodyMobile: React.FC<IBoardBodyMobileProps> = props => {
     return <CollaborationRequests organization={block} />;
   };
 
-  const renderLandingMenu = () => (
-    <BoardLandingMenu
-      block={block}
-      onClick={key => {
-        history.push(concatPaths(window.location.pathname, key));
-      }}
-    />
-  );
-
-  return null;
-  // <BoardBlockChildrenRoutes
-  //   block={block}
-  //   renderCollaborationRequests={renderCollaborationRequests}
-  //   renderCollaborators={renderCollaborators}
-  //   renderGroups={renderGroups}
-  //   renderLandingMenu={renderLandingMenu}
-  //   renderProjects={renderProjects}
-  //   renderTasks={renderTasks}
-  // />
+  return <StyledContainer></StyledContainer>;
 };
 
 export default BoardBodyMobile;

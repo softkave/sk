@@ -23,8 +23,7 @@ const Column: React.FC<IColumnProps> = props => {
 const ColumnContainer = styled.div`
   display: flex;
   height: 100%;
-  max-width: 400px;
-  min-width: 300px;
+  max-width: 300px;
   width: 100%;
   flex-direction: column;
 `;

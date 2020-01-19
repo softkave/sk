@@ -11,13 +11,15 @@ import StyledDrawerMenu from "../styled/StyledDrawerMenu";
 type CreateMenuKey = BlockType | "collaborator";
 type SettingsMenuKey = "edit" | "delete";
 
+const StyledContainerAsH1 = StyledContainer.withComponent("h1");
+
 export interface IBoardBlockHeaderProps {
   block: IBlock;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
   onClickEditBlock: () => void;
   onClickDeleteBlock: () => void;
-  onNavigateBack?: (() => void) | null;
+  onNavigateBack: () => void;
 }
 
 const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
@@ -88,28 +90,29 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   );
 
   return (
-    <StyledContainer
-      s={{ width: "100%", alignItems: "center", marginBottom: "12px" }}
-    >
-      {onNavigateBack && (
-        <StyledFlatButton
-          style={{ paddingRight: "16px" }}
-          onClick={onNavigateBack}
-        >
-          <Icon type="caret-left" theme="filled" />
+    <StyledContainer s={{ width: "100%", alignItems: "center" }}>
+      <StyledFlatButton onClick={onNavigateBack}>
+        <Icon type="arrow-left" />
+      </StyledFlatButton>
+      <StyledContainerAsH1
+        s={{
+          fontSize: "18px",
+          textOverflow: "ellipsis",
+          flex: 1,
+          margin: "0 16px",
+          justifyContent: "center"
+        }}
+      >
+        {block.name}
+      </StyledContainerAsH1>
+      <Dropdown overlay={createMenu} trigger={["click"]}>
+        <StyledFlatButton icon="plus" />
+      </Dropdown>
+      <Dropdown overlay={settingsMenu} trigger={["click"]}>
+        <StyledFlatButton style={{ paddingLeft: "16px" }}>
+          <Icon type="setting" />
         </StyledFlatButton>
-      )}
-      <StyledHeaderName>{block.name}</StyledHeaderName>
-      <div>
-        <Dropdown overlay={createMenu} trigger={["click"]}>
-          <StyledFlatButton icon="plus" />
-        </Dropdown>
-        <Dropdown overlay={settingsMenu} trigger={["click"]}>
-          <StyledFlatButton style={{ paddingLeft: "16px" }}>
-            <Icon type="setting" />
-          </StyledFlatButton>
-        </Dropdown>
-      </div>
+      </Dropdown>
     </StyledContainer>
   );
 };
@@ -117,15 +120,6 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
 export default BoardBlockHeader;
 
 const StyledMenuItem = styled(Menu.Item)({
-  fontSize: "14px",
   textTransform: "capitalize",
   display: "flex"
-});
-
-const StyledHeaderName = styled.h1({
-  display: "flex",
-  flex: 1,
-  marginRight: "16px",
-  fontSize: "24px",
-  marginBottom: "0"
 });

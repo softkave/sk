@@ -1,23 +1,17 @@
 import styled from "@emotion/styled";
 import { Icon } from "antd";
 import React from "react";
-import { BlockType } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
-import { pluralize } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 
-const getHeaderTitle = (blockType: BlockType) =>
-  pluralize(getBlockTypeFullName(blockType)).toUpperCase();
-
 export interface IBoardBlockTypeHeaderProps {
-  blockType: BlockType;
+  title: string;
   onClickCreate: () => void;
   onNavigateBack?: (() => void) | null;
 }
 
 const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
-  const { onNavigateBack, blockType, onClickCreate } = props;
+  const { onNavigateBack, title, onClickCreate } = props;
 
   return (
     <StyledContainer
@@ -28,11 +22,13 @@ const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
           style={{ paddingRight: "16px" }}
           onClick={onNavigateBack}
         >
-          <Icon type="caret-left" theme="filled" />
+          <Icon type="arrow-left" />
         </StyledFlatButton>
       )}
-      <StyledHeaderName>{getHeaderTitle(blockType)}</StyledHeaderName>
-      <StyledFlatButton icon="plus" onClick={onClickCreate} />
+      <StyledHeaderName>{title}</StyledHeaderName>
+      <StyledFlatButton onClick={onClickCreate}>
+        <Icon type="plus" />
+      </StyledFlatButton>
     </StyledContainer>
   );
 };
@@ -43,6 +39,8 @@ const StyledHeaderName = styled.h1({
   display: "flex",
   flex: 1,
   marginRight: "16px",
-  fontSize: "24px",
-  marginBottom: "0"
+  fontSize: "18px",
+  marginBottom: "0",
+  justifyContent: "center",
+  textTransform: "capitalize"
 });

@@ -1,34 +1,46 @@
+import { Icon } from "antd";
 import React from "react";
 import { useSelector, useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
+import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
+import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
-import OperationIDs from "../../redux/operations/operationIDs";
+import OperationIDs, {
+  addCollaboratorsOperationID
+} from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
+import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
 import GroupFormContainer from "../group/GroupFormContainer";
 import useBlockParents from "../hooks/useBlockParent";
 import EditOrgFormContainer from "../org/EditOrgFormContainer";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
 import StyledCapitalizeText from "../StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
 
-export type BlockFormType = "add-block-form" | "update-block-form";
+export type BlockFormType =
+  | "add-block-form"
+  | "update-block-form"
+  | "collaborator-form";
 
 export interface IBlockFormsProps {
   block: IBlock;
   formType: BlockFormType;
   onClose: () => void;
+  parent?: IBlock;
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = props => {
-  const { block, formType, onClose } = props;
+  const { block, formType, onClose, parent } = props;
   const store = useStore();
   const parents = useBlockParents(block);
   const user = useSelector(getSignedInUserRequired);
@@ -42,6 +54,23 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
     : [];
   const collaborators = useSelector<IReduxState, IUser[]>(state =>
     getUsersAsArray(state, collaboratorIDs)
+  );
+  const requestIDs = Array.isArray(organization.collaborationRequests)
+    ? organization.collaborationRequests
+    : [];
+  const requests = useSelector<IReduxState, INotification[]>(state =>
+    getNotificationsAsArray(state, requestIDs)
+  );
+  const formActionType = formType === "update-block-form" ? "Edit" : "Create";
+  const formName =
+    formType === "collaborator-form"
+      ? "Collaborator"
+      : getBlockTypeFullName(block.type);
+
+  const formLabel = (
+    <StyledCapitalizeText>
+      {formActionType} {formName}
+    </StyledCapitalizeText>
   );
 
   const getFormParents = (formBlock: IBlock) => {
@@ -91,74 +120,101 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
   const onCompleteEditBlock = (values: any, options: IOperationFuncOptions) => {
     if (formType === "add-block-form") {
       const newBlock = { ...block, ...values };
-      addBlockOperationFunc({ user, block: newBlock, parent: block }, options);
+      addBlockOperationFunc({ parent, user, block: newBlock }, options);
     } else {
       updateBlockOperationFunc({ block, data: values }, options);
     }
   };
 
-  const blockFormTypeFullName = getBlockTypeFullName(block.type);
-  const blockFormOperationId =
-    formType === "add-block-form"
-      ? OperationIDs.addBlock
-      : OperationIDs.updateBlock;
+  const renderBlockForm = () => {
+    const formParents = getFormParents(block);
+    const blockFormOperationId =
+      formType === "add-block-form"
+        ? OperationIDs.addBlock
+        : OperationIDs.updateBlock;
 
-  const formLabel = (
-    <StyledCapitalizeText>
-      {formType} {blockFormTypeFullName}
-    </StyledCapitalizeText>
-  );
+    switch (block.type) {
+      case "group":
+        return (
+          <GroupFormContainer
+            operationID={blockFormOperationId}
+            customId={block.customId}
+            onClose={onClose}
+            onSubmit={onCompleteEditBlock}
+            initialValues={block}
+            submitLabel={formLabel}
+            parents={formParents}
+          />
+        );
 
-  const formParents = getFormParents(block);
+      case "task":
+        return (
+          <TaskFormContainer
+            operationID={blockFormOperationId}
+            customId={block.customId}
+            onClose={onClose}
+            onSubmit={onCompleteEditBlock}
+            initialValues={block as any}
+            user={user}
+            submitLabel={formLabel}
+            collaborators={collaborators}
+            parents={formParents}
+          />
+        );
+
+      case "org":
+        return (
+          <EditOrgFormContainer
+            onSubmit={onCompleteEditBlock}
+            onClose={onClose}
+            customId={block.customId}
+            initialValues={block}
+            operationID={blockFormOperationId}
+            submitLabel={formLabel}
+          />
+        );
+
+      case "project":
+        return (
+          <ProjectFormContainer
+            customId={block.customId}
+            initialValues={block}
+            onClose={onClose}
+            onSubmit={onCompleteEditBlock}
+            operationID={blockFormOperationId}
+            submitLabel={formLabel}
+            parents={formParents}
+          />
+        );
+    }
+  };
+
+  const renderCollaboratorForm = () => {
+    return (
+      <AddCollaboratorFormContainer
+        customId={block.customId}
+        existingCollaborationRequests={requests}
+        existingCollaborators={collaborators}
+        onClose={onClose}
+        onSubmit={(data, options) =>
+          addCollaboratorsOperationFunc({ block, ...data }, options)
+        }
+        operationID={addCollaboratorsOperationID}
+      />
+    );
+  };
 
   return (
-    <StyledContainer s={{ flexDirection: "column" }}>
-      <h3 style={{ padding: "0 24px" }}>{formLabel}</h3>
-      {block.type === "project" && (
-        <ProjectFormContainer
-          customId={block.customId}
-          initialValues={block}
-          onClose={onClose}
-          onSubmit={onCompleteEditBlock}
-          operationID={blockFormOperationId}
-          submitLabel={formLabel}
-          parents={formParents}
-        />
-      )}
-      {block.type === "group" && (
-        <GroupFormContainer
-          operationID={blockFormOperationId}
-          customId={block.customId}
-          onClose={onClose}
-          onSubmit={onCompleteEditBlock}
-          initialValues={block}
-          submitLabel={formLabel}
-          parents={formParents}
-        />
-      )}
-      {block.type === "task" && (
-        <TaskFormContainer
-          operationID={blockFormOperationId}
-          customId={block.customId}
-          onClose={onClose}
-          onSubmit={onCompleteEditBlock}
-          initialValues={block as any}
-          user={user}
-          submitLabel={formLabel}
-          collaborators={collaborators}
-          parents={formParents}
-        />
-      )}
-      {block.type === "org" && (
-        <EditOrgFormContainer
-          onSubmit={onCompleteEditBlock}
-          onClose={onClose}
-          customId={block.customId}
-          initialValues={block}
-          operationID={blockFormOperationId}
-          submitLabel={formLabel}
-        />
-      )}
+    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <h3 style={{ padding: "0 24px" }}>
+        <StyledFlatButton style={{ marginRight: "16px" }} onClick={onClose}>
+          <Icon type="arrow-left" />
+        </StyledFlatButton>
+        {formLabel}
+      </h3>
+      {formType === "collaborator-form"
+        ? renderCollaboratorForm()
+        : renderBlockForm()}
     </StyledContainer>
   );
 };

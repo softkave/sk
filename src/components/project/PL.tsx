@@ -19,7 +19,6 @@ const ProjectList: React.FC<IProjectListProps> = props => {
         onClick={onClick}
         showFields={["name"]}
         emptyDescription="No projects available."
-        itemStyle={{ padding: "16px 0" }}
       />
     </StyledContainer>
   );

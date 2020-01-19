@@ -18,7 +18,6 @@ const GroupList: React.FC<IGroupListProps> = props => {
         blocks={groups}
         showFields={["name"]}
         emptyDescription="No groups available."
-        itemStyle={{ padding: "16px 0" }}
         onClick={onClick}
       />
     </StyledContainer>

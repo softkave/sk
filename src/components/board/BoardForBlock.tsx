@@ -1,42 +1,32 @@
-import styled from "@emotion/styled";
 import { Modal } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { INotification } from "../../models/notification/notification";
-import { IUser } from "../../models/user/user";
-import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
+import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
 import {
-  addCollaboratorsOperationID,
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
   getBlockCollaboratorsOperationID
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
-import { getUsersAsArray } from "../../redux/users/selectors";
 import { pluralize } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
-import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
-import Loading from "../Loading";
-import RenderForDevice from "../RenderForDevice";
+import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
-import BoardBlockHeader from "./BoardBlockHeader";
-import BoardBodyMobile from "./BoardBodyMobile";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
+import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
 import BoardBlockChildren from "./BoardChildren";
 import BoardEntryForBlock from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
-import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
 interface IBlockFormState {
   block: IBlock;
@@ -61,10 +51,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
     null
   );
-  const [
-    showAddCollaboratorsForm,
-    setShowAddCollaboratorsForm
-  ] = React.useState(false);
 
   const getPath = (b: IBlock) => {
     const bTypeFullName = getBlockTypeFullName(b.type);
@@ -75,19 +61,18 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const parents = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, parentIDs)
   );
+
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
-
   const childGroupMatch = useRouteMatch<IGroupChildPathMatch>(
     `${blockPath}/groups/:groupID`
   );
+
   const childProjectMatch = useRouteMatch<IProjectChildPathMatch>(
     `${blockPath}/projects/:projectID`
   );
 
-  const showBlockForm = !!blockForm;
   const user = useSelector(getSignedInUserRequired);
-
   const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
       loadBlockCollaboratorsOperationFunc({ block });
@@ -101,16 +86,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   };
 
   const hasCollaborators = block.type === "org";
-  const organizationID = hasCollaborators ? block.customId : block.parents![0];
-  const organization = useSelector<IReduxState, IBlock>(
-    state => getBlock(state, organizationID)!
-  );
-  const collaboratorIDs = Array.isArray(organization.collaborators)
-    ? organization.collaborators
-    : [];
-  const collaborators = useSelector<IReduxState, IUser[]>(state =>
-    getUsersAsArray(state, collaboratorIDs)
-  );
   const loadCollaboratorsStatus = useOperation(
     {
       operationID: getBlockCollaboratorsOperationID,
@@ -123,12 +98,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     hasCollaborators &&
     (loadCollaboratorsStatus.isLoading || !!!loadCollaboratorsStatus.operation);
 
-  const requestIDs = Array.isArray(organization.collaborationRequests)
-    ? organization.collaborationRequests
-    : [];
-  const requests = useSelector<IReduxState, INotification[]>(state =>
-    getNotificationsAsArray(state, requestIDs)
-  );
   const hasRequests = block.type === "org";
   const loadRequestsStatus = useOperation(
     {
@@ -141,8 +110,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingRequests =
     hasRequests &&
     (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
-
-  const blockTypeFullName = getBlockTypeFullName(block.type);
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
@@ -161,9 +128,29 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
-  const onDeleteBlock = () => {
-    history.push(parentPath);
+  const onClickBlock = (clickedBlock: IBlock) => {
+    const path = concatPaths(blockPath, getPath(clickedBlock));
+    history.push(path);
+  };
+
+  const onNavigate = (route: string) => {
+    history.push(concatPaths(blockPath, route));
+  };
+
+  const onNavigateBack = () => {
+    const path = window.location.pathname;
+    const pathArr = path.split("/");
+    pathArr.pop();
+    const destPath = pathArr.join("/");
+    history.push(destPath);
+  };
+
+  const onDeleteBlock = (blockToDelete: IBlock) => {
     deleteBlockOperationFunc({ block });
+
+    if (blockToDelete.customId === block.customId) {
+      history.push(parentPath);
+    }
   };
 
   const resetBlockForm = () => {
@@ -171,9 +158,10 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     setBlockForm(null);
   };
 
-  const promptConfirmDelete = () => {
+  const promptConfirmDelete = (blockToDelete: IBlock) => {
+    const blockToDeleteFullType = getBlockTypeFullName(blockToDelete.type);
     const onDeletePromptMessage = (
-      <div>Are you sure you want to delete this {blockTypeFullName}?</div>
+      <div>Are you sure you want to delete this {blockToDeleteFullType}?</div>
     );
 
     Modal.confirm({
@@ -182,7 +170,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       cancelText: "No",
       okType: "danger",
       onOk() {
-        onDeleteBlock();
+        onDeleteBlock(blockToDelete);
       },
       onCancel() {
         // do nothing
@@ -190,49 +178,22 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     });
   };
 
-  const renderAddCollaboratorForm = () => {
-    return (
-      <AddCollaboratorFormContainer
-        customId={block.customId}
-        existingCollaborationRequests={requests}
-        existingCollaborators={collaborators}
-        onClose={() => setShowAddCollaboratorsForm(false)}
-        onSubmit={(data, options) =>
-          addCollaboratorsOperationFunc({ block, ...data }, options)
-        }
-        operationID={addCollaboratorsOperationID}
-      />
-    );
+  const renderForms = () => {
+    if (blockForm) {
+      return (
+        <StyledContainer
+          s={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+        >
+          <BlockForms
+            block={blockForm!.block}
+            formType={blockForm!.formType}
+            onClose={resetBlockForm}
+            parent={block}
+          />
+        </StyledContainer>
+      );
+    }
   };
-
-  const renderForms = () => (
-    <BlockForms
-      block={blockForm!.block}
-      formType={blockForm!.formType}
-      onClose={resetBlockForm}
-    />
-  );
-
-  const renderHeader = () => (
-    <BoardBlockHeader
-      block={block}
-      onClickAddCollaborator={() => setShowAddCollaboratorsForm(true)}
-      onClickCreateNewBlock={blockType => {
-        setBlockForm({
-          block: getNewBlock(user, blockType, block),
-          formType: "add-block-form"
-        });
-      }}
-      onClickDeleteBlock={promptConfirmDelete}
-      onClickEditBlock={() => {
-        setBlockForm({
-          block,
-          formType: "update-block-form"
-        });
-      }}
-      onNavigateBack={blockForm && resetBlockForm}
-    />
-  );
 
   const shouldRenderLoading = () => {
     return isLoadingCollaborators || isLoadingRequests || isLoadingChildren;
@@ -250,47 +211,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     }
 
     return loadErrors;
-  };
-
-  const renderMobile = () => (
-    <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
-      <StyledContainer s={{ padding: "0 24px" }}>
-        {renderHeader()}
-      </StyledContainer>
-      {showBlockForm ? (
-        renderForms()
-      ) : showAddCollaboratorsForm ? (
-        renderAddCollaboratorForm()
-      ) : (
-        <StyledContainer s={{ flex: 1, padding: "0 24px" }}>
-          <BoardBodyMobile
-            block={block}
-            onClickUpdateBlock={blockToUpdate =>
-              setBlockForm({
-                block: blockToUpdate,
-                formType: "update-block-form"
-              })
-            }
-          />
-        </StyledContainer>
-      )}
-    </StyledContainer>
-  );
-
-  const renderDesktop = () => {
-    // TODO: render form without nav menu and have a back or cancelbutton
-    return (
-      <StyledFillContainer>
-        {renderHeader()}
-        <StyledBodyContainer>
-          {showBlockForm
-            ? renderForms()
-            : showAddCollaboratorsForm
-            ? renderAddCollaboratorForm()
-            : null}
-        </StyledBodyContainer>
-      </StyledFillContainer>
-    );
   };
 
   const renderChild = () => {
@@ -338,10 +258,33 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     }
 
     return (
-      <RenderForDevice
-        renderForDesktop={renderDesktop}
-        renderForMobile={renderMobile}
-      />
+      <React.Fragment>
+        {blockForm && renderForms()}
+        {!blockForm && (
+          <BoardBlockChildrenRoutes
+            block={block}
+            onClickAddBlock={blockType => {
+              setBlockForm({
+                block: getNewBlock(user, blockType, block),
+                formType: "add-block-form"
+              });
+            }}
+            onClickUpdateBlock={blockToUpdate =>
+              setBlockForm({
+                block: blockToUpdate,
+                formType: "update-block-form"
+              })
+            }
+            onClickBlock={onClickBlock}
+            onClickDeleteBlock={promptConfirmDelete}
+            onNavigate={onNavigate}
+            onNavigateBack={onNavigateBack}
+            onClickAddCollaborator={() =>
+              setBlockForm({ block, formType: "collaborator-form" })
+            }
+          />
+        )}
+      </React.Fragment>
     );
   };
 
@@ -349,15 +292,3 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 };
 
 export default BoardForBlock;
-
-const StyledBodyContainer = styled.div({
-  display: "flex",
-  flex: 1,
-  overflow: "auto"
-});
-
-const StyledFillContainer = styled.div({
-  display: "flex",
-  flexDirection: "column",
-  flex: 1
-});

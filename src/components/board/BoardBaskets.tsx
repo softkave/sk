@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import EmptyMessage from "../EmptyMessage";
+import StyledContainer from "../styled/Container";
 
 const defaultEmptyMessage = "No blocks yet.";
 
@@ -41,7 +42,11 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
     };
 
     if (baskets.length === 0) {
-      return <EmptyMessage>{emptyMessage || defaultEmptyMessage}</EmptyMessage>;
+      return (
+        <StyledContainer s={{ flex: 1, alignItems: "center" }}>
+          <EmptyMessage>{emptyMessage || defaultEmptyMessage}</EmptyMessage>
+        </StyledContainer>
+      );
     }
 
     return (

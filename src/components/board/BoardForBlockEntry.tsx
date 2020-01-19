@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
-import StyledCenterContainer from "../styled/CenterContainer";
+import StyledContainer from "../styled/Container";
 import BoardForBlock from "./BoardForBlock";
 
 const defaultNotFoundMessage = "Block not found.";
@@ -22,9 +22,11 @@ const BoardEntryForBlock: React.FC<IBoardEntryForBlockProps> = props => {
 
   if (!block) {
     return (
-      <StyledCenterContainer>
+      <StyledContainer
+        s={{ height: "100%", alignItems: "center", justifyContent: "center" }}
+      >
         <Empty description={notFoundMessage || defaultNotFoundMessage} />
-      </StyledCenterContainer>
+      </StyledContainer>
     );
   }
 

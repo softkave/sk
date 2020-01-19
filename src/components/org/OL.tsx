@@ -44,29 +44,43 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
     return null;
   };
 
+  // TODO: add an empty container
+
   return (
     <StyledContainer
       s={{
-        display: "flex",
         width: "100%",
         height: "100%",
-        flexDirection: "column",
-        padding: "0px 24px",
-        maxWidth: "400px"
+        flexDirection: "column"
       }}
     >
       {renderOrgForm()}
-      <BoardBlockTypeHeader
-        blockType="org"
-        onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
-        onNavigateBack={() => history.push("/app")}
-      />
-      <BlockList
-        blocks={orgs}
-        emptyDescription="Create an organization to get started."
-        onClick={onClick}
-        showFields={["name", "description"]}
-      />
+      <StyledContainer
+        s={{
+          padding: "0px 24px"
+        }}
+      >
+        <BoardBlockTypeHeader
+          title="organizations"
+          onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
+          onNavigateBack={() => history.push("/app")}
+        />
+      </StyledContainer>
+      <StyledContainer
+        s={{
+          width: "100%",
+          flexDirection: "column",
+          maxWidth: "400px",
+          margin: "0 auto"
+        }}
+      >
+        <BlockList
+          blocks={orgs}
+          emptyDescription="Create an organization to get started."
+          onClick={onClick}
+          showFields={["name", "description"]}
+        />
+      </StyledContainer>
     </StyledContainer>
   );
 };

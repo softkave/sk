@@ -56,7 +56,11 @@ const Header: React.FC<{}> = () => {
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
-            <Icon type="caret-down" theme="filled" />
+            <Icon
+              type="caret-down"
+              theme="filled"
+              style={{ marginLeft: "4px", fontSize: "14px" }}
+            />
           </StyledAvatarButton>
         </Dropdown>
       </StyledContainer>

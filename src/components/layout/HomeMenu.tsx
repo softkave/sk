@@ -42,44 +42,56 @@ const HomeMenu: React.FC<{}> = () => {
     return <GeneralErrorList fill errors={sessionDetailsOperation.error} />;
   }
 
+  console.log(sessionDetails);
+
   return (
     <StyledContainer
       s={{
-        flexDirection: "column"
+        flexDirection: "column",
+        maxWidth: "400px",
+        width: "100%",
+        margin: "32px auto",
+        height: "100%"
       }}
     >
-      <StyledContainer s={{ flex: 1 }}>
+      <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
         <MenuItem
+          bordered
+          keepCountSpace
           key="notifications"
           iconType="mail"
           name={
-            sessionDetails.notificationsCount > 0
-              ? "Notifications"
-              : "Notification"
+            sessionDetails.notificationsCount === 1
+              ? "Notification"
+              : "Notifications"
           }
           count={sessionDetails.notificationsCount}
           unseenCount={sessionDetails.unseenNotificationsCount}
           onClick={() => navigateToPath("notifications")}
         />
         <MenuItem
+          bordered
+          keepCountSpace
           key="assigned-tasks"
           iconType="schedule"
           name={
-            sessionDetails.assignedTasksCount > 0
-              ? "Assigned Tasks"
-              : "Assigned Task"
+            sessionDetails.assignedTasksCount === 1
+              ? "Assigned Task"
+              : "Assigned Tasks"
           }
           count={sessionDetails.assignedTasksCount}
           unseenCount={sessionDetails.unseenAssignedTasksCount}
           onClick={() => navigateToPath("assigned-tasks")}
         />
         <MenuItem
+          bordered
+          keepCountSpace
           key="organizations"
           iconType="block"
           name={
-            sessionDetails.organizationsCount > 0
-              ? "Organizations"
-              : "Organization"
+            sessionDetails.organizationsCount === 1
+              ? "Organization"
+              : "Organizations"
           }
           count={sessionDetails.organizationsCount}
           unseenCount={sessionDetails.unseenOrganizationsCount}
