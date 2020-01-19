@@ -1,5 +1,11 @@
+import { IUserSessionDetails } from "../../models/user/user";
 import { ISessionAction } from "./actions";
-import { LOGIN_USER, LOGOUT_USER, SET_SESSION_TO_WEB } from "./constants";
+import {
+  LOGIN_USER,
+  LOGOUT_USER,
+  SET_SESSION_DETAILS,
+  SET_SESSION_TO_WEB
+} from "./constants";
 
 export const sessionInitializing = "initializing";
 export const sessionWeb = "web";
@@ -16,6 +22,7 @@ export interface ISessionState {
   sessionType: SessionType;
   token?: string;
   userId?: string;
+  sessionDetails?: IUserSessionDetails;
 }
 
 export function sessionReducer(
@@ -34,6 +41,13 @@ export function sessionReducer(
     case LOGOUT_USER:
     case SET_SESSION_TO_WEB: {
       return { sessionType: sessionWeb };
+    }
+
+    case SET_SESSION_DETAILS: {
+      return {
+        ...state,
+        sessionDetails: action.payload
+      };
     }
 
     default:

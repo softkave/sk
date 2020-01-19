@@ -7,7 +7,7 @@ const operationPending = "pending";
 const operationComplete = "complete";
 const operationError = "error";
 
-export const defaultOperationStatusTypes = {
+export const operationStatusTypes = {
   operationStarted,
   operationPending,
   operationError,
@@ -271,7 +271,7 @@ export function dispatchOperationStarted(props: IDispatchOperationFuncProps) {
     {
       data,
       scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
+      status: operationStatusTypes.operationStarted,
       timestamp: Date.now()
     },
     resourceID
@@ -286,7 +286,7 @@ export function dispatchOperationPending(props: IDispatchOperationFuncProps) {
     {
       data,
       scopeID,
-      status: defaultOperationStatusTypes.operationPending,
+      status: operationStatusTypes.operationPending,
       timestamp: Date.now()
     },
     resourceID
@@ -302,7 +302,7 @@ export function dispatchOperationError(props: IDispatchOperationFuncProps) {
       data,
       scopeID,
       error,
-      status: defaultOperationStatusTypes.operationError,
+      status: operationStatusTypes.operationError,
       timestamp: Date.now()
     },
     resourceID
@@ -317,7 +317,7 @@ export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
     {
       data,
       scopeID,
-      status: defaultOperationStatusTypes.operationComplete,
+      status: operationStatusTypes.operationComplete,
       timestamp: Date.now()
     },
     resourceID

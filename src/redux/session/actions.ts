@@ -1,6 +1,8 @@
+import { IUserSessionDetails } from "../../models/user/user";
 import {
   LOGIN_USER,
   LOGOUT_USER,
+  SET_SESSION_DETAILS,
   SET_SESSION_TO_WEB,
   UPDATE_TOKEN
 } from "./constants";
@@ -62,7 +64,22 @@ export function setSessionToWeb(): ISetSessionToWebAction {
   };
 }
 
+export interface ISetSessionDetailsAction {
+  type: SET_SESSION_DETAILS;
+  payload: IUserSessionDetails;
+}
+
+export function setSessionDetails(
+  details: IUserSessionDetails
+): ISetSessionDetailsAction {
+  return {
+    type: SET_SESSION_DETAILS,
+    payload: details
+  };
+}
+
 export type ISessionAction =
   | ILoginUserAction
   | ILogoutUserAction
-  | ISetSessionToWebAction;
+  | ISetSessionToWebAction
+  | ISetSessionDetailsAction;

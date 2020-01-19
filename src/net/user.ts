@@ -7,6 +7,7 @@ import {
   changePasswordWithTokenMutation,
   forgotPasswordMutation,
   getCollaborationRequestsQuery,
+  getSessionDetailsQuery,
   getUserDataQuery,
   respondToCollaborationRequestMutation,
   updateCollaborationRequestMutation,
@@ -132,6 +133,10 @@ export function getCollaborationRequests() {
     {},
     "data.user.getCollaborationRequests"
   );
+}
+
+export function getSessionDetails() {
+  return auth(null, getSessionDetailsQuery, {}, "data.user.getSessionDetails");
 }
 
 export function getUserData(token) {

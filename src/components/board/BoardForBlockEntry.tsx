@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
-import BA from "../board/BA";
-import StyledCenterContainer from "../styled/CenterContainer";
+import StyledContainer from "../styled/Container";
+import BoardForBlock from "./BoardForBlock";
 
 const defaultNotFoundMessage = "Block not found.";
 
-export interface IBDProps {
+export interface IBoardEntryForBlockProps {
   blockID: string;
   notFoundMessage?: string;
 }
 
-const BD: React.FC<IBDProps> = props => {
+const BoardEntryForBlock: React.FC<IBoardEntryForBlockProps> = props => {
   const { blockID, notFoundMessage } = props;
   const block = useSelector<IReduxState, IBlock | undefined>(state =>
     getBlock(state, blockID)
@@ -22,13 +22,15 @@ const BD: React.FC<IBDProps> = props => {
 
   if (!block) {
     return (
-      <StyledCenterContainer>
+      <StyledContainer
+        s={{ height: "100%", alignItems: "center", justifyContent: "center" }}
+      >
         <Empty description={notFoundMessage || defaultNotFoundMessage} />
-      </StyledCenterContainer>
+      </StyledContainer>
     );
   }
 
-  return <BA block={block} />;
+  return <BoardForBlock block={block} />;
 };
 
-export default BD;
+export default BoardEntryForBlock;

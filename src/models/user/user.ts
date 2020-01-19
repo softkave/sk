@@ -22,3 +22,12 @@ export interface IUser {
   notifications?: string[];
   assignedTasks?: string[];
 }
+
+export interface IUserSessionDetails {
+  notificationsCount: number;
+  unseenNotificationsCount: number;
+  organizationsCount: number;
+  unseenOrganizationsCount: number;
+  assignedTasksCount: number;
+  unseenAssignedTasksCount: number;
+}

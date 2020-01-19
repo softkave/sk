@@ -1,71 +1,130 @@
-import styled from "@emotion/styled";
+import { defaultTo } from "lodash";
 import React from "react";
-import { IBlock } from "../../models/block/block";
-import EmptyMessage from "../EmptyMessage";
-// import StyledHorizontalScrollContainer from "../styled/HorizontalScrollContainer";
+import { BlockType, IBlock } from "../../models/block/block";
+import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import StyledContainer from "../styled/Container";
+import Text from "../Text";
+import MenuItem from "../utilities/MenuItem";
+import BoardBlockHeader from "./BoardBlockHeader";
 
-const defaultEmptyMessage = "No blocks yet.";
-
-export interface IBBasket {
-  key: string;
-  blocks: IBlock[];
+export interface IBProps {
+  block: IBlock;
+  onClickUpdateBlock: (block: IBlock) => void;
+  onClickAddBlock: (type: BlockType) => void;
+  onNavigateBack: () => void;
+  onNavigate: (route: string) => void;
+  onClickAddCollaborator: () => void;
+  onClickDeleteBlock: (block: IBlock) => void;
 }
 
-export interface IBProps<BasketType extends IBBasket> {
-  blocks: IBlock[];
-  getBaskets: (blocks: IBlock[]) => BasketType[];
-  renderBasket: (
-    basket: BasketType,
-    index: number,
-    baskets: BasketType[]
-  ) => React.ReactNode;
-  emptyMessage?: string;
-}
+const B: React.FC<IBProps> = props => {
+  const {
+    block,
+    onNavigate,
+    onClickAddBlock,
+    onClickAddCollaborator,
+    onClickDeleteBlock,
+    onClickUpdateBlock,
+    onNavigateBack
+  } = props;
 
-class B<T extends IBBasket> extends React.Component<IBProps<T>> {
-  public render() {
-    const { blocks, getBaskets, renderBasket, emptyMessage } = this.props;
-    const baskets = getBaskets(blocks);
+  const childrenTypes = useBlockChildrenTypes(block);
+  const hasTasks = childrenTypes.includes("task");
+  const hasProjects = childrenTypes.includes("project");
+  const hasGroups = childrenTypes.includes("group");
+  const hasRequests = block.type === "org";
+  const hasCollaborators = block.type === "org";
+  const tasksCount = defaultTo(block.tasks, []).length;
+  const groupsCount = defaultTo(block.groups, []).length;
+  const projectsCount = defaultTo(block.projects, []).length;
+  const collaboratorsCount = defaultTo(block.collaborators, []).length;
+  const requestsCount = defaultTo(block.collaborationRequests, []).length;
 
-    const renderBaskets = () => {
-      return baskets.map((basket, index, allBaskets) => {
-        const renderedBasket = renderBasket(basket, index, allBaskets);
+  // TODO: show selected child route, like by adding background color or something
+  // TODO: show count and use badges only for new unseen entries
+  // TODO: sort the entries by count?
 
-        if (renderedBasket !== null) {
-          return <StyledColumn key={basket.key}>{renderedBasket}</StyledColumn>;
-        }
-
-        return null;
-      });
-    };
-
-    if (baskets.length === 0) {
-      return <EmptyMessage>{emptyMessage || defaultEmptyMessage}</EmptyMessage>;
-    }
-
-    return (
-      <StyledBasketsContainerInner>
-        {renderBaskets()}
-      </StyledBasketsContainerInner>
-    );
-  }
-}
+  return (
+    <StyledContainer s={{ flexDirection: "column" }}>
+      <StyledContainer s={{ flexDirection: "column", padding: "0 24px" }}>
+        <BoardBlockHeader
+          block={block}
+          onClickAddCollaborator={onClickAddCollaborator}
+          onClickCreateNewBlock={onClickAddBlock}
+          onClickDeleteBlock={() => onClickDeleteBlock(block)}
+          onClickEditBlock={() => onClickUpdateBlock(block)}
+          onNavigateBack={onNavigateBack}
+        />
+      </StyledContainer>
+      <StyledContainer
+        s={{
+          flexDirection: "column",
+          width: "100%",
+          maxWidth: "400px",
+          margin: "0px auto"
+        }}
+      >
+        {block.description && (
+          <StyledContainer s={{ margin: "24px 0" }}>
+            <Text rows={3} text={block.description} />
+          </StyledContainer>
+        )}
+        {hasGroups && (
+          <MenuItem
+            bordered
+            keepCountSpace
+            key="groups"
+            name={groupsCount > 0 ? "Groups" : "Group"}
+            count={groupsCount}
+            onClick={() => onNavigate("groups")}
+          />
+        )}
+        {hasTasks && (
+          <MenuItem
+            bordered
+            keepCountSpace
+            key="tasks"
+            name={tasksCount === 1 ? "Task" : "Tasks"}
+            count={tasksCount}
+            onClick={() => onNavigate("tasks")}
+          />
+        )}
+        {hasProjects && (
+          <MenuItem
+            bordered
+            keepCountSpace
+            key="projects"
+            name={projectsCount === 1 ? "Project" : "Projects"}
+            count={projectsCount}
+            onClick={() => onNavigate("projects")}
+          />
+        )}
+        {hasCollaborators && (
+          <MenuItem
+            bordered
+            keepCountSpace
+            key="collaborators"
+            name={collaboratorsCount === 1 ? "Collaborator" : "Collaborators"}
+            count={collaboratorsCount}
+            onClick={() => onNavigate("collaborators")}
+          />
+        )}
+        {hasRequests && (
+          <MenuItem
+            keepCountSpace
+            key="collaboration-requests"
+            name={
+              requestsCount === 1
+                ? "Collaboration Request"
+                : "Collaboration Requests"
+            }
+            count={requestsCount}
+            onClick={() => onNavigate("collaboration-requests")}
+          />
+        )}
+      </StyledContainer>
+    </StyledContainer>
+  );
+};
 
 export default B;
-
-const StyledBasketsContainerInner = styled.div({
-  height: "100%",
-  display: "flex",
-  boxSizing: "border-box",
-  width: "100%"
-});
-
-const lastOfTypeSelector = "&:last-of-type";
-const StyledColumn = styled.div({
-  width: "100%",
-  marginRight: "24px",
-
-  [lastOfTypeSelector]: {
-    marginRight: 0
-  }
-});

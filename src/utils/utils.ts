@@ -4,3 +4,7 @@ const uuid = require("uuid/v4");
 export function newId() {
   return uuid();
 }
+
+export const pluralize = (str: string) => {
+  return `${str}s`;
+};

@@ -6,9 +6,9 @@ import store from "../../store";
 import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { loadUserNotificationsOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -30,7 +30,7 @@ export default async function loadUserNotificationsOperationFunc(
   store.dispatch(
     pushOperation(loadUserNotificationsOperationID, {
       scopeID: options.scopeID,
-      status: defaultOperationStatusTypes.operationStarted,
+      status: operationStatusTypes.operationStarted,
       timestamp: Date.now()
     })
   );
@@ -59,7 +59,7 @@ export default async function loadUserNotificationsOperationFunc(
     store.dispatch(
       pushOperation(loadUserNotificationsOperationID, {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationComplete,
+        status: operationStatusTypes.operationComplete,
         timestamp: Date.now()
       })
     );
@@ -70,7 +70,7 @@ export default async function loadUserNotificationsOperationFunc(
       pushOperation(loadUserNotificationsOperationID, {
         error: transformedError,
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationError,
+        status: operationStatusTypes.operationError,
         timestamp: Date.now()
       })
     );

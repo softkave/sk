@@ -5,18 +5,17 @@ import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
 import { IReduxState } from "../../redux/store";
-import GeneralError from "../GeneralError";
+import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
-import Loading from "../Loading";
-import StyledContainer from "../styled/Container";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
-export interface IBlockChildrenProps {
+export interface IBoardBlockChildrenProps {
   parent: IBlock;
   getChildrenIDs: () => string[];
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const BlockChildren: React.FC<IBlockChildrenProps> = props => {
+const BoardBlockChildren: React.FC<IBoardBlockChildrenProps> = props => {
   const { parent, render, getChildrenIDs } = props;
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>(state =>
@@ -38,35 +37,12 @@ const BlockChildren: React.FC<IBlockChildrenProps> = props => {
     loadParentChildrenStatus.isLoading ||
     !!!loadParentChildrenStatus.operation
   ) {
-    return (
-      <StyledContainer
-        s={{
-          width: "100%",
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <Loading />
-      </StyledContainer>
-    );
+    return <LoadingEllipsis />;
   } else if (loadParentChildrenStatus.error) {
-    return (
-      <StyledContainer
-        s={{
-          width: "100%",
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "16px"
-        }}
-      >
-        <GeneralError error={loadParentChildrenStatus.error} />
-      </StyledContainer>
-    );
+    return <GeneralErrorList errors={loadParentChildrenStatus.error} />;
   }
 
   return <React.Fragment>{render(blocks)}</React.Fragment>;
 };
 
-export default BlockChildren;
+export default BoardBlockChildren;

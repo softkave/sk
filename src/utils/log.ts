@@ -1,5 +1,5 @@
 export function devConsole(type, location = "unknown") {
-  return function(...args) {
+  return (...args) => {
     if (process.env.NODE_ENV === "development") {
       console.log(`-- ${location} --`);
       console[type](...args);

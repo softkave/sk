@@ -1,19 +1,16 @@
-import styled from "@emotion/styled";
-import { Button, Empty } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import { addBlockOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import BlockList from "../block/BlockList";
 import getNewBlock from "../block/getNewBlock";
-import StyledCenterContainer from "../styled/CenterContainer";
+import BoardBlockTypeHeader from "../board/BoardBlockTypeHeader";
 import StyledContainer from "../styled/Container";
 import EditOrgFormWithModal from "./EditOrgFormWithModal";
-import OrganizationListItem from "./OLI";
-
-const StyledH1 = StyledContainer.withComponent("h1");
 
 export interface IOrganizationListProps {
   orgs: IBlock[];
@@ -24,14 +21,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
   const { orgs, onClick } = props;
   const [newOrg, setNewOrg] = React.useState<IBlock | null>(null);
   const user = useSelector(getSignedInUserRequired);
-
-  if (orgs.length === 0) {
-    return (
-      <StyledEmptyContainer>
-        <Empty description="Create an organization to get started." />
-      </StyledEmptyContainer>
-    );
-  }
+  const history = useHistory();
 
   const renderOrgForm = () => {
     if (newOrg) {
@@ -54,76 +44,45 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
     return null;
   };
 
+  // TODO: add an empty container
+
   return (
     <StyledContainer
       s={{
-        display: "flex",
         width: "100%",
         height: "100%",
-        flexDirection: "column",
-        padding: "0px 24px",
-        maxWidth: "400px"
+        flexDirection: "column"
       }}
     >
       {renderOrgForm()}
-      <StyledH1 s={{ margin: "16px 0", marginBottom: "32px" }}>
-        Organizations
-      </StyledH1>
-      {/* <StyledContainer
-                s={{
-                  lineHeight: "16px",
-                  padding: "0 24px"
-                }}
-              >
-                <StyledFlatButton style={{ color: "#1890ff" }}>
-                  <Icon type="plus-circle" theme="twoTone" />
-                  Create Organization
-                </StyledFlatButton>
-              </StyledContainer> */}
-      <StyledContainer s={{ marginBottom: "16px" }}>
-        <Button
-          block
-          onClick={() => setNewOrg(getNewBlock(user, "org"))}
-          icon="plus"
-        >
-          Create Organization
-        </Button>
+      <StyledContainer
+        s={{
+          padding: "0px 24px"
+        }}
+      >
+        <BoardBlockTypeHeader
+          title="organizations"
+          onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
+          onNavigateBack={() => history.push("/app")}
+        />
       </StyledContainer>
-      <StyledList>
-        {orgs.map(org => {
-          return (
-            <StyledOrgListItem key={org.customId}>
-              <OrganizationListItem org={org} onClick={onClick} />
-            </StyledOrgListItem>
-          );
-        })}
-      </StyledList>
+      <StyledContainer
+        s={{
+          width: "100%",
+          flexDirection: "column",
+          maxWidth: "400px",
+          margin: "0 auto"
+        }}
+      >
+        <BlockList
+          blocks={orgs}
+          emptyDescription="Create an organization to get started."
+          onClick={onClick}
+          showFields={["name", "description"]}
+        />
+      </StyledContainer>
     </StyledContainer>
   );
 };
 
 export default OrganizationList;
-
-const lastOfTypeSelector = "&:last-of-type";
-const hoverSelector = "&:hover";
-const StyledOrgListItem = styled.div({
-  padding: "24px 0px",
-  borderBottom: "1px solid #DDD",
-  cursor: "pointer",
-
-  [lastOfTypeSelector]: {
-    borderBottom: 0
-  },
-
-  [hoverSelector]: {
-    backgroundColor: "#E6F7FF"
-  }
-});
-
-const StyledEmptyContainer = styled(StyledCenterContainer)({
-  marginTop: 64
-});
-
-const StyledList = styled.div({
-  overflow: "auto"
-});

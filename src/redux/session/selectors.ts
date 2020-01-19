@@ -46,3 +46,7 @@ export function getUserTokenRequired(state: IReduxState) {
 export function getSessionType(state: IReduxState) {
   return state.session.sessionType;
 }
+
+export function getSessionDetails(state: IReduxState) {
+  return state.session.sessionDetails;
+}

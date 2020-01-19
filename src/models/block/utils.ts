@@ -17,7 +17,7 @@ export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
 
 type BlockTypeToTypesMap = { [key in BlockType]: BlockType[] };
 
-export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
+export function getBlockValidChildrenTypes(type: BlockType, parentType?: BlockType | null): BlockType[] {
   const validChildrenTypesMap: BlockTypeToTypesMap = {
     root: ["project", "group", "task"],
     org: ["project", "group", "task"],
@@ -26,7 +26,14 @@ export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
     task: []
   };
 
-  const types = validChildrenTypesMap[type] || [];
+  let types = validChildrenTypesMap[type] || [];
+
+  if (type === "group") {
+    if (parentType === "project") {
+      types = types.filter(nextType => nextType !== "project");
+    }
+  }
+
   return [...types];
 }
 

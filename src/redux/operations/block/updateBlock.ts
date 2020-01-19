@@ -9,9 +9,9 @@ import { getBlock } from "../../blocks/selectors";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
-  defaultOperationStatusTypes,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
+  operationStatusTypes
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -52,7 +52,7 @@ export default async function updateBlockOperationFunc(
       updateBlockOperationID,
       {
         scopeID: options.scopeID,
-        status: defaultOperationStatusTypes.operationStarted,
+        status: operationStatusTypes.operationStarted,
         timestamp: Date.now()
       },
       block.customId
@@ -96,7 +96,7 @@ export default async function updateBlockOperationFunc(
         updateBlockOperationID,
         {
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationComplete,
+          status: operationStatusTypes.operationComplete,
           timestamp: Date.now()
         },
         block.customId
@@ -113,7 +113,7 @@ export default async function updateBlockOperationFunc(
         {
           error: transformedError,
           scopeID: options.scopeID,
-          status: defaultOperationStatusTypes.operationError,
+          status: operationStatusTypes.operationError,
           timestamp: Date.now()
         },
         block.customId

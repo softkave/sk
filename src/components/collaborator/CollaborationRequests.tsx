@@ -16,7 +16,7 @@ export interface ICRProps {
   organization: IBlock;
 }
 
-const CR: React.FC<ICRProps> = props => {
+const CollaborationRequests: React.FC<ICRProps> = props => {
   const { organization } = props;
   const requests = useSelector<IReduxState, INotification[]>(state =>
     getNotificationsAsArray(state, organization.collaborationRequests!)
@@ -67,4 +67,4 @@ const CR: React.FC<ICRProps> = props => {
   );
 };
 
-export default CR;
+export default CollaborationRequests;
