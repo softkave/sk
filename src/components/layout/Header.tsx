@@ -11,6 +11,7 @@ import theme from "../theme";
 
 const StyledContainerAsLink = StyledContainer.withComponent(Link);
 
+// TODO: make header inclusive - ignore
 const Header: React.FC<{}> = () => {
   const user = useSelector(getSignedInUserRequired);
   const onLogout = () => {
