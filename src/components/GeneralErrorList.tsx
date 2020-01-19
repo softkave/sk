@@ -1,5 +1,6 @@
 import { Divider } from "antd";
 import React from "react";
+import OperationError from "../utils/operation-error/OperationError";
 import GeneralError, { IGeneralErrorProps } from "./GeneralError";
 import StyledContainer from "./styled/Container";
 
@@ -11,7 +12,13 @@ export interface IGeneralErrorListProps {
 const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
   const { errors, fill } = props;
 
-  const a = (
+  const e = Array.isArray(errors)
+    ? errors
+    : (errors as any).errors
+    ? (errors as any).errors
+    : []; // TODO: should we show a generic error instead of []
+
+  const content = (
     <StyledContainer
       s={{
         flexDirection: "column",
@@ -21,10 +28,10 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
         padding: "0 16px"
       }}
     >
-      {errors.map((error, index) => (
+      {e.map((error, index) => (
         <React.Fragment>
           <GeneralError error={error} />
-          {index !== errors.length - 1 && <Divider />}
+          {index !== e.length - 1 && <Divider />}
         </React.Fragment>
       ))}
     </StyledContainer>
@@ -41,12 +48,12 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
           marginBottom: "16px"
         }}
       >
-        {a}
+        {content}
       </StyledContainer>
     );
   }
 
-  return a;
+  return content;
 };
 
 export default GeneralErrorList;
