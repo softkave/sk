@@ -44,7 +44,6 @@ const TaskList: React.FC<ITaskListProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <h3>Tasks</h3>
       <List
         dataSource={tasksToRender}
         rowKey="customId"

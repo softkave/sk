@@ -46,16 +46,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column" }}>
-      <StyledContainer s={{ flexDirection: "column", padding: "0 24px" }}>
-        <BoardBlockHeader
-          block={block}
-          onClickAddCollaborator={onClickAddCollaborator}
-          onClickCreateNewBlock={onClickAddBlock}
-          onClickDeleteBlock={() => onClickDeleteBlock(block)}
-          onClickEditBlock={() => onClickUpdateBlock(block)}
-          onNavigateBack={onNavigateBack}
-        />
-      </StyledContainer>
       <StyledContainer
         s={{
           flexDirection: "column",
@@ -64,6 +54,16 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
           margin: "0px auto"
         }}
       >
+        <StyledContainer s={{ marginBottom: "16px" }}>
+          <BoardBlockHeader
+            block={block}
+            onClickAddCollaborator={onClickAddCollaborator}
+            onClickCreateNewBlock={onClickAddBlock}
+            onClickDeleteBlock={() => onClickDeleteBlock(block)}
+            onClickEditBlock={() => onClickUpdateBlock(block)}
+            onNavigateBack={onNavigateBack}
+          />
+        </StyledContainer>
         {block.description && (
           <StyledContainer s={{ margin: "24px 0" }}>
             <Text rows={3} text={block.description} />

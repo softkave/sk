@@ -14,17 +14,15 @@ const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
   const { onNavigateBack, title, onClickCreate } = props;
 
   return (
-    <StyledContainer
-      s={{ width: "100%", alignItems: "center", marginBottom: "12px" }}
-    >
-      {onNavigateBack && (
+    <StyledContainer s={{ width: "100%", alignItems: "center" }}>
+      {/* {onNavigateBack && (
         <StyledFlatButton
           style={{ paddingRight: "16px" }}
           onClick={onNavigateBack}
         >
           <Icon type="arrow-left" />
         </StyledFlatButton>
-      )}
+      )} */}
       <StyledHeaderName>{title}</StyledHeaderName>
       <StyledFlatButton onClick={onClickCreate}>
         <Icon type="plus" />
@@ -41,6 +39,5 @@ const StyledHeaderName = styled.h1({
   marginRight: "16px",
   fontSize: "18px",
   marginBottom: "0",
-  justifyContent: "center",
   textTransform: "capitalize"
 });

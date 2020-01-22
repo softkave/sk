@@ -4,6 +4,7 @@ import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledDrawerMenu from "../styled/StyledDrawerMenu";
@@ -91,16 +92,18 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
 
   return (
     <StyledContainer s={{ width: "100%", alignItems: "center" }}>
-      <StyledFlatButton onClick={onNavigateBack}>
+      {/* <StyledFlatButton onClick={onNavigateBack}>
         <Icon type="arrow-left" />
-      </StyledFlatButton>
+      </StyledFlatButton> */}
+      <StyledContainer>
+        <ItemAvatar color={block.color} />
+      </StyledContainer>
       <StyledContainerAsH1
         s={{
           fontSize: "18px",
           textOverflow: "ellipsis",
           flex: 1,
-          margin: "0 16px",
-          justifyContent: "center"
+          margin: "0 16px"
         }}
       >
         {block.name}

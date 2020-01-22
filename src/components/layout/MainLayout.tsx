@@ -13,7 +13,7 @@ const MainLayout: React.FC<{}> = () => {
       <Header />
       <Switch>
         <Route path="/app/notifications" component={Notifications} />
-        <Route path="/app/assigned-tasks" component={AssignedTasksMain} />
+        {/* <Route path="/app/assigned-tasks" component={AssignedTasksMain} /> */}
         <Route
           path="/app/organizations"
           component={OrganizationListContainer}

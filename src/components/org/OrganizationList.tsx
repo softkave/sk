@@ -57,23 +57,19 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
       {renderOrgForm()}
       <StyledContainer
         s={{
-          padding: "0px 24px"
-        }}
-      >
-        <BoardBlockTypeHeader
-          title="organizations"
-          onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
-          onNavigateBack={() => history.push("/app")}
-        />
-      </StyledContainer>
-      <StyledContainer
-        s={{
           width: "100%",
           flexDirection: "column",
           maxWidth: "400px",
           margin: "0 auto"
         }}
       >
+        <StyledContainer s={{ marginBottom: "16px" }}>
+          <BoardBlockTypeHeader
+            title="organizations"
+            onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
+            onNavigateBack={() => history.push("/app")}
+          />
+        </StyledContainer>
         <BlockList
           blocks={orgs}
           emptyDescription="Create an organization to get started."

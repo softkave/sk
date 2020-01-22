@@ -13,7 +13,6 @@ const ProjectList: React.FC<IProjectListProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <h3>Projects</h3>
       <BlockList
         blocks={projects}
         onClick={onClick}

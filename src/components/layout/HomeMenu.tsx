@@ -69,7 +69,7 @@ const HomeMenu: React.FC<{}> = () => {
           unseenCount={sessionDetails.unseenNotificationsCount}
           onClick={() => navigateToPath("notifications")}
         />
-        <MenuItem
+        {/* <MenuItem
           bordered
           keepCountSpace
           key="assigned-tasks"
@@ -82,7 +82,7 @@ const HomeMenu: React.FC<{}> = () => {
           count={sessionDetails.assignedTasksCount}
           unseenCount={sessionDetails.unseenAssignedTasksCount}
           onClick={() => navigateToPath("assigned-tasks")}
-        />
+        /> */}
         <MenuItem
           bordered
           keepCountSpace

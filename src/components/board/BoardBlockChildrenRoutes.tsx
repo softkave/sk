@@ -65,7 +65,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
     renderBasketFunc: (basket: IBoardBasket) => React.ReactNode
   ) => {
     return (
-      <StyledContainer s={{ flex: 1, padding: "0 24px" }}>
+      <StyledContainer s={{ flex: 1 }}>
         <BoardBaskets
           blocks={blocks}
           emptyMessage={emptyMessage}
@@ -131,23 +131,29 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
     return <CollaborationRequests organization={block} />;
   };
 
-  const r = (
+  const renderRoute = (
     title: string,
     onClickCreate: () => void,
     renderChildren: () => React.ReactNode
   ) => {
     return (
       <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
-        <StyledContainer s={{ padding: "0 24px" }}>
-          <BoardBlockTypeHeader
-            title={title}
-            onClickCreate={onClickCreate}
-            onNavigateBack={onNavigateBack}
-          />
-        </StyledContainer>
         <StyledContainer
-          s={{ width: "100%", maxWidth: "400px", margin: "0 auto", flex: 1 }}
+          s={{
+            width: "100%",
+            maxWidth: "400px",
+            margin: "0 auto",
+            flex: 1,
+            flexDirection: "column"
+          }}
         >
+          <StyledContainer s={{ marginBottom: "16px" }}>
+            <BoardBlockTypeHeader
+              title={title}
+              onClickCreate={onClickCreate}
+              onNavigateBack={onNavigateBack}
+            />
+          </StyledContainer>
           {renderChildren()}
         </StyledContainer>
       </StyledContainer>
@@ -174,14 +180,16 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
       {hasTasks && (
         <Route
           path={`${blockPath}/tasks`}
-          render={() => r("tasks", () => onClickAddBlock("task"), renderTasks)}
+          render={() =>
+            renderRoute("tasks", () => onClickAddBlock("task"), renderTasks)
+          }
         />
       )}
       {hasGroups && (
         <Route
           path={`${blockPath}/groups`}
           render={() =>
-            r("groups", () => onClickAddBlock("group"), renderGroups)
+            renderRoute("groups", () => onClickAddBlock("group"), renderGroups)
           }
         />
       )}
@@ -189,7 +197,11 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
         <Route
           path={`${blockPath}/projects`}
           render={() =>
-            r("projects", () => onClickAddBlock("project"), renderProjects)
+            renderRoute(
+              "projects",
+              () => onClickAddBlock("project"),
+              renderProjects
+            )
           }
         />
       )}
@@ -197,7 +209,11 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
         <Route
           path={`${blockPath}/collaborators`}
           render={() =>
-            r("collaborators", onClickAddCollaborator, renderCollaborators)
+            renderRoute(
+              "collaborators",
+              onClickAddCollaborator,
+              renderCollaborators
+            )
           }
         />
       )}
@@ -205,7 +221,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
         <Route
           path={`${blockPath}/collaboration-requests`}
           render={() =>
-            r(
+            renderRoute(
               "collaboration requests",
               onClickAddCollaborator,
               renderCollaborationRequests
