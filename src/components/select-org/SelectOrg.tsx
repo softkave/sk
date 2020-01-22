@@ -4,7 +4,7 @@ import React from "react";
 import { findBlock, IBlock } from "../../models/block/block";
 import { orgsViewName } from "../../redux/view/orgs";
 import { getWindowWidth } from "../../utils/window";
-import StyledCapitalizeText from "../StyledCapitalizeText";
+import StyledCapitalizeText from "../styled/StyledCapitalizeText";
 
 export interface ISelectOrgProps {
   orgs: IBlock[];

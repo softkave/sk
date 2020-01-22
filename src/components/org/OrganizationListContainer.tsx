@@ -14,8 +14,8 @@ import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps
 } from "../OperationHelper";
 import StyledContainer from "../styled/Container";
-import OrganizationContainer from "./OC";
-import OrganizationList from "./OL";
+import OrganizationContainer from "./OrganizationContainer";
+import OrganizationList from "./OrganizationList";
 
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();

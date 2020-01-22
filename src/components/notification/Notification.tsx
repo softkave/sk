@@ -21,7 +21,6 @@ import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
 import StyledContainer from "../styled/Container";
-// import StyledFlatButton from "../styled/FlatButton";
 import {
   getNotificationLatestStatus,
   INotificationsPathParams,

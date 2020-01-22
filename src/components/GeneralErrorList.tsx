@@ -1,6 +1,5 @@
 import { Divider } from "antd";
 import React from "react";
-import OperationError from "../utils/operation-error/OperationError";
 import GeneralError, { IGeneralErrorProps } from "./GeneralError";
 import StyledContainer from "./styled/Container";
 

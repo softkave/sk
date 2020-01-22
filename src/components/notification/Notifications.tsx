@@ -1,135 +1,152 @@
-// import styled from "@emotion/styled";
-// import { Col, Empty, Row } from "antd";
-// import throttle from "lodash/throttle";
-// import React from "react";
-// import { INotification } from "../../models/notification/notification";
-// import { IUser } from "../../models/user/user";
-// import { getWindowWidth } from "../../utils/window";
-// import StyledCenterContainer from "../styled/CenterContainer";
-// import NotificationBody from "./NotificationBody";
-// import NotificationList from "./NotificationList";
+import styled from "@emotion/styled";
+import { Empty } from "antd";
+import React from "react";
+import Media from "react-media";
+import { useSelector } from "react-redux";
+import { useHistory, useRouteMatch } from "react-router";
+import { INotification } from "../../models/notification/notification";
+import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
+import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { IReduxState } from "../../redux/store";
+import SingleOperationHelper, {
+  ISingleOperationHelperDerivedProps
+} from "../OperationHelper";
+import StyledCenterContainer from "../styled/CenterContainer";
+import theme from "../theme";
+import Notification from "./Notification";
+import NotificationList from "./NotificationList";
+import { INotificationsPathParams } from "./utils";
 
-// export interface INotificationListProps {
-//   notifications: INotification[];
-//   onClickNotification: (notification: INotification) => void;
-//   user: IUser;
-//   currentNotificationID?: string;
-// }
+const Notifications: React.FC<{}> = props => {
+  const history = useHistory();
+  const routeMatch = useRouteMatch()!;
+  const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(
+    "/app/notifications/:notificationID"
+  );
+  const user = useSelector(getSignedInUserRequired);
+  const notifications = useSelector<IReduxState, INotification[]>(state =>
+    getNotificationsAsArray(state, user.notifications || [])
+  );
+  const userHasNoNotifications = notifications.length === 0;
+  const currentNotificationID =
+    currentNotificationRouteMatch && currentNotificationRouteMatch.params
+      ? currentNotificationRouteMatch.params.notificationID
+      : undefined;
 
-// interface INotificationListState {
-//   renderType: string;
-// }
+  const onClickNotification = (notification: INotification) => {
+    history.push(`${routeMatch.url}/${notification.customId}`);
+  };
 
-// class Notifications extends React.Component<
-//   INotificationListProps,
-//   INotificationListState
-// > {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       renderType: this.getRenderType()
-//     };
+  const loadNotifications = (
+    helperProps: ISingleOperationHelperDerivedProps
+  ) => {
+    const shouldLoadNotifications = () => {
+      return !!!helperProps.operation;
+    };
 
-//     this.setRenderType = throttle(this.setRenderType, 100, { leading: true });
-//   }
+    if (shouldLoadNotifications()) {
+      loadUserNotificationsOperationFunc();
+    }
+  };
 
-//   public componentDidMount() {
-//     window.addEventListener("resize", this.setRenderType);
-//   }
+  const renderEmptyList = () => {
+    return (
+      <StyledCenterContainer>
+        <Empty description="You currently have no notifications." />
+      </StyledCenterContainer>
+    );
+  };
 
-//   public componentWillUnmount() {
-//     window.removeEventListener("resize", this.setRenderType);
-//   }
+  const renderNotificationList = () => {
+    return (
+      <NotificationList
+        currentNotificationID={currentNotificationID}
+        notifications={notifications}
+        onClickNotification={onClickNotification}
+      />
+    );
+  };
 
-//   public render() {
-//     const { currentNotificationID, notifications } = this.props;
-//     const { renderType } = this.state;
+  const renderCurrentNotification = () => {
+    return <Notification />;
+  };
 
-//     if (notifications.length === 0) {
-//       return (
-//         <StyledCenterContainer>
-//           <Empty description="You are all set!" />
-//         </StyledCenterContainer>
-//       );
-//     }
+  const renderCurrentNotificationForDesktop = () => {
+    if (currentNotificationID) {
+      return renderCurrentNotification();
+    }
 
-//     if (renderType === "mobile") {
-//       if (currentNotificationID) {
-//         return this.renderCurrentNotification();
-//       }
+    return null;
+  };
 
-//       return this.renderNotificationList();
-//     }
+  const renderNotificationsForMobile = () => {
+    if (currentNotificationID) {
+      return renderCurrentNotification();
+    }
 
-//     return (
-//       <StyledNotificationsDesktop>
-//         <StyledNotificationListDesktop span={8}>
-//           {this.renderNotificationList()}
-//         </StyledNotificationListDesktop>
-//         <StyledCurrentNotificationDesktop span={16}>
-//           {currentNotificationID ? this.renderCurrentNotification() : null}
-//         </StyledCurrentNotificationDesktop>
-//       </StyledNotificationsDesktop>
-//     );
-//   }
+    return renderNotificationList();
+  };
 
-//   private findNotification(id: string) {
-//     return this.props.notifications.find(
-//       nextNotification => nextNotification.customId === id
-//     )!;
-//   }
+  const renderNotificationsForDesktop = () => {
+    return (
+      <StyledDesktopNotificationContainer>
+        <StyledDesktopNotificationListContainer>
+          {renderNotificationList()}
+        </StyledDesktopNotificationListContainer>
+        <StyledDesktopNotificationBodyContainer>
+          {renderCurrentNotificationForDesktop()}
+        </StyledDesktopNotificationBodyContainer>
+      </StyledDesktopNotificationContainer>
+    );
+  };
 
-//   private setRenderType() {
-//     const renderType = this.getRenderType();
-//     if (this.state.renderType !== renderType) {
-//       this.setState({ renderType });
-//     }
-//   }
+  // TODO: Should we refactor this, it is used in multiple places?
+  const render = () => {
+    if (userHasNoNotifications) {
+      return renderEmptyList();
+    }
 
-//   private getRenderType() {
-//     return getWindowWidth() > 500 ? "desktop" : "mobile";
-//   }
+    return (
+      <Media queries={{ mobile: `(max-width: ${theme.breakpoints.sm}px)` }}>
+        {matches => (
+          <React.Fragment>
+            {matches.mobile && renderNotificationsForMobile()}
+            {!matches.mobile && renderNotificationsForDesktop()}
+          </React.Fragment>
+        )}
+      </Media>
+    );
+  };
 
-//   private renderCurrentNotification() {
-//     const { currentNotificationID } = this.props;
+  return (
+    <SingleOperationHelper
+      operationID={loadUserNotificationsOperationID}
+      render={render}
+      loadFunc={loadNotifications}
+    />
+  );
+};
 
-//     return (
-//       <NotificationBody
-//         notification={this.findNotification(currentNotificationID!)}
-//       />
-//     );
-//   }
+export default Notifications;
 
-//   private renderNotificationList() {
-//     const {
-//       notifications,
-//       currentNotificationID,
-//       onClickNotification
-//     } = this.props;
+// TODO: Global header for desktop
+// TODO: Shadow header for mobile
 
-//     return (
-//       <NotificationList
-//         notifications={notifications}
-//         onClickNotification={onClickNotification}
-//         currentNotificationID={currentNotificationID}
-//       />
-//     );
-//   }
-// }
+const StyledDesktopNotificationContainer = styled.div({
+  display: "flex",
+  flex: 1,
+  width: "100%",
+  height: "100%",
+  boxSizing: "border-box"
+});
 
-// export default Notifications;
+const StyledDesktopNotificationBodyContainer = styled.div({
+  display: "flex",
+  flex: 1
+});
 
-// const StyledNotificationsDesktop = styled(Row)({
-//   height: "100%",
-//   width: "100%"
-// });
-
-// const StyledNotificationListDesktop = styled(Col)({
-//   height: "100%"
-// });
-
-// const StyledCurrentNotificationDesktop = styled(Col)({
-//   height: "100%"
-// });
-
-export const a = "a";
+const StyledDesktopNotificationListContainer = styled.div({
+  width: "300px"
+});

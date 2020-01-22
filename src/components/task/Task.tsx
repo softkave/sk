@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import { Button } from "antd";
+import { Icon } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
-import StyledButton from "../styled/Button";
+import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import Text from "../Text";
 import Priority from "./Priority";
@@ -37,18 +37,21 @@ const Task: React.FC<ITaskProps> = props => {
       </StyledDescriptionContainer>
       <StyledControlsContainer>
         {onEdit && (
-          <StyledButton
-            icon="edit"
+          <StyledFlatButton
             onClick={() => onEdit(task)}
             title="edit task"
-            style={{ marginRight: "8px" }}
-          />
+            style={{ marginRight: "32px" }}
+          >
+            <Icon type="edit" />
+          </StyledFlatButton>
         )}
         <DeleteButtonWithPrompt
           onDelete={onDeleteTask}
           title="Are you sure you want to delete this task?"
         >
-          <Button icon="delete" type="danger" className="sk-minitask-close" />
+          <StyledFlatButton>
+            <Icon type="delete" />
+          </StyledFlatButton>
         </DeleteButtonWithPrompt>
       </StyledControlsContainer>
     </StyledTask>
@@ -58,9 +61,6 @@ const Task: React.FC<ITaskProps> = props => {
 export default Task;
 
 const StyledTask = styled.div({
-  padding: "8px",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
   backgroundColor: "white",
   display: "flex",
   flexDirection: "column"

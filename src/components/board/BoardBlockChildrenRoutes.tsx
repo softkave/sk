@@ -8,16 +8,16 @@ import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
-import GroupList from "../group/GL";
+import GroupList from "../group/GroupList";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
-import ProjectList from "../project/PL";
+import ProjectList from "../project/ProjectList";
 import StyledContainer from "../styled/Container";
-import TaskList from "../task/TL";
-import B from "./B";
+import TaskList from "../task/TaskList";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import BoardBlockTypeHeader from "./BoardBlockTypeHeader";
 import BoardBlockChildren from "./BoardChildren";
-import Column from "./C";
+import BoardHomeForBlock from "./BoardHomeForBlock";
+import Column from "./Column";
 
 export interface IBoardBlockChildrenRoutesProps {
   block: IBlock;
@@ -160,7 +160,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
         exact
         path={blockPath}
         render={() => (
-          <B
+          <BoardHomeForBlock
             block={block}
             onNavigate={onNavigate}
             onClickAddBlock={onClickAddBlock}

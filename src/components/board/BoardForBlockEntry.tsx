@@ -9,12 +9,12 @@ import BoardForBlock from "./BoardForBlock";
 
 const defaultNotFoundMessage = "Block not found.";
 
-export interface IBoardEntryForBlockProps {
+export interface IBoardForBlockContainerProps {
   blockID: string;
   notFoundMessage?: string;
 }
 
-const BoardEntryForBlock: React.FC<IBoardEntryForBlockProps> = props => {
+const BoardForBlockContainer: React.FC<IBoardForBlockContainerProps> = props => {
   const { blockID, notFoundMessage } = props;
   const block = useSelector<IReduxState, IBlock | undefined>(state =>
     getBlock(state, blockID)
@@ -33,4 +33,4 @@ const BoardEntryForBlock: React.FC<IBoardEntryForBlockProps> = props => {
   return <BoardForBlock block={block} />;
 };
 
-export default BoardEntryForBlock;
+export default BoardForBlockContainer;

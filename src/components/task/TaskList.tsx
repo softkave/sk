@@ -4,6 +4,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import StyledContainer from "../styled/Container";
+import List from "../styled/List";
 import Task from "./Task";
 
 export interface ITaskListProps {
@@ -14,7 +15,6 @@ export interface ITaskListProps {
 
 const TaskList: React.FC<ITaskListProps> = props => {
   const { toggleForm, selectedCollaborators, tasks } = props;
-
   const filteredTasks =
     isObject(selectedCollaborators) &&
     Object.keys(selectedCollaborators).length > 0
@@ -29,28 +29,28 @@ const TaskList: React.FC<ITaskListProps> = props => {
         })
       : tasks;
 
-  const renderTasks = () => {
-    const tasksToRender = sortBlocksByPriority(filteredTasks);
-    const renderedTasks = tasksToRender.map(task => {
-      return (
-        <StyledBlockThumbnailContainer key={task.customId}>
-          <Task
-            task={task}
-            onEdit={
-              toggleForm ? editedTask => toggleForm(editedTask) : undefined
-            }
-          />
-        </StyledBlockThumbnailContainer>
-      );
-    });
+  const tasksToRender = sortBlocksByPriority(filteredTasks);
 
-    return renderedTasks;
+  const renderTask = task => {
+    return (
+      <StyledBlockThumbnailContainer key={task.customId}>
+        <Task
+          task={task}
+          onEdit={toggleForm ? editedTask => toggleForm(editedTask) : undefined}
+        />
+      </StyledBlockThumbnailContainer>
+    );
   };
 
   return (
     <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
       <h3>Tasks</h3>
-      {renderTasks()}
+      <List
+        dataSource={tasksToRender}
+        rowKey="customId"
+        emptyDescription="No tasks available."
+        renderItem={renderTask}
+      />
     </StyledContainer>
   );
 };

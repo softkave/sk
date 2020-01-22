@@ -25,7 +25,7 @@ import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
 import BoardBlockChildren from "./BoardChildren";
-import BoardEntryForBlock from "./BoardForBlockEntry";
+import BoardForBlockContainer from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
 
 interface IBlockFormState {
@@ -237,7 +237,10 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         parent={block}
         getChildrenIDs={getChildrenIDsFunc}
         render={() => (
-          <BoardEntryForBlock blockID={childID!} notFoundMessage={message} />
+          <BoardForBlockContainer
+            blockID={childID!}
+            notFoundMessage={message}
+          />
         )}
       />
     );

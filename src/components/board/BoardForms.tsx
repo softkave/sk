@@ -24,7 +24,7 @@ import EditOrgFormContainer from "../org/EditOrgFormContainer";
 import ProjectFormContainer from "../project/ProjectFormContainer";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
-import StyledCapitalizeText from "../StyledCapitalizeText";
+import StyledCapitalizeText from "../styled/StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
 
 export type BlockFormType =

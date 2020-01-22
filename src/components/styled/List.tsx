@@ -8,7 +8,6 @@ export interface IListProps<T> {
   rowKey: ((item: T) => string) | string;
   renderItem: (item: T, index: number) => React.ReactNode;
   emptyDescription?: string | React.ReactNode;
-  // style: React.CSSProperties;
 }
 
 const defaultEmptyDescription = "No data";
@@ -49,16 +48,11 @@ class List<T> extends React.Component<IListProps<T>> {
 export default List;
 
 const lastOfTypeSelector = "&:last-of-type";
-const hoverSelector = "&:hover";
 const StyledListItemContainer = styled.div({
   borderBottom: "1px solid #DDD",
   cursor: "pointer",
 
   [lastOfTypeSelector]: {
     borderBottom: 0
-  },
-
-  [hoverSelector]: {
-    backgroundColor: "#E6F7FF"
   }
 });

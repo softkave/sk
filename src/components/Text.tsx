@@ -13,7 +13,7 @@ export interface ITextProps {
 const Text: React.FC<ITextProps> = props => {
   const { text, rows } = props;
   const [expand, setExpand] = React.useState(false);
-  const col = 32;
+  const col = 36;
   const lastCol = 16;
   const cols = (rows - 1) * col + lastCol;
   const shouldShowControls = text.length > cols;
@@ -27,7 +27,8 @@ const Text: React.FC<ITextProps> = props => {
         border: "none",
         backgroundColor: "inherit",
         color: "rgb(66,133,244)",
-        cursor: "pointer"
+        cursor: "pointer",
+        padding: "0"
       }}
       onClick={toggleExpand}
     >

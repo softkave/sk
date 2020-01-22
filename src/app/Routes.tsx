@@ -7,7 +7,6 @@ import SignupContainer from "../components/signup/SignupContainer";
 import StyledContainer from "../components/styled/Container";
 import Web from "../web/Web";
 import WebHeader from "../web/WebHeader";
-// import MainLayout from "../components/layout/MainLayout";
 
 function renderComponent(component) {
   return () => {
@@ -43,7 +42,6 @@ export default function Routes() {
         path="/change-password"
         render={renderComponent(ChangePasswordWithTokenContainer)}
       />
-      {/* <Route path="/app" component={MainLayout} /> */}
       <Route exact path="/" component={Web} />
     </Switch>
   );

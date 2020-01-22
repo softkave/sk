@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Badge } from "antd";
 import React from "react";
 import StyledContainer from "../styled/Container";
-import Column from "./C";
+import Column from "./Column";
 
 export interface IColumnWithTitleAndCountProps {
   count: number;

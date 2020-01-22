@@ -7,7 +7,7 @@ import Text from "../Text";
 import MenuItem from "../utilities/MenuItem";
 import BoardBlockHeader from "./BoardBlockHeader";
 
-export interface IBProps {
+export interface IBoardHomeForBlockProps {
   block: IBlock;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickAddBlock: (type: BlockType) => void;
@@ -17,7 +17,7 @@ export interface IBProps {
   onClickDeleteBlock: (block: IBlock) => void;
 }
 
-const B: React.FC<IBProps> = props => {
+const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   const {
     block,
     onNavigate,
@@ -127,4 +127,4 @@ const B: React.FC<IBProps> = props => {
   );
 };
 
-export default B;
+export default BoardHomeForBlock;
