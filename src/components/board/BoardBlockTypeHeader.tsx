@@ -11,7 +11,7 @@ export interface IBoardBlockTypeHeaderProps {
 }
 
 const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
-  const { onNavigateBack, title, onClickCreate } = props;
+  const { title, onClickCreate } = props;
 
   return (
     <StyledContainer s={{ width: "100%", alignItems: "center" }}>

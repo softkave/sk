@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
+// import AssignedTasksMain from "../assigned-tasks/AssignedTasksMain";
 import Notifications from "../notification/Notifications";
 import OrganizationListContainer from "../org/OrganizationListContainer";
 import StyledContainer from "../styled/Container";

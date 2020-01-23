@@ -25,7 +25,6 @@ export interface IBoardBlockHeaderProps {
 
 const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   const {
-    onNavigateBack,
     block,
     onClickAddCollaborator,
     onClickCreateNewBlock,

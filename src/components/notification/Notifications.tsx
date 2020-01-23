@@ -13,7 +13,7 @@ import { IReduxState } from "../../redux/store";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps
 } from "../OperationHelper";
-import StyledCenterContainer from "../styled/CenterContainer";
+import StyledContainer from "../styled/Container";
 import theme from "../theme";
 import Notification from "./Notification";
 import NotificationList from "./NotificationList";
@@ -53,9 +53,16 @@ const Notifications: React.FC<{}> = props => {
 
   const renderEmptyList = () => {
     return (
-      <StyledCenterContainer>
+      <StyledContainer
+        s={{
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
         <Empty description="You currently have no notifications." />
-      </StyledCenterContainer>
+      </StyledContainer>
     );
   };
 

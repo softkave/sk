@@ -4,7 +4,7 @@ import { getWindowWidth } from "../../utils/window";
 
 const StyledDrawerMenu = styled(Menu)(() => {
   const windowWidth = getWindowWidth();
-  const maxMenuWidth = 500;
+  const maxMenuWidth = 400;
   const maxMenuHeight = 400;
 
   return {

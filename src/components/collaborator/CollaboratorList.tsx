@@ -57,7 +57,6 @@ const CollaboratorList: React.FC<ICProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <h3>Collaborators</h3>
       <List
         dataSource={collaborators}
         rowKey={getCollaboratorID}

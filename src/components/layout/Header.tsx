@@ -3,15 +3,12 @@ import { Button, Dropdown, Icon, Menu } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import theme from "../theme";
-
-const StyledContainerAsLink = StyledContainer.withComponent(Link);
 
 export interface IHeaderProps {
   content?: React.ReactNode;
