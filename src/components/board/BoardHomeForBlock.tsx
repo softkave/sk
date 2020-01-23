@@ -54,7 +54,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
           margin: "0px auto"
         }}
       >
-        <StyledContainer s={{ marginBottom: "16px" }}>
+        <StyledContainer s={{ marginBottom: "16px", padding: "0 24px" }}>
           <BoardBlockHeader
             block={block}
             onClickAddCollaborator={onClickAddCollaborator}

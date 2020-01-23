@@ -42,8 +42,6 @@ const HomeMenu: React.FC<{}> = () => {
     return <GeneralErrorList fill errors={sessionDetailsOperation.error} />;
   }
 
-  console.log(sessionDetails);
-
   return (
     <StyledContainer
       s={{

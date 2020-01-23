@@ -147,7 +147,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
             flexDirection: "column"
           }}
         >
-          <StyledContainer s={{ marginBottom: "16px" }}>
+          <StyledContainer s={{ marginBottom: "16px", padding: "0 24px" }}>
             <BoardBlockTypeHeader
               title={title}
               onClickCreate={onClickCreate}

@@ -38,10 +38,8 @@ const Header: React.FC<IHeaderProps> = props => {
 
   const defaultOnNavigateBack = () => {
     const pathArr = window.location.pathname.split("/");
-    console.log([...pathArr]);
     pathArr.pop();
     const destPath = pathArr.join("/");
-    console.log(destPath);
 
     // TODO: Prefferably, first check if the destPath is contained in the stack,
     // and remove it if it does. Otherwise, go to the destPath

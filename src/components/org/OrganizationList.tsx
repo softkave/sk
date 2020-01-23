@@ -63,7 +63,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
           margin: "0 auto"
         }}
       >
-        <StyledContainer s={{ marginBottom: "16px" }}>
+        <StyledContainer s={{ marginBottom: "16px", padding: "0 24px" }}>
           <BoardBlockTypeHeader
             title="organizations"
             onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
