@@ -29,7 +29,12 @@ const Header: React.FC<IHeaderProps> = props => {
     }
   };
 
-  const isInHomePath = () => {
+  // const navigateToPath = (key: string) => {
+  //   const path = `/app/${key}`;
+  //   history.push(path);
+  // };
+
+  const isInBasePath = () => {
     return window.location.pathname.split("/").pop() === "app";
   };
 
@@ -45,7 +50,7 @@ const Header: React.FC<IHeaderProps> = props => {
 
   const content = props.content || <StyledH1>Softkave</StyledH1>;
   const onNavigateBack =
-    props.onNavigateBack || (!isInHomePath() && defaultOnNavigateBack);
+    props.onNavigateBack || (!isInBasePath() && defaultOnNavigateBack);
   const avatarMenuOverlay = (
     <Menu onClick={onSelectAvatarMenu} style={{ minWidth: "120px" }}>
       <StyledMenuItem key="logout">
@@ -61,15 +66,63 @@ const Header: React.FC<IHeaderProps> = props => {
     </Menu>
   );
 
+  // const isIn = (route: string) => {
+  //   return window.location.pathname.includes(route);
+  // };
+
+  // const renderNotificationsButton = (text?: string) => (
+  //   <StyledFlatButton
+  //     style={{
+  //       padding: "0 12px",
+  //       color: isIn("notifications") ? "#40a9ff" : undefined
+  //     }}
+  //     onClick={() => navigateToPath("notifications")}
+  //   >
+  //     <Icon type="alert" />
+  //     {text}
+  //   </StyledFlatButton>
+  // );
+
+  // const renderOrgsButton = (text?: string) => {
+  //   const isInOrgs = isIn("organizations");
+  //   return (
+  //     <StyledFlatButton
+  //       style={{ padding: "0 12px", color: isInOrgs ? "#40a9ff" : undefined }}
+  //       onClick={() => navigateToPath("organizations")}
+  //     >
+  //       <Icon type={isInOrgs ? "folder-open" : "folder"} />
+  //       {text}
+  //     </StyledFlatButton>
+  //   );
+  // };
+
+  // const renderNavButtonsForMobile = () => (
+  //   <>
+  //     {renderOrgsButton()}
+  //     {renderNotificationsButton()}
+  //   </>
+  // );
+
+  // const renderNavButtonsForDesktop = () => (
+  //   <>
+  //     {renderOrgsButton("Organizations")}
+  //     {renderNotificationsButton("Notifications")}
+  //   </>
+  // );
+
+  // TODO: implement line clamping on the application name
   return (
     <StyledHeaderContainer>
       {onNavigateBack && (
-        <StyledFlatButton onClick={onNavigateBack}>
+        <StyledFlatButton
+          onClick={onNavigateBack}
+          style={{ marginRight: "12px" }}
+        >
           <Icon type="arrow-left" />
         </StyledFlatButton>
       )}
       <StyledApplicationNameContainer>{content}</StyledApplicationNameContainer>
-      <StyledContainer>
+      <StyledContainer s={{ marginLeft: "12px" }}>
         <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
           <StyledAvatarButton>
             <ItemAvatar
@@ -93,11 +146,12 @@ const Header: React.FC<IHeaderProps> = props => {
 export default Header;
 
 const StyledApplicationNameContainer = styled.div({
-  justifyContent: "center",
   display: "flex",
   flex: 1,
   marginBottom: 0,
-  alignItems: "start"
+  alignItems: "start",
+  marginRight: "12px",
+  textOverflow: "ellipsis"
 });
 
 const StyledH1 = styled.h1({
@@ -109,7 +163,7 @@ const StyledH1 = styled.h1({
 const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
-  padding: "16px 24px"
+  padding: "16px 16px"
 });
 
 const StyledAvatarButton = styled(Button)({

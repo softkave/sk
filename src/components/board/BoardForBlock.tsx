@@ -27,18 +27,11 @@ import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
 import BoardBlockChildren from "./BoardChildren";
 import BoardForBlockContainer from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
+import { IBlockPathMatch } from "./types";
 
 interface IBlockFormState {
   block: IBlock;
   formType: BlockFormType;
-}
-
-interface IGroupChildPathMatch {
-  groupID: string;
-}
-
-interface IProjectChildPathMatch {
-  projectID: string;
 }
 
 export interface IBoardForBlockProps {
@@ -64,11 +57,11 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
-  const childGroupMatch = useRouteMatch<IGroupChildPathMatch>(
+  const childGroupMatch = useRouteMatch<IBlockPathMatch>(
     `${blockPath}/groups/:groupID`
   );
 
-  const childProjectMatch = useRouteMatch<IProjectChildPathMatch>(
+  const childProjectMatch = useRouteMatch<IBlockPathMatch>(
     `${blockPath}/projects/:projectID`
   );
 
@@ -219,11 +212,11 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     let getChildrenIDsFunc: () => string[] = () => [];
 
     if (childGroupMatch) {
-      childID = childGroupMatch.params.groupID;
+      childID = childGroupMatch.params.blockID;
       message = "Group not found.";
       getChildrenIDsFunc = () => block.groups || [];
     } else if (childProjectMatch) {
-      childID = childProjectMatch.params.projectID;
+      childID = childProjectMatch.params.blockID;
       message = "Project not found.";
       getChildrenIDsFunc = () => block.projects || [];
     }
@@ -281,7 +274,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
             onClickBlock={onClickBlock}
             onClickDeleteBlock={promptConfirmDelete}
             onNavigate={onNavigate}
-            onNavigateBack={onNavigateBack}
             onClickAddCollaborator={() =>
               setBlockForm({ block, formType: "collaborator-form" })
             }

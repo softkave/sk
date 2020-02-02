@@ -69,7 +69,7 @@ const StyledBasketsContainerInner = styled.div({
 const lastOfTypeSelector = "&:last-of-type";
 const StyledColumn = styled.div({
   width: "100%",
-  marginRight: "24px",
+  marginRight: "16px",
 
   [lastOfTypeSelector]: {
     marginRight: 0

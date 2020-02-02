@@ -13,6 +13,7 @@ import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import MenuItem from "../utilities/MenuItem";
 
+// TODO: should we remove HomeMenu, and where do we show the user details, like orgs count?
 const HomeMenu: React.FC<{}> = () => {
   const history = useHistory();
 
@@ -49,57 +50,39 @@ const HomeMenu: React.FC<{}> = () => {
         maxWidth: "400px",
         width: "100%",
         margin: "32px auto",
-        height: "100%"
+        flex: 1
       }}
     >
       <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
         <MenuItem
-          bordered
           keepCountSpace
           key="notifications"
           iconType="mail"
-          name={
+          content={
             sessionDetails.notificationsCount === 1
               ? "Notification"
               : "Notifications"
           }
           count={sessionDetails.notificationsCount}
-          unseenCount={sessionDetails.unseenNotificationsCount}
           onClick={() => navigateToPath("notifications")}
         />
-        {/* <MenuItem
-          bordered
-          keepCountSpace
-          key="assigned-tasks"
-          iconType="schedule"
-          name={
-            sessionDetails.assignedTasksCount === 1
-              ? "Assigned Task"
-              : "Assigned Tasks"
-          }
-          count={sessionDetails.assignedTasksCount}
-          unseenCount={sessionDetails.unseenAssignedTasksCount}
-          onClick={() => navigateToPath("assigned-tasks")}
-        /> */}
         <MenuItem
-          bordered
           keepCountSpace
           key="organizations"
           iconType="block"
-          name={
+          content={
             sessionDetails.organizationsCount === 1
               ? "Organization"
               : "Organizations"
           }
           count={sessionDetails.organizationsCount}
-          unseenCount={sessionDetails.unseenOrganizationsCount}
           onClick={() => navigateToPath("organizations")}
         />
       </StyledContainer>
       <MenuItem
         key="logout"
         iconType="logout"
-        name="Logout"
+        content="Logout"
         style={{ color: "rgb(255, 77, 79)", marginTop: "32px" }}
         onClick={onLogout}
       />

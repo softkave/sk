@@ -3,17 +3,19 @@ import { isFunction } from "lodash";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail, {
-  BlockThumbnailShowField
+  BlockThumbnailShowField,
+  IBlockThumbnailProps
 } from "../block/BlockThumnail";
-import ScrollList from "../ScrollList";
 import List from "../styled/List";
 
 export interface IBlockListProps {
   blocks: IBlock[];
+  showExploreMenu?: boolean;
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
   itemStyle?: React.CSSProperties;
   onClick?: (block: IBlock) => void;
+  onClickChildMenuItem?: IBlockThumbnailProps["onClickChildMenuItem"];
 }
 
 class BlockList extends React.PureComponent<IBlockListProps> {
@@ -23,32 +25,34 @@ class BlockList extends React.PureComponent<IBlockListProps> {
       onClick,
       showFields,
       emptyDescription,
-      itemStyle
+      itemStyle,
+      showExploreMenu,
+      onClickChildMenuItem
     } = this.props;
 
     return (
-      <ScrollList>
-        <List
-          dataSource={blocks}
-          rowKey="customId"
-          emptyDescription={emptyDescription}
-          renderItem={block => (
-            <StyledBlockThumbnailContainer style={itemStyle}>
-              <BlockThumbnail
-                block={block}
-                showFields={showFields}
-                onClick={() => isFunction(onClick) && onClick(block)}
-              />
-            </StyledBlockThumbnailContainer>
-          )}
-        />
-      </ScrollList>
+      <List
+        dataSource={blocks}
+        rowKey="customId"
+        emptyDescription={emptyDescription}
+        renderItem={block => (
+          <StyledBlockThumbnailContainer style={itemStyle}>
+            <BlockThumbnail
+              block={block}
+              showExploreMenu={showExploreMenu}
+              showFields={showFields}
+              onClick={() => isFunction(onClick) && onClick(block)}
+              onClickChildMenuItem={onClickChildMenuItem}
+            />
+          </StyledBlockThumbnailContainer>
+        )}
+      />
     );
   }
 }
 
 const StyledBlockThumbnailContainer = styled.div({
-  padding: "24px"
+  padding: "16px"
 });
 
 export default BlockList;

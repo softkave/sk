@@ -2,7 +2,8 @@ html,
 body,
 #root {
   height: 100%;
-  font-family: "Karla", sans-serif;
+  /* font-family: "Karla", sans-serif; */
+  font-family: 'Work Sans', sans-serif;
 }
 
 body,
@@ -13,7 +14,8 @@ body,
 
 *,
 .ant-form-item-children {
-  font-family: "Karla", sans-serif !important;
+  /* font-family: "Karla", sans-serif !important; */
+  font-family: 'Work Sans', sans-serif;
 }
 
 .ant-drawer-body {
@@ -30,3 +32,7 @@ body,
 .ant-btn .anticon {
   font-size: 16px;
 }
+
+/* .ant-form-item label {
+  font-weight: 600;
+} */

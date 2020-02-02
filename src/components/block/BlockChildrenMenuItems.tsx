@@ -3,16 +3,21 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
-import Text from "../Text";
 import MenuItem from "../utilities/MenuItem";
-import { BoardLandingMenuType } from "./types";
 
-export interface IBoardLandingMenuProps {
+export type BlockChildrenMenuItemType =
+  | "groups"
+  | "tasks"
+  | "projects"
+  | "collaborators"
+  | "collaboration-requests";
+
+export interface IBlockChildrenMenuItemsProps {
   block: IBlock;
-  onClick: (key: BoardLandingMenuType) => void;
+  onClick: (key: BlockChildrenMenuItemType) => void;
 }
 
-const BoardLandingMenu: React.FC<IBoardLandingMenuProps> = props => {
+const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => {
   const { block, onClick } = props;
 
   const childrenTypes = useBlockChildrenTypes(block);
@@ -32,47 +37,51 @@ const BoardLandingMenu: React.FC<IBoardLandingMenuProps> = props => {
   // TODO: sort the entries by count?
 
   return (
-    <StyledContainer>
-      {block.description && <Text rows={3} text={block.description} />}
+    <StyledContainer s={{ flexDirection: "column" }}>
       {hasGroups && (
         <MenuItem
+          keepCountSpace
           key="groups"
-          name={groupsCount > 0 ? "Groups" : "Group"}
+          content={groupsCount > 0 ? "Groups" : "Group"}
           count={groupsCount}
           onClick={() => onClick("groups")}
         />
       )}
       {hasTasks && (
         <MenuItem
+          keepCountSpace
           key="tasks"
-          name={tasksCount > 0 ? "Tasks" : "Task"}
+          content={tasksCount === 1 ? "Task" : "Tasks"}
           count={tasksCount}
           onClick={() => onClick("tasks")}
         />
       )}
       {hasProjects && (
         <MenuItem
+          keepCountSpace
           key="projects"
-          name={projectsCount > 0 ? "Projects" : "Project"}
+          content={projectsCount === 1 ? "Project" : "Projects"}
           count={projectsCount}
           onClick={() => onClick("projects")}
         />
       )}
       {hasCollaborators && (
         <MenuItem
+          keepCountSpace
           key="collaborators"
-          name={collaboratorsCount > 0 ? "Collaborators" : "Collaborator"}
+          content={collaboratorsCount === 1 ? "Collaborator" : "Collaborators"}
           count={collaboratorsCount}
           onClick={() => onClick("collaborators")}
         />
       )}
       {hasRequests && (
         <MenuItem
+          keepCountSpace
           key="collaboration-requests"
-          name={
-            requestsCount > 0
-              ? "collaboration-requests"
-              : "collaboration-requests"
+          content={
+            requestsCount === 1
+              ? "Collaboration Request"
+              : "Collaboration Requests"
           }
           count={requestsCount}
           onClick={() => onClick("collaboration-requests")}
@@ -82,4 +91,4 @@ const BoardLandingMenu: React.FC<IBoardLandingMenuProps> = props => {
   );
 };
 
-export default BoardLandingMenu;
+export default BlockChildrenMenuItems;

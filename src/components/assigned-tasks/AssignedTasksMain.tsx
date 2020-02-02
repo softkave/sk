@@ -111,7 +111,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
   const renderMobileLandingMenu = () => (
     <StyledContainer
-      s={{ padding: "0 24px", flexDirection: "column", width: "100%" }}
+      s={{ padding: "0 16px", flexDirection: "column", width: "100%" }}
     >
       <h1>Assigned Tasks</h1>
       <StyledContainer onClick={() => onNavigateToBasket("due-already")}>
@@ -150,7 +150,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
   const renderMobileBasket = (title: string, basketTasks: IBlock[]) => (
     <StyledContainer
-      s={{ flexDirection: "column", width: "100%", padding: "0 24px" }}
+      s={{ flexDirection: "column", width: "100%", padding: "0 16px" }}
     >
       <h3>{title}</h3>
       <TaskList selectedCollaborators={{}} tasks={basketTasks} />
@@ -213,7 +213,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
     // const hasNoneDue = sortResult.rest.length === assignedTasks.length;
 
     return (
-      <StyledContainer s={{ overflowX: "auto", marginLeft: "24px" }}>
+      <StyledContainer s={{ overflowX: "auto", marginLeft: "16px" }}>
         <BoardBaskets
           blocks={assignedTasks}
           getBaskets={getBaskets}

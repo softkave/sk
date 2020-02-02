@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Icon } from "antd";
+import isNumber from "lodash/isNumber";
 import React from "react";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
@@ -7,23 +8,18 @@ import StyledFlatButton from "../styled/FlatButton";
 export interface IBoardBlockTypeHeaderProps {
   title: string;
   onClickCreate: () => void;
-  onNavigateBack?: (() => void) | null;
+  count?: number;
 }
 
 const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
-  const { title, onClickCreate } = props;
+  const { title, onClickCreate, count } = props;
 
   return (
     <StyledContainer s={{ width: "100%", alignItems: "center" }}>
-      {/* {onNavigateBack && (
-        <StyledFlatButton
-          style={{ paddingRight: "16px" }}
-          onClick={onNavigateBack}
-        >
-          <Icon type="arrow-left" />
-        </StyledFlatButton>
-      )} */}
-      <StyledHeaderName>{title}</StyledHeaderName>
+      <StyledHeaderName>
+        {title}
+        {isNumber(count) && ` (${count})`}
+      </StyledHeaderName>
       <StyledFlatButton onClick={onClickCreate}>
         <Icon type="plus" />
       </StyledFlatButton>

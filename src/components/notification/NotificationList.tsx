@@ -59,7 +59,7 @@ const StyledNotificationList = styled.div({
 });
 
 const StyledHeader = styled.h1({
-  padding: "0 24px",
+  padding: "0 16px",
   marginBottom: 0
 });
 

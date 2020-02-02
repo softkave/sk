@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Divider } from "antd";
 import isObject from "lodash/isObject";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -31,14 +32,20 @@ const TaskList: React.FC<ITaskListProps> = props => {
 
   const tasksToRender = sortBlocksByPriority(filteredTasks);
 
-  const renderTask = task => {
+  const renderTask = (task, i) => {
     return (
-      <StyledBlockThumbnailContainer key={task.customId}>
-        <Task
-          task={task}
-          onEdit={toggleForm ? editedTask => toggleForm(editedTask) : undefined}
-        />
-      </StyledBlockThumbnailContainer>
+      <>
+        <StyledBlockThumbnailContainer key={task.customId}>
+          <Task
+            task={task}
+            onEdit={
+              toggleForm ? editedTask => toggleForm(editedTask) : undefined
+            }
+          />
+        </StyledBlockThumbnailContainer>
+        {i < tasksToRender.length - 1 && <Divider />}
+        {}
+      </>
     );
   };
 
@@ -59,4 +66,5 @@ export default TaskList;
 const StyledBlockThumbnailContainer = styled.div`
   margin-top: 12px;
   margin-bottom: 12px;
+  padding: 0 16px;
 `;

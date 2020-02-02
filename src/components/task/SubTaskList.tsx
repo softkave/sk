@@ -6,6 +6,7 @@ import { blockConstants } from "../../models/block/constants";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { newId } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
 import SubTask, { ISubTaskErrors } from "./SubTask";
 
 const StyledContainerAsLink = StyledContainer.withComponent("a");
@@ -159,17 +160,26 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     );
   };
 
+  const renderLabel = () => {
+    return (
+      <StyledContainer
+        s={{ width: "100%", lineHeight: "40px", fontWeight: 600 }}
+      >
+        <StyledContainer s={{ flex: 1 }}>
+          Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasksLength}):
+        </StyledContainer>
+        {subTasks.length < blockConstants.maxSubTasksLength && (
+          <StyledFlatButton>
+            <Icon type="plus" />
+          </StyledFlatButton>
+        )}
+      </StyledContainer>
+    );
+  };
+
   return (
     <div>
-      {subTasks.length < blockConstants.maxSubTasksLength && (
-        <StyledContainerAsLink
-          role="button"
-          onClick={onAddSubTask}
-          s={{ display: "block", lineHeight: "16px", marginBottom: "24px" }}
-        >
-          <Icon type="plus-circle" theme="twoTone" /> Add sub-task
-        </StyledContainerAsLink>
-      )}
+      {renderLabel()}
       {renderSubTaskList()}
     </div>
   );
