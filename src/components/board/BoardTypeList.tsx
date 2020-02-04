@@ -1,3 +1,4 @@
+import defaultTo from "lodash/defaultTo";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
@@ -7,6 +8,7 @@ import ProjectList from "../project/ProjectList";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import Text from "../Text";
+import MenuItem from "../utilities/MenuItem";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import BoardBlockChildren from "./BoardChildren";
 import Column from "./Column";
@@ -14,13 +16,33 @@ import { BoardResourceType } from "./types";
 
 export interface IBoardTypeListProps {
   block: IBlock;
-  resourceType?: BoardResourceType;
+  resourceTypes: BoardResourceType[];
   onClickUpdateBlock: (block: IBlock) => void;
-  onClickBlock: (block: IBlock) => void;
+  onClickBlock: (blocks: IBlock[]) => void;
+  onNavigate: (resourceType: BoardResourceType) => void;
+  selectedResourceType?: BoardResourceType;
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
-  const { block, onClickUpdateBlock, onClickBlock, resourceType } = props;
+  const {
+    block,
+    onClickUpdateBlock,
+    onClickBlock,
+    selectedResourceType,
+    resourceTypes,
+    onNavigate
+  } = props;
+
+  const hasTasks = resourceTypes.includes("tasks");
+  const hasProjects = resourceTypes.includes("projects");
+  const hasGroups = resourceTypes.includes("groups");
+  const hasRequests = resourceTypes.includes("collaboration-requests");
+  const hasCollaborators = resourceTypes.includes("collaborators");
+  const tasksCount = defaultTo(block.tasks, []).length;
+  const groupsCount = defaultTo(block.groups, []).length;
+  const projectsCount = defaultTo(block.projects, []).length;
+  const collaboratorsCount = defaultTo(block.collaborators, []).length;
+  const requestsCount = defaultTo(block.collaborationRequests, []).length;
 
   const renderChildrenGroup = (
     blocks: IBlock[],
@@ -65,7 +87,10 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         getChildrenIDs={() => block.projects || []}
         render={projects =>
           renderChildrenGroup(projects, "No projects yet.", () => (
-            <ProjectList projects={projects} onClick={onClickBlock} />
+            <ProjectList
+              projects={projects}
+              onClick={() => onClickBlock([block])}
+            />
           ))
         }
       />
@@ -79,7 +104,7 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         getChildrenIDs={() => block.groups || []}
         render={groups =>
           renderChildrenGroup(groups, "No groups yet.", () => (
-            <GroupList groups={groups} onClick={onClickBlock} />
+            <GroupList groups={groups} onClick={() => onClickBlock([block])} />
           ))
         }
       />
@@ -112,24 +137,77 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
     );
   };
 
-  if (!resourceType) {
+  if (!selectedResourceType) {
     return (
-      <StyledContainer>
+      <StyledContainer
+        s={{ flexDirection: "column", maxWidth: "400px", padding: "16px" }}
+      >
         {block.description && (
-          <StyledContainer s={{ margin: "16px 0", padding: "0 16px" }}>
+          <StyledContainer s={{ marginBottom: "16px" }}>
             <Text rows={3} text={block.description} />
           </StyledContainer>
+        )}
+        {hasGroups && (
+          <MenuItem
+            keepCountSpace
+            key="groups"
+            content={groupsCount > 0 ? "Groups" : "Group"}
+            count={groupsCount}
+            onClick={() => onNavigate("groups")}
+          />
+        )}
+        {hasTasks && (
+          <MenuItem
+            keepCountSpace
+            key="tasks"
+            content={tasksCount === 1 ? "Task" : "Tasks"}
+            count={tasksCount}
+            onClick={() => onNavigate("tasks")}
+          />
+        )}
+        {hasProjects && (
+          <MenuItem
+            keepCountSpace
+            key="projects"
+            content={projectsCount === 1 ? "Project" : "Projects"}
+            count={projectsCount}
+            onClick={() => onNavigate("projects")}
+          />
+        )}
+        {hasCollaborators && (
+          <MenuItem
+            keepCountSpace
+            key="collaborators"
+            content={
+              collaboratorsCount === 1 ? "Collaborator" : "Collaborators"
+            }
+            count={collaboratorsCount}
+            onClick={() => onNavigate("collaborators")}
+          />
+        )}
+        {hasRequests && (
+          <MenuItem
+            keepCountSpace
+            key="collaboration-requests"
+            content={
+              requestsCount === 1
+                ? "Collaboration Request"
+                : "Collaboration Requests"
+            }
+            count={requestsCount}
+            onClick={() => onNavigate("collaboration-requests")}
+          />
         )}
       </StyledContainer>
     );
   }
 
-  switch (resourceType) {
+  switch (selectedResourceType) {
     case "collaboration-requests":
       return renderRoute(renderCollaborationRequests);
 
     case "collaborators":
-      renderRoute(renderCollaborators);
+      return renderRoute(renderCollaborators);
 
     case "groups":
       return renderRoute(renderGroups);

@@ -168,6 +168,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
             onClickAddCollaborator={onClickAddCollaborator}
             onClickDeleteBlock={onClickDeleteBlock}
             onClickUpdateBlock={onClickUpdateBlock}
+            onClickBlock={() => {}}
           />
         )}
       />

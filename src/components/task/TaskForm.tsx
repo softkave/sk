@@ -18,7 +18,6 @@ import {
   ITaskCollaborationData,
   ITaskCollaborator
 } from "../../models/block/block";
-import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
 import BlockParentSelection from "../block/BlockParentSelection";
@@ -33,7 +32,6 @@ import {
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
-import StyledFlatButton from "../styled/FlatButton";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import SubTaskList from "./SubTaskList";

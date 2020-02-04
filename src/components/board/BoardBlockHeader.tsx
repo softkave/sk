@@ -116,7 +116,6 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         <StyledFlatButton
           onClick={() => onChangeBoardType("kanban")}
           style={{
-            // margin: "0 8px",
             color:
               selectedBoardType === "kanban"
                 ? selectedBoardTypeColor

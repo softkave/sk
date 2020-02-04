@@ -23,10 +23,10 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
 import BoardBlockChildren from "./BoardChildren";
 import BoardForBlockContainer from "./BoardForBlockEntry";
 import BlockForms, { BlockFormType } from "./BoardForms";
+import BoardHomeForBlock from "./BoardHomeForBlock";
 import { IBlockPathMatch } from "./types";
 
 interface IBlockFormState {
@@ -37,6 +37,10 @@ interface IBlockFormState {
 export interface IBoardForBlockProps {
   block: IBlock;
 }
+
+export type OnClickBlock = (block: IBlock[]) => void;
+
+// TODO: should forms have their own routes?
 
 const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const { block } = props;
@@ -121,21 +125,13 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
-  const onClickBlock = (clickedBlock: IBlock) => {
-    const path = concatPaths(blockPath, getPath(clickedBlock));
+  const onClickBlock = (blocks: IBlock[]) => {
+    const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
     history.push(path);
   };
 
   const onNavigate = (route: string) => {
     history.push(concatPaths(blockPath, route));
-  };
-
-  const onNavigateBack = () => {
-    const path = window.location.pathname;
-    const pathArr = path.split("/");
-    pathArr.pop();
-    const destPath = pathArr.join("/");
-    history.push(destPath);
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
@@ -257,8 +253,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       <React.Fragment>
         {blockForm && renderForms()}
         {!blockForm && (
-          <BoardBlockChildrenRoutes
+          <BoardHomeForBlock
             block={block}
+            blockPath={blockPath}
+            onClickBlock={onClickBlock}
+            onClickDeleteBlock={promptConfirmDelete}
+            onNavigate={onNavigate}
             onClickAddBlock={blockType => {
               setBlockForm({
                 block: getNewBlock(user, blockType, block),
@@ -271,9 +271,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
                 formType: "update-block-form"
               })
             }
-            onClickBlock={onClickBlock}
-            onClickDeleteBlock={promptConfirmDelete}
-            onNavigate={onNavigate}
             onClickAddCollaborator={() =>
               setBlockForm({ block, formType: "collaborator-form" })
             }

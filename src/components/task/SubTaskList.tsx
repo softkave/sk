@@ -4,12 +4,9 @@ import { useSelector } from "react-redux";
 import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { newId } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import SubTask, { ISubTaskErrors } from "./SubTask";
-
-const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 export interface ISubTaskListProps {
   subTasks: ISubTask[];
@@ -73,19 +70,19 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     onChange(newSubTasks);
   };
 
-  const onAddSubTask = () => {
-    const newSubTasks = [...subTasks];
-    const newSubTasksBeingEdited = [...subTasksBeingEdited];
-    const newSubTask: ISubTask = { description: "", customId: newId() };
-    const newSubTaskState: ISubTaskState = {
-      customId: newSubTask.customId,
-      description: ""
-    };
-    newSubTasksBeingEdited.unshift(newSubTaskState);
-    newSubTasks.unshift(newSubTask);
-    setSubTasksBeingEdited(newSubTasksBeingEdited);
-    onChange(newSubTasks);
-  };
+  // const onAddSubTask = () => {
+  //   const newSubTasks = [...subTasks];
+  //   const newSubTasksBeingEdited = [...subTasksBeingEdited];
+  //   const newSubTask: ISubTask = { description: "", customId: newId() };
+  //   const newSubTaskState: ISubTaskState = {
+  //     customId: newSubTask.customId,
+  //     description: ""
+  //   };
+  //   newSubTasksBeingEdited.unshift(newSubTaskState);
+  //   newSubTasks.unshift(newSubTask);
+  //   setSubTasksBeingEdited(newSubTasksBeingEdited);
+  //   onChange(newSubTasks);
+  // };
 
   const onToggleSubTask = (id: string) => {
     const subTask = subTasks[getSubTaskIDIndexFromSubTasks(id)];

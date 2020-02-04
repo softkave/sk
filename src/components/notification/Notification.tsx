@@ -20,14 +20,11 @@ import { IReduxState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
-import StyledContainer from "../styled/Container";
 import {
   getNotificationLatestStatus,
   INotificationsPathParams,
   isNotificationExpired
 } from "./utils";
-
-const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 const Notification: React.FC<{}> = props => {
   const history = useHistory();
@@ -69,10 +66,6 @@ const Notification: React.FC<{}> = props => {
       response: selectedResponse,
       request: notification!
     });
-  };
-
-  const onNavigateBack = () => {
-    history.push("/app/notifications");
   };
 
   const renderNotificationResponse = () => {

@@ -2,18 +2,12 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
 import { BoardResourceType } from "./types";
 
-// export const blockResourceTypes: BoardResourceType[] = [
-//   "collaboration-requests",
-//   "collaborators",
-//   "groups",
-//   "projects",
-//   "tasks"
-// ];
+const cbReq = "collaboration-requests";
 
 export const blockResourceTypeToBlockKeyMap: {
   [key in BoardResourceType]: string;
 } = {
-  ["collaboration-requests"]: "collaborationRequests",
+  [cbReq]: "collaborationRequests",
   collaborators: "collaborators",
   groups: "groups",
   projects: "projects",
