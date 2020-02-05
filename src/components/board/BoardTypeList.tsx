@@ -11,7 +11,6 @@ import Text from "../Text";
 import MenuItem from "../utilities/MenuItem";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import BoardBlockChildren from "./BoardChildren";
-import Column from "./Column";
 import { BoardResourceType } from "./types";
 
 export interface IBoardTypeListProps {
@@ -21,6 +20,7 @@ export interface IBoardTypeListProps {
   onClickBlock: (blocks: IBlock[]) => void;
   onNavigate: (resourceType: BoardResourceType) => void;
   selectedResourceType?: BoardResourceType;
+  noPadding?: boolean;
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
@@ -30,7 +30,8 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
     onClickBlock,
     selectedResourceType,
     resourceTypes,
-    onNavigate
+    onNavigate,
+    noPadding
   } = props;
 
   const hasTasks = resourceTypes.includes("tasks");
@@ -50,16 +51,14 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
     renderBasketFunc: (basket: IBoardBasket) => React.ReactNode
   ) => {
     return (
-      <StyledContainer s={{ flex: 1 }}>
-        <BoardBaskets
-          blocks={blocks}
-          emptyMessage={emptyMessage}
-          getBaskets={() =>
-            blocks.length > 0 ? [{ key: "blocks", blocks }] : []
-          }
-          renderBasket={basket => <Column body={renderBasketFunc(basket)} />}
-        />
-      </StyledContainer>
+      <BoardBaskets
+        blocks={blocks}
+        emptyMessage={emptyMessage}
+        getBaskets={() =>
+          blocks.length > 0 ? [{ key: "blocks", blocks }] : []
+        }
+        renderBasket={basket => renderBasketFunc(basket)}
+      />
     );
   };
 
@@ -121,18 +120,18 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
 
   const renderRoute = (renderChildren: () => React.ReactNode) => {
     return (
-      <StyledContainer s={{ flexDirection: "column", height: "100%", flex: 1 }}>
-        <StyledContainer
-          s={{
-            width: "100%",
-            maxWidth: "400px",
-            margin: "0 auto",
-            flex: 1,
-            flexDirection: "column"
-          }}
-        >
-          {renderChildren()}
-        </StyledContainer>
+      <StyledContainer
+        s={{
+          flexDirection: "column",
+          height: "100%",
+          flex: 1,
+          width: "100%",
+          // maxWidth: "400px",
+          padding: noPadding ? undefined : "0 16px"
+          // margin: "0 auto"
+        }}
+      >
+        {renderChildren()}
       </StyledContainer>
     );
   };

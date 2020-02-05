@@ -44,11 +44,7 @@ const CollaborationRequests: React.FC<ICRProps> = props => {
   }
 
   const renderItem = (request: INotification) => {
-    return (
-      <StyledContainer s={{ padding: "16px 0" }}>
-        <CollaborationRequestThumbnail request={request} />
-      </StyledContainer>
-    );
+    return <CollaborationRequestThumbnail request={request} />;
   };
 
   const getCollaboratorID = (request: INotification) => {

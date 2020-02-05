@@ -98,7 +98,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
-      <StyledContainer s={{ marginBottom: "16px", padding: "0 16px" }}>
+      <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
         <BoardBlockHeader
           block={block}
           availableBoardTypes={["kanban", "list", "tab"]}

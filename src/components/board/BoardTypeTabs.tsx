@@ -1,6 +1,7 @@
 import { Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import StyledContainer from "../styled/Container";
 import BoardTypeList from "./BoardTypeList";
 import { BoardResourceType } from "./types";
 import { getBoardResourceTypeFullName } from "./utils";
@@ -31,14 +32,19 @@ const BoardTypeTabs: React.FC<IBoardTypeTabsProps> = props => {
     >
       {resourceTypes.map(type => (
         <Tabs.TabPane key={type} tab={getBoardResourceTypeFullName(type)}>
-          <BoardTypeList
-            block={block}
-            resourceTypes={resourceTypes}
-            selectedResourceType={type}
-            onClickBlock={onClickBlock}
-            onClickUpdateBlock={onClickUpdateBlock}
-            onNavigate={onNavigate}
-          />
+          <StyledContainer
+            s={{ padding: "0 16px", width: "100%", height: "100%" }}
+          >
+            <BoardTypeList
+              noPadding
+              block={block}
+              resourceTypes={resourceTypes}
+              selectedResourceType={type}
+              onClickBlock={onClickBlock}
+              onClickUpdateBlock={onClickUpdateBlock}
+              onNavigate={onNavigate}
+            />
+          </StyledContainer>
         </Tabs.TabPane>
       ))}
     </Tabs>

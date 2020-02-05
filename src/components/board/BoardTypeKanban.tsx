@@ -24,7 +24,8 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
 
   if (
     selectedResourceType === "collaboration-requests" ||
-    selectedResourceType === "collaborators"
+    selectedResourceType === "collaborators" ||
+    selectedResourceType === "groups"
   ) {
     return <BoardTypeList {...props} />;
   }
@@ -36,14 +37,12 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     renderBasketFunc: RenderBasketFunc
   ) => {
     return (
-      <StyledContainer s={{ flex: 1 }}>
-        <BoardBaskets
-          blocks={blocks}
-          emptyMessage={emptyMessage}
-          getBaskets={getBaskets}
-          renderBasket={basket => <Column body={renderBasketFunc(basket)} />}
-        />
-      </StyledContainer>
+      <BoardBaskets
+        blocks={blocks}
+        emptyMessage={emptyMessage}
+        getBaskets={getBaskets}
+        renderBasket={basket => renderBasketFunc(basket)}
+      />
     );
   };
 
@@ -112,6 +111,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
             body={
               <BoardTypeList
                 {...props}
+                noPadding
                 block={g}
                 onClickBlock={blocks =>
                   onClickBlock(groupBasket.blocks.concat(blocks))

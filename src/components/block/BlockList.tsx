@@ -52,7 +52,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
 }
 
 const StyledBlockThumbnailContainer = styled.div({
-  padding: "16px"
+  padding: "16px 0"
 });
 
 export default BlockList;

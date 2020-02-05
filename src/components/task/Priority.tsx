@@ -33,7 +33,7 @@ const StyledPriority = styled("span")<IPriorityProps>(props => {
   const color = priorityToColorMap[props.level];
 
   return {
-    padding: "4px 10px",
+    padding: "2px 8px",
     borderRadius: "4em",
     color: "white",
     fontSize: "13.33px",

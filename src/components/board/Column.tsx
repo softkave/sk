@@ -24,7 +24,9 @@ const Column: React.FC<IColumnProps> = props => {
   return (
     <RenderForDevice
       renderForDesktop={() => (
-        <StyledContainer s={{ width: "350px" }}>{column}</StyledContainer>
+        <StyledContainer s={{ width: "350px", flex: 1, height: "100%" }}>
+          {column}
+        </StyledContainer>
       )}
       renderForMobile={() => column}
     />
@@ -36,15 +38,15 @@ const ColumnContainer = styled.div`
   height: 100%;
   width: 100%;
   flex-direction: column;
-  padding: 16px;
   box-sizing: border-box;
+  padding: 0 16px;
 `;
 
 const StyledColumnHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 8px;
-  border-bottom: 1px solid grey;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d9d9d9;
 `;
 
 const StyledColumnBodyContainer = styled.div`

@@ -10,7 +10,6 @@ import TabSVG from "../icons/svg/TabSVG";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
-import StyledDrawerMenu from "../styled/StyledDrawerMenu";
 import { BoardResourceType, BoardType } from "./types";
 import { getBlockResourceTypes, getBoardResourceTypeFullName } from "./utils";
 
@@ -82,11 +81,9 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   }
 
   const createMenu = (
-    <StyledDrawerMenu
-      onClick={event => onSelectCreateMenuItem(event.key as CreateMenuKey)}
-    >
+    <Menu onClick={event => onSelectCreateMenuItem(event.key as CreateMenuKey)}>
       {createMenuItems}
-    </StyledDrawerMenu>
+    </Menu>
   );
 
   const onSelectSettingsMenuItem = (key: SettingsMenuKey) => {
@@ -102,12 +99,12 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   };
 
   const settingsMenu = (
-    <StyledDrawerMenu
+    <Menu
       onClick={event => onSelectSettingsMenuItem(event.key as SettingsMenuKey)}
     >
       <StyledMenuItem key="edit">Edit {blockTypeFullName}</StyledMenuItem>
       <StyledMenuItem key="delete">Delete {blockTypeFullName}</StyledMenuItem>
-    </StyledDrawerMenu>
+    </Menu>
   );
 
   const renderKanbanSelector = () => {
@@ -132,7 +129,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
               style={{ marginLeft: "8px" }}
             >
               {blockResourceTypes.map(type => (
-                <Select.Option value={type}>
+                <Select.Option key={type} value={type}>
                   {getBoardResourceTypeFullName(type)}
                 </Select.Option>
               ))}
@@ -160,16 +157,13 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
             fontSize: "18px",
             textOverflow: "ellipsis",
             flex: 1,
-            margin: 0
+            margin: 0,
+            lineHeight: "18px"
           }}
         >
           {block.name}
         </StyledContainerAsH1>
-        {resourceType && (
-          <StyledContainer s={{ marginTop: "8px" }}>
-            {resourceTypeName}
-          </StyledContainer>
-        )}
+        {resourceType && <StyledContainer>{resourceTypeName}</StyledContainer>}
       </StyledContainer>
       <Dropdown
         placement="bottomRight"

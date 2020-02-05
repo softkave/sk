@@ -41,6 +41,7 @@ export interface IBoardForBlockProps {
 export type OnClickBlock = (block: IBlock[]) => void;
 
 // TODO: should forms have their own routes?
+// TODO: should form labels be bold?
 
 const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const { block } = props;
@@ -125,20 +126,28 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
+  const pushRoute = route => {
+    const search = window.location.search;
+    const url = `${route}${search}`;
+    history.push(url);
+  };
+
   const onClickBlock = (blocks: IBlock[]) => {
     const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
-    history.push(path);
+    console.log({ blocks, path });
+    return;
+    pushRoute(path);
   };
 
   const onNavigate = (route: string) => {
-    history.push(concatPaths(blockPath, route));
+    pushRoute(concatPaths(blockPath, route));
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
     deleteBlockOperationFunc({ block });
 
     if (blockToDelete.customId === block.customId) {
-      history.push(parentPath);
+      pushRoute(parentPath);
     }
   };
 

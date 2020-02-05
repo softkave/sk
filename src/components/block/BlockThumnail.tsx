@@ -46,7 +46,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
       <StyledItemAvatarContainer>
         <ItemAvatar color={color} />
       </StyledItemAvatarContainer>
-      <StyledBlockDescriptionContainer>
+      <StyledBlockDescriptionContainer style={{ lineHeight: "16px" }}>
         {fieldsToShow.name && (
           <StyledContainer
             s={{
