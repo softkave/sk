@@ -3,6 +3,7 @@ import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
@@ -96,34 +97,43 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     }
   };
 
+  const renderHeader = (types: BoardType[]) => {
+    return (
+      <BoardBlockHeader
+        block={block}
+        availableBoardTypes={types}
+        selectedBoardType={boardType}
+        resourceType={resourceType}
+        onChangeBoardType={bt => {
+          if (boardType !== bt) {
+            let destPath = blockPath;
+
+            if (resourceType) {
+              destPath = `${blockPath}/${resourceType}`;
+            }
+
+            history.push(`${destPath}?bt=${bt}`);
+          }
+        }}
+        onChangeKanbanResourceType={rt => {
+          if (resourceType !== rt) {
+            history.push(`${blockPath}/${rt}?bt=${boardType}`);
+          }
+        }}
+        onClickAddCollaborator={onClickAddCollaborator}
+        onClickCreateNewBlock={onClickAddBlock}
+        onClickDeleteBlock={() => onClickDeleteBlock(block)}
+        onClickEditBlock={() => onClickUpdateBlock(block)}
+      />
+    );
+  };
+
   return (
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
       <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
-        <BoardBlockHeader
-          block={block}
-          availableBoardTypes={["kanban", "list", "tab"]}
-          selectedBoardType={boardType}
-          resourceType={resourceType}
-          onChangeBoardType={bt => {
-            if (boardType !== bt) {
-              let destPath = blockPath;
-
-              if (resourceType) {
-                destPath = `${blockPath}/${resourceType}`;
-              }
-
-              history.push(`${destPath}?bt=${bt}`);
-            }
-          }}
-          onChangeKanbanResourceType={rt => {
-            if (resourceType !== rt) {
-              history.push(`${blockPath}/${rt}?bt=${boardType}`);
-            }
-          }}
-          onClickAddCollaborator={onClickAddCollaborator}
-          onClickCreateNewBlock={onClickAddBlock}
-          onClickDeleteBlock={() => onClickDeleteBlock(block)}
-          onClickEditBlock={() => onClickUpdateBlock(block)}
+        <RenderForDevice
+          renderForDesktop={() => renderHeader(["kanban", "list", "tab"])}
+          renderForMobile={() => renderHeader(["list", "tab"])}
         />
       </StyledContainer>
       <StyledContainer

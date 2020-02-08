@@ -24,7 +24,7 @@ import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardBlockChildren from "./BoardChildren";
-import BoardForBlockContainer from "./BoardForBlockEntry";
+import BoardForBlockContainer from "./BoardForBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardHomeForBlock from "./BoardHomeForBlock";
 import { IBlockPathMatch } from "./types";
@@ -63,11 +63,11 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
   const childGroupMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/groups/:groupID`
+    `${blockPath}/groups/:blockID`
   );
 
   const childProjectMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/projects/:projectID`
+    `${blockPath}/projects/:blockID`
   );
 
   const user = useSelector(getSignedInUserRequired);
@@ -135,7 +135,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const onClickBlock = (blocks: IBlock[]) => {
     const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
     console.log({ blocks, path });
-    return;
+    // return;
     pushRoute(path);
   };
 
@@ -215,6 +215,8 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     let childID: string | null = null;
     let message: string = "";
     let getChildrenIDsFunc: () => string[] = () => [];
+
+    console.log({ childGroupMatch, childProjectMatch });
 
     if (childGroupMatch) {
       childID = childGroupMatch.params.blockID;

@@ -66,5 +66,4 @@ export default TaskList;
 const StyledBlockThumbnailContainer = styled.div`
   margin-top: 12px;
   margin-bottom: 12px;
-  padding: 0 16px;
 `;

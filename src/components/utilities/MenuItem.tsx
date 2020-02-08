@@ -78,8 +78,8 @@ const MenuItem: React.FC<IMenuItemProps> = props => {
       {renderIcon()}
       <StyledContainer s={{ flex: 1, textOverflow: "ellipsis" }}>
         {name}
+        {count ? ` (${count})` : null}
       </StyledContainer>
-      {renderCount()}
     </StyledContainer>
   );
 };

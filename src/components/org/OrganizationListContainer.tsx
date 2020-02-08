@@ -51,7 +51,9 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const render = () => {
     const renderOrganizations = () => {
       return (
-        <StyledContainer s={{ justifyContent: "center", width: "100%" }}>
+        <StyledContainer
+          s={{ justifyContent: "center", width: "100%", padding: "0 16px" }}
+        >
           <OrganizationList
             orgs={organizations}
             onClick={onClickOrganization}

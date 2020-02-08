@@ -50,7 +50,8 @@ const HomeMenu: React.FC<{}> = () => {
         maxWidth: "400px",
         width: "100%",
         margin: "32px auto",
-        flex: 1
+        flex: 1,
+        padding: "0 16px"
       }}
     >
       <StyledContainer s={{ flex: 1, flexDirection: "column" }}>

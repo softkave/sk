@@ -64,7 +64,8 @@ export default Task;
 const StyledTask = styled.div({
   backgroundColor: "white",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  minWidth: "280px"
 });
 
 const StyledDescriptionContainer = styled.div({

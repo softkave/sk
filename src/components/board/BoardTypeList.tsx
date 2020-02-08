@@ -88,7 +88,7 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
           renderChildrenGroup(projects, "No projects yet.", () => (
             <ProjectList
               projects={projects}
-              onClick={() => onClickBlock([block])}
+              onClick={project => onClickBlock([project])}
             />
           ))
         }
@@ -103,7 +103,10 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         getChildrenIDs={() => block.groups || []}
         render={groups =>
           renderChildrenGroup(groups, "No groups yet.", () => (
-            <GroupList groups={groups} onClick={() => onClickBlock([block])} />
+            <GroupList
+              groups={groups}
+              onClick={group => onClickBlock([group])}
+            />
           ))
         }
       />
