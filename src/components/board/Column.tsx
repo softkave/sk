@@ -1,5 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
+import RenderForDevice from "../RenderForDevice";
+import StyledContainer from "../styled/Container";
 
 export interface IColumnProps {
   className?: string;
@@ -10,13 +12,24 @@ export interface IColumnProps {
 const Column: React.FC<IColumnProps> = props => {
   const { className, header, body } = props;
 
-  return (
+  const column = (
     <ColumnContainer className={className}>
       {header && (
         <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
       )}
       <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
     </ColumnContainer>
+  );
+
+  return (
+    <RenderForDevice
+      renderForDesktop={() => (
+        <StyledContainer s={{ width: "350px", flex: 1, height: "100%" }}>
+          {column}
+        </StyledContainer>
+      )}
+      renderForMobile={() => column}
+    />
   );
 };
 
@@ -25,12 +38,15 @@ const ColumnContainer = styled.div`
   height: 100%;
   width: 100%;
   flex-direction: column;
+  box-sizing: border-box;
+  padding: 0 16px;
 `;
 
 const StyledColumnHeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d9d9d9;
 `;
 
 const StyledColumnBodyContainer = styled.div`

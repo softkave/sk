@@ -1,66 +1,82 @@
 import styled from "@emotion/styled";
-import { Typography } from "antd";
 import React from "react";
-import { SizeMe } from "react-sizeme";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import ItemAvatar from "../ItemAvatar";
+import StyledContainer from "../styled/Container";
+import BlockExploreChildrenMenu, {
+  IBlockExploreChildrenMenuProps
+} from "./BlockExploreChildrenMenu";
 
 export type BlockThumbnailShowField = "name" | "type" | "description";
 
 export interface IBlockThumbnailProps {
   block: IBlock;
+  showExploreMenu?: boolean;
   showFields?: BlockThumbnailShowField[];
   className?: string;
   onClick?: () => void;
+  onClickChildMenuItem?: IBlockExploreChildrenMenuProps["onClick"];
 }
 
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
+const hoverSelector = "&:hover";
 
 const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
-  const { block, className, onClick, showFields } = props;
+  const {
+    block,
+    className,
+    onClick,
+    showFields,
+    showExploreMenu,
+    onClickChildMenuItem
+  } = props;
+
   const color = block.color;
+  const fieldsToShow: { [key in BlockThumbnailShowField]?: boolean } = (
+    showFields || []
+  ).reduce((accumulator, field) => {
+    accumulator[field] = true;
+    return accumulator;
+  }, {});
 
-  const showField = (field: BlockThumbnailShowField) => {
-    return (showFields || defaultFields).indexOf(field) !== -1 && block[field];
-  };
-
-  const renderBlockItem = (node: React.ReactNode, width?: number | null) => (
-    <StyledDescriptionItem style={{ width: getBlockDescriptionWidth(width) }}>
-      {node}
-    </StyledDescriptionItem>
-  );
-
+  // TODO: do line clamping on the texts
   return (
-    <StyledContainer className={className} onClick={onClick}>
+    <StyledContainer s={{ flex: 1 }} className={className}>
       <StyledItemAvatarContainer>
         <ItemAvatar color={color} />
       </StyledItemAvatarContainer>
-      <SizeMe>
-        {({ size }) => (
-          <StyledBlockDescriptionContainer>
-            {showField("name") &&
-              renderBlockItem(
-                <Typography.Text strong ellipsis>
-                  {block.name}
-                </Typography.Text>,
-                size.width
-              )}
-            {showField("type") &&
-              renderBlockItem(
-                <Typography.Text>
-                  {getBlockTypeFullName(block.type)}
-                </Typography.Text>,
-                size.width
-              )}
-            {showField("description") &&
-              renderBlockItem(
-                <Typography.Text>{block.description}</Typography.Text>,
-                size.width
-              )}
-          </StyledBlockDescriptionContainer>
+      <StyledBlockDescriptionContainer style={{ lineHeight: "16px" }}>
+        {fieldsToShow.name && (
+          <StyledContainer
+            s={{
+              fontWeight: "bold",
+              textDecoration: onClick ? "underline" : undefined,
+              cursor: onClick ? "pointer" : undefined,
+              [hoverSelector]: {
+                color: "rgb(66,133,244)"
+              }
+            }}
+            onClick={onClick}
+          >
+            {block.name}
+          </StyledContainer>
         )}
-      </SizeMe>
+        {fieldsToShow.type && (
+          <StyledContainer>{getBlockTypeFullName(block.type)}</StyledContainer>
+        )}
+        {fieldsToShow.description && (
+          <StyledContainer s={{ marginTop: "8px" }}>
+            {block.description}
+          </StyledContainer>
+        )}
+        {showExploreMenu && onClickChildMenuItem && (
+          <BlockExploreChildrenMenu
+            block={block}
+            onClick={onClickChildMenuItem}
+          />
+        )}
+      </StyledBlockDescriptionContainer>
     </StyledContainer>
   );
 };
@@ -71,17 +87,6 @@ BlockThumbnail.defaultProps = {
 
 export default BlockThumbnail;
 
-function getBlockDescriptionWidth(width?: number | null) {
-  if (width) {
-    return width - blockDescriptionMarginWidth;
-  }
-}
-
-const StyledContainer = styled.div({
-  display: "flex",
-  flex: 1
-});
-
 const blockDescriptionMarginWidth = 16;
 
 const StyledBlockDescriptionContainer = styled.div({
@@ -89,14 +94,7 @@ const StyledBlockDescriptionContainer = styled.div({
   marginLeft: blockDescriptionMarginWidth,
   flexDirection: "column",
   boxSizing: "border-box",
-  display: "flex",
-  alignItems: "center"
-});
-
-const StyledDescriptionItem = styled.div({
-  lineHeight: "1.25em !important",
-  display: "flex",
-  alignItems: "center"
+  display: "flex"
 });
 
 const StyledItemAvatarContainer = styled.div({

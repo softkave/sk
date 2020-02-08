@@ -158,10 +158,10 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderToggleSwitch = () => (
       <Form.Item
         label="Completed"
-        labelCol={{ span: 12 }}
-        wrapperCol={{ span: 12 }}
+        // labelCol={{ span: 12 }}
+        // wrapperCol={{ span: 12 }}
         labelAlign="left"
-        style={{ textAlign: "right" }}
+        // style={{ textAlign: "right" }}
       >
         <Switch
           checked={!!values.taskCollaborationData.completedAt}
@@ -173,16 +173,14 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderPriority = () => (
       <Form.Item
         label="Priority"
-        labelCol={{ span: 12 }}
-        wrapperCol={{ span: 12 }}
+        // labelCol={{ span: 12 }}
+        // wrapperCol={{ span: 12 }}
         labelAlign="left"
       >
-        <StyledContainer s={{ flexDirection: "row-reverse" }}>
-          <EditPriority
-            onChange={(value: string) => setFieldValue("priority", value)}
-            value={values.priority as TaskPriority}
-          />
-        </StyledContainer>
+        <EditPriority
+          onChange={(value: string) => setFieldValue("priority", value)}
+          value={values.priority as TaskPriority}
+        />
       </Form.Item>
     );
 
@@ -281,15 +279,19 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       setValues(update);
     };
 
-    const renderSubTasks = () => (
-      <Form.Item label="Sub Tasks">
-        <SubTaskList
-          subTasks={values.subTasks || []}
-          errors={touched.subTasks && (errors.subTasks as any)}
-          onChange={onChangeSubTasks}
-        />
-      </Form.Item>
-    );
+    const renderSubTasks = () => {
+      return (
+        <StyledContainer
+          s={{ flexDirection: "column", width: "100%", marginBottom: "24px" }}
+        >
+          <SubTaskList
+            subTasks={values.subTasks || []}
+            errors={touched.subTasks && (errors.subTasks as any)}
+            onChange={onChangeSubTasks}
+          />
+        </StyledContainer>
+      );
+    };
 
     return (
       <StyledForm onSubmit={handleSubmit}>

@@ -43,13 +43,12 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
   const renderMainControls = () => {
     return (
       <StyledContainer s={{ flex: 1, marginTop: "8px" }}>
-        {renderDeleteBtn()}
-        <StyledFlatButton
-          onClick={onEdit}
-          style={{ marginLeft: "48px", color: "#1890ff" }}
-        >
+        <StyledFlatButton onClick={onEdit} style={{ color: "#1890ff" }}>
           <Icon type="edit" theme="twoTone" /> Edit
         </StyledFlatButton>
+        <StyledContainer s={{ marginLeft: "32px" }}>
+          {renderDeleteBtn()}
+        </StyledContainer>
       </StyledContainer>
     );
   };
@@ -58,7 +57,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
     return (
       <StyledContainer
         s={{
-          lineHeight: "24px"
+          lineHeight: "16px"
         }}
       >
         {subTask.description}
@@ -73,7 +72,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
         {onCancelEdit && (
           <StyledFlatButton
             onClick={onCancelEdit}
-            style={{ marginLeft: "48px", color: "rgb(255, 77, 79)" }}
+            style={{ marginLeft: "32px", color: "rgb(255, 77, 79)" }}
           >
             <Icon
               type="close-circle"
@@ -86,7 +85,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
         {subTask.description.length > 0 && (
           <StyledFlatButton
             onClick={onSave}
-            style={{ marginLeft: "48px", color: "#1890ff" }}
+            style={{ marginLeft: "32px", color: "#1890ff" }}
           >
             <Icon type="save" theme="twoTone" /> Save
           </StyledFlatButton>

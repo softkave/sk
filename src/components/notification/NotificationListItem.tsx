@@ -39,7 +39,7 @@ const seenNotificationColor = "#777";
 const StyledNotificationListItem = styled("div")<
   IStyledNotificationListItemProps
 >(props => ({
-  padding: "16px 24px",
+  padding: "16px 16px",
   cursor: "pointer",
   color: props.isSelected
     ? "white"

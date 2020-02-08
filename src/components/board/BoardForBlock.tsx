@@ -23,27 +23,25 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardBlockChildrenRoutes from "./BoardBlockChildrenRoutes";
 import BoardBlockChildren from "./BoardChildren";
-import BoardForBlockContainer from "./BoardForBlockEntry";
+import BoardForBlockContainer from "./BoardForBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
+import BoardHomeForBlock from "./BoardHomeForBlock";
+import { IBlockPathMatch } from "./types";
 
 interface IBlockFormState {
   block: IBlock;
   formType: BlockFormType;
 }
 
-interface IGroupChildPathMatch {
-  groupID: string;
-}
-
-interface IProjectChildPathMatch {
-  projectID: string;
-}
-
 export interface IBoardForBlockProps {
   block: IBlock;
 }
+
+export type OnClickBlock = (block: IBlock[]) => void;
+
+// TODO: should forms have their own routes?
+// TODO: should form labels be bold?
 
 const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const { block } = props;
@@ -64,12 +62,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
-  const childGroupMatch = useRouteMatch<IGroupChildPathMatch>(
-    `${blockPath}/groups/:groupID`
+  const childGroupMatch = useRouteMatch<IBlockPathMatch>(
+    `${blockPath}/groups/:blockID`
   );
 
-  const childProjectMatch = useRouteMatch<IProjectChildPathMatch>(
-    `${blockPath}/projects/:projectID`
+  const childProjectMatch = useRouteMatch<IBlockPathMatch>(
+    `${blockPath}/projects/:blockID`
   );
 
   const user = useSelector(getSignedInUserRequired);
@@ -128,28 +126,28 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
-  const onClickBlock = (clickedBlock: IBlock) => {
-    const path = concatPaths(blockPath, getPath(clickedBlock));
-    history.push(path);
+  const pushRoute = route => {
+    const search = window.location.search;
+    const url = `${route}${search}`;
+    history.push(url);
+  };
+
+  const onClickBlock = (blocks: IBlock[]) => {
+    const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
+    console.log({ blocks, path });
+    // return;
+    pushRoute(path);
   };
 
   const onNavigate = (route: string) => {
-    history.push(concatPaths(blockPath, route));
-  };
-
-  const onNavigateBack = () => {
-    const path = window.location.pathname;
-    const pathArr = path.split("/");
-    pathArr.pop();
-    const destPath = pathArr.join("/");
-    history.push(destPath);
+    pushRoute(concatPaths(blockPath, route));
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
     deleteBlockOperationFunc({ block });
 
     if (blockToDelete.customId === block.customId) {
-      history.push(parentPath);
+      pushRoute(parentPath);
     }
   };
 
@@ -218,12 +216,14 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     let message: string = "";
     let getChildrenIDsFunc: () => string[] = () => [];
 
+    console.log({ childGroupMatch, childProjectMatch });
+
     if (childGroupMatch) {
-      childID = childGroupMatch.params.groupID;
+      childID = childGroupMatch.params.blockID;
       message = "Group not found.";
       getChildrenIDsFunc = () => block.groups || [];
     } else if (childProjectMatch) {
-      childID = childProjectMatch.params.projectID;
+      childID = childProjectMatch.params.blockID;
       message = "Project not found.";
       getChildrenIDsFunc = () => block.projects || [];
     }
@@ -264,8 +264,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       <React.Fragment>
         {blockForm && renderForms()}
         {!blockForm && (
-          <BoardBlockChildrenRoutes
+          <BoardHomeForBlock
             block={block}
+            blockPath={blockPath}
+            onClickBlock={onClickBlock}
+            onClickDeleteBlock={promptConfirmDelete}
+            onNavigate={onNavigate}
             onClickAddBlock={blockType => {
               setBlockForm({
                 block: getNewBlock(user, blockType, block),
@@ -278,10 +282,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
                 formType: "update-block-form"
               })
             }
-            onClickBlock={onClickBlock}
-            onClickDeleteBlock={promptConfirmDelete}
-            onNavigate={onNavigate}
-            onNavigateBack={onNavigateBack}
             onClickAddCollaborator={() =>
               setBlockForm({ block, formType: "collaborator-form" })
             }

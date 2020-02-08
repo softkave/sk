@@ -4,6 +4,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
+import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledFlexContainer from "../styled/FlexContainer";
 import Text from "../Text";
@@ -25,12 +26,12 @@ const Task: React.FC<ITaskProps> = props => {
   return (
     <StyledTask>
       <StyledFlexContainer>
-        <div>
+        <StyledContainer s={{ flex: 1 }}>
           <ToggleSwitchContainer task={task} />
-        </div>
-        <StyledPriorityContainer>
+        </StyledContainer>
+        <StyledContainer s={{ marginLeft: "8px" }}>
           <Priority level={task.priority!} />
-        </StyledPriorityContainer>
+        </StyledContainer>
       </StyledFlexContainer>
       <StyledDescriptionContainer>
         <Text text={task.description!} rows={3} />
@@ -63,15 +64,12 @@ export default Task;
 const StyledTask = styled.div({
   backgroundColor: "white",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
+  minWidth: "280px"
 });
 
 const StyledDescriptionContainer = styled.div({
   margin: "16px 0"
-});
-
-const StyledPriorityContainer = styled.div({
-  marginLeft: "8px"
 });
 
 const StyledControlsContainer = styled.div({

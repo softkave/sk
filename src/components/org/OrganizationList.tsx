@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
@@ -21,7 +20,6 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
   const { orgs, onClick } = props;
   const [newOrg, setNewOrg] = React.useState<IBlock | null>(null);
   const user = useSelector(getSignedInUserRequired);
-  const history = useHistory();
 
   const renderOrgForm = () => {
     if (newOrg) {
@@ -63,18 +61,20 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
           margin: "0 auto"
         }}
       >
-        <StyledContainer s={{ marginBottom: "16px", padding: "0 24px" }}>
+        <StyledContainer s={{ marginBottom: "16px" }}>
           <BoardBlockTypeHeader
             title="organizations"
+            count={orgs.length}
             onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
-            onNavigateBack={() => history.push("/app")}
           />
         </StyledContainer>
         <BlockList
+          showExploreMenu
           blocks={orgs}
           emptyDescription="Create an organization to get started."
           onClick={onClick}
           showFields={["name", "description"]}
+          onClickChildMenuItem={() => null}
         />
       </StyledContainer>
     </StyledContainer>

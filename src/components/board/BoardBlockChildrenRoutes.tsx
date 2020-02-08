@@ -23,7 +23,6 @@ export interface IBoardBlockChildrenRoutesProps {
   block: IBlock;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickAddBlock: (type: BlockType) => void;
-  onNavigateBack: () => void;
   onClickBlock: (block: IBlock) => void;
   onNavigate: (route: string) => void;
   onClickAddCollaborator: () => void;
@@ -36,7 +35,6 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
     onClickAddBlock,
     onClickUpdateBlock,
     onClickBlock,
-    onNavigateBack,
     onNavigate,
     onClickAddCollaborator,
     onClickDeleteBlock
@@ -137,7 +135,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
     renderChildren: () => React.ReactNode
   ) => {
     return (
-      <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+      <StyledContainer s={{ flexDirection: "column", height: "100%", flex: 1 }}>
         <StyledContainer
           s={{
             width: "100%",
@@ -147,12 +145,8 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
             flexDirection: "column"
           }}
         >
-          <StyledContainer s={{ marginBottom: "16px", padding: "0 24px" }}>
-            <BoardBlockTypeHeader
-              title={title}
-              onClickCreate={onClickCreate}
-              onNavigateBack={onNavigateBack}
-            />
+          <StyledContainer s={{ marginBottom: "16px", padding: "0 16px" }}>
+            <BoardBlockTypeHeader title={title} onClickCreate={onClickCreate} />
           </StyledContainer>
           {renderChildren()}
         </StyledContainer>
@@ -168,12 +162,13 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
         render={() => (
           <BoardHomeForBlock
             block={block}
+            blockPath={blockPath}
             onNavigate={onNavigate}
             onClickAddBlock={onClickAddBlock}
             onClickAddCollaborator={onClickAddCollaborator}
             onClickDeleteBlock={onClickDeleteBlock}
             onClickUpdateBlock={onClickUpdateBlock}
-            onNavigateBack={onNavigateBack}
+            onClickBlock={() => {}}
           />
         )}
       />

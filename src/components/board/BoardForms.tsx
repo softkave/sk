@@ -1,4 +1,3 @@
-import { Icon } from "antd";
 import React from "react";
 import { useSelector, useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
@@ -26,6 +25,8 @@ import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import StyledCapitalizeText from "../styled/StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
+
+const StyledContainerAsH3 = StyledContainer.withComponent("h3");
 
 export type BlockFormType =
   | "add-block-form"
@@ -206,12 +207,12 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
 
   return (
     <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <h3 style={{ padding: "0 24px" }}>
-        <StyledFlatButton style={{ marginRight: "16px" }} onClick={onClose}>
-          <Icon type="arrow-left" />
+      <StyledContainerAsH3 s={{ padding: "0 16px" }}>
+        <StyledContainer s={{ flex: 1 }}>{formLabel}</StyledContainer>
+        <StyledFlatButton style={{ color: "#ff4d4f" }} onClick={onClose}>
+          Cancel
         </StyledFlatButton>
-        {formLabel}
-      </h3>
+      </StyledContainerAsH3>
       {formType === "collaborator-form"
         ? renderCollaboratorForm()
         : renderBlockForm()}

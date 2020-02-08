@@ -49,9 +49,6 @@ export default List;
 
 const lastOfTypeSelector = "&:last-of-type";
 const StyledListItemContainer = styled.div({
-  borderBottom: "1px solid #DDD",
-  cursor: "pointer",
-
   [lastOfTypeSelector]: {
     borderBottom: 0
   }

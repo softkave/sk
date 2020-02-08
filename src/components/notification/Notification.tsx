@@ -20,14 +20,11 @@ import { IReduxState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
-import StyledContainer from "../styled/Container";
 import {
   getNotificationLatestStatus,
   INotificationsPathParams,
   isNotificationExpired
 } from "./utils";
-
-const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 const Notification: React.FC<{}> = props => {
   const history = useHistory();
@@ -69,10 +66,6 @@ const Notification: React.FC<{}> = props => {
       response: selectedResponse,
       request: notification!
     });
-  };
-
-  const onNavigateBack = () => {
-    history.push("/app/notifications");
   };
 
   const renderNotificationResponse = () => {
@@ -130,24 +123,6 @@ const Notification: React.FC<{}> = props => {
 
   return (
     <StyledNotificationBody>
-      <StyledContainer s={{ marginBottom: "16px" }}>
-        {/* <StyledFlatButton onClick={onNavigateBack}>
-          <Icon type="left" />
-          <span style={{ paddingLeft: "4px" }}>Notifications</span>
-        </StyledFlatButton> */}
-        <StyledContainerAsLink
-          role="button"
-          onClick={onNavigateBack}
-          s={{ display: "flex", lineHeight: "16px", alignItems: "center" }}
-        >
-          <Icon
-            type="left-circle"
-            theme="twoTone"
-            style={{ fontSize: "16px", marginRight: "8px" }}
-          />{" "}
-          Notifications
-        </StyledContainerAsLink>
-      </StyledContainer>
       <StyledNotificationBodyHead>
         <StyledTitle>
           Collaboration Request From {notification!.from.blockName}
@@ -165,7 +140,7 @@ const Notification: React.FC<{}> = props => {
 export default Notification;
 
 const StyledNotificationBody = styled.div({
-  padding: "0 24px",
+  padding: "0 16px",
   backgroundColor: "white",
   height: "100%"
 });
@@ -174,10 +149,8 @@ const StyledNotificationBodyHead = styled.div({
   marginBottom: "32px"
 });
 
-const StyledTitle = styled.h1({
-  fontSize: "16px !important",
-  lineHeight: "24px",
-  fontWeight: "bold",
+const StyledTitle = styled.h2({
+  // fontSize: 20,
   marginBottom: 0
 });
 

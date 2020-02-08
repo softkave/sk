@@ -11,6 +11,8 @@ export interface IBoardBasket {
   blocks: IBlock[];
 }
 
+export type GetBasketsFunc<T> = (blocks: IBlock[]) => T[];
+
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
   blocks: IBlock[];
   getBaskets: (blocks: IBlock[]) => BasketType[];
@@ -63,15 +65,13 @@ const StyledBasketsContainerInner = styled.div({
   height: "100%",
   display: "flex",
   boxSizing: "border-box",
-  width: "100%"
+  width: "100%",
+  overflowX: "auto"
 });
 
 const lastOfTypeSelector = "&:last-of-type";
 const StyledColumn = styled.div({
-  width: "100%",
-  marginRight: "24px",
-
-  [lastOfTypeSelector]: {
-    marginRight: 0
-  }
+  // width: "100%",
+  height: "100%"
+  // padding: "0 16px"
 });
