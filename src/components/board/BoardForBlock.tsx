@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
@@ -15,7 +14,6 @@ import {
   getBlockCollaboratorsOperationID
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import GeneralErrorList from "../GeneralErrorList";

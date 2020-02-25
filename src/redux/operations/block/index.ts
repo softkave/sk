@@ -1,11 +1,10 @@
 export * from "./addBlock";
 export * from "./addCollaborators";
 export * from "./deleteBlock";
-export * from "./loadBlock";
 export * from "./loadBlockChildren";
 export * from "./loadBlockCollaborationRequests";
 export * from "./loadBlockCollaborators";
 export * from "./loadRootBlocks";
-export * from "./toggleTask";
+// export * from "./toggleTask";
 export * from "./transferBlock";
 export * from "./updateBlock";

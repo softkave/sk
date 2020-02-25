@@ -1,3 +1,5 @@
+export const TODO = true;
+
 // import { Dispatch } from "redux";
 // import { IBlock } from "../../../models/block/block";
 // import { isTaskCompleted } from "../../../models/block/utils";

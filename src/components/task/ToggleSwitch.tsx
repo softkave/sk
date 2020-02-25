@@ -1,8 +1,10 @@
 import { message, Switch } from "antd";
 import React from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
+import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import toggleTaskOperationFunc from "../../redux/operations/block/toggleTask";
+import { isTaskCompleted } from "../../models/block/utils";
+import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
+// import toggleTaskOperationFunc from "../../redux/operations/block/toggleTask";
 import { toggleTaskOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import OperationError from "../../utils/operation-error/OperationError";
@@ -20,8 +22,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
     operationID: toggleTaskOperationID,
     resourceID: task.customId
   });
-  const store = useStore();
-  const dispatch = useDispatch();
+
   const [lastStatusTimestamp, setLastStatusTimestamp] = React.useState(
     Date.now()
   );
@@ -46,7 +47,18 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = props => {
   }
 
   const onToggle = () => {
-    toggleTaskOperationFunc(store.getState(), dispatch, { user, block: task });
+    // toggleTaskOperationFunc(store.getState(), dispatch, { user, block: task });
+    const isCompleted = isTaskCompleted(task, user);
+    updateBlockOperationFunc({
+      block: task,
+      data: {
+        taskCollaborationData: {
+          ...task.taskCollaborationData!,
+          completedAt: isCompleted ? 0 : Date.now(),
+          completedBy: user.customId
+        }
+      }
+    });
   };
 
   return (

@@ -1,6 +1,5 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import StyledContainer from "../styled/Container";
 import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
 import BoardBlockChildren from "./BoardChildren";
 import BoardTypeList from "./BoardTypeList";
@@ -63,39 +62,6 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
       />
     );
   };
-
-  // interface IT {
-  //   getChildrenIDs: GetChildrenIDs;
-  //   emptyMessage: string;
-  //   getBaskets: GetBasketsFunc<IBoardBasket>;
-  //   renderBasketFunc: RenderBasketFunc;
-  // }
-
-  // const forTasks: IT = {
-  //   getChildrenIDs: (group: IBlock) => group.tasks || [],
-  //   emptyMessage: "No tasks yet",
-  //   getBaskets: blocks => [{ blocks, key: "tasks" }],
-  //   renderBasketFunc: basket => null
-  // };
-
-  // const forProjects: IT = {
-  //   getChildrenIDs: (group: IBlock) => group.projects || [],
-  //   emptyMessage: "No projects yet",
-  //   getBaskets: blocks => [{ blocks, key: "projects" }],
-  //   renderBasketFunc: basket => null
-  // };
-
-  // const s = selectedResourceType === "tasks" ? forTasks : forProjects;
-
-  // const renderGroupBasket = (groupBasket: IBoardBasket) => {
-  //   return renderBlockChildren(
-  //     groupBasket.blocks[0],
-  //     s.getChildrenIDs,
-  //     s.emptyMessage,
-  //     s.getBaskets,
-  //     s.renderBasketFunc
-  //   );
-  // };
 
   const renderMainBlockChildren = () => {
     return renderBlockChildren(

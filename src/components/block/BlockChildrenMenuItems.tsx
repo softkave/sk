@@ -40,7 +40,6 @@ const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => 
     <StyledContainer s={{ flexDirection: "column" }}>
       {hasGroups && (
         <MenuItem
-          keepCountSpace
           key="groups"
           content={groupsCount > 0 ? "Groups" : "Group"}
           count={groupsCount}
@@ -49,7 +48,6 @@ const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => 
       )}
       {hasTasks && (
         <MenuItem
-          keepCountSpace
           key="tasks"
           content={tasksCount === 1 ? "Task" : "Tasks"}
           count={tasksCount}
@@ -58,7 +56,6 @@ const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => 
       )}
       {hasProjects && (
         <MenuItem
-          keepCountSpace
           key="projects"
           content={projectsCount === 1 ? "Project" : "Projects"}
           count={projectsCount}
@@ -67,7 +64,6 @@ const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => 
       )}
       {hasCollaborators && (
         <MenuItem
-          keepCountSpace
           key="collaborators"
           content={collaboratorsCount === 1 ? "Collaborator" : "Collaborators"}
           count={collaboratorsCount}
@@ -76,7 +72,6 @@ const BlockChildrenMenuItems: React.FC<IBlockChildrenMenuItemsProps> = props => 
       )}
       {hasRequests && (
         <MenuItem
-          keepCountSpace
           key="collaboration-requests"
           content={
             requestsCount === 1

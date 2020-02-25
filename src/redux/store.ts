@@ -8,14 +8,12 @@ import {
 import operationsReducer, { IOperationState } from "./operations/reducer";
 import { ISessionState, sessionReducer } from "./session/reducer";
 import { IUsersState, usersReducer } from "./users/reducer";
-import viewReducer, { IViewState } from "./view/reducers";
 
 export interface IReduxState {
   blocks: IBlocksState;
   users: IUsersState;
   notifications: INotificationsState;
   session: ISessionState;
-  view: IViewState;
   operations: IOperationState;
 }
 
@@ -24,7 +22,6 @@ const reducer = combineReducers({
   users: usersReducer,
   notifications: notificationsReducer,
   session: sessionReducer,
-  view: viewReducer,
   operations: operationsReducer
 });
 

@@ -7,7 +7,6 @@ import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import store from "../../store";
 import { addUserRedux } from "../../users/actions";
-import { setDefaultView } from "../../view/actions";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
@@ -52,7 +51,6 @@ export default async function initializeAppSessionOperationFunc(
 
       saveUserTokenToStorage(userToken);
       store.dispatch(addUserRedux(user));
-      store.dispatch(setDefaultView());
       store.dispatch(loginUserRedux(userToken, user.customId));
 
       saveUserTokenToStorage(userToken);

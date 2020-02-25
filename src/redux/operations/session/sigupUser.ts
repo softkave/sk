@@ -7,7 +7,6 @@ import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorIt
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
-import { setDefaultView } from "../../view/actions";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -59,7 +58,6 @@ export default async function signupUserOperationFunc(
       throw result.errors;
     } else if (result && result.token && result.user) {
       dispatch(addUserRedux(result.user));
-      dispatch(setDefaultView());
       dispatch(loginUserRedux(result.token, result.user.customId));
 
       // TODO: should we save the user token after signup or only after login?

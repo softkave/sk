@@ -151,7 +151,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         )}
         {hasGroups && (
           <MenuItem
-            keepCountSpace
             key="groups"
             content={groupsCount > 0 ? "Groups" : "Group"}
             count={groupsCount}
@@ -160,7 +159,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         )}
         {hasTasks && (
           <MenuItem
-            keepCountSpace
             key="tasks"
             content={tasksCount === 1 ? "Task" : "Tasks"}
             count={tasksCount}
@@ -169,7 +167,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         )}
         {hasProjects && (
           <MenuItem
-            keepCountSpace
             key="projects"
             content={projectsCount === 1 ? "Project" : "Projects"}
             count={projectsCount}
@@ -178,7 +175,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         )}
         {hasCollaborators && (
           <MenuItem
-            keepCountSpace
             key="collaborators"
             content={
               collaboratorsCount === 1 ? "Collaborator" : "Collaborators"
@@ -189,7 +185,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         )}
         {hasRequests && (
           <MenuItem
-            keepCountSpace
             key="collaboration-requests"
             content={
               requestsCount === 1

@@ -1,11 +1,9 @@
-import { Empty } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
-import StyledContainer from "../styled/Container";
 import BoardForBlock from "./BoardForBlock";
 
 const defaultNotFoundMessage = "Block not found.";

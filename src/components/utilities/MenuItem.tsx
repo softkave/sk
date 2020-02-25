@@ -1,5 +1,4 @@
 import { Icon } from "antd";
-import isNumber from "lodash/isNumber";
 import React from "react";
 import StyledContainer from "../styled/Container";
 
@@ -9,7 +8,6 @@ export interface IMenuItemProps {
   iconType?: string;
   count?: number;
   keepIconSpace?: boolean;
-  keepCountSpace?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -19,33 +17,9 @@ const MenuItem: React.FC<IMenuItemProps> = props => {
     count,
     iconType,
     style,
-    keepCountSpace,
     keepIconSpace,
     onClick
   } = props;
-
-  // TODO: round up after a 1000 -> 1K
-  // TODO: determine the width by getting the largest count, maybe
-  const countWidth = "32px";
-  const renderCount = () => {
-    if (isNumber(count)) {
-      return (
-        <StyledContainer
-          s={{
-            width: countWidth,
-            display: "inline-block",
-            marginLeft: "8px"
-          }}
-        >
-          {count}
-        </StyledContainer>
-      );
-    } else if (keepCountSpace) {
-      return <StyledContainer s={{ width: countWidth }} />;
-    }
-
-    return null;
-  };
 
   const iconWidth = "16px";
   const renderIcon = () => {

@@ -56,7 +56,6 @@ const HomeMenu: React.FC<{}> = () => {
     >
       <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
         <MenuItem
-          keepCountSpace
           key="notifications"
           iconType="mail"
           content={
@@ -68,7 +67,6 @@ const HomeMenu: React.FC<{}> = () => {
           onClick={() => navigateToPath("notifications")}
         />
         <MenuItem
-          keepCountSpace
           key="organizations"
           iconType="block"
           content={
