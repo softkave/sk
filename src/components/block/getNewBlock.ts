@@ -10,22 +10,11 @@ import { IUser } from "../../models/user/user";
 import cast from "../../utils/cast";
 import { newId } from "../../utils/utils";
 
-export function makeBlockParentIDs(parent: IBlock) {
-  const ancestors = Array.isArray(parent.parents) ? parent.parents : [];
-  return [...ancestors, parent.customId];
-}
-
 export default function getNewBlock(
   user: IUser,
   type: BlockType,
   parent?: IBlock
 ): IBlock {
-  const getParents = () => {
-    if (parent) {
-      return makeBlockParentIDs(parent);
-    }
-  };
-
   const childrenTypes = getBlockValidChildrenTypes(type);
 
   // TODO: Move creation of ids ( any resource at all ) to the server
@@ -38,7 +27,7 @@ export default function getNewBlock(
     color: randomColor(),
     groupTaskContext: [],
     groupProjectContext: [],
-    parents: getParents(),
+    parent: parent ? parent.customId : undefined,
     collaborators: type === "org" ? [user.customId] : undefined,
     taskCollaborationData:
       type === "task" ? { collaborationType: "collective" } : undefined,

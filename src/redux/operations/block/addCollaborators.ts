@@ -65,10 +65,10 @@ export default async function addCollaboratorsOperationFunc(
       };
     });
 
-    const result = await blockNet.addCollaborators({
+    const result = await blockNet.addCollaborators(
       block,
-      collaborators: proccessedCollaborators
-    });
+      proccessedCollaborators
+    );
 
     if (result && result.errors) {
       throw result.errors;

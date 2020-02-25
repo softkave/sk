@@ -53,7 +53,7 @@ export default async function loginUserOperationFunc(
 
   try {
     // TODO: define types for the result
-    const result = await userNet.login(user);
+    const result = await userNet.login(user.email, user.password);
 
     if (result && result.errors) {
       throw result.errors;

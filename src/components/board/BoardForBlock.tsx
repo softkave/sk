@@ -19,6 +19,7 @@ import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import GeneralErrorList from "../GeneralErrorList";
+import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
@@ -55,11 +56,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     return `/${pluralize(bTypeFullName)}/${b.customId}`;
   };
 
-  const parentIDs = Array.isArray(block.parents) ? block.parents : [];
-  const parents = useSelector<IReduxState, IBlock[]>(state =>
-    getBlocksAsArray(state, parentIDs)
-  );
-
+  const parents = useBlockParents(block);
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
   const childGroupMatch = useRouteMatch<IBlockPathMatch>(

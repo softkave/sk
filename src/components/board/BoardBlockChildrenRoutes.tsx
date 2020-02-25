@@ -1,15 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
 import GroupList from "../group/GroupList";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import useBlockParents from "../hooks/useBlockParent";
 import ProjectList from "../project/ProjectList";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
@@ -44,10 +42,7 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
     return `/${pluralize(blockTypeFullName)}/${forBlock.customId}`;
   };
 
-  const parentIDs = Array.isArray(block.parents) ? block.parents : [];
-  const parents = useSelector<IReduxState, IBlock[]>(state =>
-    getBlocksAsArray(state, parentIDs)
-  );
+  const parents = useBlockParents(block);
   const parentPath = `/app${parents.map(getPath).join("")}`;
   const blockPath = `${parentPath}${getPath(block)}`;
   const childrenTypes = useBlockChildrenTypes(block);
@@ -168,7 +163,9 @@ const BoardBlockChildrenRoutes: React.FC<IBoardBlockChildrenRoutesProps> = props
             onClickAddCollaborator={onClickAddCollaborator}
             onClickDeleteBlock={onClickDeleteBlock}
             onClickUpdateBlock={onClickUpdateBlock}
-            onClickBlock={() => {}}
+            onClickBlock={() => {
+              // TODO: currently does nothing, why?
+            }}
           />
         )}
       />

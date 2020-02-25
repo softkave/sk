@@ -18,12 +18,7 @@ const subTaskSchema = yup.object().shape({
 
 const validationSchema = yup.object().shape({
   description: descriptionValidationSchema,
-  parents: yup
-    .array()
-    .of(yup.string())
-    .min(blockConstants.minNonRootBlockParentsLength)
-    .max(blockConstants.maxParentsLength)
-    .required(),
+  parent: yup.string().required(),
 
   // TODO: what should be the max?
   subTasks: yup

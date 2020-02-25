@@ -62,15 +62,9 @@ export default async function changePasswordOperationFunc(
     let result: any = null;
 
     if (token) {
-      result = await userNet.changePasswordWithToken({
-        password,
-        token
-      });
+      result = await userNet.changePasswordWithToken(password, token);
     } else {
-      result = await userNet.changePassword({
-        password,
-        token
-      });
+      result = await userNet.changePassword(password, token);
     }
 
     if (result && result.errors) {

@@ -5,12 +5,6 @@ export interface ITaskCollaborator {
   assignedBy: string;
 }
 
-export interface IBlockRole {
-  roleName: string;
-  createdBy: string;
-  createdAt: number;
-}
-
 const notImportantkey = "not important";
 const veryImportantKey = "very important";
 export const taskPriority = {
@@ -58,18 +52,17 @@ export interface IBlock {
   color: string;
   updatedAt?: number;
   type: BlockType;
-  parents?: string[];
+  parent?: string;
+  rootBlockID?: string;
   createdBy: string;
   taskCollaborationData?: ITaskCollaborationData;
   taskCollaborators?: ITaskCollaborator[];
   priority?: BlockPriority;
-  isBacklog: boolean;
   tasks?: string[];
   groups?: string[];
   projects?: string[];
   groupTaskContext?: string[];
   groupProjectContext?: string[];
-  roles?: IBlockRole[];
   collaborators?: string[];
   collaborationRequests?: string[];
   subTasks?: ISubTask[];

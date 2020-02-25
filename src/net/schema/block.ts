@@ -11,7 +11,8 @@ const blockFragment = `
     color
     updatedAt
     type
-    parents
+    parent
+    rootBlockID
     createdBy
     tasks
     groups
@@ -53,9 +54,9 @@ const addBlockMutation = `
 
 const updateBlockMutation = `
   ${errorFragment}
-  mutation UpdateBlockMutation ($block: BlockParamInput!, $data: UpdateBlockInput!) {
+  mutation UpdateBlockMutation ($customId: String!, $data: UpdateBlockInput!) {
     block {
-      updateBlock (block: $block, data: $data) {
+      updateBlock (customId: $customId, data: $data) {
         errors {
           ...errorFragment
         }
@@ -66,9 +67,9 @@ const updateBlockMutation = `
 
 const deleteBlockMutation = `
   ${errorFragment}
-  mutation DeleteBlockMutation ($block: BlockParamInput!) {
+  mutation DeleteBlockMutation ($customId: String!) {
     block {
-      deleteBlock (block: $block) {
+      deleteBlock (customId: $customId) {
         errors {
           ...errorFragment
         }
@@ -97,9 +98,9 @@ const getRoleBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlockChildrenQuery ($block: BlockParamInput!, $types: [String!], $isBacklog: Boolean) {
+  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!]) {
     block {
-      getBlockChildren (block: $block, types: $types, isBacklog: $isBacklog) {
+      getBlockChildren (customId: $customId, typeList: $typeList) {
         errors {
           ...errorFragment
         }
@@ -114,11 +115,11 @@ const getBlockChildrenQuery = `
 const addCollaboratorsMutation = `
   ${errorFragment}
   mutation AddCollaborators (
-    $block: BlockParamInput!, 
+    $customId: String!,
     $collaborators: [AddCollaboratorInput!]!
   ) {
     block {
-      addCollaborators (block: $block, collaborators: $collaborators) {
+      addCollaborators (customId: $customId, collaborators: $collaborators) {
         errors {
           ...errorFragment
         }
@@ -129,9 +130,9 @@ const addCollaboratorsMutation = `
 
 const getCollaboratorsQuery = `
   ${errorFragment}
-  query GetCollaboratorsQuery ($block: BlockParamInput!) {
+  query GetBlockCollaboratorsQuery ($customId: String!) {
     block {
-      getCollaborators (block: $block) {
+      getBlockCollaborators (customId: $customId) {
         errors {
           ...errorFragment
         }
@@ -147,9 +148,9 @@ const getCollaboratorsQuery = `
 
 const getCollabRequestsQuery = `
   ${errorFragment}
-  query GetCollabRequestsQuery ($block: BlockParamInput!) {
+  query GetBlockCollaborationRequestsQuery ($customId: String!) {
     block {
-      getCollabRequests (block: $block) {
+      getBlockCollaborationRequests (customId: $customId) {
         errors {
           ...errorFragment
         }
@@ -186,9 +187,9 @@ const getCollabRequestsQuery = `
 
 const removeCollaboratorMutation = `
   ${errorFragment}
-  mutation RemoveCollaboratorsMutation ($block: BlockParamInput!, $collaborator: String!) {
+  mutation RemoveCollaboratorsMutation ($customId: String!, $collaborator: String!) {
     block {
-      removeCollaborator (block: $block, collaborator: $collaborator) {
+      removeCollaborator (customId: $customId, collaborator: $collaborator) {
         errors {
           ...errorFragment
         }
@@ -197,24 +198,24 @@ const removeCollaboratorMutation = `
   }
 `;
 
-const toggleTaskMutation = `
-  ${errorFragment}
-  mutation ToggleTaskMutation ($block: BlockParamInput!,  $data: Boolean!) {
-    block {
-       toggleTask (block: $block, data: $data) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
+// const toggleTaskMutation = `
+//   ${errorFragment}
+//   mutation ToggleTaskMutation ($customId: String!,  $data: Boolean!) {
+//     block {
+//        toggleTask (customId: $customId, data: $data) {
+//         errors {
+//           ...errorFragment
+//         }
+//       }
+//     }
+//   }
+// `;
 
 const revokeRequestMutation = `
   ${errorFragment}
-  mutation RevokeRequestMutation ($block: BlockParamInput!, $request: String!) {
+  mutation RevokeCollaborationRequestMutation ($customId: String!, $request: String!) {
     block {
-       revokeRequest (block: $block, request: $request) {
+      revokeCollaborationRequest (customId: $customId, request: $request) {
         errors {
           ...errorFragment
         }
@@ -226,12 +227,10 @@ const revokeRequestMutation = `
 const transferBlockMutation = `
   ${errorFragment}
   mutation DragAndDropMutation (
-    $sourceBlock: BlockParamInput!,
-    $draggedBlock: BlockParamInput!,
-    $destinationBlock: BlockParamInput,
-    $dropPosition: Float!,
-    $blockPosition: Float!,
-    $draggedBlockType: String!,
+    $sourceBlock: String!,
+    $draggedBlock: String!,
+    $destinationBlock: String!,
+    $dropPosition: Float,
     $groupContext: String
   ) {
     block {
@@ -240,51 +239,8 @@ const transferBlockMutation = `
         draggedBlock: $draggedBlock,
         destinationBlock: $destinationBlock,
         dropPosition: $dropPosition,
-        blockPosition: $blockPosition,
-        draggedBlockType: $draggedBlockType,
         groupContext: $groupContext
       ) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
-const updateAccessControlDataMutation = `
-  ${errorFragment}
-  mutation UpdateAccessControlDataMutation (
-    $block: BlockParamInput!, $accessControlData: [AccessControlInput!]!) {
-    block {
-      updateAccessControlData (block: $block, accessControlData: $accessControlData) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
-const updateRolesMutation = `
-  ${errorFragment}
-  mutation UpdateRolesMutation ($block: BlockParamInput!, $roles: [String!]!) {
-    block {
-      updateRoles (block: $block, roles: $roles) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
-const assignRoleMutation = `
-  ${errorFragment}
-  mutation AssignRoleMutation (
-    $block: BlockParamInput!, $collaborator: String!, $roleName: String!) {
-    block {
-      assignRole (block: $block, collaborator: $collaborator, roleName: $roleName) {
         errors {
           ...errorFragment
         }
@@ -296,9 +252,9 @@ const assignRoleMutation = `
 export const getBlocksWithCustomIDsQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlocksWithCustomIDsQuery ($customIDs: [String!]!) {
+  query GetBlocksWithCustomIdsQuery ($customIds: [String!]!) {
     block {
-      getBlocksWithCustomIDs (customIDs: $customIDs) {
+      getBlocksWithCustomIds (customIds: $customIds) {
         errors {
           ...errorFragment
         }
@@ -338,10 +294,7 @@ export {
   getCollaboratorsQuery,
   getRoleBlocksQuery,
   removeCollaboratorMutation,
-  toggleTaskMutation,
+  // toggleTaskMutation,
   revokeRequestMutation,
-  transferBlockMutation,
-  updateAccessControlDataMutation,
-  updateRolesMutation,
-  assignRoleMutation
+  transferBlockMutation
 };

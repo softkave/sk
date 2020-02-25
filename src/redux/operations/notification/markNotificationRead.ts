@@ -47,10 +47,7 @@ export default async function markNotificationReadOperationFunc(
 
   try {
     const data = { readAt: Date.now() };
-    const result = await userNet.updateCollaborationRequest({
-      request: notification,
-      data
-    });
+    const result = await userNet.updateCollaborationRequest(notification, data);
 
     if (result && result.errors) {
       throw result.errors;

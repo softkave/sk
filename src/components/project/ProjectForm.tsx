@@ -23,12 +23,12 @@ export interface IProjectFormValues {
   type: BlockType;
   name: string;
   description?: string;
-  parents?: string[];
+  parent?: string;
 }
 
 export interface IProjectFormProps
   extends IFormikFormBaseProps<IProjectFormValues> {
-  parents: IBlock[];
+  possibleParents: IBlock[];
   submitLabel?: React.ReactNode;
   onClose: () => void;
 }
@@ -46,13 +46,13 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     handleSubmit,
     isSubmitting,
     setFieldValue,
-    parents,
+    possibleParents,
     onClose
   } = props;
 
-  const parentIDs = values.parents || [];
+  const parentIDs = values.parent || [];
   const immediateParentID = parentIDs[parentIDs.length - 1];
-  const immediateParent = parents.find(
+  const immediateParent = possibleParents.find(
     parent => parent.customId === immediateParentID
   );
   const projectIDs = (immediateParent && immediateParent.projects) || [];
@@ -78,12 +78,12 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
   const renderParentInput = () => (
     <Form.Item
       label="Parent"
-      help={touched.parents && <FormError>{errors.parents}</FormError>}
+      help={touched.parent && <FormError>{errors.parent}</FormError>}
     >
       <BlockParentSelection
-        value={values.parents}
-        parents={parents}
-        onChange={value => setFieldValue("parents", value)}
+        value={values.parent}
+        possibleParents={possibleParents}
+        onChange={value => setFieldValue("parent", value)}
       />
     </Form.Item>
   );

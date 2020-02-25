@@ -1,3 +1,5 @@
+import { BlockType } from "mongo/block";
+
 const priorityNotImportant = "not important";
 const priorityImportant = "important";
 const priorityVeryImportant = "very important";
@@ -11,26 +13,24 @@ const blockTypeProject = "project";
 const blockTypeRoot = "root";
 const blockTypeTask = "task";
 
-const constants = {
+const blockConstants = {
   minNameLength: 0,
   maxNameLength: 300,
   minDescriptionLength: 0,
   maxDescriptionLength: 1000,
-  minNonRootBlockParentsLength: 1,
-  maxParentsLength: 10,
   minRequiredStringLength: 1,
   minTaskCollaboratorsLength: 0,
   maxTaskCollaboratorsLength: 10,
   minAddCollaboratorValuesLength: 0,
   maxAddCollaboratorValuesLength: 10,
-  maxChildrenCount: 100,
+  maxChildrenCount: 500,
   blockTypesArray: [
     blockTypeGroup,
     blockTypeOrg,
     blockTypeProject,
     blockTypeTask,
     blockTypeRoot
-  ],
+  ] as BlockType[],
   priorityValuesArray: [
     priorityNotImportant,
     priorityImportant,
@@ -53,8 +53,18 @@ const constants = {
     [blockTypeRoot]: blockTypeRoot,
     [blockTypeTask]: blockTypeTask
   },
+  minLinkedBlockReasonLength: 0,
+  maxLinkedBlockReasonLength: 250,
+  minLinkedBlocksCount: 0,
+  maxLinkedBlocksCount: 250,
+  minRoleNameLength: 0,
+  maxRoleNameLength: 100,
+  minRoles: 1,
+  maxRoles: 10,
   minSubTasksLength: 0,
-  maxSubTasksLength: 50
+  maxSubTasksLength: 50,
+  taskCollaborationData: ["individual", "collective"],
+  maxGetBlocksWithCustomIDs: 50
 };
 
 const blockTaskCollaboratorFieldNames = {
@@ -73,7 +83,7 @@ const blockFieldNames = {
   color: "color",
   updatedAt: "updatedAt",
   type: "type",
-  parents: "parents",
+  parent: "parent",
   createdBy: "createdBy",
   taskCollaborators: "taskCollaborators",
   priority: "priority",
@@ -84,8 +94,4 @@ const blockFieldNames = {
   groupProjectContext: "groupProjectContext"
 };
 
-export {
-  constants as blockConstants,
-  blockFieldNames,
-  blockTaskCollaboratorFieldNames
-};
+export { blockConstants, blockFieldNames, blockTaskCollaboratorFieldNames };

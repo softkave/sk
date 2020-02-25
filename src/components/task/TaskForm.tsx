@@ -46,7 +46,7 @@ export interface ITaskFormValues {
   taskCollaborators: ITaskCollaborator[];
   expectedEndAt: number;
   description?: string;
-  parents?: string[];
+  parent?: string;
   subTasks?: ISubTask[];
   priority?: string;
 }
@@ -55,7 +55,7 @@ export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
   submitLabel?: React.ReactNode;
   user: IUser;
   collaborators: IUser[];
-  parents: IBlock[];
+  possibleParents: IBlock[];
   onClose: () => void;
 }
 
@@ -91,7 +91,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       handleSubmit,
       isSubmitting,
       setFieldValue,
-      parents,
+      possibleParents,
       onClose,
       setValues
     } = this.props;
@@ -100,12 +100,12 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderParentInput = () => (
       <Form.Item
         label="Parent"
-        help={touched.parents && <FormError>{errors.parents}</FormError>}
+        help={touched.parent && <FormError>{errors.parent}</FormError>}
       >
         <BlockParentSelection
-          value={values.parents}
-          parents={parents}
-          onChange={parentIDs => setFieldValue("parents", parentIDs)}
+          value={values.parent}
+          possibleParents={possibleParents}
+          onChange={parentID => setFieldValue("parent", parentID)}
         />
       </Form.Item>
     );

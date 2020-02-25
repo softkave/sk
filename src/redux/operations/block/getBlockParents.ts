@@ -14,14 +14,14 @@ import {
 import { getBlocksWithCustomIDsOperationID } from "../operationIDs";
 import { getOperationsWithID } from "../selectors";
 
-export interface IGetBlocksWithCustomIDsOperationFuncProps {
+export interface IGetBlocksParentsOperationFuncProps {
   customIDs: string[];
 }
 
-export default async function getBlocksWithCustomIDsOperationFunc(
+export default async function getBlockParentsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
-  dataProps: IGetBlocksWithCustomIDsOperationFuncProps,
+  dataProps: IGetBlocksParentsOperationFuncProps,
   options: IOperationFuncOptions = {}
 ) {
   const operations = getOperationsWithID(

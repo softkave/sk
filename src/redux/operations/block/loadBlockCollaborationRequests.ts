@@ -45,7 +45,7 @@ export default async function loadBlockCollaborationRequestsOperationFunc(
   );
 
   try {
-    const result = await blockNet.getCollabRequests({ block });
+    const result = await blockNet.getCollabRequests(block);
 
     if (result && result.errors) {
       throw result.errors;

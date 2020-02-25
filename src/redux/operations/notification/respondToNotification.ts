@@ -59,10 +59,10 @@ export default async function respondToNotificationOperationFunc(
       throw new OperationErrorItem("error", "Request is not valid");
     }
 
-    const result = await userNet.respondToCollaborationRequest({
+    const result = await userNet.respondToCollaborationRequest(
       request,
       response
-    });
+    );
 
     if (result && result.errors) {
       throw result.errors;

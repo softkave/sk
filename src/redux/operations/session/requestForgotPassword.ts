@@ -42,7 +42,7 @@ export default async function requestForgotPasswordOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const result = await userNet.forgotPassword({ email });
+    const result = await userNet.forgotPassword(email);
 
     if (result && result.errors) {
       throw result.errors;

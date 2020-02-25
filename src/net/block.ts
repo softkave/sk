@@ -1,9 +1,12 @@
+import { IAddCollaboratorFormItemValues } from "../components/collaborator/AddCollaboratorFormItem";
+import { BlockType, IBlock } from "../models/block/block";
+import { INotification } from "../models/notification/notification";
+import { IUser } from "../models/user/user";
 import { getDataFromObject } from "../utils/object";
 import auth from "./auth";
 import {
   addBlockMutation,
   addCollaboratorsMutation,
-  assignRoleMutation,
   deleteBlockMutation,
   getBlockChildrenQuery,
   getBlocksWithCustomIDsQuery,
@@ -13,16 +16,11 @@ import {
   getTasksAssignedToUserQuery,
   removeCollaboratorMutation,
   revokeRequestMutation,
-  toggleTaskMutation,
   transferBlockMutation,
-  updateAccessControlDataMutation,
-  updateBlockMutation,
-  updateRolesMutation
+  updateBlockMutation
 } from "./schema/block";
 
-const blockParamFields = ["customId"];
-
-export function addBlock({ block }) {
+export function addBlock(block: IBlock) {
   // TODO: Find a way to define central structures that'll be used by server and client, including
   // mongo schemas, graphql schemas, extract functions, and other places.
   // TODO: define the type of the arguments, so that we can avoid using fields
@@ -31,20 +29,19 @@ export function addBlock({ block }) {
     "customId",
     "description",
     "expectedEndAt",
-    "completedAt",
     "color",
     "type",
-    "parents",
-    "data",
+    "parent",
+    "rootBlockID",
     "priority",
     "taskCollaborationData",
     "taskCollaborators",
-    "tasks",
+    "subTasks",
     "groups",
     "projects",
+    "tasks",
     "groupTaskContext",
-    "groupProjectContext",
-    "subTasks"
+    "groupProjectContext"
   ];
 
   return auth(
@@ -55,21 +52,19 @@ export function addBlock({ block }) {
   );
 }
 
-export function updateBlock({ block, data }) {
+export function updateBlock(block: IBlock, data: Partial<IBlock>) {
   const dataFields = [
     "name",
     "description",
     "expectedEndAt",
-    "completedAt",
     "color",
     "priority",
-    "data",
     "taskCollaborationData",
     "taskCollaborators",
-    "parents",
-    "tasks",
+    "parent",
     "groups",
     "projects",
+    "tasks",
     "groupTaskContext",
     "groupProjectContext",
     "subTasks"
@@ -79,38 +74,41 @@ export function updateBlock({ block, data }) {
     null,
     updateBlockMutation,
     {
-      block: getDataFromObject(block, blockParamFields),
+      customId: block.customId,
       data: getDataFromObject(data, dataFields)
     },
     "data.block.updateBlock"
   );
 }
 
-export function deleteBlock({ block }) {
+export function deleteBlock(block: IBlock) {
   return auth(
     null,
     deleteBlockMutation,
-    { block: getDataFromObject(block, blockParamFields) },
+    { customId: block.customId },
     "data.block.deleteBlock"
   );
 }
 
-export function getBlockChildren({ block, types, isBacklog }) {
+export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
   return auth(
     null,
     getBlockChildrenQuery,
-    { types, block: getDataFromObject(block, blockParamFields), isBacklog },
+    { typeList, customId: block.customId },
     "data.block.getBlockChildren"
   );
 }
 
-export function addCollaborators({ block, collaborators }) {
+export function addCollaborators(
+  block: IBlock,
+  collaborators: IAddCollaboratorFormItemValues[]
+) {
   const collaboratorFields = ["email", "body", "expiresAt", "customId"];
   return auth(
     null,
     addCollaboratorsMutation,
     {
-      block: getDataFromObject(block, blockParamFields),
+      customId: block.customId,
       collaborators: collaborators.map(request =>
         getDataFromObject(request, collaboratorFields)
       )
@@ -119,37 +117,37 @@ export function addCollaborators({ block, collaborators }) {
   );
 }
 
-export function removeCollaborator({ block, collaborator }) {
+export function removeCollaborator(block: IBlock, collaborator: IUser) {
   return auth(
     null,
     removeCollaboratorMutation,
     {
-      block: getDataFromObject(block, blockParamFields),
+      customId: block.customId,
       collaborator: collaborator.customId
     },
     "data.block.removeCollaborator"
   );
 }
 
-export function getCollaborators({ block }) {
+export function getCollaborators(block: IBlock) {
   return auth(
     null,
     getCollaboratorsQuery,
     {
-      block: getDataFromObject(block, blockParamFields)
+      customId: block.customId
     },
-    "data.block.getCollaborators"
+    "data.block.getBlockCollaborators"
   );
 }
 
-export function getCollabRequests({ block }) {
+export function getCollabRequests(block: IBlock) {
   return auth(
     null,
     getCollabRequestsQuery,
     {
-      block: getDataFromObject(block, blockParamFields)
+      customId: block.customId
     },
-    "data.block.getCollabRequests"
+    "data.block.getBlockCollaborationRequests"
   );
 }
 
@@ -157,93 +155,48 @@ export function getRoleBlocks() {
   return auth(null, getRoleBlocksQuery, {}, "data.block.getRoleBlocks");
 }
 
-export function toggleTask({ block, data }) {
-  return auth(
-    null,
-    toggleTaskMutation,
-    {
-      data,
-      block: getDataFromObject(block, blockParamFields)
-    },
-    "data.block.toggleTask"
-  );
-}
+// export function toggleTask({ block, data }) {
+//   return auth(
+//     null,
+//     toggleTaskMutation,
+//     {
+//       data,
+//       customId: block.customId
+//     },
+//     "data.block.toggleTask"
+//   );
+// }
 
-export function revokeRequest({ block, request }) {
+export function revokeRequest(block: IBlock, request: INotification) {
   return auth(
     null,
     revokeRequestMutation,
     {
       request: request.customId,
-      block: getDataFromObject(block, blockParamFields)
+      customId: block.customId
     },
-    "data.block.revokeRequest"
+    "data.block.revokeCollaborationRequest"
   );
 }
 
-export function transferBlock({
-  sourceBlock,
-  draggedBlock,
-  destinationBlock,
-  dropPosition,
-  blockPosition,
-  draggedBlockType,
-  groupContext
-}) {
+export function transferBlock(
+  sourceBlock: IBlock,
+  draggedBlock: IBlock,
+  destinationBlock: IBlock,
+  dropPosition?: number,
+  groupContext?: "task" | "project"
+) {
   return auth(
     null,
     transferBlockMutation,
     {
       dropPosition,
-      blockPosition,
-      draggedBlockType,
       groupContext,
-      sourceBlock: getDataFromObject(sourceBlock, blockParamFields),
-      draggedBlock: getDataFromObject(draggedBlock, blockParamFields),
-      destinationBlock: getDataFromObject(destinationBlock, blockParamFields)
+      sourceBlock: sourceBlock.customId,
+      draggedBlock: draggedBlock.customId,
+      destinationBlock: destinationBlock.customId
     },
     "data.block.transferBlock"
-  );
-}
-
-export function updateAccessControlData({ block, accessControlData }) {
-  return auth(
-    null,
-    updateAccessControlDataMutation,
-    {
-      accessControlData: getDataFromObject(accessControlData, [
-        "orgId",
-        "actionName",
-        "permittedRoles"
-      ]),
-      block: getDataFromObject(block, blockParamFields)
-    },
-    "data.block.updateAccessControlData"
-  );
-}
-
-export function updateRoles({ block, roles }) {
-  return auth(
-    null,
-    updateRolesMutation,
-    {
-      roles,
-      block: getDataFromObject(block, blockParamFields)
-    },
-    "data.block.updateRoles"
-  );
-}
-
-export function assignRole({ block, collaborator, roleName }) {
-  return auth(
-    null,
-    assignRoleMutation,
-    {
-      collaborator,
-      roleName,
-      block: getDataFromObject(block, blockParamFields)
-    },
-    "data.block.assignRole"
   );
 }
 
@@ -256,11 +209,11 @@ export function getTasksAssignedToUser() {
   );
 }
 
-export function getBlocksWithCustomIDs(props: { customIDs: string[] }) {
+export function getBlocksWithCustomIDs(customIds: string[]) {
   return auth(
     null,
     getBlocksWithCustomIDsQuery,
-    { customIDs: props.customIDs },
+    { customIds },
     "data.block.getBlocksWithCustomIDs"
   );
 }

@@ -56,7 +56,7 @@ export default async function addBlockOperationFunc(
       newBlock.subTasks = addCustomIDToSubTasks(newBlock.subTasks);
     }
 
-    const result = await blockNet.addBlock({ block: newBlock });
+    const result = await blockNet.addBlock(newBlock);
 
     if (result && result.errors) {
       throw result.errors;

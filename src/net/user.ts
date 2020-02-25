@@ -1,3 +1,5 @@
+import { INotification } from "../models/notification/notification";
+import { IUser } from "../models/user/user";
 import { getDataFromObject } from "../utils/object";
 import { getItem, removeItem, setItem } from "../utils/storage";
 import auth from "./auth";
@@ -21,7 +23,7 @@ const tokenStorageName = "t";
 
 // TODO: Define types for the parameters
 
-export async function signup({ user }) {
+export async function signup(user: IUser) {
   const userFields = ["name", "password", "email", "color"];
 
   const result = await query(
@@ -36,7 +38,7 @@ export async function signup({ user }) {
   return result;
 }
 
-export async function login({ email, password }) {
+export async function login(email: string, password: string) {
   const result = await query(
     null,
     userLoginMutation,
@@ -51,7 +53,7 @@ export function logout() {
   removeItem(tokenStorageName, "local");
 }
 
-export function updateUser({ user }) {
+export function updateUser(user: IUser) {
   const updateUserFields = ["name", "lastNotificationCheckTime"];
 
   return auth(
@@ -62,7 +64,7 @@ export function updateUser({ user }) {
   );
 }
 
-export async function changePassword({ password, token }) {
+export async function changePassword(password: string, token: string) {
   const result = await auth(
     null,
     changePasswordMutation,
@@ -80,7 +82,7 @@ export async function changePassword({ password, token }) {
   return result;
 }
 
-export function forgotPassword({ email }) {
+export function forgotPassword(email: string) {
   return query(
     null,
     forgotPasswordMutation,
@@ -89,11 +91,12 @@ export function forgotPassword({ email }) {
   );
 }
 
-export function userExists({ email }) {
+export function userExists(email: string) {
   return query(null, userExistsQuery, { email }, "data.user.userExists");
 }
 
-export function updateCollaborationRequest({ request, data }) {
+// TODO: define data's type
+export function updateCollaborationRequest(request: INotification, data: any) {
   const updateRequestFields = ["readAt"];
 
   return auth(
@@ -107,7 +110,7 @@ export function updateCollaborationRequest({ request, data }) {
   );
 }
 
-export function changePasswordWithToken({ password, token }) {
+export function changePasswordWithToken(password: string, token: string) {
   return auth(
     null,
     changePasswordWithTokenMutation,
@@ -117,7 +120,11 @@ export function changePasswordWithToken({ password, token }) {
   );
 }
 
-export function respondToCollaborationRequest({ request, response }) {
+// TODO: define response's type
+export function respondToCollaborationRequest(
+  request: INotification,
+  response: any
+) {
   return auth(
     null,
     respondToCollaborationRequestMutation,
@@ -139,7 +146,7 @@ export function getSessionDetails() {
   return auth(null, getSessionDetailsQuery, {}, "data.user.getSessionDetails");
 }
 
-export function getUserData(token) {
+export function getUserData(token: string) {
   return auth(null, getUserDataQuery, {}, "data.user.getUserData", token);
 }
 

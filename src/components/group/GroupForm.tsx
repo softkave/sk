@@ -23,13 +23,13 @@ export interface IGroupFormValues {
   type: BlockType;
   name: string;
   description?: string;
-  parents?: string[];
+  parent?: string;
 }
 
 export interface IGroupFormProps
   extends IFormikFormBaseProps<IGroupFormValues> {
   submitLabel?: React.ReactNode;
-  parents: IBlock[];
+  possibleParents: IBlock[];
   onClose: () => void;
 }
 
@@ -46,13 +46,13 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     handleSubmit,
     isSubmitting,
     setFieldValue,
-    parents,
+    possibleParents,
     onClose
   } = props;
 
-  const parentIDs = values.parents || [];
+  const parentIDs = values.parent || [];
   const immediateParentID = parentIDs[parentIDs.length - 1];
-  const immediateParent = parents.find(
+  const immediateParent = possibleParents.find(
     parent => parent.customId === immediateParentID
   );
   const groupIDs = (immediateParent && immediateParent.groups) || [];
@@ -75,13 +75,13 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
   const renderParentInput = () => (
     <Form.Item
       label="Parent"
-      help={touched.parents && <FormError>{errors.parents}</FormError>}
+      help={touched.parent && <FormError>{errors.parent}</FormError>}
     >
       <BlockParentSelection
-        value={values.parents}
-        parents={parents}
+        value={values.parent}
+        possibleParents={possibleParents}
         onChange={value => {
-          setFieldValue("parents", value);
+          setFieldValue("parent", value);
         }}
       />
     </Form.Item>

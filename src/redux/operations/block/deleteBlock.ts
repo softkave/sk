@@ -50,7 +50,7 @@ export default async function deleteBlockOperationFunc(
   );
 
   try {
-    const result = await blockNet.deleteBlock({ block });
+    const result = await blockNet.deleteBlock(block);
 
     if (result && result.errors) {
       throw result.errors;
@@ -65,13 +65,10 @@ export default async function deleteBlockOperationFunc(
       );
     }
 
-    const parentIDs = block.parents || [];
+    const parentID = block.parent;
 
-    if (parentIDs.length > 0) {
-      const parent = getBlock(
-        store.getState(),
-        parentIDs[parentIDs.length - 1]
-      );
+    if (parentID) {
+      const parent = getBlock(store.getState(), parentID);
 
       if (parent) {
         const pluralType = `${block.type}s`;

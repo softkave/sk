@@ -1,4 +1,4 @@
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -15,15 +15,14 @@ import updateBlockOperationFunc from "./updateBlock";
 
 export interface ILoadBlockChildrenOperationFuncDataProps {
   block: IBlock;
-  types?: string[];
-  isBacklog?: boolean;
+  typeList?: BlockType[];
 }
 
 export default async function loadBlockChildrenOperationFunc(
   dataProps: ILoadBlockChildrenOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { block, isBacklog, types } = dataProps;
+  const { block, typeList } = dataProps;
   const operation = getOperationWithIDForResource(
     store.getState(),
     getBlockChildrenOperationID,
@@ -47,11 +46,7 @@ export default async function loadBlockChildrenOperationFunc(
   );
 
   try {
-    const result = await blockNet.getBlockChildren({
-      block,
-      types,
-      isBacklog
-    });
+    const result = await blockNet.getBlockChildren(block, typeList);
 
     if (result && result.errors) {
       throw result.errors;

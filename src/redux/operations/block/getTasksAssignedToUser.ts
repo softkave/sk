@@ -1,8 +1,5 @@
 import { IBlock } from "../../../models/block/block";
-import {
-  aggregateBlocksParentIDs,
-  getUserTaskCollaborator
-} from "../../../models/block/utils";
+import { getUserTaskCollaborator } from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -47,28 +44,10 @@ export default async function getTasksAssignedToUserOperationFunc(
     }
 
     const { blocks: tasks } = result;
-    const parentIDs = aggregateBlocksParentIDs(tasks);
-    const maxFetchableBlocksPerRequest = 100;
-    let parents: IBlock[] = [];
-
-    // TODO: should we fetch only the parents we don't have yet?
-    // TODO: should the getAssignedTasks API only return ids, so that we can fetch the ones we don't have yet?
-    for (let i = 0; i < parentIDs.length; i += maxFetchableBlocksPerRequest) {
-      const parentsResult = await blockNet.getBlocksWithCustomIDs({
-        customIDs: parentIDs.slice(i, i + maxFetchableBlocksPerRequest)
-      });
-
-      if (parentsResult && parentsResult.errors) {
-        throw parentsResult.errors;
-      }
-
-      parents = parents.concat(parentsResult.blocks);
-    }
-
     const taskIDs = tasks.map(block => block.customId);
     const user = getSignedInUserRequired(store.getState());
 
-    store.dispatch(blockActions.bulkAddBlocksRedux(tasks.concat(parents)));
+    store.dispatch(blockActions.bulkAddBlocksRedux(tasks));
     store.dispatch(
       userActions.updateUserRedux(
         user.customId,

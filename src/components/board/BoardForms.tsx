@@ -45,8 +45,8 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
   const store = useStore();
   const parents = useBlockParents(block);
   const user = useSelector(getSignedInUserRequired);
-  const hasCollaborators = block.type === "org";
-  const organizationID = hasCollaborators ? block.customId : block.parents![0];
+  const organizationID =
+    block.type === "org" ? block.customId : block.rootBlockID;
   const organization = useSelector<IReduxState, IBlock>(
     state => getBlock(state, organizationID)!
   );
@@ -144,7 +144,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
             onSubmit={onCompleteEditBlock}
             initialValues={block}
             submitLabel={formLabel}
-            parents={formParents}
+            possibleParents={formParents}
           />
         );
 
@@ -159,7 +159,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
             user={user}
             submitLabel={formLabel}
             collaborators={collaborators}
-            parents={formParents}
+            possibleParents={formParents}
           />
         );
 
@@ -184,7 +184,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
             onSubmit={onCompleteEditBlock}
             operationID={blockFormOperationId}
             submitLabel={formLabel}
-            parents={formParents}
+            possibleParents={formParents}
           />
         );
     }

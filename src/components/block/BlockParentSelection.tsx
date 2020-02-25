@@ -4,35 +4,33 @@ import { findBlock, IBlock } from "../../models/block/block";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import BlockThumbnail from "./BlockThumnail";
-import { makeBlockParentIDs } from "./getNewBlock";
 
 export interface IBlockParentSelectionProps {
-  parents: IBlock[];
-  value?: string[];
-  onChange?: (parentIDs: string[]) => void;
+  possibleParents: IBlock[];
+  value?: string;
+  onChange?: (parentID: string) => void;
 }
 
 const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
-  const { value, parents, onChange } = props;
+  const { value, possibleParents, onChange } = props;
   const hasValue = Array.isArray(value) && value.length > 0;
 
   React.useEffect(() => {
-    if (!hasValue && parents.length === 1 && onChange) {
-      onChange(makeBlockParentIDs(parents[0]));
+    if (!hasValue && possibleParents.length === 1 && onChange) {
+      onChange(possibleParents[0].customId);
     }
   });
 
   const selectParent = (id: string) => {
     if (onChange) {
-      const parent = findBlock(parents, id)!;
-      const blockParentIDs = makeBlockParentIDs(parent);
-      onChange(blockParentIDs);
+      const parent = findBlock(possibleParents, id)!;
+      onChange(parent.customId);
     }
   };
 
   const parentsMenu = (
     <Menu onClick={event => selectParent(event.key)}>
-      {parents.map(parent => (
+      {possibleParents.map(parent => (
         <Menu.Item key={parent.customId}>
           <BlockThumbnail block={parent} />
         </Menu.Item>
@@ -43,7 +41,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
   const renderSelectedParent = () => {
     if (value) {
       const immediateParentID = value[value.length - 1];
-      const immediateParent = findBlock(parents, immediateParentID);
+      const immediateParent = findBlock(possibleParents, immediateParentID);
 
       if (immediateParent) {
         return <BlockThumbnail block={immediateParent} />;

@@ -15,11 +15,7 @@ const validationSchema = yup.object().shape({
     .string()
     .max(blockConstants.maxDescriptionLength)
     .matches(textPattern),
-  parents: yup
-    .array()
-    .of(yup.string())
-    .min(blockConstants.minNonRootBlockParentsLength)
-    .max(blockConstants.maxParentsLength)
+  parent: yup.string().required()
 });
 
 export default withFormikFormWrapper({ validationSchema })(ProjectForm);

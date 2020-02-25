@@ -1,7 +1,6 @@
 import moment from "moment";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
-import { getBlockParentIDs } from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
@@ -17,7 +16,7 @@ import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 import {
-  hasBlockParentsChanged,
+  hasBlockParentChanged,
   transferBlockStateHelper
 } from "./transferBlock";
 
@@ -60,7 +59,7 @@ export default async function updateBlockOperationFunc(
   );
 
   try {
-    const result = await blockNet.updateBlock({ block, data });
+    const result = await blockNet.updateBlock(block, data);
 
     if (result && result.errors) {
       throw result.errors;
@@ -69,19 +68,11 @@ export default async function updateBlockOperationFunc(
     addTaskToUserIfAssigned(block);
     const forTransferBlockOnly = { ...block, ...data };
 
-    if (hasBlockParentsChanged(block, forTransferBlockOnly)) {
-      const blockParentIDs = getBlockParentIDs(block);
-      const transferBlockParentIDs = getBlockParentIDs(forTransferBlockOnly);
+    if (hasBlockParentChanged(block, forTransferBlockOnly)) {
       transferBlockStateHelper({
         draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(
-          store.getState(),
-          blockParentIDs[blockParentIDs.length - 1]
-        )!,
-        destinationBlock: getBlock(
-          store.getState(),
-          transferBlockParentIDs[transferBlockParentIDs.length - 1]
-        )!
+        sourceBlock: getBlock(store.getState(), block.parent)!,
+        destinationBlock: getBlock(store.getState(), data.parent)!
       });
     }
 

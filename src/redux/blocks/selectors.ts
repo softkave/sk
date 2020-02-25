@@ -27,5 +27,15 @@ export function getEveryBlockChildrenInState(
 }
 
 export function getBlockParents(state: IReduxState, block: IBlock) {
-  return getBlocksAsArray(state, block.parents || []);
+  let b: IBlock = block;
+  const parents: IBlock[] = [];
+
+  while (b.type !== "org") {
+    // TODO: currently assumes that the parent exists
+    const parent = getBlock(state, b.parent!)!;
+    parents.unshift(parent);
+    b = parent;
+  }
+
+  return parents;
 }

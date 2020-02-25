@@ -17,7 +17,10 @@ export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
 
 type BlockTypeToTypesMap = { [key in BlockType]: BlockType[] };
 
-export function getBlockValidChildrenTypes(type: BlockType, parentType?: BlockType | null): BlockType[] {
+export function getBlockValidChildrenTypes(
+  type: BlockType,
+  parentType?: BlockType | null
+): BlockType[] {
   const validChildrenTypesMap: BlockTypeToTypesMap = {
     root: ["project", "group", "task"],
     org: ["project", "group", "task"],
@@ -35,18 +38,6 @@ export function getBlockValidChildrenTypes(type: BlockType, parentType?: BlockTy
   }
 
   return [...types];
-}
-
-export function aggregateBlocksParentIDs(blocks: IBlock[]) {
-  const mappedParentIDs = blocks.reduce((accumulator, block) => {
-    const blockParentIDs = getBlockParentIDs(block);
-    blockParentIDs.forEach(parentID => (accumulator[parentID] = parentID));
-    return accumulator;
-  }, {});
-
-  const parentIDs = Object.keys(mappedParentIDs);
-
-  return parentIDs;
 }
 
 export function getUserTaskCollaborator(task: IBlock, user: IUser) {
@@ -83,8 +74,7 @@ export function filterValidParentsForBlockType(
 }
 
 export function isBlockParentOf(parent: IBlock, block: IBlock) {
-  const parentIDs = getBlockParentIDs(block);
-  return parent.customId === parentIDs[parentIDs.length - 1];
+  return parent.customId === block.parent;
 }
 
 export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
@@ -110,10 +100,6 @@ export const getBlockTypeFullName = (type: BlockType) => {
       return "block";
   }
 };
-
-export function getBlockParentIDs(block: IBlock) {
-  return Array.isArray(block.parents) ? block.parents : [];
-}
 
 export interface ITaskCompletionData {
   type: TaskCollaborationType;

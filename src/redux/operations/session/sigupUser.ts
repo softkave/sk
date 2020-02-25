@@ -53,7 +53,7 @@ export default async function signupUserOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const result = await userNet.signup({ user: data });
+    const result = await userNet.signup(data as any);
 
     if (result && result.errors) {
       throw result.errors;

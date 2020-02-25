@@ -45,7 +45,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
   );
 
   try {
-    const result = await blockNet.getCollaborators({ block });
+    const result = await blockNet.getCollaborators(block);
 
     if (result && result.errors) {
       throw result.errors;

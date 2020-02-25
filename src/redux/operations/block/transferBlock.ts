@@ -1,10 +1,5 @@
-import { makeBlockParentIDs } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
-import { blockErrorMessages } from "../../../models/block/blockErrorMessages";
-import { blockConstants } from "../../../models/block/constants";
-import { getBlockParentIDs } from "../../../models/block/utils";
 import * as blockActions from "../../blocks/actions";
-import { getEveryBlockChildrenInState } from "../../blocks/selectors";
 import store from "../../store";
 
 export default async function transferBlockOperation() {
@@ -20,178 +15,6 @@ export interface ITransferBlockReduxProps {
   groupContext?: string;
 }
 
-function getIndex(list: any[], item: any, notFoundError?: string | Error) {
-  const itemIndex = list.indexOf(item);
-
-  if (itemIndex === -1) {
-    throw notFoundError;
-  }
-
-  return itemIndex;
-}
-
-function move(
-  list: any[],
-  item: any,
-  dropPosition: number,
-  notFoundError?: string | Error,
-  getItemIndex = getIndex
-) {
-  const itemIndex = getItemIndex(list, item, notFoundError);
-  list = [...list];
-  list.splice(itemIndex, 1);
-  list.splice(dropPosition, 0, item);
-  return list;
-}
-
-function remove(
-  list: any[],
-  item: any,
-  notFoundError?: string | Error,
-  getItemIndex = getIndex
-) {
-  const itemIndex = getItemIndex(list, item, notFoundError);
-  list = [...list];
-  list.splice(itemIndex, 1);
-  return list;
-}
-
-function add(list: any[], item: any, dropPosition?: number) {
-  list = Array.isArray(list) ? [...list] : [];
-
-  if (dropPosition) {
-    list.splice(dropPosition, 0, item);
-  } else {
-    list.push(item);
-  }
-
-  return list;
-}
-
-function checkBlocks(props: ITransferBlockReduxProps) {
-  const { sourceBlock, draggedBlock, destinationBlock } = props;
-
-  if (!draggedBlock) {
-    throw new Error(blockErrorMessages.transferDraggedBlockMissing);
-  }
-
-  if (!sourceBlock) {
-    throw new Error(blockErrorMessages.transferSourceBlockMissing);
-  }
-
-  if (sourceBlock.customId !== destinationBlock.customId && !destinationBlock) {
-    throw new Error(blockErrorMessages.transferDestinationBlockMissing);
-  }
-}
-
-function updateDraggedBlockPositionInSource(props: ITransferBlockReduxProps) {
-  const { groupContext, sourceBlock, draggedBlock, dropPosition } = props;
-  const sourceBlockUpdates: Partial<IBlock> = {};
-
-  if (!dropPosition) {
-    // TODO: Find a way to differentiate between log errors and display errors
-    throw new Error(blockErrorMessages.transferDropPositionNotProvided);
-  }
-
-  if (draggedBlock.type === blockConstants.blockTypes.group) {
-    if (groupContext) {
-      sourceBlockUpdates[groupContext] = move(
-        sourceBlock[groupContext],
-        draggedBlock.customId,
-        dropPosition,
-        blockErrorMessages.transferDraggedBlockNotFoundInParent
-      );
-    } else {
-      const groupTaskContext = blockConstants.groupContexts.groupTaskContext;
-      const groupProjectContext =
-        blockConstants.groupContexts.groupProjectContext;
-
-      sourceBlockUpdates[groupTaskContext] = move(
-        sourceBlock[groupTaskContext],
-        draggedBlock.customId,
-        dropPosition,
-        blockErrorMessages.transferDraggedBlockNotFoundInParent
-      );
-
-      sourceBlockUpdates[groupProjectContext] = move(
-        sourceBlock[groupProjectContext],
-        draggedBlock.customId,
-        dropPosition,
-        blockErrorMessages.transferDraggedBlockNotFoundInParent
-      );
-    }
-  }
-
-  const pluralizedType = `${draggedBlock.type}s`;
-  sourceBlockUpdates[pluralizedType] = move(
-    sourceBlock[pluralizedType],
-    draggedBlock.customId,
-    dropPosition,
-    blockErrorMessages.transferDraggedBlockNotFoundInParent
-  );
-
-  return sourceBlockUpdates;
-}
-
-function updateDraggedBlockInSourceAndDestination(
-  props: ITransferBlockReduxProps
-) {
-  const { draggedBlock, sourceBlock, destinationBlock } = props;
-  const sourceBlockUpdates: Partial<IBlock> = {};
-  const draggedBlockUpdates: Partial<IBlock> = {};
-  const destinationBlockUpdates: Partial<IBlock> = {};
-  const pluralizedType = `${draggedBlock.type}s`;
-
-  if (draggedBlock.type === blockConstants.blockTypes.group) {
-    const groupTaskContext = blockConstants.groupContexts.groupTaskContext;
-    const groupProjectContext =
-      blockConstants.groupContexts.groupProjectContext;
-
-    sourceBlockUpdates[groupTaskContext] = remove(
-      sourceBlock[groupTaskContext],
-      draggedBlock.customId,
-      blockErrorMessages.transferDraggedBlockNotFoundInParent
-    );
-
-    sourceBlockUpdates[groupProjectContext] = remove(
-      sourceBlock[groupProjectContext],
-      draggedBlock.customId,
-      blockErrorMessages.transferDraggedBlockNotFoundInParent
-    );
-
-    destinationBlockUpdates[groupTaskContext] = add(
-      destinationBlock[pluralizedType],
-      draggedBlock.customId
-    );
-
-    destinationBlockUpdates[groupProjectContext] = add(
-      destinationBlock[pluralizedType],
-      draggedBlock.customId
-    );
-  }
-
-  sourceBlockUpdates[pluralizedType] = remove(
-    sourceBlock[pluralizedType],
-    draggedBlock.customId,
-    blockErrorMessages.transferDraggedBlockNotFoundInParent
-  );
-
-  destinationBlockUpdates[pluralizedType] = add(
-    destinationBlock[pluralizedType],
-    draggedBlock.customId
-  );
-
-  const draggedBlockParentUpdate = [...(destinationBlock.parents || [])];
-  draggedBlockParentUpdate.push(destinationBlock.customId);
-  draggedBlockUpdates.parents = draggedBlockParentUpdate;
-
-  return {
-    sourceBlockUpdates,
-    destinationBlockUpdates,
-    draggedBlockUpdates
-  };
-}
-
 function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
   store.dispatch(
     blockActions.updateBlockRedux(block.customId, updates, {
@@ -201,53 +24,75 @@ function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
 }
 
 export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
-  checkBlocks(props);
-
   const sourceBlock = props.sourceBlock;
   const draggedBlock = props.draggedBlock;
   const destinationBlock = props.destinationBlock;
+  const dropPosition = props.dropPosition;
+  const groupContext = props.groupContext;
+
+  const draggedBlockContainerName = `${draggedBlock.type}s`;
+  const draggedBlockContainer: string[] =
+    sourceBlock[draggedBlockContainerName];
+  const draggedBlockIndexInSourceBlock = draggedBlockContainer.indexOf(
+    draggedBlock.customId
+  );
+
+  if (draggedBlockIndexInSourceBlock === -1) {
+    throw new Error("Dragged block not found in source block");
+  }
 
   if (sourceBlock.customId === destinationBlock.customId) {
-    const sourceBlockUpdates = updateDraggedBlockPositionInSource(props);
+    if (!dropPosition) {
+      // TODO: Find a way to differentiate between log errors and display errors
+      throw new Error("Drop position not provided");
+    }
+
+    const sourceBlockUpdates: Partial<IBlock> = {};
+
+    draggedBlockContainer.splice(draggedBlockIndexInSourceBlock, 1);
+    draggedBlockContainer.splice(dropPosition, 0, draggedBlock.customId);
+    sourceBlockUpdates[draggedBlockContainerName] = draggedBlockContainer;
+
+    if (groupContext && draggedBlock.type === "group") {
+      const groupContextContainerName =
+        groupContext === "project" ? "groupProjectContext" : "groupTaskContext";
+      const groupContextContainer =
+        sourceBlock[groupContextContainerName] || [];
+      const draggedBlockIndexInGroupContext = groupContextContainer.indexOf(
+        draggedBlock.customId
+      );
+
+      groupContextContainer.splice(draggedBlockIndexInGroupContext, 1);
+      groupContextContainer.splice(dropPosition, 0, draggedBlock.customId);
+      sourceBlockUpdates[groupContextContainerName] = groupContextContainer;
+    }
+
     updateBlockInStore(sourceBlock, sourceBlockUpdates);
   } else {
     // Ignores paremeters' groupContext and dropPosition
-    const {
-      sourceBlockUpdates,
-      destinationBlockUpdates,
-      draggedBlockUpdates
-    } = updateDraggedBlockInSourceAndDestination(props);
+
+    const draggedBlockUpdates: Partial<IBlock> = {
+      parent: destinationBlock.customId
+    };
+
+    draggedBlockContainer.splice(draggedBlockIndexInSourceBlock, 1);
+    const sourceBlockUpdates: Partial<IBlock> = {
+      [draggedBlockContainerName]: draggedBlockContainer
+    };
+
+    const destinationBlockContainer =
+      destinationBlock[draggedBlockContainerName];
+    destinationBlockContainer.splice(dropPosition, 0, draggedBlock.customId);
+    const destinationBlockUpdates: Partial<IBlock> = {
+      [draggedBlockContainerName]: destinationBlockContainer
+    };
 
     updateBlockInStore(sourceBlock, sourceBlockUpdates);
     updateBlockInStore(draggedBlock, draggedBlockUpdates);
     updateBlockInStore(destinationBlock, destinationBlockUpdates);
-
-    if (draggedBlock.type !== "task") {
-      const blockChildren = getEveryBlockChildrenInState(
-        store.getState(),
-        draggedBlock
-      );
-      const draggedBlockChildrenUpdates: Partial<IBlock> = {
-        parents: makeBlockParentIDs({ ...draggedBlock, ...draggedBlockUpdates })
-      };
-
-      store.dispatch(
-        blockActions.bulkUpdateBlocksRedux(
-          blockChildren.map(child => {
-            return {
-              id: child.customId,
-              data: draggedBlockChildrenUpdates
-            };
-          }),
-          { arrayUpdateStrategy: "replace" }
-        )
-      );
-    }
   }
 }
 
-export function hasBlockParentsChanged(block: IBlock, update: IBlock) {
-  const blockParentIDs = getBlockParentIDs(block);
-  const updateParentIDs = getBlockParentIDs(update);
-  return !!blockParentIDs.find((id, index) => id !== updateParentIDs[index]);
+export function hasBlockParentChanged(block: IBlock, update: IBlock) {
+  return block.parent !== update.parent;
 }

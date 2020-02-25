@@ -31,12 +31,6 @@ const AssignedTasksMain: React.FC<{}> = props => {
     getBlocksAsArray(state, user.assignedTasks || [])
   );
   const history = useHistory();
-  // const total = assignedTasks.length;
-  // const parentIDs = assignedTasks && aggregateBlocksParentIDs(assignedTasks);
-  // const parents = useSelector<IReduxState, IBlock[]>(state =>
-  //   getBlocksAsArray(state, parentIDs)
-  // );
-
   const loadAssignedTasks = (
     helperProps: ISingleOperationHelperDerivedProps
   ) => {
