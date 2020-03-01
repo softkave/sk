@@ -17,6 +17,7 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
     ? (errors as any).errors
     : []; // TODO: should we show a generic error instead of []
 
+  // TODO: implement a better key for the items
   const content = (
     <StyledContainer
       s={{
@@ -28,7 +29,7 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = props => {
       }}
     >
       {e.map((error, index) => (
-        <React.Fragment>
+        <React.Fragment key={error.name ? `${error.name}-${index}` : index}>
           <GeneralError error={error} />
           {index !== e.length - 1 && <Divider />}
         </React.Fragment>

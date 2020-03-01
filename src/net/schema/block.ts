@@ -78,12 +78,12 @@ const deleteBlockMutation = `
   }
 `;
 
-const getRoleBlocksQuery = `
+const getRootBlocksQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetRoleBlocksQuery {
+  query GetRootBlocksQuery {
     block {
-      getRoleBlocks {
+      getRootBlocks {
         errors {
           ...errorFragment
         }
@@ -292,7 +292,7 @@ export {
   addCollaboratorsMutation,
   getCollabRequestsQuery,
   getCollaboratorsQuery,
-  getRoleBlocksQuery,
+  getRootBlocksQuery,
   removeCollaboratorMutation,
   // toggleTaskMutation,
   revokeRequestMutation,

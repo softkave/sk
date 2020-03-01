@@ -33,7 +33,7 @@ export default async function loadRootBlocksOperationFunc(
   );
 
   try {
-    const result = await blockNet.getRoleBlocks();
+    const result = await blockNet.getRootBlocks();
 
     if (result && result.errors) {
       throw result.errors;

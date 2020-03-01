@@ -41,7 +41,6 @@ export const userLoginFragement = `
       createdAt
       lastNotificationCheckTime
       color
-      # roles
       orgs
     }
     token

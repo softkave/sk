@@ -1,5 +1,6 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
+import logoutUserOperationFunc from "../redux/operations/session/logoutUser";
 import { devLog } from "../utils/log";
 import OperationError, {
   defaultOperationError
@@ -37,6 +38,21 @@ function processQueryResult(resultBody: any, process: NetResultProcessor) {
   }
 }
 
+const shouldLoginAgain = errors => {
+  if (
+    Array.isArray(errors) &&
+    errors.find(error => error.action === "login-again")
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+const isExpectedErrorType = errors => {
+  return Array.isArray(errors) && !!errors.find(e => !!e.name);
+};
+
 export default async function query(
   headers: OutgoingHttpHeaders | null,
   netQuery: string,
@@ -59,14 +75,35 @@ export default async function query(
       mode: "cors"
     });
 
-    const resultBody = processQueryResult(await result.json(), process);
+    if (!result.headers.get("Content-Type")?.includes("application/json")) {
+      throw defaultQueryError;
+    }
+
+    const rawResultBody = await result.json();
+    const resultBody = processQueryResult(rawResultBody, process);
     devLog(__filename, resultBody);
 
     if (result.ok) {
+      if (resultBody && shouldLoginAgain(resultBody.errors)) {
+        logoutUserOperationFunc();
+      }
+
       return resultBody;
     } else {
-      if (result.status === 500) {
-        if (resultBody && resultBody.errors) {
+      if (result.status === 500 || result.status === 401) {
+        console.log(result.status, { rawResultBody });
+        if (rawResultBody && rawResultBody.errors) {
+          console.log("has errors");
+          if (isExpectedErrorType(rawResultBody.errors)) {
+            console.log("error is expected type");
+            if (shouldLoginAgain(rawResultBody.errors)) {
+              console.log("should login again");
+              logoutUserOperationFunc();
+            } else {
+              throw rawResultBody.errors;
+            }
+          }
+
           throw defaultQueryError;
         }
       }

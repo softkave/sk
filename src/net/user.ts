@@ -1,7 +1,7 @@
 import { INotification } from "../models/notification/notification";
 import { IUser } from "../models/user/user";
 import { getDataFromObject } from "../utils/object";
-import { getItem, removeItem, setItem } from "../utils/storage";
+import { getItem } from "../utils/storage";
 import auth from "./auth";
 import query from "./query";
 import {
@@ -33,8 +33,6 @@ export async function signup(user: IUser) {
     "data.user.signup"
   );
 
-  setItem(tokenStorageName, result.token, "local");
-
   return result;
 }
 
@@ -47,10 +45,6 @@ export async function login(email: string, password: string) {
   );
 
   return result;
-}
-
-export function logout() {
-  removeItem(tokenStorageName, "local");
 }
 
 export function updateUser(user: IUser) {
@@ -72,12 +66,6 @@ export async function changePassword(password: string, token: string) {
     "data.user.changePassword",
     token
   );
-
-  const prevToken = getItem(tokenStorageName);
-
-  if (prevToken) {
-    setItem(tokenStorageName, result.token, "local");
-  }
 
   return result;
 }
@@ -142,26 +130,16 @@ export function getCollaborationRequests() {
   );
 }
 
-export function getSessionDetails() {
-  return auth(null, getSessionDetailsQuery, {}, "data.user.getSessionDetails");
+export function getSessionDetails(token: string) {
+  return auth(
+    null,
+    getSessionDetailsQuery,
+    {},
+    "data.user.getSessionDetails",
+    token
+  );
 }
 
 export function getUserData(token: string) {
   return auth(null, getUserDataQuery, {}, "data.user.getUserData", token);
-}
-
-export async function getSavedUserData() {
-  const userToken = getItem(tokenStorageName);
-
-  if (userToken) {
-    const result = await getUserData(userToken);
-
-    if (result && result.errors) {
-      throw result.errors;
-    }
-
-    const { user, token } = result;
-    setItem(tokenStorageName, token);
-    return { user, token };
-  }
 }

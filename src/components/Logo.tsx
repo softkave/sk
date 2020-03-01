@@ -9,9 +9,9 @@ export default Logo;
 
 const StyledLogoWrapper = styled.span(() => {
   return {
-    backgroundColor: "#e7e7e7",
-    borderRadius: "8px",
-    padding: "8px",
+    // backgroundColor: "#e7e7e7",
+    // borderRadius: "8px",
+    // padding: "8px",
     fontWeight: "bold"
   };
 });

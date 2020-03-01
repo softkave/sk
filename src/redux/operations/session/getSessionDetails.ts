@@ -33,7 +33,7 @@ export default async function getSessionDetailsOperationFunc(
   );
 
   try {
-    const result = await getSessionDetails();
+    const result = await getSessionDetails(state.session.token!);
 
     if (result && result.errors) {
       throw result.errors;

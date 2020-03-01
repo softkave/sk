@@ -4,6 +4,7 @@ const errorFragment = `
     message
     action
     type
+    name
   }
 `;
 

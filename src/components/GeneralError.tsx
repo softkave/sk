@@ -4,6 +4,8 @@ import isString from "lodash/isString";
 import React from "react";
 import StyledContainer from "./styled/Container";
 
+// TODO: make GeneralError centered
+
 export interface IGeneralErrorProps {
   error?: Error | string;
   fill?: boolean;

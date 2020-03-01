@@ -2,8 +2,10 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
+import ErrorMessages from "../../models/errorMessages";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern, textPattern } from "../../models/user/descriptor";
+import { userErrorMessages } from "../../models/user/userErrorMessages";
 import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
@@ -19,20 +21,21 @@ const invalidNameMessage = "Name is invalid";
 const invalidPasswordMessage = "Password is invalid";
 
 // TODO: Add regex to appropriate types like password
+// TODO: add correct error messages to your forms
 const validationSchema = yup.object().shape({
   name: yup
     .string()
     .max(userConstants.maxNameLength)
     .matches(textPattern, invalidNameMessage)
-    .required(),
+    .required(ErrorMessages.fieldIsRequired),
   email: yup
     .string()
-    .email()
-    .required(),
+    .email(userErrorMessages.invalidEmail)
+    .required(ErrorMessages.fieldIsRequired),
   confirmEmail: yup
     .string()
     .oneOf([yup.ref("email")], emailMismatchErrorMessage)
-    .required(),
+    .required(ErrorMessages.fieldIsRequired),
   password: yup
     .string()
     .min(userConstants.minPasswordLength)
@@ -42,7 +45,7 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
-    .required()
+    .required(ErrorMessages.fieldIsRequired)
 });
 
 export interface ISignupFormData {

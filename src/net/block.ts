@@ -12,7 +12,7 @@ import {
   getBlocksWithCustomIDsQuery,
   getCollaboratorsQuery,
   getCollabRequestsQuery,
-  getRoleBlocksQuery,
+  getRootBlocksQuery,
   getTasksAssignedToUserQuery,
   removeCollaboratorMutation,
   revokeRequestMutation,
@@ -151,8 +151,8 @@ export function getCollabRequests(block: IBlock) {
   );
 }
 
-export function getRoleBlocks() {
-  return auth(null, getRoleBlocksQuery, {}, "data.block.getRoleBlocks");
+export function getRootBlocks() {
+  return auth(null, getRootBlocksQuery, {}, "data.block.getRootBlocks");
 }
 
 // export function toggleTask({ block, data }) {
