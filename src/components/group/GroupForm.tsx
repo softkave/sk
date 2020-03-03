@@ -129,7 +129,6 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("on submit", { groupNameError });
 
     if (!groupNameError) {
       handleSubmit(event);

@@ -41,55 +41,41 @@ export interface IBlockFormsProps {
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = props => {
-  console.log({ ...props });
-
   const { block, formType, onClose, parent } = props;
   const store = useStore();
 
-  console.log("after store");
   const parents = useBlockParents(block);
 
-  console.log({ parents });
   const user = useSelector(getSignedInUserRequired);
-
-  console.log({ user });
 
   const organizationID =
     block.type === "org" ? block.customId : block.rootBlockID;
 
-  console.log({ organizationID });
   const organization = useSelector<IReduxState, IBlock>(
     state => getBlock(state, organizationID)!
   );
 
-  console.log({ organization });
   const collaboratorIDs = Array.isArray(organization.collaborators)
     ? organization.collaborators
     : [];
 
-  console.log({ collaboratorIDs });
   const collaborators = useSelector<IReduxState, IUser[]>(state =>
     getUsersAsArray(state, collaboratorIDs)
   );
 
-  console.log({ collaborators });
   const requestIDs = Array.isArray(organization.collaborationRequests)
     ? organization.collaborationRequests
     : [];
 
-  console.log({ requestIDs });
   const requests = useSelector<IReduxState, INotification[]>(state =>
     getNotificationsAsArray(state, requestIDs)
   );
 
-  console.log({ requests });
   const formActionType = formType === "update-block-form" ? "Edit" : "Create";
   const formName =
     formType === "collaborator-form"
       ? "Collaborator"
       : getBlockTypeFullName(block.type);
-
-  console.log({ formActionType, formName });
 
   const formLabel = (
     <StyledCapitalizeText>
@@ -142,7 +128,6 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
   };
 
   const onCompleteEditBlock = (values: any, options: IOperationFuncOptions) => {
-    console.log("complete edit form", { formType, values, options });
     if (formType === "add-block-form") {
       const newBlock = { ...block, ...values };
       addBlockOperationFunc({ parent, user, block: newBlock }, options);
@@ -153,7 +138,6 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
 
   const renderBlockForm = () => {
     const formParents = getFormParents(block);
-    console.log({ formParents });
 
     const blockFormOperationId =
       formType === "add-block-form"

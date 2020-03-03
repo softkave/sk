@@ -60,7 +60,6 @@ export default function withFormikFormWrapper(
         };
 
         this.onSubmitForm = this.onSubmitForm.bind(this);
-        console.log({ t: this });
       }
 
       public componentDidMount() {
@@ -110,7 +109,6 @@ export default function withFormikFormWrapper(
           initialValues
         );
 
-        console.log("rendering");
         // return "HAHAHA!! HEHEHE!! HUHUHU!!";
 
         return (
@@ -121,7 +119,6 @@ export default function withFormikFormWrapper(
             onSubmit={this.onSubmitForm}
           >
             {props => {
-              console.log({ pProps: props });
               // return "Inside Formik";
               return React.createElement(component, {
                 onClose,

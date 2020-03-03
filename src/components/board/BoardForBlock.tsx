@@ -131,7 +131,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 
   const onClickBlock = (blocks: IBlock[]) => {
     const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
-    console.log({ blocks, path });
     // return;
     pushRoute(path);
   };
@@ -175,9 +174,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   };
 
   const renderForms = () => {
-    console.log({ blockForm });
     if (blockForm) {
-      console.log("has block form");
       return (
         <StyledContainer
           s={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
@@ -215,8 +212,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     let childID: string | null = null;
     let message: string = "";
     let getChildrenIDsFunc: () => string[] = () => [];
-
-    console.log({ childGroupMatch, childProjectMatch });
 
     if (childGroupMatch) {
       childID = childGroupMatch.params.blockID;
@@ -271,7 +266,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
             onClickDeleteBlock={promptConfirmDelete}
             onNavigate={onNavigate}
             onClickAddBlock={blockType => {
-              console.log({ blockType });
               setBlockForm({
                 block: getNewBlock(user, blockType, block),
                 formType: "add-block-form"

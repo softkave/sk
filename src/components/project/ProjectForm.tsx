@@ -36,7 +36,6 @@ export interface IProjectFormProps
 const defaultSubmitLabel = "Create Project";
 
 const ProjectForm: React.FC<IProjectFormProps> = props => {
-  console.log({ projectProps: props });
   const {
     submitLabel,
     values,

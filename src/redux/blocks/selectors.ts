@@ -31,7 +31,6 @@ export function getBlockParents(state: IReduxState, block: IBlock) {
   const parents: IBlock[] = [];
 
   while (b.type !== "org") {
-    console.log(b.type);
     // TODO: currently assumes that the parent exists
     const parent = getBlock(state, b.parent!)!;
     parents.unshift(parent);

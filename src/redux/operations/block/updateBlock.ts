@@ -94,7 +94,6 @@ export default async function updateBlockOperationFunc(
       )
     );
   } catch (error) {
-    console.log({ error });
     const transformedError = OperationError.fromAny(error).transform({
       stripBaseNames: ["data"]
     });

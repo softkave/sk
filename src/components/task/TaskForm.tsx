@@ -96,8 +96,6 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       setValues
     } = this.props;
 
-    console.log({ taskProps: this.props });
-
     const globalError = getGlobalError(errors);
     const renderParentInput = () => (
       <Form.Item
