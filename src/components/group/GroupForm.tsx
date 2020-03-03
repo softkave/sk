@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import BlockParentSelection from "../block/BlockParentSelection";
 import FormError from "../form/FormError";
@@ -50,8 +50,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     onClose
   } = props;
 
-  const parentIDs = values.parent || [];
-  const immediateParentID = parentIDs[parentIDs.length - 1];
+  const immediateParentID = values.parent;
   const immediateParent = possibleParents.find(
     parent => parent.customId === immediateParentID
   );
@@ -59,14 +58,20 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
   const groups = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, groupIDs)
   );
+  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>(state =>
+    getBlock(state, values.customId)
+  );
 
   const globalError = getGlobalError(errors);
 
   const getGroupExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
+      const existingGroup = groups.find(
+        group => group.name.toLowerCase() === name
+      );
 
-      if (groups.findIndex(group => group.name.toLowerCase() === name) !== -1) {
+      if (existingGroup && existingGroup.customId !== blockToUpdate?.customId) {
         return groupExistsErrorMessage;
       }
     }
@@ -124,6 +129,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log("on submit", { groupNameError });
 
     if (!groupNameError) {
       handleSubmit(event);

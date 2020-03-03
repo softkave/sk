@@ -27,12 +27,13 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
   const sourceBlock = props.sourceBlock;
   const draggedBlock = props.draggedBlock;
   const destinationBlock = props.destinationBlock;
-  const dropPosition = props.dropPosition;
+  const dropPosition = props.dropPosition || 0;
   const groupContext = props.groupContext;
 
   const draggedBlockContainerName = `${draggedBlock.type}s`;
-  const draggedBlockContainer: string[] =
-    sourceBlock[draggedBlockContainerName];
+  const draggedBlockContainer: string[] = [
+    ...sourceBlock[draggedBlockContainerName]
+  ];
   const draggedBlockIndexInSourceBlock = draggedBlockContainer.indexOf(
     draggedBlock.customId
   );
@@ -56,8 +57,9 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
     if (groupContext && draggedBlock.type === "group") {
       const groupContextContainerName =
         groupContext === "project" ? "groupProjectContext" : "groupTaskContext";
-      const groupContextContainer =
-        sourceBlock[groupContextContainerName] || [];
+      const groupContextContainer = [
+        ...(sourceBlock[groupContextContainerName] || [])
+      ];
       const draggedBlockIndexInGroupContext = groupContextContainer.indexOf(
         draggedBlock.customId
       );
@@ -80,8 +82,9 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
       [draggedBlockContainerName]: draggedBlockContainer
     };
 
-    const destinationBlockContainer =
-      destinationBlock[draggedBlockContainerName];
+    const destinationBlockContainer = [
+      ...destinationBlock[draggedBlockContainerName]
+    ];
     destinationBlockContainer.splice(dropPosition, 0, draggedBlock.customId);
     const destinationBlockUpdates: Partial<IBlock> = {
       [draggedBlockContainerName]: destinationBlockContainer

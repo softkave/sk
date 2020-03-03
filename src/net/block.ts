@@ -75,7 +75,10 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
     updateBlockMutation,
     {
       customId: block.customId,
-      data: getDataFromObject(data, dataFields)
+      data: {
+        ...getDataFromObject({ ...block, ...data }, dataFields),
+        type: block.type
+      }
     },
     "data.block.updateBlock"
   );

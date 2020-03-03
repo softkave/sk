@@ -1,8 +1,5 @@
 import { getUserData } from "../../../net/user";
-import {
-  getUserTokenFromStorage,
-  saveUserTokenToStorage
-} from "../../../storage/userSession";
+import { getUserTokenFromStorage } from "../../../storage/userSession";
 import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import store from "../../store";
@@ -47,13 +44,10 @@ export default async function initializeAppSessionOperationFunc(
         throw result.errors;
       }
 
-      const { user, token: userToken } = result;
+      const { user } = result;
 
-      saveUserTokenToStorage(userToken);
       store.dispatch(addUserRedux(user));
-      store.dispatch(loginUserRedux(userToken, user.customId));
-
-      saveUserTokenToStorage(userToken);
+      store.dispatch(loginUserRedux(token, user.customId));
     } else {
       store.dispatch(setSessionToWeb());
     }

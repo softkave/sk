@@ -76,6 +76,10 @@ export default async function query(
     });
 
     if (!result.headers.get("Content-Type")?.includes("application/json")) {
+      console.log(
+        "invalid response content type",
+        result.headers.get("Content-Type")
+      );
       throw defaultQueryError;
     }
 
@@ -84,6 +88,7 @@ export default async function query(
     devLog(__filename, resultBody);
 
     if (result.ok) {
+      console.log("result is ok");
       if (resultBody && shouldLoginAgain(resultBody.errors)) {
         logoutUserOperationFunc();
       }

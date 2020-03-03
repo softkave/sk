@@ -56,6 +56,8 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 
   const parents = useBlockParents(block);
   const parentPath = `/app${parents.map(getPath).join("")}`;
+
+  // TODO: we need to rebuild the path when the user transfers the block
   const blockPath = `${parentPath}${getPath(block)}`;
   const childGroupMatch = useRouteMatch<IBlockPathMatch>(
     `${blockPath}/groups/:blockID`
@@ -141,6 +143,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const onDeleteBlock = (blockToDelete: IBlock) => {
     deleteBlockOperationFunc({ block });
 
+    // TODO: wait for block to complete deleting before pushing
     if (blockToDelete.customId === block.customId) {
       pushRoute(parentPath);
     }
@@ -172,7 +175,9 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   };
 
   const renderForms = () => {
+    console.log({ blockForm });
     if (blockForm) {
+      console.log("has block form");
       return (
         <StyledContainer
           s={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
@@ -266,6 +271,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
             onClickDeleteBlock={promptConfirmDelete}
             onNavigate={onNavigate}
             onClickAddBlock={blockType => {
+              console.log({ blockType });
               setBlockForm({
                 block: getNewBlock(user, blockType, block),
                 formType: "add-block-form"

@@ -55,6 +55,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   const blockResourceTypes = getBlockResourceTypes(block, childrenTypes);
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
+    console.log({ key });
     switch (key) {
       case "group":
       case "project":

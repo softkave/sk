@@ -14,6 +14,7 @@ const validationSchema = yup.object().shape({
     .string()
     .max(blockConstants.maxDescriptionLength)
     .matches(textPattern)
+    .nullable()
 });
 
 const EditOrgFormWithFormikWrapper = withFormikFormWrapper({

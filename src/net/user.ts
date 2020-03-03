@@ -1,7 +1,6 @@
 import { INotification } from "../models/notification/notification";
 import { IUser } from "../models/user/user";
 import { getDataFromObject } from "../utils/object";
-import { getItem } from "../utils/storage";
 import auth from "./auth";
 import query from "./query";
 import {
@@ -18,8 +17,6 @@ import {
   userLoginMutation,
   userSignupMutation
 } from "./schema/user";
-
-const tokenStorageName = "t";
 
 // TODO: Define types for the parameters
 

@@ -81,19 +81,17 @@ export default async function respondToNotificationOperationFunc(
       })
     );
 
-    if (response === "accepted") {
+    if (response === "accepted" && result) {
       const { block } = result as { block: IBlock };
 
-      if (block) {
-        store.dispatch(blockActions.addBlockRedux(block));
-        store.dispatch(
-          userActions.updateUserRedux(
-            user.customId,
-            { orgs: [block.customId] },
-            { arrayUpdateStrategy: "concat" }
-          )
-        );
-      }
+      store.dispatch(blockActions.addBlockRedux(block));
+      store.dispatch(
+        userActions.updateUserRedux(
+          user.customId,
+          { orgs: [request.from.blockId] },
+          { arrayUpdateStrategy: "concat" }
+        )
+      );
     }
 
     store.dispatch(

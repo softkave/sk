@@ -53,6 +53,8 @@ export default async function loadBlockChildrenOperationFunc(
     }
 
     const { blocks } = result;
+
+    // TODO: this list should be based on the valid chidren types
     const parentUpdate: Partial<IBlock> = {
       tasks: [],
       groups: [],
@@ -83,6 +85,7 @@ export default async function loadBlockChildrenOperationFunc(
         !Array.isArray(block[key]) ||
         block[key].length !== typeContainer.length
       ) {
+        console.log({ key, typeContainer, bCont: block[key] });
         // TODO: Think on, this is currently fire and forget, should we wait for it?
         updateBlockOperationFunc({ block, data: parentUpdate }, options);
 

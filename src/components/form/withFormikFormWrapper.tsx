@@ -60,6 +60,7 @@ export default function withFormikFormWrapper(
         };
 
         this.onSubmitForm = this.onSubmitForm.bind(this);
+        console.log({ t: this });
       }
 
       public componentDidMount() {
@@ -81,7 +82,7 @@ export default function withFormikFormWrapper(
         const { scopeID } = this.state;
         const formikBag = this.getFormikBag();
 
-        if (formikBag) {
+        if (formikBag && operation) {
           if (shouldCloseFormikForm(operation, scopeID)) {
             if (isFunction(onClose)) {
               onClose();
@@ -109,6 +110,9 @@ export default function withFormikFormWrapper(
           initialValues
         );
 
+        console.log("rendering");
+        // return "HAHAHA!! HEHEHE!! HUHUHU!!";
+
         return (
           <Formik
             {...options}
@@ -117,6 +121,8 @@ export default function withFormikFormWrapper(
             onSubmit={this.onSubmitForm}
           >
             {props => {
+              console.log({ pProps: props });
+              // return "Inside Formik";
               return React.createElement(component, {
                 onClose,
                 ...rest,
@@ -137,12 +143,15 @@ export default function withFormikFormWrapper(
 
       private setFormikFormState() {
         const { operation } = this.props;
-        const { scopeID } = this.state;
-        const formikBag = this.getFormikBag();
-        const state = getFormikFormStateFromOperation(operation, scopeID);
 
-        if (formikBag) {
-          setFormikFormStateFromProps(formikBag, state);
+        if (operation) {
+          const { scopeID } = this.state;
+          const formikBag = this.getFormikBag();
+          const state = getFormikFormStateFromOperation(operation, scopeID);
+
+          if (formikBag) {
+            setFormikFormStateFromProps(formikBag, state);
+          }
         }
       }
 

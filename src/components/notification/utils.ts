@@ -47,7 +47,7 @@ export function isNotificationExpired(notification: INotification) {
     return notification.expiresAt < Date.now();
   }
 
-  return true;
+  return false;
 }
 
 export interface INotificationsPathParams {

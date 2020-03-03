@@ -4,9 +4,7 @@ import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
-import BlockExploreChildrenMenu, {
-  IBlockExploreChildrenMenuProps
-} from "./BlockExploreChildrenMenu";
+import { IBlockExploreChildrenMenuProps } from "./BlockExploreChildrenMenu";
 
 export type BlockThumbnailShowField = "name" | "type" | "description";
 
@@ -27,9 +25,9 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
     block,
     className,
     onClick,
-    showFields,
-    showExploreMenu,
-    onClickChildMenuItem
+    showFields
+    // showExploreMenu,
+    // onClickChildMenuItem
   } = props;
 
   const color = block.color;
@@ -41,6 +39,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
   }, {});
 
   // TODO: do line clamping on the texts
+  // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
     <StyledContainer s={{ flex: 1 }} className={className}>
       <StyledItemAvatarContainer>
@@ -70,12 +69,12 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
             {block.description}
           </StyledContainer>
         )}
-        {showExploreMenu && onClickChildMenuItem && (
+        {/* {showExploreMenu && onClickChildMenuItem && (
           <BlockExploreChildrenMenu
             block={block}
             onClick={onClickChildMenuItem}
           />
-        )}
+        )} */}
       </StyledBlockDescriptionContainer>
     </StyledContainer>
   );

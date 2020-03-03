@@ -28,6 +28,11 @@ export default function getNewBlock(
     groupTaskContext: [],
     groupProjectContext: [],
     parent: parent ? parent.customId : undefined,
+    rootBlockID: parent
+      ? parent.type === "org"
+        ? parent.customId
+        : parent.rootBlockID
+      : undefined,
     collaborators: type === "org" ? [user.customId] : undefined,
     taskCollaborationData:
       type === "task" ? { collaborationType: "collective" } : undefined,

@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import BlockParentSelection from "../block/BlockParentSelection";
 import FormError from "../form/FormError";
@@ -36,6 +36,7 @@ export interface IProjectFormProps
 const defaultSubmitLabel = "Create Project";
 
 const ProjectForm: React.FC<IProjectFormProps> = props => {
+  console.log({ projectProps: props });
   const {
     submitLabel,
     values,
@@ -50,14 +51,18 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     onClose
   } = props;
 
-  const parentIDs = values.parent || [];
-  const immediateParentID = parentIDs[parentIDs.length - 1];
+  // return <span>Inside Project</span>;
+
+  const immediateParentID = values.parent;
   const immediateParent = possibleParents.find(
     parent => parent.customId === immediateParentID
   );
-  const projectIDs = (immediateParent && immediateParent.projects) || [];
+  const projectIDs = (immediateParent && immediateParent!.projects) || [];
   const projects = useSelector<IReduxState, IBlock[]>(state =>
     getBlocksAsArray(state, projectIDs)
+  );
+  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>(state =>
+    getBlock(state, values.customId)
   );
 
   const globalError = getGlobalError(errors);
@@ -65,10 +70,13 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
   const getProjectExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
+      const existingProject = projects.find(
+        project => project.name.toLowerCase() === name
+      );
 
       if (
-        projects.findIndex(project => project.name.toLowerCase() === name) !==
-        -1
+        existingProject &&
+        existingProject.customId !== blockToUpdate?.customId
       ) {
         return projectExistsErrorMessage;
       }

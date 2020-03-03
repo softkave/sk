@@ -58,7 +58,8 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
           width: "100%",
           flexDirection: "column",
           maxWidth: "400px",
-          margin: "0 auto"
+          margin: "0 auto",
+          flex: 1
         }}
       >
         <StyledContainer s={{ marginBottom: "16px" }}>

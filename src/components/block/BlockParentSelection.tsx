@@ -13,10 +13,9 @@ export interface IBlockParentSelectionProps {
 
 const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
   const { value, possibleParents, onChange } = props;
-  const hasValue = Array.isArray(value) && value.length > 0;
 
   React.useEffect(() => {
-    if (!hasValue && possibleParents.length === 1 && onChange) {
+    if (!value && possibleParents.length === 1 && onChange) {
       onChange(possibleParents[0].customId);
     }
   });
@@ -40,7 +39,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
 
   const renderSelectedParent = () => {
     if (value) {
-      const immediateParentID = value[value.length - 1];
+      const immediateParentID = value;
       const immediateParent = findBlock(possibleParents, immediateParentID);
 
       if (immediateParent) {

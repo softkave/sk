@@ -7,7 +7,9 @@ import {
   updateBlockRedux
 } from "../../blocks/actions";
 import { getBlock, getEveryBlockChildrenInState } from "../../blocks/selectors";
+import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
+import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
@@ -94,6 +96,22 @@ export default async function deleteBlockOperationFunc(
           })
         );
       }
+    }
+
+    const user = getSignedInUserRequired(store.getState());
+
+    if (block.type === "org") {
+      const orgIndex = user.orgs.indexOf(block.customId);
+      const orgs = [...user.orgs];
+      orgs.splice(orgIndex, 1);
+
+      store.dispatch(
+        userActions.updateUserRedux(
+          user.customId,
+          { orgs },
+          { arrayUpdateStrategy: "replace" }
+        )
+      );
     }
 
     removeTaskFromUserIfAssigned(block);
