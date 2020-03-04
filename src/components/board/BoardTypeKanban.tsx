@@ -68,9 +68,9 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
       block,
       () => block.groups || [],
       "No groups yet.",
-      groups => groups.map(group => ({ key: group.customId, blocks: [group] })),
+      groups => groups.map(group => ({ key: group.customId, items: [group] })),
       groupBasket => {
-        const g = groupBasket.blocks[0];
+        const g = groupBasket.items[0];
         return (
           <Column
             header={g.name}
@@ -80,7 +80,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
                 noPadding
                 block={g}
                 onClickBlock={blocks =>
-                  onClickBlock(groupBasket.blocks.concat(blocks))
+                  onClickBlock(groupBasket.items.concat(blocks))
                 }
               />
             }

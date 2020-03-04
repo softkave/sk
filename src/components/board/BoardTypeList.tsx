@@ -55,9 +55,21 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
         blocks={blocks}
         emptyMessage={emptyMessage}
         getBaskets={() =>
-          blocks.length > 0 ? [{ key: "blocks", blocks }] : []
+          blocks.length > 0 ? [{ key: "blocks", items: blocks }] : []
         }
-        renderBasket={basket => renderBasketFunc(basket)}
+        renderBasket={basket => (
+          <StyledContainer
+            s={{
+              flexDirection: "column",
+              height: "100%",
+              flex: 1,
+              width: "100%",
+              padding: noPadding ? undefined : "0 16px"
+            }}
+          >
+            {renderBasketFunc(basket)}
+          </StyledContainer>
+        )}
       />
     );
   };
@@ -114,11 +126,19 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
   };
 
   const renderCollaborators = () => {
-    return <CollaboratorList organization={block} />;
+    return (
+      <StyledContainer s={{ padding: "0 16px" }}>
+        <CollaboratorList organization={block} />
+      </StyledContainer>
+    );
   };
 
   const renderCollaborationRequests = () => {
-    return <CollaborationRequests organization={block} />;
+    return (
+      <StyledContainer s={{ padding: "0 16px" }}>
+        <CollaborationRequests organization={block} />
+      </StyledContainer>
+    );
   };
 
   const renderRoute = (renderChildren: () => React.ReactNode) => {
@@ -128,9 +148,9 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
           flexDirection: "column",
           height: "100%",
           flex: 1,
-          width: "100%",
+          width: "100%"
           // maxWidth: "400px",
-          padding: noPadding ? undefined : "0 16px"
+          // padding: noPadding ? undefined : "0 16px"
           // margin: "0 auto"
         }}
       >

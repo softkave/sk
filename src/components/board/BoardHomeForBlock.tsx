@@ -8,7 +8,7 @@ import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
-import BoardTypeTabs from "./BoardTypeTabs";
+// import BoardTypeTabs from "./BoardTypeTabs";
 import {
   BoardResourceType,
   BoardType,
@@ -92,9 +92,11 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
       case "list":
         return <BoardTypeList {...p} />;
 
-      case "tab":
-        return <BoardTypeTabs {...p} />;
+      // case "tab":
+      //   return <BoardTypeTabs {...p} />;
     }
+
+    return null;
   };
 
   const renderHeader = (types: BoardType[]) => {
@@ -132,8 +134,8 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
       <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
         <RenderForDevice
-          renderForDesktop={() => renderHeader(["kanban", "list", "tab"])}
-          renderForMobile={() => renderHeader(["list", "tab"])}
+          renderForDesktop={() => renderHeader(["kanban", "list" /*,"tab"*/])}
+          renderForMobile={() => renderHeader(["list" /*,"tab"*/])}
         />
       </StyledContainer>
       <StyledContainer

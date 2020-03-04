@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { IBlock } from "../../models/block/block";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 
@@ -8,14 +7,14 @@ const defaultEmptyMessage = "No blocks yet.";
 
 export interface IBoardBasket {
   key: string;
-  blocks: IBlock[];
+  items: any[];
 }
 
-export type GetBasketsFunc<T> = (blocks: IBlock[]) => T[];
+export type GetBasketsFunc<T> = (blocks: any[]) => T[];
 
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
-  blocks: IBlock[];
-  getBaskets: (blocks: IBlock[]) => BasketType[];
+  blocks: any[];
+  getBaskets: (blocks: any[]) => BasketType[];
   renderBasket: (
     basket: BasketType,
     index: number,
@@ -66,7 +65,8 @@ const StyledBasketsContainerInner = styled.div({
   display: "flex",
   boxSizing: "border-box",
   width: "100%",
-  overflowX: "auto"
+  overflowX: "auto",
+  overflowY: "auto"
 });
 
 const StyledColumn = styled.div({

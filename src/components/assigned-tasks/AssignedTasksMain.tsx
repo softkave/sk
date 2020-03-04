@@ -79,23 +79,23 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
   const getBaskets = () => {
     const baskets: IAssignedTasksBasket[] = [
-      { key: "dueAlready", title: "Due Already", blocks: dueAlready },
-      { key: "dueToday", title: "Due Today", blocks: dueToday },
-      { key: "dueTomorrow", title: "Due Tomorrow", blocks: dueTomorrow },
-      { key: "dueThisWeek", title: "Due This Week", blocks: dueThisWeek },
-      { key: "dueThisMonth", title: "Due This Month", blocks: dueThisMonth },
-      { key: "rest", title: remainingTasksTitle, blocks: rest }
+      { key: "dueAlready", title: "Due Already", items: dueAlready },
+      { key: "dueToday", title: "Due Today", items: dueToday },
+      { key: "dueTomorrow", title: "Due Tomorrow", items: dueTomorrow },
+      { key: "dueThisWeek", title: "Due This Week", items: dueThisWeek },
+      { key: "dueThisMonth", title: "Due This Month", items: dueThisMonth },
+      { key: "rest", title: remainingTasksTitle, items: rest }
     ];
 
     return baskets;
   };
 
   const renderBasket = (basket: IAssignedTasksBasket) => {
-    if (basket.blocks.length === 0) {
+    if (basket.items.length === 0) {
       return null;
     }
 
-    return renderColumn(basket.title, sortBlocksByPriority(basket.blocks));
+    return renderColumn(basket.title, sortBlocksByPriority(basket.items));
   };
 
   const onNavigateToBasket = (basketPath: string) => {

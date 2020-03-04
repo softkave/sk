@@ -4,7 +4,6 @@ import isObject from "lodash/isObject";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
-import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import Task from "./Task";
 
@@ -50,14 +49,12 @@ const TaskList: React.FC<ITaskListProps> = props => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <List
-        dataSource={tasksToRender}
-        rowKey="customId"
-        emptyDescription="No tasks available."
-        renderItem={renderTask}
-      />
-    </StyledContainer>
+    <List
+      dataSource={tasksToRender}
+      rowKey="customId"
+      emptyDescription="No tasks available."
+      renderItem={renderTask}
+    />
   );
 };
 

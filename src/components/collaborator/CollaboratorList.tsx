@@ -44,7 +44,11 @@ const CollaboratorList: React.FC<ICProps> = props => {
   }
 
   const renderItem = (collaborator: IUser) => {
-    return <CollaboratorThumbnail collaborator={collaborator} />;
+    return (
+      <StyledContainer s={{ padding: "16px 0" }}>
+        <CollaboratorThumbnail collaborator={collaborator} />
+      </StyledContainer>
+    );
   };
 
   const getCollaboratorID = (collaborator: IUser) => {
@@ -52,13 +56,11 @@ const CollaboratorList: React.FC<ICProps> = props => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <List
-        dataSource={collaborators}
-        rowKey={getCollaboratorID}
-        renderItem={renderItem}
-      />
-    </StyledContainer>
+    <List
+      dataSource={collaborators}
+      rowKey={getCollaboratorID}
+      renderItem={renderItem}
+    />
   );
 };
 

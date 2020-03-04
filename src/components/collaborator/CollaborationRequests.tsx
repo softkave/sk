@@ -44,7 +44,11 @@ const CollaborationRequests: React.FC<ICRProps> = props => {
   }
 
   const renderItem = (request: INotification) => {
-    return <CollaborationRequestThumbnail request={request} />;
+    return (
+      <StyledContainer s={{ padding: "16px 0" }}>
+        <CollaborationRequestThumbnail request={request} />
+      </StyledContainer>
+    );
   };
 
   const getCollaboratorID = (request: INotification) => {
@@ -52,13 +56,11 @@ const CollaborationRequests: React.FC<ICRProps> = props => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-      <List
-        dataSource={requests}
-        rowKey={getCollaboratorID}
-        renderItem={renderItem}
-      />
-    </StyledContainer>
+    <List
+      dataSource={requests}
+      rowKey={getCollaboratorID}
+      renderItem={renderItem}
+    />
   );
 };
 
