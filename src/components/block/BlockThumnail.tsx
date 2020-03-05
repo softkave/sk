@@ -49,7 +49,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
         {fieldsToShow.name && (
           <StyledContainer
             s={{
-              fontWeight: "bold",
+              // fontWeight: "bold",
               textDecoration: onClick ? "underline" : undefined,
               cursor: onClick ? "pointer" : undefined,
               [hoverSelector]: {

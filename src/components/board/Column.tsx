@@ -24,7 +24,9 @@ const Column: React.FC<IColumnProps> = props => {
   return (
     <RenderForDevice
       renderForDesktop={() => (
-        <StyledContainer s={{ width: "350px", flex: 1, height: "100%" }}>
+        <StyledContainer
+          s={{ width: "350px", maxWidth: "350px", flex: 1, height: "100%" }}
+        >
           {column}
         </StyledContainer>
       )}

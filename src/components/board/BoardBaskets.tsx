@@ -21,17 +21,31 @@ export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
     baskets: BasketType[]
   ) => React.ReactNode;
   emptyMessage?: string;
+  hideEmptyBaskets?: boolean;
 }
 
 class BoardBaskets<T extends IBoardBasket> extends React.Component<
   IBoardBasketsProps<T>
 > {
   public render() {
-    const { blocks, getBaskets, renderBasket, emptyMessage } = this.props;
+    const {
+      blocks,
+      getBaskets,
+      renderBasket,
+      emptyMessage,
+      hideEmptyBaskets
+    } = this.props;
     const baskets = getBaskets(blocks);
 
+    const filterBaskets = () => {
+      return baskets.filter(basket => {
+        return basket.items.length > 0;
+      });
+    };
+
     const renderBaskets = () => {
-      return baskets.map((basket, index, allBaskets) => {
+      const iterBaskets = hideEmptyBaskets ? filterBaskets() : baskets;
+      return iterBaskets.map((basket, index, allBaskets) => {
         const renderedBasket = renderBasket(basket, index, allBaskets);
 
         if (renderedBasket !== null) {
@@ -71,4 +85,5 @@ const StyledBasketsContainerInner = styled.div({
 
 const StyledColumn = styled.div({
   height: "100%"
+  // width: "100%"
 });

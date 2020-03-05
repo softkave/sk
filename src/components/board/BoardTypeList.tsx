@@ -5,6 +5,7 @@ import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
 import GroupList from "../group/GroupList";
 import ProjectList from "../project/ProjectList";
+import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import Text from "../Text";
@@ -159,10 +160,15 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
     );
   };
 
-  if (!selectedResourceType) {
+  const renderHome = desktop => {
     return (
       <StyledContainer
-        s={{ flexDirection: "column", maxWidth: "400px", padding: "16px" }}
+        s={{
+          flexDirection: "column",
+          maxWidth: "400px",
+          padding: "16px",
+          margin: desktop ? "0 auto" : 0
+        }}
       >
         {block.description && (
           <StyledContainer s={{ marginBottom: "16px" }}>
@@ -216,6 +222,15 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
           />
         )}
       </StyledContainer>
+    );
+  };
+
+  if (!selectedResourceType) {
+    return (
+      <RenderForDevice
+        renderForDesktop={() => renderHome(true)}
+        renderForMobile={() => renderHome(false)}
+      />
     );
   }
 
