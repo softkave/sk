@@ -8,6 +8,7 @@ import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
+import BoardLandingPage from "./LandingPage";
 // import BoardTypeTabs from "./BoardTypeTabs";
 import {
   BoardResourceType,
@@ -41,10 +42,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   const childrenTypes = useBlockChildrenTypes(block);
   const resourceTypes = getBlockResourceTypes(block, childrenTypes);
-  const sortedResourceTypes = sortBlockResourceTypesByCount(
-    block,
-    resourceTypes
-  );
 
   const history = useHistory();
   const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
@@ -59,27 +56,19 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   // TODO: show count and use badges only for new unseen entries
   // TODO: sort the entries by count?
 
-  if (!boardType) {
-    let destPath = blockPath;
-
-    if (resourceType) {
-      destPath = `${blockPath}/${resourceType}`;
-    }
+  if (!boardType && resourceType) {
+    const destPath = `${blockPath}/${resourceType}`;
 
     return <Redirect to={`${destPath}?bt=${"list"}`} />;
   }
 
-  if (boardType !== "list" && !resourceType) {
-    return (
-      <Redirect to={`${blockPath}/${sortedResourceTypes[0]}?bt=${boardType}`} />
-    );
+  if (boardType && !resourceType) {
+    return <Redirect to={`${blockPath}`} />;
   }
 
-  const p = {
+  const boardTypeProps = {
     block,
-    resourceTypes,
     onClickUpdateBlock,
-    onNavigate,
     onClickBlock,
     selectedResourceType: resourceType!
   };
@@ -87,10 +76,10 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   const renderBoardType = () => {
     switch (boardType) {
       case "kanban":
-        return <BoardTypeKanban {...p} />;
+        return <BoardTypeKanban {...boardTypeProps} />;
 
       case "list":
-        return <BoardTypeList {...p} />;
+        return <BoardTypeList {...boardTypeProps} />;
 
       // case "tab":
       //   return <BoardTypeTabs {...p} />;
@@ -99,6 +88,20 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     return null;
   };
 
+  let content: React.ReactNode = null;
+
+  if (!resourceType) {
+    content = (
+      <BoardLandingPage
+        block={block}
+        onNavigate={onNavigate}
+        resourceTypes={resourceTypes}
+      />
+    );
+  } else {
+    content = renderBoardType();
+  }
+
   const renderHeader = (types: BoardType[]) => {
     return (
       <BoardBlockHeader
@@ -106,15 +109,25 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         availableBoardTypes={types}
         selectedBoardType={boardType}
         resourceType={resourceType}
-        onChangeBoardType={bt => {
-          if (boardType !== bt) {
+        onChangeBoardType={selectedBoardType => {
+          if (boardType !== selectedBoardType) {
             let destPath = blockPath;
 
             if (resourceType) {
               destPath = `${blockPath}/${resourceType}`;
+            } else if (
+              selectedBoardType === "kanban" ||
+              selectedBoardType === "tab"
+            ) {
+              const sortedResourceTypes = sortBlockResourceTypesByCount(
+                block,
+                resourceTypes
+              );
+
+              destPath = `${blockPath}/${sortedResourceTypes[0]}`;
             }
 
-            history.push(`${destPath}?bt=${bt}`);
+            history.push(`${destPath}?bt=${selectedBoardType}`);
           }
         }}
         onChangeKanbanResourceType={rt => {
@@ -146,7 +159,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
           flex: 1
         }}
       >
-        {renderBoardType()}
+        {content}
       </StyledContainer>
     </StyledContainer>
   );

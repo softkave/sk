@@ -2,23 +2,20 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
-import BoardBlockChildren from "./BoardChildren";
-import BoardTypeList from "./BoardTypeList";
+import Children from "./Children";
 import Column from "./Column";
+import BoardBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
 
 const StyledButton = StyledContainer.withComponent("button");
 
 export interface IBoardTypeKanbanProps {
   block: IBlock;
-  resourceTypes: BoardResourceType[];
   onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
-  onNavigate: (resourceType: BoardResourceType) => void;
-  selectedResourceType?: BoardResourceType;
+  selectedResourceType: BoardResourceType;
 }
 
-type GetChildrenIDs = (block: IBlock) => string[];
 type RenderBasketFunc = (basket: IBoardBasket) => React.ReactNode;
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
@@ -30,7 +27,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     selectedResourceType === "collaborators" ||
     selectedResourceType === "groups"
   ) {
-    return <BoardTypeList {...props} />;
+    return <Children {...props} />;
   }
 
   const toggleHideEmptyGroups = () => {
@@ -54,54 +51,27 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
-  const renderBlockChildren = (
-    b,
-    getChildrenIDs: GetChildrenIDs,
-    emptyMessage: string,
-    getBaskets: GetBasketsFunc<IBoardBasket>,
-    renderBasketFunc: RenderBasketFunc
-  ) => {
+  const renderGroup = groupBasket => {
+    const g = groupBasket.items[0];
+    const c = g[props.selectedResourceType!] || [];
+
+    if (c.length === 0 && hideEmptyGroups) {
+      return null;
+    }
+
     return (
-      <BoardBlockChildren
-        parent={b}
-        getChildrenIDs={() => getChildrenIDs(b)}
-        render={blocks =>
-          renderBaskets(blocks, emptyMessage, getBaskets, renderBasketFunc)
-        }
-      />
-    );
-  };
-
-  const renderMainBlockChildren = () => {
-    return renderBlockChildren(
-      block,
-      () => block.groups || [],
-      "No groups yet.",
-      groups => groups.map(group => ({ key: group.customId, items: [group] })),
-      groupBasket => {
-        const g = groupBasket.items[0];
-        const c = g[props.selectedResourceType!] || [];
-
-        if (c.length === 0 && hideEmptyGroups) {
-          return null;
-        }
-
-        return (
-          <Column
-            header={g.name}
-            body={
-              <BoardTypeList
-                {...props}
-                noPadding
-                block={g}
-                onClickBlock={blocks =>
-                  onClickBlock(groupBasket.items.concat(blocks))
-                }
-              />
+      <Column
+        header={g.name}
+        body={
+          <Children
+            {...props}
+            block={g}
+            onClickBlock={clickedBlockWithParents =>
+              onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
             }
           />
-        );
-      }
+        }
+      />
     );
   };
 
@@ -147,7 +117,19 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
       }}
     >
       {renderToggleEmptyGroups()}
-      {renderMainBlockChildren()}
+      <BoardBlockChildren
+        parent={block}
+        getChildrenIDs={() => block.groups || []}
+        render={blocks =>
+          renderBaskets(
+            blocks,
+            "No groups yet.",
+            groups =>
+              groups.map(group => ({ key: group.customId, items: [group] })),
+            renderGroup
+          )
+        }
+      />
     </StyledContainer>
   );
 };

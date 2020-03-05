@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { List as AntDList } from "antd";
 import React from "react";
 import EmptyMessage from "../EmptyMessage";
@@ -37,19 +36,8 @@ class List<T> extends React.Component<IListProps<T>> {
   private renderItem = (item: T, index: number) => {
     const { renderItem } = this.props;
 
-    return (
-      <StyledListItemContainer>
-        {renderItem(item, index)}
-      </StyledListItemContainer>
-    );
+    return renderItem(item, index);
   };
 }
 
 export default List;
-
-const lastOfTypeSelector = "&:last-of-type";
-const StyledListItemContainer = styled.div({
-  [lastOfTypeSelector]: {
-    borderBottom: 0
-  }
-});

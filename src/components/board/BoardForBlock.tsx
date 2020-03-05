@@ -22,10 +22,10 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardBlockChildren from "./BoardChildren";
 import BoardForBlockContainer from "./BoardForBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardHomeForBlock from "./BoardHomeForBlock";
+import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
 
 interface IBlockFormState {

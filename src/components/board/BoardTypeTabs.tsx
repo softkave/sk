@@ -1,8 +1,7 @@
 import { Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import StyledContainer from "../styled/Container";
-import BoardTypeList from "./BoardTypeList";
+import Children from "./Children";
 import { BoardResourceType } from "./types";
 import { getBoardResourceTypeFullName } from "./utils";
 
@@ -32,14 +31,11 @@ const BoardTypeTabs: React.FC<IBoardTypeTabsProps> = props => {
     >
       {resourceTypes.map(type => (
         <Tabs.TabPane key={type} tab={getBoardResourceTypeFullName(type)}>
-          <BoardTypeList
-            // noPadding
+          <Children
             block={block}
-            resourceTypes={resourceTypes}
             selectedResourceType={type}
             onClickBlock={onClickBlock}
             onClickUpdateBlock={onClickUpdateBlock}
-            onNavigate={onNavigate}
           />
         </Tabs.TabPane>
       ))}

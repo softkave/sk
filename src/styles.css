@@ -7,7 +7,7 @@ body,
   font-weight: 500;
 }
 
-body,
+/* body, */
 .ant-input,
 .ant-dropdown-menu-item {
   color: rgba(0, 0, 0, 0.85) !important;

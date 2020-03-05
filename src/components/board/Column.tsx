@@ -4,45 +4,50 @@ import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 
 export interface IColumnProps {
-  className?: string;
   header?: React.ReactNode;
   body?: React.ReactNode;
 }
 
 const Column: React.FC<IColumnProps> = props => {
-  const { className, header, body } = props;
+  const { header, body } = props;
 
-  const column = (
-    <ColumnContainer className={className}>
-      {header && (
-        <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
-      )}
-      <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
-    </ColumnContainer>
-  );
+  const renderColumn = (desktop: boolean) => {
+    let styles: React.CSSProperties = {
+      display: "flex",
+      height: "100%",
+      width: "100%",
+      flexDirection: "column",
+      boxSizing: "border-box",
+      padding: "0 16px"
+    };
+
+    if (desktop) {
+      styles = {
+        ...styles,
+        width: "350px",
+        maxWidth: "350px",
+        flex: 1,
+        height: "100%"
+      };
+    }
+
+    return (
+      <StyledContainer s={styles}>
+        {header && (
+          <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
+        )}
+        <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
+      </StyledContainer>
+    );
+  };
 
   return (
     <RenderForDevice
-      renderForDesktop={() => (
-        <StyledContainer
-          s={{ width: "350px", maxWidth: "350px", flex: 1, height: "100%" }}
-        >
-          {column}
-        </StyledContainer>
-      )}
-      renderForMobile={() => column}
+      renderForDesktop={() => renderColumn(true)}
+      renderForMobile={() => renderColumn(false)}
     />
   );
 };
-
-const ColumnContainer = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-  box-sizing: border-box;
-  padding: 0 16px;
-`;
 
 const StyledColumnHeaderContainer = styled.div`
   display: flex;

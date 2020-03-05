@@ -9,13 +9,13 @@ import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
-export interface IBoardBlockChildrenProps {
+export interface ILoadBlockChildrenProps {
   parent: IBlock;
   getChildrenIDs: () => string[];
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const BoardBlockChildren: React.FC<IBoardBlockChildrenProps> = props => {
+const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = props => {
   const { parent, render, getChildrenIDs } = props;
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>(state =>
@@ -45,4 +45,4 @@ const BoardBlockChildren: React.FC<IBoardBlockChildrenProps> = props => {
   return <React.Fragment>{render(blocks)}</React.Fragment>;
 };
 
-export default BoardBlockChildren;
+export default LoadBlockChildren;
