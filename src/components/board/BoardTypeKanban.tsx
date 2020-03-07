@@ -6,6 +6,7 @@ import Children from "./Children";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
+import BoardTypeList from "./BoardTypeList";
 
 const StyledButton = StyledContainer.withComponent("button");
 
@@ -27,7 +28,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     selectedResourceType === "collaborators" ||
     selectedResourceType === "groups"
   ) {
-    return <Children {...props} />;
+    return <BoardTypeList {...props} />;
   }
 
   const toggleHideEmptyGroups = () => {

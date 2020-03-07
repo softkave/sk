@@ -163,7 +163,20 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         >
           {block.name}
         </StyledContainerAsH1>
-        {resourceType && <StyledContainer>{resourceTypeName}</StyledContainer>}
+        <StyledContainer>
+          {block.type}
+          {resourceType && (
+            <StyledContainer
+              s={{
+                borderLeft: "1px solid rgba(0, 0, 0, 0.65)",
+                paddingLeft: "8px",
+                marginLeft: "8px"
+              }}
+            >
+              {resourceTypeName}
+            </StyledContainer>
+          )}
+        </StyledContainer>
       </StyledContainer>
       <Dropdown
         placement="bottomRight"
