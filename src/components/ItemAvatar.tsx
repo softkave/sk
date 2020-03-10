@@ -57,10 +57,7 @@ const StyledAvatarContainer = styled("span")<IAvatarContainerProps>(props => {
     case "thumbnail": {
       return {
         ...styles,
-        borderBottom: props.active
-          ? "2px solid rgb(66,133,244)"
-          : // : "2px solid rgba(255,255,255,1)",
-            "none",
+        borderBottom: props.active ? "2px solid rgb(66,133,244)" : "none",
         padding: props.active ? "2px" : undefined,
         borderRadius: props.active ? "4px" : undefined,
         cursor: "pointer",

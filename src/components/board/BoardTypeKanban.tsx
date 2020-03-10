@@ -1,12 +1,13 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
 import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
+import BoardTypeList from "./BoardTypeList";
 import Children from "./Children";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
-import BoardTypeList from "./BoardTypeList";
 
 const StyledButton = StyledContainer.withComponent("button");
 
@@ -21,7 +22,7 @@ type RenderBasketFunc = (basket: IBoardBasket) => React.ReactNode;
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const { block, selectedResourceType, onClickBlock } = props;
-  const [hideEmptyGroups, setHideEmptyGroups] = React.useState(true);
+  const [hideEmptyGroups, setHideEmptyGroups] = React.useState(false);
 
   if (
     selectedResourceType === "collaboration-requests" ||
@@ -52,6 +53,17 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
+  const renderGroupThumbnail = (group: IBlock) => {
+    return (
+      <BlockThumbnail
+        block={group}
+        avatarSize="small"
+        count={group[selectedResourceType]?.length}
+        showFields={["name"]}
+      />
+    );
+  };
+
   const renderGroup = groupBasket => {
     const g = groupBasket.items[0];
     const c = g[props.selectedResourceType!] || [];
@@ -62,7 +74,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
 
     return (
       <Column
-        header={g.name}
+        header={renderGroupThumbnail(g)}
         body={
           <Children
             {...props}
@@ -117,7 +129,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
         flexDirection: "column"
       }}
     >
-      {renderToggleEmptyGroups()}
+      {/* {renderToggleEmptyGroups()} */}
       <BoardBlockChildren
         parent={block}
         getChildrenIDs={() => block.groups || []}

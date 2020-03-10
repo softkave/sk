@@ -1,6 +1,7 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
+import BoardTypeListForGroups from "./BoardTypeListForGroups";
 import Children from "./Children";
 import { BoardResourceType } from "./types";
 
@@ -18,6 +19,10 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = props => {
     onClickBlock,
     selectedResourceType
   } = props;
+
+  if (selectedResourceType === "groups") {
+    return <BoardTypeListForGroups {...props} />;
+  }
 
   return (
     <StyledContainer

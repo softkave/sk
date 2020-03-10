@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import ItemAvatar from "../ItemAvatar";
+import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import { IBlockExploreChildrenMenuProps } from "./BlockExploreChildrenMenu";
 
@@ -15,6 +15,8 @@ export interface IBlockThumbnailProps {
   className?: string;
   onClick?: () => void;
   onClickChildMenuItem?: IBlockExploreChildrenMenuProps["onClick"];
+  avatarSize?: IItemAvatarProps["size"];
+  count?: number;
 }
 
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
@@ -25,7 +27,9 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
     block,
     className,
     onClick,
-    showFields
+    showFields,
+    avatarSize,
+    count
     // showExploreMenu,
     // onClickChildMenuItem
   } = props;
@@ -42,9 +46,9 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
     <StyledContainer s={{ flex: 1 }} className={className}>
-      <StyledItemAvatarContainer>
-        <ItemAvatar color={color} />
-      </StyledItemAvatarContainer>
+      <StyledContainer>
+        <ItemAvatar size={avatarSize} color={color} />
+      </StyledContainer>
       <StyledBlockDescriptionContainer style={{ lineHeight: "16px" }}>
         {fieldsToShow.name && (
           <StyledContainer
@@ -59,10 +63,13 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
             onClick={onClick}
           >
             {block.name}
+            {count ? ` (${count})` : ""}
           </StyledContainer>
         )}
         {fieldsToShow.type && (
-          <StyledContainer>{getBlockTypeFullName(block.type)}</StyledContainer>
+          <StyledContainer s={{ opacity: 0.75 }}>
+            {getBlockTypeFullName(block.type)}
+          </StyledContainer>
         )}
         {fieldsToShow.description && (
           <StyledContainer s={{ marginTop: "8px" }}>
@@ -94,8 +101,4 @@ const StyledBlockDescriptionContainer = styled.div({
   flexDirection: "column",
   boxSizing: "border-box",
   display: "flex"
-});
-
-const StyledItemAvatarContainer = styled.div({
-  lineHeight: "32px"
 });
