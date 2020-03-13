@@ -1,5 +1,5 @@
+import { CloseCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Icon } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import StyledContainer from "./styled/Container";
@@ -26,7 +26,7 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
     <StyledContainer>
       <StyledContainer s={{ maxWidth: "300px", fontWeight: "bold" }}>
         <StyledContainer s={{ color: "red", fontSize: "20px" }}>
-          <Icon type="close-circle" theme="twoTone" twoToneColor="red" />
+          <CloseCircleTwoTone twoToneColor="red" />
         </StyledContainer>
         <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
       </StyledContainer>

@@ -1,4 +1,9 @@
-import { Icon } from "antd";
+import {
+  UserOutlined,
+  HomeOutlined,
+  MailOutlined,
+  BlockOutlined
+} from "@ant-design/icons";
 import React from "react";
 import { useHistory } from "react-router";
 import StyledContainer from "../styled/Container";
@@ -44,7 +49,7 @@ const HomeControlBar: React.FC<IHomeControlBarProps> = props => {
           ...(currentItem === "home" ? currentItemStyles : {})
         }}
       >
-        <Icon type="home" />
+        <HomeOutlined />
         {showText && <StyledContainer>Home</StyledContainer>}
       </StyledContainer>
       <StyledContainer
@@ -54,7 +59,7 @@ const HomeControlBar: React.FC<IHomeControlBarProps> = props => {
           ...(currentItem === "notifications" ? currentItemStyles : {})
         }}
       >
-        <Icon type="mail" />
+        <MailOutlined />
         {showText && <StyledContainer>Notifications</StyledContainer>}
       </StyledContainer>
       <StyledContainer
@@ -64,7 +69,7 @@ const HomeControlBar: React.FC<IHomeControlBarProps> = props => {
           ...(currentItem === "organizations" ? currentItemStyles : {})
         }}
       >
-        <Icon type="block" />
+        <BlockOutlined />
         {showText && <StyledContainer>Organizations</StyledContainer>}
       </StyledContainer>
       <StyledContainer
@@ -74,7 +79,7 @@ const HomeControlBar: React.FC<IHomeControlBarProps> = props => {
           ...(currentItem === "user" ? currentItemStyles : {})
         }}
       >
-        <Icon type="user" />
+        <UserOutlined />
         {showText && <StyledContainer>User</StyledContainer>}
       </StyledContainer>
     </StyledContainer>

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Button, Empty, Icon, Typography } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Button, Empty, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -104,7 +105,7 @@ const Notification: React.FC<{}> = props => {
 
       return (
         <React.Fragment>
-          {isResponseLoading && <Icon type="loading" />}
+          {isResponseLoading && <LoadingOutlined />}
           {responseError && <FormError error={responseError} />}
           {!isResponseLoading && (
             <Button.Group>

@@ -1,4 +1,5 @@
-import { Dropdown, Icon, Menu } from "antd";
+import { CaretDownOutlined } from "@ant-design/icons";
+import { Dropdown, Menu } from "antd";
 import React from "react";
 import { findBlock, IBlock } from "../../models/block/block";
 import ItemAvatar from "../ItemAvatar";
@@ -64,7 +65,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
             fontSize: "16px"
           }}
         >
-          <Icon type="caret-down" />
+          <CaretDownOutlined />
         </StyledContainer>
       </StyledContainer>
     </Dropdown>

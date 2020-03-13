@@ -1,5 +1,6 @@
+import { DeleteFilled } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Icon, Switch, Typography } from "antd";
+import { Switch, Typography } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
 import {
@@ -49,7 +50,7 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = pr
           onClick={onUnassign}
           style={{ color: "rgb(255, 77, 79)" }}
         >
-          <Icon type="delete" theme="filled" />
+          <DeleteFilled />
         </StyledFlatButton>
       </StyledContainer>
     </StyledMainContainer>

@@ -1,5 +1,10 @@
+import {
+  ArrowLeftOutlined,
+  CaretDownFilled,
+  LogoutOutlined
+} from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Icon, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -57,7 +62,7 @@ const Header: React.FC<IHeaderProps> = props => {
         <StyledContainer
           s={{ color: "rgb(255, 77, 79)", alignItems: "center" }}
         >
-          <Icon type="logout" />
+          <LogoutOutlined />
           <StyledContainer s={{ flex: 1, marginLeft: "10px" }}>
             Logout
           </StyledContainer>
@@ -65,50 +70,6 @@ const Header: React.FC<IHeaderProps> = props => {
       </StyledMenuItem>
     </Menu>
   );
-
-  // const isIn = (route: string) => {
-  //   return window.location.pathname.includes(route);
-  // };
-
-  // const renderNotificationsButton = (text?: string) => (
-  //   <StyledFlatButton
-  //     style={{
-  //       padding: "0 12px",
-  //       color: isIn("notifications") ? "#40a9ff" : undefined
-  //     }}
-  //     onClick={() => navigateToPath("notifications")}
-  //   >
-  //     <Icon type="alert" />
-  //     {text}
-  //   </StyledFlatButton>
-  // );
-
-  // const renderOrgsButton = (text?: string) => {
-  //   const isInOrgs = isIn("organizations");
-  //   return (
-  //     <StyledFlatButton
-  //       style={{ padding: "0 12px", color: isInOrgs ? "#40a9ff" : undefined }}
-  //       onClick={() => navigateToPath("organizations")}
-  //     >
-  //       <Icon type={isInOrgs ? "folder-open" : "folder"} />
-  //       {text}
-  //     </StyledFlatButton>
-  //   );
-  // };
-
-  // const renderNavButtonsForMobile = () => (
-  //   <>
-  //     {renderOrgsButton()}
-  //     {renderNotificationsButton()}
-  //   </>
-  // );
-
-  // const renderNavButtonsForDesktop = () => (
-  //   <>
-  //     {renderOrgsButton("Organizations")}
-  //     {renderNotificationsButton("Notifications")}
-  //   </>
-  // );
 
   // TODO: implement line clamping on the application name
   return (
@@ -118,7 +79,7 @@ const Header: React.FC<IHeaderProps> = props => {
           onClick={onNavigateBack}
           style={{ marginRight: "12px" }}
         >
-          <Icon type="arrow-left" />
+          <ArrowLeftOutlined />
         </StyledFlatButton>
       )}
       <StyledApplicationNameContainer>{content}</StyledApplicationNameContainer>
@@ -131,11 +92,7 @@ const Header: React.FC<IHeaderProps> = props => {
               onClick={() => null}
               color={user.color || theme.colors.defaults.avatar}
             />
-            <Icon
-              type="caret-down"
-              theme="filled"
-              style={{ marginLeft: "4px", fontSize: "14px" }}
-            />
+            <CaretDownFilled style={{ marginLeft: "4px", fontSize: "14px" }} />
           </StyledAvatarButton>
         </Dropdown>
       </StyledContainer>

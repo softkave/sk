@@ -1,14 +1,6 @@
+import { RightCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Icon,
-  Input,
-  List,
-  Select,
-  Switch
-} from "antd";
+import { Button, DatePicker, Form, Input, List, Select, Switch } from "antd";
 import moment from "moment";
 import React from "react";
 import {
@@ -118,7 +110,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         }
       >
         <Input.TextArea
-          autosize={{ minRows: 2, maxRows: 6 }}
+          autoSize={{ minRows: 2, maxRows: 6 }}
           autoComplete="off"
           name="description"
           placeholder="Description"
@@ -248,7 +240,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
           }
           s={{ display: "block", lineHeight: "32px" }}
         >
-          <Icon type="right-circle" theme="twoTone" /> Assign To Me
+          <RightCircleTwoTone /> Assign To Me
         </StyledContainerAsLink>
         <StyledTaskCollaboaratorsContainer>
           {this.renderTaskCollaborators()}

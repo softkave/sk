@@ -1,5 +1,11 @@
+import {
+  CloseCircleTwoTone,
+  DeleteFilled,
+  EditTwoTone,
+  SaveTwoTone
+} from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Icon, Input, Switch } from "antd";
+import { Input, Switch } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
 import { ISubTask } from "../../models/block/block";
@@ -36,7 +42,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
 
   const renderDeleteBtn = () => (
     <StyledFlatButton onClick={onDelete} style={{ color: "rgb(255, 77, 79)" }}>
-      <Icon type="delete" theme="filled" /> Delete
+      <DeleteFilled /> Delete
     </StyledFlatButton>
   );
 
@@ -44,7 +50,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
     return (
       <StyledContainer s={{ flex: 1, marginTop: "8px" }}>
         <StyledFlatButton onClick={onEdit} style={{ color: "#1890ff" }}>
-          <Icon type="edit" theme="twoTone" /> Edit
+          <EditTwoTone /> Edit
         </StyledFlatButton>
         <StyledContainer s={{ marginLeft: "32px" }}>
           {renderDeleteBtn()}
@@ -74,12 +80,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
             onClick={onCancelEdit}
             style={{ marginLeft: "32px", color: "rgb(255, 77, 79)" }}
           >
-            <Icon
-              type="close-circle"
-              theme="twoTone"
-              twoToneColor="rgb(255, 77, 79)"
-            />{" "}
-            Cancel
+            <CloseCircleTwoTone twoToneColor="rgb(255, 77, 79)" /> Cancel
           </StyledFlatButton>
         )}
         {subTask.description.length > 0 && (
@@ -87,7 +88,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
             onClick={onSave}
             style={{ marginLeft: "32px", color: "#1890ff" }}
           >
-            <Icon type="save" theme="twoTone" /> Save
+            <SaveTwoTone /> Save
           </StyledFlatButton>
         )}
       </StyledContainer>
@@ -99,7 +100,7 @@ const SubTask: React.SFC<ISubTaskProps> = props => {
       <React.Fragment>
         <Input.TextArea
           // TODO: These constants should go in a theme file
-          autosize={{ minRows: 2, maxRows: 6 }}
+          autoSize={{ minRows: 2, maxRows: 6 }}
           autoComplete="off"
           name="description"
           placeholder="Description"

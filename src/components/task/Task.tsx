@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Icon } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
@@ -43,7 +43,7 @@ const Task: React.FC<ITaskProps> = props => {
             title="edit task"
             style={{ marginRight: "32px" }}
           >
-            <Icon type="edit" />
+            <EditOutlined />
           </StyledFlatButton>
         )}
         <DeleteButtonWithPrompt
@@ -51,7 +51,7 @@ const Task: React.FC<ITaskProps> = props => {
           title="Are you sure you want to delete this task?"
         >
           <StyledFlatButton>
-            <Icon type="delete" />
+            <DeleteOutlined />
           </StyledFlatButton>
         </DeleteButtonWithPrompt>
       </StyledControlsContainer>

@@ -1,5 +1,5 @@
+import { PlusOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Icon } from "antd";
 import isNumber from "lodash/isNumber";
 import React from "react";
 import StyledContainer from "../styled/Container";
@@ -21,7 +21,7 @@ const BoardBlockTypeHeader: React.FC<IBoardBlockTypeHeaderProps> = props => {
         {isNumber(count) && ` (${count})`}
       </StyledHeaderName>
       <StyledFlatButton onClick={onClickCreate}>
-        <Icon type="plus" />
+        <PlusOutlined />
       </StyledFlatButton>
     </StyledContainer>
   );

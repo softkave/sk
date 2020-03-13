@@ -1,3 +1,4 @@
+import { BlockOutlined, LogoutOutlined, MailOutlined } from "@ant-design/icons";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -57,7 +58,7 @@ const HomeMenu: React.FC<{}> = () => {
       <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
         <MenuItem
           key="notifications"
-          iconType="mail"
+          icon={<MailOutlined />}
           content={
             sessionDetails.notificationsCount === 1
               ? "Notification"
@@ -68,7 +69,7 @@ const HomeMenu: React.FC<{}> = () => {
         />
         <MenuItem
           key="organizations"
-          iconType="block"
+          icon={<BlockOutlined />}
           content={
             sessionDetails.organizationsCount === 1
               ? "Organization"
@@ -80,7 +81,7 @@ const HomeMenu: React.FC<{}> = () => {
       </StyledContainer>
       <MenuItem
         key="logout"
-        iconType="logout"
+        icon={<LogoutOutlined />}
         content="Logout"
         style={{ color: "rgb(255, 77, 79)", marginTop: "32px" }}
         onClick={onLogout}

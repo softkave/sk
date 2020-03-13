@@ -1,22 +1,17 @@
 import styled from "@emotion/styled";
 import React from "react";
-
-import WebBody from "./WebBody";
+import WebBody2 from "./WebBody2";
 import WebFooter from "./WebFooter";
 import WebHeader from "./WebHeader";
 
 const Web: React.SFC<{}> = () => {
   return (
     <StyledWeb>
-      <StyledWebHeader>
-        <WebHeader />
-      </StyledWebHeader>
+      <WebHeader />
       <StyledWebBody>
-        <WebBody />
+        <WebBody2 />
       </StyledWebBody>
-      <StyledWebFooter>
-        <WebFooter />
-      </StyledWebFooter>
+      <WebFooter />
     </StyledWeb>
   );
 };
@@ -29,12 +24,8 @@ const StyledWeb = styled.div`
   min-height: 100%;
 `;
 
-const StyledWebHeader = styled.div``;
-
 const StyledWebBody = styled.div`
   flex: 1;
   display: flex;
   margin: 100px 0;
 `;
-
-const StyledWebFooter = styled.div``;

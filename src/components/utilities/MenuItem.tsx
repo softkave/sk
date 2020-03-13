@@ -1,32 +1,24 @@
-import { Icon } from "antd";
 import React from "react";
 import StyledContainer from "../styled/Container";
 
 export interface IMenuItemProps {
   content: string;
   onClick: () => void;
-  iconType?: string;
+  icon?: React.ReactNode;
   count?: number;
   keepIconSpace?: boolean;
   style?: React.CSSProperties;
 }
 
 const MenuItem: React.FC<IMenuItemProps> = props => {
-  const {
-    content: name,
-    count,
-    iconType,
-    style,
-    keepIconSpace,
-    onClick
-  } = props;
+  const { content: name, count, icon, style, keepIconSpace, onClick } = props;
 
   const iconWidth = "16px";
   const renderIcon = () => {
-    if (iconType) {
+    if (icon) {
       return (
         <StyledContainer s={{ width: iconWidth, marginRight: "8px" }}>
-          <Icon type={iconType} />
+          {icon}
         </StyledContainer>
       );
     } else if (keepIconSpace) {

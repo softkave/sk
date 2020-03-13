@@ -1,4 +1,5 @@
-import { Divider, Icon } from "antd";
+import { Divider } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
 import { useSelector } from "react-redux";
 import { ISubTask } from "../../models/block/block";
@@ -167,7 +168,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
         </StyledContainer>
         {subTasks.length < blockConstants.maxSubTasksLength && (
           <StyledFlatButton>
-            <Icon type="plus" />
+            <PlusOutlined />
           </StyledFlatButton>
         )}
       </StyledContainer>

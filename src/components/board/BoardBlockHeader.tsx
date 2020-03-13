@@ -1,5 +1,10 @@
+import Icon, {
+  PlusOutlined,
+  UnorderedListOutlined,
+  SettingOutlined
+} from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Dropdown, Icon, Menu, Select } from "antd";
+import { Dropdown, Menu, Select } from "antd";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -124,7 +129,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         {selectedBoardType === "kanban" &&
           isFunction(onChangeKanbanResourceType) && (
             <Select
-              value={resourceType}
+              value={resourceType!}
               onChange={value => onChangeKanbanResourceType(value)}
               style={{ marginLeft: "8px" }}
             >
@@ -184,7 +189,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         trigger={["click"]}
       >
         <StyledFlatButton style={{ margin: "0 8px" }}>
-          <Icon type="plus" />
+          <PlusOutlined />
         </StyledFlatButton>
       </Dropdown>
       {showKanban && renderKanbanSelector()}
@@ -197,7 +202,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
               selectedBoardType === "list" ? selectedBoardTypeColor : undefined
           }}
         >
-          <Icon type="unordered-list" />
+          <UnorderedListOutlined />
         </StyledFlatButton>
       )}
       {showTabs && (
@@ -217,7 +222,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
       )}
       <Dropdown overlay={settingsMenu} trigger={["click"]}>
         <StyledFlatButton style={{ marginLeft: "8px" }}>
-          <Icon type="setting" />
+          <SettingOutlined />
         </StyledFlatButton>
       </Dropdown>
     </StyledContainer>

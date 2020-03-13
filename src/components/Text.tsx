@@ -1,5 +1,5 @@
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Icon } from "antd";
 import React from "react";
 import StyledContainer from "./styled/Container";
 
@@ -20,7 +20,7 @@ const Text: React.FC<ITextProps> = props => {
 
   const toggleExpand = () => setExpand(!expand);
 
-  const renderControl = (controlText: string, icon: string) => (
+  const renderControl = (controlText: string, icon: React.ReactNode) => (
     <StyledButton
       s={{
         display: "inline-block",
@@ -33,7 +33,7 @@ const Text: React.FC<ITextProps> = props => {
       onClick={toggleExpand}
     >
       {controlText}
-      <StyledControlIcon type={icon} />
+      {icon}
     </StyledButton>
   );
 
@@ -42,7 +42,7 @@ const Text: React.FC<ITextProps> = props => {
       return (
         <StyledTextContainer>
           {text}
-          {renderControl("less", "up")}
+          {renderControl("less", <UpOutlined />)}
         </StyledTextContainer>
       );
     } else {
@@ -52,7 +52,7 @@ const Text: React.FC<ITextProps> = props => {
         <StyledHideTextContainer>
           {renderedText}
           {"..."}
-          {renderControl("more", "down")}
+          {renderControl("more", <DownOutlined />)}
         </StyledHideTextContainer>
       );
     }
@@ -74,8 +74,4 @@ const StyledTextContainer = styled.p({
 
 const StyledHideTextContainer = styled(StyledTextContainer)({
   whiteSpace: "normal"
-});
-
-const StyledControlIcon = styled(Icon)({
-  fontSize: "11px"
 });

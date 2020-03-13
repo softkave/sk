@@ -1,4 +1,4 @@
-import { Icon } from "antd";
+import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
@@ -21,10 +21,15 @@ const BlockExploreChildrenMenu: React.FC<IBlockExploreChildrenMenuProps> = props
   return (
     <StyledContainer s={{ flexDirection: "column" }}>
       <StyledFlatButton onClick={toggleExpand} style={{ textAlign: "left" }}>
-        <Icon
-          type={isExploreExpanded ? "caret-down" : "caret-right"}
-          style={{ marginRight: "16px", fontSize: "14px" }}
-        />
+        {isExploreExpanded ? (
+          <CaretDownOutlined
+            style={{ marginRight: "16px", fontSize: "14px" }}
+          />
+        ) : (
+          <CaretRightOutlined
+            style={{ marginRight: "16px", fontSize: "14px" }}
+          />
+        )}
         Explore - {isExploreExpanded ? "Collapse" : "Expand"}
       </StyledFlatButton>
       {isExploreExpanded && (
