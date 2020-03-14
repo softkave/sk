@@ -9,7 +9,7 @@ import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
 
-const StyledButton = StyledContainer.withComponent("button");
+// const StyledButton = StyledContainer.withComponent("button");
 
 export interface IBoardTypeKanbanProps {
   block: IBlock;
@@ -22,7 +22,10 @@ type RenderBasketFunc = (basket: IBoardBasket) => React.ReactNode;
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const { block, selectedResourceType, onClickBlock } = props;
-  const [hideEmptyGroups, setHideEmptyGroups] = React.useState(false);
+  const [
+    hideEmptyGroups
+    // setHideEmptyGroups
+  ] = React.useState(false);
 
   if (
     selectedResourceType === "collaboration-requests" ||
@@ -32,9 +35,9 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     return <BoardTypeList {...props} />;
   }
 
-  const toggleHideEmptyGroups = () => {
-    setHideEmptyGroups(!hideEmptyGroups);
-  };
+  // const toggleHideEmptyGroups = () => {
+  //   setHideEmptyGroups(!hideEmptyGroups);
+  // };
 
   const renderBaskets = (
     blocks: IBlock[],
@@ -88,37 +91,37 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
-  const renderToggleEmptyGroups = () => {
-    let content: React.ReactNode = null;
+  // const renderToggleEmptyGroups = () => {
+  //   let content: React.ReactNode = null;
 
-    if (hideEmptyGroups) {
-      content = "Show Empty Groups";
-    } else {
-      content = "Hide Empty Groups";
-    }
+  //   if (hideEmptyGroups) {
+  //     content = "Show Empty Groups";
+  //   } else {
+  //     content = "Hide Empty Groups";
+  //   }
 
-    return (
-      <StyledContainer
-        s={{
-          justifyContent: "flex-end",
-          marginBottom: "20px",
-          padding: "0 16px"
-        }}
-      >
-        <StyledButton
-          s={{
-            color: "rgb(66,133,244)",
-            border: "none",
-            backgroundColor: "inherit",
-            cursor: "pointer"
-          }}
-          onClick={toggleHideEmptyGroups}
-        >
-          {content}
-        </StyledButton>
-      </StyledContainer>
-    );
-  };
+  //   return (
+  //     <StyledContainer
+  //       s={{
+  //         justifyContent: "flex-end",
+  //         marginBottom: "20px",
+  //         padding: "0 16px"
+  //       }}
+  //     >
+  //       <StyledButton
+  //         s={{
+  //           color: "rgb(66,133,244)",
+  //           border: "none",
+  //           backgroundColor: "inherit",
+  //           cursor: "pointer"
+  //         }}
+  //         onClick={toggleHideEmptyGroups}
+  //       >
+  //         {content}
+  //       </StyledButton>
+  //     </StyledContainer>
+  //   );
+  // };
 
   return (
     <StyledContainer

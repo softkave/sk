@@ -73,7 +73,7 @@ export default class AddCollaboratorForm extends React.PureComponent<
               help={touched.message && <FormError>{errors.message}</FormError>}
             >
               <Input.TextArea
-                autosize={{ minRows: 2, maxRows: 6 }}
+                autoSize={{ minRows: 2, maxRows: 6 }}
                 autoComplete="off"
                 name="message"
                 value={values.message}

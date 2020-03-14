@@ -79,7 +79,7 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
               }
             >
               <Input.TextArea
-                autosize={{ minRows: 2, maxRows: 6 }}
+                autoSize={{ minRows: 2, maxRows: 6 }}
                 autoComplete="off"
                 name="description"
                 onBlur={handleBlur}

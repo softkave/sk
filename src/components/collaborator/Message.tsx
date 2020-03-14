@@ -15,7 +15,7 @@ class Message extends React.PureComponent<IMessageProps> {
     return (
       <Input.TextArea
         placeholder={placeholder}
-        autosize={{ minRows: 2, maxRows: 6 }}
+        autoSize={{ minRows: 2, maxRows: 6 }}
         autoComplete="off"
         value={value}
         onBlur={onBlur}

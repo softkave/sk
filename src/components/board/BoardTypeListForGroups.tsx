@@ -78,6 +78,7 @@ const BoardTypeListForGroups: React.FC<IBoardTypeListForGroupsProps> = props => 
     tabs.push({ key: "projects", title: "Projects", render: renderGroups });
   }
 
+  const collapseElemSelector = "& .ant-collapse";
   return (
     <StyledContainer
       s={{
@@ -86,7 +87,7 @@ const BoardTypeListForGroups: React.FC<IBoardTypeListForGroupsProps> = props => 
         flex: 1,
         width: "100%",
 
-        ["& .ant-collapse"]: {
+        [collapseElemSelector]: {
           width: "100%"
         }
       }}

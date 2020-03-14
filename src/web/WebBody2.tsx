@@ -1,3 +1,4 @@
+import { AppstoreAddOutlined } from "@ant-design/icons";
 import React from "react";
 import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer, {
@@ -16,12 +17,12 @@ const WebBody2: React.SFC<{}> = () => {
 
   const render = (style: any) => {
     return (
-      <StyledContainer s={style}>
-        <WebCard icon="AppstoreAddOutlined" text="Manage Tasks" />
-        <WebCard icon="AppstoreAddOutlined" text="Manage Projects" />
-        <WebCard icon="AppstoreAddOutlined" text="Manage Groups" />
+      <StyledContainer s={{ ...style, flex: 1 }}>
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Tasks" />
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Projects" />
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Groups" />
         <WebCard
-          icon="AppstoreAddOutlined"
+          icon={<AppstoreAddOutlined />}
           text="Manage Organizations and Collaborators"
         />
       </StyledContainer>

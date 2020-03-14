@@ -117,7 +117,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
       help={touched.description && <FormError>{errors.description}</FormError>}
     >
       <Input.TextArea
-        autosize={{ minRows: 2, maxRows: 6 }}
+        autoSize={{ minRows: 2, maxRows: 6 }}
         autoComplete="off"
         name="description"
         onBlur={handleBlur}

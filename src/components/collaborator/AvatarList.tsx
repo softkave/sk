@@ -65,7 +65,7 @@ export default class AvatarList extends React.Component<IAvatarListProps> {
 
     if (renderExtra) {
       return (
-        <Row key={avatar.key} type="flex" align="middle">
+        <Row key={avatar.key} align="middle">
           <Col span={4}>{renderedAvatar}</Col>
           <Col span={20}>{avatar.extra}</Col>
         </Row>
