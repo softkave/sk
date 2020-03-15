@@ -71,6 +71,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
             <Form.Item
               label="Default Message"
               help={touched.message && <FormError>{errors.message}</FormError>}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
             >
               <Input.TextArea
                 autoSize={{ minRows: 2, maxRows: 6 }}
@@ -86,6 +88,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
               help={
                 touched.expiresAt && <FormError>{errors.expiresAt}</FormError>
               }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
             >
               <ExpiresAt
                 minDate={moment()
@@ -103,6 +107,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
                   <FormError>{errors.requests}</FormError>
                 )
               }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
             >
               <AddCollaboratorFormItemList
                 value={values.requests}

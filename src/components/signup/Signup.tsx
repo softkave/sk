@@ -115,6 +115,8 @@ class Signup extends React.Component<ISignupProps> {
                 <Form.Item
                   label="Name"
                   help={touched.name && <FormError>{errors.name}</FormError>}
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="name"
@@ -127,6 +129,8 @@ class Signup extends React.Component<ISignupProps> {
                 <Form.Item
                   label="Email Address"
                   help={touched.email && <FormError>{errors.email}</FormError>}
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="email"
@@ -143,6 +147,8 @@ class Signup extends React.Component<ISignupProps> {
                       <FormError>{errors.confirmEmail}</FormError>
                     )
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="email"
@@ -162,6 +168,8 @@ class Signup extends React.Component<ISignupProps> {
                       passwordExtraInfo
                     )
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input.Password
                     visibilityToggle
@@ -179,6 +187,8 @@ class Signup extends React.Component<ISignupProps> {
                       <FormError>{errors.confirmPassword}</FormError>
                     )
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input.Password
                     visibilityToggle

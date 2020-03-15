@@ -93,6 +93,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       <Form.Item
         label="Parent"
         help={touched.parent && <FormError>{errors.parent}</FormError>}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
       >
         <BlockParentSelection
           value={values.parent}
@@ -108,6 +110,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         help={
           touched.description && <FormError>{errors.description}</FormError>
         }
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
       >
         <Input.TextArea
           autoSize={{ minRows: 2, maxRows: 6 }}
@@ -150,10 +154,9 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderToggleSwitch = () => (
       <Form.Item
         label="Completed"
-        // labelCol={{ span: 12 }}
-        // wrapperCol={{ span: 12 }}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
         labelAlign="left"
-        // style={{ textAlign: "right" }}
       >
         <Switch
           checked={!!values.taskCollaborationData.completedAt}
@@ -165,8 +168,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     const renderPriority = () => (
       <Form.Item
         label="Priority"
-        // labelCol={{ span: 12 }}
-        // wrapperCol={{ span: 12 }}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
         labelAlign="left"
       >
         <EditPriority
@@ -208,7 +211,11 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     );
 
     const renderAssignedToInput = () => (
-      <Form.Item label="Assigned To">
+      <Form.Item
+        label="Assigned To"
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
         <Select
           placeholder="Assign collaborator"
           value={undefined}

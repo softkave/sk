@@ -1,54 +1,40 @@
-import styled from "@emotion/styled";
+import { AppstoreAddOutlined } from "@ant-design/icons";
 import React from "react";
-
-import WebPropTask from "./WebPropTask";
+import RenderForDevice from "../components/RenderForDevice";
+import StyledContainer, {
+  IStyledContainerProps
+} from "../components/styled/Container";
+import WebCard from "./WebCard";
 
 const WebBody: React.SFC<{}> = () => {
+  const mobileStyle: IStyledContainerProps["s"] = {
+    flexDirection: "column"
+  };
+
+  const desktopStyle: IStyledContainerProps["s"] = {
+    justifyContent: "center"
+  };
+
+  const render = (style: any) => {
+    return (
+      <StyledContainer s={{ ...style, flex: 1 }}>
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Tasks" />
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Projects" />
+        <WebCard icon={<AppstoreAddOutlined />} text="Manage Groups" />
+        <WebCard
+          icon={<AppstoreAddOutlined />}
+          text="Manage Organizations and Collaborators"
+        />
+      </StyledContainer>
+    );
+  };
+
   return (
-    <StyledWebBody>
-      <StyledWebBodyContent>
-        <StyledTaskWrapper>
-          <WebPropTask checked priority="not important">
-            <StyledTaskContent>Manage</StyledTaskContent>
-          </WebPropTask>
-        </StyledTaskWrapper>
-        <StyledTaskWrapper>
-          <WebPropTask checked priority="important">
-            <StyledTaskContent>Your</StyledTaskContent>
-          </WebPropTask>
-        </StyledTaskWrapper>
-        <StyledTaskWrapper>
-          <WebPropTask checked priority="very important">
-            <StyledTaskContent>Tasks</StyledTaskContent>
-          </WebPropTask>
-        </StyledTaskWrapper>
-      </StyledWebBodyContent>
-    </StyledWebBody>
+    <RenderForDevice
+      renderForDesktop={() => render(desktopStyle)}
+      renderForMobile={() => render(mobileStyle)}
+    />
   );
 };
 
 export default WebBody;
-
-const StyledWebBody = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledWebBodyContent = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-`;
-
-const StyledTaskWrapper = styled.div`
-  display: inline-block;
-`;
-
-const StyledTaskContent = styled.span`
-  font-weight: bold;
-  font-size: 24px;
-`;
