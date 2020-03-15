@@ -183,7 +183,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
             block={blockForm!.block}
             formType={blockForm!.formType}
             onClose={resetBlockForm}
-            parent={block}
           />
         </StyledContainer>
       );

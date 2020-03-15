@@ -100,6 +100,8 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                 <Form.Item
                   label="Email Address"
                   help={touched.email && <FormError>{errors.email}</FormError>}
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="email"
@@ -116,6 +118,8 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                       <FormError>{errors.confirmEmail}</FormError>
                     )
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="email"

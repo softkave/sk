@@ -3,7 +3,9 @@ import styled from "@emotion/styled";
 export const FormBodyContainer = styled("div")({
   display: "flex",
   flexDirection: "column",
-  height: "100%"
+  height: "100%",
+  overflow: "hidden",
+  flex: 1
 });
 
 export const FormBody = styled("div")({
@@ -22,5 +24,7 @@ export const FormControls = styled("div")({
 });
 
 export const StyledForm = styled("form")`
-  height: 100%;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 `;

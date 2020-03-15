@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
@@ -56,10 +57,10 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
         {this.renderList()}
         <Button
           block
-          icon="plus"
           onClick={this.onAdd}
           disabled={value.length >= maxRequests}
         >
+          <PlusOutlined />
           Add Collaborator
         </Button>
       </React.Fragment>
@@ -108,13 +109,11 @@ const StyledList = styled.div({
   margin: "16px 0"
 });
 
-const StyledItem = styled.div(props => {
-  return {
-    borderBottom: "1px solid #bbb",
-    padding: "16px",
+const StyledItem = styled.div({
+  borderBottom: "1px solid #bbb",
+  padding: "16px",
 
-    "&:last-of-type": {
-      borderBottom: "none"
-    }
-  };
+  "&:last-of-type": {
+    borderBottom: "none"
+  }
 });

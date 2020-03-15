@@ -61,6 +61,8 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
                   <FormError error={formErrors.name} />
                 ))
               }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
             >
               <Input
                 autoComplete="off"
@@ -77,6 +79,8 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
                   <FormError>{errors.description}</FormError>
                 )
               }
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
             >
               <Input.TextArea
                 autoSize={{ minRows: 2, maxRows: 6 }}

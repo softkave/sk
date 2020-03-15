@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import WebBody2 from "./WebBody2";
+import WebBody from "./WebBody";
 import WebFooter from "./WebFooter";
 import WebHeader from "./WebHeader";
 
@@ -9,7 +9,7 @@ const Web: React.SFC<{}> = () => {
     <StyledWeb>
       <WebHeader />
       <StyledWebBody>
-        <WebBody2 />
+        <WebBody />
       </StyledWebBody>
       <WebFooter />
     </StyledWeb>

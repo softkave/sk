@@ -76,6 +76,8 @@ class Login extends React.Component<ILoginProps> {
                 <Form.Item
                   label="Email Address"
                   help={touched.email && <FormError>{errors.email}</FormError>}
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input
                     autoComplete="email"
@@ -90,6 +92,8 @@ class Login extends React.Component<ILoginProps> {
                   help={
                     touched.password && <FormError>{errors.password}</FormError>
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input.Password
                     visibilityToggle

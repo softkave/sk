@@ -1,8 +1,8 @@
+import { MenuOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
-
 import Logo from "../components/Logo";
 
 const WebHeader: React.SFC<{}> = () => {
@@ -28,7 +28,9 @@ const WebHeader: React.SFC<{}> = () => {
             </Menu>
           }
         >
-          <Button icon="menu-fold" />
+          <Button type="link">
+            <MenuOutlined />
+          </Button>
         </Dropdown>
       </StyledRightButtons>
     </StyledWebHeader>

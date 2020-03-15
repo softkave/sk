@@ -37,11 +37,10 @@ export interface IBlockFormsProps {
   block: IBlock;
   formType: BlockFormType;
   onClose: () => void;
-  parent?: IBlock;
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = props => {
-  const { block, formType, onClose, parent } = props;
+  const { block, formType, onClose } = props;
   const store = useStore();
 
   const parents = useBlockParents(block);
@@ -130,7 +129,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
   const onCompleteEditBlock = (values: any, options: IOperationFuncOptions) => {
     if (formType === "add-block-form") {
       const newBlock = { ...block, ...values };
-      addBlockOperationFunc({ parent, user, block: newBlock }, options);
+      addBlockOperationFunc({ user, block: newBlock }, options);
     } else {
       updateBlockOperationFunc({ block, data: values }, options);
     }
@@ -219,12 +218,14 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+    <StyledContainer
+      s={{ flexDirection: "column", width: "100%", overflowY: "hidden" }}
+    >
       <StyledContainerAsH3 s={{ padding: "0 16px" }}>
         <StyledContainer s={{ flex: 1 }}>{formLabel}</StyledContainer>
-        <StyledFlatButton style={{ color: "#ff4d4f" }} onClick={onClose}>
+        {/* <StyledFlatButton style={{ color: "#ff4d4f" }} onClick={onClose}>
           Cancel
-        </StyledFlatButton>
+        </StyledFlatButton> */}
       </StyledContainerAsH3>
       {formType === "collaborator-form"
         ? renderCollaboratorForm()

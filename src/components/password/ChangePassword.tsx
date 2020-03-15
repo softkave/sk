@@ -106,6 +106,8 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
                   help={
                     touched.password && <FormError>{errors.password}</FormError>
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input.Password
                     visibilityToggle
@@ -123,6 +125,8 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
                       <FormError>{errors.confirmPassword}</FormError>
                     )
                   }
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
                 >
                   <Input.Password
                     visibilityToggle

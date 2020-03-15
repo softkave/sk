@@ -86,6 +86,8 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     <Form.Item
       label="Parent"
       help={touched.parent && <FormError>{errors.parent}</FormError>}
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
     >
       <BlockParentSelection
         value={values.parent}
@@ -101,6 +103,8 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     <Form.Item
       label="Project Name"
       help={touched.name && <FormError>{projectNameError}</FormError>}
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
     >
       <Input
         autoComplete="off"
@@ -119,6 +123,8 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     <Form.Item
       label="Description"
       help={touched.description && <FormError>{errors.description}</FormError>}
+      labelCol={{ span: 24 }}
+      wrapperCol={{ span: 24 }}
     >
       <Input.TextArea
         autoSize={{ minRows: 2, maxRows: 6 }}

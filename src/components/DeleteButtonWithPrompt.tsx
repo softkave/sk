@@ -1,3 +1,4 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Modal } from "antd";
 import React from "react";
 
@@ -33,7 +34,11 @@ const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = props => {
   const singleChild = React.Children.only(children);
 
   if (!React.isValidElement(singleChild)) {
-    return <Button icon="delete" type="danger" onClick={showDeleteConfirm} />;
+    return (
+      <Button type="danger" onClick={showDeleteConfirm}>
+        <DeleteOutlined />
+      </Button>
+    );
   }
 
   return React.cloneElement(singleChild, {
