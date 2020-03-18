@@ -35,6 +35,7 @@ export const loginUserOperationID = "loginUserOperationID";
 export const requestForgotPasswordOperationID =
   "requestForgotPasswordOperationID";
 export const changePasswordOperationID = "changePasswordOperationID";
+export const getBlockLandingPageOperationID = "getBlockLandingPageOperationID";
 
 export default class OperationIDs {
   // block
@@ -67,4 +68,5 @@ export default class OperationIDs {
   public static requestForgotPassword = requestForgotPasswordOperationID;
   public static changePassword = changePasswordOperationID;
   public static getSessionDetails = "getSessionDetails";
+  public static getBlockLandingPageOperationID = getBlockLandingPageOperationID;
 }

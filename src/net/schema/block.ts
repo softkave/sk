@@ -36,6 +36,7 @@ const blockFragment = `
       completedAt
       completedBy
     }
+    landingPage
   }
 `;
 
@@ -278,6 +279,20 @@ export const getTasksAssignedToUserQuery = `
         blocks {
           ...blockFragment
         }
+      }
+    }
+  }
+`;
+
+export const getBlockLandingPageQuery = `
+  ${errorFragment}
+  query GetBlockLandingPageQuery($customId: String!) {
+    block {
+      getBlockLandingPage(customId: $customId) {
+        errors {
+          ...errorFragment
+        }
+        page
       }
     }
   }

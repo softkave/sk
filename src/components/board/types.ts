@@ -1,5 +1,3 @@
-import { BlockType } from "../../models/block/block";
-
 export type BoardResourceType =
   | "groups"
   | "tasks"

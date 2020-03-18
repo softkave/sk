@@ -1,6 +1,6 @@
 import { BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
-import { BoardResourceType } from "./types";
+import { BoardResourceType, BoardType } from "./types";
 
 const cbReq = "collaboration-requests";
 
@@ -60,4 +60,34 @@ export const getBlockResourceTypes = (
   }
 
   return blockResourceTypes;
+};
+
+export const getBlockBoardTypes = (
+  block: IBlock,
+  isMobile: boolean = false
+): BoardType[] => {
+  let types: BoardType[] = [];
+
+  switch (block.type) {
+    case "org":
+    case "project":
+      types = ["kanban", "list", "tab"];
+      break;
+
+    case "group":
+      types = ["list", "tab"];
+      break;
+  }
+
+  if (isMobile) {
+    types = types.filter(type => {
+      if (type === "tab") {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  return types;
 };

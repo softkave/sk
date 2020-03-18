@@ -5,13 +5,15 @@ import { useHistory, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
+import getBlockLandingPageOperationFunc from "../../redux/operations/block/getBlockLandingPage";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
-  getBlockCollaboratorsOperationID
+  getBlockCollaboratorsOperationID,
+  getBlockLandingPageOperationID
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { pluralize } from "../../utils/utils";
@@ -123,6 +125,28 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
+  const blockLandingPage = block.landingPage;
+  const loadBlockLandingPage = (loadProps: IUseOperationStatus) => {
+    if (!!!loadProps.operation) {
+      if (!blockLandingPage) {
+        getBlockLandingPageOperationFunc({ block });
+      }
+    }
+  };
+
+  const loadBlockLandingPageStatus = useOperation(
+    {
+      operationID: getBlockLandingPageOperationID,
+      resourceID: block.customId
+    },
+    loadBlockLandingPage
+  );
+
+  const isLoadingBlockLandingPage =
+    !blockLandingPage &&
+    (loadBlockLandingPageStatus.isLoading ||
+      !!!loadBlockLandingPageStatus.operation);
+
   const pushRoute = route => {
     const search = window.location.search;
     const url = `${route}${search}`;
@@ -190,7 +214,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   };
 
   const shouldRenderLoading = () => {
-    return isLoadingCollaborators || isLoadingRequests || isLoadingChildren;
+    return (
+      isLoadingCollaborators ||
+      isLoadingRequests ||
+      isLoadingChildren ||
+      isLoadingBlockLandingPage
+    );
   };
 
   const getLoadErrors = () => {
