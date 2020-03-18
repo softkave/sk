@@ -29,6 +29,7 @@ import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardHomeForBlock from "./BoardHomeForBlock";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
+import { getBlockLandingPage } from "./utils";
 
 interface IBlockFormState {
   block: IBlock;
@@ -125,7 +126,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
-  const blockLandingPage = block.landingPage;
+  const blockLandingPage = getBlockLandingPage(block);
   const loadBlockLandingPage = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
       if (!blockLandingPage) {
@@ -231,6 +232,10 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
 
     if (loadRequestsStatus && loadRequestsStatus.error) {
       loadErrors.push(loadRequestsStatus.error);
+    }
+
+    if (loadBlockLandingPageStatus && loadBlockLandingPageStatus.error) {
+      loadErrors.push(loadBlockLandingPageStatus.error);
     }
 
     return loadErrors;
