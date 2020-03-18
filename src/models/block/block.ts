@@ -43,6 +43,8 @@ export interface ITaskCollaborationData {
   completedBy?: string | null;
 }
 
+export type BlockLandingPage = "tasks" | "projects" | "self";
+
 export interface IBlock {
   customId: string;
   name: string;
@@ -66,6 +68,7 @@ export interface IBlock {
   collaborators?: string[];
   collaborationRequests?: string[];
   subTasks?: ISubTask[];
+  landingPage?: BlockLandingPage;
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

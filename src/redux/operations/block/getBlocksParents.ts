@@ -18,7 +18,7 @@ export interface IGetBlocksParentsOperationFuncProps {
   customIDs: string[];
 }
 
-export default async function getBlockParentsOperationFunc(
+export default async function getBlocksParentsOperationFunc(
   state: IReduxState,
   dispatch: Dispatch,
   dataProps: IGetBlocksParentsOperationFuncProps,

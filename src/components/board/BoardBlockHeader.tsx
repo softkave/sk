@@ -1,7 +1,7 @@
 import Icon, {
   PlusOutlined,
-  UnorderedListOutlined,
-  SettingOutlined
+  SettingOutlined,
+  UnorderedListOutlined
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Dropdown, Menu, Select } from "antd";

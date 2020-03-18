@@ -283,6 +283,20 @@ export const getTasksAssignedToUserQuery = `
   }
 `;
 
+export const getBlockLandingPageQuery = `
+  ${errorFragment}
+  query GetBlockLandingPageQuery($customId: String!) {
+    block {
+      getBlockLandingPage(customId: $customId) {
+        errors {
+          ...errorFragment
+        }
+        page
+      }
+    }
+  }
+`;
+
 export {
   addBlockMutation,
   updateBlockMutation,

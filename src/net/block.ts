@@ -9,6 +9,7 @@ import {
   addCollaboratorsMutation,
   deleteBlockMutation,
   getBlockChildrenQuery,
+  getBlockLandingPageQuery,
   getBlocksWithCustomIDsQuery,
   getCollaboratorsQuery,
   getCollabRequestsQuery,
@@ -218,5 +219,14 @@ export function getBlocksWithCustomIDs(customIds: string[]) {
     getBlocksWithCustomIDsQuery,
     { customIds },
     "data.block.getBlocksWithCustomIDs"
+  );
+}
+
+export function getBlockLandingPage(customId: string) {
+  return auth(
+    null,
+    getBlockLandingPageQuery,
+    { customId },
+    "data.block.getBlockLandingPage"
   );
 }
