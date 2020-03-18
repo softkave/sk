@@ -1,4 +1,4 @@
-import { BlockType, IBlock } from "../../models/block/block";
+import { BlockLandingPage, BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
 import { BoardResourceType, BoardType } from "./types";
 
@@ -91,3 +91,35 @@ export const getBlockBoardTypes = (
 
   return types;
 };
+
+export function getBlockLandingPage(block: IBlock): BlockLandingPage | null {
+  let pageType: BlockLandingPage | null = null;
+
+  const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
+  const hasTasks = Array.isArray(block.tasks) && block.tasks.length > 0;
+
+  if (hasTasks) {
+    pageType = "tasks";
+  } else if (block.type !== "org") {
+    switch (block.type) {
+      case "project":
+        if (hasGroups) {
+          pageType = "tasks";
+        }
+        break;
+
+      case "group":
+      case "task":
+      default:
+        pageType = "self";
+    }
+  } else {
+    if (hasGroups) {
+      // do nothing
+    } else {
+      pageType = "self";
+    }
+  }
+
+  return pageType;
+}

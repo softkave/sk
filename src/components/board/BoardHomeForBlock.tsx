@@ -15,7 +15,11 @@ import {
   BoardType,
   IBoardResourceTypePathMatch
 } from "./types";
-import { getBlockBoardTypes, getBlockResourceTypes } from "./utils";
+import {
+  getBlockBoardTypes,
+  getBlockLandingPage,
+  getBlockResourceTypes
+} from "./utils";
 
 export interface IBoardHomeForBlockProps {
   blockPath: string;
@@ -60,8 +64,10 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   React.useEffect(() => {
     if (isFirstRender) {
-      if (!resourceType && block.landingPage !== "self") {
-        history.push(`${blockPath}/${block.landingPage}?bt=kanban`);
+      const landingPage = getBlockLandingPage(block) || block.landingPage;
+
+      if (!resourceType && landingPage !== "self") {
+        history.push(`${blockPath}/${landingPage}?bt=kanban`);
       }
 
       setIsFirstRender(false);
