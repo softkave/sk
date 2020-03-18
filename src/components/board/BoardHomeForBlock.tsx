@@ -57,6 +57,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     resourceTypeMatch && resourceTypeMatch.params.resourceType;
   const searchParams = new URLSearchParams(window.location.search);
   const boardType: BoardType = searchParams.get("bt") as BoardType;
+  const landingPage = getBlockLandingPage(block) || block.landingPage;
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries
@@ -64,8 +65,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   React.useEffect(() => {
     if (isFirstRender) {
-      const landingPage = getBlockLandingPage(block) || block.landingPage;
-
       if (!resourceType && landingPage !== "self") {
         history.push(`${blockPath}/${landingPage}?bt=kanban`);
       }
@@ -140,7 +139,10 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         resourceType={resourceType}
         onChangeBoardType={selectedBoardType => {
           if (boardType !== selectedBoardType) {
-            history.push(`${blockPath}?bt=${selectedBoardType}`);
+            history.push(
+              `${blockPath}/${resourceType ||
+                landingPage}?bt=${selectedBoardType}`
+            );
           }
         }}
         onChangeKanbanResourceType={rt => {
