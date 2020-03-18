@@ -5,10 +5,6 @@ import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
-  dispatchOperationComplete,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
   operationStatusTypes

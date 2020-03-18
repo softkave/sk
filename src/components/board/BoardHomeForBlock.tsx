@@ -59,11 +59,21 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   // TODO: sort the entries by count?
 
   React.useEffect(() => {
-    if (isFirstRender && !resourceType && block.landingPage !== "self") {
-      history.push(`${blockPath}/${block.landingPage}?bt=kanban`);
+    if (isFirstRender) {
+      if (!resourceType && block.landingPage !== "self") {
+        history.push(`${blockPath}/${block.landingPage}?bt=kanban`);
+      }
+
       setIsFirstRender(false);
     }
-  }, [isFirstRender, setIsFirstRender]);
+  }, [
+    isFirstRender,
+    setIsFirstRender,
+    history,
+    resourceType,
+    block,
+    blockPath
+  ]);
 
   if (isFirstRender) {
     return null;
@@ -99,8 +109,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         return null;
       //   return <BoardTypeTabs {...p} />;
     }
-
-    return null;
   };
 
   let content: React.ReactNode = null;

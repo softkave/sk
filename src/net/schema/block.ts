@@ -36,6 +36,7 @@ const blockFragment = `
       completedAt
       completedBy
     }
+    landingPage
   }
 `;
 
