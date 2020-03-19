@@ -15,9 +15,9 @@ import {
   IBoardResourceTypePathMatch
 } from "./types";
 import {
-  getBlockBoardTypes,
   getBlockLandingPage,
-  getBlockResourceTypes
+  getBlockResourceTypes,
+  getBoardTypesForResourceType
 } from "./utils";
 
 export interface IBoardHomeForBlockProps {
@@ -58,7 +58,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     resourceTypeMatch && resourceTypeMatch.params.resourceType;
   const searchParams = new URLSearchParams(window.location.search);
   const boardType: BoardType = searchParams.get("bt") as BoardType;
-  const landingPage = getBlockLandingPage(block) || block.landingPage;
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries
@@ -66,8 +65,17 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   React.useEffect(() => {
     if (isFirstRender) {
-      if (!resourceType && landingPage !== "self") {
-        const bt: BoardType = isMobile ? "list" : "kanban";
+      const landingPage = getBlockLandingPage(block) || block.landingPage;
+      console.log({ landingPage });
+
+      if (!resourceType && landingPage && landingPage !== "self") {
+        const boardTypesForResourceType = getBoardTypesForResourceType(
+          block,
+          landingPage,
+          isMobile
+        );
+
+        const bt: BoardType = boardTypesForResourceType[0];
         const path = `${blockPath}/${landingPage}?bt=${bt}`;
         history.push(path);
       }
@@ -80,7 +88,8 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     history,
     resourceType,
     block,
-    blockPath
+    blockPath,
+    isMobile
   ]);
 
   if (isFirstRender) {
@@ -133,30 +142,26 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     content = renderBoardType();
   }
 
-  const renderHeader = (types: BoardType[]) => {
+  const renderHeader = () => {
     return (
       <BoardBlockHeader
+        isMobile={isMobile}
         block={block}
-        availableBoardTypes={types}
         selectedBoardType={boardType}
         resourceType={resourceType}
-        onChangeBoardType={selectedBoardType => {
-          if (boardType !== selectedBoardType) {
-            history.push(
-              `${blockPath}/${resourceType ||
-                landingPage}?bt=${selectedBoardType}`
-            );
-          }
-        }}
-        onChangeKanbanResourceType={rt => {
-          if (resourceType !== rt) {
-            history.push(`${blockPath}/${rt}?bt=${boardType}`);
-          }
-        }}
         onClickAddCollaborator={onClickAddCollaborator}
         onClickCreateNewBlock={onClickAddBlock}
         onClickDeleteBlock={() => onClickDeleteBlock(block)}
         onClickEditBlock={() => onClickUpdateBlock(block)}
+        onNavigate={(navResourceType, navBoardType) => {
+          let path = `${blockPath}/${navResourceType}`;
+
+          if (navBoardType) {
+            path = `${path}?bt=${navBoardType}`;
+          }
+
+          history.push(path);
+        }}
       />
     );
   };
@@ -164,7 +169,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   return (
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
       <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
-        {renderHeader(getBlockBoardTypes(block, isMobile))}
+        {renderHeader()}
       </StyledContainer>
       <StyledContainer
         s={{

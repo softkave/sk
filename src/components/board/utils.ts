@@ -62,64 +62,51 @@ export const getBlockResourceTypes = (
   return blockResourceTypes;
 };
 
-export const getBlockBoardTypes = (
-  block: IBlock,
-  isMobile: boolean = false
-): BoardType[] => {
-  let types: BoardType[] = [];
-
-  switch (block.type) {
-    case "org":
-    case "project":
-      types = ["kanban", "list", "tab"];
-      break;
-
-    case "group":
-      types = ["list", "tab"];
-      break;
-  }
-
-  if (isMobile) {
-    types = types.filter(type => {
-      if (type === "tab") {
-        return false;
-      }
-
-      return true;
-    });
-  }
-
-  return types;
-};
-
 export function getBlockLandingPage(block: IBlock): BlockLandingPage | null {
-  let pageType: BlockLandingPage | null = null;
-
   const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
   const hasTasks = Array.isArray(block.tasks) && block.tasks.length > 0;
+  const hasProjects =
+    Array.isArray(block.projects) && block.projects.length > 0;
 
-  if (hasTasks) {
-    pageType = "tasks";
-  } else if (block.type !== "org") {
-    switch (block.type) {
-      case "project":
-        if (hasGroups) {
-          pageType = "tasks";
-        }
-        break;
-
-      case "group":
-      case "task":
-      default:
-        pageType = "self";
-    }
-  } else {
+  if (block.type === "org") {
     if (hasGroups) {
-      // do nothing
-    } else {
-      pageType = "self";
+      return null;
     }
+  } else if (block.type === "project" && hasGroups) {
+    return "tasks";
+  } else if (hasTasks) {
+    return "tasks";
+  } else if (hasProjects) {
+    return "projects";
   }
 
-  return pageType;
+  return "self";
 }
+
+export const getBoardTypesForResourceType = (
+  block: IBlock,
+  resourceType: BoardResourceType,
+  isMobile: boolean
+): BoardType[] => {
+  const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
+  let boardTypes: BoardType[] = [];
+
+  switch (resourceType) {
+    case "tasks":
+    case "projects":
+      boardTypes = ["list", "tab"];
+
+      if (hasGroups && !isMobile) {
+        boardTypes.unshift("kanban");
+      }
+
+      break;
+
+    case "groups":
+    case "collaborators":
+    case "collaboration-requests":
+      boardTypes = ["list", "tab"];
+  }
+
+  return boardTypes;
+};
