@@ -3,7 +3,6 @@ import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
-import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
@@ -24,6 +23,7 @@ import {
 export interface IBoardHomeForBlockProps {
   blockPath: string;
   block: IBlock;
+  isMobile: boolean;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickAddBlock: (type: BlockType) => void;
   onNavigate: (resourceType: BoardResourceType) => void;
@@ -41,7 +41,8 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     onClickAddCollaborator,
     onClickDeleteBlock,
     onClickUpdateBlock,
-    onClickBlock
+    onClickBlock,
+    isMobile
   } = props;
 
   const [isFirstRender, setIsFirstRender] = React.useState(true);
@@ -66,7 +67,9 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   React.useEffect(() => {
     if (isFirstRender) {
       if (!resourceType && landingPage !== "self") {
-        history.push(`${blockPath}/${landingPage}?bt=kanban`);
+        const bt: BoardType = isMobile ? "list" : "kanban";
+        const path = `${blockPath}/${landingPage}?bt=${bt}`;
+        history.push(path);
       }
 
       setIsFirstRender(false);
@@ -161,10 +164,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   return (
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
       <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
-        <RenderForDevice
-          renderForDesktop={() => renderHeader(getBlockBoardTypes(block))}
-          renderForMobile={() => renderHeader(getBlockBoardTypes(block, true))}
-        />
+        {renderHeader(getBlockBoardTypes(block, isMobile))}
       </StyledContainer>
       <StyledContainer
         s={{
