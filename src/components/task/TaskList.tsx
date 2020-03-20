@@ -33,7 +33,7 @@ const TaskList: React.FC<ITaskListProps> = props => {
 
   const renderTask = (task, i) => {
     return (
-      <>
+      <React.Fragment>
         <StyledBlockThumbnailContainer key={task.customId}>
           <Task
             task={task}
@@ -43,8 +43,7 @@ const TaskList: React.FC<ITaskListProps> = props => {
           />
         </StyledBlockThumbnailContainer>
         {i < tasksToRender.length - 1 && <Divider />}
-        {}
-      </>
+      </React.Fragment>
     );
   };
 

@@ -37,6 +37,10 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = props => {
     loadParentChildren
   );
 
+  if (blocks.length === blockIDs.length) {
+    return <React.Fragment>{render(blocks)}</React.Fragment>;
+  }
+
   if (
     loadParentChildrenStatus.isLoading ||
     !!!loadParentChildrenStatus.operation
