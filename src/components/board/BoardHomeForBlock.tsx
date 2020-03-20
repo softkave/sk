@@ -98,8 +98,14 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
 
   if (!boardType && resourceType) {
     const destPath = `${blockPath}/${resourceType}`;
+    const boardTypesForResourceType = getBoardTypesForResourceType(
+      block,
+      resourceType,
+      isMobile
+    );
+    const bt: BoardType = boardTypesForResourceType[0];
 
-    return <Redirect to={`${destPath}?bt=${"list"}`} />;
+    return <Redirect to={`${destPath}?bt=${bt}`} />;
   }
 
   if (boardType && !resourceType) {
@@ -154,7 +160,11 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         onClickDeleteBlock={() => onClickDeleteBlock(block)}
         onClickEditBlock={() => onClickUpdateBlock(block)}
         onNavigate={(navResourceType, navBoardType) => {
-          let path = `${blockPath}/${navResourceType}`;
+          let path = `${blockPath}`;
+
+          if (navResourceType) {
+            path = `${path}/${navResourceType}`;
+          }
 
           if (navBoardType) {
             path = `${path}?bt=${navBoardType}`;

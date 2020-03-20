@@ -1,4 +1,5 @@
 import Icon, {
+  HomeOutlined,
   MenuFoldOutlined,
   PlusOutlined,
   SettingOutlined,
@@ -61,7 +62,7 @@ export interface IBoardBlockHeaderProps {
   onClickEditBlock: () => void;
   onClickDeleteBlock: () => void;
   onNavigate: (
-    resourceType: BoardResourceType,
+    resourceType: BoardResourceType | null,
     boardType: BoardType | null
   ) => void;
   resourceType?: BoardResourceType | null;
@@ -225,6 +226,18 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
     );
   };
 
+  const renderSelfButton = () => {
+    return (
+      <StyledContainer
+        onClick={() => onNavigate(null, null)}
+        s={{ alignItems: "center", cursor: "pointer" }}
+      >
+        <HomeOutlined />
+        {!isMobile && wrapWithMargin("Home", 8, 0)}
+      </StyledContainer>
+    );
+  };
+
   const renderResourceTypeOptions = () => {
     return wrapMenu(
       <Menu
@@ -370,7 +383,8 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
               s={{
                 borderLeft: "1px solid rgba(0, 0, 0, 0.65)",
                 paddingLeft: "8px",
-                marginLeft: "8px"
+                marginLeft: "8px",
+                textDecoration: "underline"
               }}
             >
               {renderResourceTypeSelection()}
@@ -378,21 +392,24 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
           )}
         </StyledContainer>
       </StyledContainer>
-      <StyledFlatButton
-        style={{ margin: "0 8px" }}
-        onClick={() => setDrawerFor("create-new")}
-      >
-        <PlusOutlined />
-      </StyledFlatButton>
-      {!isMobile && wrapWithMargin(renderResourceTypeSelection())}
-      {isBlockRelatedResourceType(resourceType) &&
-        wrapWithMargin(renderBoardTypeSelection())}
-      <StyledFlatButton
-        style={{ marginLeft: "8px" }}
-        onClick={() => setDrawerFor("block-options")}
-      >
-        <SettingOutlined />
-      </StyledFlatButton>
+      <StyledContainer s={{ alignItems: "center" }}>
+        <StyledContainer
+          style={{ margin: "0 8px", cursor: "pointer" }}
+          onClick={() => setDrawerFor("create-new")}
+        >
+          <PlusOutlined />
+        </StyledContainer>
+        {wrapWithMargin(renderSelfButton())}
+        {!isMobile && wrapWithMargin(renderResourceTypeSelection())}
+        {isBlockRelatedResourceType(resourceType) &&
+          wrapWithMargin(renderBoardTypeSelection())}
+        <StyledContainer
+          style={{ marginLeft: "8px", cursor: "pointer" }}
+          onClick={() => setDrawerFor("block-options")}
+        >
+          <SettingOutlined />
+        </StyledContainer>
+      </StyledContainer>
       {renderMenus()}
     </StyledContainer>
   );

@@ -24,19 +24,11 @@ const Children: React.FC<IChildrenProps> = props => {
   } = props;
 
   const renderCollaborators = () => {
-    return (
-      <StyledContainer s={{ padding: "0 16px" }}>
-        <CollaboratorList organization={block} />
-      </StyledContainer>
-    );
+    return <CollaboratorList organization={block} />;
   };
 
   const renderCollaborationRequests = () => {
-    return (
-      <StyledContainer s={{ padding: "0 16px" }}>
-        <CollaborationRequests organization={block} />
-      </StyledContainer>
-    );
+    return <CollaborationRequests organization={block} />;
   };
 
   switch (selectedResourceType) {
