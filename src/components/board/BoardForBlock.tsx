@@ -297,9 +297,9 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         onClickBlock={onClickBlock}
         onClickDeleteBlock={promptConfirmDelete}
         onNavigate={onNavigate}
-        onClickAddBlock={blockType => {
+        onClickAddBlock={(parentBlock, blockType) => {
           setBlockForm({
-            block: getNewBlock(user, blockType, block),
+            block: getNewBlock(user, blockType, parentBlock),
             formType: "add-block-form"
           });
         }}

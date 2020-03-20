@@ -1,5 +1,5 @@
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import BoardTypeListForGroups from "./BoardTypeListForGroups";
 import Children from "./Children";
@@ -7,9 +7,10 @@ import { BoardResourceType } from "./types";
 
 export interface IBoardTypeListProps {
   block: IBlock;
+  selectedResourceType: BoardResourceType;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
-  selectedResourceType: BoardResourceType;
+  onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = props => {

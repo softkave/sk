@@ -110,3 +110,21 @@ export const getBoardTypesForResourceType = (
 
   return boardTypes;
 };
+
+export const getBlockTypeFromResourceType = (
+  resourceType: BoardResourceType
+): BlockType | null => {
+  switch (resourceType) {
+    case "groups":
+      return "group";
+
+    case "projects":
+      return "project";
+
+    case "tasks":
+      return "task";
+
+    default:
+      return null;
+  }
+};

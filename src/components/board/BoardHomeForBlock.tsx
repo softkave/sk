@@ -25,7 +25,7 @@ export interface IBoardHomeForBlockProps {
   block: IBlock;
   isMobile: boolean;
   onClickUpdateBlock: (block: IBlock) => void;
-  onClickAddBlock: (type: BlockType) => void;
+  onClickAddBlock: (block: IBlock, type: BlockType) => void;
   onNavigate: (resourceType: BoardResourceType) => void;
   onClickBlock: (blocks: IBlock[]) => void;
   onClickAddCollaborator: () => void;
@@ -112,20 +112,30 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     return <Redirect to={`${blockPath}`} />;
   }
 
-  const boardTypeProps = {
-    block,
-    onClickUpdateBlock,
-    onClickBlock,
-    selectedResourceType: resourceType!
-  };
-
   const renderBoardType = () => {
     switch (boardType) {
       case "kanban":
-        return <BoardTypeKanban {...boardTypeProps} />;
+        return (
+          <BoardTypeKanban
+            block={block}
+            onClickUpdateBlock={onClickUpdateBlock}
+            onClickBlock={onClickBlock}
+            selectedResourceType={resourceType!}
+            onClickCreateNewBlock={onClickAddBlock}
+            onClickDeleteBlock={onClickDeleteBlock}
+          />
+        );
 
       case "list":
-        return <BoardTypeList {...boardTypeProps} />;
+        return (
+          <BoardTypeList
+            block={block}
+            onClickUpdateBlock={onClickUpdateBlock}
+            onClickBlock={onClickBlock}
+            selectedResourceType={resourceType!}
+            onClickCreateNewBlock={onClickAddBlock}
+          />
+        );
 
       case "tab":
         // TODO:
@@ -156,7 +166,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         selectedBoardType={boardType}
         resourceType={resourceType}
         onClickAddCollaborator={onClickAddCollaborator}
-        onClickCreateNewBlock={onClickAddBlock}
+        onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
         onClickDeleteBlock={() => onClickDeleteBlock(block)}
         onClickEditBlock={() => onClickUpdateBlock(block)}
         onNavigate={(navResourceType, navBoardType) => {
