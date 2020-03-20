@@ -5,8 +5,8 @@ import BlockThumbnail from "../block/BlockThumnail";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import Tabs, { ITab } from "../Tabs";
-import Children from "./Children";
 import LoadBlockChildren from "./LoadBlockChildren";
+import RenderBlockChildren from "./RenderBlockChildren";
 import { BoardResourceType } from "./types";
 
 export interface IBoardTypeListForGroupsProps {
@@ -35,7 +35,7 @@ const BoardTypeListForGroups: React.FC<IBoardTypeListForGroupsProps> = props => 
   const renderGroup = (group: IBlock) => {
     return (
       <Collapse.Panel header={renderGroupThumbnail(group)} key={group.customId}>
-        <Children
+        <RenderBlockChildren
           block={group}
           onClickBlock={onClickBlock}
           onClickUpdateBlock={onClickUpdateBlock}

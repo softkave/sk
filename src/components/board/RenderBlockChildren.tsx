@@ -2,20 +2,19 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
-import StyledContainer from "../styled/Container";
-import GroupChildren from "./GroupChildren";
-import ProjectChildren from "./ProjectChildren";
-import TaskChildren from "./TaskChildren";
+import LoadBlockGroupChildren from "./LoadBlockGroupChildren";
+import LoadBlockProjects from "./LoadBlockProjects";
+import LoadBlockTasks from "./LoadBlockTasks";
 import { BoardResourceType } from "./types";
 
-export interface IChildrenProps {
+export interface IRenderBlockChildrenProps {
   block: IBlock;
+  selectedResourceType: BoardResourceType;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
-  selectedResourceType: BoardResourceType;
 }
 
-const Children: React.FC<IChildrenProps> = props => {
+const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = props => {
   const {
     block,
     onClickUpdateBlock,
@@ -39,16 +38,18 @@ const Children: React.FC<IChildrenProps> = props => {
       return renderCollaborators();
 
     case "groups":
-      return <GroupChildren block={block} onClickBlock={onClickBlock} />;
+      return (
+        <LoadBlockGroupChildren block={block} onClickBlock={onClickBlock} />
+      );
 
     case "projects":
-      return <ProjectChildren block={block} onClickBlock={onClickBlock} />;
+      return <LoadBlockProjects block={block} onClickBlock={onClickBlock} />;
 
     case "tasks":
       return (
-        <TaskChildren block={block} onClickUpdateBlock={onClickUpdateBlock} />
+        <LoadBlockTasks block={block} onClickUpdateBlock={onClickUpdateBlock} />
       );
   }
 };
 
-export default Children;
+export default RenderBlockChildren;

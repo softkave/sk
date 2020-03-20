@@ -1,7 +1,7 @@
 import { Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import Children from "./Children";
+import RenderBlockChildren from "./RenderBlockChildren";
 import { BoardResourceType } from "./types";
 import { getBoardResourceTypeFullName } from "./utils";
 
@@ -31,7 +31,7 @@ const BoardTypeTabs: React.FC<IBoardTypeTabsProps> = props => {
     >
       {resourceTypes.map(type => (
         <Tabs.TabPane key={type} tab={getBoardResourceTypeFullName(type)}>
-          <Children
+          <RenderBlockChildren
             block={block}
             selectedResourceType={type}
             onClickBlock={onClickBlock}

@@ -1,19 +1,19 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import ProjectList from "../project/ProjectList";
-import BoardBlockChildren from "./LoadBlockChildren";
+import LoadBlockChildren from "./LoadBlockChildren";
 
-export interface IProjectChildrenProps {
+export interface ILoadBlockProjectsProps {
   block: IBlock;
   onClickBlock: (blocks: IBlock[]) => void;
 }
 
-const ProjectChildren: React.FC<IProjectChildrenProps> = props => {
+const LoadBlockProjects: React.FC<ILoadBlockProjectsProps> = props => {
   const { block, onClickBlock } = props;
 
   const renderProjects = () => {
     return (
-      <BoardBlockChildren
+      <LoadBlockChildren
         parent={block}
         getChildrenIDs={() => block.projects || []}
         render={projects => (
@@ -29,4 +29,4 @@ const ProjectChildren: React.FC<IProjectChildrenProps> = props => {
   return renderProjects();
 };
 
-export default ProjectChildren;
+export default LoadBlockProjects;

@@ -7,9 +7,9 @@ import StyledFlatButton from "../styled/FlatButton";
 import wrapWithMargin from "../utilities/wrapWithMargin";
 import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
 import BoardTypeList from "./BoardTypeList";
-import Children from "./Children";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
+import RenderBlockChildren from "./RenderBlockChildren";
 import SelectBlockOptionsMenu, {
   SettingsMenuKey
 } from "./SelectBlockOptionsMenu";
@@ -99,7 +99,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
             block={group}
             avatarSize="small"
             count={group[selectedResourceType]?.length}
-            showFields={["name"]}
+            showFields={["name", "type"]}
           />
         </StyledContainer>
         <StyledContainer>
@@ -120,21 +120,21 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
-  const renderGroup = groupBasket => {
-    const g = groupBasket.items[0];
-    const c = g[props.selectedResourceType!] || [];
+  const renderGroup = (groupBasket: IBoardBasket) => {
+    const group = groupBasket.items[0];
+    const childrenIDs = group[selectedResourceType!] || [];
 
-    if (c.length === 0 && hideEmptyGroups) {
+    if (childrenIDs.length === 0 && hideEmptyGroups) {
       return null;
     }
 
     return (
       <Column
-        header={renderGroupHeader(g)}
+        header={renderGroupHeader(group)}
         body={
-          <Children
+          <RenderBlockChildren
             {...props}
-            block={g}
+            block={group}
             onClickBlock={clickedBlockWithParents =>
               onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
             }
@@ -193,8 +193,21 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
           renderBaskets(
             blocks,
             "No groups yet.",
-            groups =>
-              groups.map(group => ({ key: group.customId, items: [group] })),
+            groups => {
+              let baskets: IBoardBasket[] = [];
+
+              if (
+                block[selectedResourceType] &&
+                (block[selectedResourceType] || []).length > 0
+              ) {
+                baskets.push({ key: block.customId, items: [block] });
+              }
+
+              baskets = baskets.concat(
+                groups.map(group => ({ key: group.customId, items: [group] }))
+              );
+              return baskets;
+            },
             renderGroup
           )
         }

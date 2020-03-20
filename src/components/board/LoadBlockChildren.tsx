@@ -23,6 +23,10 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = props => {
   );
 
   const loadParentChildren = (loadProps: IUseOperationStatus) => {
+    if (blocks.length === blockIDs.length) {
+      return;
+    }
+
     if (!!!loadProps.operation) {
       loadBlockChildrenOperationFunc({ block: parent });
     }

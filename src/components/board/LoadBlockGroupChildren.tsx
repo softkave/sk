@@ -1,19 +1,19 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import GroupList from "../group/GroupList";
-import BoardBlockChildren from "./LoadBlockChildren";
+import LoadBlockChildren from "./LoadBlockChildren";
 
-export interface IGroupChildrenProps {
+export interface ILoadBlockGroupChildrenProps {
   block: IBlock;
   onClickBlock: (blocks: IBlock[]) => void;
 }
 
-const GroupChildren: React.FC<IGroupChildrenProps> = props => {
+const LoadBlockGroupChildren: React.FC<ILoadBlockGroupChildrenProps> = props => {
   const { block, onClickBlock } = props;
 
   const renderGroups = () => {
     return (
-      <BoardBlockChildren
+      <LoadBlockChildren
         parent={block}
         getChildrenIDs={() => block.groups || []}
         render={groups => (
@@ -26,4 +26,4 @@ const GroupChildren: React.FC<IGroupChildrenProps> = props => {
   return renderGroups();
 };
 
-export default GroupChildren;
+export default LoadBlockGroupChildren;
