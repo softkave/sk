@@ -156,8 +156,17 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       !!!loadBlockLandingPageStatus.operation);
 
   const pushRoute = route => {
-    const search = window.location.search;
-    const url = `${route}${search}`;
+    const search = new URLSearchParams(window.location.search);
+    const routeURL = new URL(
+      `${window.location.protocol}${window.location.host}${route}`
+    );
+
+    search.forEach((value, key) => {
+      routeURL.searchParams.set(key, value);
+    });
+
+    const url = `/app${routeURL.pathname}${routeURL.search}`;
+
     history.push(url);
   };
 

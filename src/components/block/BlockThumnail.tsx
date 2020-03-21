@@ -20,7 +20,7 @@ export interface IBlockThumbnailProps {
 }
 
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
-const hoverSelector = "&:hover";
+// const hoverSelector = "&:hover";
 
 const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
   const {
@@ -55,10 +55,10 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
             s={{
               // fontWeight: "bold",
               textDecoration: onClick ? "underline" : undefined,
-              cursor: onClick ? "pointer" : undefined,
-              [hoverSelector]: {
-                color: "rgb(66,133,244)"
-              }
+              cursor: onClick ? "pointer" : undefined
+              // [hoverSelector]: {
+              //   color: "rgb(66,133,244)"
+              // }
             }}
             onClick={onClick}
           >

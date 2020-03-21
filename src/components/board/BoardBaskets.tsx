@@ -41,6 +41,7 @@ export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
     index: number,
     baskets: BasketType[]
   ) => boolean;
+  sortBaskets?: (baskets: BasketType[]) => BasketType[];
 }
 
 class BoardBaskets<T extends IBoardBasket> extends React.Component<
@@ -57,18 +58,22 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
       isDragDisabled,
       isDropDisabled,
       dragType,
+      sortBaskets,
       shouldRenderBasket: shouldRenderBasketFn
     } = this.props;
     const baskets = getBaskets(blocks);
 
-    const filterBaskets = () => {
-      return baskets.filter(basket => {
+    const filterBaskets = (inputBaskets: T[]) => {
+      return inputBaskets.filter(basket => {
         return basket.items.length > 0;
       });
     };
 
     const renderBaskets = () => {
-      const iterBaskets = hideEmptyBaskets ? filterBaskets() : baskets;
+      const sortedBaskets = sortBaskets ? sortBaskets(baskets) : baskets;
+      const iterBaskets = hideEmptyBaskets
+        ? filterBaskets(sortedBaskets)
+        : sortedBaskets;
       return iterBaskets.map((basket, index, allBaskets) => {
         const shouldRenderBasket = shouldRenderBasketFn
           ? shouldRenderBasketFn(basket, index, allBaskets)

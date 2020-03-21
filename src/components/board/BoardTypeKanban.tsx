@@ -1,7 +1,8 @@
 import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-import { BlockType, IBlock } from "../../models/block/block";
+import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
+import { sortItemsByPosition } from "../../utils/sortItemsByPosition";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
@@ -69,6 +70,17 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     return true;
   };
 
+  const getGroupContext = (): BlockGroupContext => {
+    return selectedResourceType === "projects"
+      ? "groupProjectContext"
+      : "groupTaskContext";
+  };
+
+  const sortBaskets = (baskets: IBoardBasket[]) => {
+    const ids = block[getGroupContext()] || [];
+    return sortItemsByPosition(baskets, ids, "key", "before");
+  };
+
   const renderBaskets = (
     blocks: IBlock[],
     emptyMessage: string,
@@ -77,14 +89,15 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   ) => {
     return (
       <BoardBaskets
-        id="AssignedTasks"
-        dragType="Group"
+        id={block.customId}
+        dragType={getGroupContext()}
         hideEmptyBaskets={hideEmptyGroups}
         blocks={blocks}
         emptyMessage={emptyMessage}
         getBaskets={getBaskets}
         renderBasket={renderBasketFunc}
         shouldRenderBasket={shouldRenderBasket}
+        sortBaskets={sortBaskets}
       />
     );
   };

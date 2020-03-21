@@ -26,7 +26,11 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = props => 
   ) => {
     return (
       <StyledContainer
-        s={{ cursor: "pointer", ["& .anticon"]: { fontSize: "16px" } }}
+        s={{
+          cursor: "pointer",
+          textTransform: "capitalize",
+          ["& .anticon"]: { fontSize: "16px" }
+        }}
         onClick={renderTriggerProps.openMenu}
       >
         <EllipsisOutlined style={{ fontSize: "24px" }} />

@@ -1,20 +1,4 @@
 import { IBlock, taskPriority } from "../../models/block/block";
-import { indexArray } from "../../utils/object";
-
-export function sortBlocksByPosition(
-  blocks: IBlock[] = [],
-  sortIds: string[] = []
-) {
-  const indexedBlocks = indexArray(blocks, { path: "customId" });
-  const sortedBlocks: IBlock[] = [];
-  sortIds.forEach(id => {
-    if (indexedBlocks[id]) {
-      sortedBlocks.push(indexedBlocks[id]);
-    }
-  });
-
-  return sortedBlocks;
-}
 
 const blockPriorityToNumMap = {
   [taskPriority["very important"]]: -1,

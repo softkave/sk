@@ -18,7 +18,8 @@ const Column: React.FC<IColumnProps> = props => {
       width: "100%",
       flexDirection: "column",
       boxSizing: "border-box",
-      padding: "0 16px"
+      padding: "0 16px",
+      backgroundColor: "white"
     };
 
     if (desktop) {

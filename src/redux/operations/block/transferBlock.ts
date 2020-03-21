@@ -76,6 +76,8 @@ export default async function transferBlockOperationFn(
       )
     );
   } catch (error) {
+    console.error(error);
+
     const transformedError = OperationError.fromAny(error).transform({
       stripBaseNames: ["data"]
     });
