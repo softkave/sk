@@ -22,6 +22,7 @@ import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
+import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardForBlockContainer from "./BoardForBlockContainer";
@@ -288,31 +289,39 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       return renderChild();
     }
 
+    const renderBoardForBlock = (isMobile: boolean) => (
+      <BoardHomeForBlock
+        isMobile={isMobile}
+        block={block}
+        blockPath={blockPath}
+        onClickBlock={onClickBlock}
+        onClickDeleteBlock={promptConfirmDelete}
+        onNavigate={onNavigate}
+        onClickAddBlock={(parentBlock, blockType) => {
+          setBlockForm({
+            block: getNewBlock(user, blockType, parentBlock),
+            formType: "add-block-form"
+          });
+        }}
+        onClickUpdateBlock={blockToUpdate =>
+          setBlockForm({
+            block: blockToUpdate,
+            formType: "update-block-form"
+          })
+        }
+        onClickAddCollaborator={() =>
+          setBlockForm({ block, formType: "collaborator-form" })
+        }
+      />
+    );
+
     return (
       <React.Fragment>
         {blockForm && renderForms()}
         {!blockForm && (
-          <BoardHomeForBlock
-            block={block}
-            blockPath={blockPath}
-            onClickBlock={onClickBlock}
-            onClickDeleteBlock={promptConfirmDelete}
-            onNavigate={onNavigate}
-            onClickAddBlock={blockType => {
-              setBlockForm({
-                block: getNewBlock(user, blockType, block),
-                formType: "add-block-form"
-              });
-            }}
-            onClickUpdateBlock={blockToUpdate =>
-              setBlockForm({
-                block: blockToUpdate,
-                formType: "update-block-form"
-              })
-            }
-            onClickAddCollaborator={() =>
-              setBlockForm({ block, formType: "collaborator-form" })
-            }
+          <RenderForDevice
+            renderForDesktop={() => renderBoardForBlock(false)}
+            renderForMobile={() => renderBoardForBlock(true)}
           />
         )}
       </React.Fragment>

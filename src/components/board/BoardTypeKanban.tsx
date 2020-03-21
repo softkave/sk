@@ -1,27 +1,43 @@
+import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
+import wrapWithMargin from "../utilities/wrapWithMargin";
 import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
 import BoardTypeList from "./BoardTypeList";
-import Children from "./Children";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
+import RenderBlockChildren from "./RenderBlockChildren";
+import SelectBlockOptionsMenu, {
+  SettingsMenuKey
+} from "./SelectBlockOptionsMenu";
 import { BoardResourceType } from "./types";
+import { getBlockTypeFromResourceType } from "./utils";
 
 // const StyledButton = StyledContainer.withComponent("button");
 
 export interface IBoardTypeKanbanProps {
   block: IBlock;
+  selectedResourceType: BoardResourceType;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
-  selectedResourceType: BoardResourceType;
+  onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
+  onClickDeleteBlock: (block: IBlock) => void;
 }
 
 type RenderBasketFunc = (basket: IBoardBasket) => React.ReactNode;
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
-  const { block, selectedResourceType, onClickBlock } = props;
+  const {
+    block,
+    selectedResourceType,
+    onClickBlock,
+    onClickCreateNewBlock,
+    onClickDeleteBlock,
+    onClickUpdateBlock
+  } = props;
   const [
     hideEmptyGroups
     // setHideEmptyGroups
@@ -56,32 +72,69 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
-  const renderGroupThumbnail = (group: IBlock) => {
+  const onSelectSettingsMenuItem = (forBlock: IBlock, key: SettingsMenuKey) => {
+    switch (key) {
+      case "edit":
+        onClickUpdateBlock(forBlock);
+        break;
+
+      case "delete":
+        onClickDeleteBlock(forBlock);
+        break;
+    }
+  };
+
+  const renderSettingsMenu = (forBlock: IBlock) => (
+    <SelectBlockOptionsMenu
+      block={forBlock}
+      onSelect={key => onSelectSettingsMenuItem(forBlock, key)}
+    />
+  );
+
+  const renderGroupHeader = (group: IBlock) => {
     return (
-      <BlockThumbnail
-        block={group}
-        avatarSize="small"
-        count={group[selectedResourceType]?.length}
-        showFields={["name"]}
-      />
+      <StyledContainer s={{ width: "100%" }}>
+        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+          <BlockThumbnail
+            block={group}
+            avatarSize="small"
+            count={group[selectedResourceType]?.length}
+            showFields={["name", "type"]}
+          />
+        </StyledContainer>
+        <StyledContainer>
+          <StyledFlatButton
+            style={{ margin: "0 8px", cursor: "pointer" }}
+            onClick={() =>
+              onClickCreateNewBlock(
+                group,
+                getBlockTypeFromResourceType(selectedResourceType)!
+              )
+            }
+          >
+            <PlusOutlined />
+          </StyledFlatButton>
+          {wrapWithMargin(renderSettingsMenu(group), 8, 0)}
+        </StyledContainer>
+      </StyledContainer>
     );
   };
 
-  const renderGroup = groupBasket => {
-    const g = groupBasket.items[0];
-    const c = g[props.selectedResourceType!] || [];
+  const renderGroup = (groupBasket: IBoardBasket) => {
+    const group = groupBasket.items[0];
+    const childrenIDs = group[selectedResourceType!] || [];
 
-    if (c.length === 0 && hideEmptyGroups) {
+    if (childrenIDs.length === 0 && hideEmptyGroups) {
       return null;
     }
 
     return (
       <Column
-        header={renderGroupThumbnail(g)}
+        header={renderGroupHeader(group)}
         body={
-          <Children
+          <RenderBlockChildren
             {...props}
-            block={g}
+            block={group}
             onClickBlock={clickedBlockWithParents =>
               onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
             }
@@ -140,8 +193,21 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
           renderBaskets(
             blocks,
             "No groups yet.",
-            groups =>
-              groups.map(group => ({ key: group.customId, items: [group] })),
+            groups => {
+              let baskets: IBoardBasket[] = [];
+
+              if (
+                block[selectedResourceType] &&
+                (block[selectedResourceType] || []).length > 0
+              ) {
+                baskets.push({ key: block.customId, items: [block] });
+              }
+
+              baskets = baskets.concat(
+                groups.map(group => ({ key: group.customId, items: [group] }))
+              );
+              return baskets;
+            },
             renderGroup
           )
         }

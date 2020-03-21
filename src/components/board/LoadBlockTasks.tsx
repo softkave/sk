@@ -1,19 +1,19 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import TaskList from "../task/TaskList";
-import BoardBlockChildren from "./LoadBlockChildren";
+import LoadBlockChildren from "./LoadBlockChildren";
 
-export interface ITaskChildrenProps {
+export interface ILoadBlockTasksProps {
   block: IBlock;
   onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const TaskChildren: React.FC<ITaskChildrenProps> = props => {
+const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = props => {
   const { block, onClickUpdateBlock } = props;
 
   const renderTasks = () => {
     return (
-      <BoardBlockChildren
+      <LoadBlockChildren
         parent={block}
         getChildrenIDs={() => block.tasks || []}
         render={tasks => (
@@ -29,4 +29,4 @@ const TaskChildren: React.FC<ITaskChildrenProps> = props => {
   return renderTasks();
 };
 
-export default TaskChildren;
+export default LoadBlockTasks;

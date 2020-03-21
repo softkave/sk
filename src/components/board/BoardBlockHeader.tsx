@@ -1,63 +1,63 @@
-import Icon, {
-  PlusOutlined,
-  SettingOutlined,
-  UnorderedListOutlined
-} from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { Dropdown, Menu, Select } from "antd";
-import isFunction from "lodash/isFunction";
+import { HomeOutlined } from "@ant-design/icons";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
-import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
-import KanbanSVG from "../icons/svg/KanbanSVG";
-import TabSVG from "../icons/svg/TabSVG";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
-import StyledFlatButton from "../styled/FlatButton";
+import wrapWithMargin from "../utilities/wrapWithMargin";
+import SelectBlockCreateNewOptionsMenu from "./SelectBlockCreateNewOptionsMenu";
+import SelectBlockOptionsMenu from "./SelectBlockOptionsMenu";
+import SelectBoardTypeMenu from "./SelectBoardTypeMenu";
+import SelectResourceTypeMenu from "./SelectResourceTypeMenu";
 import { BoardResourceType, BoardType } from "./types";
-import { getBlockResourceTypes, getBoardResourceTypeFullName } from "./utils";
+import { getBoardTypesForResourceType } from "./utils";
 
 type CreateMenuKey = BlockType | "collaborator";
 type SettingsMenuKey = "edit" | "delete";
 
 const StyledContainerAsH1 = StyledContainer.withComponent("h1");
-const selectedBoardTypeColor = "rgb(66,133,244)";
+
+const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
+  switch (type) {
+    case "groups":
+    case "projects":
+    case "tasks":
+      return true;
+
+    case "collaborators":
+    case "collaboration-requests":
+    default:
+      return false;
+  }
+};
 
 export interface IBoardBlockHeaderProps {
   block: IBlock;
-  availableBoardTypes: BoardType[];
   selectedBoardType: BoardType;
-  onChangeBoardType: (boardType: BoardType) => void;
+  isMobile: boolean;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
   onClickEditBlock: () => void;
   onClickDeleteBlock: () => void;
+  onNavigate: (
+    resourceType: BoardResourceType | null,
+    boardType: BoardType | null
+  ) => void;
+
   resourceType?: BoardResourceType | null;
-  onChangeKanbanResourceType?: (blockType: BoardResourceType) => void;
 }
 
 const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
   const {
     block,
-    availableBoardTypes,
     selectedBoardType,
     resourceType,
-    onChangeBoardType,
-    onChangeKanbanResourceType,
     onClickAddCollaborator,
     onClickCreateNewBlock,
     onClickDeleteBlock,
-    onClickEditBlock
+    onClickEditBlock,
+    isMobile,
+    onNavigate
   } = props;
-  const blockTypeFullName = getBlockTypeFullName(block.type);
-  const hasCollaborators = block.type === "org";
-  const childrenTypes = useBlockChildrenTypes(block);
-  const showKanban = availableBoardTypes.includes("kanban");
-  const showList = availableBoardTypes.includes("list");
-  const showTabs = availableBoardTypes.includes("tab");
-  const resourceTypeName = getBoardResourceTypeFullName(resourceType);
-  const blockResourceTypes = getBlockResourceTypes(block, childrenTypes);
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
     switch (key) {
@@ -74,23 +74,6 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
     }
   };
 
-  const createMenuItems = childrenTypes.map(type => (
-    <StyledMenuItem key={type}>Create {type}</StyledMenuItem>
-  ));
-
-  if (hasCollaborators) {
-    createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
-    createMenuItems.push(
-      <StyledMenuItem key="collaborator">Add Collaborator</StyledMenuItem>
-    );
-  }
-
-  const createMenu = (
-    <Menu onClick={event => onSelectCreateMenuItem(event.key as CreateMenuKey)}>
-      {createMenuItems}
-    </Menu>
-  );
-
   const onSelectSettingsMenuItem = (key: SettingsMenuKey) => {
     switch (key) {
       case "edit":
@@ -103,49 +86,92 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
     }
   };
 
-  const settingsMenu = (
-    <Menu
-      onClick={event => onSelectSettingsMenuItem(event.key as SettingsMenuKey)}
-    >
-      <StyledMenuItem key="edit">Edit {blockTypeFullName}</StyledMenuItem>
-      <StyledMenuItem key="delete">Delete {blockTypeFullName}</StyledMenuItem>
-    </Menu>
-  );
+  const onSelectResourceTypeMenuItem = (key: BoardResourceType) => {
+    const boardTypesForResourceType = getBoardTypesForResourceType(
+      block,
+      key,
+      isMobile
+    );
 
-  const renderKanbanSelector = () => {
+    switch (key) {
+      case "groups":
+      case "projects":
+      case "tasks":
+        onNavigate(
+          key,
+          selectedBoardType &&
+            boardTypesForResourceType.includes(selectedBoardType)
+            ? selectedBoardType
+            : boardTypesForResourceType[0]
+        );
+        break;
+
+      case "collaboration-requests":
+      case "collaborators":
+        onNavigate(key, null);
+        break;
+    }
+  };
+
+  const onSelectBoardTypeMenuItem = (key: BoardType) => {
+    onNavigate(resourceType!, key);
+  };
+
+  const renderSelfButton = () => {
     return (
-      <StyledContainer s={{ margin: "0 8px" }}>
-        <StyledFlatButton
-          onClick={() => onChangeBoardType("kanban")}
-          style={{
-            color:
-              selectedBoardType === "kanban"
-                ? selectedBoardTypeColor
-                : undefined
-          }}
-        >
-          <Icon component={KanbanSVG} />
-        </StyledFlatButton>
-        {selectedBoardType === "kanban" &&
-          isFunction(onChangeKanbanResourceType) && (
-            <Select
-              value={resourceType!}
-              onChange={value => onChangeKanbanResourceType(value)}
-              style={{ marginLeft: "8px" }}
-            >
-              {blockResourceTypes.map(type => (
-                <Select.Option key={type} value={type}>
-                  {getBoardResourceTypeFullName(type)}
-                </Select.Option>
-              ))}
-            </Select>
-          )}
+      <StyledContainer
+        onClick={() => onNavigate(null, null)}
+        s={{ alignItems: "center", cursor: "pointer" }}
+      >
+        <HomeOutlined />
+        {!isMobile && wrapWithMargin("Home", 8, 0)}
       </StyledContainer>
     );
   };
 
+  const renderResourceTypeMenu = () => (
+    <SelectResourceTypeMenu
+      block={block}
+      resourceType={resourceType}
+      onSelect={onSelectResourceTypeMenuItem}
+    />
+  );
+
+  const renderBoardTypeMenu = () => {
+    if (resourceType) {
+      return (
+        <SelectBoardTypeMenu
+          block={block}
+          boardType={selectedBoardType}
+          isMobile={isMobile}
+          resourceType={resourceType}
+          onSelect={onSelectBoardTypeMenuItem}
+        />
+      );
+    }
+
+    return null;
+  };
+
+  const renderCreateNewMenu = () => (
+    <SelectBlockCreateNewOptionsMenu
+      block={block}
+      onSelect={onSelectCreateMenuItem}
+    />
+  );
+
+  const renderBlockOptionsMenu = () => (
+    <SelectBlockOptionsMenu block={block} onSelect={onSelectSettingsMenuItem} />
+  );
+
   return (
-    <StyledContainer s={{ width: "100%", alignItems: "center" }}>
+    <StyledContainer
+      s={{
+        width: "100%",
+        alignItems: "center",
+        ["& .anticon"]: { fontSize: "16px" }
+      }}
+    >
       <StyledContainer>
         <ItemAvatar color={block.color} />
       </StyledContainer>
@@ -175,63 +201,25 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
               s={{
                 borderLeft: "1px solid rgba(0, 0, 0, 0.65)",
                 paddingLeft: "8px",
-                marginLeft: "8px"
+                marginLeft: "8px",
+                textDecoration: "underline"
               }}
             >
-              {resourceTypeName}
+              {renderResourceTypeMenu()}
             </StyledContainer>
           )}
         </StyledContainer>
       </StyledContainer>
-      <Dropdown
-        placement="bottomRight"
-        overlay={createMenu}
-        trigger={["click"]}
-      >
-        <StyledFlatButton style={{ margin: "0 8px" }}>
-          <PlusOutlined />
-        </StyledFlatButton>
-      </Dropdown>
-      {showKanban && renderKanbanSelector()}
-      {showList && (
-        <StyledFlatButton
-          onClick={() => onChangeBoardType("list")}
-          style={{
-            margin: "0 8px",
-            color:
-              selectedBoardType === "list" ? selectedBoardTypeColor : undefined
-          }}
-        >
-          <UnorderedListOutlined />
-        </StyledFlatButton>
-      )}
-      {showTabs && (
-        <StyledFlatButton
-          onClick={() => onChangeBoardType("tab")}
-          style={{
-            margin: "0 8px",
-            color:
-              selectedBoardType === "tab" ? selectedBoardTypeColor : undefined
-          }}
-        >
-          <Icon
-            component={TabSVG}
-            style={{ fontSize: "1.60em", marginTop: "5px" }}
-          />
-        </StyledFlatButton>
-      )}
-      <Dropdown overlay={settingsMenu} trigger={["click"]}>
-        <StyledFlatButton style={{ marginLeft: "8px" }}>
-          <SettingOutlined />
-        </StyledFlatButton>
-      </Dropdown>
+      <StyledContainer s={{ alignItems: "center" }}>
+        {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
+        {wrapWithMargin(renderSelfButton())}
+        {!isMobile && wrapWithMargin(renderResourceTypeMenu())}
+        {isBlockRelatedResourceType(resourceType) &&
+          wrapWithMargin(renderBoardTypeMenu())}
+        {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
+      </StyledContainer>
     </StyledContainer>
   );
 };
 
 export default BoardBlockHeader;
-
-const StyledMenuItem = styled(Menu.Item)({
-  textTransform: "capitalize",
-  display: "flex"
-});

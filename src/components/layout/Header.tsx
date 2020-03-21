@@ -77,7 +77,7 @@ const Header: React.FC<IHeaderProps> = props => {
       {onNavigateBack && (
         <StyledFlatButton
           onClick={onNavigateBack}
-          style={{ marginRight: "12px" }}
+          style={{ marginRight: "12px", paddingTop: "4px" }}
         >
           <ArrowLeftOutlined />
         </StyledFlatButton>
