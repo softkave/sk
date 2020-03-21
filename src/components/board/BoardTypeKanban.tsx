@@ -1,11 +1,16 @@
 import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { BlockType, IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import wrapWithMargin from "../utilities/wrapWithMargin";
-import BoardBaskets, { GetBasketsFunc, IBoardBasket } from "./BoardBaskets";
+import BoardBaskets, {
+  GetBasketsFunc,
+  IBoardBasket,
+  RenderBasketFn
+} from "./BoardBaskets";
 import BoardTypeList from "./BoardTypeList";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
@@ -26,8 +31,6 @@ export interface IBoardTypeKanbanProps {
   onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
   onClickDeleteBlock: (block: IBlock) => void;
 }
-
-type RenderBasketFunc = (basket: IBoardBasket) => React.ReactNode;
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const {
@@ -55,19 +58,33 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   //   setHideEmptyGroups(!hideEmptyGroups);
   // };
 
+  const shouldRenderBasket = (basket: IBoardBasket) => {
+    const group: IBlock = basket.items[0];
+    const childrenIDs = group[selectedResourceType!] || [];
+
+    if (childrenIDs.length === 0 && hideEmptyGroups) {
+      return false;
+    }
+
+    return true;
+  };
+
   const renderBaskets = (
     blocks: IBlock[],
     emptyMessage: string,
     getBaskets: GetBasketsFunc<IBoardBasket>,
-    renderBasketFunc: RenderBasketFunc
+    renderBasketFunc: RenderBasketFn<IBoardBasket>
   ) => {
     return (
       <BoardBaskets
+        id="AssignedTasks"
+        dragType="Group"
         hideEmptyBaskets={hideEmptyGroups}
         blocks={blocks}
         emptyMessage={emptyMessage}
         getBaskets={getBaskets}
-        renderBasket={basket => renderBasketFunc(basket)}
+        renderBasket={renderBasketFunc}
+        shouldRenderBasket={shouldRenderBasket}
       />
     );
   };
@@ -91,9 +108,19 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     />
   );
 
-  const renderGroupHeader = (group: IBlock) => {
+  const renderGroupHeader = (
+    group: IBlock,
+    provided: DraggableProvided,
+    snapshot: DraggableStateSnapshot
+  ) => {
     return (
-      <StyledContainer s={{ width: "100%" }}>
+      <StyledContainer
+        s={{
+          width: "100%",
+          cursor: snapshot.isDragging ? "grabbing" : " grab"
+        }}
+        {...provided.dragHandleProps}
+      >
         <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
           <BlockThumbnail
             block={group}
@@ -102,7 +129,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
             showFields={["name", "type"]}
           />
         </StyledContainer>
-        <StyledContainer>
+        <StyledContainer s={{ alignItems: "center" }}>
           <StyledFlatButton
             style={{ margin: "0 8px", cursor: "pointer" }}
             onClick={() =>
@@ -120,17 +147,18 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
     );
   };
 
-  const renderGroup = (groupBasket: IBoardBasket) => {
-    const group = groupBasket.items[0];
-    const childrenIDs = group[selectedResourceType!] || [];
-
-    if (childrenIDs.length === 0 && hideEmptyGroups) {
-      return null;
-    }
+  const renderGroup: RenderBasketFn<IBoardBasket> = (
+    groupBasket,
+    index,
+    baskets,
+    provided,
+    snapshot
+  ) => {
+    const group: IBlock = groupBasket.items[0];
 
     return (
       <Column
-        header={renderGroupHeader(group)}
+        header={renderGroupHeader(group, provided, snapshot)}
         body={
           <RenderBlockChildren
             {...props}

@@ -124,7 +124,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         s={{ alignItems: "center", cursor: "pointer" }}
       >
         <HomeOutlined />
-        {!isMobile && wrapWithMargin("Home", 8, 0)}
+        {!isMobile && wrapWithMargin("home", 8, 0)}
       </StyledContainer>
     );
   };

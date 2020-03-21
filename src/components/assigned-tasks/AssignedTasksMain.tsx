@@ -209,6 +209,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
     return (
       <StyledContainer s={{ overflowX: "auto", marginLeft: "16px" }}>
         <BoardBaskets
+          id="AssignedTasks"
           blocks={assignedTasks}
           getBaskets={getBaskets}
           renderBasket={renderBasket}

@@ -44,6 +44,7 @@ export interface ITaskCollaborationData {
 }
 
 export type BlockLandingPage = "tasks" | "projects" | "self";
+export type BlockGroupContext = "groupTaskContext" | "groupProjectContext";
 
 export interface IBlock {
   customId: string;

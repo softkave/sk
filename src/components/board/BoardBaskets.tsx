@@ -1,9 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
+import {
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  Droppable
+} from "react-beautiful-dnd";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 
-const defaultEmptyMessage = "No blocks yet.";
+const defaultEmptyMessage = "No data yet.";
 
 export interface IBoardBasket {
   key: string;
@@ -11,17 +17,30 @@ export interface IBoardBasket {
 }
 
 export type GetBasketsFunc<T> = (blocks: any[]) => T[];
+export type RenderBasketFn<BasketType extends IBoardBasket> = (
+  basket: BasketType,
+  index: number,
+  baskets: BasketType[],
+  porvided: DraggableProvided,
+  snapshot: DraggableStateSnapshot
+) => React.ReactNode;
 
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
+  id: string;
   blocks: any[];
   getBaskets: (blocks: any[]) => BasketType[];
-  renderBasket: (
+  renderBasket: RenderBasketFn<BasketType>;
+
+  dragType?: string;
+  isDropDisabled?: boolean;
+  isDragDisabled?: boolean;
+  emptyMessage?: string;
+  hideEmptyBaskets?: boolean;
+  shouldRenderBasket?: (
     basket: BasketType,
     index: number,
     baskets: BasketType[]
-  ) => React.ReactNode;
-  emptyMessage?: string;
-  hideEmptyBaskets?: boolean;
+  ) => boolean;
 }
 
 class BoardBaskets<T extends IBoardBasket> extends React.Component<
@@ -29,11 +48,16 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
 > {
   public render() {
     const {
+      id,
       blocks,
       getBaskets,
       renderBasket,
       emptyMessage,
-      hideEmptyBaskets
+      hideEmptyBaskets,
+      isDragDisabled,
+      isDropDisabled,
+      dragType,
+      shouldRenderBasket: shouldRenderBasketFn
     } = this.props;
     const baskets = getBaskets(blocks);
 
@@ -46,10 +70,40 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
     const renderBaskets = () => {
       const iterBaskets = hideEmptyBaskets ? filterBaskets() : baskets;
       return iterBaskets.map((basket, index, allBaskets) => {
-        const renderedBasket = renderBasket(basket, index, allBaskets);
+        const shouldRenderBasket = shouldRenderBasketFn
+          ? shouldRenderBasketFn(basket, index, allBaskets)
+          : true;
 
-        if (renderedBasket !== null) {
-          return <StyledColumn key={basket.key}>{renderedBasket}</StyledColumn>;
+        if (shouldRenderBasket) {
+          return (
+            <Draggable
+              isDragDisabled={isDragDisabled}
+              key={basket.key}
+              draggableId={basket.key}
+              index={index}
+            >
+              {(provided, snapshot) => {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    style={{
+                      height: "100%",
+                      ...provided.draggableProps.style
+                    }}
+                  >
+                    {renderBasket(
+                      basket,
+                      index,
+                      allBaskets,
+                      provided,
+                      snapshot
+                    )}
+                  </div>
+                );
+              }}
+            </Draggable>
+          );
         }
 
         return null;
@@ -65,9 +119,24 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
     }
 
     return (
-      <StyledBasketsContainerInner>
-        {renderBaskets()}
-      </StyledBasketsContainerInner>
+      <Droppable
+        droppableId={id}
+        type={dragType}
+        direction="horizontal"
+        isDropDisabled={isDropDisabled}
+      >
+        {(provided, snapshot) => {
+          return (
+            <StyledBasketsContainerInner
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {renderBaskets()}
+              {provided.placeholder}
+            </StyledBasketsContainerInner>
+          );
+        }}
+      </Droppable>
     );
   }
 }
@@ -81,9 +150,4 @@ const StyledBasketsContainerInner = styled.div({
   width: "100%",
   overflowX: "auto",
   overflowY: "auto"
-});
-
-const StyledColumn = styled.div({
-  height: "100%"
-  // width: "100%"
 });
