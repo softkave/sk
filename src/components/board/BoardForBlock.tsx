@@ -1,14 +1,20 @@
 import { Modal } from "antd";
 import React from "react";
+import {
+  DragDropContext,
+  DropResult,
+  ResponderProvided
+} from "react-beautiful-dnd";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { IBlock } from "../../models/block/block";
+import { BlockGroupContext, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import getBlockLandingPageOperationFunc from "../../redux/operations/block/getBlockLandingPage";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
+import transferBlockOperationFn from "../../redux/operations/block/transferBlock";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -150,14 +156,24 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       !!!loadBlockLandingPageStatus.operation);
 
   const pushRoute = route => {
-    const search = window.location.search;
-    const url = `${route}${search}`;
+    const search = new URLSearchParams(window.location.search);
+    const routeURL = new URL(
+      `${window.location.protocol}${window.location.host}${route}`
+    );
+
+    search.forEach((value, key) => {
+      routeURL.searchParams.set(key, value);
+    });
+
+    const url = `/app${routeURL.pathname}${routeURL.search}`;
+
     history.push(url);
   };
 
   const onClickBlock = (blocks: IBlock[]) => {
-    const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join("/"));
-    // return;
+    const path = concatPaths("", blocks.map(b => getPath(b)).join(""));
+
+    console.log({ blocks, path });
     pushRoute(path);
   };
 
@@ -275,6 +291,31 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     );
   };
 
+  const onDragEnd = React.useCallback(
+    (result: DropResult, provided: ResponderProvided) => {
+      if (!result.destination) {
+        return;
+      }
+
+      // did not move anywhere - can bail early
+      if (
+        result.source.droppableId === result.destination.droppableId &&
+        result.source.index === result.destination.index
+      ) {
+        return;
+      }
+
+      transferBlockOperationFn({
+        sourceBlockID: result.source.droppableId,
+        draggedBlockID: result.draggableId,
+        destinationBlockID: result.destination?.droppableId,
+        dropPosition: result.destination?.index,
+        groupContext: result.type as BlockGroupContext
+      });
+    },
+    []
+  );
+
   const render = () => {
     const showLoading = shouldRenderLoading();
     const loadErrors = getLoadErrors();
@@ -316,7 +357,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     );
 
     return (
-      <React.Fragment>
+      <DragDropContext onDragEnd={onDragEnd}>
         {blockForm && renderForms()}
         {!blockForm && (
           <RenderForDevice
@@ -324,7 +365,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
             renderForMobile={() => renderBoardForBlock(true)}
           />
         )}
-      </React.Fragment>
+      </DragDropContext>
     );
   };
 

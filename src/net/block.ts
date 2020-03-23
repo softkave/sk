@@ -1,5 +1,5 @@
 import { IAddCollaboratorFormItemValues } from "../components/collaborator/AddCollaboratorFormItem";
-import { BlockType, IBlock } from "../models/block/block";
+import { BlockGroupContext, BlockType, IBlock } from "../models/block/block";
 import { INotification } from "../models/notification/notification";
 import { IUser } from "../models/user/user";
 import { getDataFromObject } from "../utils/object";
@@ -188,7 +188,7 @@ export function transferBlock(
   draggedBlock: IBlock,
   destinationBlock: IBlock,
   dropPosition?: number,
-  groupContext?: "task" | "project"
+  groupContext?: BlockGroupContext
 ) {
   return auth(
     null,

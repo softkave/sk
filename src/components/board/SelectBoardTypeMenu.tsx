@@ -42,6 +42,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = props => {
         s={{
           cursor: "pointer",
           alignItems: "center",
+          textTransform: "capitalize",
           ["& .anticon"]: { fontSize: "16px" }
         }}
       >

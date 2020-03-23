@@ -41,9 +41,7 @@ export interface IBlockFormsProps {
 const BlockForms: React.FC<IBlockFormsProps> = props => {
   const { block, formType, onClose } = props;
   const store = useStore();
-
   const parents = useBlockParents(block);
-
   const user = useSelector(getSignedInUserRequired);
 
   const organizationID =

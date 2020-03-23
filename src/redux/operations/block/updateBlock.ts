@@ -4,7 +4,6 @@ import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
-import { getBlock } from "../../blocks/selectors";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
@@ -70,9 +69,9 @@ export default async function updateBlockOperationFunc(
 
     if (hasBlockParentChanged(block, forTransferBlockOnly)) {
       transferBlockStateHelper({
-        draggedBlock: forTransferBlockOnly,
-        sourceBlock: getBlock(store.getState(), block.parent)!,
-        destinationBlock: getBlock(store.getState(), data.parent)!
+        draggedBlockID: forTransferBlockOnly.customId,
+        sourceBlockID: block.parent!,
+        destinationBlockID: data.parent!
       });
     }
 

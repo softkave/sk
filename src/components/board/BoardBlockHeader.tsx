@@ -121,10 +121,14 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
     return (
       <StyledContainer
         onClick={() => onNavigate(null, null)}
-        s={{ alignItems: "center", cursor: "pointer" }}
+        s={{
+          alignItems: "center",
+          cursor: "pointer",
+          textTransform: "capitalize"
+        }}
       >
         <HomeOutlined />
-        {!isMobile && wrapWithMargin("Home", 8, 0)}
+        {!isMobile && wrapWithMargin("home", 8, 0)}
       </StyledContainer>
     );
   };

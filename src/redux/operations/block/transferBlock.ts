@@ -1,18 +1,110 @@
-import { IBlock } from "../../../models/block/block";
+import { BlockGroupContext, IBlock } from "../../../models/block/block";
+import * as blockNet from "../../../net/block";
+import OperationError from "../../../utils/operation-error/OperationError";
+import reorder from "../../../utils/reorder";
 import * as blockActions from "../../blocks/actions";
+import { getBlock } from "../../blocks/selectors";
 import store from "../../store";
+import { pushOperation } from "../actions";
+import {
+  IOperationFuncOptions,
+  isOperationStarted,
+  operationStatusTypes
+} from "../operation";
+import { transferBlockOperationID } from "../operationIDs";
+import { getOperationWithIDForResource } from "../selectors";
 
-export default async function transferBlockOperation() {
-  throw new Error("Not implemented yet");
+export interface ITransferBlockProps {
+  sourceBlockID: string;
+  draggedBlockID: string;
+  destinationBlockID: string;
+  dropPosition?: number;
+  groupContext?: BlockGroupContext;
 }
 
-// TODO: define any types, and make sure other types are correct
-export interface ITransferBlockReduxProps {
-  sourceBlock: IBlock;
-  draggedBlock: IBlock;
-  destinationBlock: IBlock;
-  dropPosition?: number;
-  groupContext?: string;
+export default async function transferBlockOperationFn(
+  dataProps: ITransferBlockProps,
+  options: IOperationFuncOptions = {}
+) {
+  const { sourceBlockID } = dataProps;
+  const operation = getOperationWithIDForResource(
+    store.getState(),
+    transferBlockOperationID,
+    sourceBlockID
+  );
+
+  if (operation && isOperationStarted(operation, options.scopeID)) {
+    return;
+  }
+
+  store.dispatch(
+    pushOperation(
+      transferBlockOperationID,
+      {
+        scopeID: options.scopeID,
+        status: operationStatusTypes.operationStarted,
+        timestamp: Date.now()
+      },
+      sourceBlockID
+    )
+  );
+
+  try {
+    const sourceBlock = getBlock(store.getState(), dataProps.sourceBlockID)!;
+    const draggedBlock = getBlock(store.getState(), dataProps.draggedBlockID)!;
+    const destinationBlock =
+      sourceBlockID === dataProps.destinationBlockID
+        ? sourceBlock
+        : getBlock(store.getState(), dataProps.destinationBlockID)!;
+
+    transferBlockStateHelper(dataProps);
+
+    // Currently calling the API after updating redux because it causes a lag
+    // TODO: should we call the API before redux, in case it fails and we should revert
+    // and show loading, and error if it fails?
+    const result = await blockNet.transferBlock(
+      sourceBlock,
+      draggedBlock,
+      destinationBlock,
+      dataProps.dropPosition,
+      dataProps.groupContext
+    );
+
+    if (result && result.errors) {
+      throw result.errors;
+    }
+
+    store.dispatch(
+      pushOperation(
+        transferBlockOperationID,
+        {
+          scopeID: options.scopeID,
+          status: operationStatusTypes.operationComplete,
+          timestamp: Date.now()
+        },
+        sourceBlockID
+      )
+    );
+  } catch (error) {
+    console.error(error);
+
+    const transformedError = OperationError.fromAny(error).transform({
+      stripBaseNames: ["data"]
+    });
+
+    store.dispatch(
+      pushOperation(
+        transferBlockOperationID,
+        {
+          error: transformedError,
+          scopeID: options.scopeID,
+          status: operationStatusTypes.operationError,
+          timestamp: Date.now()
+        },
+        sourceBlockID
+      )
+    );
+  }
 }
 
 function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
@@ -23,17 +115,18 @@ function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
   );
 }
 
-export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
-  const sourceBlock = props.sourceBlock;
-  const draggedBlock = props.draggedBlock;
-  const destinationBlock = props.destinationBlock;
+export function transferBlockStateHelper(props: ITransferBlockProps) {
+  const sourceBlock = getBlock(store.getState(), props.sourceBlockID)!;
+  const draggedBlock = getBlock(store.getState(), props.draggedBlockID)!;
+  const destinationBlock = getBlock(
+    store.getState(),
+    props.destinationBlockID
+  )!;
   const dropPosition = props.dropPosition || 0;
   const groupContext = props.groupContext;
 
-  const draggedBlockContainerName = `${draggedBlock.type}s`;
-  const draggedBlockContainer: string[] = [
-    ...sourceBlock[draggedBlockContainerName]
-  ];
+  const containerName = `${draggedBlock.type}s`;
+  const draggedBlockContainer: string[] = [...sourceBlock[containerName]];
   const draggedBlockIndexInSourceBlock = draggedBlockContainer.indexOf(
     draggedBlock.customId
   );
@@ -43,51 +136,53 @@ export function transferBlockStateHelper(props: ITransferBlockReduxProps) {
   }
 
   if (sourceBlock.customId === destinationBlock.customId) {
-    if (!dropPosition) {
+    if (!(dropPosition >= 0)) {
       // TODO: Find a way to differentiate between log errors and display errors
       throw new Error("Drop position not provided");
     }
 
-    const sourceBlockUpdates: Partial<IBlock> = {};
+    const sourceBlockUpdates: Partial<IBlock> = { updatedAt: Date.now() };
 
-    draggedBlockContainer.splice(draggedBlockIndexInSourceBlock, 1);
-    draggedBlockContainer.splice(dropPosition, 0, draggedBlock.customId);
-    sourceBlockUpdates[draggedBlockContainerName] = draggedBlockContainer;
+    sourceBlockUpdates[containerName] = reorder(
+      draggedBlockContainer,
+      draggedBlockIndexInSourceBlock,
+      dropPosition
+    );
 
     if (groupContext && draggedBlock.type === "group") {
-      const groupContextContainerName =
-        groupContext === "project" ? "groupProjectContext" : "groupTaskContext";
-      const groupContextContainer = [
-        ...(sourceBlock[groupContextContainerName] || [])
-      ];
+      const groupContextContainer = sourceBlock[groupContext] || [];
       const draggedBlockIndexInGroupContext = groupContextContainer.indexOf(
         draggedBlock.customId
       );
 
-      groupContextContainer.splice(draggedBlockIndexInGroupContext, 1);
-      groupContextContainer.splice(dropPosition, 0, draggedBlock.customId);
-      sourceBlockUpdates[groupContextContainerName] = groupContextContainer;
+      sourceBlockUpdates[groupContext] = reorder(
+        groupContextContainer,
+        draggedBlockIndexInGroupContext,
+        dropPosition
+      );
     }
 
     updateBlockInStore(sourceBlock, sourceBlockUpdates);
   } else {
-    // Ignores paremeters' groupContext and dropPosition
-
     const draggedBlockUpdates: Partial<IBlock> = {
+      updatedAt: Date.now(),
       parent: destinationBlock.customId
     };
 
     draggedBlockContainer.splice(draggedBlockIndexInSourceBlock, 1);
+
     const sourceBlockUpdates: Partial<IBlock> = {
-      [draggedBlockContainerName]: draggedBlockContainer
+      updatedAt: Date.now(),
+      [containerName]: draggedBlockContainer
     };
 
-    const destinationBlockContainer = [
-      ...destinationBlock[draggedBlockContainerName]
-    ];
+    const destinationBlockContainer = [...destinationBlock[containerName]];
+
     destinationBlockContainer.splice(dropPosition, 0, draggedBlock.customId);
+
     const destinationBlockUpdates: Partial<IBlock> = {
-      [draggedBlockContainerName]: destinationBlockContainer
+      updatedAt: Date.now(),
+      [containerName]: destinationBlockContainer
     };
 
     updateBlockInStore(sourceBlock, sourceBlockUpdates);
