@@ -165,15 +165,16 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       routeURL.searchParams.set(key, value);
     });
 
-    const url = `/app${routeURL.pathname}${routeURL.search}`;
+    const url = `${routeURL.pathname}${routeURL.search}`;
+    // const url = `/app${routeURL.pathname}${routeURL.search}`;
 
     history.push(url);
   };
 
   const onClickBlock = (blocks: IBlock[]) => {
-    const path = concatPaths("", blocks.map(b => getPath(b)).join(""));
+    const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join(""));
 
-    console.log({ blocks, path });
+    // console.log({ blocks, path });
     pushRoute(path);
   };
 

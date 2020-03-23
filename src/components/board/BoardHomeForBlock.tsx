@@ -66,7 +66,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
   React.useEffect(() => {
     if (isFirstRender) {
       const landingPage = getBlockLandingPage(block) || block.landingPage;
-      console.log({ landingPage });
 
       if (!resourceType && landingPage && landingPage !== "self") {
         const boardTypesForResourceType = getBoardTypesForResourceType(
