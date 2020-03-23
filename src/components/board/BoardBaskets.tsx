@@ -95,7 +95,8 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
                     {...provided.draggableProps}
                     style={{
                       height: "100%",
-                      padding: "16px",
+                      padding: "0 16px",
+                      paddingTop: "16px",
                       backgroundColor: snapshot.isDragging ? "#eee" : "white",
                       ...provided.draggableProps.style
                     }}

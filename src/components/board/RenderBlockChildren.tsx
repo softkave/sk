@@ -50,8 +50,6 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = props => {
         <LoadBlockTasks block={block} onClickUpdateBlock={onClickUpdateBlock} />
       );
   }
-
-  console.log({ props });
 };
 
 export default RenderBlockChildren;

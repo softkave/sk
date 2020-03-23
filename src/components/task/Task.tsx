@@ -1,5 +1,5 @@
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
@@ -62,7 +62,6 @@ const Task: React.FC<ITaskProps> = props => {
 export default Task;
 
 const StyledTask = styled.div({
-  backgroundColor: "white",
   display: "flex",
   flexDirection: "column",
   minWidth: "280px"
