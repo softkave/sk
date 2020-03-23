@@ -50,19 +50,29 @@ export default async function transferBlockOperationFn(
   );
 
   try {
-    // const result = await blockNet.transferBlock(
-    //   dataProps.sourceBlock,
-    //   dataProps.draggedBlock,
-    //   dataProps.destinationBlock,
-    //   dataProps.dropPosition,
-    //   dataProps.groupContext === "groupTaskContext" ? "task" : "project"
-    // );
-
-    // if (result && result.errors) {
-    //   throw result.errors;
-    // }
+    const sourceBlock = getBlock(store.getState(), dataProps.sourceBlockID)!;
+    const draggedBlock = getBlock(store.getState(), dataProps.draggedBlockID)!;
+    const destinationBlock =
+      sourceBlockID === dataProps.destinationBlockID
+        ? sourceBlock
+        : getBlock(store.getState(), dataProps.destinationBlockID)!;
 
     transferBlockStateHelper(dataProps);
+
+    // Currently calling the API after updating redux because it causes a lag
+    // TODO: should we call the API before redux, in case it fails and we should revert
+    // and show loading, and error if it fails?
+    const result = await blockNet.transferBlock(
+      sourceBlock,
+      draggedBlock,
+      destinationBlock,
+      dataProps.dropPosition,
+      dataProps.groupContext
+    );
+
+    if (result && result.errors) {
+      throw result.errors;
+    }
 
     store.dispatch(
       pushOperation(
@@ -126,7 +136,7 @@ export function transferBlockStateHelper(props: ITransferBlockProps) {
   }
 
   if (sourceBlock.customId === destinationBlock.customId) {
-    if (!dropPosition) {
+    if (!(dropPosition >= 0)) {
       // TODO: Find a way to differentiate between log errors and display errors
       throw new Error("Drop position not provided");
     }

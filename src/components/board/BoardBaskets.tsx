@@ -80,6 +80,7 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
           : true;
 
         if (shouldRenderBasket) {
+          // TODO: there is a multiple scroll parents warning while dragging
           return (
             <Draggable
               isDragDisabled={isDragDisabled}
@@ -94,6 +95,8 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
                     {...provided.draggableProps}
                     style={{
                       height: "100%",
+                      padding: "16px",
+                      backgroundColor: snapshot.isDragging ? "#eee" : "white",
                       ...provided.draggableProps.style
                     }}
                   >
