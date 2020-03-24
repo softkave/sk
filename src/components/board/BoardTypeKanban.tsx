@@ -76,9 +76,18 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
       : "groupTaskContext";
   };
 
+  // TODO: the sort function is getting called multiple times which can affect perf
+  // look into it.
   const sortBaskets = (baskets: IBoardBasket[]) => {
     const ids = block[getGroupContext()] || [];
-    return sortItemsByPosition(baskets, ids, "key", "before");
+    const sortedBaskets = sortItemsByPosition(
+      baskets,
+      ids,
+      (basket: IBoardBasket) => basket.key,
+      "before"
+    );
+
+    return sortedBaskets;
   };
 
   const renderBaskets = (
@@ -124,13 +133,18 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const renderGroupHeader = (
     group: IBlock,
     provided: DraggableProvided,
-    snapshot: DraggableStateSnapshot
+    snapshot: DraggableStateSnapshot,
+    isDragDisabled: boolean
   ) => {
     return (
       <StyledContainer
         s={{
           width: "100%",
-          cursor: snapshot.isDragging ? "grabbing" : " grab"
+          cursor: isDragDisabled
+            ? undefined
+            : snapshot.isDragging
+            ? "grabbing"
+            : " grab"
         }}
         {...provided.dragHandleProps}
       >
@@ -171,7 +185,12 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
 
     return (
       <Column
-        header={renderGroupHeader(group, provided, snapshot)}
+        header={renderGroupHeader(
+          group,
+          provided,
+          snapshot,
+          !!groupBasket.isDragDisabled
+        )}
         body={
           <RenderBlockChildren
             {...props}
@@ -241,7 +260,11 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
                 block[selectedResourceType] &&
                 (block[selectedResourceType] || []).length > 0
               ) {
-                baskets.push({ key: block.customId, items: [block] });
+                baskets.push({
+                  key: block.customId,
+                  items: [block],
+                  isDragDisabled: true
+                });
               }
 
               baskets = baskets.concat(

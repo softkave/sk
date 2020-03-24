@@ -14,6 +14,8 @@ const defaultEmptyMessage = "No data yet.";
 export interface IBoardBasket {
   key: string;
   items: any[];
+
+  isDragDisabled?: boolean;
 }
 
 export type GetBasketsFunc<T> = (blocks: any[]) => T[];
@@ -83,7 +85,7 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
           // TODO: there is a multiple scroll parents warning while dragging
           return (
             <Draggable
-              isDragDisabled={isDragDisabled}
+              isDragDisabled={isDragDisabled || basket.isDragDisabled}
               key={basket.key}
               draggableId={basket.key}
               index={index}
