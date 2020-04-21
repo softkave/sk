@@ -67,7 +67,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
           </StyledContainer>
         )}
         {fieldsToShow.type && (
-          <StyledContainer s={{ opacity: 0.75 }}>
+          <StyledContainer s={{ color: "rgba(0, 0, 0, 0.85)" }}>
             {getBlockTypeFullName(block.type)}
           </StyledContainer>
         )}

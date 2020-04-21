@@ -4,7 +4,7 @@ import {
   Draggable,
   DraggableProvided,
   DraggableStateSnapshot,
-  Droppable
+  Droppable,
 } from "react-beautiful-dnd";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
@@ -61,12 +61,12 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
       isDropDisabled,
       dragType,
       sortBaskets,
-      shouldRenderBasket: shouldRenderBasketFn
+      shouldRenderBasket: shouldRenderBasketFn,
     } = this.props;
     const baskets = getBaskets(blocks);
 
     const filterBaskets = (inputBaskets: T[]) => {
-      return inputBaskets.filter(basket => {
+      return inputBaskets.filter((basket) => {
         return basket.items.length > 0;
       });
     };
@@ -100,7 +100,7 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
                       padding: "0 16px",
                       paddingTop: "16px",
                       backgroundColor: snapshot.isDragging ? "#eee" : "white",
-                      ...provided.draggableProps.style
+                      ...provided.draggableProps.style,
                     }}
                   >
                     {renderBasket(
@@ -152,13 +152,13 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
   }
 }
 
-export default BoardBaskets;
-
 const StyledBasketsContainerInner = styled.div({
   height: "100%",
   display: "flex",
   boxSizing: "border-box",
   width: "100%",
   overflowX: "auto",
-  overflowY: "auto"
+  overflowY: "auto",
 });
+
+export default React.memo(BoardBaskets);

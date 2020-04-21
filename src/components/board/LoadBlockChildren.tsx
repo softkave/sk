@@ -15,10 +15,10 @@ export interface ILoadBlockChildrenProps {
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = props => {
+const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, getChildrenIDs } = props;
   const blockIDs = getChildrenIDs();
-  const blocks = useSelector<IReduxState, IBlock[]>(state =>
+  const blocks = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, blockIDs)
   );
 
@@ -53,4 +53,4 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = props => {
   return <React.Fragment>{render(blocks)}</React.Fragment>;
 };
 
-export default LoadBlockChildren;
+export default React.memo(LoadBlockChildren);

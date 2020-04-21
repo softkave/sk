@@ -16,7 +16,7 @@ export interface ITaskProps {
   onEdit?: (task: IBlock) => void;
 }
 
-const Task: React.FC<ITaskProps> = props => {
+const Task: React.FC<ITaskProps> = (props) => {
   const { task, onEdit } = props;
 
   const onDeleteTask = () => {
@@ -59,18 +59,18 @@ const Task: React.FC<ITaskProps> = props => {
   );
 };
 
-export default Task;
-
 const StyledTask = styled.div({
   display: "flex",
   flexDirection: "column",
-  minWidth: "280px"
+  minWidth: "280px",
 });
 
 const StyledDescriptionContainer = styled.div({
-  margin: "16px 0"
+  margin: "16px 0",
 });
 
 const StyledControlsContainer = styled.div({
-  textAlign: "right"
+  textAlign: "right",
 });
+
+export default React.memo(Task);

@@ -8,7 +8,7 @@ export interface IColumnProps {
   body?: React.ReactNode;
 }
 
-const Column: React.FC<IColumnProps> = props => {
+const Column: React.FC<IColumnProps> = (props) => {
   const { header, body } = props;
 
   const renderColumn = (desktop: boolean) => {
@@ -17,7 +17,7 @@ const Column: React.FC<IColumnProps> = props => {
       height: "100%",
       width: "100%",
       flexDirection: "column",
-      boxSizing: "border-box"
+      boxSizing: "border-box",
       // padding: "0 16px"
     };
 
@@ -27,7 +27,7 @@ const Column: React.FC<IColumnProps> = props => {
         width: "350px",
         maxWidth: "350px",
         flex: 1,
-        height: "100%"
+        height: "100%",
       };
     }
 
@@ -62,4 +62,4 @@ const StyledColumnBodyContainer = styled.div`
   overflow: auto;
 `;
 
-export default Column;
+export default React.memo(Column);

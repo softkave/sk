@@ -53,7 +53,14 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
   const renderColumn = (title: string, columnTasks: IBlock[]) => {
     const renderBody = () => {
-      return <TaskList selectedCollaborators={{}} tasks={columnTasks} />;
+      return (
+        <TaskList
+          isDragDisabled
+          isDropDisabled
+          selectedCollaborators={{}}
+          tasks={columnTasks}
+        />
+      );
     };
 
     return (

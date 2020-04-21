@@ -316,6 +316,11 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       // TODO: volatile, blocks are possibly null OR undefined
       const sourceBlock = getBlock(store.getState(), sourceBlockID)!;
       const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+
+      if (draggedBlock.type === "org" || draggedBlock.type === "project") {
+        return;
+      }
+
       const groupContext =
         draggedBlock.type === "group"
           ? (result.type as BlockGroupContext)
