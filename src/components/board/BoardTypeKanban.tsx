@@ -3,7 +3,7 @@ import React from "react";
 import {
   DraggableProvided,
   DraggableStateSnapshot,
-  Droppable
+  Droppable,
 } from "react-beautiful-dnd";
 import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
 import { sortItemsByPosition } from "../../utils/sortItemsByPosition";
@@ -14,14 +14,14 @@ import wrapWithMargin from "../utilities/wrapWithMargin";
 import BoardBaskets, {
   GetBasketsFunc,
   IBoardBasket,
-  RenderBasketFn
+  RenderBasketFn,
 } from "./BoardBaskets";
 import BoardTypeList from "./BoardTypeList";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
 import RenderBlockChildren from "./RenderBlockChildren";
 import SelectBlockOptionsMenu, {
-  SettingsMenuKey
+  SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
 import { BoardResourceType } from "./types";
 import { getBlockTypeFromResourceType } from "./utils";
@@ -37,17 +37,17 @@ export interface IBoardTypeKanbanProps {
   onClickDeleteBlock: (block: IBlock) => void;
 }
 
-const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
+const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   const {
     block,
     selectedResourceType,
     onClickBlock,
     onClickCreateNewBlock,
     onClickDeleteBlock,
-    onClickUpdateBlock
+    onClickUpdateBlock,
   } = props;
   const [
-    hideEmptyGroups
+    hideEmptyGroups,
     // setHideEmptyGroups
   ] = React.useState(false);
 
@@ -130,7 +130,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const renderSettingsMenu = (forBlock: IBlock) => (
     <SelectBlockOptionsMenu
       block={forBlock}
-      onSelect={key => onSelectSettingsMenuItem(forBlock, key)}
+      onSelect={(key) => onSelectSettingsMenuItem(forBlock, key)}
     />
   );
 
@@ -148,7 +148,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
             ? undefined
             : snapshot.isDragging
             ? "grabbing"
-            : "grab"
+            : "grab",
         }}
         {...provided.dragHandleProps}
       >
@@ -199,7 +199,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
           <RenderBlockChildren
             {...props}
             block={group}
-            onClickBlock={clickedBlockWithParents =>
+            onClickBlock={(clickedBlockWithParents) =>
               onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
             }
           />
@@ -246,18 +246,18 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
         flex: 1,
         width: "100%",
         height: "100%",
-        flexDirection: "column"
+        flexDirection: "column",
       }}
     >
       {/* {renderToggleEmptyGroups()} */}
       <BoardBlockChildren
         parent={block}
         getChildrenIDs={() => block.groups || []}
-        render={blocks =>
+        render={(blocks) =>
           renderBaskets(
             blocks,
             "No groups yet.",
-            groups => {
+            (groups) => {
               let baskets: IBoardBasket[] = [];
 
               if (
@@ -266,13 +266,13 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
               ) {
                 baskets.push({
                   key: block.customId,
-                  items: [block]
+                  items: [block],
                   // isDragDisabled: true
                 });
               }
 
               baskets = baskets.concat(
-                groups.map(group => ({ key: group.customId, items: [group] }))
+                groups.map((group) => ({ key: group.customId, items: [group] }))
               );
               return baskets;
             },
