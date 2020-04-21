@@ -34,11 +34,17 @@ function defaultProcessValue(value: any) {
 
 interface IIndexArrayOptions {
   path?: string;
-  indexer?: (current: any, path: string, arr: any[]) => string | number;
+  indexer?: (
+    current: any,
+    providedPath: string,
+    currentIndex: number,
+    arr: any[]
+  ) => string | number;
   proccessValue?: (
     current: any,
     existing: any,
-    path: string,
+    providedPath: string,
+    currentIndex: number,
     arr: any[]
   ) => any;
 }
@@ -53,10 +59,10 @@ export function indexArray(
 
   proccessValue = proccessValue || defaultProcessValue;
 
-  const result = arr.reduce((accumulator, current) => {
-    const index = indexer!(current, path!, arr);
+  const result = arr.reduce((accumulator, current, reduceIndex) => {
+    const index = indexer!(current, path!, reduceIndex, arr);
     const existing = get(accumulator, index);
-    const value = proccessValue!(current, existing, path!, arr);
+    const value = proccessValue!(current, existing, path!, reduceIndex, arr);
     set(accumulator, index, value);
     return accumulator;
   }, {});

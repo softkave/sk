@@ -5,10 +5,11 @@ import {
   DropResult,
   ResponderProvided
 } from "react-beautiful-dnd";
-import { useSelector } from "react-redux";
+import { useSelector, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockGroupContext, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
+import { getBlock } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import getBlockLandingPageOperationFunc from "../../redux/operations/block/getBlockLandingPage";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
@@ -22,6 +23,7 @@ import {
   getBlockLandingPageOperationID
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import GeneralErrorList from "../GeneralErrorList";
@@ -55,6 +57,7 @@ export type OnClickBlock = (block: IBlock[]) => void;
 const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const { block } = props;
   const history = useHistory();
+  const store = useStore<IReduxState>();
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
     null
   );
@@ -306,12 +309,53 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         return;
       }
 
+      let dropPosition: number = result.destination?.index;
+      const sourceBlockID = result.source.droppableId;
+      const draggedBlockID = result.draggableId;
+
+      // TODO: volatile, blocks are possibly null OR undefined
+      const sourceBlock = getBlock(store.getState(), sourceBlockID)!;
+      const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+
+      if (draggedBlock.type === "org" || draggedBlock.type === "project") {
+        return;
+      }
+
+      const groupContext =
+        draggedBlock.type === "group"
+          ? (result.type as BlockGroupContext)
+          : undefined;
+
+      if (groupContext) {
+        const containerName =
+          groupContext === "groupTaskContext" ? "tasks" : "projects";
+        const container: string[] = sourceBlock[containerName] || [];
+
+        if (container.length > 0) {
+          dropPosition -= 1;
+        }
+      }
+
+      if (dropPosition < 0) {
+        return;
+      }
+
+      console.log({
+        sourceBlockID,
+        draggedBlockID,
+        dropPosition,
+        groupContext,
+        destinationBlockID: result.destination?.droppableId
+      });
+
+      // return;
+
       transferBlockOperationFn({
-        sourceBlockID: result.source.droppableId,
-        draggedBlockID: result.draggableId,
-        destinationBlockID: result.destination?.droppableId,
-        dropPosition: result.destination?.index,
-        groupContext: result.type as BlockGroupContext
+        sourceBlockID,
+        draggedBlockID,
+        dropPosition,
+        groupContext,
+        destinationBlockID: result.destination?.droppableId
       });
     },
     []

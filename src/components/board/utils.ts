@@ -128,3 +128,7 @@ export const getBlockTypeFromResourceType = (
       return null;
   }
 };
+
+export const getResourceTypeFieldName = (resourceType: BoardResourceType) => {
+  return blockResourceTypeToBlockKeyMap[resourceType];
+};

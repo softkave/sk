@@ -14,12 +14,12 @@ export interface IRenderBlockChildrenProps {
   onClickBlock: (blocks: IBlock[]) => void;
 }
 
-const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = props => {
+const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
   const {
     block,
     onClickUpdateBlock,
     onClickBlock,
-    selectedResourceType
+    selectedResourceType,
   } = props;
 
   const renderCollaborators = () => {
@@ -52,4 +52,4 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = props => {
   }
 };
 
-export default RenderBlockChildren;
+export default React.memo(RenderBlockChildren);

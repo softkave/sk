@@ -8,7 +8,7 @@ export interface ILoadBlockTasksProps {
   onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = props => {
+const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = (props) => {
   const { block, onClickUpdateBlock } = props;
 
   const renderTasks = () => {
@@ -16,10 +16,11 @@ const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = props => {
       <LoadBlockChildren
         parent={block}
         getChildrenIDs={() => block.tasks || []}
-        render={tasks => (
+        render={(tasks) => (
           <TaskList
+            block={block}
             tasks={tasks}
-            toggleForm={task => onClickUpdateBlock(task)}
+            toggleForm={(task) => onClickUpdateBlock(task)}
           />
         )}
       />
@@ -29,4 +30,4 @@ const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = props => {
   return renderTasks();
 };
 
-export default LoadBlockTasks;
+export default React.memo(LoadBlockTasks);

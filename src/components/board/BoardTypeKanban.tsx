@@ -1,6 +1,10 @@
 import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
-import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
+import {
+  DraggableProvided,
+  DraggableStateSnapshot,
+  Droppable,
+} from "react-beautiful-dnd";
 import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
 import { sortItemsByPosition } from "../../utils/sortItemsByPosition";
 import BlockThumbnail from "../block/BlockThumnail";
@@ -10,14 +14,14 @@ import wrapWithMargin from "../utilities/wrapWithMargin";
 import BoardBaskets, {
   GetBasketsFunc,
   IBoardBasket,
-  RenderBasketFn
+  RenderBasketFn,
 } from "./BoardBaskets";
 import BoardTypeList from "./BoardTypeList";
 import Column from "./Column";
 import BoardBlockChildren from "./LoadBlockChildren";
 import RenderBlockChildren from "./RenderBlockChildren";
 import SelectBlockOptionsMenu, {
-  SettingsMenuKey
+  SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
 import { BoardResourceType } from "./types";
 import { getBlockTypeFromResourceType } from "./utils";
@@ -33,17 +37,17 @@ export interface IBoardTypeKanbanProps {
   onClickDeleteBlock: (block: IBlock) => void;
 }
 
-const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
+const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   const {
     block,
     selectedResourceType,
     onClickBlock,
     onClickCreateNewBlock,
     onClickDeleteBlock,
-    onClickUpdateBlock
+    onClickUpdateBlock,
   } = props;
   const [
-    hideEmptyGroups
+    hideEmptyGroups,
     // setHideEmptyGroups
   ] = React.useState(false);
 
@@ -76,9 +80,18 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
       : "groupTaskContext";
   };
 
+  // TODO: the sort function is getting called multiple times which can affect perf
+  // look into it.
   const sortBaskets = (baskets: IBoardBasket[]) => {
     const ids = block[getGroupContext()] || [];
-    return sortItemsByPosition(baskets, ids, "key", "before");
+    const sortedBaskets = sortItemsByPosition(
+      baskets,
+      ids,
+      (basket: IBoardBasket) => basket.key,
+      "before"
+    );
+
+    return sortedBaskets;
   };
 
   const renderBaskets = (
@@ -117,20 +130,25 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
   const renderSettingsMenu = (forBlock: IBlock) => (
     <SelectBlockOptionsMenu
       block={forBlock}
-      onSelect={key => onSelectSettingsMenuItem(forBlock, key)}
+      onSelect={(key) => onSelectSettingsMenuItem(forBlock, key)}
     />
   );
 
   const renderGroupHeader = (
     group: IBlock,
     provided: DraggableProvided,
-    snapshot: DraggableStateSnapshot
+    snapshot: DraggableStateSnapshot,
+    isDragDisabled: boolean
   ) => {
     return (
       <StyledContainer
         s={{
           width: "100%",
-          cursor: snapshot.isDragging ? "grabbing" : " grab"
+          cursor: isDragDisabled
+            ? undefined
+            : snapshot.isDragging
+            ? "grabbing"
+            : "grab",
         }}
         {...provided.dragHandleProps}
       >
@@ -171,12 +189,17 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
 
     return (
       <Column
-        header={renderGroupHeader(group, provided, snapshot)}
+        header={renderGroupHeader(
+          group,
+          provided,
+          snapshot,
+          !!groupBasket.isDragDisabled
+        )}
         body={
           <RenderBlockChildren
             {...props}
             block={group}
-            onClickBlock={clickedBlockWithParents =>
+            onClickBlock={(clickedBlockWithParents) =>
               onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
             }
           />
@@ -223,29 +246,33 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = props => {
         flex: 1,
         width: "100%",
         height: "100%",
-        flexDirection: "column"
+        flexDirection: "column",
       }}
     >
       {/* {renderToggleEmptyGroups()} */}
       <BoardBlockChildren
         parent={block}
         getChildrenIDs={() => block.groups || []}
-        render={blocks =>
+        render={(blocks) =>
           renderBaskets(
             blocks,
             "No groups yet.",
-            groups => {
+            (groups) => {
               let baskets: IBoardBasket[] = [];
 
               if (
                 block[selectedResourceType] &&
                 (block[selectedResourceType] || []).length > 0
               ) {
-                baskets.push({ key: block.customId, items: [block] });
+                baskets.push({
+                  key: block.customId,
+                  items: [block],
+                  // isDragDisabled: true
+                });
               }
 
               baskets = baskets.concat(
-                groups.map(group => ({ key: group.customId, items: [group] }))
+                groups.map((group) => ({ key: group.customId, items: [group] }))
               );
               return baskets;
             },

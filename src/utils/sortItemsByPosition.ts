@@ -3,21 +3,25 @@ import { indexArray } from "./object";
 export function sortItemsByPosition(
   items: any[],
   sortIds: string[],
-  indexPath: string,
+  getIndex: (item: any, index: number) => string,
   unknownPlacement: "before" | "after" = "before"
 ) {
   // TODO: should we sort it in place?
   // if we do, we get O(logN), right now, we get O(N)
 
-  const indexedItems = indexArray(items, { path: indexPath });
+  const indexedIDs = indexArray(sortIds, {
+    proccessValue: (id, existingItem, path, index) => index
+  });
   const unknownItems: any[] = [];
   let sortedItems: any[] = [];
 
-  sortIds.forEach(id => {
-    if (indexedItems[id]) {
-      sortedItems.push(indexedItems[id]);
+  items.forEach((item, i) => {
+    const key = getIndex(item, i);
+
+    if (indexedIDs[key] >= 0) {
+      sortedItems.splice(indexedIDs[key], 0, item);
     } else {
-      unknownItems.push(indexedItems[id]);
+      unknownItems.push(item);
     }
   });
 

@@ -9,7 +9,7 @@ const veryImportantKey = "very important";
 export const priorityToColorMap = {
   [notImportantKey]: "#EACA2C",
   important: "#7ED321",
-  [veryImportantKey]: "rgb(255, 77, 79)"
+  [veryImportantKey]: "rgb(255, 77, 79)",
 };
 
 interface IPriorityProps {
@@ -18,7 +18,7 @@ interface IPriorityProps {
   className?: string;
 }
 
-const Priority: React.FC<IPriorityProps> = props => {
+const Priority: React.FC<IPriorityProps> = (props) => {
   const { level, cover, className } = props;
 
   return (
@@ -28,16 +28,16 @@ const Priority: React.FC<IPriorityProps> = props => {
   );
 };
 
-const StyledPriority = styled("span")<IPriorityProps>(props => {
+const StyledPriority = styled("span")<IPriorityProps>((props) => {
   const coverProp = props.cover === "color" ? "color" : "backgroundColor";
   const color = priorityToColorMap[props.level];
 
   return {
-    padding: "2px 8px",
+    padding: "1px 8px 0px 8px",
     borderRadius: "4em",
     color: "white",
     fontSize: "13.33px",
-    [coverProp]: color
+    [coverProp]: color,
   };
 });
 

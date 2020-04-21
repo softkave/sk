@@ -13,7 +13,7 @@ import BoardBaskets, { IBoardBasket } from "../board/BoardBaskets";
 import ColumnWithTitleAndCount from "../board/ColumnWithTitleAndContent";
 import { concatPaths } from "../layout/path";
 import SingleOperationHelper, {
-  ISingleOperationHelperDerivedProps
+  ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
 import RenderForDevice from "../RenderForDevice";
 import StyledCenterContainer from "../styled/CenterContainer";
@@ -25,9 +25,9 @@ interface IAssignedTasksBasket extends IBoardBasket {
   title: string;
 }
 
-const AssignedTasksMain: React.FC<{}> = props => {
+const AssignedTasksMain: React.FC<{}> = (props) => {
   const user = useSelector(getSignedInUserRequired);
-  const assignedTasks = useSelector<IReduxState, IBlock[]>(state =>
+  const assignedTasks = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, user.assignedTasks || [])
   );
   const history = useHistory();
@@ -53,7 +53,14 @@ const AssignedTasksMain: React.FC<{}> = props => {
 
   const renderColumn = (title: string, columnTasks: IBlock[]) => {
     const renderBody = () => {
-      return <TaskList selectedCollaborators={{}} tasks={columnTasks} />;
+      return (
+        <TaskList
+          isDragDisabled
+          isDropDisabled
+          selectedCollaborators={{}}
+          tasks={columnTasks}
+        />
+      );
     };
 
     return (
@@ -71,7 +78,7 @@ const AssignedTasksMain: React.FC<{}> = props => {
     dueTomorrow,
     dueThisWeek,
     dueThisMonth,
-    rest
+    rest,
   } = sortAssignedTasksByDueDate(assignedTasks);
 
   const hasNoneDue = rest.length === assignedTasks.length;
@@ -84,13 +91,13 @@ const AssignedTasksMain: React.FC<{}> = props => {
       { key: "dueTomorrow", title: "Due Tomorrow", items: dueTomorrow },
       { key: "dueThisWeek", title: "Due This Week", items: dueThisWeek },
       { key: "dueThisMonth", title: "Due This Month", items: dueThisMonth },
-      { key: "rest", title: remainingTasksTitle, items: rest }
+      { key: "rest", title: remainingTasksTitle, items: rest },
     ];
 
     return baskets;
   };
 
-  const renderBasket = (basket: IAssignedTasksBasket) => {
+  const renderBasket = (basket) => {
     if (basket.items.length === 0) {
       return null;
     }
