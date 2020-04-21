@@ -38,6 +38,7 @@ const StyledPriority = styled("span")<IPriorityProps>((props) => {
     color: "white",
     fontSize: "13.33px",
     [coverProp]: color,
+    display: "inline-block",
   };
 });
 
