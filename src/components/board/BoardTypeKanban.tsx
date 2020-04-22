@@ -200,7 +200,13 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
             {...props}
             block={group}
             onClickBlock={(clickedBlockWithParents) =>
-              onClickBlock(groupBasket.items.concat(clickedBlockWithParents))
+              onClickBlock(
+                // To fix navigation bug when clicking on projects from orgs in kanban view
+                // NOTE: possible bug sourcelater on
+                group.customId === block.customId
+                  ? clickedBlockWithParents
+                  : groupBasket.items.concat(clickedBlockWithParents)
+              )
             }
           />
         }

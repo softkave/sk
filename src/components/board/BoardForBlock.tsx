@@ -3,7 +3,7 @@ import React from "react";
 import {
   DragDropContext,
   DropResult,
-  ResponderProvided
+  ResponderProvided,
 } from "react-beautiful-dnd";
 import { useSelector, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -20,7 +20,7 @@ import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
   getBlockCollaboratorsOperationID,
-  getBlockLandingPageOperationID
+  getBlockLandingPageOperationID,
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
@@ -54,7 +54,7 @@ export type OnClickBlock = (block: IBlock[]) => void;
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
+const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   const { block } = props;
   const history = useHistory();
   const store = useStore<IReduxState>();
@@ -97,7 +97,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const loadCollaboratorsStatus = useOperation(
     {
       operationID: getBlockCollaboratorsOperationID,
-      resourceID: block.customId
+      resourceID: block.customId,
     },
     hasCollaborators && loadOrgCollaborators
   );
@@ -110,7 +110,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const loadRequestsStatus = useOperation(
     {
       operationID: getBlockCollaborationRequestsOperationID,
-      resourceID: block.customId
+      resourceID: block.customId,
     },
     hasRequests && loadOrgCollaborationRequests
   );
@@ -128,7 +128,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const loadChildrenStatus = useOperation(
     {
       operationID: getBlockChildrenOperationID,
-      resourceID: block.customId
+      resourceID: block.customId,
     },
     loadBlockChildren
   );
@@ -148,7 +148,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   const loadBlockLandingPageStatus = useOperation(
     {
       operationID: getBlockLandingPageOperationID,
-      resourceID: block.customId
+      resourceID: block.customId,
     },
     loadBlockLandingPage
   );
@@ -158,7 +158,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
     (loadBlockLandingPageStatus.isLoading ||
       !!!loadBlockLandingPageStatus.operation);
 
-  const pushRoute = route => {
+  const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
     const routeURL = new URL(
       `${window.location.protocol}${window.location.host}${route}`
@@ -175,7 +175,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
   };
 
   const onClickBlock = (blocks: IBlock[]) => {
-    const path = concatPaths(blockPath, blocks.map(b => getPath(b)).join(""));
+    const path = concatPaths(blockPath, blocks.map((b) => getPath(b)).join(""));
 
     // console.log({ blocks, path });
     pushRoute(path);
@@ -215,7 +215,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
       },
       onCancel() {
         // do nothing
-      }
+      },
     });
   };
 
@@ -345,7 +345,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         draggedBlockID,
         dropPosition,
         groupContext,
-        destinationBlockID: result.destination?.droppableId
+        destinationBlockID: result.destination?.droppableId,
       });
 
       // return;
@@ -355,7 +355,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         draggedBlockID,
         dropPosition,
         groupContext,
-        destinationBlockID: result.destination?.droppableId
+        destinationBlockID: result.destination?.droppableId,
       });
     },
     []
@@ -386,13 +386,13 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = props => {
         onClickAddBlock={(parentBlock, blockType) => {
           setBlockForm({
             block: getNewBlock(user, blockType, parentBlock),
-            formType: "add-block-form"
+            formType: "add-block-form",
           });
         }}
-        onClickUpdateBlock={blockToUpdate =>
+        onClickUpdateBlock={(blockToUpdate) =>
           setBlockForm({
             block: blockToUpdate,
-            formType: "update-block-form"
+            formType: "update-block-form",
           })
         }
         onClickAddCollaborator={() =>
