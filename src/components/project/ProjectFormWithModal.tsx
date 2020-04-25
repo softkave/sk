@@ -1,4 +1,4 @@
-import withModal from "../withModal";
+import withDrawer from "../withDrawer";
 import ProjectFormContainer from "./ProjectFormContainer";
 
-export default withModal(ProjectFormContainer);
+export default withDrawer(ProjectFormContainer);

@@ -1,4 +1,4 @@
-import withModal from "../withModal";
+import withDrawer from "../withDrawer";
 import GroupFormContainer from "./GroupFormContainer";
 
-export default withModal(GroupFormContainer);
+export default withDrawer(GroupFormContainer);

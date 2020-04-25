@@ -10,7 +10,7 @@ const veryImportantKey = "very important";
 export const taskPriority = {
   important: "important",
   [notImportantkey]: "not important",
-  [veryImportantKey]: "very important"
+  [veryImportantKey]: "very important",
 };
 
 export const blockType = {
@@ -18,7 +18,7 @@ export const blockType = {
   project: "project",
   group: "group",
   task: "task",
-  root: "root"
+  root: "root",
 };
 
 export type BlockPriority = keyof typeof taskPriority;
@@ -33,7 +33,7 @@ export interface ISubTask {
 
 export const blockTaskCollaborationTypes = {
   individual: "individual",
-  collective: "collective"
+  collective: "collective",
 };
 
 export type TaskCollaborationType = "individual" | "collective";
@@ -45,6 +45,28 @@ export interface ITaskCollaborationData {
 
 export type BlockLandingPage = "tasks" | "projects" | "self";
 export type BlockGroupContext = "groupTaskContext" | "groupProjectContext";
+
+export interface IBlockStatus {
+  customId: string;
+  name: string;
+  createdAt: number;
+  createdBy: string;
+  // color: string;
+  description?: string;
+  updatedAt?: number;
+  updatedBy?: string;
+}
+
+export interface IBlockLabel {
+  customId: string;
+  name: string;
+  createdAt: number;
+  createdBy: string;
+  color: string;
+  description?: string;
+  updatedAt?: number;
+  updatedBy?: string;
+}
 
 export interface IBlock {
   customId: string;
@@ -70,10 +92,14 @@ export interface IBlock {
   collaborationRequests?: string[];
   subTasks?: ISubTask[];
   landingPage?: BlockLandingPage;
+  availableStatuses?: IBlockStatus[];
+  availableLabels?: IBlockLabel[];
+  blockLabels?: string[];
+  blockStatus?: string;
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {
-  return blocks.find(block => {
+  return blocks.find((block) => {
     return block.customId === id;
   });
 }

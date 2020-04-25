@@ -1,4 +1,4 @@
-import withModal from "../withModal";
+import withDrawer from "../withDrawer";
 import AddCollaboratorFormContainer from "./AddCollaboratorFormContainer";
 
-export default withModal(AddCollaboratorFormContainer);
+export default withDrawer(AddCollaboratorFormContainer);

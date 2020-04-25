@@ -1,4 +1,4 @@
-import withModal from "../withModal";
+import withDrawer from "../withDrawer";
 import TaskFormContainer from "./TaskFormContainer";
 
-export default withModal(TaskFormContainer);
+export default withDrawer(TaskFormContainer);

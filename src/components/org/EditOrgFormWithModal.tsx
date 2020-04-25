@@ -1,4 +1,4 @@
-import withModal from "../withModal";
+import withDrawer from "../withDrawer";
 import EditOrgFormContainer from "./EditOrgFormContainer";
 
-export default withModal(EditOrgFormContainer);
+export default withDrawer(EditOrgFormContainer);
