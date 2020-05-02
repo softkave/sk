@@ -98,7 +98,8 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
           <FormControls>
             <StyledButton
               block
-              type="danger"
+              danger
+              type="primary"
               disabled={isSubmitting}
               onClick={onClose}
             >

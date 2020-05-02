@@ -13,7 +13,7 @@ const RoundEdgeTags: React.FC<IRoundEdgeTagsProps> = (props) => {
       s={{
         padding: "1px 8px 0px 8px",
         borderRadius: "4em",
-        color: "#f0f0f0" || color,
+        backgroundColor: color || "#f0f0f0",
         fontSize: "13.33px",
         display: "inline-block",
       }}

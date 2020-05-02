@@ -32,29 +32,32 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   );
 
   const onAdd = (id: string) => {
-    onChange([...labelIDs, id]);
+    if (labelIDs.indexOf(id) === -1) {
+      onChange([...labelIDs, id]);
+    }
   };
 
   const onRemove = (id: string) => {
     const index = labelIDs.indexOf(id);
     const newIDs = [...labelIDs];
-    newIDs.splice(index);
+    newIDs.splice(index, 1);
     onChange(newIDs);
   };
 
   const renderLabelTag = (label: IBlockLabel, canRemove) => {
     return (
       <RoundEdgeTags key={label.customId} color={label.color}>
-        <Space>
+        <StyledContainer s={{ alignItems: "center" }}>
           {label.name}
           {canRemove && !disabled && (
             <CloseIcon
               onClick={() => {
                 onRemove(label.customId);
               }}
+              style={{ width: "14px", marginLeft: "8px" }}
             />
           )}
-        </Space>
+        </StyledContainer>
       </RoundEdgeTags>
     );
   };
@@ -113,7 +116,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   return (
     <StyledContainer>
       <Space direction="vertical">
-        {renderSelectLabel()}
+        {/* {renderSelectLabel()} */}
         <Space>
           {renderSelectedLabels()}
           {!disabled && renderAddNewLabel()}

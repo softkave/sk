@@ -11,7 +11,7 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  StyledForm
+  StyledForm,
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 
@@ -35,7 +35,7 @@ export interface IProjectFormProps
 
 const defaultSubmitLabel = "Create Project";
 
-const ProjectForm: React.FC<IProjectFormProps> = props => {
+const ProjectForm: React.FC<IProjectFormProps> = (props) => {
   const {
     submitLabel,
     values,
@@ -47,20 +47,20 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     isSubmitting,
     setFieldValue,
     possibleParents,
-    onClose
+    onClose,
   } = props;
 
   // return <span>Inside Project</span>;
 
   const immediateParentID = values.parent;
   const immediateParent = possibleParents.find(
-    parent => parent.customId === immediateParentID
+    (parent) => parent.customId === immediateParentID
   );
   const projectIDs = (immediateParent && immediateParent!.projects) || [];
-  const projects = useSelector<IReduxState, IBlock[]>(state =>
+  const projects = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, projectIDs)
   );
-  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>(state =>
+  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>((state) =>
     getBlock(state, values.customId)
   );
 
@@ -70,7 +70,7 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
       const existingProject = projects.find(
-        project => project.name.toLowerCase() === name
+        (project) => project.name.toLowerCase() === name
       );
 
       if (
@@ -92,7 +92,7 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
       <BlockParentSelection
         value={values.parent}
         possibleParents={possibleParents}
-        onChange={value => setFieldValue("parent", value)}
+        onChange={(value) => setFieldValue("parent", value)}
       />
     </Form.Item>
   );
@@ -161,7 +161,8 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
         <FormControls>
           <StyledButton
             block
-            type="danger"
+            danger
+            type="primary"
             disabled={isSubmitting}
             onClick={onClose}
           >
@@ -177,7 +178,7 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
 };
 
 ProjectForm.defaultProps = {
-  submitLabel: defaultSubmitLabel
+  submitLabel: defaultSubmitLabel,
 };
 
 export default ProjectForm;

@@ -209,7 +209,8 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
       title: onDeletePromptMessage,
       okText: "Yes",
       cancelText: "No",
-      okType: "danger",
+      okType: "primary",
+      okButtonProps: { danger: true },
       onOk() {
         onDeleteBlock(blockToDelete);
       },

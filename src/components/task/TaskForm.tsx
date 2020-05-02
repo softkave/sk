@@ -347,7 +347,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
           <FormControls>
             <StyledButton
               block
-              type="danger"
+              danger
+              type="primary"
               disabled={isSubmitting}
               onClick={onClose}
             >

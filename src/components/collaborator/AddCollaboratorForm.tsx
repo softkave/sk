@@ -127,7 +127,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
           <FormControls>
             <StyledButton
               block
-              type="danger"
+              danger
+              type="primary"
               disabled={isSubmitting}
               onClick={onClose}
             >

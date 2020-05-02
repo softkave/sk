@@ -25,7 +25,7 @@ export interface IAddCollaboratorFormItemProps {
 }
 
 const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
-  props => {
+  (props) => {
     const { error, onChange, onDelete, value } = props;
     const itemError = error || {};
 
@@ -36,7 +36,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             placeholder="Email Address"
             value={value.email}
             autoComplete="email"
-            onChange={event => {
+            onChange={(event) => {
               onChange({ ...value, email: event.target.value });
             }}
           />
@@ -46,7 +46,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
           <Message
             placeholder="Message"
             value={value.body}
-            onChange={body => {
+            onChange={(body) => {
               onChange({ ...value, body });
             }}
           />
@@ -56,16 +56,14 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
           <ExpiresAt
             placeholder="Expires At"
             value={value.expiresAt}
-            minDate={moment()
-              .subtract(1, "day")
-              .endOf("day")}
-            onChange={date => {
+            minDate={moment().subtract(1, "day").endOf("day")}
+            onChange={(date) => {
               onChange({ ...value, expiresAt: date });
             }}
           />
         </StyledFormItem>
         <StyledFormItemButtonContainer>
-          <Button block onClick={() => onDelete(value)} type="danger">
+          <Button block danger onClick={() => onDelete(value)} type="primary">
             Delete
           </Button>
         </StyledFormItemButtonContainer>
@@ -79,9 +77,9 @@ export default AddCollaboratorFormItem;
 const StyledContainer = styled.div({});
 
 const StyledFormItem = styled.div({
-  marginTop: "8px"
+  marginTop: "8px",
 });
 
 const StyledFormItemButtonContainer = styled.div({
-  marginTop: "16px"
+  marginTop: "16px",
 });

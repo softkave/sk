@@ -11,7 +11,7 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  StyledForm
+  StyledForm,
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 
@@ -35,7 +35,7 @@ export interface IGroupFormProps
 
 const defaultSubmitLabel = "Create Group";
 
-const GroupForm: React.FC<IGroupFormProps> = props => {
+const GroupForm: React.FC<IGroupFormProps> = (props) => {
   const {
     submitLabel,
     values,
@@ -47,18 +47,18 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     isSubmitting,
     setFieldValue,
     possibleParents,
-    onClose
+    onClose,
   } = props;
 
   const immediateParentID = values.parent;
   const immediateParent = possibleParents.find(
-    parent => parent.customId === immediateParentID
+    (parent) => parent.customId === immediateParentID
   );
   const groupIDs = (immediateParent && immediateParent.groups) || [];
-  const groups = useSelector<IReduxState, IBlock[]>(state =>
+  const groups = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, groupIDs)
   );
-  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>(state =>
+  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>((state) =>
     getBlock(state, values.customId)
   );
 
@@ -68,7 +68,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
       const existingGroup = groups.find(
-        group => group.name.toLowerCase() === name
+        (group) => group.name.toLowerCase() === name
       );
 
       if (existingGroup && existingGroup.customId !== blockToUpdate?.customId) {
@@ -87,7 +87,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
       <BlockParentSelection
         value={values.parent}
         possibleParents={possibleParents}
-        onChange={value => {
+        onChange={(value) => {
           setFieldValue("parent", value);
         }}
       />
@@ -157,7 +157,8 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
         <FormControls>
           <StyledButton
             block
-            type="danger"
+            danger
+            type="primary"
             disabled={isSubmitting}
             onClick={onClose}
           >
@@ -173,7 +174,7 @@ const GroupForm: React.FC<IGroupFormProps> = props => {
 };
 
 GroupForm.defaultProps = {
-  submitLabel: defaultSubmitLabel
+  submitLabel: defaultSubmitLabel,
 };
 
 export default GroupForm;
