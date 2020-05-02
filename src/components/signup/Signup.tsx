@@ -45,7 +45,7 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
-    .required(ErrorMessages.fieldIsRequired)
+    .required(ErrorMessages.fieldIsRequired),
 });
 
 export interface ISignupFormData {
@@ -65,9 +65,7 @@ export interface ISignupProps {
 }
 
 class Signup extends React.Component<ISignupProps> {
-  private formikRef: React.RefObject<
-    Formik<ISignupFormInternalData>
-  > = React.createRef();
+  private formikRef: React.RefObject<any> = React.createRef();
 
   public componentDidMount() {
     applyOperationToFormik(this.props.operation, this.formikRef);
@@ -82,13 +80,15 @@ class Signup extends React.Component<ISignupProps> {
 
     return (
       <Formik
+        // TODO: fix error
+        // @ts-ignore
         ref={this.formikRef}
         initialValues={cast<ISignupFormInternalData>({})}
-        onSubmit={values => {
+        onSubmit={(values) => {
           onSubmit({
             email: values.email,
             name: values.name,
-            password: values.password
+            password: values.password,
           });
         }}
         validationSchema={validationSchema}
@@ -100,7 +100,7 @@ class Signup extends React.Component<ISignupProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
+          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 

@@ -5,10 +5,12 @@ body,
   /* font-family: "Karla", sans-serif; */
   font-family: 'Work Sans', sans-serif;
   font-weight: 500;
+  /* font-weight: 400; */
 }
 
 /* body, */
 .ant-input,
+/* .ant-list, */
 .ant-dropdown-menu-item {
   color: rgba(0, 0, 0, 0.85) !important;
 }

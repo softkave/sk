@@ -92,10 +92,11 @@ export interface IBlock {
   collaborationRequests?: string[];
   subTasks?: ISubTask[];
   landingPage?: BlockLandingPage;
-  availableStatuses?: IBlockStatus[];
+
+  availableStatus?: IBlockStatus[];
   availableLabels?: IBlockLabel[];
-  blockLabels?: string[];
-  blockStatus?: string;
+  labels?: string[];
+  status?: string;
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

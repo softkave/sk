@@ -9,16 +9,22 @@ import Pickr from "@simonwep/pickr";
 export interface IColorPickerProps {
   onChange: (value: string) => void;
 
+  disabled?: boolean;
   value?: string;
 }
 
 const ColorPicker: React.FC<IColorPickerProps> = (props) => {
-  const { value, onChange } = props;
+  const { value, onChange, disabled } = props;
   const divRef = React.createRef<HTMLDivElement>();
   const pickrRef = React.useRef<Pickr>();
 
   React.useEffect(() => {
+    // if (disabled) {
+    //   return;
+    // }
+
     pickrRef.current = Pickr.create({
+      disabled,
       el: divRef.current!,
       theme: "nano",
       default: value,
@@ -64,7 +70,32 @@ const ColorPicker: React.FC<IColorPickerProps> = (props) => {
       onChange(pickrRef.current?.getColor()!.toHEXA().toString());
       pickrRef.current?.hide();
     });
-  }, [divRef, pickrRef]);
+  }, []);
+
+  React.useEffect(() => {
+    if (disabled) {
+      if (pickrRef.current) {
+        pickrRef.current.disable();
+      }
+    } else {
+      if (pickrRef.current) {
+        pickrRef.current.enable();
+      }
+    }
+  });
+
+  // if (disabled) {
+  //   return (
+  //     <span
+  //       style={{
+  //         backgroundColor: value,
+  //         width: "28px",
+  //         height: "28px",
+  //         borderRadius: "2.1px",
+  //       }}
+  //     ></span>
+  //   );
+  // }
 
   return <div ref={divRef}></div>;
 };

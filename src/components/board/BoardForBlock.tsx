@@ -398,6 +398,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
         onClickAddCollaborator={() =>
           setBlockForm({ block, formType: "collaborator-form" })
         }
+        onClickAddOrEditLabel={() =>
+          setBlockForm({ block, formType: "label-list-form" })
+        }
+        onClickAddOrEditStatus={() =>
+          setBlockForm({ block, formType: "status-list-form" })
+        }
       />
     );
 

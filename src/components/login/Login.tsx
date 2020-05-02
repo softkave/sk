@@ -10,14 +10,8 @@ import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
 
 const validationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email()
-    .required(),
-  password: yup
-    .string()
-    .max(userConstants.maxPasswordLength)
-    .required()
+  email: yup.string().email().required(),
+  password: yup.string().max(userConstants.maxPasswordLength).required(),
 });
 
 export interface ILoginFormValues {
@@ -32,9 +26,7 @@ export interface ILoginProps {
 }
 
 class Login extends React.Component<ILoginProps> {
-  private formikRef: React.RefObject<
-    Formik<ILoginFormValues>
-  > = React.createRef();
+  private formikRef: React.RefObject<typeof Formik> = React.createRef();
 
   public componentDidMount() {
     applyOperationToFormik(this.props.operation, this.formikRef);
@@ -61,7 +53,7 @@ class Login extends React.Component<ILoginProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
+          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 

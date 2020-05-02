@@ -12,12 +12,12 @@ import BoardLandingPage from "./LandingPage";
 import {
   BoardResourceType,
   BoardType,
-  IBoardResourceTypePathMatch
+  IBoardResourceTypePathMatch,
 } from "./types";
 import {
   getBlockLandingPage,
   getBlockResourceTypes,
-  getBoardTypesForResourceType
+  getBoardTypesForResourceType,
 } from "./utils";
 
 export interface IBoardHomeForBlockProps {
@@ -29,10 +29,12 @@ export interface IBoardHomeForBlockProps {
   onNavigate: (resourceType: BoardResourceType) => void;
   onClickBlock: (blocks: IBlock[]) => void;
   onClickAddCollaborator: () => void;
+  onClickAddOrEditLabel: () => void;
+  onClickAddOrEditStatus: () => void;
   onClickDeleteBlock: (block: IBlock) => void;
 }
 
-const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
+const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
   const {
     blockPath,
     block,
@@ -42,7 +44,9 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     onClickDeleteBlock,
     onClickUpdateBlock,
     onClickBlock,
-    isMobile
+    isMobile,
+    onClickAddOrEditLabel,
+    onClickAddOrEditStatus,
   } = props;
 
   const [isFirstRender, setIsFirstRender] = React.useState(true);
@@ -88,7 +92,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
     resourceType,
     block,
     blockPath,
-    isMobile
+    isMobile,
   ]);
 
   if (isFirstRender) {
@@ -165,6 +169,8 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
         selectedBoardType={boardType}
         resourceType={resourceType}
         onClickAddCollaborator={onClickAddCollaborator}
+        onClickAddOrEditLabel={onClickAddOrEditLabel}
+        onClickAddOrEditStatus={onClickAddOrEditStatus}
         onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
         onClickDeleteBlock={() => onClickDeleteBlock(block)}
         onClickEditBlock={() => onClickUpdateBlock(block)}
@@ -195,7 +201,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = props => {
           flexDirection: "column",
           width: "100%",
           overflowX: "hidden",
-          flex: 1
+          flex: 1,
         }}
       >
         {content}

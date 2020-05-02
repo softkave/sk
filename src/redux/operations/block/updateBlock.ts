@@ -9,14 +9,14 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 import {
   hasBlockParentChanged,
-  transferBlockStateHelper
+  transferBlockStateHelper,
 } from "./transferBlock";
 
 export interface IUpdateBlockOperationFuncDataProps {
@@ -51,7 +51,7 @@ export default async function updateBlockOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -71,13 +71,13 @@ export default async function updateBlockOperationFunc(
       transferBlockStateHelper({
         draggedBlockID: forTransferBlockOnly.customId,
         sourceBlockID: block.parent!,
-        destinationBlockID: data.parent!
+        destinationBlockID: data.parent!,
       });
     }
 
     store.dispatch(
       blockActions.updateBlockRedux(block.customId, data, {
-        arrayUpdateStrategy: "replace"
+        arrayUpdateStrategy: "replace",
       })
     );
 
@@ -87,14 +87,14 @@ export default async function updateBlockOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
     const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["data"]
+      stripBaseNames: ["data"],
     });
 
     store.dispatch(
@@ -104,7 +104,7 @@ export default async function updateBlockOperationFunc(
           error: transformedError,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

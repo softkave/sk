@@ -3,7 +3,7 @@ import { merge } from "lodash";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import IOperation, {
-  IOperationFuncOptions
+  IOperationFuncOptions,
 } from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import { newId } from "../../utils/utils";
@@ -11,7 +11,7 @@ import {
   getFormikFormStateFromOperation,
   IFormikFormBaseProps,
   setFormikFormStateFromProps,
-  shouldCloseFormikForm
+  shouldCloseFormikForm,
 } from "./formik-utils";
 
 export default function withFormikFormWrapper(
@@ -50,13 +50,13 @@ export default function withFormikFormWrapper(
       FormikFormWrapperProps & { forwardedRef?: RefType },
       IFormikFormWrapperState
     > {
-      private formikRef: React.RefObject<Formik<Values>> = React.createRef();
+      private formikRef: React.RefObject<any> = React.createRef();
 
       constructor(props) {
         super(props);
 
         this.state = {
-          scopeID: undefined
+          scopeID: undefined,
         };
 
         this.onSubmitForm = this.onSubmitForm.bind(this);
@@ -118,14 +118,14 @@ export default function withFormikFormWrapper(
             initialValues={derivedInitialValue}
             onSubmit={this.onSubmitForm}
           >
-            {props => {
+            {(props) => {
               // return "Inside Formik";
               return React.createElement(component, {
                 onClose,
                 ...rest,
                 ...cast<IFormikFormBaseProps<Values>>(props),
                 errors: props.errors || {},
-                ref: forwardedRef
+                ref: forwardedRef,
               });
             }}
           </Formik>
@@ -171,9 +171,9 @@ export default function withFormikFormWrapper(
       }
     }
 
-    const displayName = `withFormikFormWrapper(${component.displayName ||
-      component.name ||
-      "Component"})`;
+    const displayName = `withFormikFormWrapper(${
+      component.displayName || component.name || "Component"
+    })`;
 
     function forwardRef(props: FormikFormWrapperProps, ref: RefType) {
       return <FormikFormWrapper {...props} forwardedRef={ref} />;

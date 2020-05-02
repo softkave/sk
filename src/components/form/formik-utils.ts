@@ -1,4 +1,4 @@
-import { Formik, FormikActions, FormikErrors, FormikProps } from "formik";
+import { FormikErrors, FormikHelpers, FormikProps } from "formik";
 import IOperation, {
   getOperationLastError,
   getOperationLastStatus,
@@ -7,7 +7,7 @@ import IOperation, {
   isStatusTypeCompleted,
   isStatusTypeError,
   isStatusTypePending,
-  isStatusTypeStarted
+  isStatusTypeStarted,
 } from "../../redux/operations/operation";
 
 export function getGlobalError(errors: object) {
@@ -17,13 +17,13 @@ export function getGlobalError(errors: object) {
 const defaultFields = [];
 export function deleteFields(values: object, fields: string[] = defaultFields) {
   const updated = { ...values };
-  fields.forEach(field => delete updated[field]);
+  fields.forEach((field) => delete updated[field]);
   return updated;
 }
 
 export function applyOperationToFormik(
   operation?: IOperation,
-  formikRef?: React.RefObject<Formik<any>>
+  formikRef?: React.RefObject<any>
 ) {
   if (formikRef && formikRef.current && operation) {
     const isLoading =
@@ -58,36 +58,25 @@ export interface IFormikFormState {
 }
 
 export function setFormikFormIsSubmitting(
-  formikActions: FormikActions<any>,
+  formikActions: FormikHelpers<any>,
   isSubmitting?: boolean
 ) {
   formikActions.setSubmitting(!!isSubmitting);
 }
 
 export function setFormikFormErrors(
-  formikActions: FormikActions<any>,
+  formikActions: FormikHelpers<any>,
   errors?: any
 ) {
   formikActions.setErrors(errors);
 }
 
 export function setFormikFormStateFromProps(
-  formikActions: FormikActions<any>,
+  formikActions: FormikHelpers<any>,
   props: IFormikFormState
 ) {
   setFormikFormIsSubmitting(formikActions, props.isSubmitting);
   setFormikFormErrors(formikActions, props.errors);
-}
-
-export function setFormikFormStateFromPropsUsingRef(
-  formikRef: React.RefObject<Formik<any>>,
-  props: IFormikFormState
-) {
-  if (formikRef.current) {
-    const formikActions = formikRef.current.getFormikBag();
-
-    setFormikFormStateFromProps(formikActions, props);
-  }
 }
 
 export function getFormikFormStateFromOperation(
@@ -104,7 +93,7 @@ export function getFormikFormStateFromOperation(
 
       return {
         isSubmitting: isLoading,
-        errors: errors ? errors.flatten() : {}
+        errors: errors ? errors.flatten() : {},
       };
     }
   }

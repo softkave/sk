@@ -1,3 +1,5 @@
+import { BlockType } from "../../models/block/block";
+
 export type BoardResourceType =
   | "groups"
   | "tasks"
@@ -14,3 +16,5 @@ export interface IBlockPathMatch {
 export interface IBoardResourceTypePathMatch {
   resourceType: BoardResourceType;
 }
+
+export type CreateMenuKey = BlockType | "collaborator" | "status" | "label";

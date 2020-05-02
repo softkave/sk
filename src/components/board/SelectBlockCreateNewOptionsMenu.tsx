@@ -7,17 +7,18 @@ import StyledContainer from "../styled/Container";
 import StyledMenuItem from "../styled/StyledMenuItem";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
-  IMenuWithTriggerRenderTriggerProps
+  IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
-
-export type CreateMenuKey = BlockType | "collaborator";
+import { CreateMenuKey } from "./types";
 
 export interface ISelectBlockCreateNewOptionsMenuProps {
   block: IBlock;
   onSelect: (key: CreateMenuKey) => void;
 }
 
-const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenuProps> = props => {
+const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenuProps> = (
+  props
+) => {
   const { onSelect, block } = props;
   const childrenTypes = useBlockChildrenTypes(block);
   const hasCollaborators = block.type === "org";
@@ -30,7 +31,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
         s={{
           cursor: "pointer",
           textTransform: "capitalize",
-          ["& .anticon"]: { fontSize: "16px" }
+          ["& .anticon"]: { fontSize: "16px" },
         }}
         onClick={renderTriggerProps.openMenu}
       >
@@ -42,7 +43,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
   const renderCreateNewOptions = (
     renderMenuProps: IMenuWithTriggerRenderMenuProps
   ) => {
-    const createMenuItems = childrenTypes.map(type => (
+    const createMenuItems = childrenTypes.map((type) => (
       <StyledMenuItem key={type}>Create {type}</StyledMenuItem>
     ));
 
@@ -53,9 +54,14 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
       );
     }
 
+    createMenuItems.push(
+      <StyledMenuItem key="status">Add or Edit Status</StyledMenuItem>,
+      <StyledMenuItem key="label">Add or Edit Label</StyledMenuItem>
+    );
+
     const createMenu = (
       <Menu
-        onClick={event => {
+        onClick={(event) => {
           onSelect(event.key as CreateMenuKey);
           renderMenuProps.closeMenu();
         }}

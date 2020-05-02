@@ -181,7 +181,6 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: Date.now(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
     },
     {
       name: "In Progress",
@@ -189,7 +188,6 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: Date.now(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
     },
     {
       name: "Done",
@@ -197,7 +195,6 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: Date.now(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
     },
   ];
 };

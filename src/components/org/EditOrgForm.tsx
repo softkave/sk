@@ -1,5 +1,6 @@
 import { Button, Form, Input } from "antd";
 import React from "react";
+import { IBlockLabel, IBlockStatus } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import FormError from "../form/FormError";
 import { IFormikFormBaseProps, IFormikFormErrors } from "../form/formik-utils";
@@ -7,13 +8,15 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  StyledForm
+  StyledForm,
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
   name: string;
+  availableLabels: IBlockLabel[];
+  availableStatus: IBlockStatus[];
   description?: string;
 }
 
@@ -28,7 +31,7 @@ const defaultSubmitLabel = "Create Organization";
 
 export default class EditOrgForm extends React.Component<IEditOrgProps> {
   public static defaultProps = {
-    submitLabel: defaultSubmitLabel
+    submitLabel: defaultSubmitLabel,
   };
 
   public render() {
@@ -41,7 +44,7 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
       values,
       handleSubmit,
       touched,
-      onClose
+      onClose,
     } = this.props;
     const formErrors = errors || {};
     const orgExistsMessage = this.doesOrgExist(formErrors);
@@ -127,7 +130,7 @@ export default class EditOrgForm extends React.Component<IEditOrgProps> {
         messages = messages.concat(errorMessages.name);
       }
 
-      return messages.find(message => {
+      return messages.find((message) => {
         return message === blockErrorMessages.orgExists;
       });
     }

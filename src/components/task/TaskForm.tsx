@@ -8,7 +8,7 @@ import {
   IBlock,
   ISubTask,
   ITaskCollaborationData,
-  ITaskCollaborator
+  ITaskCollaborator,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
@@ -20,7 +20,7 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  StyledForm
+  StyledForm,
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
@@ -28,6 +28,8 @@ import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import SubTaskList from "./SubTaskList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
+import TaskLabels from "./TaskLabels";
+import TaskStatus from "./TaskStatus";
 
 export interface ITaskFormValues {
   // TODO: Should tasks have names and descriptions?
@@ -41,6 +43,8 @@ export interface ITaskFormValues {
   parent?: string;
   subTasks?: ISubTask[];
   priority?: string;
+  status?: string;
+  labels?: string[];
 }
 
 export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
@@ -48,6 +52,7 @@ export interface ITaskFormProps extends IFormikFormBaseProps<ITaskFormValues> {
   user: IUser;
   collaborators: IUser[];
   possibleParents: IBlock[];
+  orgID: string;
   onClose: () => void;
 }
 
@@ -57,7 +62,7 @@ const StyledContainerAsLink = StyledContainer.withComponent("a");
 export default class TaskForm extends React.Component<ITaskFormProps> {
   public static defaultProps = {
     submitLabel: defaultSubmitLabel,
-    defaultAssignedTo: []
+    defaultAssignedTo: [],
   };
 
   private indexedCollaborators: { [key: string]: IUser };
@@ -66,7 +71,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     super(props);
 
     this.indexedCollaborators = indexArray(props.collaborators, {
-      path: "customId"
+      path: "customId",
     });
   }
 
@@ -85,7 +90,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       setFieldValue,
       possibleParents,
       onClose,
-      setValues
+      setValues,
+      orgID,
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -99,7 +105,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         <BlockParentSelection
           value={values.parent}
           possibleParents={possibleParents}
-          onChange={parentID => setFieldValue("parent", parentID)}
+          onChange={(parentID) => setFieldValue("parent", parentID)}
         />
       </Form.Item>
     );
@@ -133,16 +139,16 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         taskCollaborationData: {
           ...values.taskCollaborationData,
           completedAt: isCompleted ? null : now,
-          completedBy: isCompleted ? null : user.customId
-        }
+          completedBy: isCompleted ? null : user.customId,
+        },
       };
       const subTasks = update.subTasks;
 
       if (Array.isArray(subTasks) && subTasks.length > 0) {
-        const newSubTasks = subTasks.map(subTask => ({
+        const newSubTasks = subTasks.map((subTask) => ({
           ...subTask,
           completedAt: isCompleted ? null : now,
-          completedBy: isCompleted ? null : user.customId
+          completedBy: isCompleted ? null : user.customId,
         }));
 
         update.subTasks = newSubTasks;
@@ -179,27 +185,53 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       </Form.Item>
     );
 
+    const renderStatus = () => (
+      <Form.Item
+        label="Status"
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+        labelAlign="left"
+      >
+        <TaskStatus
+          orgID={orgID}
+          onChange={(value: string) => setFieldValue("status", value)}
+          statusID={values.status}
+        />
+      </Form.Item>
+    );
+
+    // TODO: extract these fields into separate components with React.memo for speed
+    const renderLabels = () => (
+      <Form.Item
+        label="Labels"
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+        labelAlign="left"
+      >
+        <TaskLabels
+          orgID={orgID}
+          onChange={(value: string[]) => setFieldValue("labels", value)}
+          // disabled={}
+          labelIDs={values.labels}
+        />
+      </Form.Item>
+    );
+
     const renderDueDateInput = () => (
       <Form.Item
         label="Due Date"
-        labelCol={{ span: 12, xs: { span: 24 } }}
-        wrapperCol={{ span: 12, xs: { span: 24 } }}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
         labelAlign="left"
       >
         <DatePicker
           showTime
           format="YYYY-MM-DD HH:mm:ss"
           placeholder="Due date"
-          onChange={value => {
+          onChange={(value) => {
             setFieldValue(
               "expectedEndAt",
-              value
-                ? value
-                    .hour(23)
-                    .minute(59)
-                    .second(0)
-                    .valueOf()
-                : null
+              value ? value.hour(23).minute(59).second(0).valueOf() : null
             );
           }}
           value={
@@ -219,7 +251,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         <Select
           placeholder="Assign collaborator"
           value={undefined}
-          onChange={index =>
+          onChange={(index) =>
             setFieldValue(
               "taskCollaborators",
               this.assignCollaborator(
@@ -261,7 +293,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
 
       if (Array.isArray(subTasks) && subTasks.length > 0) {
         const areSubTasksCompleted = !!!subTasks.find(
-          subTask => !!!subTask.completedAt
+          (subTask) => !!!subTask.completedAt
         );
 
         if (
@@ -270,7 +302,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
           update.taskCollaborationData = {
             ...update.taskCollaborationData,
             completedAt: areSubTasksCompleted ? now : null,
-            completedBy: areSubTasksCompleted ? user.customId : null
+            completedBy: areSubTasksCompleted ? user.customId : null,
           };
         }
       }
@@ -305,6 +337,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
             {renderDescription()}
             {renderToggleSwitch()}
             {renderPriority()}
+            {renderStatus()}
+            {renderLabels()}
             {renderDueDateInput()}
             {/* {renderCollaborationTypeInput()} */}
             {renderAssignedToInput()}
@@ -344,7 +378,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
       return (
         <List
           dataSource={values.taskCollaborators}
-          renderItem={item => {
+          renderItem={(item) => {
             return (
               <List.Item>
                 <TaskCollaboratorThumbnail
@@ -376,7 +410,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     taskCollaborators: ITaskCollaborator[]
   ): ITaskCollaborator[] => {
     const { user } = this.props;
-    const collaboratorExists = !!taskCollaborators.find(next => {
+    const collaboratorExists = !!taskCollaborators.find((next) => {
       return collaborator.customId === next.userId;
     });
 
@@ -386,8 +420,8 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
         {
           userId: collaborator.customId,
           assignedAt: Date.now(),
-          assignedBy: user.customId
-        }
+          assignedBy: user.customId,
+        },
       ];
     }
 
@@ -398,7 +432,7 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
     collaboratorData: ITaskCollaborator,
     taskCollaborators: ITaskCollaborator[]
   ) => {
-    const index = taskCollaborators.findIndex(next => {
+    const index = taskCollaborators.findIndex((next) => {
       return next.userId === collaboratorData.userId;
     });
 
@@ -413,5 +447,5 @@ export default class TaskForm extends React.Component<ITaskFormProps> {
 }
 
 const StyledTaskCollaboaratorsContainer = styled.div({
-  marginBottom: 16
+  marginBottom: 16,
 });

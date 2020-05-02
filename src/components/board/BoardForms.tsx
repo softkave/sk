@@ -11,7 +11,7 @@ import addCollaboratorsOperationFunc from "../../redux/operations/block/addColla
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { IOperationFuncOptions } from "../../redux/operations/operation";
 import OperationIDs, {
-  addCollaboratorsOperationID
+  addCollaboratorsOperationID,
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
@@ -19,8 +19,12 @@ import { getUsersAsArray } from "../../redux/users/selectors";
 import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
 import GroupFormContainer from "../group/GroupFormContainer";
 import useBlockParents from "../hooks/useBlockParent";
+import LabelListContainer from "../label/LabelListContainer";
+import LabelListWithDrawer from "../label/LabelListWithDrawer";
 import EditOrgFormContainer from "../org/EditOrgFormContainer";
 import ProjectFormContainer from "../project/ProjectFormContainer";
+import StatusListContainer from "../status/StatusListContainer";
+import StatusListWithDrawer from "../status/StatusListWithDrawer";
 import StyledContainer from "../styled/Container";
 import StyledCapitalizeText from "../styled/StyledCapitalizeText";
 import TaskFormContainer from "../task/TaskFormContainer";
@@ -30,7 +34,9 @@ const StyledContainerAsH3 = StyledContainer.withComponent("h3");
 export type BlockFormType =
   | "add-block-form"
   | "update-block-form"
-  | "collaborator-form";
+  | "collaborator-form"
+  | "status-list-form"
+  | "label-list-form";
 
 export interface IBlockFormsProps {
   block: IBlock;
@@ -38,7 +44,7 @@ export interface IBlockFormsProps {
   onClose: () => void;
 }
 
-const BlockForms: React.FC<IBlockFormsProps> = props => {
+const BlockForms: React.FC<IBlockFormsProps> = (props) => {
   const { block, formType, onClose } = props;
   const store = useStore();
   const parents = useBlockParents(block);
@@ -48,14 +54,14 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
     block.type === "org" ? block.customId : block.rootBlockID;
 
   const organization = useSelector<IReduxState, IBlock>(
-    state => getBlock(state, organizationID)!
+    (state) => getBlock(state, organizationID)!
   );
 
   const collaboratorIDs = Array.isArray(organization.collaborators)
     ? organization.collaborators
     : [];
 
-  const collaborators = useSelector<IReduxState, IUser[]>(state =>
+  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
     getUsersAsArray(state, collaboratorIDs)
   );
 
@@ -63,7 +69,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
     ? organization.collaborationRequests
     : [];
 
-  const requests = useSelector<IReduxState, INotification[]>(state =>
+  const requests = useSelector<IReduxState, INotification[]>((state) =>
     getNotificationsAsArray(state, requestIDs)
   );
 
@@ -166,6 +172,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
             submitLabel={formLabel}
             collaborators={collaborators}
             possibleParents={formParents}
+            orgID={block.rootBlockID!}
           />
         );
 
@@ -175,6 +182,7 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
             onSubmit={onCompleteEditBlock}
             onClose={onClose}
             customId={block.customId}
+            // @ts-ignore
             initialValues={block}
             operationID={blockFormOperationId}
             submitLabel={formLabel}
@@ -214,19 +222,46 @@ const BlockForms: React.FC<IBlockFormsProps> = props => {
     );
   };
 
+  const renderStatusListForm = () => {
+    return <StatusListWithDrawer visible block={block} onClose={onClose} />;
+  };
+
+  const renderLabelListForm = () => {
+    return <LabelListWithDrawer visible block={block} onClose={onClose} />;
+  };
+
+  const renderForm = () => {
+    switch (formType) {
+      case "add-block-form":
+      case "update-block-form":
+        return renderBlockForm();
+
+      case "collaborator-form":
+        return renderCollaboratorForm();
+
+      case "status-list-form":
+        return renderStatusListForm();
+
+      case "label-list-form":
+        return renderLabelListForm();
+
+      default:
+        return null;
+    }
+  };
+
+  if (formType === "label-list-form" || formType === "status-list-form") {
+    return renderForm();
+  }
+
   return (
     <StyledContainer
       s={{ flexDirection: "column", width: "100%", overflowY: "hidden" }}
     >
       <StyledContainerAsH3 s={{ padding: "0 16px" }}>
         <StyledContainer s={{ flex: 1 }}>{formLabel}</StyledContainer>
-        {/* <StyledFlatButton style={{ color: "#ff4d4f" }} onClick={onClose}>
-          Cancel
-        </StyledFlatButton> */}
       </StyledContainerAsH3>
-      {formType === "collaborator-form"
-        ? renderCollaboratorForm()
-        : renderBlockForm()}
+      {renderForm()}
     </StyledContainer>
   );
 };

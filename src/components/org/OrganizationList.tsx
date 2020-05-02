@@ -16,7 +16,7 @@ export interface IOrganizationListProps {
   onClick: (org: IBlock) => void;
 }
 
-const OrganizationList: React.FC<IOrganizationListProps> = props => {
+const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
   const { orgs, onClick } = props;
   const [newOrg, setNewOrg] = React.useState<IBlock | null>(null);
   const user = useSelector(getSignedInUserRequired);
@@ -31,6 +31,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
           }}
           onClose={() => setNewOrg(null)}
           customId={newOrg.customId}
+          // @ts-ignore
           initialValues={newOrg}
           operationID={addBlockOperationID}
           title="Create Organization"
@@ -49,7 +50,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
       s={{
         width: "100%",
         height: "100%",
-        flexDirection: "column"
+        flexDirection: "column",
       }}
     >
       {renderOrgForm()}
@@ -59,7 +60,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = props => {
           flexDirection: "column",
           maxWidth: "400px",
           margin: "0 auto",
-          flex: 1
+          flex: 1,
         }}
       >
         <StyledContainer s={{ marginBottom: "16px" }}>

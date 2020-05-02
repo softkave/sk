@@ -6,7 +6,7 @@ import { userConstants } from "../../models/user/constants";
 import { passwordPattern } from "../../models/user/descriptor";
 import IOperation, {
   areOperationsSameCheckStatus,
-  isOperationCompleted
+  isOperationCompleted,
 } from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
@@ -28,7 +28,7 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
-    .required()
+    .required(),
 });
 
 export interface IChangePasswordFormData {
@@ -45,9 +45,7 @@ export interface IChangePasswordProps {
 }
 
 class ChangePassword extends React.Component<IChangePasswordProps> {
-  private formikRef: React.RefObject<
-    Formik<IChangePasswordFormInternalData>
-  > = React.createRef();
+  private formikRef: React.RefObject<any> = React.createRef();
 
   public componentDidMount() {
     applyOperationToFormik(this.props.operation, this.formikRef);
@@ -62,7 +60,7 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
         notification.success({
           message: "Change Password",
           description: changePasswordSuccessMessage,
-          duration: 0
+          duration: 0,
         });
       }
     }
@@ -73,12 +71,14 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
 
     return (
       <Formik
+        // TODO: fix error
+        // @ts-ignore
         ref={this.formikRef}
         initialValues={cast<IChangePasswordFormInternalData>({})}
         validationSchema={validationSchema}
-        onSubmit={async values => {
+        onSubmit={async (values) => {
           onSubmit({
-            password: values.password
+            password: values.password,
           });
         }}
       >
@@ -89,7 +89,7 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
+          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 

@@ -71,6 +71,7 @@ export default function withDrawer<
 
       return (
         <Drawer
+          closable={false}
           className={options.className}
           visible={visible}
           onClose={onClose}

@@ -1,5 +1,5 @@
-import { Divider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { Divider } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { ISubTask } from "../../models/block/block";
@@ -20,7 +20,7 @@ interface ISubTaskState {
   description: string;
 }
 
-const SubTaskList: React.SFC<ISubTaskListProps> = props => {
+const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
   const { subTasks: value, onChange, errors: subTaskErrors } = props;
   const subTasks = value || [];
   const errors = subTaskErrors || [];
@@ -31,9 +31,11 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
   const user = useSelector(getSignedInUserRequired);
 
   const getSubTaskIndexFromState = (id: string) =>
-    subTasksBeingEdited.findIndex(subTaskState => subTaskState.customId === id);
+    subTasksBeingEdited.findIndex(
+      (subTaskState) => subTaskState.customId === id
+    );
   const getSubTaskIDIndexFromSubTasks = (id: string) =>
-    subTasks.findIndex(subTask => subTask.customId === id);
+    subTasks.findIndex((subTask) => subTask.customId === id);
 
   const isSubTaskBeingEdited = (id: string) => {
     return getSubTaskIndexFromState(id) !== -1;
@@ -59,7 +61,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     const subTask = subTasks[getSubTaskIDIndexFromSubTasks(id)];
     const newSubTaskState: ISubTaskState = {
       customId: id,
-      description: subTask.description
+      description: subTask.description,
     };
     newSubTasksBeingEdited.push(newSubTaskState);
     setSubTasksBeingEdited(newSubTasksBeingEdited);
@@ -91,7 +93,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     const newSubTask: ISubTask = {
       ...subTask,
       completedAt: isCompleted ? null : Date.now(),
-      completedBy: isCompleted ? null : user.customId
+      completedBy: isCompleted ? null : user.customId,
     };
 
     onUpdateSubTask(id, newSubTask);
@@ -102,7 +104,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
     const subTask = subTasks[getSubTaskIDIndexFromSubTasks(id)];
     const newSubTask: ISubTask = {
       ...subTask,
-      description: subTaskState.description
+      description: subTaskState.description,
     };
 
     removeSubTaskFromSubTasksBeingEdited(id);
@@ -135,7 +137,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
         isEditing={isEditing}
         errorMessage={error.description}
         onCancelEdit={onCancelEdit}
-        onChange={update => onUpdateSubTask(subTask.customId, update)}
+        onChange={(update) => onUpdateSubTask(subTask.customId, update)}
         onDelete={() => onDeleteSubTask(subTask.customId)}
         onToggle={() => onToggleSubTask(subTask.customId)}
         onEdit={() => onBeginEditSubTask(subTask.customId)}
@@ -164,7 +166,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = props => {
         s={{ width: "100%", lineHeight: "40px", fontWeight: 600 }}
       >
         <StyledContainer s={{ flex: 1 }}>
-          Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasksLength}):
+          Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasksLength})
         </StyledContainer>
         {subTasks.length < blockConstants.maxSubTasksLength && (
           <StyledFlatButton>

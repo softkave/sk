@@ -14,12 +14,12 @@ import {
   FormBody,
   FormBodyContainer,
   FormControls,
-  StyledForm
+  StyledForm,
 } from "../form/FormStyledComponents";
 import StyledButton from "../styled/Button";
 import {
   IAddCollaboratorFormItemError,
-  IAddCollaboratorFormItemValues
+  IAddCollaboratorFormItemValues,
 } from "./AddCollaboratorFormItem.jsx";
 import AddCollaboratorFormItemList from "./AddCollaboratorFormItemList";
 import ExpiresAt from "./ExpiresAt";
@@ -54,7 +54,7 @@ export default class AddCollaboratorForm extends React.PureComponent<
       isSubmitting,
       setFieldValue,
       setFieldError,
-      onClose
+      onClose,
     } = this.props;
 
     const globalError = getGlobalError(errors);
@@ -92,10 +92,8 @@ export default class AddCollaboratorForm extends React.PureComponent<
               wrapperCol={{ span: 24 }}
             >
               <ExpiresAt
-                minDate={moment()
-                  .subtract(1, "day")
-                  .endOf("day")}
-                onChange={value => setFieldValue("expiresAt", value)}
+                minDate={moment().subtract(1, "day").endOf("day")}
+                onChange={(value) => setFieldValue("expiresAt", value)}
                 value={values.expiresAt}
               />
             </Form.Item>
@@ -113,13 +111,15 @@ export default class AddCollaboratorForm extends React.PureComponent<
               <AddCollaboratorFormItemList
                 value={values.requests}
                 maxRequests={blockConstants.maxAddCollaboratorValuesLength}
-                onChange={value => {
+                onChange={(value) => {
                   setFieldValue("requests", value);
                   setFieldError(
                     "requests",
                     this.getErrorFromRequests(value) as any
                   );
                 }}
+                // TODO: fix error
+                // @ts-ignore
                 errors={isArray(errors.requests) ? errors.requests : undefined}
               />
             </Form.Item>
@@ -172,7 +172,7 @@ export default class AddCollaboratorForm extends React.PureComponent<
       if (collaborator) {
         return {
           email:
-            notificationErrorMessages.sendingRequestToAnExistingCollaborator
+            notificationErrorMessages.sendingRequestToAnExistingCollaborator,
         };
       }
 

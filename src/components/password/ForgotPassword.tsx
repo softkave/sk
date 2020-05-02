@@ -4,7 +4,7 @@ import React from "react";
 import * as yup from "yup";
 import IOperation, {
   areOperationsSameCheckStatus,
-  isOperationCompleted
+  isOperationCompleted,
 } from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
@@ -17,14 +17,11 @@ const successMessage = `
   a change password link will been sent to your email address.`;
 
 const validationSchema = yup.object().shape({
-  email: yup
-    .string()
-    .email()
-    .required(),
+  email: yup.string().email().required(),
   confirmEmail: yup
     .string()
     .oneOf([yup.ref("email")], emailMismatchErrorMessage)
-    .required()
+    .required(),
 });
 
 export interface IForgotPasswordFormData {
@@ -41,9 +38,7 @@ export interface IForgotPasswordProps {
 }
 
 class ForgotPassword extends React.Component<IForgotPasswordProps> {
-  private formikRef: React.RefObject<
-    Formik<IForgotPasswordFormInternalData>
-  > = React.createRef();
+  private formikRef: React.RefObject<any> = React.createRef();
 
   public componentDidMount() {
     applyOperationToFormik(this.props.operation, this.formikRef);
@@ -58,7 +53,7 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
         notification.success({
           message: "Forgot Password",
           description: successMessage,
-          duration: 0
+          duration: 0,
         });
       }
     }
@@ -69,12 +64,14 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
 
     return (
       <Formik
+        // TODO: fix error
+        // @ts-ignore
         ref={this.formikRef}
         initialValues={cast<IForgotPasswordFormInternalData>({})}
         validationSchema={validationSchema}
-        onSubmit={values => {
+        onSubmit={(values) => {
           onSubmit({
-            email: values.email
+            email: values.email,
           });
         }}
       >
@@ -85,7 +82,7 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
+          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 

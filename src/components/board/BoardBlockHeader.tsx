@@ -8,10 +8,9 @@ import SelectBlockCreateNewOptionsMenu from "./SelectBlockCreateNewOptionsMenu";
 import SelectBlockOptionsMenu from "./SelectBlockOptionsMenu";
 import SelectBoardTypeMenu from "./SelectBoardTypeMenu";
 import SelectResourceTypeMenu from "./SelectResourceTypeMenu";
-import { BoardResourceType, BoardType } from "./types";
+import { BoardResourceType, BoardType, CreateMenuKey } from "./types";
 import { getBoardTypesForResourceType } from "./utils";
 
-type CreateMenuKey = BlockType | "collaborator";
 type SettingsMenuKey = "edit" | "delete";
 
 const StyledContainerAsH1 = StyledContainer.withComponent("h1");
@@ -36,6 +35,8 @@ export interface IBoardBlockHeaderProps {
   isMobile: boolean;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
+  onClickAddOrEditLabel: () => void;
+  onClickAddOrEditStatus: () => void;
   onClickEditBlock: () => void;
   onClickDeleteBlock: () => void;
   onNavigate: (
@@ -46,7 +47,7 @@ export interface IBoardBlockHeaderProps {
   resourceType?: BoardResourceType | null;
 }
 
-const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
+const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
   const {
     block,
     selectedBoardType,
@@ -56,7 +57,9 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
     onClickDeleteBlock,
     onClickEditBlock,
     isMobile,
-    onNavigate
+    onNavigate,
+    onClickAddOrEditLabel,
+    onClickAddOrEditStatus,
   } = props;
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
@@ -70,6 +73,14 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
 
       case "collaborator":
         onClickAddCollaborator();
+        break;
+
+      case "label":
+        onClickAddOrEditLabel();
+        break;
+
+      case "status":
+        onClickAddOrEditStatus();
         break;
     }
   };
@@ -124,7 +135,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
         s={{
           alignItems: "center",
           cursor: "pointer",
-          textTransform: "capitalize"
+          textTransform: "capitalize",
         }}
       >
         <HomeOutlined />
@@ -173,7 +184,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
       s={{
         width: "100%",
         alignItems: "center",
-        ["& .anticon"]: { fontSize: "16px" }
+        ["& .anticon"]: { fontSize: "16px" },
       }}
     >
       <StyledContainer>
@@ -184,7 +195,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
           flex: 1,
           flexDirection: "column",
           margin: "0 16px",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <StyledContainerAsH1
@@ -193,7 +204,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
             textOverflow: "ellipsis",
             flex: 1,
             margin: 0,
-            lineHeight: "18px"
+            lineHeight: "18px",
           }}
         >
           {block.name}
@@ -206,7 +217,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = props => {
                 borderLeft: "1px solid rgba(0, 0, 0, 0.65)",
                 paddingLeft: "8px",
                 marginLeft: "8px",
-                textDecoration: "underline"
+                textDecoration: "underline",
               }}
             >
               {renderResourceTypeMenu()}
