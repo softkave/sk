@@ -1,15 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import addBlockOperationFunc from "../../redux/operations/block/addBlock";
-import { IOperationFuncOptions } from "../../redux/operations/operation";
-import { addBlockOperationID } from "../../redux/operations/operationIDs";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
 import BlockList from "../block/BlockList";
-import getNewBlock from "../block/getNewBlock";
 import BoardBlockTypeHeader from "../board/BoardBlockTypeHeader";
 import StyledContainer from "../styled/Container";
-import EditOrgFormWithModal from "./EditOrgFormWithModal";
+import EditOrgFormWithDrawer from "./EditOrgFormInDrawer";
 
 export interface IOrganizationListProps {
   orgs: IBlock[];
@@ -18,22 +12,14 @@ export interface IOrganizationListProps {
 
 const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
   const { orgs, onClick } = props;
-  const [newOrg, setNewOrg] = React.useState<IBlock | null>(null);
-  const user = useSelector(getSignedInUserRequired);
+  const [showOrgForm, setShowOrgForm] = React.useState(false);
 
   const renderOrgForm = () => {
-    if (newOrg) {
+    if (showOrgForm) {
       return (
-        <EditOrgFormWithModal
-          visible={!!newOrg}
-          onSubmit={async (org, options: IOperationFuncOptions) => {
-            await addBlockOperationFunc({ user, block: org as any }, options);
-          }}
-          onClose={() => setNewOrg(null)}
-          customId={newOrg.customId}
-          // @ts-ignore
-          initialValues={newOrg}
-          operationID={addBlockOperationID}
+        <EditOrgFormWithDrawer
+          visible={!!showOrgForm}
+          onClose={() => setShowOrgForm(false)}
           title="Create Organization"
           submitLabel="Create Organization"
         />
@@ -67,7 +53,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
           <BoardBlockTypeHeader
             title="organizations"
             count={orgs.length}
-            onClickCreate={() => setNewOrg(getNewBlock(user, "org"))}
+            onClickCreate={() => setShowOrgForm(true)}
           />
         </StyledContainer>
         <BlockList

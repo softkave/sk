@@ -1,57 +1,43 @@
 import React from "react";
-import { useSelector, useStore } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { useSelector } from "react-redux";
+import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
-import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
+import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { IOperationFuncOptions } from "../../redux/operations/operation";
-import OperationIDs, {
-  addCollaboratorsOperationID,
-} from "../../redux/operations/operationIDs";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
-import GroupFormContainer from "../group/GroupFormContainer";
-import useBlockParents from "../hooks/useBlockParent";
-import LabelListContainer from "../label/LabelListContainer";
+import GroupFormInDrawer from "../group/GroupFormInDrawer";
 import LabelListWithDrawer from "../label/LabelListWithDrawer";
-import EditOrgFormContainer from "../org/EditOrgFormContainer";
-import ProjectFormContainer from "../project/ProjectFormContainer";
-import StatusListContainer from "../status/StatusListContainer";
+import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
+import ProjectFormInDrawer from "../project/ProjectFormInDrawer";
 import StatusListWithDrawer from "../status/StatusListWithDrawer";
-import StyledContainer from "../styled/Container";
 import StyledCapitalizeText from "../styled/StyledCapitalizeText";
-import TaskFormContainer from "../task/TaskFormContainer";
-
-const StyledContainerAsH3 = StyledContainer.withComponent("h3");
+import TaskFormInDrawer from "../task/TaskFormInDrawer";
 
 export type BlockFormType =
-  | "add-block-form"
-  | "update-block-form"
+  | "block-form"
   | "collaborator-form"
   | "status-list-form"
   | "label-list-form";
 
 export interface IBlockFormsProps {
-  block: IBlock;
+  orgID: string;
   formType: BlockFormType;
   onClose: () => void;
+
+  block?: IBlock;
+  blockType?: BlockType;
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = (props) => {
-  const { block, formType, onClose } = props;
-  const store = useStore();
-  const parents = useBlockParents(block);
-  const user = useSelector(getSignedInUserRequired);
+  const { block, formType, onClose, orgID, blockType } = props;
 
-  const organizationID =
-    block.type === "org" ? block.customId : block.rootBlockID;
+  const organizationID = orgID;
 
   const organization = useSelector<IReduxState, IBlock>(
     (state) => getBlock(state, organizationID)!
@@ -73,167 +59,134 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
     getNotificationsAsArray(state, requestIDs)
   );
 
-  const formActionType = formType === "update-block-form" ? "Edit" : "Create";
-  const formName =
-    formType === "collaborator-form"
-      ? "Collaborator"
-      : getBlockTypeFullName(block.type);
-
-  const formLabel = (
-    <StyledCapitalizeText>
-      {formActionType} {formName}
-    </StyledCapitalizeText>
-  );
-
-  const getFormParents = (formBlock: IBlock) => {
-    // if (formBlock.customId !== block.customId) {
-    //   const blockGroups = getBlocksAsArray(
-    //     store.getState(),
-    //     block.groups || []
-    //   );
-    //   return [block].concat(blockGroups);
-    // }
-
-    const hasParents = parents.length > 0;
-
-    // immediate parent
-    const parent0 = hasParents ? parents[parents.length - 1] : null;
-    const hasParent0 = !!parent0;
-
-    if (block.type !== "org") {
-      if (hasParent0) {
-        const parent0Groups =
-          hasParent0 && formBlock.type !== "group"
-            ? getBlocksAsArray(store.getState(), parent0!.groups || [])
-            : [];
-
-        // immediate parent's parent
-        const parent1 =
-          parent0 && parent0.type === "group"
-            ? parents[parents.length - 2]
-            : null;
-        const hasParent1 = !!parent1;
-
-        if (hasParent1) {
-          const parent1Groups =
-            hasParent1 && formBlock.type !== "group"
-              ? getBlocksAsArray(store.getState(), parent1!.groups || [])
-              : [];
-          return [parent1!].concat(parent1Groups);
-        }
-
-        return [parent0!].concat(parent0Groups);
-      }
-    }
-
-    return [];
+  const noBlockWarning = () => {
+    console.warn("Block is required for form type, but was not provided");
   };
 
-  const onCompleteEditBlock = (values: any, options: IOperationFuncOptions) => {
-    if (formType === "add-block-form") {
-      const newBlock = { ...block, ...values };
-      addBlockOperationFunc({ user, block: newBlock }, options);
-    } else {
-      updateBlockOperationFunc({ block, data: values }, options);
-    }
+  const noBlockTypeWarning = () => {
+    console.warn(
+      "Block type is required for form type 'block-form' because a block was not provided"
+    );
   };
 
   const renderBlockForm = () => {
-    const formParents = getFormParents(block);
+    if (!blockType) {
+      noBlockTypeWarning();
 
-    const blockFormOperationId =
-      formType === "add-block-form"
-        ? OperationIDs.addBlock
-        : OperationIDs.updateBlock;
+      return null;
+    } else if (block && block.type !== blockType) {
+      throw new Error(
+        "block type and the type of the block provided does not match"
+      );
+    }
 
-    switch (block.type) {
+    const formActionType = !!block ? "Edit" : "Create";
+    const formName = getBlockTypeFullName(blockType);
+
+    const formLabel = (
+      <StyledCapitalizeText>
+        {formActionType} {formName}
+      </StyledCapitalizeText>
+    );
+
+    switch (blockType) {
       case "group":
         return (
-          <GroupFormContainer
-            operationID={blockFormOperationId}
-            customId={block.customId}
+          <GroupFormInDrawer
+            visible
+            title="Group Form"
             onClose={onClose}
-            onSubmit={onCompleteEditBlock}
-            initialValues={block}
             submitLabel={formLabel}
-            possibleParents={formParents}
+            orgID={orgID}
+            block={block}
           />
         );
 
       case "task":
         return (
-          <TaskFormContainer
-            operationID={blockFormOperationId}
-            customId={block.customId}
+          <TaskFormInDrawer
+            visible
+            block={block}
+            // TODO: remove title from drawers?
+            title="Task Form"
             onClose={onClose}
-            onSubmit={onCompleteEditBlock}
-            initialValues={block as any}
-            user={user}
             submitLabel={formLabel}
-            collaborators={collaborators}
-            possibleParents={formParents}
-            orgID={block.rootBlockID!}
+            orgID={orgID}
           />
         );
 
       case "org":
         return (
-          <EditOrgFormContainer
-            onSubmit={onCompleteEditBlock}
+          <EditOrgFormInDrawer
+            visible
+            block={block}
+            title="Organization Form"
             onClose={onClose}
-            customId={block.customId}
-            // @ts-ignore
-            initialValues={block}
-            operationID={blockFormOperationId}
             submitLabel={formLabel}
           />
         );
 
       case "project":
         return (
-          <ProjectFormContainer
-            customId={block.customId}
-            initialValues={block}
+          <ProjectFormInDrawer
+            visible
+            orgID={orgID}
+            block={block}
+            title="Project Form"
             onClose={onClose}
-            onSubmit={onCompleteEditBlock}
-            operationID={blockFormOperationId}
             submitLabel={formLabel}
-            possibleParents={formParents}
           />
         );
 
       default:
-        throw new Error("block type not found");
+        return null;
     }
   };
 
   const renderCollaboratorForm = () => {
-    return (
-      <AddCollaboratorFormContainer
-        customId={block.customId}
-        existingCollaborationRequests={requests}
-        existingCollaborators={collaborators}
-        onClose={onClose}
-        onSubmit={(data, options) =>
-          addCollaboratorsOperationFunc({ block, ...data }, options)
-        }
-        operationID={addCollaboratorsOperationID}
-      />
-    );
+    if (block) {
+      return (
+        <AddCollaboratorFormContainer
+          customId={block.customId}
+          existingCollaborationRequests={requests}
+          existingCollaborators={collaborators}
+          onClose={onClose}
+          onSubmit={(data, options) =>
+            addCollaboratorsOperationFunc({ block, ...data }, options)
+          }
+          operationID={addCollaboratorsOperationID}
+        />
+      );
+    }
+
+    noBlockWarning();
+
+    return null;
   };
 
   const renderStatusListForm = () => {
-    return <StatusListWithDrawer visible block={block} onClose={onClose} />;
+    if (block) {
+      return <StatusListWithDrawer visible block={block} onClose={onClose} />;
+    }
+
+    noBlockWarning();
+
+    return null;
   };
 
   const renderLabelListForm = () => {
-    return <LabelListWithDrawer visible block={block} onClose={onClose} />;
+    if (block) {
+      return <LabelListWithDrawer visible block={block} onClose={onClose} />;
+    }
+
+    noBlockWarning();
+
+    return null;
   };
 
   const renderForm = () => {
     switch (formType) {
-      case "add-block-form":
-      case "update-block-form":
+      case "block-form":
         return renderBlockForm();
 
       case "collaborator-form":
@@ -250,20 +203,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
     }
   };
 
-  if (formType === "label-list-form" || formType === "status-list-form") {
-    return renderForm();
-  }
-
-  return (
-    <StyledContainer
-      s={{ flexDirection: "column", width: "100%", overflowY: "hidden" }}
-    >
-      <StyledContainerAsH3 s={{ padding: "0 16px" }}>
-        <StyledContainer s={{ flex: 1 }}>{formLabel}</StyledContainer>
-      </StyledContainerAsH3>
-      {renderForm()}
-    </StyledContainer>
-  );
+  return renderForm();
 };
 
 export default BlockForms;
