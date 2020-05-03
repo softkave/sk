@@ -1,6 +1,5 @@
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import * as userActions from "../../users/actions";
@@ -8,7 +7,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { getBlockCollaboratorsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -38,7 +37,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -52,13 +51,13 @@ export default async function loadBlockCollaboratorsOperationFunc(
     }
 
     const { collaborators } = result;
-    const ids = collaborators.map(collaborator => collaborator.customId);
+    const ids = collaborators.map((collaborator) => collaborator.customId);
     store.dispatch(userActions.bulkAddUsersRedux(collaborators));
     store.dispatch(
       blockActions.updateBlockRedux(
         block.customId,
         {
-          collaborators: ids
+          collaborators: ids,
         },
         { arrayUpdateStrategy: "replace" }
       )
@@ -70,22 +69,20 @@ export default async function loadBlockCollaboratorsOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(
         getBlockCollaboratorsOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

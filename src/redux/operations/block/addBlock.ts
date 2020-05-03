@@ -11,7 +11,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { addBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -45,7 +45,7 @@ export default async function addBlockOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -85,7 +85,7 @@ export default async function addBlockOperationFunc(
 
       store.dispatch(
         blockActions.updateBlockRedux(parent.customId, parentUpdate, {
-          arrayUpdateStrategy: "concat"
+          arrayUpdateStrategy: "concat",
         })
       );
     }
@@ -108,24 +108,20 @@ export default async function addBlockOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["block"]
-    });
-
     store.dispatch(
       pushOperation(
         addBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

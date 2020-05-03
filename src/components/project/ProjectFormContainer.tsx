@@ -18,12 +18,13 @@ export interface IProjectFormContainerProps {
   orgID: string;
   onClose: () => void;
 
+  parentBlock?: IBlock;
   block?: IBlock;
   submitLabel?: React.ReactNode;
 }
 
 const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
-  const { onClose, submitLabel, orgID } = props;
+  const { onClose, submitLabel, orgID, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
 
   const org = useSelector<IReduxState, IBlock>((state) => {
@@ -31,7 +32,7 @@ const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
   });
 
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "project", org)
+    props.block || getNewBlock(user, "project", parentBlock)
   );
 
   const possibleParents = useBlockPossibleParents(block);

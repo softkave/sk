@@ -3,10 +3,9 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
-import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
 
 const validationSchema = yup.object().shape({
@@ -22,26 +21,17 @@ export interface ILoginFormValues {
 
 export interface ILoginProps {
   onSubmit: (values: ILoginFormValues) => void | Promise<void>;
-  operation?: IOperation;
+
+  isSubmitting?: boolean;
+  errors?: IFormikFormErrors<ILoginFormValues>;
 }
 
 class Login extends React.Component<ILoginProps> {
-  private formikRef: React.RefObject<typeof Formik> = React.createRef();
-
-  public componentDidMount() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
-  public componentDidUpdate() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
   public render() {
-    const { onSubmit } = this.props;
+    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
 
     return (
       <Formik
-        ref={this.formikRef}
         initialValues={cast<ILoginFormValues>({})}
         onSubmit={onSubmit}
         validationSchema={validationSchema}
@@ -53,13 +43,13 @@ class Login extends React.Component<ILoginProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 
           return (
             <FormBody>
               <form onSubmit={handleSubmit}>
+                <h2>Login</h2>
                 {globalError && (
                   <Form.Item>
                     <FormError error={globalError} />
@@ -77,6 +67,8 @@ class Login extends React.Component<ILoginProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
+                    disabled={isSubmitting}
+                    placeholder="Enter your email address"
                   />
                 </Form.Item>
                 <Form.Item
@@ -94,6 +86,8 @@ class Login extends React.Component<ILoginProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.password}
+                    disabled={isSubmitting}
+                    placeholder="Enter your password"
                   />
                 </Form.Item>
                 <Form.Item>
@@ -101,6 +95,7 @@ class Login extends React.Component<ILoginProps> {
                     name="remember"
                     onChange={handleChange}
                     checked={values.remember}
+                    disabled={isSubmitting}
                   >
                     Remember Me
                   </Checkbox>
@@ -112,7 +107,7 @@ class Login extends React.Component<ILoginProps> {
                     htmlType="submit"
                     loading={isSubmitting}
                   >
-                    Login
+                    {isSubmitting ? "Logging In" : "Login"}
                   </Button>
                 </Form.Item>
               </form>

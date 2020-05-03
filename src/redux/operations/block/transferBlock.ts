@@ -1,6 +1,5 @@
 import { BlockGroupContext, IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import reorder from "../../../utils/reorder";
 import * as blockActions from "../../blocks/actions";
 import { getBlock } from "../../blocks/selectors";
@@ -9,24 +8,26 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { transferBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 
 export interface ITransferBlockProps {
-  sourceBlockID: string;
-  draggedBlockID: string;
-  destinationBlockID: string;
-  dropPosition?: number;
-  groupContext?: BlockGroupContext;
+  data: {
+    sourceBlockID: string;
+    draggedBlockID: string;
+    destinationBlockID: string;
+    dropPosition?: number;
+    groupContext?: BlockGroupContext;
+  };
 }
 
 export default async function transferBlockOperationFn(
   dataProps: ITransferBlockProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { sourceBlockID } = dataProps;
+  const { sourceBlockID } = dataProps.data;
   const operation = getOperationWithIDForResource(
     store.getState(),
     transferBlockOperationID,
@@ -43,19 +44,25 @@ export default async function transferBlockOperationFn(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       sourceBlockID
     )
   );
 
   try {
-    const sourceBlock = getBlock(store.getState(), dataProps.sourceBlockID)!;
-    const draggedBlock = getBlock(store.getState(), dataProps.draggedBlockID)!;
+    const sourceBlock = getBlock(
+      store.getState(),
+      dataProps.data.sourceBlockID
+    )!;
+    const draggedBlock = getBlock(
+      store.getState(),
+      dataProps.data.draggedBlockID
+    )!;
     const destinationBlock =
-      sourceBlockID === dataProps.destinationBlockID
+      sourceBlockID === dataProps.data.destinationBlockID
         ? sourceBlock
-        : getBlock(store.getState(), dataProps.destinationBlockID)!;
+        : getBlock(store.getState(), dataProps.data.destinationBlockID)!;
 
     transferBlockStateHelper(dataProps);
 
@@ -66,8 +73,8 @@ export default async function transferBlockOperationFn(
       sourceBlock,
       draggedBlock,
       destinationBlock,
-      dataProps.dropPosition,
-      dataProps.groupContext
+      dataProps.data.dropPosition,
+      dataProps.data.groupContext
     );
 
     if (result && result.errors) {
@@ -80,26 +87,20 @@ export default async function transferBlockOperationFn(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         sourceBlockID
       )
     );
   } catch (error) {
-    console.error(error);
-
-    const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["data"]
-    });
-
     store.dispatch(
       pushOperation(
         transferBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         sourceBlockID
       )
@@ -110,20 +111,20 @@ export default async function transferBlockOperationFn(
 function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
   store.dispatch(
     blockActions.updateBlockRedux(block.customId, updates, {
-      arrayUpdateStrategy: "replace"
+      arrayUpdateStrategy: "replace",
     })
   );
 }
 
 export function transferBlockStateHelper(props: ITransferBlockProps) {
-  const sourceBlock = getBlock(store.getState(), props.sourceBlockID)!;
-  const draggedBlock = getBlock(store.getState(), props.draggedBlockID)!;
+  const sourceBlock = getBlock(store.getState(), props.data.sourceBlockID)!;
+  const draggedBlock = getBlock(store.getState(), props.data.draggedBlockID)!;
   const destinationBlock = getBlock(
     store.getState(),
-    props.destinationBlockID
+    props.data.destinationBlockID
   )!;
-  const dropPosition = props.dropPosition || 0;
-  const groupContext = props.groupContext;
+  const dropPosition = props.data.dropPosition || 0;
+  const groupContext = props.data.groupContext;
 
   const containerName = `${draggedBlock.type}s`;
   const draggedBlockContainer: string[] = [...sourceBlock[containerName]];
@@ -166,14 +167,14 @@ export function transferBlockStateHelper(props: ITransferBlockProps) {
   } else {
     const draggedBlockUpdates: Partial<IBlock> = {
       updatedAt: Date.now(),
-      parent: destinationBlock.customId
+      parent: destinationBlock.customId,
     };
 
     draggedBlockContainer.splice(draggedBlockIndexInSourceBlock, 1);
 
     const sourceBlockUpdates: Partial<IBlock> = {
       updatedAt: Date.now(),
-      [containerName]: draggedBlockContainer
+      [containerName]: draggedBlockContainer,
     };
 
     const destinationBlockContainer = [...destinationBlock[containerName]];
@@ -182,7 +183,7 @@ export function transferBlockStateHelper(props: ITransferBlockProps) {
 
     const destinationBlockUpdates: Partial<IBlock> = {
       updatedAt: Date.now(),
-      [containerName]: destinationBlockContainer
+      [containerName]: destinationBlockContainer,
     };
 
     updateBlockInStore(sourceBlock, sourceBlockUpdates);

@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 import { INotification } from "../../../models/notification/notification";
 import * as userNet from "../../../net/user";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
 import { IReduxState } from "../../store";
 import {
@@ -10,7 +9,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { updateNotificationOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -40,7 +39,7 @@ export default async function markNotificationReadOperationFunc(
     ...options,
     dispatch,
     operationID: updateNotificationOperationID,
-    resourceID: notification.customId
+    resourceID: notification.customId,
   };
 
   dispatchOperationStarted(dispatchOptions);
@@ -56,14 +55,12 @@ export default async function markNotificationReadOperationFunc(
     // TODO: Should control wait for net call, or should it happen before net call?
     dispatch(
       notificationActions.updateNotificationRedux(notification.customId, data, {
-        arrayUpdateStrategy: "replace"
+        arrayUpdateStrategy: "replace",
       })
     );
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

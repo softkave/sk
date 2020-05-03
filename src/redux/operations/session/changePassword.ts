@@ -12,7 +12,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { changePasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -34,7 +34,7 @@ export default async function changePasswordOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: changePasswordOperationID
+    operationID: changePasswordOperationID,
   };
 
   if (!token) {
@@ -42,7 +42,7 @@ export default async function changePasswordOperationFunc(
       ...dispatchOptions,
       error: OperationError.fromAny(
         new Error(userErrorMessages.invalidCredentials)
-      )
+      ),
     });
 
     return;
@@ -79,8 +79,6 @@ export default async function changePasswordOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const err = OperationError.fromAny(error);
-
-    dispatchOperationError({ ...dispatchOptions, error: err });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

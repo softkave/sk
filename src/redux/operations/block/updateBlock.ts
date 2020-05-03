@@ -69,9 +69,11 @@ export default async function updateBlockOperationFunc(
 
     if (hasBlockParentChanged(block, forTransferBlockOnly)) {
       transferBlockStateHelper({
-        draggedBlockID: forTransferBlockOnly.customId,
-        sourceBlockID: block.parent!,
-        destinationBlockID: data.parent!,
+        data: {
+          draggedBlockID: forTransferBlockOnly.customId,
+          sourceBlockID: block.parent!,
+          destinationBlockID: data.parent!,
+        },
       });
     }
 
@@ -93,15 +95,11 @@ export default async function updateBlockOperationFunc(
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["data"],
-    });
-
     store.dispatch(
       pushOperation(
         updateBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),

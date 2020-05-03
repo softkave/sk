@@ -1,20 +1,13 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import IOperation, {
-  areOperationsSameCheckStatus,
-  isOperationCompleted,
-} from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
 
 const emailMismatchErrorMessage = "Email does not match";
-const successMessage = `
-  Request was successful,
-  a change password link will been sent to your email address.`;
 
 const validationSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -34,39 +27,18 @@ interface IForgotPasswordFormInternalData extends IForgotPasswordFormData {
 
 export interface IForgotPasswordProps {
   onSubmit: (values: IForgotPasswordFormData) => void | Promise<void>;
-  operation?: IOperation;
+
+  isSubmitting?: boolean;
+  errors?: IFormikFormErrors<IForgotPasswordFormData>;
 }
 
 class ForgotPassword extends React.Component<IForgotPasswordProps> {
-  private formikRef: React.RefObject<any> = React.createRef();
-
-  public componentDidMount() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
-  public componentDidUpdate(prevProps: IForgotPasswordProps) {
-    const { operation } = this.props;
-    applyOperationToFormik(operation, this.formikRef);
-
-    if (isOperationCompleted(operation)) {
-      if (!areOperationsSameCheckStatus(operation, prevProps.operation)) {
-        notification.success({
-          message: "Forgot Password",
-          description: successMessage,
-          duration: 0,
-        });
-      }
-    }
-  }
-
   public render() {
-    const { onSubmit } = this.props;
+    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
 
     return (
       <Formik
-        // TODO: fix error
-        // @ts-ignore
-        ref={this.formikRef}
+        initialErrors={externalErrors as any}
         initialValues={cast<IForgotPasswordFormInternalData>({})}
         validationSchema={validationSchema}
         onSubmit={(values) => {
@@ -82,13 +54,13 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 
           return (
             <FormBody>
               <form onSubmit={handleSubmit}>
+                <h2>Forgot Password</h2>
                 {globalError && (
                   <Form.Item>
                     <FormError error={globalError} />
@@ -106,6 +78,8 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.email}
+                    placeholder="Enter your email address"
+                    disabled={isSubmitting}
                   />
                 </Form.Item>
                 <Form.Item
@@ -124,6 +98,8 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.confirmEmail}
+                    placeholder="Re-enter your email address"
+                    disabled={isSubmitting}
                   />
                 </Form.Item>
                 <Form.Item>
@@ -133,7 +109,9 @@ class ForgotPassword extends React.Component<IForgotPasswordProps> {
                     htmlType="submit"
                     loading={isSubmitting}
                   >
-                    Change Password
+                    {isSubmitting
+                      ? "Sending Change Password Email"
+                      : "Send Change Password Email"}
                   </Button>
                 </Form.Item>
               </form>

@@ -2,7 +2,6 @@ import randomColor from "randomcolor";
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import { saveUserTokenToStorage } from "../../../storage/userSession";
-import OperationError from "../../../utils/operation-error/OperationError";
 import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
@@ -13,7 +12,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { signupUserOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -46,7 +45,7 @@ export default async function signupUserOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: signupUserOperationID
+    operationID: signupUserOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);
@@ -68,10 +67,6 @@ export default async function signupUserOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const err = OperationError.fromAny(error).transform({
-      stripBaseNames: ["user"]
-    });
-
-    dispatchOperationError({ ...dispatchOptions, error: err });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

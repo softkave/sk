@@ -7,7 +7,7 @@ import {
 } from "react-beautiful-dnd";
 import { useSelector, useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { BlockGroupContext, IBlock } from "../../models/block/block";
+import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import { getBlock } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
@@ -41,8 +41,11 @@ import { IBlockPathMatch } from "./types";
 import { getBlockLandingPage } from "./utils";
 
 interface IBlockFormState {
-  block: IBlock;
   formType: BlockFormType;
+  orgID: string;
+  blockType?: BlockType;
+  parentBlock?: IBlock;
+  block?: IBlock;
 }
 
 export interface IBoardForBlockProps {
@@ -223,17 +226,17 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   const renderForms = () => {
     if (blockForm) {
       return (
-        <StyledContainer
-          s={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
-        >
-          <BlockForms
-            block={blockForm!.block}
-            formType={blockForm!.formType}
-            onClose={resetBlockForm}
-          />
-        </StyledContainer>
+        <BlockForms
+          orgID={blockForm.orgID}
+          blockType={blockForm.blockType}
+          block={blockForm.block}
+          formType={blockForm.formType}
+          onClose={resetBlockForm}
+        />
       );
     }
+
+    return null;
   };
 
   const shouldRenderLoading = () => {
@@ -386,37 +389,51 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
         onNavigate={onNavigate}
         onClickAddBlock={(parentBlock, blockType) => {
           setBlockForm({
-            block: getNewBlock(user, blockType, parentBlock),
-            formType: "add-block-form",
+            blockType,
+            parentBlock,
+            formType: "block-form",
+            orgID: block.rootBlockID!,
           });
         }}
         onClickUpdateBlock={(blockToUpdate) =>
           setBlockForm({
             block: blockToUpdate,
-            formType: "update-block-form",
+            formType: "block-form",
+            orgID: block.rootBlockID!,
+            blockType: blockToUpdate.type,
           })
         }
         onClickAddCollaborator={() =>
-          setBlockForm({ block, formType: "collaborator-form" })
+          setBlockForm({
+            block,
+            formType: "collaborator-form",
+            orgID: block.rootBlockID!,
+          })
         }
         onClickAddOrEditLabel={() =>
-          setBlockForm({ block, formType: "label-list-form" })
+          setBlockForm({
+            block,
+            formType: "label-list-form",
+            orgID: block.rootBlockID!,
+          })
         }
         onClickAddOrEditStatus={() =>
-          setBlockForm({ block, formType: "status-list-form" })
+          setBlockForm({
+            block,
+            formType: "status-list-form",
+            orgID: block.rootBlockID!,
+          })
         }
       />
     );
 
     return (
       <DragDropContext onDragEnd={onDragEnd}>
-        {blockForm && renderForms()}
-        {!blockForm && (
-          <RenderForDevice
-            renderForDesktop={() => renderBoardForBlock(false)}
-            renderForMobile={() => renderBoardForBlock(true)}
-          />
-        )}
+        {renderForms()}
+        <RenderForDevice
+          renderForDesktop={() => renderBoardForBlock(false)}
+          renderForMobile={() => renderBoardForBlock(true)}
+        />
       </DragDropContext>
     );
   };

@@ -18,12 +18,13 @@ export interface IGroupFormContainerProps {
   orgID: string;
   onClose: () => void;
 
+  parentBlock?: IBlock;
   block?: IBlock;
   submitLabel?: React.ReactNode;
 }
 
 const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
-  const { onClose, submitLabel, orgID } = props;
+  const { onClose, submitLabel, orgID, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
 
   const org = useSelector<IReduxState, IBlock>((state) => {
@@ -31,7 +32,7 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
   });
 
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "group", org)
+    props.block || getNewBlock(user, "group", parentBlock)
   );
 
   const possibleParents = useBlockPossibleParents(block);

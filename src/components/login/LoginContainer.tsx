@@ -1,28 +1,34 @@
-import { connect } from "react-redux";
-import { loginUserOperationID } from "../../redux/operations/operationIDs";
-import { getFirstOperationWithID } from "../../redux/operations/selectors";
+import React from "react";
+import { useDispatch, useStore } from "react-redux";
+import { updateBlockOperationID } from "../../redux/operations/operationIDs";
 import loginUserOperationFunc from "../../redux/operations/session/loginUser";
+import useOperation from "../hooks/useOperation";
 import Login, { ILoginFormValues } from "./Login";
 
-function mapStateToProps(state) {
-  return state;
-}
+const scopeID = "LoginContainer";
 
-function mapDispatchToProps(dispatch) {
-  return { dispatch };
-}
+const LoginContainer: React.FC<{}> = () => {
+  const dispatch = useDispatch();
+  const store = useStore();
+  const operationStatus = useOperation({
+    scopeID,
+    operationID: updateBlockOperationID,
+  });
 
-function mergeProps(state, { dispatch }) {
-  return {
-    operation: getFirstOperationWithID(state, loginUserOperationID),
-    async onSubmit(user: ILoginFormValues) {
-      return loginUserOperationFunc(state, dispatch, { user });
-    }
+  const onSubmit = async (user: ILoginFormValues) => {
+    return loginUserOperationFunc(store.getState(), dispatch, { user });
   };
-}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
-)(Login);
+  console.log({ operationStatus });
+
+  return (
+    <Login
+      isSubmitting
+      onSubmit={onSubmit}
+      // isSubmitting={operationStatus.isLoading}
+      errors={operationStatus.error}
+    />
+  );
+};
+
+export default React.memo(LoginContainer);

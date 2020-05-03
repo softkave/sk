@@ -1,16 +1,7 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { INotification } from "../../models/notification/notification";
-import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
-import { getUsersAsArray } from "../../redux/users/selectors";
-import AddCollaboratorFormContainer from "../collaborator/AddCollaboratorFormContainer";
+import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import GroupFormInDrawer from "../group/GroupFormInDrawer";
 import LabelListWithDrawer from "../label/LabelListWithDrawer";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
@@ -30,34 +21,13 @@ export interface IBlockFormsProps {
   formType: BlockFormType;
   onClose: () => void;
 
+  parentBlock?: IBlock;
   block?: IBlock;
   blockType?: BlockType;
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = (props) => {
-  const { block, formType, onClose, orgID, blockType } = props;
-
-  const organizationID = orgID;
-
-  const organization = useSelector<IReduxState, IBlock>(
-    (state) => getBlock(state, organizationID)!
-  );
-
-  const collaboratorIDs = Array.isArray(organization.collaborators)
-    ? organization.collaborators
-    : [];
-
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIDs)
-  );
-
-  const requestIDs = Array.isArray(organization.collaborationRequests)
-    ? organization.collaborationRequests
-    : [];
-
-  const requests = useSelector<IReduxState, INotification[]>((state) =>
-    getNotificationsAsArray(state, requestIDs)
-  );
+  const { block, formType, onClose, orgID, blockType, parentBlock } = props;
 
   const noBlockWarning = () => {
     console.warn("Block is required for form type, but was not provided");
@@ -99,6 +69,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
             submitLabel={formLabel}
             orgID={orgID}
             block={block}
+            parentBlock={parentBlock}
           />
         );
 
@@ -112,6 +83,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
             onClose={onClose}
             submitLabel={formLabel}
             orgID={orgID}
+            parentBlock={parentBlock}
           />
         );
 
@@ -135,6 +107,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
             title="Project Form"
             onClose={onClose}
             submitLabel={formLabel}
+            parentBlock={parentBlock}
           />
         );
 
@@ -146,16 +119,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
   const renderCollaboratorForm = () => {
     if (block) {
       return (
-        <AddCollaboratorFormContainer
-          customId={block.customId}
-          existingCollaborationRequests={requests}
-          existingCollaborators={collaborators}
-          onClose={onClose}
-          onSubmit={(data, options) =>
-            addCollaboratorsOperationFunc({ block, ...data }, options)
-          }
-          operationID={addCollaboratorsOperationID}
-        />
+        <AddCollaboratorFormInDrawer visible orgID={orgID} onClose={onClose} />
       );
     }
 

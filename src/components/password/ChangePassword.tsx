@@ -1,20 +1,15 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern } from "../../models/user/descriptor";
-import IOperation, {
-  areOperationsSameCheckStatus,
-  isOperationCompleted,
-} from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
 
 // TODO: Move to a central place ( errorMessages )
-const changePasswordSuccessMessage = "Password changed successfully";
 const invalidPasswordMessage = "Password is invalid";
 const passwordMismatchErrorMessage = "Passwords do not match";
 
@@ -41,39 +36,18 @@ interface IChangePasswordFormInternalData extends IChangePasswordFormData {
 
 export interface IChangePasswordProps {
   onSubmit: (values: IChangePasswordFormData) => void | Promise<void>;
-  operation?: IOperation;
+
+  isSubmitting?: boolean;
+  errors?: IFormikFormErrors<IChangePasswordFormData>;
 }
 
 class ChangePassword extends React.Component<IChangePasswordProps> {
-  private formikRef: React.RefObject<any> = React.createRef();
-
-  public componentDidMount() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
-  public componentDidUpdate(prevProps: IChangePasswordProps) {
-    const { operation } = this.props;
-    applyOperationToFormik(operation, this.formikRef);
-
-    if (isOperationCompleted(operation)) {
-      if (!areOperationsSameCheckStatus(operation, prevProps.operation)) {
-        notification.success({
-          message: "Change Password",
-          description: changePasswordSuccessMessage,
-          duration: 0,
-        });
-      }
-    }
-  }
-
   public render() {
-    const { onSubmit } = this.props;
+    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
 
     return (
       <Formik
-        // TODO: fix error
-        // @ts-ignore
-        ref={this.formikRef}
+        initialErrors={externalErrors as any}
         initialValues={cast<IChangePasswordFormInternalData>({})}
         validationSchema={validationSchema}
         onSubmit={async (values) => {
@@ -89,13 +63,13 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 
           return (
             <FormBody>
               <form onSubmit={handleSubmit}>
+                <h2>Change Password</h2>
                 {globalError && (
                   <Form.Item>
                     <FormError error={globalError} />
@@ -116,6 +90,8 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.password}
+                    placeholder="Enter new password"
+                    disabled={isSubmitting}
                   />
                 </Form.Item>
                 <Form.Item
@@ -135,6 +111,8 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.confirmPassword}
+                    placeholder="Re-enter your new password"
+                    disabled={isSubmitting}
                   />
                 </Form.Item>
                 <Form.Item>
@@ -144,7 +122,9 @@ class ChangePassword extends React.Component<IChangePasswordProps> {
                     htmlType="submit"
                     loading={isSubmitting}
                   >
-                    Change Password
+                    {isSubmitting
+                      ? "Changing Your Password"
+                      : "Change Password"}
                   </Button>
                 </Form.Item>
               </form>

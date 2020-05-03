@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
-import OperationError from "../../../utils/operation-error/OperationError";
 import { IReduxState } from "../../store";
 import {
   dispatchOperationComplete,
@@ -8,7 +7,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { requestForgotPasswordOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -36,7 +35,7 @@ export default async function requestForgotPasswordOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: requestForgotPasswordOperationID
+    operationID: requestForgotPasswordOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);
@@ -50,8 +49,6 @@ export default async function requestForgotPasswordOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const err = OperationError.fromAny(error);
-
-    dispatchOperationError({ ...dispatchOptions, error: err });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

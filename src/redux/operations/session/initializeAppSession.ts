@@ -1,6 +1,5 @@
 import { getUserData } from "../../../net/user";
 import { getUserTokenFromStorage } from "../../../storage/userSession";
-import OperationError from "../../../utils/operation-error/OperationError";
 import { loginUserRedux, setSessionToWeb } from "../../session/actions";
 import store from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -8,7 +7,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { initializeAppSessionOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -30,7 +29,7 @@ export default async function initializeAppSessionOperationFunc(
     pushOperation(initializeAppSessionOperationID, {
       scopeID: options.scopeID,
       status: operationStatusTypes.operationStarted,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   );
 
@@ -56,19 +55,18 @@ export default async function initializeAppSessionOperationFunc(
       pushOperation(initializeAppSessionOperationID, {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationComplete,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   } catch (error) {
     store.dispatch(setSessionToWeb());
-    const finalError = OperationError.fromAny(error);
 
     store.dispatch(
       pushOperation(initializeAppSessionOperationID, {
-        error: finalError,
+        error,
         scopeID: options.scopeID,
         status: operationStatusTypes.operationError,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   }

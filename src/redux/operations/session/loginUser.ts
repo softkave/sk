@@ -12,7 +12,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { loginUserOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -45,7 +45,7 @@ export default async function loginUserOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: loginUserOperationID
+    operationID: loginUserOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);
@@ -69,8 +69,6 @@ export default async function loginUserOperationFunc(
 
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const err = OperationError.fromAny(error);
-
-    dispatchOperationError({ ...dispatchOptions, error: err });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

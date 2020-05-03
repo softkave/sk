@@ -6,14 +6,13 @@ import ErrorMessages from "../../models/errorMessages";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern, textPattern } from "../../models/user/descriptor";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
-import IOperation from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
 
 // TODO: Add minimum and maximum to input helper
-const passwordExtraInfo = "Minimum of 5 characters";
+const passwordExtraInfo = "Minimum of 7 characters";
 
 const emailMismatchErrorMessage = "Email does not match";
 const passwordMismatchErrorMessage = "Password do not match";
@@ -61,28 +60,20 @@ interface ISignupFormInternalData extends ISignupFormData {
 
 export interface ISignupProps {
   onSubmit: (values: ISignupFormData) => void | Promise<void>;
-  operation?: IOperation;
+
+  // TODO: error from container and flattening
+  errors?: IFormikFormErrors<ISignupFormData>;
+  isSubmitting?: boolean;
 }
 
 class Signup extends React.Component<ISignupProps> {
-  private formikRef: React.RefObject<any> = React.createRef();
-
-  public componentDidMount() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
-  public componentDidUpdate() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
-
   public render() {
-    const { onSubmit } = this.props;
+    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
 
     return (
       <Formik
-        // TODO: fix error
         // @ts-ignore
-        ref={this.formikRef}
+        initialErrors={externalErrors}
         initialValues={cast<ISignupFormInternalData>({})}
         onSubmit={(values) => {
           onSubmit({
@@ -100,13 +91,13 @@ class Signup extends React.Component<ISignupProps> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
         }) => {
           const globalError = getGlobalError(errors);
 
           return (
             <FormBody>
               <form onSubmit={handleSubmit}>
+                <h2>Signup</h2>
                 {globalError && (
                   <Form.Item>
                     <FormError error={globalError} />
@@ -124,6 +115,8 @@ class Signup extends React.Component<ISignupProps> {
                     value={values.name}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    placeholder="Enter your first name and last name"
+                    disabled={isSubmitting}
                   />
                 </Form.Item>
                 <Form.Item
@@ -138,6 +131,8 @@ class Signup extends React.Component<ISignupProps> {
                     value={values.email}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    disabled={isSubmitting}
+                    placeholder="Enter your email address"
                   />
                 </Form.Item>
                 <Form.Item
@@ -156,6 +151,8 @@ class Signup extends React.Component<ISignupProps> {
                     value={values.confirmEmail}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    disabled={isSubmitting}
+                    placeholder="Re-enter your email address"
                   />
                 </Form.Item>
                 <Form.Item
@@ -178,6 +175,8 @@ class Signup extends React.Component<ISignupProps> {
                     value={values.password}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    disabled={isSubmitting}
+                    placeholder="Enter new password"
                   />
                 </Form.Item>
                 <Form.Item
@@ -197,6 +196,8 @@ class Signup extends React.Component<ISignupProps> {
                     value={values.confirmPassword}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    disabled={isSubmitting}
+                    placeholder="Re-enter your new password"
                   />
                 </Form.Item>
                 <Form.Item>
@@ -206,7 +207,7 @@ class Signup extends React.Component<ISignupProps> {
                     htmlType="submit"
                     loading={isSubmitting}
                   >
-                    Create Account
+                    {isSubmitting ? "Creating Account" : "Create Account"}
                   </Button>
                 </Form.Item>
               </form>

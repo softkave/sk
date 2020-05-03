@@ -1,7 +1,6 @@
 import { IBlock } from "../../../models/block/block";
 import { getUserTaskCollaborator } from "../../../models/block/utils";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
@@ -10,7 +9,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { getTasksAssignedToUserOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -32,7 +31,7 @@ export default async function getTasksAssignedToUserOperationFunc(
     pushOperation(getTasksAssignedToUserOperationID, {
       scopeID: options.scopeID,
       status: operationStatusTypes.operationStarted,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   );
 
@@ -44,7 +43,7 @@ export default async function getTasksAssignedToUserOperationFunc(
     }
 
     const { blocks: tasks } = result;
-    const taskIDs = tasks.map(block => block.customId);
+    const taskIDs = tasks.map((block) => block.customId);
     const user = getSignedInUserRequired(store.getState());
 
     store.dispatch(blockActions.bulkAddBlocksRedux(tasks));
@@ -52,7 +51,7 @@ export default async function getTasksAssignedToUserOperationFunc(
       userActions.updateUserRedux(
         user.customId,
         {
-          assignedTasks: taskIDs
+          assignedTasks: taskIDs,
         },
         { arrayUpdateStrategy: "replace" }
       )
@@ -62,18 +61,16 @@ export default async function getTasksAssignedToUserOperationFunc(
       pushOperation(getTasksAssignedToUserOperationID, {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationComplete,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(getTasksAssignedToUserOperationID, {
-        error: transformedError,
+        error,
         scopeID: options.scopeID,
         status: operationStatusTypes.operationError,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   }
@@ -102,7 +99,7 @@ export function addTaskToUserIfAssigned(block: IBlock) {
         userActions.updateUserRedux(
           user.customId,
           {
-            assignedTasks: assignedTaskIDs
+            assignedTasks: assignedTaskIDs,
           },
           { arrayUpdateStrategy: "replace" }
         )
@@ -127,7 +124,7 @@ export function removeTaskFromUserIfAssigned(block: IBlock) {
         userActions.updateUserRedux(
           user.customId,
           {
-            assignedTasks: assignedTaskIDs
+            assignedTasks: assignedTaskIDs,
           },
           { arrayUpdateStrategy: "replace" }
         )
