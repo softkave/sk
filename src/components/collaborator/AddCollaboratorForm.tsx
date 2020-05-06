@@ -16,13 +16,10 @@ import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
 import findItem from "../../utils/findItem";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import {
-  FormBody,
-  FormBodyContainer,
-  FormControls,
-  StyledForm,
-} from "../form/FormStyledComponents";
+import { StyledForm } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
+import StyledContainer from "../styled/Container";
 import {
   IAddCollaboratorFormItemError,
   IAddCollaboratorFormItemValues,
@@ -65,7 +62,7 @@ const validationSchema = yup.object().shape({
 export interface IAddCollaboratorFormValues {
   message?: string;
   expiresAt?: number;
-  requests: IAddCollaboratorFormItemValues[];
+  collaborators: IAddCollaboratorFormItemValues[];
 }
 
 type AddCollaboratorFormFormikProps = FormikProps<IAddCollaboratorFormValues>;
@@ -94,6 +91,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     isSubmitting,
     errors: externalErrors,
   } = props;
+
+  const formikRef = useInsertFormikErrors(externalErrors);
 
   const getErrorFromRequests = (requests: IAddCollaboratorFormItemValues[]) => {
     const errors: Array<
@@ -148,7 +147,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     return (
       <Form.Item
         label="Default Message"
-        help={touched.message && <FormError>{errors.message}</FormError>}
+        help={touched.message && <FormError error={errors.message} />}
+        extra="This message is added to every request without a message"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -159,6 +159,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
           value={values.message}
           onChange={handleChange}
           onBlur={handleBlur}
+          placeholder="Enter default message"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -172,7 +174,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     return (
       <Form.Item
         label="Default Expiration Date"
-        help={touched.expiresAt && <FormError>{errors.expiresAt}</FormError>}
+        help={touched.expiresAt && <FormError error={errors.expiresAt} />}
+        extra="This date is added to every request without one"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -180,6 +183,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
           minDate={moment().subtract(1, "day").endOf("day")}
           onChange={(val) => setFieldValue("expiresAt", val)}
           value={values.expiresAt}
+          placeholder="Select default expiration date"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -200,14 +205,16 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
       <Form.Item
         label="Requests"
         help={
-          touched.requests &&
-          isString(errors.requests) && <FormError>{errors.requests}</FormError>
+          touched.collaborators &&
+          isString(errors.collaborators) && (
+            <FormError>{errors.collaborators}</FormError>
+          )
         }
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
         <AddCollaboratorFormItemList
-          value={values.requests}
+          value={values.collaborators}
           maxRequests={blockConstants.maxAddCollaboratorValuesLength}
           onChange={(val) => {
             setFieldValue("requests", val);
@@ -215,7 +222,10 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
           }}
           // TODO: fix error
           // @ts-ignore
-          errors={isArray(errors.requests) ? errors.requests : undefined}
+          errors={
+            isArray(errors.collaborators) ? errors.collaborators : undefined
+          }
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -223,7 +233,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <FormControls>
+      <StyledContainer>
         <StyledButton
           block
           danger
@@ -236,37 +246,43 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         <Button block type="primary" htmlType="submit" loading={isSubmitting}>
           Send Requests
         </Button>
-      </FormControls>
+      </StyledContainer>
     );
   };
 
   const renderForm = (formikProps: AddCollaboratorFormFormikProps) => {
+    formikRef.current = formikProps;
     const { errors, handleSubmit } = formikProps;
     const globalError = getGlobalError(errors);
 
     return (
       <StyledForm onSubmit={handleSubmit}>
-        <FormBodyContainer>
-          <FormBody>
-            {globalError && (
-              <Form.Item>
-                <FormError error={globalError} />
-              </Form.Item>
-            )}
-            {renderDefaultMessageInput(formikProps)}
-            {renderDefaultExpirationInput(formikProps)}
-            {renderCollaboratorsListInput(formikProps)}
-          </FormBody>
+        <StyledContainer
+          s={{
+            height: "100%",
+            width: "100%",
+            padding: "16px 24px 24px 24px",
+            overflowY: "auto",
+            flexDirection: "column",
+          }}
+        >
+          {globalError && (
+            <Form.Item>
+              <FormError error={globalError} />
+            </Form.Item>
+          )}
+          {renderDefaultMessageInput(formikProps)}
+          {renderDefaultExpirationInput(formikProps)}
+          {renderCollaboratorsListInput(formikProps)}
+
           {renderControls()}
-        </FormBodyContainer>
+        </StyledContainer>
       </StyledForm>
     );
   };
 
   return (
     <Formik
-      // @ts-ignore
-      initialErrors={externalErrors}
       initialValues={value}
       validationSchema={validationSchema}
       onSubmit={onSubmit}

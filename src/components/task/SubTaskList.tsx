@@ -12,6 +12,8 @@ import SubTask, { ISubTaskErrors } from "./SubTask";
 export interface ISubTaskListProps {
   subTasks: ISubTask[];
   onChange: (value: ISubTask[]) => void;
+
+  disabled?: boolean;
   errors?: ISubTaskErrors[];
 }
 
@@ -21,7 +23,7 @@ interface ISubTaskState {
 }
 
 const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
-  const { subTasks: value, onChange, errors: subTaskErrors } = props;
+  const { subTasks: value, onChange, errors: subTaskErrors, disabled } = props;
   const subTasks = value || [];
   const errors = subTaskErrors || [];
 
@@ -169,7 +171,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
           Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasksLength})
         </StyledContainer>
         {subTasks.length < blockConstants.maxSubTasksLength && (
-          <StyledFlatButton>
+          <StyledFlatButton disabled={disabled}>
             <PlusOutlined />
           </StyledFlatButton>
         )}

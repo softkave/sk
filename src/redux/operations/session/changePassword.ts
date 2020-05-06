@@ -1,8 +1,6 @@
 import { Dispatch } from "redux";
 import { userErrorMessages } from "../../../models/user/userErrorMessages";
 import * as userNet from "../../../net/user";
-import OperationError from "../../../utils/operation-error/OperationError";
-import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -40,9 +38,7 @@ export default async function changePasswordOperationFunc(
   if (!token) {
     dispatchOperationError({
       ...dispatchOptions,
-      error: OperationError.fromAny(
-        new Error(userErrorMessages.invalidCredentials)
-      ),
+      error: new Error(userErrorMessages.invalidCredentials),
     });
 
     return;
@@ -74,7 +70,7 @@ export default async function changePasswordOperationFunc(
 
       saveUserTokenIfAlreadySaved(result.token);
     } else {
-      throw anErrorOccurred;
+      throw new Error("An error occurred");
     }
 
     dispatchOperationComplete(dispatchOptions);

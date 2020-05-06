@@ -1,8 +1,6 @@
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import { saveUserTokenToStorage } from "../../../storage/userSession";
-import OperationError from "../../../utils/operation-error/OperationError";
-import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -64,7 +62,7 @@ export default async function loginUserOperationFunc(
         saveUserTokenToStorage(result.token);
       }
     } else {
-      throw anErrorOccurred;
+      throw new Error("An error occurred");
     }
 
     dispatchOperationComplete(dispatchOptions);

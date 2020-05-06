@@ -1,6 +1,5 @@
 import { getUserToken } from "../redux/session/selectors";
 import store from "../redux/store";
-import { defaultOperationError } from "../utils/operation-error/OperationError";
 import { IAnyObject } from "../utils/types";
 import query, { NetResultProcessor } from "./query";
 
@@ -18,13 +17,13 @@ export default async function queryWithAuth(
   const requestToken = tokenParam || getToken();
 
   if (!requestToken) {
-    throw defaultOperationError;
+    throw new Error("Invalid credentials");
   }
 
   return await query(
     {
       Authorization: `Bearer ${requestToken}`,
-      ...headers
+      ...headers,
     },
     netQuery,
     variables,

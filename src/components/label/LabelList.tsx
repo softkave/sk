@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Divider, Form, Input, Space } from "antd";
-import { Formik, FormikErrors, FormikProps } from "formik";
-import isNumber from "lodash/isNumber";
+import { Button, Form, Input, Space } from "antd";
+import { Formik, FormikErrors } from "formik";
 import randomColor from "randomcolor";
 import React from "react";
 import { Check, X as CloseIcon } from "react-feather";
@@ -9,17 +8,16 @@ import * as yup from "yup";
 import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { indexArray } from "../../utils/object";
 import { newId } from "../../utils/utils";
 import ColorPicker from "../form/ColorPicker";
 import FormError from "../form/FormError";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
+import RoundEdgeTags from "../utilities/RoundEdgeTags";
+import { LabelListFormikProps } from "./types";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
-
-type LabelListFormikProps = FormikProps<{ labelList: IBlockLabel[] }>;
-type LabelListFormikErrors = LabelListFormikProps["errors"];
 
 export interface ILabelListProps {
   user: IUser;
@@ -34,6 +32,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   const { labelList, saveChanges, user, errors, isSubmitting } = props;
   const [editingLabel, setEditingLabel] = React.useState<string[]>([]);
   const [newLabels, setNewLabels] = React.useState<string[]>([]);
+
+  const formikRef = useInsertFormikErrors(errors);
 
   const onDelete = React.useCallback(
     (formikProps: LabelListFormikProps, index: number) => {
@@ -70,61 +70,61 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     [editingLabel, newLabels]
   );
 
-  const checkNameConflicts = (
-    formikProps: LabelListFormikProps,
-    labelIndex?: number
-  ) => {
-    const nameToLabelMap = indexArray(formikProps.values.labelList, {
-      path: "name",
-      indexer: (label: IBlockLabel) => label.name.toLowerCase(),
-      proccessValue: (label: IBlockLabel, u1, u2, index: number) => {
-        return {
-          label,
-          index,
-        };
-      },
-    });
+  // const checkNameConflicts = (
+  //   formikProps: LabelListFormikProps,
+  //   labelIndex?: number
+  // ) => {
+  //   const nameToLabelMap = indexArray(formikProps.values.labelList, {
+  //     path: "name",
+  //     indexer: (label: IBlockLabel) => label.name.toLowerCase(),
+  //     proccessValue: (label: IBlockLabel, u1, u2, index: number) => {
+  //       return {
+  //         label,
+  //         index,
+  //       };
+  //     },
+  //   });
 
-    const checkErrors: LabelListFormikErrors = { labelList: [] };
+  //   const checkErrors: LabelListFormikErrors = { labelList: [] };
 
-    const pushError = (label: IBlockLabel, index: number) => {
-      const existingError: any =
-        (formikProps.errors.labelList || [])[index] || {};
+  //   const pushError = (label: IBlockLabel, index: number) => {
+  //     const existingError: any =
+  //       (formikProps.errors.labelList || [])[index] || {};
 
-      if (existingError.name) {
-        // @ts-ignore
-        checkErrors.labelList.push(existingError);
-        return;
-      }
+  //     if (existingError.name) {
+  //       // @ts-ignore
+  //       checkErrors.labelList.push(existingError);
+  //       return;
+  //     }
 
-      const labelDataWithNameConflict =
-        nameToLabelMap[label.name.toLowerCase()];
+  //     const labelDataWithNameConflict =
+  //       nameToLabelMap[label.name.toLowerCase()];
 
-      if (
-        labelDataWithNameConflict &&
-        labelDataWithNameConflict.index !== index
-      ) {
-        // @ts-ignore
-        checkErrors.labelList.push({
-          ...existingError,
-          name: "Label name exists",
-        });
-      } else if (existingError) {
-        // @ts-ignore
-        checkErrors.labelList.push(existingError);
-      }
-    };
+  //     if (
+  //       labelDataWithNameConflict &&
+  //       labelDataWithNameConflict.index !== index
+  //     ) {
+  //       // @ts-ignore
+  //       checkErrors.labelList.push({
+  //         ...existingError,
+  //         name: "Label name exists",
+  //       });
+  //     } else if (existingError) {
+  //       // @ts-ignore
+  //       checkErrors.labelList.push(existingError);
+  //     }
+  //   };
 
-    if (isNumber(labelIndex) && labelIndex >= 0) {
-      pushError(formikProps.values.labelList[labelIndex], labelIndex);
-    } else {
-      formikProps.values.labelList.forEach((label, index) => {
-        pushError(label, index);
-      });
-    }
+  //   if (isNumber(labelIndex) && labelIndex >= 0) {
+  //     pushError(formikProps.values.labelList[labelIndex], labelIndex);
+  //   } else {
+  //     formikProps.values.labelList.forEach((label, index) => {
+  //       pushError(label, index);
+  //     });
+  //   }
 
-    return checkErrors;
-  };
+  //   return checkErrors;
+  // };
 
   const renderEditingLabel = (
     formikProps: LabelListFormikProps,
@@ -135,7 +135,6 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const values = formikProps.values.labelList[index];
     const nameField = `labelList.[${index}].name`;
     const descField = `labelList.[${index}].description`;
-    const colorField = `labelList.[${index}].color`;
 
     return (
       <StyledContainer>
@@ -160,7 +159,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
               }}
               name={nameField}
               value={values.name}
-              placeholder="Label name"
+              placeholder="Enter label name"
+              disabled={isSubmitting}
             />
           </Form.Item>
           <Form.Item
@@ -186,7 +186,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
               }}
               name={descField}
               value={values.description}
-              placeholder="Label description"
+              placeholder="Enter label description"
+              disabled={isSubmitting}
             />
           </Form.Item>
         </StyledContainer>
@@ -207,11 +208,16 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       <StyledContainer>
         <StyledContainer s={{ flexDirection: "column", flex: 1 }}>
           <StyledContainer
-            style={{
-              color: "rgba(0,0,0,0.85)",
-            }}
+          // style={{
+          //   color: "rgba(0,0,0,0.85)",
+          // }}
           >
-            {values.name}
+            <RoundEdgeTags
+              // contentColor="white"
+              color={values.color}
+              children={values.name}
+            />
+            {/* {values.name} */}
           </StyledContainer>
           <StyledContainer s={{ marginTop: "4px" }}>
             {values.description}
@@ -280,6 +286,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
                 setNewLabels(newNewLabel);
               }
             }}
+            disabled={isSubmitting}
           />
           <Button
             onClick={() => {
@@ -306,7 +313,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
               }
             }}
             icon={<CloseIcon style={{ fontSize: "14px" }} />}
-            disabled={newLabels.indexOf(label.customId) !== -1}
+            disabled={isSubmitting || newLabels.indexOf(label.customId) !== -1}
           />
         </React.Fragment>
       );
@@ -399,11 +406,9 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         s={{
           flexDirection: "column",
           width: "100%",
-          borderTop: "1px solid #f0f0f0",
           padding: "24px",
         }}
       >
-        <Divider />
         <Button
           // disabled={isSubmitting}
           loading={isSubmitting}
@@ -494,6 +499,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   };
 
   const renderMain = (formikProps: LabelListFormikProps) => {
+    formikRef.current = formikProps;
+
     return (
       <StyledContainerAsForm
         s={{ width: "100%", height: "100%", flexDirection: "column" }}
@@ -510,7 +517,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     // TODO: should we alert the user they have unsaved changes?
     setEditingLabel([]);
     setNewLabels([]);
-    // return;
+
     saveChanges(values.labelList);
   };
 
@@ -521,8 +528,6 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       validationSchema={yup.object().shape({
         labelList: labelValidationSchemas.labelList,
       })}
-      // @ts-ignore
-      initialErrors={{ labelList: errors }}
     >
       {(formikProps) => renderMain(formikProps)}
     </Formik>

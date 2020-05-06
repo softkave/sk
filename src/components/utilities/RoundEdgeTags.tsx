@@ -3,10 +3,11 @@ import StyledContainer from "../styled/Container";
 
 export interface IRoundEdgeTagsProps {
   color?: string;
+  contentColor?: string;
 }
 
 const RoundEdgeTags: React.FC<IRoundEdgeTagsProps> = (props) => {
-  const { color, children } = props;
+  const { color, children, contentColor } = props;
 
   return (
     <StyledContainer
@@ -16,6 +17,7 @@ const RoundEdgeTags: React.FC<IRoundEdgeTagsProps> = (props) => {
         backgroundColor: color || "#f0f0f0",
         fontSize: "13.33px",
         display: "inline-block",
+        color: contentColor,
       }}
     >
       {children}

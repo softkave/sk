@@ -6,11 +6,11 @@ import IOperation, {
   getOperationLastStatus,
   IOperationStatus,
   isOperationCompleted,
-  isOperationStartedOrPending
+  isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import {
   getFirstOperationWithID,
-  getOperationWithIDForResource
+  getOperationWithIDForResource,
 } from "../../redux/operations/selectors";
 import { IReduxState } from "../../redux/store";
 
@@ -50,7 +50,7 @@ export const getOperationDetailedStatus = (
     error,
     operation,
     isError: !!error,
-    currentStatus: status
+    currentStatus: status,
   };
 };
 
@@ -65,7 +65,7 @@ const getOperation = (state: IReduxState, selector: IOperationSelector) => {
 };
 
 const useOperation: UseOperation = (selector, loadOperation) => {
-  const operation = useSelector<IReduxState, IOperation | undefined>(state =>
+  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
     getOperation(state, selector)
   );
   const statusData = getOperationDetailedStatus(operation, selector.scopeID);

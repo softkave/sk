@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import OperationError from "../../utils/operation-error/OperationError";
+import { INetError } from "../../net/query";
 import { pushOperation } from "./actions";
 
 const operationStarted = "started";
@@ -29,7 +29,7 @@ export interface IOperationStatus<StatusType extends string = string> {
   timestamp: number;
   scopeID?: string | number;
   data?: any;
-  error?: OperationError;
+  error?: INetError | Error;
 }
 
 export default interface IOperation<
@@ -254,7 +254,7 @@ export interface IDispatchOperationFuncProps {
   resourceID?: string | null;
   data?: any;
   scopeID?: string | number;
-  error?: OperationError;
+  error?: INetError | Error;
 }
 
 function dispatchOperationStatus(

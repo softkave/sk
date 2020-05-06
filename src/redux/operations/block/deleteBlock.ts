@@ -1,6 +1,5 @@
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import {
   bulkDeleteBlocksRedux,
   deleteBlockRedux,

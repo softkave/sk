@@ -21,36 +21,40 @@ export interface IAddCollaboratorFormItemProps {
   value: IAddCollaboratorFormItemValues;
   onChange: (value: IAddCollaboratorFormItemValues) => void;
   onDelete: (value: IAddCollaboratorFormItemValues) => void;
+
+  disabled?: boolean;
   error?: IAddCollaboratorFormItemError;
 }
 
 const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
   (props) => {
-    const { error, onChange, onDelete, value } = props;
+    const { error, onChange, onDelete, value, disabled } = props;
     const itemError = error || {};
 
     return (
       <StyledContainer>
         <StyledFormItem>
           <Input
-            placeholder="Email Address"
+            placeholder="Enter recipient email address"
             value={value.email}
             autoComplete="email"
             onChange={(event) => {
               onChange({ ...value, email: event.target.value });
             }}
+            disabled={disabled}
           />
-          {itemError.email && <FormError>{itemError.email}</FormError>}
+          {itemError.email && <FormError error={itemError.email} />}
         </StyledFormItem>
         <StyledFormItem>
           <Message
-            placeholder="Message"
+            placeholder="Enter collaboration request message"
             value={value.body}
             onChange={(body) => {
               onChange({ ...value, body });
             }}
+            disabled={disabled}
           />
-          {itemError.body && <FormError>{itemError.body}</FormError>}
+          {itemError.body && <FormError error={itemError.body} />}
         </StyledFormItem>
         <StyledFormItem>
           <ExpiresAt
@@ -60,10 +64,17 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             onChange={(date) => {
               onChange({ ...value, expiresAt: date });
             }}
+            disabled={disabled}
           />
         </StyledFormItem>
         <StyledFormItemButtonContainer>
-          <Button block danger onClick={() => onDelete(value)} type="primary">
+          <Button
+            block
+            danger
+            onClick={() => onDelete(value)}
+            type="primary"
+            disabled={disabled}
+          >
             Delete
           </Button>
         </StyledFormItemButtonContainer>

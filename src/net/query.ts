@@ -2,13 +2,6 @@ import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import logoutUserOperationFunc from "../redux/operations/session/logoutUser";
 import { devLog } from "../utils/log";
-import OperationError, {
-  defaultOperationError
-} from "../utils/operation-error/OperationError";
-import OperationErrorItem, {
-  anErrorOccurredMessage,
-  defaultOperationErrorItemField
-} from "../utils/operation-error/OperationErrorItem";
 import { IAnyObject } from "../utils/types";
 
 type NetResultProcessorFunction = (data: any) => any;
@@ -18,15 +11,6 @@ const serverAddr =
   process.env.NODE_ENV === "development"
     ? `http://localhost:5000/graphql`
     : "https://api.softkave.com/graphql";
-
-const defaultQueryError = OperationError.fromAny(defaultOperationError);
-
-function makeSingleQueryError(
-  message = anErrorOccurredMessage,
-  field = defaultOperationErrorItemField
-) {
-  return new OperationError([new OperationErrorItem(field, message, field)]);
-}
 
 function processQueryResult(resultBody: any, process: NetResultProcessor) {
   if (resultBody) {
@@ -38,10 +22,10 @@ function processQueryResult(resultBody: any, process: NetResultProcessor) {
   }
 }
 
-const shouldLoginAgain = errors => {
+const shouldLoginAgain = (errors) => {
   if (
     Array.isArray(errors) &&
-    errors.find(error => error.action === "login-again")
+    errors.find((error) => error.action === "login-again")
   ) {
     return true;
   }
@@ -49,8 +33,8 @@ const shouldLoginAgain = errors => {
   return false;
 };
 
-const isExpectedErrorType = errors => {
-  return Array.isArray(errors) && !!errors.find(e => !!e.name);
+const isExpectedErrorType = (errors) => {
+  return Array.isArray(errors) && !!errors.find((e) => !!e.name);
 };
 
 export default async function query(
@@ -62,21 +46,21 @@ export default async function query(
   try {
     const hd = {
       "Content-Type": "application/json",
-      ...headers
+      ...headers,
     };
 
     const result = await fetch(serverAddr, {
       headers: hd,
       body: JSON.stringify({
         query: netQuery,
-        variables
+        variables,
       }),
       method: "POST",
-      mode: "cors"
+      mode: "cors",
     });
 
     if (!result.headers.get("Content-Type")?.includes("application/json")) {
-      throw defaultQueryError;
+      throw new Error("An error occurred");
     }
 
     const rawResultBody = await result.json();
@@ -100,19 +84,19 @@ export default async function query(
             }
           }
 
-          throw defaultQueryError;
+          throw new Error("An error occurred");
         }
       }
     }
 
-    throw makeSingleQueryError(result.statusText);
+    throw new Error(result.statusText);
   } catch (error) {
     devLog(__filename, error);
 
     if (Array.isArray(error)) {
       throw error;
     } else {
-      throw defaultQueryError;
+      throw new Error("An error occurred");
     }
   }
 }

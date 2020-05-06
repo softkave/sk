@@ -5,10 +5,14 @@ import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import {
+  addBlockOperationID,
+  updateBlockOperationID,
+} from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
@@ -40,17 +44,31 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     getUsersAsArray(state, collaboratorIDs)
   );
 
-  const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "task", parentBlock)
-  );
+  const [block, setBlock] = React.useState<IBlock>(() => {
+    if (props.block) {
+      return props.block;
+    } else {
+      const newBlock = getNewBlock(user, "task", parentBlock);
+
+      if (org.availableStatus && org.availableStatus.length > 0) {
+        newBlock.status = org.availableStatus[0].customId;
+      }
+
+      return newBlock;
+    }
+  });
 
   const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
     scopeID,
-    operationID: updateBlockOperationID,
+    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
     resourceID: block.customId,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
 
   const onSubmit = async (values: ITaskFormValues) => {
     const data = { ...block, ...values };
@@ -81,10 +99,11 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     }
   };
 
-  console.log({ operationStatus });
+  console.log({ operationStatus, props, errors });
 
   return (
     <TaskForm
+      // isSubmitting
       value={block as any}
       collaborators={collaborators}
       orgID={orgID}
@@ -93,7 +112,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
       submitLabel={submitLabel}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
       possibleParents={possibleParents}
     />
   );

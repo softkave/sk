@@ -2,16 +2,17 @@ import { CloseCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import isString from "lodash/isString";
 import React from "react";
+import { INetError } from "../net/query";
 import StyledContainer from "./styled/Container";
 
 // TODO: make GeneralError centered
 
 export interface IGeneralErrorProps {
-  error?: Error | string;
+  error?: Error | INetError | string;
   fill?: boolean;
 }
 
-const GeneralError: React.FC<IGeneralErrorProps> = props => {
+const GeneralError: React.FC<IGeneralErrorProps> = (props) => {
   const { error, children, fill } = props;
 
   let errorMessage: React.ReactNode = children || "An error occurred.";
@@ -41,7 +42,7 @@ const GeneralError: React.FC<IGeneralErrorProps> = props => {
           height: "100%",
           alignItems: "center",
           justifyContent: "center",
-          marginBottom: "16px"
+          marginBottom: "16px",
         }}
       >
         {a}
@@ -57,5 +58,5 @@ export default GeneralError;
 const StyledErrorMessage = styled.div({
   display: "flex",
   flex: 1,
-  marginLeft: "8px"
+  marginLeft: "8px",
 });

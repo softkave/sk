@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Select, Space } from "antd";
+import { Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { X as CloseIcon } from "react-feather";
 import { useSelector } from "react-redux";
@@ -94,24 +94,24 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     );
   };
 
-  const renderSelectLabel = () => {
-    return (
-      <Select
-        placeholder="Select label"
-        value={undefined}
-        onChange={(labelID) => onAdd(labelID as string)}
-      >
-        {labelIDs.map((id) => {
-          const label = idToLabelMap[id];
-          return (
-            <Select.Option value={id} key={label.customId}>
-              {renderLabelTag(label, false)}
-            </Select.Option>
-          );
-        })}
-      </Select>
-    );
-  };
+  // const renderSelectLabel = () => {
+  //   return (
+  //     <Select
+  //       placeholder="Select label"
+  //       value={undefined}
+  //       onChange={(labelID) => onAdd(labelID as string)}
+  //     >
+  //       {labelIDs.map((id) => {
+  //         const label = idToLabelMap[id];
+  //         return (
+  //           <Select.Option value={id} key={label.customId}>
+  //             {renderLabelTag(label, false)}
+  //           </Select.Option>
+  //         );
+  //       })}
+  //     </Select>
+  //   );
+  // };
 
   return (
     <StyledContainer>

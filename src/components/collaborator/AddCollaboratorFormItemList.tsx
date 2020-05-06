@@ -11,6 +11,8 @@ export interface IAddCollaboratorFormItemListProps {
   onChange: (value: IAddCollaboratorFormItemValues[]) => void;
   value: IAddCollaboratorFormItemValues[];
   maxRequests: number;
+
+  disabled?: boolean;
   errors?: Array<IAddCollaboratorFormItemError | undefined>;
 }
 
@@ -50,7 +52,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
   };
 
   public render() {
-    const { value, maxRequests } = this.props;
+    const { value, maxRequests, disabled } = this.props;
 
     return (
       <React.Fragment>
@@ -58,7 +60,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
         <Button
           block
           onClick={this.onAdd}
-          disabled={value.length >= maxRequests}
+          disabled={disabled || value.length >= maxRequests}
         >
           <PlusOutlined />
           Add Collaborator

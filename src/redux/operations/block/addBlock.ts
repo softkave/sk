@@ -2,7 +2,6 @@ import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getBlock } from "../../blocks/selectors";
 import store from "../../store";

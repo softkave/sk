@@ -9,13 +9,10 @@ import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import {
-  FormBody,
-  FormBodyContainer,
-  FormControls,
-  StyledForm,
-} from "../form/FormStyledComponents";
+import { StyledForm } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
+import StyledContainer from "../styled/Container";
 
 // TODO: Move to error messages file
 const groupExistsErrorMessage = "Group with the same name exists";
@@ -67,6 +64,8 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     getBlock(state, value.customId)
   );
 
+  const formikRef = useInsertFormikErrors(externalErrors);
+
   const getGroupExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
@@ -86,7 +85,7 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     return (
       <Form.Item
         label="Parent"
-        help={touched.parent && <FormError>{errors.parent}</FormError>}
+        help={touched.parent && <FormError error={errors.parent} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -94,6 +93,7 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
           value={values.parent}
           possibleParents={possibleParents}
           onChange={(val) => setFieldValue("parent", val)}
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -107,8 +107,9 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
 
     return (
       <Form.Item
+        required
         label="Group Name"
-        help={touched.name && <FormError>{groupNameError}</FormError>}
+        help={touched.name && <FormError error={groupNameError} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -121,7 +122,8 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
             setFieldValue("name", val);
           }}
           value={values.name}
-          placeholder="Group name"
+          placeholder="Enter group name"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -133,9 +135,7 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     return (
       <Form.Item
         label="Description"
-        help={
-          touched.description && <FormError>{errors.description}</FormError>
-        }
+        help={touched.description && <FormError error={errors.description} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -146,7 +146,8 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
           onBlur={handleBlur}
           onChange={handleChange}
           value={values.description}
-          placeholder="Group description"
+          placeholder="Enter group description"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -171,21 +172,29 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
   const renderForm = (formikProps: GroupFormFormikProps) => {
     const { errors } = formikProps;
     const globalError = getGlobalError(errors);
+    formikRef.current = formikProps;
 
     return (
       <StyledForm onSubmit={(evt) => preSubmit(evt, formikProps)}>
-        <FormBodyContainer>
-          <FormBody>
-            {globalError && (
-              <Form.Item>
-                <FormError error={globalError} />
-              </Form.Item>
-            )}
-            {renderParentInput(formikProps)}
-            {renderNameInput(formikProps)}
-            {renderDescriptionInput(formikProps)}
-          </FormBody>
-          <FormControls>
+        <StyledContainer
+          s={{
+            height: "100%",
+            width: "100%",
+            padding: "16px 24px 24px 24px",
+            overflowY: "auto",
+            flexDirection: "column",
+          }}
+        >
+          {globalError && (
+            <Form.Item>
+              <FormError error={globalError} />
+            </Form.Item>
+          )}
+          {renderParentInput(formikProps)}
+          {renderNameInput(formikProps)}
+          {renderDescriptionInput(formikProps)}
+
+          <StyledContainer>
             <StyledButton
               block
               danger
@@ -203,16 +212,14 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
             >
               {submitLabel || defaultSubmitLabel}
             </Button>
-          </FormControls>
-        </FormBodyContainer>
+          </StyledContainer>
+        </StyledContainer>
       </StyledForm>
     );
   };
 
   return (
     <Formik
-      // @ts-ignore
-      initialErrors={externalErrors}
       initialValues={value}
       validationSchema={blockValidationSchemas.org}
       onSubmit={onSubmit}

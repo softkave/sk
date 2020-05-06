@@ -1,11 +1,12 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { IBlock, IBlockLabel } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import LabelList from "./LabelList";
 
@@ -17,7 +18,6 @@ export interface ILabelListContainerProps {
 
 const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const { block } = props;
-  const dispatch = useDispatch();
   const user = useSelector(getSignedInUserRequired);
   const org = useSelector<IReduxState, IBlock>((state) => {
     if (block.type === "org") {
@@ -33,6 +33,14 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
     operationID: updateBlockOperationID,
     resourceID: org.customId,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error).block
+    : undefined;
+
+  if (errors && errors.block && errors.block.availableLabels) {
+    errors.availableLabels = errors.block.availableLabels;
+  }
 
   const onSaveChanges = async (values: IBlockLabel[]) => {
     updateBlockOperationFunc(
@@ -59,7 +67,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
       labelList={labelList}
       saveChanges={onSaveChanges}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
     />
   );
 };

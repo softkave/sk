@@ -15,14 +15,14 @@ const WebBody: React.SFC<{}> = () => {
     justifyContent: "center",
   };
 
-  const renderItem = () => {
-    return (
-      <StyledContainer>
-        <StyledContainer></StyledContainer>
-        <StyledContainer></StyledContainer>
-      </StyledContainer>
-    );
-  };
+  // const renderItem = () => {
+  //   return (
+  //     <StyledContainer>
+  //       <StyledContainer></StyledContainer>
+  //       <StyledContainer></StyledContainer>
+  //     </StyledContainer>
+  //   );
+  // };
 
   const render = (style: any) => {
     return (

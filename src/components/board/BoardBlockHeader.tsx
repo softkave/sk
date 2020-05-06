@@ -184,7 +184,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       s={{
         width: "100%",
         alignItems: "center",
-        ["& .anticon"]: { fontSize: "16px" },
+        "& .anticon": { fontSize: "16px" },
       }}
     >
       <StyledContainer>

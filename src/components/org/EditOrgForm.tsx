@@ -6,13 +6,10 @@ import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { IFormikFormErrors } from "../form/formik-utils";
-import {
-  FormBody,
-  FormBodyContainer,
-  FormControls,
-  StyledForm,
-} from "../form/FormStyledComponents";
+import { StyledForm } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
+import StyledContainer from "../styled/Container";
 import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
@@ -48,6 +45,10 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     errors: externalErrors,
   } = props;
 
+  const formikRef = useInsertFormikErrors(externalErrors);
+
+  // TODO: find a better way to implement this
+  // TODO: test your error handling in all forms
   const doesOrgExist = (
     errorMessages: IFormikFormErrors<IEditOrgFormValues>
   ) => {
@@ -74,6 +75,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <Form.Item
+        required
         label="Organization Name"
         help={
           touched.name &&
@@ -92,7 +94,8 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
           onBlur={handleBlur}
           onChange={handleChange}
           value={values.name}
-          placeholder="Organization name"
+          placeholder="Enter organization name"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -117,7 +120,8 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
           onBlur={handleBlur}
           onChange={handleChange}
           value={values.description}
-          placeholder="Organization description"
+          placeholder="Enter organization description"
+          disabled={isSubmitting}
         />
       </Form.Item>
     );
@@ -125,7 +129,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <FormControls>
+      <StyledContainer>
         <StyledButton
           block
           danger
@@ -138,32 +142,38 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         <Button block type="primary" htmlType="submit" loading={isSubmitting}>
           {submitLabel || defaultSubmitLabel}
         </Button>
-      </FormControls>
+      </StyledContainer>
     );
   };
 
   const renderForm = (formikProps: EditOrgFormFormikProps) => {
     const { handleSubmit } = formikProps;
     const errors = (formikProps.errors as any) as EditOrgFormErrors;
+    formikRef.current = formikProps;
 
     return (
       <StyledForm onSubmit={handleSubmit}>
-        <FormBodyContainer>
-          <FormBody>
-            {errors.error && <FormError error={errors.error} />}
-            {renderNameInput(formikProps)}
-            {renderDescriptionInput(formikProps)}
-          </FormBody>
+        <StyledContainer
+          s={{
+            height: "100%",
+            width: "100%",
+            padding: "16px 24px 24px 24px",
+            overflowY: "auto",
+            flexDirection: "column",
+          }}
+        >
+          {errors.error && <FormError error={errors.error} />}
+          {renderNameInput(formikProps)}
+          {renderDescriptionInput(formikProps)}
+
           {renderControls()}
-        </FormBodyContainer>
+        </StyledContainer>
       </StyledForm>
     );
   };
 
   return (
     <Formik
-      // @ts-ignore
-      initialErrors={externalErrors}
       initialValues={value}
       validationSchema={blockValidationSchemas.org}
       onSubmit={onSubmit}

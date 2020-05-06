@@ -1,12 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import {
+  addBlockOperationID,
+  updateBlockOperationID,
+} from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
@@ -24,12 +26,8 @@ export interface IGroupFormContainerProps {
 }
 
 const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
-  const { onClose, submitLabel, orgID, parentBlock } = props;
+  const { onClose, submitLabel, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
-
-  const org = useSelector<IReduxState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
-  });
 
   const [block, setBlock] = React.useState<IBlock>(
     props.block || getNewBlock(user, "group", parentBlock)
@@ -39,9 +37,13 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
 
   const operationStatus = useOperation({
     scopeID,
-    operationID: updateBlockOperationID,
+    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
     resourceID: block.customId,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
 
   const onSubmit = async (values: IGroupFormValues) => {
     const data = { ...block, ...values };
@@ -82,7 +84,7 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
       submitLabel={submitLabel}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
       possibleParents={possibleParents}
     />
   );

@@ -5,7 +5,7 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { useSelector, useStore } from "react-redux";
+import { useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
@@ -22,16 +22,13 @@ import {
   getBlockCollaboratorsOperationID,
   getBlockLandingPageOperationID,
 } from "../../redux/operations/operationIDs";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
-import getNewBlock from "../block/getNewBlock";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import { concatPaths } from "../layout/path";
 import RenderForDevice from "../RenderForDevice";
-import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardForBlockContainer from "./BoardForBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
@@ -83,7 +80,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
     `${blockPath}/projects/:blockID`
   );
 
-  const user = useSelector(getSignedInUserRequired);
   const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
       loadBlockCollaboratorsOperationFunc({ block });
@@ -180,7 +176,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   const onClickBlock = (blocks: IBlock[]) => {
     const path = concatPaths(blockPath, blocks.map((b) => getPath(b)).join(""));
 
-    // console.log({ blocks, path });
     pushRoute(path);
   };
 
@@ -227,11 +222,12 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
     if (blockForm) {
       return (
         <BlockForms
-          orgID={blockForm.orgID}
+          orgID={block.rootBlockID || block.customId}
           blockType={blockForm.blockType}
           block={blockForm.block}
           formType={blockForm.formType}
           onClose={resetBlockForm}
+          parentBlock={blockForm.parentBlock}
         />
       );
     }
@@ -344,25 +340,17 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
         return;
       }
 
-      console.log({
-        sourceBlockID,
-        draggedBlockID,
-        dropPosition,
-        groupContext,
-        destinationBlockID: result.destination?.droppableId,
-      });
-
-      // return;
-
       transferBlockOperationFn({
-        sourceBlockID,
-        draggedBlockID,
-        dropPosition,
-        groupContext,
-        destinationBlockID: result.destination?.droppableId,
+        data: {
+          sourceBlockID,
+          draggedBlockID,
+          dropPosition,
+          groupContext,
+          destinationBlockID: result.destination?.droppableId,
+        },
       });
     },
-    []
+    [store]
   );
 
   const render = () => {

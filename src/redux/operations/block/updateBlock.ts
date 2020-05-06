@@ -2,7 +2,6 @@ import moment from "moment";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";

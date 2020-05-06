@@ -1,6 +1,3 @@
-import get from "lodash/get";
-import isNumber from "lodash/isNumber";
-import set from "lodash/set";
 import { indexArray } from "./object";
 
 const uuid = require("uuid/v4");
@@ -50,7 +47,7 @@ export const flattenErrorListWithDepthOne = (
 
 export const flattenErrorListWithDepthInfinite = (
   errors: any
-): { [key: string]: any } | any[] => {
+): { [key: string]: any } => {
   if (!errors) {
     return {};
   }

@@ -7,6 +7,7 @@ import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 
 const validationSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -26,97 +27,101 @@ export interface ILoginProps {
   errors?: IFormikFormErrors<ILoginFormValues>;
 }
 
-class Login extends React.Component<ILoginProps> {
-  public render() {
-    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
+const Login: React.FC<ILoginProps> = (props) => {
+  const { onSubmit, isSubmitting, errors: externalErrors } = props;
 
-    return (
-      <Formik
-        initialValues={cast<ILoginFormValues>({})}
-        onSubmit={onSubmit}
-        validationSchema={validationSchema}
-      >
-        {({
+  const formikRef = useInsertFormikErrors(externalErrors);
+
+  return (
+    <Formik
+      initialValues={cast<ILoginFormValues>({})}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
+    >
+      {(formikProps) => {
+        const {
           values,
           errors,
           touched,
           handleChange,
           handleBlur,
           handleSubmit,
-        }) => {
-          const globalError = getGlobalError(errors);
+        } = formikProps;
+        formikRef.current = formikProps;
+        const globalError = getGlobalError(errors);
 
-          return (
-            <FormBody>
-              <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
-                {globalError && (
-                  <Form.Item>
-                    <FormError error={globalError} />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label="Email Address"
-                  help={touched.email && <FormError>{errors.email}</FormError>}
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input
-                    autoComplete="email"
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.email}
-                    disabled={isSubmitting}
-                    placeholder="Enter your email address"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Password"
-                  help={
-                    touched.password && <FormError>{errors.password}</FormError>
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input.Password
-                    visibilityToggle
-                    autoComplete="current-password"
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.password}
-                    disabled={isSubmitting}
-                    placeholder="Enter your password"
-                  />
-                </Form.Item>
+        return (
+          <FormBody>
+            <form onSubmit={handleSubmit}>
+              <h2>Login</h2>
+              {globalError && (
                 <Form.Item>
-                  <Checkbox
-                    name="remember"
-                    onChange={handleChange}
-                    checked={values.remember}
-                    disabled={isSubmitting}
-                  >
-                    Remember Me
-                  </Checkbox>
+                  <FormError error={globalError} />
                 </Form.Item>
-                <Form.Item>
-                  <Button
-                    block
-                    type="primary"
-                    htmlType="submit"
-                    loading={isSubmitting}
-                  >
-                    {isSubmitting ? "Logging In" : "Login"}
-                  </Button>
-                </Form.Item>
-              </form>
-            </FormBody>
-          );
-        }}
-      </Formik>
-    );
-  }
-}
+              )}
+              <Form.Item
+                required
+                label="Email Address"
+                help={touched.email && <FormError>{errors.email}</FormError>}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input
+                  autoComplete="email"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                  disabled={isSubmitting}
+                  placeholder="Enter your email address"
+                />
+              </Form.Item>
+              <Form.Item
+                required
+                label="Password"
+                help={
+                  touched.password && <FormError>{errors.password}</FormError>
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="current-password"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  disabled={isSubmitting}
+                  placeholder="Enter your password"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Checkbox
+                  name="remember"
+                  onChange={handleChange}
+                  checked={values.remember}
+                  disabled={isSubmitting}
+                >
+                  Remember Me
+                </Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  loading={isSubmitting}
+                >
+                  {isSubmitting ? "Logging In" : "Login"}
+                </Button>
+              </Form.Item>
+            </form>
+          </FormBody>
+        );
+      }}
+    </Formik>
+  );
+};
 
-export default Login;
+export default React.memo(Login);

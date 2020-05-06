@@ -6,9 +6,10 @@ import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import AddCollaboratorForm, {
   IAddCollaboratorFormValues,
@@ -50,13 +51,17 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
   );
 
   const [data, setData] = React.useState<IAddCollaboratorFormValues>({
-    requests: [],
+    collaborators: [],
   });
 
   const operationStatus = useOperation({
     scopeID,
-    operationID: updateBlockOperationID,
+    operationID: addCollaboratorsOperationID,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
 
   const onSubmit = async (values: IAddCollaboratorFormValues) => {
     setData(data);
@@ -76,7 +81,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
       onClose={onClose}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
     />
   );
 };

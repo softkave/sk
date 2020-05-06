@@ -29,6 +29,8 @@ export interface IBlockFormsProps {
 const BlockForms: React.FC<IBlockFormsProps> = (props) => {
   const { block, formType, onClose, orgID, blockType, parentBlock } = props;
 
+  console.log({ props });
+
   const noBlockWarning = () => {
     console.warn("Block is required for form type, but was not provided");
   };

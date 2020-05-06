@@ -1,10 +1,11 @@
-import { notification } from "antd";
+import { message } from "antd";
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
 import { pushOperation } from "../../redux/operations/actions";
 import { operationStatusTypes } from "../../redux/operations/operation";
 import { changePasswordOperationID } from "../../redux/operations/operationIDs";
 import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
 
@@ -12,34 +13,31 @@ import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
 // TODO: Implement a way to supply token to a net call
 // TODO: Implement an endpoint to convert forgot password token to change password token ( maybe not necessary )
 
-const scopeID = "ChangePasswordWithTokenContainer";
 const changePasswordSuccessMessage = "Password changed successfully";
 
 const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
   const operationStatus = useOperation({
-    scopeID,
     operationID: changePasswordOperationID,
   });
 
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
+
   React.useEffect(() => {
     if (operationStatus.isCompleted) {
-      notification.success({
-        message: "Change Password",
-        description: changePasswordSuccessMessage,
-        duration: 0,
-      });
+      message.success(changePasswordSuccessMessage);
 
       dispatch(
         pushOperation(changePasswordOperationID, {
-          scopeID,
           status: operationStatusTypes.consumed,
           timestamp: Date.now(),
         })
       );
     }
-  });
+  }, [operationStatus, dispatch]);
 
   const onSubmit = async (data: IChangePasswordFormData) => {
     const query = new URLSearchParams(window.location.search);
@@ -54,14 +52,11 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
     });
   };
 
-  console.log({ operationStatus });
-
   return (
     <ChangePassword
-      isSubmitting
       onSubmit={onSubmit}
-      // isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      isSubmitting={operationStatus.isLoading}
+      errors={errors}
     />
   );
 };

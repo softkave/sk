@@ -2,7 +2,6 @@ import randomColor from "randomcolor";
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import { saveUserTokenToStorage } from "../../../storage/userSession";
-import { anErrorOccurred } from "../../../utils/operation-error/OperationErrorItem";
 import { loginUserRedux } from "../../session/actions";
 import { IReduxState } from "../../store";
 import { addUserRedux } from "../../users/actions";
@@ -62,7 +61,7 @@ export default async function signupUserOperationFunc(
       // TODO: should we save the user token after signup or only after login?
       saveUserTokenToStorage(result.token);
     } else {
-      throw anErrorOccurred;
+      throw new Error("An error occurred");
     }
 
     dispatchOperationComplete(dispatchOptions);

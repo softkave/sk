@@ -1,5 +1,4 @@
 import { getSessionDetails } from "../../../net/user";
-import OperationError from "../../../utils/operation-error/OperationError";
 import { setSessionDetails } from "../../session/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";

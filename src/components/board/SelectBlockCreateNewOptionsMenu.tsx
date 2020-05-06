@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import StyledMenuItem from "../styled/StyledMenuItem";
@@ -31,7 +31,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
         s={{
           cursor: "pointer",
           textTransform: "capitalize",
-          ["& .anticon"]: { fontSize: "16px" },
+          "& .anticon": { fontSize: "16px" },
         }}
         onClick={renderTriggerProps.openMenu}
       >

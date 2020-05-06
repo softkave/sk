@@ -1,4 +1,4 @@
-import { DownOutlined, CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -24,11 +24,13 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   });
 
   const statusList = org.availableStatus || [];
+
   const selectedStatus = value
     ? statusList.find((status) => {
         return status.customId === value;
       })
     : null;
+
   const getSelectedKeys = () => (value ? [value] : []);
 
   const statusListMenu = (
@@ -48,10 +50,9 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
 
   const renderSelectedStatus = () => {
     return (
-      <StyledContainer s={{ cursor: "pointer" }}>
+      <StyledContainer s={{ cursor: disabled ? "not-allowed" : "pointer" }}>
         <Space>
           {selectedStatus?.name || "No status"}
-          {/* <DownOutlined style={{ fontSize: "10px" }} /> */}
           <CaretDownOutlined style={{ fontSize: "10px" }} />
         </Space>
       </StyledContainer>

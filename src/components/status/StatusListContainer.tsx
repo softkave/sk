@@ -1,11 +1,12 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
@@ -32,6 +33,14 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     operationID: updateBlockOperationID,
     resourceID: org.customId,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error).block
+    : undefined;
+
+  if (errors && errors.block && errors.block.availableStatus) {
+    errors.availableStatus = errors.block.availableStatus;
+  }
 
   const onSaveChanges = async (values: IBlockStatus[]) => {
     updateBlockOperationFunc(
@@ -62,7 +71,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
       statusList={statusList}
       saveChanges={onSaveChanges}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
     />
   );
 };

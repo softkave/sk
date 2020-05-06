@@ -8,7 +8,7 @@ import StyledMenuItem from "../styled/StyledMenuItem";
 import wrapWithMargin from "../utilities/wrapWithMargin";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
-  IMenuWithTriggerRenderTriggerProps
+  IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 import { BoardResourceType } from "./types";
 import { getBlockResourceTypes, getBoardResourceTypeFullName } from "./utils";
@@ -20,7 +20,9 @@ export interface ISelectResourceTypeMenuProps {
   resourceType?: BoardResourceType | null;
 }
 
-const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = props => {
+const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = (
+  props
+) => {
   const { resourceType, onSelect, block } = props;
   const childrenTypes = useBlockChildrenTypes(block);
   const resourceTypeName = getBoardResourceTypeFullName(resourceType);
@@ -36,7 +38,7 @@ const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = props => 
           cursor: "pointer",
           alignItems: "center",
           textTransform: "capitalize",
-          ["& .anticon"]: { fontSize: "16px" }
+          "& .anticon": { fontSize: "16px" },
         }}
       >
         <MenuFoldOutlined />
@@ -51,12 +53,12 @@ const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = props => 
     return (
       <Menu
         selectedKeys={resourceType ? [resourceType] : []}
-        onClick={event => {
+        onClick={(event) => {
           onSelect(event.key as BoardResourceType);
           renderMenuProps.closeMenu();
         }}
       >
-        {blockResourceTypes.map(type => {
+        {blockResourceTypes.map((type) => {
           return (
             <StyledMenuItem key={type}>
               {getBoardResourceTypeFullName(type)}

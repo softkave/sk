@@ -8,6 +8,7 @@ import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 
 // TODO: Move to a central place ( errorMessages )
 const invalidPasswordMessage = "Password is invalid";
@@ -41,99 +42,100 @@ export interface IChangePasswordProps {
   errors?: IFormikFormErrors<IChangePasswordFormData>;
 }
 
-class ChangePassword extends React.Component<IChangePasswordProps> {
-  public render() {
-    const { onSubmit, isSubmitting, errors: externalErrors } = this.props;
+const ChangePassword: React.FC<IChangePasswordProps> = (props) => {
+  const { onSubmit, isSubmitting, errors: externalErrors } = props;
 
-    return (
-      <Formik
-        initialErrors={externalErrors as any}
-        initialValues={cast<IChangePasswordFormInternalData>({})}
-        validationSchema={validationSchema}
-        onSubmit={async (values) => {
-          onSubmit({
-            password: values.password,
-          });
-        }}
-      >
-        {({
+  const formikRef = useInsertFormikErrors(externalErrors);
+
+  return (
+    <Formik
+      initialValues={cast<IChangePasswordFormInternalData>({})}
+      validationSchema={validationSchema}
+      onSubmit={async (values) => {
+        onSubmit({
+          password: values.password,
+        });
+      }}
+    >
+      {(formikProps) => {
+        const {
           values,
           errors,
           touched,
           handleChange,
           handleBlur,
           handleSubmit,
-        }) => {
-          const globalError = getGlobalError(errors);
+        } = formikProps;
+        formikRef.current = formikProps;
+        const globalError = getGlobalError(errors);
 
-          return (
-            <FormBody>
-              <form onSubmit={handleSubmit}>
-                <h2>Change Password</h2>
-                {globalError && (
-                  <Form.Item>
-                    <FormError error={globalError} />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label="Password"
-                  help={
-                    touched.password && <FormError>{errors.password}</FormError>
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.password}
-                    placeholder="Enter new password"
-                    disabled={isSubmitting}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Confirm Password"
-                  help={
-                    touched.confirmPassword && (
-                      <FormError>{errors.confirmPassword}</FormError>
-                    )
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="confirmPassword"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.confirmPassword}
-                    placeholder="Re-enter your new password"
-                    disabled={isSubmitting}
-                  />
-                </Form.Item>
+        return (
+          <FormBody>
+            <form onSubmit={handleSubmit}>
+              <h2>Change Password</h2>
+              {globalError && (
                 <Form.Item>
-                  <Button
-                    block
-                    type="primary"
-                    htmlType="submit"
-                    loading={isSubmitting}
-                  >
-                    {isSubmitting
-                      ? "Changing Your Password"
-                      : "Change Password"}
-                  </Button>
+                  <FormError error={globalError} />
                 </Form.Item>
-              </form>
-            </FormBody>
-          );
-        }}
-      </Formik>
-    );
-  }
-}
+              )}
+              <Form.Item
+                required
+                label="Password"
+                help={
+                  touched.password && <FormError>{errors.password}</FormError>
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  placeholder="Enter new password"
+                  disabled={isSubmitting}
+                />
+              </Form.Item>
+              <Form.Item
+                required
+                label="Confirm Password"
+                help={
+                  touched.confirmPassword && (
+                    <FormError>{errors.confirmPassword}</FormError>
+                  )
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="confirmPassword"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                  placeholder="Re-enter your new password"
+                  disabled={isSubmitting}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  loading={isSubmitting}
+                >
+                  {isSubmitting ? "Changing Your Password" : "Change Password"}
+                </Button>
+              </Form.Item>
+            </form>
+          </FormBody>
+        );
+      }}
+    </Formik>
+  );
+};
 
-export default ChangePassword;
+export default React.memo(ChangePassword);

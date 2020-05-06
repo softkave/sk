@@ -3,6 +3,7 @@ import throttle from "lodash/throttle";
 import React from "react";
 import cast from "../utils/cast";
 import { getWindowWidth } from "../utils/window";
+import StyledContainer from "./styled/Container";
 
 export interface IDrawerWrapperProps {
   visible: boolean;

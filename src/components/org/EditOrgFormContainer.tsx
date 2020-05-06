@@ -3,8 +3,12 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import {
+  addBlockOperationID,
+  updateBlockOperationID,
+} from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useOperation from "../hooks/useOperation";
 import EditOrgForm, { IEditOrgFormValues } from "./EditOrgForm";
@@ -27,9 +31,13 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
 
   const operationStatus = useOperation({
     scopeID,
-    operationID: updateBlockOperationID,
+    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
     resourceID: block.customId,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
 
   const onSubmit = async (values: IEditOrgFormValues) => {
     const data = { ...block, ...values };
@@ -70,7 +78,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
       submitLabel={submitLabel}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      errors={errors}
     />
   );
 };

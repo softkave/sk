@@ -1,7 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Divider, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space } from "antd";
 import { Formik, FormikErrors, FormikProps } from "formik";
-import isNumber from "lodash/isNumber";
 import React from "react";
 import {
   DragDropContext,
@@ -17,23 +16,23 @@ import * as yup from "yup";
 import { IBlockStatus } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { indexArray } from "../../utils/object";
 import { newId } from "../../utils/utils";
 import FormError from "../form/FormError";
+import { IFormikFormErrors } from "../form/formik-utils";
+import { StyledForm } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
+import { StatusListFormikProps } from "./types";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
-
-type StatusListFormikProps = FormikProps<{ statusList: IBlockStatus[] }>;
-type StatusListFormikErrors = StatusListFormikProps["errors"];
 
 export interface IStatusListProps {
   user: IUser;
   statusList: IBlockStatus[];
   saveChanges: (statusList: IBlockStatus[]) => Promise<void>;
 
-  errors?: FormikErrors<IBlockStatus[]>;
+  errors?: IFormikFormErrors<IBlockStatus[]>;
   isSubmitting?: boolean;
 }
 
@@ -43,6 +42,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   const [editingStatus, setEditingStatus] = React.useState<string[]>(() => {
     return [];
   });
+
+  const formikRef = useInsertFormikErrors(errors);
 
   const onDelete = React.useCallback(
     (formikProps: StatusListFormikProps, index: number) => {
@@ -79,61 +80,61 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     [editingStatus, newStatuses]
   );
 
-  const checkNameConflicts = (
-    formikProps: StatusListFormikProps,
-    statusIndex?: number
-  ) => {
-    const nameToStatusMap = indexArray(formikProps.values.statusList, {
-      path: "name",
-      indexer: (status: IBlockStatus) => status.name.toLowerCase(),
-      proccessValue: (status: IBlockStatus, u1, u2, index: number) => {
-        return {
-          status,
-          index,
-        };
-      },
-    });
+  // const checkNameConflicts = (
+  //   formikProps: StatusListFormikProps,
+  //   statusIndex?: number
+  // ) => {
+  //   const nameToStatusMap = indexArray(formikProps.values.statusList, {
+  //     path: "name",
+  //     indexer: (status: IBlockStatus) => status.name.toLowerCase(),
+  //     proccessValue: (status: IBlockStatus, u1, u2, index: number) => {
+  //       return {
+  //         status,
+  //         index,
+  //       };
+  //     },
+  //   });
 
-    const checkErrors: StatusListFormikErrors = { statusList: [] };
+  //   const checkErrors: StatusListFormikErrors = { statusList: [] };
 
-    const pushError = (status: IBlockStatus, index: number) => {
-      const existingError: any =
-        (formikProps.errors.statusList || [])[index] || {};
+  //   const pushError = (status: IBlockStatus, index: number) => {
+  //     const existingError: any =
+  //       (formikProps.errors.statusList || [])[index] || {};
 
-      if (existingError.name) {
-        // @ts-ignore
-        checkErrors.statusList.push(existingError);
-        return;
-      }
+  //     if (existingError.name) {
+  //       // @ts-ignore
+  //       checkErrors.statusList.push(existingError);
+  //       return;
+  //     }
 
-      const statusDataWithNameConflict =
-        nameToStatusMap[status.name.toLowerCase()];
+  //     const statusDataWithNameConflict =
+  //       nameToStatusMap[status.name.toLowerCase()];
 
-      if (
-        statusDataWithNameConflict &&
-        statusDataWithNameConflict.index !== index
-      ) {
-        // @ts-ignore
-        checkErrors.statusList.push({
-          ...existingError,
-          name: "Status name exists",
-        });
-      } else if (existingError) {
-        // @ts-ignore
-        checkErrors.statusList.push(existingError);
-      }
-    };
+  //     if (
+  //       statusDataWithNameConflict &&
+  //       statusDataWithNameConflict.index !== index
+  //     ) {
+  //       // @ts-ignore
+  //       checkErrors.statusList.push({
+  //         ...existingError,
+  //         name: "Status name exists",
+  //       });
+  //     } else if (existingError) {
+  //       // @ts-ignore
+  //       checkErrors.statusList.push(existingError);
+  //     }
+  //   };
 
-    if (isNumber(statusIndex) && statusIndex >= 0) {
-      pushError(formikProps.values.statusList[statusIndex], statusIndex);
-    } else {
-      formikProps.values.statusList.forEach((status, index) => {
-        pushError(status, index);
-      });
-    }
+  //   if (isNumber(statusIndex) && statusIndex >= 0) {
+  //     pushError(formikProps.values.statusList[statusIndex], statusIndex);
+  //   } else {
+  //     formikProps.values.statusList.forEach((status, index) => {
+  //       pushError(status, index);
+  //     });
+  //   }
 
-    return checkErrors;
-  };
+  //   return checkErrors;
+  // };
 
   const renderEditingStatus = (
     formikProps: StatusListFormikProps,
@@ -168,7 +169,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
             }}
             name={nameField}
             value={values.name}
-            placeholder="Status name"
+            placeholder="Enter status name"
+            disabled={isSubmitting}
           />
         </Form.Item>
         <Form.Item
@@ -194,7 +196,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
             }}
             name={descField}
             value={values.description}
-            placeholder="Status description"
+            placeholder="Enter status description"
+            disabled={isSubmitting}
           />
         </Form.Item>
       </StyledContainer>
@@ -284,6 +287,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
               }
             }}
             htmlType="button"
+            disabled={isSubmitting}
           />
           <Button
             onClick={() => {
@@ -310,7 +314,9 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
               }
             }}
             icon={<CloseIcon style={{ fontSize: "14px" }} />}
-            disabled={newStatuses.indexOf(status.customId) !== -1}
+            disabled={
+              isSubmitting || newStatuses.indexOf(status.customId) !== -1
+            }
             htmlType="button"
           />
         </React.Fragment>
@@ -434,6 +440,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
           key={status.customId}
           draggableId={status.customId}
           index={index}
+          isDragDisabled={isSubmitting}
         >
           {(provided, snapshot) =>
             renderStatus(formikProps, status, index, provided, snapshot)
@@ -452,6 +459,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
           droppableId="status-list"
           type="status"
           // direction="horizontal"
+          isDropDisabled={isSubmitting}
         >
           {(provided, snapshot) => {
             return (
@@ -475,13 +483,13 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     );
   };
 
+  // TODO: add cancel button
   const renderSubmitControls = (formikProps: StatusListFormikProps) => {
     return (
       <StyledContainer
         s={{
           flexDirection: "column",
           width: "100%",
-          borderTop: "1px solid #f0f0f0",
           padding: "24px",
         }}
       >
@@ -574,15 +582,25 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   };
 
   const renderMain = (formikProps: StatusListFormikProps) => {
+    formikRef.current = formikProps;
+
     return (
-      <StyledContainerAsForm
-        s={{ width: "100%", height: "100%", flexDirection: "column" }}
-        onSubmit={formikProps.handleSubmit}
-      >
-        {renderAddControls(formikProps)}
-        {renderList(formikProps)}
-        {renderSubmitControls(formikProps)}
-      </StyledContainerAsForm>
+      <StyledForm onSubmit={formikProps.handleSubmit}>
+        <StyledContainer
+          s={{
+            height: "100%",
+            width: "100%",
+            // padding: "16px 24px 24px 24px",
+            // paddingBottom: "24px",
+            overflowY: "auto",
+            flexDirection: "column",
+          }}
+        >
+          {renderAddControls(formikProps)}
+          {renderList(formikProps)}
+          {renderSubmitControls(formikProps)}
+        </StyledContainer>
+      </StyledForm>
     );
   };
 
@@ -603,8 +621,6 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       validationSchema={yup.object().shape({
         statusList: labelValidationSchemas.labelList,
       })}
-      // @ts-ignore
-      initialErrors={{ statusList: errors }}
     >
       {(formikProps) => renderMain(formikProps)}
     </Formik>

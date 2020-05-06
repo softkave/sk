@@ -1,19 +1,21 @@
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { loginUserOperationID } from "../../redux/operations/operationIDs";
 import loginUserOperationFunc from "../../redux/operations/session/loginUser";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import Login, { ILoginFormValues } from "./Login";
-
-const scopeID = "LoginContainer";
 
 const LoginContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
   const operationStatus = useOperation({
-    scopeID,
-    operationID: updateBlockOperationID,
+    operationID: loginUserOperationID,
   });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
 
   const onSubmit = async (user: ILoginFormValues) => {
     return loginUserOperationFunc(store.getState(), dispatch, { user });
@@ -23,10 +25,9 @@ const LoginContainer: React.FC<{}> = () => {
 
   return (
     <Login
-      isSubmitting
       onSubmit={onSubmit}
-      // isSubmitting={operationStatus.isLoading}
-      errors={operationStatus.error}
+      isSubmitting={operationStatus.isLoading}
+      errors={errors}
     />
   );
 };

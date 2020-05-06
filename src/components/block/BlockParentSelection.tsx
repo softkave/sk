@@ -8,12 +8,14 @@ import BlockThumbnail from "./BlockThumnail";
 
 export interface IBlockParentSelectionProps {
   possibleParents: IBlock[];
+
+  disabled?: boolean;
   value?: string;
   onChange?: (parentID: string) => void;
 }
 
-const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
-  const { value, possibleParents, onChange } = props;
+const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
+  const { value, possibleParents, onChange, disabled } = props;
 
   React.useEffect(() => {
     if (!value && possibleParents.length === 1 && onChange) {
@@ -29,8 +31,11 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
   };
 
   const parentsMenu = (
-    <Menu onClick={event => selectParent(event.key)}>
-      {possibleParents.map(parent => (
+    <Menu
+      onClick={(event) => selectParent(event.key)}
+      style={{ maxHeight: "300px", overflowY: "auto" }}
+    >
+      {possibleParents.map((parent) => (
         <Menu.Item key={parent.customId}>
           <BlockThumbnail block={parent} />
         </Menu.Item>
@@ -53,21 +58,31 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = props => {
     return "Select parent block";
   };
 
-  return (
-    <Dropdown overlay={parentsMenu} trigger={["click"]}>
-      <StyledContainer s={{ cursor: "pointer" }}>
+  const renderDropdownContent = () => {
+    return (
+      <StyledContainer s={{ cursor: disabled ? "not-allowed" : "pointer" }}>
         <StyledContainer s={{ display: "flex", flex: 1, marginRight: "16px" }}>
           {renderSelectedParent()}
         </StyledContainer>
         <StyledContainer
           s={{
             alignItems: "center",
-            fontSize: "16px"
+            fontSize: "16px",
           }}
         >
           <CaretDownOutlined />
         </StyledContainer>
       </StyledContainer>
+    );
+  };
+
+  if (disabled) {
+    return renderDropdownContent();
+  }
+
+  return (
+    <Dropdown overlay={parentsMenu} trigger={["click"]}>
+      {renderDropdownContent()}
     </Dropdown>
   );
 };
