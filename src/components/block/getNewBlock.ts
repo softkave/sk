@@ -3,9 +3,12 @@ import {
   BlockType,
   IBlock,
   ISubTask,
-  ITaskCollaborator
+  ITaskCollaborator,
 } from "../../models/block/block";
-import { getBlockValidChildrenTypes } from "../../models/block/utils";
+import {
+  getBlockValidChildrenTypes,
+  getDefaultStatuses,
+} from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
 import cast from "../../utils/cast";
 import { newId } from "../../utils/utils";
@@ -50,7 +53,9 @@ export default function getNewBlock(
     priority: type === "task" ? "important" : undefined,
     isBacklog: false,
     roles: undefined,
-    collaborationRequests: type === "org" ? [] : undefined
+    collaborationRequests: type === "org" ? [] : undefined,
+    availableLabels: [],
+    availableStatus: type === "org" ? getDefaultStatuses(user) : undefined,
   };
 
   return cast<IBlock>(newBlock);
@@ -60,9 +65,9 @@ export type INewBlock = ReturnType<typeof getNewBlock>;
 
 export function addCustomIDToSubTasks(subTasks?: ISubTask[]) {
   return Array.isArray(subTasks)
-    ? subTasks.map(subTask => ({
+    ? subTasks.map((subTask) => ({
         ...subTask,
-        customId: subTask.customId || newId()
+        customId: subTask.customId || newId(),
       }))
     : [];
 }

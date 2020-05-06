@@ -2,7 +2,6 @@ import moment from "moment";
 import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
@@ -10,7 +9,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { addCollaboratorsOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -19,7 +18,7 @@ export interface IAddCollaboratorOperationFuncDataProps {
   block: IBlock;
 
   // TODO: better declare type, don't rely on form values
-  requests: IAddCollaboratorFormItemValues[];
+  collaborators: IAddCollaboratorFormItemValues[];
   message?: string;
   expiresAt?: number | Date;
 }
@@ -28,7 +27,7 @@ export default async function addCollaboratorsOperationFunc(
   dataProps: IAddCollaboratorOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { block, requests, message, expiresAt } = dataProps;
+  const { block, collaborators, message, expiresAt } = dataProps;
   const operation = getOperationWithIDForResource(
     store.getState(),
     addCollaboratorsOperationID,
@@ -45,14 +44,14 @@ export default async function addCollaboratorsOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
   );
 
   try {
-    const proccessedCollaborators = requests.map(request => {
+    const proccessedCollaborators = collaborators.map((request) => {
       const requestExpiresAt = request.expiresAt || expiresAt;
 
       return {
@@ -61,7 +60,7 @@ export default async function addCollaboratorsOperationFunc(
         expiresAt: requestExpiresAt
           ? moment(requestExpiresAt).valueOf()
           : undefined,
-        customId: newId()
+        customId: newId(),
       };
     });
 
@@ -74,7 +73,9 @@ export default async function addCollaboratorsOperationFunc(
       throw result.errors;
     }
 
-    const requestIds = proccessedCollaborators.map(request => request.customId);
+    const requestIds = proccessedCollaborators.map(
+      (request) => request.customId
+    );
 
     /**
      * Currently, the only the request IDs are stored, which will trigger a refetch of all the block's notifications
@@ -89,7 +90,7 @@ export default async function addCollaboratorsOperationFunc(
       blockActions.updateBlockRedux(
         block.customId,
         {
-          collaborationRequests: requestIds
+          collaborationRequests: requestIds,
         },
         { arrayUpdateStrategy: "concat" }
       )
@@ -101,24 +102,20 @@ export default async function addCollaboratorsOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error).transform({
-      replaceBaseNames: [{ from: "collaborators", to: "requests" }]
-    });
-
     store.dispatch(
       pushOperation(
         addCollaboratorsOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

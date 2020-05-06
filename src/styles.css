@@ -5,10 +5,13 @@ body,
   /* font-family: "Karla", sans-serif; */
   font-family: 'Work Sans', sans-serif;
   font-weight: 500;
+  font-size: 14px;
+  /* font-weight: 400; */
 }
 
 /* body, */
 .ant-input,
+/* .ant-list, */
 .ant-dropdown-menu-item {
   color: rgba(0, 0, 0, 0.85) !important;
 }
@@ -34,6 +37,6 @@ body,
   font-size: 16px;
 }
 
-/* .ant-form-item label {
-  font-weight: 600;
-} */
+.ant-form-item label {
+  font-weight: 500;
+}

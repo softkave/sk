@@ -1,13 +1,12 @@
 import { BlockType, IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -39,7 +38,7 @@ export default async function loadBlockChildrenOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -60,10 +59,10 @@ export default async function loadBlockChildrenOperationFunc(
       groups: [],
       projects: [],
       groupTaskContext: [],
-      groupProjectContext: []
+      groupProjectContext: [],
     };
 
-    blocks.forEach(nextBlock => {
+    blocks.forEach((nextBlock) => {
       const container = parentUpdate[`${nextBlock.type}s`];
       container.push(nextBlock.customId);
 
@@ -90,7 +89,7 @@ export default async function loadBlockChildrenOperationFunc(
 
         store.dispatch(
           blockActions.updateBlockRedux(block.customId, parentUpdate, {
-            arrayUpdateStrategy: "replace"
+            arrayUpdateStrategy: "replace",
           })
         );
 
@@ -104,22 +103,20 @@ export default async function loadBlockChildrenOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(
         getBlockChildrenOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

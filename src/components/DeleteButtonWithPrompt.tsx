@@ -10,7 +10,7 @@ export interface IDeleteButtonProps {
   cancelText?: string;
 }
 
-const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = props => {
+const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = (props) => {
   const { onDelete, title, content, okText, cancelText, children } = props;
 
   const showDeleteConfirm = () => {
@@ -19,7 +19,8 @@ const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = props => {
       content,
       okText,
       cancelText,
-      okType: "danger",
+      okType: "primary",
+      okButtonProps: { danger: true },
       onOk() {
         if (typeof onDelete === "function") {
           onDelete();
@@ -27,7 +28,7 @@ const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = props => {
       },
       onCancel() {
         // Do nothing
-      }
+      },
     });
   };
 
@@ -35,21 +36,21 @@ const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = props => {
 
   if (!React.isValidElement(singleChild)) {
     return (
-      <Button type="danger" onClick={showDeleteConfirm}>
+      <Button danger type="primary" onClick={showDeleteConfirm}>
         <DeleteOutlined />
       </Button>
     );
   }
 
   return React.cloneElement(singleChild, {
-    onClick: showDeleteConfirm
+    onClick: showDeleteConfirm,
   });
 };
 
 DeleteButtonWithPrompt.defaultProps = {
   title: "Are you sure delete this resource?",
   okText: "Yes",
-  cancelText: "No"
+  cancelText: "No",
 };
 
 export default DeleteButtonWithPrompt;

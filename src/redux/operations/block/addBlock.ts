@@ -2,7 +2,6 @@ import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { getBlock } from "../../blocks/selectors";
 import store from "../../store";
@@ -11,7 +10,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { addBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -45,7 +44,7 @@ export default async function addBlockOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -85,7 +84,7 @@ export default async function addBlockOperationFunc(
 
       store.dispatch(
         blockActions.updateBlockRedux(parent.customId, parentUpdate, {
-          arrayUpdateStrategy: "concat"
+          arrayUpdateStrategy: "concat",
         })
       );
     }
@@ -108,24 +107,20 @@ export default async function addBlockOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["block"]
-    });
-
     store.dispatch(
       pushOperation(
         addBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

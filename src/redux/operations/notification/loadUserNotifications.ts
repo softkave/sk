@@ -1,5 +1,4 @@
 import * as userNet from "../../../net/user";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as notificationActions from "../../notifications/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
@@ -8,7 +7,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { loadUserNotificationsOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -31,7 +30,7 @@ export default async function loadUserNotificationsOperationFunc(
     pushOperation(loadUserNotificationsOperationID, {
       scopeID: options.scopeID,
       status: operationStatusTypes.operationStarted,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   );
 
@@ -43,14 +42,14 @@ export default async function loadUserNotificationsOperationFunc(
     }
 
     const { requests } = result;
-    const ids = requests.map(request => request.customId);
+    const ids = requests.map((request) => request.customId);
 
     store.dispatch(notificationActions.bulkAddNotificationsRedux(requests));
     store.dispatch(
       userActions.updateUserRedux(
         user.customId,
         {
-          notifications: ids
+          notifications: ids,
         },
         { arrayUpdateStrategy: "replace" }
       )
@@ -60,18 +59,16 @@ export default async function loadUserNotificationsOperationFunc(
       pushOperation(loadUserNotificationsOperationID, {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationComplete,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(loadUserNotificationsOperationID, {
-        error: transformedError,
+        error,
         scopeID: options.scopeID,
         status: operationStatusTypes.operationError,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   }

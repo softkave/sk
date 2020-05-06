@@ -1,38 +1,38 @@
 import { Drawer } from "antd";
 import throttle from "lodash/throttle";
 import React from "react";
-
 import cast from "../utils/cast";
 import { getWindowWidth } from "../utils/window";
+import StyledContainer from "./styled/Container";
 
-export interface IModalWrapperProps {
+export interface IDrawerWrapperProps {
   visible: boolean;
   onClose: () => void;
   title?: string;
 }
 
-interface IModalWrapperState {
+interface IDrawerWrapperState {
   currentDeviceWidth: number;
 }
 
-export interface IWithModalHOCProps {
+export interface IWithDrawerHOCProps {
   className?: string;
 }
 
-export default function withModal<
+export default function withDrawer<
   ComponentType extends React.FunctionComponent<any> | React.ComponentClass<any>
 >(
   component: ComponentType,
   defaultTitle: React.ReactNode = "",
-  options: IWithModalHOCProps = {}
+  options: IWithDrawerHOCProps = {}
 ) {
   type ComponentProps = React.ComponentPropsWithRef<typeof component>;
-  type FinalWrappedComponentProps = IModalWrapperProps & ComponentProps;
+  type FinalWrappedComponentProps = IDrawerWrapperProps & ComponentProps;
   type RefType = React.RefObject<ComponentType> | React.Ref<ComponentType>;
 
   class ModalWrapperComponent extends React.Component<
     FinalWrappedComponentProps & { forwardedRef: RefType },
-    IModalWrapperState
+    IDrawerWrapperState
   > {
     private modalIsMounted = false;
 
@@ -42,7 +42,7 @@ export default function withModal<
       this.updateWindowData = throttle(this.updateWindowData, 300);
 
       this.state = {
-        currentDeviceWidth: getWindowWidth()
+        currentDeviceWidth: getWindowWidth(),
       };
     }
 
@@ -72,6 +72,7 @@ export default function withModal<
 
       return (
         <Drawer
+          closable={false}
           className={options.className}
           visible={visible}
           onClose={onClose}
@@ -80,7 +81,7 @@ export default function withModal<
         >
           {React.createElement(component, {
             ...rest,
-            ref: forwardedRef
+            ref: forwardedRef,
           })}
         </Drawer>
       );
@@ -93,9 +94,9 @@ export default function withModal<
     };
   }
 
-  const displayName = `withModal(${component.displayName ||
-    component.name ||
-    "Component"})`;
+  const displayName = `withModal(${
+    component.displayName || component.name || "Component"
+  })`;
 
   cast<React.FunctionComponent>(
     ModalWrapperComponent

@@ -2,18 +2,27 @@ import { AppstoreAddOutlined } from "@ant-design/icons";
 import React from "react";
 import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer, {
-  IStyledContainerProps
+  IStyledContainerProps,
 } from "../components/styled/Container";
 import WebCard from "./WebCard";
 
 const WebBody: React.SFC<{}> = () => {
   const mobileStyle: IStyledContainerProps["s"] = {
-    flexDirection: "column"
+    flexDirection: "column",
   };
 
   const desktopStyle: IStyledContainerProps["s"] = {
-    justifyContent: "center"
+    justifyContent: "center",
   };
+
+  // const renderItem = () => {
+  //   return (
+  //     <StyledContainer>
+  //       <StyledContainer></StyledContainer>
+  //       <StyledContainer></StyledContainer>
+  //     </StyledContainer>
+  //   );
+  // };
 
   const render = (style: any) => {
     return (

@@ -21,51 +21,60 @@ export interface IAddCollaboratorFormItemProps {
   value: IAddCollaboratorFormItemValues;
   onChange: (value: IAddCollaboratorFormItemValues) => void;
   onDelete: (value: IAddCollaboratorFormItemValues) => void;
+
+  disabled?: boolean;
   error?: IAddCollaboratorFormItemError;
 }
 
 const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
-  props => {
-    const { error, onChange, onDelete, value } = props;
+  (props) => {
+    const { error, onChange, onDelete, value, disabled } = props;
     const itemError = error || {};
 
     return (
       <StyledContainer>
         <StyledFormItem>
           <Input
-            placeholder="Email Address"
+            placeholder="Enter recipient email address"
             value={value.email}
             autoComplete="email"
-            onChange={event => {
+            onChange={(event) => {
               onChange({ ...value, email: event.target.value });
             }}
+            disabled={disabled}
           />
-          {itemError.email && <FormError>{itemError.email}</FormError>}
+          {itemError.email && <FormError error={itemError.email} />}
         </StyledFormItem>
         <StyledFormItem>
           <Message
-            placeholder="Message"
+            placeholder="Enter collaboration request message"
             value={value.body}
-            onChange={body => {
+            onChange={(body) => {
               onChange({ ...value, body });
             }}
+            disabled={disabled}
           />
-          {itemError.body && <FormError>{itemError.body}</FormError>}
+          {itemError.body && <FormError error={itemError.body} />}
         </StyledFormItem>
         <StyledFormItem>
           <ExpiresAt
             placeholder="Expires At"
             value={value.expiresAt}
-            minDate={moment()
-              .subtract(1, "day")
-              .endOf("day")}
-            onChange={date => {
+            minDate={moment().subtract(1, "day").endOf("day")}
+            onChange={(date) => {
               onChange({ ...value, expiresAt: date });
             }}
+            disabled={disabled}
           />
         </StyledFormItem>
         <StyledFormItemButtonContainer>
-          <Button block onClick={() => onDelete(value)} type="danger">
+          <Button
+            block
+            danger
+            onClick={() => onDelete(value)}
+            type="primary"
+            disabled={disabled}
+          >
             Delete
           </Button>
         </StyledFormItemButtonContainer>
@@ -79,9 +88,9 @@ export default AddCollaboratorFormItem;
 const StyledContainer = styled.div({});
 
 const StyledFormItem = styled.div({
-  marginTop: "8px"
+  marginTop: "8px",
 });
 
 const StyledFormItemButtonContainer = styled.div({
-  marginTop: "16px"
+  marginTop: "16px",
 });

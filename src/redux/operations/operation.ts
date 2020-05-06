@@ -1,24 +1,27 @@
 import { Dispatch } from "redux";
-import OperationError from "../../utils/operation-error/OperationError";
+import { INetError } from "../../net/query";
 import { pushOperation } from "./actions";
 
 const operationStarted = "started";
 const operationPending = "pending";
 const operationComplete = "complete";
+const operationConsumed = "consumed";
 const operationError = "error";
 
 export const operationStatusTypes = {
   operationStarted,
   operationPending,
   operationError,
-  operationComplete
+  operationComplete,
+  consumed: operationConsumed,
 };
 
 export type DefaultOperationStatusType =
   | typeof operationStarted
   | typeof operationPending
   | typeof operationError
-  | typeof operationComplete;
+  | typeof operationComplete
+  | typeof operationConsumed;
 
 export type OperationStatusScopeID = string | number;
 export interface IOperationStatus<StatusType extends string = string> {
@@ -26,7 +29,7 @@ export interface IOperationStatus<StatusType extends string = string> {
   timestamp: number;
   scopeID?: string | number;
   data?: any;
-  error?: OperationError;
+  error?: INetError | Error;
 }
 
 export default interface IOperation<
@@ -156,7 +159,7 @@ export function getOperationStatusesWithType(
   statusType: string,
   scopeID?: OperationStatusScopeID
 ) {
-  return operation.statusHistory.filter(status => {
+  return operation.statusHistory.filter((status) => {
     const isTypeSame = status.status === statusType;
 
     if (isTypeSame) {
@@ -235,7 +238,7 @@ export function getStatusesWithScope(
   operation: IOperation,
   scopeID: string | number
 ) {
-  return operation.statusHistory.filter(status => {
+  return operation.statusHistory.filter((status) => {
     return status.scopeID === scopeID;
   });
 }
@@ -251,7 +254,7 @@ export interface IDispatchOperationFuncProps {
   resourceID?: string | null;
   data?: any;
   scopeID?: string | number;
-  error?: OperationError;
+  error?: INetError | Error;
 }
 
 function dispatchOperationStatus(
@@ -272,7 +275,7 @@ export function dispatchOperationStarted(props: IDispatchOperationFuncProps) {
       data,
       scopeID,
       status: operationStatusTypes.operationStarted,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     resourceID
   );
@@ -287,7 +290,7 @@ export function dispatchOperationPending(props: IDispatchOperationFuncProps) {
       data,
       scopeID,
       status: operationStatusTypes.operationPending,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     resourceID
   );
@@ -303,7 +306,7 @@ export function dispatchOperationError(props: IDispatchOperationFuncProps) {
       scopeID,
       error,
       status: operationStatusTypes.operationError,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     resourceID
   );
@@ -318,7 +321,7 @@ export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
       data,
       scopeID,
       status: operationStatusTypes.operationComplete,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     resourceID
   );

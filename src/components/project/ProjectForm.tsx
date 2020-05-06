@@ -1,19 +1,18 @@
 import { Button, Form, Input } from "antd";
+import { Formik, FormikProps } from "formik";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import BlockParentSelection from "../block/BlockParentSelection";
+import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormBaseProps } from "../form/formik-utils";
-import {
-  FormBody,
-  FormBodyContainer,
-  FormControls,
-  StyledForm
-} from "../form/FormStyledComponents";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import { StyledForm } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
+import StyledContainer from "../styled/Container";
 
 // TODO: Move to error messages file
 const projectExistsErrorMessage = "Project with the same name exists";
@@ -26,51 +25,52 @@ export interface IProjectFormValues {
   parent?: string;
 }
 
-export interface IProjectFormProps
-  extends IFormikFormBaseProps<IProjectFormValues> {
+type ProjectFormFormikProps = FormikProps<IProjectFormValues>;
+export type ProjectFormErrors = IFormikFormErrors<IProjectFormValues>;
+
+export interface IProjectFormProps {
   possibleParents: IBlock[];
-  submitLabel?: React.ReactNode;
+  value: IProjectFormValues;
   onClose: () => void;
+  onSubmit: (values: IProjectFormValues) => void;
+
+  submitLabel?: React.ReactNode;
+  isSubmitting?: boolean;
+  errors?: ProjectFormErrors;
 }
 
 const defaultSubmitLabel = "Create Project";
 
-const ProjectForm: React.FC<IProjectFormProps> = props => {
+const ProjectForm: React.FC<IProjectFormProps> = (props) => {
   const {
     submitLabel,
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
     isSubmitting,
-    setFieldValue,
     possibleParents,
-    onClose
+    onClose,
+    value,
+    onSubmit,
+    errors: externalErrors,
   } = props;
 
-  // return <span>Inside Project</span>;
-
-  const immediateParentID = values.parent;
+  const immediateParentID = value.parent;
   const immediateParent = possibleParents.find(
-    parent => parent.customId === immediateParentID
+    (parent) => parent.customId === immediateParentID
   );
   const projectIDs = (immediateParent && immediateParent!.projects) || [];
-  const projects = useSelector<IReduxState, IBlock[]>(state =>
+  const projects = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, projectIDs)
   );
-  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>(state =>
-    getBlock(state, values.customId)
+  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>((state) =>
+    getBlock(state, value.customId)
   );
 
-  const globalError = getGlobalError(errors);
+  const formikRef = useInsertFormikErrors(externalErrors);
 
   const getProjectExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
       const existingProject = projects.find(
-        project => project.name.toLowerCase() === name
+        (project) => project.name.toLowerCase() === name
       );
 
       if (
@@ -82,102 +82,158 @@ const ProjectForm: React.FC<IProjectFormProps> = props => {
     }
   };
 
-  const renderParentInput = () => (
-    <Form.Item
-      label="Parent"
-      help={touched.parent && <FormError>{errors.parent}</FormError>}
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <BlockParentSelection
-        value={values.parent}
-        possibleParents={possibleParents}
-        onChange={value => setFieldValue("parent", value)}
-      />
-    </Form.Item>
-  );
+  const renderParentInput = (formikProps: ProjectFormFormikProps) => {
+    const { touched, errors, values, setFieldValue } = formikProps;
 
-  // TODO: can this be more efficient?
-  const projectNameError = errors.name || getProjectExistsError(values.name);
-  const renderNameInput = () => (
-    <Form.Item
-      label="Project Name"
-      help={touched.name && <FormError>{projectNameError}</FormError>}
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input
-        autoComplete="off"
-        name="name"
-        onBlur={handleBlur}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-          const value = event.target.value;
-          setFieldValue("name", value);
-        }}
-        value={values.name}
-      />
-    </Form.Item>
-  );
+    return (
+      <Form.Item
+        label="Parent"
+        help={touched.parent && <FormError error={errors.parent} />}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <BlockParentSelection
+          value={values.parent}
+          possibleParents={possibleParents}
+          onChange={(val) => setFieldValue("parent", val)}
+          disabled={isSubmitting}
+        />
+      </Form.Item>
+    );
+  };
 
-  const renderDescriptionInput = () => (
-    <Form.Item
-      label="Description"
-      help={touched.description && <FormError>{errors.description}</FormError>}
-      labelCol={{ span: 24 }}
-      wrapperCol={{ span: 24 }}
-    >
-      <Input.TextArea
-        autoSize={{ minRows: 2, maxRows: 6 }}
-        autoComplete="off"
-        name="description"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.description}
-      />
-    </Form.Item>
-  );
+  const renderNameInput = (formikProps: ProjectFormFormikProps) => {
+    const { touched, handleBlur, setFieldValue, values, errors } = formikProps;
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // TODO: can this be more efficient?
+    const projectNameError = errors.name || getProjectExistsError(values.name);
+
+    return (
+      <Form.Item
+        required
+        label="Project Name"
+        help={touched.name && <FormError error={projectNameError} />}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <Input
+          autoComplete="off"
+          name="name"
+          onBlur={handleBlur}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            const val = event.target.value;
+            setFieldValue("name", val);
+          }}
+          value={values.name}
+          placeholder="Enter project name"
+          disabled={isSubmitting}
+        />
+      </Form.Item>
+    );
+  };
+
+  const renderDescriptionInput = (formikProps: ProjectFormFormikProps) => {
+    const { touched, handleBlur, values, errors, handleChange } = formikProps;
+
+    return (
+      <Form.Item
+        label="Description"
+        help={touched.description && <FormError error={errors.description} />}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <Input.TextArea
+          autoSize={{ minRows: 2, maxRows: 6 }}
+          autoComplete="off"
+          name="description"
+          placeholder="Enter project description"
+          onBlur={handleBlur}
+          onChange={handleChange}
+          value={values.description}
+          disabled={isSubmitting}
+        />
+      </Form.Item>
+    );
+  };
+
+  const preSubmit = (
+    event: React.FormEvent<HTMLFormElement>,
+    formikProps: ProjectFormFormikProps
+  ) => {
     event.preventDefault();
+
+    const { errors, values, handleSubmit } = formikProps;
+
+    // TODO: can this be more efficient?
+    const projectNameError = errors.name || getProjectExistsError(values.name);
 
     if (!projectNameError) {
       handleSubmit(event);
     }
   };
 
-  return (
-    <StyledForm onSubmit={onSubmit}>
-      <FormBodyContainer>
-        <FormBody>
+  const renderForm = (formikProps: ProjectFormFormikProps) => {
+    const { errors } = formikProps;
+    const globalError = getGlobalError(errors);
+    formikRef.current = formikProps;
+
+    return (
+      <StyledForm onSubmit={(evt) => preSubmit(evt, formikProps)}>
+        <StyledContainer
+          s={{
+            height: "100%",
+            width: "100%",
+            padding: "16px 24px 24px 24px",
+            overflowY: "auto",
+            flexDirection: "column",
+          }}
+        >
           {globalError && (
             <Form.Item>
               <FormError error={globalError} />
             </Form.Item>
           )}
-          {renderParentInput()}
-          {renderNameInput()}
-          {renderDescriptionInput()}
-        </FormBody>
-        <FormControls>
-          <StyledButton
-            block
-            type="danger"
-            disabled={isSubmitting}
-            onClick={onClose}
-          >
-            Cancel
-          </StyledButton>
-          <Button block type="primary" htmlType="submit" loading={isSubmitting}>
-            {submitLabel || defaultSubmitLabel}
-          </Button>
-        </FormControls>
-      </FormBodyContainer>
-    </StyledForm>
+          {renderParentInput(formikProps)}
+          {renderNameInput(formikProps)}
+          {renderDescriptionInput(formikProps)}
+
+          <StyledContainer>
+            <StyledButton
+              block
+              danger
+              type="primary"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
+              Cancel
+            </StyledButton>
+            <Button
+              block
+              type="primary"
+              htmlType="submit"
+              loading={isSubmitting}
+            >
+              {submitLabel || defaultSubmitLabel}
+            </Button>
+          </StyledContainer>
+        </StyledContainer>
+      </StyledForm>
+    );
+  };
+
+  return (
+    <Formik
+      initialValues={value}
+      validationSchema={blockValidationSchemas.org}
+      onSubmit={onSubmit}
+    >
+      {(formikProps) => renderForm(formikProps)}
+    </Formik>
   );
 };
 
 ProjectForm.defaultProps = {
-  submitLabel: defaultSubmitLabel
+  submitLabel: defaultSubmitLabel,
 };
 
-export default ProjectForm;
+export default React.memo(ProjectForm);

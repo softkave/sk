@@ -1,25 +1,93 @@
-import { connect } from "react-redux";
-import { getOperationWithIDForResource } from "../../redux/operations/selectors";
-import { IReduxState } from "../../redux/store";
-import GroupFormWithFormik from "./GroupFormWithFormik";
+import React from "react";
+import { useSelector } from "react-redux";
+import { IBlock } from "../../models/block/block";
+import addBlockOperationFunc from "../../redux/operations/block/addBlock";
+import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
+import {
+  addBlockOperationID,
+  updateBlockOperationID,
+} from "../../redux/operations/operationIDs";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import getNewBlock from "../block/getNewBlock";
+import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
+import useOperation from "../hooks/useOperation";
+import GroupForm, { IGroupFormValues } from "./GroupForm";
+
+const scopeID = "GroupFormContainer";
 
 export interface IGroupFormContainerProps {
-  customId: string;
-  operationID: string;
+  orgID: string;
+  onClose: () => void;
+
+  parentBlock?: IBlock;
+  block?: IBlock;
+  submitLabel?: React.ReactNode;
 }
 
-function mapStateToProps(state: IReduxState, props: IGroupFormContainerProps) {
-  return {
-    operation: getOperationWithIDForResource(
-      state,
-      props.operationID,
-      props.customId
-    ),
+const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
+  const { onClose, submitLabel, parentBlock } = props;
+  const user = useSelector(getSignedInUserRequired);
 
-    getFormIdentifier() {
-      return "GroupForm";
+  const [block, setBlock] = React.useState<IBlock>(
+    props.block || getNewBlock(user, "group", parentBlock)
+  );
+
+  const possibleParents = useBlockPossibleParents(block);
+
+  const operationStatus = useOperation({
+    scopeID,
+    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
+    resourceID: block.customId,
+  });
+
+  const errors = operationStatus.error
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+    : undefined;
+
+  const onSubmit = async (values: IGroupFormValues) => {
+    const data = { ...block, ...values };
+    setBlock(data);
+
+    if (props.block) {
+      updateBlockOperationFunc(
+        {
+          block,
+          data,
+        },
+        {
+          scopeID,
+          resourceID: block.customId,
+        }
+      );
+    } else {
+      addBlockOperationFunc(
+        {
+          user,
+          block: data,
+        },
+        {
+          scopeID,
+          resourceID: block.customId,
+        }
+      );
     }
   };
-}
 
-export default connect(mapStateToProps)(GroupFormWithFormik);
+  console.log({ operationStatus });
+
+  return (
+    <GroupForm
+      // @ts-ignore
+      value={block}
+      onClose={onClose}
+      submitLabel={submitLabel}
+      onSubmit={onSubmit}
+      isSubmitting={operationStatus.isLoading}
+      errors={errors}
+      possibleParents={possibleParents}
+    />
+  );
+};
+
+export default React.memo(GroupFormContainer);

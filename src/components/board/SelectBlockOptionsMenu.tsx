@@ -7,7 +7,7 @@ import StyledContainer from "../styled/Container";
 import StyledMenuItem from "../styled/StyledMenuItem";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
-  IMenuWithTriggerRenderTriggerProps
+  IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 
 export type SettingsMenuKey = "edit" | "delete";
@@ -17,7 +17,9 @@ export interface ISelectBlockOptionsMenuProps {
   onSelect: (key: SettingsMenuKey) => void;
 }
 
-const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = props => {
+const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
+  props
+) => {
   const { block, onSelect } = props;
   const blockTypeFullName = getBlockTypeFullName(block.type);
 
@@ -29,7 +31,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = props => 
         s={{
           cursor: "pointer",
           textTransform: "capitalize",
-          ["& .anticon"]: { fontSize: "16px" }
+          "& .anticon": { fontSize: "16px" },
         }}
         onClick={renderTriggerProps.openMenu}
       >
@@ -43,7 +45,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = props => 
   ) => {
     return (
       <Menu
-        onClick={event => {
+        onClick={(event) => {
           onSelect(event.key as SettingsMenuKey);
           renderMenuProps.closeMenu();
         }}

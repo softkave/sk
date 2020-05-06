@@ -15,12 +15,19 @@ import {
   updateUserMutation,
   userExistsQuery,
   userLoginMutation,
-  userSignupMutation
+  userSignupMutation,
 } from "./schema/user";
 
 // TODO: Define types for the parameters
 
-export async function signup(user: IUser) {
+export interface ISignupEnpointProps {
+  name: string;
+  password: string;
+  email: string;
+  color: string;
+}
+
+export async function signup(user: ISignupEnpointProps) {
   const userFields = ["name", "password", "email", "color"];
 
   const result = await query(
@@ -89,7 +96,7 @@ export function updateCollaborationRequest(request: INotification, data: any) {
     updateCollaborationRequestMutation,
     {
       customId: request.customId,
-      data: getDataFromObject(data, updateRequestFields)
+      data: getDataFromObject(data, updateRequestFields),
     },
     "data.user.updateCollaborationRequest"
   );

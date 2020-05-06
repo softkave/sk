@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import { IReduxState } from "../../store";
 import {
@@ -9,7 +8,7 @@ import {
   dispatchOperationStarted,
   IDispatchOperationFuncProps,
   IOperationFuncOptions,
-  isOperationStarted
+  isOperationStarted,
 } from "../operation";
 import { getBlocksWithCustomIDsOperationID } from "../operationIDs";
 import { getOperationsWithID } from "../selectors";
@@ -36,7 +35,7 @@ export default async function getBlocksParentsOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: getBlocksWithCustomIDsOperationID
+    operationID: getBlocksWithCustomIDsOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);
@@ -53,8 +52,6 @@ export default async function getBlocksParentsOperationFunc(
     dispatch(blockActions.bulkAddBlocksRedux(blocks));
     dispatchOperationComplete(dispatchOptions);
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
-    dispatchOperationError({ ...dispatchOptions, error: transformedError });
+    dispatchOperationError({ ...dispatchOptions, error });
   }
 }

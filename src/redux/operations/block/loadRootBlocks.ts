@@ -1,12 +1,11 @@
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { loadRootBlocksOperationID } from "../operationIDs";
 import { getFirstOperationWithID } from "../selectors";
@@ -28,7 +27,7 @@ export default async function loadRootBlocksOperationFunc(
     pushOperation(loadRootBlocksOperationID, {
       scopeID: options.scopeID,
       status: operationStatusTypes.operationStarted,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   );
 
@@ -46,19 +45,16 @@ export default async function loadRootBlocksOperationFunc(
       pushOperation(loadRootBlocksOperationID, {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationComplete,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   } catch (error) {
-    // TODO: Only save the error, not OperationError
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(loadRootBlocksOperationID, {
-        error: transformedError,
+        error,
         scopeID: options.scopeID,
         status: operationStatusTypes.operationError,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   }

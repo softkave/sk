@@ -6,11 +6,13 @@ import Priority, { TaskPriority } from "./Priority";
 export interface IEditPriorityProps {
   value: TaskPriority;
   onChange: (value: string) => void;
+
+  disabled?: boolean;
 }
 
 export default class EditPriority extends React.Component<IEditPriorityProps> {
   public render() {
-    const { value, onChange } = this.props;
+    const { value, onChange, disabled } = this.props;
 
     const menu = (
       <Menu onClick={({ key }) => onChange(key)}>
@@ -26,11 +28,21 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
       </Menu>
     );
 
-    return (
-      <Dropdown overlay={menu} trigger={["click"]}>
-        <div style={{ cursor: "pointer" }}>
+    const renderDropdownContent = () => {
+      return (
+        <div style={{ cursor: disabled ? "not-allowed" : "pointer" }}>
           <Priority level={value} />
         </div>
+      );
+    };
+
+    if (disabled) {
+      return renderDropdownContent();
+    }
+
+    return (
+      <Dropdown overlay={menu} trigger={["click"]}>
+        {renderDropdownContent()}
       </Dropdown>
     );
   }

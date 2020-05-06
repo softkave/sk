@@ -1,20 +1,16 @@
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern } from "../../models/user/descriptor";
-import IOperation, {
-  areOperationsSameCheckStatus,
-  isOperationCompleted
-} from "../../redux/operations/operation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
-import { applyOperationToFormik, getGlobalError } from "../form/formik-utils";
+import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import { FormBody } from "../form/FormStyledComponents";
+import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 
 // TODO: Move to a central place ( errorMessages )
-const changePasswordSuccessMessage = "Password changed successfully";
 const invalidPasswordMessage = "Password is invalid";
 const passwordMismatchErrorMessage = "Passwords do not match";
 
@@ -28,7 +24,7 @@ const validationSchema = yup.object().shape({
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
-    .required()
+    .required(),
 });
 
 export interface IChangePasswordFormData {
@@ -41,119 +37,105 @@ interface IChangePasswordFormInternalData extends IChangePasswordFormData {
 
 export interface IChangePasswordProps {
   onSubmit: (values: IChangePasswordFormData) => void | Promise<void>;
-  operation?: IOperation;
+
+  isSubmitting?: boolean;
+  errors?: IFormikFormErrors<IChangePasswordFormData>;
 }
 
-class ChangePassword extends React.Component<IChangePasswordProps> {
-  private formikRef: React.RefObject<
-    Formik<IChangePasswordFormInternalData>
-  > = React.createRef();
+const ChangePassword: React.FC<IChangePasswordProps> = (props) => {
+  const { onSubmit, isSubmitting, errors: externalErrors } = props;
 
-  public componentDidMount() {
-    applyOperationToFormik(this.props.operation, this.formikRef);
-  }
+  const formikRef = useInsertFormikErrors(externalErrors);
 
-  public componentDidUpdate(prevProps: IChangePasswordProps) {
-    const { operation } = this.props;
-    applyOperationToFormik(operation, this.formikRef);
-
-    if (isOperationCompleted(operation)) {
-      if (!areOperationsSameCheckStatus(operation, prevProps.operation)) {
-        notification.success({
-          message: "Change Password",
-          description: changePasswordSuccessMessage,
-          duration: 0
+  return (
+    <Formik
+      initialValues={cast<IChangePasswordFormInternalData>({})}
+      validationSchema={validationSchema}
+      onSubmit={async (values) => {
+        onSubmit({
+          password: values.password,
         });
-      }
-    }
-  }
-
-  public render() {
-    const { onSubmit } = this.props;
-
-    return (
-      <Formik
-        ref={this.formikRef}
-        initialValues={cast<IChangePasswordFormInternalData>({})}
-        validationSchema={validationSchema}
-        onSubmit={async values => {
-          onSubmit({
-            password: values.password
-          });
-        }}
-      >
-        {({
+      }}
+    >
+      {(formikProps) => {
+        const {
           values,
           errors,
           touched,
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting
-        }) => {
-          const globalError = getGlobalError(errors);
+        } = formikProps;
+        formikRef.current = formikProps;
+        const globalError = getGlobalError(errors);
 
-          return (
-            <FormBody>
-              <form onSubmit={handleSubmit}>
-                {globalError && (
-                  <Form.Item>
-                    <FormError error={globalError} />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label="Password"
-                  help={
-                    touched.password && <FormError>{errors.password}</FormError>
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.password}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Confirm Password"
-                  help={
-                    touched.confirmPassword && (
-                      <FormError>{errors.confirmPassword}</FormError>
-                    )
-                  }
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="confirmPassword"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.confirmPassword}
-                  />
-                </Form.Item>
+        return (
+          <FormBody>
+            <form onSubmit={handleSubmit}>
+              <h2>Change Password</h2>
+              {globalError && (
                 <Form.Item>
-                  <Button
-                    block
-                    type="primary"
-                    htmlType="submit"
-                    loading={isSubmitting}
-                  >
-                    Change Password
-                  </Button>
+                  <FormError error={globalError} />
                 </Form.Item>
-              </form>
-            </FormBody>
-          );
-        }}
-      </Formik>
-    );
-  }
-}
+              )}
+              <Form.Item
+                required
+                label="Password"
+                help={
+                  touched.password && <FormError>{errors.password}</FormError>
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  placeholder="Enter new password"
+                  disabled={isSubmitting}
+                />
+              </Form.Item>
+              <Form.Item
+                required
+                label="Confirm Password"
+                help={
+                  touched.confirmPassword && (
+                    <FormError>{errors.confirmPassword}</FormError>
+                  )
+                }
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input.Password
+                  visibilityToggle
+                  autoComplete="new-password"
+                  name="confirmPassword"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.confirmPassword}
+                  placeholder="Re-enter your new password"
+                  disabled={isSubmitting}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+                  loading={isSubmitting}
+                >
+                  {isSubmitting ? "Changing Your Password" : "Change Password"}
+                </Button>
+              </Form.Item>
+            </form>
+          </FormBody>
+        );
+      }}
+    </Formik>
+  );
+};
 
-export default ChangePassword;
+export default React.memo(ChangePassword);

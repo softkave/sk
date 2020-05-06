@@ -5,7 +5,7 @@ import React from "react";
 import { SizeMe } from "react-sizeme";
 import {
   ITaskCollaborator,
-  TaskCollaborationType
+  TaskCollaborationType,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
@@ -17,14 +17,19 @@ export interface ITaskCollaboratorThumbnailProps {
   taskCollaborator: ITaskCollaborator;
   collaborationType: TaskCollaborationType;
   onUnassign: () => void;
+
+  disabled?: boolean;
 }
 
-const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = props => {
+const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = (
+  props
+) => {
   const {
     collaborator,
     taskCollaborator,
     onUnassign,
-    collaborationType
+    collaborationType,
+    disabled,
   } = props;
 
   return (
@@ -49,6 +54,7 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = pr
         <StyledFlatButton
           onClick={onUnassign}
           style={{ color: "rgb(255, 77, 79)" }}
+          disabled={disabled}
         >
           <DeleteFilled />
         </StyledFlatButton>
@@ -61,7 +67,7 @@ export default TaskCollaboratorThumbnail;
 
 const StyledMainContainer = styled.div({
   display: "flex",
-  width: "100%"
+  width: "100%",
 });
 
 const StyledCollaboratorNameContainer = styled.div({
@@ -69,5 +75,5 @@ const StyledCollaboratorNameContainer = styled.div({
   marginLeft: 16,
   marginRight: 16,
   display: "flex",
-  alignItems: "center"
+  alignItems: "center",
 });

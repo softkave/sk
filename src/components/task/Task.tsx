@@ -1,20 +1,23 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
+import { Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
-import StyledFlexContainer from "../styled/FlexContainer";
 import Text from "../Text";
 import Priority from "./Priority";
+import TaskStatusContainer from "./TaskStatusContainer";
 import ToggleSwitchContainer from "./ToggleSwitch";
 
 export interface ITaskProps {
   task: IBlock;
   onEdit?: (task: IBlock) => void;
 }
+
+// TODO: how do we show thelabels?
 
 const Task: React.FC<ITaskProps> = (props) => {
   const { task, onEdit } = props;
@@ -24,53 +27,45 @@ const Task: React.FC<ITaskProps> = (props) => {
   };
 
   return (
-    <StyledTask>
-      <StyledFlexContainer>
+    <StyledTask direction="vertical">
+      <StyledContainer>
         <StyledContainer s={{ flex: 1 }}>
           <ToggleSwitchContainer task={task} />
         </StyledContainer>
         <StyledContainer s={{ marginLeft: "8px" }}>
           <Priority level={task.priority!} />
         </StyledContainer>
-      </StyledFlexContainer>
-      <StyledDescriptionContainer>
-        <Text text={task.description!} rows={3} />
-      </StyledDescriptionContainer>
+      </StyledContainer>
+      <Text text={task.description!} rows={3} />
       <StyledControlsContainer>
-        {onEdit && (
-          <StyledFlatButton
-            onClick={() => onEdit(task)}
-            title="edit task"
-            style={{ marginRight: "32px" }}
-          >
-            <EditOutlined />
-          </StyledFlatButton>
-        )}
-        <DeleteButtonWithPrompt
-          onDelete={onDeleteTask}
-          title="Are you sure you want to delete this task?"
-        >
-          <StyledFlatButton>
-            <DeleteOutlined />
-          </StyledFlatButton>
-        </DeleteButtonWithPrompt>
+        <StyledContainer s={{ flex: 1 }}>
+          <TaskStatusContainer task={task} />
+        </StyledContainer>
+        <Space size="large">
+          {onEdit && (
+            <StyledFlatButton onClick={() => onEdit(task)}>
+              <EditOutlined />
+            </StyledFlatButton>
+          )}
+          <DeleteButtonWithPrompt onDelete={onDeleteTask}>
+            <StyledFlatButton>
+              <DeleteOutlined />
+            </StyledFlatButton>
+          </DeleteButtonWithPrompt>
+        </Space>
       </StyledControlsContainer>
     </StyledTask>
   );
 };
 
-const StyledTask = styled.div({
-  display: "flex",
-  flexDirection: "column",
+const StyledTask = styled(Space)({
   minWidth: "280px",
+  width: "100%",
 });
 
-const StyledDescriptionContainer = styled.div({
-  margin: "16px 0",
-});
-
-const StyledControlsContainer = styled.div({
-  textAlign: "right",
+const StyledControlsContainer = styled("div")({
+  display: "flex",
+  width: "100%",
 });
 
 export default React.memo(Task);

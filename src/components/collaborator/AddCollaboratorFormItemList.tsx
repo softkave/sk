@@ -4,13 +4,15 @@ import { Button } from "antd";
 import React from "react";
 import AddCollaboratorFormItem, {
   IAddCollaboratorFormItemError,
-  IAddCollaboratorFormItemValues
+  IAddCollaboratorFormItemValues,
 } from "./AddCollaboratorFormItem";
 
 export interface IAddCollaboratorFormItemListProps {
   onChange: (value: IAddCollaboratorFormItemValues[]) => void;
   value: IAddCollaboratorFormItemValues[];
   maxRequests: number;
+
+  disabled?: boolean;
   errors?: Array<IAddCollaboratorFormItemError | undefined>;
 }
 
@@ -21,7 +23,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
 > {
   public static defaultProps = {
     errors: [],
-    value: []
+    value: [],
   };
 
   public onUpdate = (index, data) => {
@@ -33,7 +35,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
     onChange(valueClone);
   };
 
-  public onDelete = index => {
+  public onDelete = (index) => {
     const { onChange, value } = this.props;
     const valueClone = [...value];
     valueClone.splice(index, 1);
@@ -50,7 +52,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
   };
 
   public render() {
-    const { value, maxRequests } = this.props;
+    const { value, maxRequests, disabled } = this.props;
 
     return (
       <React.Fragment>
@@ -58,7 +60,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
         <Button
           block
           onClick={this.onAdd}
-          disabled={value.length >= maxRequests}
+          disabled={disabled || value.length >= maxRequests}
         >
           <PlusOutlined />
           Add Collaborator
@@ -79,7 +81,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
               <AddCollaboratorFormItem
                 value={request}
                 error={requestErrors[index]}
-                onChange={data => {
+                onChange={(data) => {
                   /**
                    * TODO: - BUG
                    * I think React, or something else in between has one, create a plan to report it.
@@ -106,7 +108,7 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
 
 const StyledList = styled.div({
   backgroundColor: "#f0f0f0",
-  margin: "16px 0"
+  margin: "16px 0",
 });
 
 const StyledItem = styled.div({
@@ -114,6 +116,6 @@ const StyledItem = styled.div({
   padding: "16px",
 
   "&:last-of-type": {
-    borderBottom: "none"
-  }
+    borderBottom: "none",
+  },
 });

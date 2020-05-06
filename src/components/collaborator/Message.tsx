@@ -3,6 +3,8 @@ import React from "react";
 
 export interface IMessageProps {
   onChange: (value: string) => void;
+
+  disabled?: boolean;
   value?: string;
   placeholder?: string;
   onBlur?: () => void;
@@ -10,7 +12,7 @@ export interface IMessageProps {
 
 class Message extends React.PureComponent<IMessageProps> {
   public render() {
-    const { value, onChange, onBlur, placeholder } = this.props;
+    const { value, onChange, onBlur, placeholder, disabled } = this.props;
 
     return (
       <Input.TextArea
@@ -19,9 +21,10 @@ class Message extends React.PureComponent<IMessageProps> {
         autoComplete="off"
         value={value}
         onBlur={onBlur}
-        onChange={event => {
+        onChange={(event) => {
           onChange(event.target.value);
         }}
+        disabled={disabled}
       />
     );
   }

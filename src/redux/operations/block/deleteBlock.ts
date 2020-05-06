@@ -1,10 +1,9 @@
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import {
   bulkDeleteBlocksRedux,
   deleteBlockRedux,
-  updateBlockRedux
+  updateBlockRedux,
 } from "../../blocks/actions";
 import { getBlock, getEveryBlockChildrenInState } from "../../blocks/selectors";
 import { getSignedInUserRequired } from "../../session/selectors";
@@ -14,7 +13,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
@@ -45,7 +44,7 @@ export default async function deleteBlockOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -63,7 +62,7 @@ export default async function deleteBlockOperationFunc(
 
     if (blockChildren.length > 0) {
       store.dispatch(
-        bulkDeleteBlocksRedux(blockChildren.map(child => child.customId))
+        bulkDeleteBlocksRedux(blockChildren.map((child) => child.customId))
       );
     }
 
@@ -76,23 +75,23 @@ export default async function deleteBlockOperationFunc(
         const pluralType = `${block.type}s`;
         const container = parent[pluralType] || [];
         const parentUpdate = {
-          [pluralType]: container.filter(id => id !== block.customId)
+          [pluralType]: container.filter((id) => id !== block.customId),
         };
 
         if (block.type === "group") {
           const groupTaskContext = parent.groupTaskContext || [];
           const groupProjectContext = parent.groupProjectContext || [];
           parentUpdate.groupTaskContext = groupTaskContext.filter(
-            id => id !== block.customId
+            (id) => id !== block.customId
           );
           parentUpdate.groupProjectContext = groupProjectContext.filter(
-            id => id !== block.customId
+            (id) => id !== block.customId
           );
         }
 
         store.dispatch(
           updateBlockRedux(parent.customId, parentUpdate, {
-            arrayUpdateStrategy: "replace"
+            arrayUpdateStrategy: "replace",
           })
         );
       }
@@ -123,22 +122,20 @@ export default async function deleteBlockOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error);
-
     store.dispatch(
       pushOperation(
         deleteBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

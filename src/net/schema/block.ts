@@ -37,6 +37,27 @@ const blockFragment = `
       completedBy
     }
     landingPage
+    availableStatus {
+      customId
+      name
+      description
+      createdBy
+      createdAt
+      updatedBy
+      updatedAt
+    }
+    availableLabels {
+      customId
+      name
+      color
+      description
+      createdBy
+      createdAt
+      updatedBy
+      updatedAt
+    }
+    labels
+    status
   }
 `;
 
@@ -311,5 +332,5 @@ export {
   removeCollaboratorMutation,
   // toggleTaskMutation,
   revokeRequestMutation,
-  transferBlockMutation
+  transferBlockMutation,
 };

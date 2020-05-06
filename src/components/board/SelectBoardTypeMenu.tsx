@@ -9,7 +9,7 @@ import StyledMenuItem from "../styled/StyledMenuItem";
 import wrapWithMargin from "../utilities/wrapWithMargin";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
-  IMenuWithTriggerRenderTriggerProps
+  IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 import { BoardResourceType, BoardType } from "./types";
 import { getBoardTypesForResourceType } from "./utils";
@@ -19,7 +19,7 @@ const boartTypesToIconMap = {
   list: <UnorderedListOutlined />,
   tab: (
     <Icon component={TabSVG} style={{ fontSize: "1.60em", marginTop: "5px" }} />
-  )
+  ),
 };
 
 export interface ISelectBoardTypeMenuProps {
@@ -30,7 +30,7 @@ export interface ISelectBoardTypeMenuProps {
   onSelect: (boardType: BoardType) => void;
 }
 
-const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = props => {
+const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
   const { boardType, onSelect, isMobile, resourceType, block } = props;
 
   const renderBoardTypeSelection = (
@@ -43,7 +43,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = props => {
           cursor: "pointer",
           alignItems: "center",
           textTransform: "capitalize",
-          ["& .anticon"]: { fontSize: "16px" }
+          "& .anticon": { fontSize: "16px" },
         }}
       >
         {boartTypesToIconMap[boardType]}
@@ -63,12 +63,12 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = props => {
     return (
       <Menu
         selectedKeys={boardType ? [boardType] : []}
-        onClick={event => {
+        onClick={(event) => {
           onSelect(event.key as BoardType);
           renderMenuProps.closeMenu();
         }}
       >
-        {availableBoardTypes.map(type => {
+        {availableBoardTypes.map((type) => {
           return (
             <StyledMenuItem key={type}>
               <StyledContainer s={{ alignItems: "center" }}>

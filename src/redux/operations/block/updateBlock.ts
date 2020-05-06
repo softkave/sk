@@ -2,21 +2,20 @@ import moment from "moment";
 import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
-import OperationError from "../../../utils/operation-error/OperationError";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes
+  operationStatusTypes,
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
 import { getOperationWithIDForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 import {
   hasBlockParentChanged,
-  transferBlockStateHelper
+  transferBlockStateHelper,
 } from "./transferBlock";
 
 export interface IUpdateBlockOperationFuncDataProps {
@@ -51,7 +50,7 @@ export default async function updateBlockOperationFunc(
       {
         scopeID: options.scopeID,
         status: operationStatusTypes.operationStarted,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       block.customId
     )
@@ -69,15 +68,17 @@ export default async function updateBlockOperationFunc(
 
     if (hasBlockParentChanged(block, forTransferBlockOnly)) {
       transferBlockStateHelper({
-        draggedBlockID: forTransferBlockOnly.customId,
-        sourceBlockID: block.parent!,
-        destinationBlockID: data.parent!
+        data: {
+          draggedBlockID: forTransferBlockOnly.customId,
+          sourceBlockID: block.parent!,
+          destinationBlockID: data.parent!,
+        },
       });
     }
 
     store.dispatch(
       blockActions.updateBlockRedux(block.customId, data, {
-        arrayUpdateStrategy: "replace"
+        arrayUpdateStrategy: "replace",
       })
     );
 
@@ -87,24 +88,20 @@ export default async function updateBlockOperationFunc(
         {
           scopeID: options.scopeID,
           status: operationStatusTypes.operationComplete,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )
     );
   } catch (error) {
-    const transformedError = OperationError.fromAny(error).transform({
-      stripBaseNames: ["data"]
-    });
-
     store.dispatch(
       pushOperation(
         updateBlockOperationID,
         {
-          error: transformedError,
+          error,
           scopeID: options.scopeID,
           status: operationStatusTypes.operationError,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         block.customId
       )

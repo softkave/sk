@@ -18,7 +18,7 @@ import {
   removeCollaboratorMutation,
   revokeRequestMutation,
   transferBlockMutation,
-  updateBlockMutation
+  updateBlockMutation,
 } from "./schema/block";
 
 export function addBlock(block: IBlock) {
@@ -42,7 +42,11 @@ export function addBlock(block: IBlock) {
     "projects",
     "tasks",
     "groupTaskContext",
-    "groupProjectContext"
+    "groupProjectContext",
+    "availableStatus",
+    "availableLabels",
+    "labels",
+    "status",
   ];
 
   return auth(
@@ -68,7 +72,11 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
     "tasks",
     "groupTaskContext",
     "groupProjectContext",
-    "subTasks"
+    "subTasks",
+    "availableStatus",
+    "availableLabels",
+    "labels",
+    "status",
   ];
 
   return auth(
@@ -77,9 +85,9 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
     {
       customId: block.customId,
       data: {
-        ...getDataFromObject({ ...block, ...data }, dataFields),
-        type: block.type
-      }
+        ...getDataFromObject(data, dataFields),
+        type: block.type,
+      },
     },
     "data.block.updateBlock"
   );
@@ -113,9 +121,9 @@ export function addCollaborators(
     addCollaboratorsMutation,
     {
       customId: block.customId,
-      collaborators: collaborators.map(request =>
+      collaborators: collaborators.map((request) =>
         getDataFromObject(request, collaboratorFields)
-      )
+      ),
     },
     "data.block.addCollaborators"
   );
@@ -127,7 +135,7 @@ export function removeCollaborator(block: IBlock, collaborator: IUser) {
     removeCollaboratorMutation,
     {
       customId: block.customId,
-      collaborator: collaborator.customId
+      collaborator: collaborator.customId,
     },
     "data.block.removeCollaborator"
   );
@@ -138,7 +146,7 @@ export function getCollaborators(block: IBlock) {
     null,
     getCollaboratorsQuery,
     {
-      customId: block.customId
+      customId: block.customId,
     },
     "data.block.getBlockCollaborators"
   );
@@ -149,7 +157,7 @@ export function getCollabRequests(block: IBlock) {
     null,
     getCollabRequestsQuery,
     {
-      customId: block.customId
+      customId: block.customId,
     },
     "data.block.getBlockCollaborationRequests"
   );
@@ -177,7 +185,7 @@ export function revokeRequest(block: IBlock, request: INotification) {
     revokeRequestMutation,
     {
       request: request.customId,
-      customId: block.customId
+      customId: block.customId,
     },
     "data.block.revokeCollaborationRequest"
   );
@@ -198,7 +206,7 @@ export function transferBlock(
       groupContext,
       sourceBlock: sourceBlock.customId,
       draggedBlock: draggedBlock.customId,
-      destinationBlock: destinationBlock.customId
+      destinationBlock: destinationBlock.customId,
     },
     "data.block.transferBlock"
   );
