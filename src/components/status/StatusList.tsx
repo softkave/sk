@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space } from "antd";
-import { Formik, FormikErrors, FormikProps } from "formik";
+import { Formik } from "formik";
 import React from "react";
 import {
   DragDropContext,
@@ -24,8 +24,6 @@ import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
 import { StatusListFormikProps } from "./types";
-
-const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface IStatusListProps {
   user: IUser;

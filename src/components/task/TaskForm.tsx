@@ -15,7 +15,6 @@ import {
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
 import BlockParentSelection from "../block/BlockParentSelection";
-import blockValidationSchemas from "../block/validation";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
