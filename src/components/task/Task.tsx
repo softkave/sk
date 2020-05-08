@@ -8,7 +8,7 @@ import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import Text from "../Text";
-import Priority from "./Priority";
+import Priority, { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
 import ToggleSwitchContainer from "./ToggleSwitch";
 
@@ -29,11 +29,14 @@ const Task: React.FC<ITaskProps> = (props) => {
   return (
     <StyledTask direction="vertical">
       <StyledContainer>
-        <StyledContainer s={{ flex: 1 }}>
+        {/* <StyledContainer s={{ flex: 1 }}>
           <ToggleSwitchContainer task={task} />
-        </StyledContainer>
-        <StyledContainer s={{ marginLeft: "8px" }}>
-          <Priority level={task.priority!} />
+        </StyledContainer> */}
+        <StyledContainer>
+          <span style={{ color: priorityToColorMap[task.priority!] }}>
+            {task.priority}
+          </span>
+          {/* <Priority level={task.priority!} /> */}
         </StyledContainer>
       </StyledContainer>
       <Text text={task.description!} rows={3} />

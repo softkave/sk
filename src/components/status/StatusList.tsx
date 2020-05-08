@@ -467,7 +467,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
                   flexDirection: "column",
                   width: "100%",
                   flex: 1,
-                  overflowY: "auto",
+                  // overflowY: "auto",
                 }}
                 {...provided.droppableProps}
               >

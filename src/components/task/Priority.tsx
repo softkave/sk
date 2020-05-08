@@ -10,6 +10,9 @@ export const priorityToColorMap = {
   [notImportantKey]: "#EACA2C",
   important: "#7ED321",
   [veryImportantKey]: "rgb(255, 77, 79)",
+  // [notImportantKey]: "yellow",
+  // important: "green",
+  // [veryImportantKey]: "red",
 };
 
 interface IPriorityProps {

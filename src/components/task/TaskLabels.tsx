@@ -49,12 +49,18 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
       <RoundEdgeTags key={label.customId} color={label.color}>
         <StyledContainer s={{ alignItems: "center" }}>
           {label.name}
-          {canRemove && !disabled && (
+          {canRemove && (
             <CloseIcon
               onClick={() => {
-                onRemove(label.customId);
+                if (!disabled) {
+                  onRemove(label.customId);
+                }
               }}
-              style={{ width: "14px", marginLeft: "8px" }}
+              style={{
+                width: "14px",
+                marginLeft: "8px",
+                color: disabled ? "grey" : undefined,
+              }}
             />
           )}
         </StyledContainer>
@@ -70,6 +76,14 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   };
 
   const renderAddNewLabel = () => {
+    const renderedLabelMenuItems = labelList.map((label) => {
+      return (
+        <Menu.Item key={label.customId}>
+          {renderLabelTag(label, false)}
+        </Menu.Item>
+      );
+    });
+
     const labelListMenu = (
       <Menu
         onClick={(evt) => {
@@ -77,13 +91,17 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         }}
         selectedKeys={labelIDs}
       >
-        {labelList.map((label) => {
-          return (
-            <Menu.Item key={label.customId}>
-              {renderLabelTag(label, false)}
-            </Menu.Item>
-          );
-        })}
+        {renderedLabelMenuItems}
+        {renderedLabelMenuItems.length === 0 && (
+          <StyledContainer s={{ justifyContent: "center", padding: "8px" }}>
+            No Labels
+          </StyledContainer>
+        )}
+        <Menu.Divider />
+        <Menu.Item>
+          <PlusOutlined />
+          Add or Edit Tags
+        </Menu.Item>
       </Menu>
     );
 

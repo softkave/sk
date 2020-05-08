@@ -22,11 +22,10 @@ export interface IProjectFormContainerProps {
 
   parentBlock?: IBlock;
   block?: IBlock;
-  submitLabel?: React.ReactNode;
 }
 
 const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
-  const { onClose, submitLabel, parentBlock } = props;
+  const { onClose, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
 
   const [block, setBlock] = React.useState<IBlock>(
@@ -78,9 +77,10 @@ const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
 
   return (
     <ProjectForm
-      value={block as any}
+      value={block}
       onClose={onClose}
-      submitLabel={submitLabel}
+      formOnly={!props.block}
+      project={props.block}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}

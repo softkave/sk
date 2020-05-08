@@ -22,11 +22,10 @@ export interface IGroupFormContainerProps {
 
   parentBlock?: IBlock;
   block?: IBlock;
-  submitLabel?: React.ReactNode;
 }
 
 const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
-  const { onClose, submitLabel, parentBlock } = props;
+  const { onClose, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
 
   const [block, setBlock] = React.useState<IBlock>(
@@ -78,10 +77,10 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
 
   return (
     <GroupForm
-      // @ts-ignore
       value={block}
       onClose={onClose}
-      submitLabel={submitLabel}
+      formOnly={!props.block}
+      group={props.block}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}

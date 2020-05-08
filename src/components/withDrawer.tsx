@@ -14,8 +14,19 @@ interface IDrawerWrapperState {
   currentDeviceWidth: number;
 }
 
-export interface IWithDrawerHOCProps {
+// export interface IWithDrawerConfirmCloseResult {
+//   canClose: boolean;
+//   message?: React.ReactNode;
+// }
+
+// export interface IWithDrawerConfirmCloseProps {
+//   ref: React.RefObject<any>;
+// }
+
+export interface IWithDrawerProps {
   className?: string;
+  // confirmClose?: (props: IWithDrawerConfirmCloseProps) => IWithDrawerConfirmCloseResult;
+  // passProps?: () => any;
 }
 
 export default function withDrawer<
@@ -23,7 +34,7 @@ export default function withDrawer<
 >(
   component: ComponentType,
   defaultTitle: React.ReactNode = "",
-  options: IWithDrawerHOCProps = {}
+  options: IWithDrawerProps = {}
 ) {
   type ComponentProps = React.ComponentPropsWithRef<typeof component>;
   type FinalWrappedComponentProps = IDrawerWrapperProps & ComponentProps;
@@ -33,7 +44,8 @@ export default function withDrawer<
     FinalWrappedComponentProps & { forwardedRef: RefType },
     IDrawerWrapperState
   > {
-    private modalIsMounted = false;
+    private drawerIsMounted = false;
+    // private componentRef: React.RefObject<any> = React.createRef();
 
     constructor(props) {
       super(props);
@@ -47,12 +59,12 @@ export default function withDrawer<
 
     public componentDidMount() {
       window.addEventListener("resize", this.updateWindowData);
-      this.modalIsMounted = true;
+      this.drawerIsMounted = true;
     }
 
     public componentWillUnmount() {
       window.removeEventListener("resize", this.updateWindowData);
-      this.modalIsMounted = false;
+      this.drawerIsMounted = false;
     }
 
     public render() {
@@ -87,7 +99,7 @@ export default function withDrawer<
     }
 
     private updateWindowData = () => {
-      if (this.modalIsMounted) {
+      if (this.drawerIsMounted) {
         this.setState({ currentDeviceWidth: getWindowWidth() });
       }
     };

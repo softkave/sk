@@ -1,12 +1,17 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Typography } from "antd";
 import { Formik, FormikProps } from "formik";
+// import debounce from "lodash/debounce";
 import React from "react";
-import { IBlockLabel, IBlockStatus } from "../../models/block/block";
+import { IBlock, IBlockLabel, IBlockStatus } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { IFormikFormErrors } from "../form/formik-utils";
-import { StyledForm } from "../form/FormStyledComponents";
+import {
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
+  StyledForm,
+} from "../form/FormStyledComponents";
 import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
@@ -14,6 +19,7 @@ import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
   name: string;
+  color: string;
   availableLabels: IBlockLabel[];
   availableStatus: IBlockStatus[];
   description?: string;
@@ -27,25 +33,54 @@ export interface IEditOrgProps {
   onClose: () => void;
   onSubmit: (values: IEditOrgFormValues) => void;
 
-  submitLabel?: React.ReactNode;
   isSubmitting?: boolean;
+  org?: IBlock;
+  formOnly?: boolean;
   errors?: EditOrgFormErrors;
 }
-
-// TODO: Move all stray strings to a central location
-const defaultSubmitLabel = "Create Organization";
 
 const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
   const {
     isSubmitting,
     onClose,
-    submitLabel,
     value,
     onSubmit,
+    formOnly,
+    org,
     errors: externalErrors,
   } = props;
 
+  // const [fieldsEditing, setFieldsEditing] = React.useState<string[]>(() => {
+  //   const initialFieldsEditing: string[] = [];
+
+  //   if ((value.name || "").length === 0) {
+  //     initialFieldsEditing.push("name");
+  //   }
+
+  //   return initialFieldsEditing;
+  // });
+
+  // const isFieldEditing = (field: string) => {
+  //   return fieldsEditing.indexOf(field) !== -1;
+  // };
+
+  // const [editedFields, setEditedFields] = React.useState<string[]>([]);
   const formikRef = useInsertFormikErrors(externalErrors);
+
+  // const diffChanges = (formikProps: EditOrgFormFormikProps) => {
+  //   const confirmedEdited = editedFields.filter((field) => {
+  //     const initialValue = value[field];
+  //     const currentValue = formikProps.values[field];
+
+  //     return initialValue !== currentValue;
+  //   });
+
+  //   if (confirmedEdited.length < editedFields.length) {
+  //     setEditedFields(confirmedEdited);
+  //   }
+  // };
+
+  // const debouncedDiffChanges = debounce(diffChanges, 500);
 
   // TODO: find a better way to implement this
   // TODO: test your error handling in all forms
@@ -70,13 +105,14 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
   };
 
   const renderNameInput = (formikProps: EditOrgFormFormikProps) => {
-    const { touched, handleBlur, handleChange, values, errors } = formikProps;
+    const { touched, values, errors } = formikProps;
     const orgExistsMessage = doesOrgExist(formikProps.errors as any);
 
+    // TODO: make your own Editable using Paragraph and Textarea
     return (
       <Form.Item
         required
-        label="Organization Name"
+        label="Name"
         help={
           touched.name &&
           (!!orgExistsMessage ? (
@@ -88,15 +124,27 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input
-          autoComplete="off"
-          name="name"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={values.name}
-          placeholder="Enter organization name"
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input
+            autoComplete="off"
+            name="name"
+            onBlur={formikProps.handleBlur}
+            onChange={formikProps.handleChange}
+            value={values.name}
+            placeholder="Enter organization name"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("name", val);
+              },
+            }}
+          >
+            {values.name}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -113,18 +161,46 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input.TextArea
-          autoSize={{ minRows: 2, maxRows: 6 }}
-          autoComplete="off"
-          name="description"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={values.description}
-          placeholder="Enter organization description"
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input.TextArea
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            autoComplete="off"
+            name="description"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={values.description}
+            placeholder="Enter organization description"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("description", val);
+              },
+            }}
+          >
+            {values.description || ""}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
+  };
+
+  const getSubmitLabel = () => {
+    if (isSubmitting) {
+      if (org) {
+        return "Saving Changes";
+      } else {
+        return "Creating Organization";
+      }
+    } else {
+      if (org) {
+        return "Save Changes";
+      } else {
+        return "Create Organization";
+      }
+    }
   };
 
   const renderControls = () => {
@@ -137,10 +213,10 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
           disabled={isSubmitting}
           onClick={onClose}
         >
-          Cancel
+          Close
         </StyledButton>
         <Button block type="primary" htmlType="submit" loading={isSubmitting}>
-          {submitLabel || defaultSubmitLabel}
+          {getSubmitLabel()}
         </Button>
       </StyledContainer>
     );
@@ -153,19 +229,12 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <StyledForm onSubmit={handleSubmit}>
-        <StyledContainer
-          s={{
-            height: "100%",
-            width: "100%",
-            padding: "16px 24px 24px 24px",
-            overflowY: "auto",
-            flexDirection: "column",
-          }}
-        >
-          {errors.error && <FormError error={errors.error} />}
-          {renderNameInput(formikProps)}
-          {renderDescriptionInput(formikProps)}
-
+        <StyledContainer s={formContentWrapperStyle}>
+          <StyledContainer s={formInputContentWrapperStyle}>
+            {errors.error && <FormError error={errors.error} />}
+            {renderNameInput(formikProps)}
+            {renderDescriptionInput(formikProps)}
+          </StyledContainer>
           {renderControls()}
         </StyledContainer>
       </StyledForm>

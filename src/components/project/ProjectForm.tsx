@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Typography } from "antd";
 import { Formik, FormikProps } from "formik";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -9,7 +9,11 @@ import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import { StyledForm } from "../form/FormStyledComponents";
+import {
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
+  StyledForm,
+} from "../form/FormStyledComponents";
 import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
@@ -34,16 +38,16 @@ export interface IProjectFormProps {
   onClose: () => void;
   onSubmit: (values: IProjectFormValues) => void;
 
-  submitLabel?: React.ReactNode;
+  formOnly?: boolean;
+  project?: IBlock;
   isSubmitting?: boolean;
   errors?: ProjectFormErrors;
 }
 
-const defaultSubmitLabel = "Create Project";
-
 const ProjectForm: React.FC<IProjectFormProps> = (props) => {
   const {
-    submitLabel,
+    formOnly,
+    project,
     isSubmitting,
     possibleParents,
     onClose,
@@ -70,7 +74,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
       const existingProject = projects.find(
-        (project) => project.name.toLowerCase() === name
+        (proj) => proj.name.toLowerCase() === name
       );
 
       if (
@@ -103,7 +107,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
   };
 
   const renderNameInput = (formikProps: ProjectFormFormikProps) => {
-    const { touched, handleBlur, setFieldValue, values, errors } = formikProps;
+    const { touched, values, errors } = formikProps;
 
     // TODO: can this be more efficient?
     const projectNameError = errors.name || getProjectExistsError(values.name);
@@ -116,18 +120,27 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input
-          autoComplete="off"
-          name="name"
-          onBlur={handleBlur}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            const val = event.target.value;
-            setFieldValue("name", val);
-          }}
-          value={values.name}
-          placeholder="Enter project name"
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input
+            autoComplete="off"
+            name="name"
+            onBlur={formikProps.handleBlur}
+            onChange={formikProps.handleChange}
+            value={values.name}
+            placeholder="Enter project name"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("name", val);
+              },
+            }}
+          >
+            {values.name}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -142,16 +155,28 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input.TextArea
-          autoSize={{ minRows: 2, maxRows: 6 }}
-          autoComplete="off"
-          name="description"
-          placeholder="Enter project description"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={values.description}
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input.TextArea
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            autoComplete="off"
+            name="description"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={values.description}
+            placeholder="Enter project description"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("description", val);
+              },
+            }}
+          >
+            {values.description || ""}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -172,6 +197,41 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     }
   };
 
+  const getSubmitLabel = () => {
+    if (isSubmitting) {
+      if (project) {
+        return "Saving Changes";
+      } else {
+        return "Creating Project";
+      }
+    } else {
+      if (project) {
+        return "Save Changes";
+      } else {
+        return "Create Project";
+      }
+    }
+  };
+
+  const renderControls = () => {
+    return (
+      <StyledContainer>
+        <StyledButton
+          block
+          danger
+          type="primary"
+          disabled={isSubmitting}
+          onClick={onClose}
+        >
+          Close
+        </StyledButton>
+        <Button block type="primary" htmlType="submit" loading={isSubmitting}>
+          {getSubmitLabel()}
+        </Button>
+      </StyledContainer>
+    );
+  };
+
   const renderForm = (formikProps: ProjectFormFormikProps) => {
     const { errors } = formikProps;
     const globalError = getGlobalError(errors);
@@ -179,43 +239,18 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
 
     return (
       <StyledForm onSubmit={(evt) => preSubmit(evt, formikProps)}>
-        <StyledContainer
-          s={{
-            height: "100%",
-            width: "100%",
-            padding: "16px 24px 24px 24px",
-            overflowY: "auto",
-            flexDirection: "column",
-          }}
-        >
-          {globalError && (
-            <Form.Item>
-              <FormError error={globalError} />
-            </Form.Item>
-          )}
-          {renderParentInput(formikProps)}
-          {renderNameInput(formikProps)}
-          {renderDescriptionInput(formikProps)}
-
-          <StyledContainer>
-            <StyledButton
-              block
-              danger
-              type="primary"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
-            </StyledButton>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={isSubmitting}
-            >
-              {submitLabel || defaultSubmitLabel}
-            </Button>
+        <StyledContainer s={formContentWrapperStyle}>
+          <StyledContainer s={formInputContentWrapperStyle}>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {renderNameInput(formikProps)}
+            {renderDescriptionInput(formikProps)}
+            {renderParentInput(formikProps)}
           </StyledContainer>
+          {renderControls()}
         </StyledContainer>
       </StyledForm>
     );
@@ -230,10 +265,6 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
       {(formikProps) => renderForm(formikProps)}
     </Formik>
   );
-};
-
-ProjectForm.defaultProps = {
-  submitLabel: defaultSubmitLabel,
 };
 
 export default React.memo(ProjectForm);

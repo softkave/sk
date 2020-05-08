@@ -20,8 +20,6 @@ const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
         <EditOrgFormWithDrawer
           visible={!!showOrgForm}
           onClose={() => setShowOrgForm(false)}
-          title="Create Organization"
-          submitLabel="Create Organization"
         />
       );
     }

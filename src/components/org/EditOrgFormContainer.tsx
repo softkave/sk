@@ -19,11 +19,10 @@ export interface IEditOrgFormContainerProps {
   onClose: () => void;
 
   block?: IBlock;
-  submitLabel?: React.ReactNode;
 }
 
 const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
-  const { onClose, submitLabel } = props;
+  const { onClose } = props;
   const user = useSelector(getSignedInUserRequired);
   const [block, setBlock] = React.useState<IBlock>(
     props.block || getNewBlock(user, "org")
@@ -72,10 +71,10 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
 
   return (
     <EditOrgForm
-      // @ts-ignore
-      value={block}
+      formOnly={!props.block}
+      org={props.block} // props.block not block, because it's used to determine if it's a new block or not
+      value={block as any}
       onClose={onClose}
-      submitLabel={submitLabel}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}

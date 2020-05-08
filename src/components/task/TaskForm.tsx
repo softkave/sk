@@ -1,6 +1,15 @@
 import { RightCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, DatePicker, Form, Input, List, Select, Switch } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  List,
+  Select,
+  Switch,
+  Typography,
+} from "antd";
 import { Formik, FormikProps } from "formik";
 import moment from "moment";
 import React from "react";
@@ -18,7 +27,11 @@ import BlockParentSelection from "../block/BlockParentSelection";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import { StyledForm } from "../form/FormStyledComponents";
+import {
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
+  StyledForm,
+} from "../form/FormStyledComponents";
 import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
@@ -56,7 +69,8 @@ export interface ITaskFormProps {
   onClose: () => void;
   onSubmit: (values: ITaskFormValues) => void;
 
-  submitLabel?: React.ReactNode;
+  formOnly?: boolean;
+  task?: IBlock;
   isSubmitting?: boolean;
   errors?: TaskFormErrors;
 }
@@ -66,7 +80,8 @@ const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 const TaskForm: React.FC<ITaskFormProps> = (props) => {
   const {
-    submitLabel,
+    formOnly,
+    task,
     isSubmitting,
     possibleParents,
     onClose,
@@ -118,16 +133,28 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input.TextArea
-          autoSize={{ minRows: 2, maxRows: 6 }}
-          autoComplete="off"
-          name="description"
-          placeholder="Enter task description"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={values.description}
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input.TextArea
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            autoComplete="off"
+            name="description"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={values.description}
+            placeholder="Enter task description"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("description", val);
+              },
+            }}
+          >
+            {values.description || ""}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -445,6 +472,41 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   //   );
   // };
 
+  const getSubmitLabel = () => {
+    if (isSubmitting) {
+      if (task) {
+        return "Saving Changes";
+      } else {
+        return "Creating Task";
+      }
+    } else {
+      if (task) {
+        return "Save Changes";
+      } else {
+        return "Create Task";
+      }
+    }
+  };
+
+  const renderControls = () => {
+    return (
+      <StyledContainer>
+        <StyledButton
+          block
+          danger
+          type="primary"
+          disabled={isSubmitting}
+          onClick={onClose}
+        >
+          Close
+        </StyledButton>
+        <Button block type="primary" htmlType="submit" loading={isSubmitting}>
+          {getSubmitLabel()}
+        </Button>
+      </StyledContainer>
+    );
+  };
+
   const renderForm = (formikProps: TaskFormFormikProps) => {
     const { handleSubmit, errors } = formikProps;
     const globalError = getGlobalError(errors);
@@ -452,51 +514,27 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     return (
       <StyledForm onSubmit={handleSubmit}>
-        <StyledContainer
-          s={{
-            height: "100%",
-            width: "100%",
-            padding: "16px 24px 24px 24px",
-            overflowY: "auto",
-            flexDirection: "column",
-          }}
-        >
-          {globalError && (
-            <Form.Item>
-              <FormError error={globalError} />
-            </Form.Item>
-          )}
-          {renderParentInput(formikProps)}
-          {renderDescriptionInput(formikProps)}
-          {renderToggleSwitch(formikProps)}
-          {renderPriority(formikProps)}
-          {renderStatus(formikProps)}
-          {renderLabels(formikProps)}
-          {renderDueDateInput(formikProps)}
-          {/* {renderCollaborationTypeInput(formikProps)} */}
-          {renderAssignedToInput(formikProps)}
-          {/* TODO: work on sub-tasks, there is a bug preventing adding tasks, and add disabled */}
-          {/* TODO: pattern the implementation and UX like status and label lists */}
-          {/* {renderSubTasks(formikProps)} */}
-          <StyledContainer>
-            <StyledButton
-              block
-              danger
-              type="primary"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
-            </StyledButton>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={isSubmitting}
-            >
-              {submitLabel || defaultSubmitLabel}
-            </Button>
+        <StyledContainer s={formContentWrapperStyle}>
+          <StyledContainer s={formInputContentWrapperStyle}>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {renderDescriptionInput(formikProps)}
+            {renderParentInput(formikProps)}
+            {renderToggleSwitch(formikProps)}
+            {renderPriority(formikProps)}
+            {renderStatus(formikProps)}
+            {renderLabels(formikProps)}
+            {renderDueDateInput(formikProps)}
+            {/* {renderCollaborationTypeInput(formikProps)} */}
+            {renderAssignedToInput(formikProps)}
+            {/* TODO: work on sub-tasks, there is a bug preventing adding tasks, and add disabled */}
+            {/* TODO: pattern the implementation and UX like status and label lists */}
+            {/* {renderSubTasks(formikProps)} */}
           </StyledContainer>
+          {renderControls()}
         </StyledContainer>
       </StyledForm>
     );
@@ -517,9 +555,5 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 const StyledTaskCollaboaratorsContainer = styled.div({
   marginBottom: 16,
 });
-
-TaskForm.defaultProps = {
-  submitLabel: defaultSubmitLabel,
-};
 
 export default React.memo(TaskForm);

@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Typography } from "antd";
 import { Formik, FormikProps } from "formik";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -9,7 +9,11 @@ import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import { StyledForm } from "../form/FormStyledComponents";
+import {
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
+  StyledForm,
+} from "../form/FormStyledComponents";
 import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
@@ -34,16 +38,16 @@ export interface IGroupFormProps {
   onClose: () => void;
   onSubmit: (values: IGroupFormValues) => void;
 
-  submitLabel?: React.ReactNode;
+  formOnly?: boolean;
+  group?: IBlock;
   isSubmitting?: boolean;
   errors?: GroupFormErrors;
 }
 
-const defaultSubmitLabel = "Create Group";
-
 const GroupForm: React.FC<IGroupFormProps> = (props) => {
   const {
-    submitLabel,
+    formOnly,
+    group,
     isSubmitting,
     possibleParents,
     onClose,
@@ -70,7 +74,7 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
       const existingGroup = groups.find(
-        (group) => group.name.toLowerCase() === name
+        (grp) => grp.name.toLowerCase() === name
       );
 
       if (existingGroup && existingGroup.customId !== blockToUpdate?.customId) {
@@ -100,7 +104,7 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
   };
 
   const renderNameInput = (formikProps: GroupFormFormikProps) => {
-    const { touched, handleBlur, setFieldValue, values, errors } = formikProps;
+    const { touched, values, errors } = formikProps;
 
     // TODO: can this be more efficient?
     const groupNameError = errors.name || getGroupExistsError(values.name);
@@ -113,18 +117,27 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input
-          autoComplete="off"
-          name="name"
-          onBlur={handleBlur}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            const val = event.target.value;
-            setFieldValue("name", val);
-          }}
-          value={values.name}
-          placeholder="Enter group name"
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input
+            autoComplete="off"
+            name="name"
+            onBlur={formikProps.handleBlur}
+            onChange={formikProps.handleChange}
+            value={values.name}
+            placeholder="Enter group name"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("name", val);
+              },
+            }}
+          >
+            {values.name}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -139,16 +152,28 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <Input.TextArea
-          autoSize={{ minRows: 2, maxRows: 6 }}
-          autoComplete="off"
-          name="description"
-          onBlur={handleBlur}
-          onChange={handleChange}
-          value={values.description}
-          placeholder="Enter group description"
-          disabled={isSubmitting}
-        />
+        {formOnly ? (
+          <Input.TextArea
+            autoSize={{ minRows: 2, maxRows: 6 }}
+            autoComplete="off"
+            name="description"
+            onBlur={handleBlur}
+            onChange={handleChange}
+            value={values.description}
+            placeholder="Enter group description"
+            disabled={isSubmitting}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formikProps.setFieldValue("description", val);
+              },
+            }}
+          >
+            {values.description || ""}
+          </Typography.Paragraph>
+        )}
       </Form.Item>
     );
   };
@@ -169,6 +194,41 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     }
   };
 
+  const getSubmitLabel = () => {
+    if (isSubmitting) {
+      if (group) {
+        return "Saving Changes";
+      } else {
+        return "Creating Group";
+      }
+    } else {
+      if (group) {
+        return "Save Changes";
+      } else {
+        return "Create Group";
+      }
+    }
+  };
+
+  const renderControls = () => {
+    return (
+      <StyledContainer>
+        <StyledButton
+          block
+          danger
+          type="primary"
+          disabled={isSubmitting}
+          onClick={onClose}
+        >
+          Close
+        </StyledButton>
+        <Button block type="primary" htmlType="submit" loading={isSubmitting}>
+          {getSubmitLabel()}
+        </Button>
+      </StyledContainer>
+    );
+  };
+
   const renderForm = (formikProps: GroupFormFormikProps) => {
     const { errors } = formikProps;
     const globalError = getGlobalError(errors);
@@ -176,43 +236,19 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
 
     return (
       <StyledForm onSubmit={(evt) => preSubmit(evt, formikProps)}>
-        <StyledContainer
-          s={{
-            height: "100%",
-            width: "100%",
-            padding: "16px 24px 24px 24px",
-            overflowY: "auto",
-            flexDirection: "column",
-          }}
-        >
-          {globalError && (
-            <Form.Item>
-              <FormError error={globalError} />
-            </Form.Item>
-          )}
-          {renderParentInput(formikProps)}
-          {renderNameInput(formikProps)}
-          {renderDescriptionInput(formikProps)}
+        <StyledContainer s={formContentWrapperStyle}>
+          <StyledContainer s={formInputContentWrapperStyle}>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
 
-          <StyledContainer>
-            <StyledButton
-              block
-              danger
-              type="primary"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Cancel
-            </StyledButton>
-            <Button
-              block
-              type="primary"
-              htmlType="submit"
-              loading={isSubmitting}
-            >
-              {submitLabel || defaultSubmitLabel}
-            </Button>
+            {renderNameInput(formikProps)}
+            {renderDescriptionInput(formikProps)}
+            {renderParentInput(formikProps)}
           </StyledContainer>
+          {renderControls()}
         </StyledContainer>
       </StyledForm>
     );
@@ -227,10 +263,6 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
       {(formikProps) => renderForm(formikProps)}
     </Formik>
   );
-};
-
-GroupForm.defaultProps = {
-  submitLabel: defaultSubmitLabel,
 };
 
 export default React.memo(GroupForm);

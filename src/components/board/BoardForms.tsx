@@ -68,7 +68,6 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
             visible
             title="Group Form"
             onClose={onClose}
-            submitLabel={formLabel}
             orgID={orgID}
             block={block}
             parentBlock={parentBlock}
@@ -80,25 +79,14 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
           <TaskFormInDrawer
             visible
             block={block}
-            // TODO: remove title from drawers?
-            title="Task Form"
             onClose={onClose}
-            submitLabel={formLabel}
             orgID={orgID}
             parentBlock={parentBlock}
           />
         );
 
       case "org":
-        return (
-          <EditOrgFormInDrawer
-            visible
-            block={block}
-            title="Organization Form"
-            onClose={onClose}
-            submitLabel={formLabel}
-          />
-        );
+        return <EditOrgFormInDrawer visible block={block} onClose={onClose} />;
 
       case "project":
         return (
@@ -106,9 +94,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
             visible
             orgID={orgID}
             block={block}
-            title="Project Form"
             onClose={onClose}
-            submitLabel={formLabel}
             parentBlock={parentBlock}
           />
         );
