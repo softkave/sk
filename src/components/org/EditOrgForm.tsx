@@ -4,6 +4,7 @@ import { Formik, FormikProps } from "formik";
 import React from "react";
 import { IBlock, IBlockLabel, IBlockStatus } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
+import { blockConstants } from "../../models/block/constants";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { IFormikFormErrors } from "../form/formik-utils";
@@ -133,6 +134,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
             value={values.name}
             placeholder="Enter organization name"
             disabled={isSubmitting}
+            maxLength={blockConstants.maxNameLength}
           />
         ) : (
           <Typography.Paragraph
@@ -171,6 +173,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
             value={values.description}
             placeholder="Enter organization description"
             disabled={isSubmitting}
+            maxLength={blockConstants.maxDescriptionLength}
           />
         ) : (
           <Typography.Paragraph

@@ -26,11 +26,10 @@ export interface ITaskFormContainerProps {
 
   parentBlock?: IBlock;
   block?: IBlock;
-  submitLabel?: React.ReactNode;
 }
 
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
-  const { onClose, submitLabel, orgID, parentBlock } = props;
+  const { onClose, orgID, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
   const org = useSelector<IReduxState, IBlock>((state) => {
     return getBlock(state, orgID)!;

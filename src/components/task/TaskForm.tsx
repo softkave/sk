@@ -21,6 +21,7 @@ import {
   ITaskCollaborationData,
   ITaskCollaborator,
 } from "../../models/block/block";
+import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
 import BlockParentSelection from "../block/BlockParentSelection";
@@ -75,7 +76,6 @@ export interface ITaskFormProps {
   errors?: TaskFormErrors;
 }
 
-const defaultSubmitLabel = "Create Task";
 const StyledContainerAsLink = StyledContainer.withComponent("a");
 
 const TaskForm: React.FC<ITaskFormProps> = (props) => {
@@ -143,6 +143,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             value={values.description}
             placeholder="Enter task description"
             disabled={isSubmitting}
+            maxLength={blockConstants.maxDescriptionLength}
           />
         ) : (
           <Typography.Paragraph

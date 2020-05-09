@@ -10,6 +10,7 @@ export interface IExpiresAtProps {
   value?: number;
   placeholder?: string;
   dateFormat?: string;
+  style?: React.CSSProperties;
 }
 
 class ExpiresAt extends React.PureComponent<IExpiresAtProps> {
@@ -25,6 +26,7 @@ class ExpiresAt extends React.PureComponent<IExpiresAtProps> {
       minDate,
       placeholder,
       disabled,
+      style,
     } = this.props;
 
     return (
@@ -39,6 +41,7 @@ class ExpiresAt extends React.PureComponent<IExpiresAtProps> {
           onChange(date ? date.valueOf() : undefined);
         }}
         disabled={disabled}
+        style={style}
       />
     );
   }

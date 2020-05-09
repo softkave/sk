@@ -17,7 +17,7 @@ const RoundEdgeTags: React.FC<IRoundEdgeTagsProps> = (props) => {
         backgroundColor: color || "#f0f0f0",
         fontSize: "13.33px",
         display: "inline-block",
-        color: contentColor,
+        color: "white",
       }}
     >
       {children}

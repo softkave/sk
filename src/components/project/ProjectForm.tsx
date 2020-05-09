@@ -3,6 +3,7 @@ import { Formik, FormikProps } from "formik";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
+import { blockConstants } from "../../models/block/constants";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import BlockParentSelection from "../block/BlockParentSelection";
@@ -129,6 +130,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
             value={values.name}
             placeholder="Enter project name"
             disabled={isSubmitting}
+            maxLength={blockConstants.maxNameLength}
           />
         ) : (
           <Typography.Paragraph
@@ -165,6 +167,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
             value={values.description}
             placeholder="Enter project description"
             disabled={isSubmitting}
+            maxLength={blockConstants.maxDescriptionLength}
           />
         ) : (
           <Typography.Paragraph

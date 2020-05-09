@@ -94,6 +94,7 @@ const Login: React.FC<ILoginProps> = (props) => {
                   value={values.password}
                   disabled={isSubmitting}
                   placeholder="Enter your password"
+                  maxLength={userConstants.maxPasswordLength}
                 />
               </Form.Item>
               <Form.Item>

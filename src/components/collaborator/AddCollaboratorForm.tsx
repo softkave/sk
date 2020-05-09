@@ -1,6 +1,5 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
-import { Formik, FormikProps } from "formik";
-import isArray from "lodash/isArray";
 import isString from "lodash/isString";
 import moment from "moment";
 import React from "react";
@@ -10,21 +9,22 @@ import ErrorMessages from "../../models/errorMessages";
 import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
+import { IAddCollaboratorFormItemValues } from "../../models/types";
 import { IUser } from "../../models/user/user";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
-import findItem from "../../utils/findItem";
+import { newId } from "../../utils/utils";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import { StyledForm } from "../form/FormStyledComponents";
-import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
+import {
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
+  StyledForm,
+} from "../form/FormStyledComponents";
+import useFormikExtended from "../hooks/useFormikExtended";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
-import {
-  IAddCollaboratorFormItemError,
-  IAddCollaboratorFormItemValues,
-} from "./AddCollaboratorFormItem.jsx";
-import AddCollaboratorFormItemList from "./AddCollaboratorFormItemList";
+import AddCollaboratorFormItem from "./AddCollaboratorFormItem";
 import ExpiresAt from "./ExpiresAt";
 
 const emailExistsErrorMessage = "Email addresss has been entered already";
@@ -65,7 +65,6 @@ export interface IAddCollaboratorFormValues {
   collaborators: IAddCollaboratorFormItemValues[];
 }
 
-type AddCollaboratorFormFormikProps = FormikProps<IAddCollaboratorFormValues>;
 export type AddCollaboratorFormErrors = IFormikFormErrors<
   IAddCollaboratorFormValues
 >;
@@ -78,7 +77,7 @@ export interface IAddCollaboratorFormProps {
   onSubmit: (values: IAddCollaboratorFormValues) => void;
 
   isSubmitting?: boolean;
-  errors?: IAddCollaboratorFormItemError;
+  errors?: AddCollaboratorFormErrors;
 }
 
 const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
@@ -92,57 +91,63 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     errors: externalErrors,
   } = props;
 
-  const formikRef = useInsertFormikErrors(externalErrors);
-
-  const getErrorFromRequests = (requests: IAddCollaboratorFormItemValues[]) => {
-    const errors: Array<
-      IAddCollaboratorFormItemError | undefined
-    > = requests.map((req, index) => {
-      const existingRequest = findItem(
-        requests,
-        req,
-        (request1, request2) => request1.email === request2.email,
-        index
-      );
-
-      if (existingRequest) {
-        return { email: emailExistsErrorMessage };
-      }
-
-      const collaborator = findItem(
-        existingCollaborators,
-        req,
-        (user, requestItem) => user.email === requestItem.email
-      );
-
-      if (collaborator) {
-        return {
-          email:
-            notificationErrorMessages.sendingRequestToAnExistingCollaborator,
-        };
-      }
-
-      const notification = findItem(
-        existingCollaborationRequests,
-        req,
-        (notificationItem, requestItem) =>
-          notificationItem.to.email === requestItem.email
-      );
-
-      if (notification) {
-        return { email: notificationErrorMessages.requestHasBeenSentBefore };
-      }
-
-      return undefined;
+  const internalOnSubmit = (values: IAddCollaboratorFormValues) => {
+    onSubmit({
+      expiresAt: values.expiresAt,
+      message: values.message,
+      collaborators: values.collaborators.map((collaborator) => ({
+        email: collaborator.email,
+        body: collaborator.body,
+        expiresAt: collaborator.expiresAt,
+      })),
     });
-
-    return errors;
   };
 
-  const renderDefaultMessageInput = (
-    formikProps: AddCollaboratorFormFormikProps
-  ) => {
-    const { touched, errors, values, handleChange, handleBlur } = formikProps;
+  const {
+    formik,
+    deleteIndexInArrayField,
+    addNewValueToArrayField,
+  } = useFormikExtended({
+    errors: externalErrors,
+    formikProps: {
+      initialValues: value,
+      onSubmit: internalOnSubmit,
+      validationSchema,
+    },
+  });
+
+  const getEmailConflict = (email: string, itemIndex: number) => {
+    const requests = formik.values.collaborators;
+
+    let exists = !!requests.find((req, i) => {
+      if (i === itemIndex) {
+        return false;
+      }
+
+      return req.email === email;
+    });
+
+    if (exists) {
+      return emailExistsErrorMessage;
+    }
+
+    exists = !!existingCollaborators.find((user) => user.email === email);
+
+    if (exists) {
+      return notificationErrorMessages.sendingRequestToAnExistingCollaborator;
+    }
+
+    exists = !!existingCollaborationRequests.find(
+      (req) => req.to.email === email
+    );
+
+    if (exists) {
+      return notificationErrorMessages.requestHasBeenSentBefore;
+    }
+  };
+
+  const renderDefaultMessageInput = () => {
+    const { touched, errors, values, handleChange, handleBlur } = formik;
 
     return (
       <Form.Item
@@ -166,10 +171,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     );
   };
 
-  const renderDefaultExpirationInput = (
-    formikProps: AddCollaboratorFormFormikProps
-  ) => {
-    const { touched, errors, values, setFieldValue } = formikProps;
+  const renderDefaultExpirationInput = () => {
+    const { touched, errors, values, setFieldValue } = formik;
 
     return (
       <Form.Item
@@ -185,21 +188,70 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
           value={values.expiresAt}
           placeholder="Select default expiration date"
           disabled={isSubmitting}
+          style={{ width: "100%" }}
         />
       </Form.Item>
     );
   };
 
-  const renderCollaboratorsListInput = (
-    formikProps: AddCollaboratorFormFormikProps
+  const onDelete = (index: number) => {
+    deleteIndexInArrayField("statusList", index);
+  };
+
+  const onChange = (
+    index: number,
+    data: Partial<IAddCollaboratorFormItemValues>
   ) => {
-    const {
-      touched,
-      errors,
-      values,
-      setFieldValue,
-      setFieldError,
-    } = formikProps;
+    const emailPath = `statusList.[${index}].email`;
+    const bodyPath = `statusList.[${index}].body`;
+    const expiresAtPath = `statusList.[${index}].expiresAt`;
+
+    if (data.email) {
+      formik.setFieldValue(emailPath, data.email);
+
+      const emailError = getEmailConflict(data.email, index);
+
+      if (emailError) {
+        formik.setFieldError(emailPath, emailError);
+      }
+    } else if (data.body) {
+      formik.setFieldValue(bodyPath, data.body);
+    } else if (data.expiresAt) {
+      formik.setFieldValue(expiresAtPath, data.expiresAt);
+    }
+  };
+
+  const onAddNewStatus = () => {
+    const status: IAddCollaboratorFormItemValues & { customId: string } = {
+      email: "",
+      body: "",
+      customId: newId(),
+    };
+
+    addNewValueToArrayField("collaborators", status, {}, {});
+  };
+
+  const renderAddControls = () => {
+    return (
+      <StyledContainer s={{}}>
+        <Button
+          disabled={
+            isSubmitting ||
+            formik.values.collaborators.length >=
+              blockConstants.maxAddCollaboratorValuesLength
+          }
+          icon={<PlusOutlined />}
+          onClick={() => onAddNewStatus()}
+          htmlType="button"
+        >
+          New Request
+        </Button>
+      </StyledContainer>
+    );
+  };
+
+  const renderCollaboratorsListInput = () => {
+    const { touched, errors, values } = formik;
 
     return (
       <Form.Item
@@ -213,20 +265,26 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
-        <AddCollaboratorFormItemList
-          value={values.collaborators}
-          maxRequests={blockConstants.maxAddCollaboratorValuesLength}
-          onChange={(val) => {
-            setFieldValue("requests", val);
-            setFieldError("requests", getErrorFromRequests(val) as any);
-          }}
-          // TODO: fix error
-          // @ts-ignore
-          errors={
-            isArray(errors.collaborators) ? errors.collaborators : undefined
-          }
-          disabled={isSubmitting}
-        />
+        {renderAddControls()}
+        {values.collaborators.map((collaborator, i) => {
+          return (
+            <AddCollaboratorFormItem
+              onChange={(val) => onChange(i, val)}
+              onDelete={() => onDelete(i)}
+              value={collaborator}
+              disabled={isSubmitting}
+              errors={(errors.collaborators || [])[i] as any}
+              key={(collaborator as any).customId}
+              touched={(touched.collaborators || [])[i]}
+              style={{
+                borderBottom:
+                  i < formik.values.collaborators.length - 1
+                    ? "1px solid #f0f0f0"
+                    : undefined,
+              }}
+            />
+          );
+        })}
       </Form.Item>
     );
   };
@@ -250,46 +308,30 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     );
   };
 
-  const renderForm = (formikProps: AddCollaboratorFormFormikProps) => {
-    formikRef.current = formikProps;
-    const { errors, handleSubmit } = formikProps;
+  const renderForm = () => {
+    const { errors, handleSubmit } = formik;
     const globalError = getGlobalError(errors);
 
     return (
       <StyledForm onSubmit={handleSubmit}>
-        <StyledContainer
-          s={{
-            height: "100%",
-            width: "100%",
-            padding: "16px 24px 24px 24px",
-            overflowY: "auto",
-            flexDirection: "column",
-          }}
-        >
-          {globalError && (
-            <Form.Item>
-              <FormError error={globalError} />
-            </Form.Item>
-          )}
-          {renderDefaultMessageInput(formikProps)}
-          {renderDefaultExpirationInput(formikProps)}
-          {renderCollaboratorsListInput(formikProps)}
-
+        <StyledContainer s={formContentWrapperStyle}>
+          <StyledContainer s={formInputContentWrapperStyle}>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {renderDefaultMessageInput()}
+            {renderDefaultExpirationInput()}
+            {renderCollaboratorsListInput()}
+          </StyledContainer>
           {renderControls()}
         </StyledContainer>
       </StyledForm>
     );
   };
 
-  return (
-    <Formik
-      initialValues={value}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {(formikProps) => renderForm(formikProps)}
-    </Formik>
-  );
+  return renderForm();
 };
 
 export default React.memo(AddCollaboratorForm);

@@ -1,5 +1,5 @@
-export interface IBlockStatusInput {
-  name: string;
-  color: string;
-  description?: string;
+export interface IAddCollaboratorFormItemValues {
+  email: string;
+  body?: string;
+  expiresAt?: number;
 }

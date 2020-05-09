@@ -1,21 +1,13 @@
-import styled from "@emotion/styled";
-import { Button, Input } from "antd";
+import { Button, Form, Input } from "antd";
+import { FormikErrors, FormikTouched } from "formik";
 import moment from "moment";
 import React from "react";
+import { Trash } from "react-feather";
+import { IAddCollaboratorFormItemValues } from "../../models/types";
 import FormError from "../form/FormError";
-import { IFormikFormErrors } from "../form/formik-utils";
+import StyledContainer from "../styled/Container";
 import ExpiresAt from "./ExpiresAt";
 import Message from "./Message";
-
-export interface IAddCollaboratorFormItemValues {
-  email: string;
-  body?: string;
-  expiresAt?: number;
-}
-
-export type IAddCollaboratorFormItemError = IFormikFormErrors<
-  IAddCollaboratorFormItemValues
->;
 
 export interface IAddCollaboratorFormItemProps {
   value: IAddCollaboratorFormItemValues;
@@ -23,19 +15,43 @@ export interface IAddCollaboratorFormItemProps {
   onDelete: (value: IAddCollaboratorFormItemValues) => void;
 
   disabled?: boolean;
-  error?: IAddCollaboratorFormItemError;
+  errors?: FormikErrors<IAddCollaboratorFormItemValues>;
+  touched?: FormikTouched<IAddCollaboratorFormItemValues>;
+  style?: React.CSSProperties;
 }
 
 const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
   (props) => {
-    const { error, onChange, onDelete, value, disabled } = props;
-    const itemError = error || {};
+    const {
+      errors,
+      onChange,
+      onDelete,
+      value,
+      disabled,
+      touched,
+      style,
+    } = props;
 
     return (
-      <StyledContainer>
-        <StyledFormItem>
+      <StyledContainer
+        s={{
+          width: "100%",
+          flexDirection: "column",
+          padding: "32px 0",
+          ...(style || {}),
+        }}
+      >
+        <Form.Item
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+          help={
+            touched?.email &&
+            errors?.email && <FormError error={errors?.email} />
+          }
+          style={{ marginBottom: 8 }}
+        >
           <Input
-            placeholder="Enter recipient email address"
+            placeholder="Enter recipient's email address"
             value={value.email}
             autoComplete="email"
             onChange={(event) => {
@@ -43,54 +59,55 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             }}
             disabled={disabled}
           />
-          {itemError.email && <FormError error={itemError.email} />}
-        </StyledFormItem>
-        <StyledFormItem>
+        </Form.Item>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+          help={
+            touched?.body && errors?.body && <FormError error={errors?.body} />
+          }
+          style={{ marginBottom: 8 }}
+        >
           <Message
-            placeholder="Enter collaboration request message"
+            placeholder="Enter request message"
             value={value.body}
             onChange={(body) => {
               onChange({ ...value, body });
             }}
             disabled={disabled}
           />
-          {itemError.body && <FormError error={itemError.body} />}
-        </StyledFormItem>
-        <StyledFormItem>
+        </Form.Item>
+        <Form.Item
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+          help={
+            touched?.expiresAt &&
+            errors?.expiresAt && <FormError error={errors?.expiresAt} />
+          }
+          style={{ marginBottom: 8 }}
+        >
           <ExpiresAt
-            placeholder="Expires At"
+            placeholder="Select request expiration date"
             value={value.expiresAt}
             minDate={moment().subtract(1, "day").endOf("day")}
             onChange={(date) => {
               onChange({ ...value, expiresAt: date });
             }}
             disabled={disabled}
+            style={{ width: "100%" }}
           />
-        </StyledFormItem>
-        <StyledFormItemButtonContainer>
+        </Form.Item>
+        <StyledContainer>
           <Button
-            block
-            danger
-            onClick={() => onDelete(value)}
-            type="primary"
             disabled={disabled}
-          >
-            Delete
-          </Button>
-        </StyledFormItemButtonContainer>
+            icon={<Trash style={{ width: "14px" }} />}
+            onClick={() => onDelete(value)}
+            htmlType="button"
+          />
+        </StyledContainer>
       </StyledContainer>
     );
   }
 );
 
 export default AddCollaboratorFormItem;
-
-const StyledContainer = styled.div({});
-
-const StyledFormItem = styled.div({
-  marginTop: "8px",
-});
-
-const StyledFormItemButtonContainer = styled.div({
-  marginTop: "16px",
-});

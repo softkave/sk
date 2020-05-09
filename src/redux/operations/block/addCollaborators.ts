@@ -1,6 +1,6 @@
 import moment from "moment";
-import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { IBlock } from "../../../models/block/block";
+import { IAddCollaboratorFormItemValues } from "../../../models/types";
 import * as blockNet from "../../../net/block";
 import { newId } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";

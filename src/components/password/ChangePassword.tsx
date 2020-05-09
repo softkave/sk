@@ -96,6 +96,7 @@ const ChangePassword: React.FC<IChangePasswordProps> = (props) => {
                   value={values.password}
                   placeholder="Enter new password"
                   disabled={isSubmitting}
+                  maxLength={userConstants.maxPasswordLength}
                 />
               </Form.Item>
               <Form.Item
@@ -118,6 +119,7 @@ const ChangePassword: React.FC<IChangePasswordProps> = (props) => {
                   value={values.confirmPassword}
                   placeholder="Re-enter your new password"
                   disabled={isSubmitting}
+                  maxLength={userConstants.maxPasswordLength}
                 />
               </Form.Item>
               <Form.Item>

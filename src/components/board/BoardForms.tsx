@@ -55,18 +55,11 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
     const formActionType = !!block ? "Edit" : "Create";
     const formName = getBlockTypeFullName(blockType);
 
-    const formLabel = (
-      <StyledCapitalizeText>
-        {formActionType} {formName}
-      </StyledCapitalizeText>
-    );
-
     switch (blockType) {
       case "group":
         return (
           <GroupFormInDrawer
             visible
-            title="Group Form"
             onClose={onClose}
             orgID={orgID}
             block={block}

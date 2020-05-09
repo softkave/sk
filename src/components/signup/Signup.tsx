@@ -22,6 +22,8 @@ const invalidPasswordMessage = "Password is invalid";
 
 // TODO: Add regex to appropriate types like password
 // TODO: add correct error messages to your forms
+// TODO: should we have a max email length
+/** TODO: more descriptive password hint, like the mix of characters and a strenght bar */
 const validationSchema = yup.object().shape({
   name: yup
     .string()
@@ -123,6 +125,7 @@ const Signup: React.FC<ISignupProps> = (props) => {
                   onChange={handleChange}
                   placeholder="Enter your first name and last name"
                   disabled={isSubmitting}
+                  maxLength={userConstants.maxNameLength}
                 />
               </Form.Item>
               <Form.Item
@@ -190,6 +193,7 @@ const Signup: React.FC<ISignupProps> = (props) => {
                   onChange={handleChange}
                   disabled={isSubmitting}
                   placeholder="Enter new password"
+                  maxLength={userConstants.maxPasswordLength}
                 />
               </Form.Item>
               <Form.Item
@@ -213,6 +217,7 @@ const Signup: React.FC<ISignupProps> = (props) => {
                   onChange={handleChange}
                   disabled={isSubmitting}
                   placeholder="Re-enter your new password"
+                  maxLength={userConstants.maxPasswordLength}
                 />
               </Form.Item>
               <Form.Item>

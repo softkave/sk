@@ -1,4 +1,4 @@
-import styled, { StyledComponent } from "@emotion/styled";
+import styled from "@emotion/styled";
 import { ComponentStyle } from "../types";
 
 export const FormBody = styled("div")({

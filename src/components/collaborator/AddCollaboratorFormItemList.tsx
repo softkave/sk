@@ -2,18 +2,15 @@ import { PlusOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button } from "antd";
 import React from "react";
-import AddCollaboratorFormItem, {
-  IAddCollaboratorFormItemError,
-  IAddCollaboratorFormItemValues,
-} from "./AddCollaboratorFormItem";
+import AddCollaboratorFormItem from "./AddCollaboratorFormItem";
 
 export interface IAddCollaboratorFormItemListProps {
-  onChange: (value: IAddCollaboratorFormItemValues[]) => void;
-  value: IAddCollaboratorFormItemValues[];
+  onChange: (value: any[]) => void;
+  value: any[];
   maxRequests: number;
 
   disabled?: boolean;
-  errors?: Array<IAddCollaboratorFormItemError | undefined>;
+  errors?: Array<any | undefined>;
 }
 
 // TODO: Add requests count and max to let the user know
@@ -80,20 +77,8 @@ export default class AddCollaboratorFormItemList extends React.PureComponent<
             <StyledItem key={index}>
               <AddCollaboratorFormItem
                 value={request}
-                error={requestErrors[index]}
+                errors={requestErrors[index]}
                 onChange={(data) => {
-                  /**
-                   * TODO: - BUG
-                   * I think React, or something else in between has one, create a plan to report it.
-                   * Here's the bug, this ACFItem component is created in the map, and mapped to the index,
-                   * but the onUpdate is getting a wrong index if email is updated using autofill.
-                   * It works fine if the email is entered manually though. And it's only email.
-                   * I think it's maybe because we're using the index as key, and maybe use a better id system.
-                   *
-                   * Nope, it's not because of the using idex as key, using a unique id, didn't work too.
-                   *
-                   * TODO: Maybe, turn off auto-fill for email
-                   */
                   this.onUpdate(index, data);
                 }}
                 onDelete={() => this.onDelete(index)}
