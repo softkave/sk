@@ -1,4 +1,6 @@
+import { LineOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
+import { Badge } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
@@ -22,17 +24,8 @@ export interface IBlockThumbnailProps {
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
 // const hoverSelector = "&:hover";
 
-const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
-  const {
-    block,
-    className,
-    onClick,
-    showFields,
-    avatarSize,
-    count
-    // showExploreMenu,
-    // onClickChildMenuItem
-  } = props;
+const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
+  const { block, className, onClick, showFields, avatarSize, count } = props;
 
   const color = block.color;
   const fieldsToShow: { [key in BlockThumbnailShowField]?: boolean } = (
@@ -49,56 +42,52 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = props => {
       <StyledContainer>
         <ItemAvatar size={avatarSize} color={color} />
       </StyledContainer>
-      <StyledBlockDescriptionContainer style={{ lineHeight: "16px" }}>
+      <StyledContainer
+        s={{
+          lineHeight: "16px",
+          cursor: onClick ? "pointer" : undefined,
+          flex: 1,
+          marginLeft: blockDescriptionMarginWidth,
+          flexDirection: "column",
+          boxSizing: "border-box",
+          display: "flex",
+        }}
+        onClick={onClick}
+      >
         {fieldsToShow.name && (
-          <StyledContainer
-            s={{
-              // fontWeight: "bold",
-              textDecoration: onClick ? "underline" : undefined,
-              cursor: onClick ? "pointer" : undefined
-              // [hoverSelector]: {
-              //   color: "rgb(66,133,244)"
-              // }
-            }}
-            onClick={onClick}
-          >
-            {block.name}
-            {count ? ` (${count})` : ""}
+          <StyledContainer s={{ alignItems: "center" }}>
+            <StyledContainer
+              s={{ color: "rgba(0, 0, 0, 0.85)", marginRight: "8px" }}
+            >
+              {block.name}
+            </StyledContainer>
+            {count ? (
+              <Badge
+                count={count}
+                style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+              />
+            ) : null}
           </StyledContainer>
         )}
         {fieldsToShow.type && (
-          <StyledContainer s={{ color: "rgba(0, 0, 0, 0.85)" }}>
-            {getBlockTypeFullName(block.type)}
-          </StyledContainer>
+          <StyledContainer>{getBlockTypeFullName(block.type)}</StyledContainer>
         )}
         {fieldsToShow.description && (
-          <StyledContainer s={{ marginTop: "8px" }}>
+          <StyledContainer s={{ marginTop: "4px" }}>
             {block.description}
           </StyledContainer>
         )}
-        {/* {showExploreMenu && onClickChildMenuItem && (
-          <BlockExploreChildrenMenu
-            block={block}
-            onClick={onClickChildMenuItem}
-          />
-        )} */}
-      </StyledBlockDescriptionContainer>
+      </StyledContainer>
     </StyledContainer>
   );
 };
 
 BlockThumbnail.defaultProps = {
-  showFields: defaultFields
+  showFields: defaultFields,
 };
 
 export default BlockThumbnail;
 
 const blockDescriptionMarginWidth = 16;
 
-const StyledBlockDescriptionContainer = styled.div({
-  flex: 1,
-  marginLeft: blockDescriptionMarginWidth,
-  flexDirection: "column",
-  boxSizing: "border-box",
-  display: "flex"
-});
+const StyledBlockDescriptionContainer = styled.div({});

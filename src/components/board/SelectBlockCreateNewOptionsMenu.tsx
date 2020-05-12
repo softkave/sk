@@ -1,4 +1,10 @@
-import { PlusOutlined } from "@ant-design/icons";
+import {
+  BorderOutlined,
+  PlusOutlined,
+  ReconciliationOutlined,
+  TagOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -31,11 +37,10 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
         s={{
           cursor: "pointer",
           textTransform: "capitalize",
-          "& .anticon": { fontSize: "16px" },
         }}
         onClick={renderTriggerProps.openMenu}
       >
-        <PlusOutlined />
+        <PlusOutlined style={{ fontSize: "16px" }} />
       </StyledContainer>
     );
   };
@@ -44,19 +49,31 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
     renderMenuProps: IMenuWithTriggerRenderMenuProps
   ) => {
     const createMenuItems = childrenTypes.map((type) => (
-      <StyledMenuItem key={type}>Create {type}</StyledMenuItem>
+      <StyledMenuItem key={type}>
+        <BorderOutlined />
+        Create {type}
+      </StyledMenuItem>
     ));
 
     if (hasCollaborators) {
       createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
       createMenuItems.push(
-        <StyledMenuItem key="collaborator">Add Collaborator</StyledMenuItem>
+        <StyledMenuItem key="collaborator">
+          <UserAddOutlined />
+          Add Collaborator
+        </StyledMenuItem>
       );
     }
 
     createMenuItems.push(
-      <StyledMenuItem key="status">Add or Edit Status</StyledMenuItem>,
-      <StyledMenuItem key="label">Add or Edit Label</StyledMenuItem>
+      <StyledMenuItem key="status">
+        <ReconciliationOutlined />
+        Add or Edit Status
+      </StyledMenuItem>,
+      <StyledMenuItem key="label">
+        <TagOutlined />
+        Add or Edit Labels
+      </StyledMenuItem>
     );
 
     const createMenu = (
@@ -75,7 +92,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
 
   return (
     <MenuWithTrigger
-      menuType="drawer"
+      menuType="dropdown"
       renderTrigger={renderTrigger}
       renderMenu={renderCreateNewOptions}
     />

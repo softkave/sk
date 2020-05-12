@@ -1,19 +1,17 @@
 import { HomeOutlined } from "@ant-design/icons";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
-import ItemAvatar from "../ItemAvatar";
+import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
 import wrapWithMargin from "../utilities/wrapWithMargin";
 import SelectBlockCreateNewOptionsMenu from "./SelectBlockCreateNewOptionsMenu";
-import SelectBlockOptionsMenu from "./SelectBlockOptionsMenu";
+import SelectBlockOptionsMenu, {
+  SettingsMenuKey,
+} from "./SelectBlockOptionsMenu";
 import SelectBoardTypeMenu from "./SelectBoardTypeMenu";
 import SelectResourceTypeMenu from "./SelectResourceTypeMenu";
 import { BoardResourceType, BoardType, CreateMenuKey } from "./types";
 import { getBoardTypesForResourceType } from "./utils";
-
-type SettingsMenuKey = "edit" | "delete";
-
-const StyledContainerAsH1 = StyledContainer.withComponent("h1");
 
 const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
   switch (type) {
@@ -87,7 +85,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
 
   const onSelectSettingsMenuItem = (key: SettingsMenuKey) => {
     switch (key) {
-      case "edit":
+      case "view":
         onClickEditBlock();
         break;
 
@@ -184,10 +182,9 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       s={{
         width: "100%",
         alignItems: "center",
-        "& .anticon": { fontSize: "16px" },
       }}
     >
-      <StyledContainer>
+      {/* <StyledContainer>
         <ItemAvatar color={block.color} />
       </StyledContainer>
       <StyledContainer
@@ -209,25 +206,11 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
         >
           {block.name}
         </StyledContainerAsH1>
-        <StyledContainer>
-          {block.type}
-          {resourceType && (
-            <StyledContainer
-              s={{
-                borderLeft: "1px solid rgba(0, 0, 0, 0.65)",
-                paddingLeft: "8px",
-                marginLeft: "8px",
-                textDecoration: "underline",
-              }}
-            >
-              {renderResourceTypeMenu()}
-            </StyledContainer>
-          )}
-        </StyledContainer>
-      </StyledContainer>
+        <StyledContainer>{block.type}</StyledContainer>
+      </StyledContainer> */}
+      <BlockThumbnail block={block} showFields={["name", "type"]} />
       <StyledContainer s={{ alignItems: "center" }}>
         {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
-        {wrapWithMargin(renderSelfButton())}
         {!isMobile && wrapWithMargin(renderResourceTypeMenu())}
         {isBlockRelatedResourceType(resourceType) &&
           wrapWithMargin(renderBoardTypeMenu())}

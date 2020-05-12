@@ -1,4 +1,10 @@
-import { MenuFoldOutlined } from "@ant-design/icons";
+import {
+  BorderOutlined,
+  CaretDownOutlined,
+  MenuFoldOutlined,
+  SolutionOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -12,6 +18,23 @@ import MenuWithTrigger, {
 } from "./MenuWithTrigger";
 import { BoardResourceType } from "./types";
 import { getBlockResourceTypes, getBoardResourceTypeFullName } from "./utils";
+
+const getBlockResourceTypeIcon = (type: BoardResourceType) => {
+  switch (type) {
+    case "tasks":
+
+    case "projects":
+
+    case "groups":
+      return <BorderOutlined />;
+
+    case "collaborators":
+      return <TeamOutlined />;
+
+    case "collaboration-requests":
+      return <SolutionOutlined />;
+  }
+};
 
 export interface ISelectResourceTypeMenuProps {
   block: IBlock;
@@ -38,11 +61,11 @@ const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = (
           cursor: "pointer",
           alignItems: "center",
           textTransform: "capitalize",
-          "& .anticon": { fontSize: "16px" },
         }}
       >
-        <MenuFoldOutlined />
+        {resourceType && getBlockResourceTypeIcon(resourceType)}
         {wrapWithMargin(resourceTypeName || "Select Resource Type", 8, 0)}
+        <CaretDownOutlined style={{ marginLeft: "8px" }} />
       </StyledContainer>
     );
   };
@@ -61,6 +84,7 @@ const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = (
         {blockResourceTypes.map((type) => {
           return (
             <StyledMenuItem key={type}>
+              {getBlockResourceTypeIcon(type)}
               {getBoardResourceTypeFullName(type)}
             </StyledMenuItem>
           );
@@ -71,7 +95,7 @@ const SelectResourceTypeMenu: React.FC<ISelectResourceTypeMenuProps> = (
 
   return (
     <MenuWithTrigger
-      menuType="drawer"
+      menuType="dropdown"
       renderTrigger={renderResourceTypeSelection}
       renderMenu={renderResourceTypeOptions}
     />

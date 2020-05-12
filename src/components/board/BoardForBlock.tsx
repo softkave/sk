@@ -1,4 +1,5 @@
 import { Modal } from "antd";
+import path from "path";
 import React from "react";
 import {
   DragDropContext,
@@ -27,7 +28,6 @@ import { pluralize } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
-import { concatPaths } from "../layout/path";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardForBlockContainer from "./BoardForBlockContainer";
@@ -135,28 +135,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   const isLoadingChildren =
     loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
 
-  const blockLandingPage = getBlockLandingPage(block);
-  const loadBlockLandingPage = (loadProps: IUseOperationStatus) => {
-    if (!!!loadProps.operation) {
-      if (!blockLandingPage) {
-        getBlockLandingPageOperationFunc({ block });
-      }
-    }
-  };
-
-  const loadBlockLandingPageStatus = useOperation(
-    {
-      operationID: getBlockLandingPageOperationID,
-      resourceID: block.customId,
-    },
-    loadBlockLandingPage
-  );
-
-  const isLoadingBlockLandingPage =
-    !blockLandingPage &&
-    (loadBlockLandingPageStatus.isLoading ||
-      !!!loadBlockLandingPageStatus.operation);
-
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
     const routeURL = new URL(
@@ -174,13 +152,18 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const onClickBlock = (blocks: IBlock[]) => {
-    const path = concatPaths(blockPath, blocks.map((b) => getPath(b)).join(""));
+    const nextPath = path.normalize(
+      blockPath +
+        "/" +
+        blocks.map((b) => getPath(b)).join("") +
+        "/tasks?bt=kanban"
+    );
 
-    pushRoute(path);
+    pushRoute(nextPath);
   };
 
   const onNavigate = (route: string) => {
-    pushRoute(concatPaths(blockPath, route));
+    pushRoute(path.normalize(blockPath + route));
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
@@ -236,12 +219,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const shouldRenderLoading = () => {
-    return (
-      isLoadingCollaborators ||
-      isLoadingRequests ||
-      isLoadingChildren ||
-      isLoadingBlockLandingPage
-    );
+    return isLoadingCollaborators || isLoadingRequests || isLoadingChildren;
   };
 
   const getLoadErrors = () => {
@@ -253,10 +231,6 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
 
     if (loadRequestsStatus && loadRequestsStatus.error) {
       loadErrors.push(loadRequestsStatus.error);
-    }
-
-    if (loadBlockLandingPageStatus && loadBlockLandingPageStatus.error) {
-      loadErrors.push(loadBlockLandingPageStatus.error);
     }
 
     return loadErrors;

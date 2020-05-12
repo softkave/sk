@@ -47,10 +47,16 @@ export default async function getBlockLandingPageOperationFunc(
       throw result.errors;
     }
 
+    let page = result.page;
+
+    if (page === "self") {
+      page = "tasks";
+    }
+
     store.dispatch(
       blockActions.updateBlockRedux(
         dataProps.block.customId,
-        { landingPage: result.page },
+        { landingPage: page },
         {}
       )
     );

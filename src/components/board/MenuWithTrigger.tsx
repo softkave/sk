@@ -1,4 +1,4 @@
-import { Drawer } from "antd";
+import { Drawer, Dropdown } from "antd";
 import React from "react";
 import StyledContainer from "../styled/Container";
 import wrapMenu from "../utilities/wrapMenu";
@@ -12,14 +12,16 @@ export interface IMenuWithTriggerRenderTriggerProps {
 }
 
 export interface IMenuWithTriggerProps {
-  menuType: "drawer";
+  menuType: "drawer" | "dropdown";
   renderTrigger: (props: IMenuWithTriggerRenderTriggerProps) => React.ReactNode;
-  renderMenu: (props: IMenuWithTriggerRenderMenuProps) => React.ReactNode;
+  renderMenu: (
+    props: IMenuWithTriggerRenderMenuProps
+  ) => React.ReactNode | React.ReactElement;
 
   menuTitle?: React.ReactNode;
 }
 
-const MenuWithTrigger: React.FC<IMenuWithTriggerProps> = props => {
+const MenuWithTrigger: React.FC<IMenuWithTriggerProps> = (props) => {
   const { menuType, renderMenu, renderTrigger, menuTitle } = props;
   const [showMenu, setShowMenu] = React.useState(false);
   const openMenu = () => setShowMenu(true);
@@ -44,7 +46,7 @@ const MenuWithTrigger: React.FC<IMenuWithTriggerProps> = props => {
             flexDirection: "column",
             width: "100%",
             flex: 1,
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           {renderContent()}
@@ -65,10 +67,25 @@ const MenuWithTrigger: React.FC<IMenuWithTriggerProps> = props => {
     );
   };
 
+  const renderMenuForDropdown = () => {
+    return (
+      <Dropdown
+        // @ts-ignore
+        overlay={renderMenu({ closeMenu })}
+        trigger={["click"]}
+      >
+        {renderTrigger({ openMenu })}
+      </Dropdown>
+    );
+  };
+
   const render = () => {
     switch (menuType) {
       case "drawer":
         return renderMenuForDrawer();
+
+      case "dropdown":
+        return renderMenuForDropdown();
 
       default:
         return null;

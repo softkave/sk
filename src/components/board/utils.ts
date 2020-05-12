@@ -11,7 +11,7 @@ export const blockResourceTypeToBlockKeyMap: {
   collaborators: "collaborators",
   groups: "groups",
   projects: "projects",
-  tasks: "tasks"
+  tasks: "tasks",
 };
 
 export const getBoardResourceTypeFullName = (
@@ -37,7 +37,7 @@ export const sortBlockResourceTypesByCount = (
   resourceTypes: BoardResourceType[]
 ) => {
   return resourceTypes
-    .map(rt => rt)
+    .map((rt) => rt)
     .sort((a, b) => {
       return (
         (block[blockResourceTypeToBlockKeyMap[a]] || 0) -
@@ -51,7 +51,7 @@ export const getBlockResourceTypes = (
   childrenTypes: BlockType[]
 ) => {
   const blockResourceTypes: BoardResourceType[] = childrenTypes.map(
-    type => pluralize(type) as BoardResourceType
+    (type) => pluralize(type) as BoardResourceType
   );
 
   if (block.type === "org") {
@@ -88,24 +88,33 @@ export const getBoardTypesForResourceType = (
   resourceType: BoardResourceType,
   isMobile: boolean
 ): BoardType[] => {
-  const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
+  // const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
   let boardTypes: BoardType[] = [];
 
   switch (resourceType) {
     case "tasks":
     case "projects":
-      boardTypes = ["list", "tab"];
+      // boardTypes = ["list"];
+      boardTypes = ["kanban"];
 
-      if (hasGroups && !isMobile) {
-        boardTypes.unshift("kanban");
+      if (block.type === "group") {
+        boardTypes = ["list"];
       }
+
+      // if (hasGroups) {
+      //   boardTypes = ["kanban"]
+      // }
+
+      // if (hasGroups && !isMobile) {
+      //   boardTypes.unshift("kanban");
+      // }
 
       break;
 
     case "groups":
     case "collaborators":
     case "collaboration-requests":
-      boardTypes = ["list", "tab"];
+      boardTypes = ["list"];
   }
 
   return boardTypes;

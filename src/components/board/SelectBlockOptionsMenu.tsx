@@ -1,4 +1,9 @@
-import { EllipsisOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -10,7 +15,7 @@ import MenuWithTrigger, {
   IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 
-export type SettingsMenuKey = "edit" | "delete";
+export type SettingsMenuKey = "view" | "delete";
 
 export interface ISelectBlockOptionsMenuProps {
   block: IBlock;
@@ -31,11 +36,10 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
         s={{
           cursor: "pointer",
           textTransform: "capitalize",
-          "& .anticon": { fontSize: "16px" },
         }}
         onClick={renderTriggerProps.openMenu}
       >
-        <EllipsisOutlined style={{ fontSize: "24px" }} />
+        <EllipsisOutlined style={{ fontSize: "27px" }} />
       </StyledContainer>
     );
   };
@@ -50,15 +54,21 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
           renderMenuProps.closeMenu();
         }}
       >
-        <StyledMenuItem key="edit">Edit {blockTypeFullName}</StyledMenuItem>
-        <StyledMenuItem key="delete">Delete {blockTypeFullName}</StyledMenuItem>
+        <StyledMenuItem key="view">
+          <PlayCircleOutlined />
+          View {blockTypeFullName}
+        </StyledMenuItem>
+        <StyledMenuItem key="delete">
+          <DeleteOutlined />
+          Delete {blockTypeFullName}
+        </StyledMenuItem>
       </Menu>
     );
   };
 
   return (
     <MenuWithTrigger
-      menuType="drawer"
+      menuType="dropdown"
       renderTrigger={renderTrigger}
       renderMenu={renderBlockOptions}
     />

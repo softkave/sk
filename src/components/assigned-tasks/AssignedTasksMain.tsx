@@ -1,4 +1,5 @@
 import { Divider, Empty } from "antd";
+import path from "path";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory } from "react-router";
@@ -11,7 +12,6 @@ import { IReduxState } from "../../redux/store";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import BoardBaskets, { IBoardBasket } from "../board/BoardBaskets";
 import ColumnWithTitleAndCount from "../board/ColumnWithTitleAndContent";
-import { concatPaths } from "../layout/path";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -106,8 +106,8 @@ const AssignedTasksMain: React.FC<{}> = (props) => {
   };
 
   const onNavigateToBasket = (basketPath: string) => {
-    const path = concatPaths(window.location.pathname, basketPath);
-    history.push(path);
+    const nextPath = path.normalize(window.location.pathname + basketPath);
+    history.push(nextPath);
   };
 
   const renderMobileLandingMenu = () => (

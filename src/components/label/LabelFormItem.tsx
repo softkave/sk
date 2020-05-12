@@ -32,6 +32,9 @@ export interface ILabelFormItemProps {
   ) => void;
 }
 
+// TODO: preview the colors on change so that the user can see what it'll look like
+// TODO: add a get random color button that uses randomColor to get a new random color
+
 const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
   const {
     touched,

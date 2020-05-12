@@ -113,7 +113,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
 
   const onSelectSettingsMenuItem = (forBlock: IBlock, key: SettingsMenuKey) => {
     switch (key) {
-      case "edit":
+      case "view":
         onClickUpdateBlock(forBlock);
         break;
 

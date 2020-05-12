@@ -1,3 +1,4 @@
+import path from "path";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -9,9 +10,8 @@ import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import GeneralError from "../GeneralError";
-import { concatPaths } from "../layout/path";
 import SingleOperationHelper, {
-  ISingleOperationHelperDerivedProps
+  ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
 import StyledContainer from "../styled/Container";
 import OrganizationContainer from "./OrganizationContainer";
@@ -20,7 +20,7 @@ import OrganizationList from "./OrganizationList";
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
-  const organizations = useSelector<IReduxState, IBlock[]>(state =>
+  const organizations = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, user.orgs)
   );
 
@@ -29,11 +29,14 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const areOrganizationsLoaded = organizations.length === user.orgs.length;
 
   const onClickOrganization = (organization: IBlock) => {
-    const selectedOrganizationPath = concatPaths(
-      window.location.pathname,
-      organization.customId
+    const routePath = path.normalize(
+      window.location.pathname +
+        "/" +
+        organization.customId +
+        "/tasks?bt=kanban"
     );
-    history.push(selectedOrganizationPath);
+
+    history.push(routePath);
   };
 
   const loadOrganizations = (

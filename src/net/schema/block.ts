@@ -13,6 +13,7 @@ const blockFragment = `
     type
     parent
     rootBlockID
+    boardId
     createdBy
     tasks
     groups

@@ -1,6 +1,13 @@
-import Icon, { UnorderedListOutlined } from "@ant-design/icons";
+import Icon, {
+  CaretDownOutlined,
+  InsertRowAboveOutlined,
+  MenuOutlined,
+  ProfileOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
+import { Columns, Minus } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import KanbanSVG from "../icons/svg/KanbanSVG";
 import TabSVG from "../icons/svg/TabSVG";
@@ -15,11 +22,9 @@ import { BoardResourceType, BoardType } from "./types";
 import { getBoardTypesForResourceType } from "./utils";
 
 const boartTypesToIconMap = {
-  kanban: <Icon component={KanbanSVG} style={{ backgroundColor: "inherit" }} />,
-  list: <UnorderedListOutlined />,
-  tab: (
-    <Icon component={TabSVG} style={{ fontSize: "1.60em", marginTop: "5px" }} />
-  ),
+  kanban: <Columns style={{ width: "16px" }} />,
+  list: <MenuOutlined />,
+  tab: <InsertRowAboveOutlined />,
 };
 
 export interface ISelectBoardTypeMenuProps {
@@ -43,11 +48,11 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
           cursor: "pointer",
           alignItems: "center",
           textTransform: "capitalize",
-          "& .anticon": { fontSize: "16px" },
         }}
       >
         {boartTypesToIconMap[boardType]}
         {!isMobile && wrapWithMargin(boardType, 8, 0)}
+        <CaretDownOutlined style={{ marginLeft: "8px" }} />
       </StyledContainer>
     );
   };
@@ -84,7 +89,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
 
   return (
     <MenuWithTrigger
-      menuType="drawer"
+      menuType="dropdown"
       renderTrigger={renderBoardTypeSelection}
       renderMenu={renderBoardTypeOptions}
     />

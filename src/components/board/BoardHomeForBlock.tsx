@@ -1,3 +1,4 @@
+import path from "path";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
@@ -8,17 +9,12 @@ import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
 import BoardLandingPage from "./LandingPage";
-// import BoardTypeTabs from "./BoardTypeTabs";
 import {
   BoardResourceType,
   BoardType,
   IBoardResourceTypePathMatch,
 } from "./types";
-import {
-  getBlockLandingPage,
-  getBlockResourceTypes,
-  getBoardTypesForResourceType,
-} from "./utils";
+import { getBlockResourceTypes, getBoardTypesForResourceType } from "./utils";
 
 export interface IBoardHomeForBlockProps {
   blockPath: string;
@@ -49,8 +45,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
     onClickAddOrEditStatus,
   } = props;
 
-  const [isFirstRender, setIsFirstRender] = React.useState(true);
-
   const childrenTypes = useBlockChildrenTypes(block);
   const resourceTypes = getBlockResourceTypes(block, childrenTypes);
 
@@ -67,38 +61,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
   // TODO: show count and use badges only for new unseen entries
   // TODO: sort the entries by count?
 
-  React.useEffect(() => {
-    if (isFirstRender) {
-      const landingPage = getBlockLandingPage(block) || block.landingPage;
-
-      if (!resourceType && landingPage && landingPage !== "self") {
-        const boardTypesForResourceType = getBoardTypesForResourceType(
-          block,
-          landingPage,
-          isMobile
-        );
-
-        const bt: BoardType = boardTypesForResourceType[0];
-        const path = `${blockPath}/${landingPage}?bt=${bt}`;
-        history.push(path);
-      }
-
-      setIsFirstRender(false);
-    }
-  }, [
-    isFirstRender,
-    setIsFirstRender,
-    history,
-    resourceType,
-    block,
-    blockPath,
-    isMobile,
-  ]);
-
-  if (isFirstRender) {
-    return null;
-  }
-
+  // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
     const destPath = `${blockPath}/${resourceType}`;
     const boardTypesForResourceType = getBoardTypesForResourceType(
@@ -111,8 +74,16 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
     return <Redirect to={`${destPath}?bt=${bt}`} />;
   }
 
+  // TODO: should we show error if block type is task?
   if (boardType && !resourceType) {
-    return <Redirect to={`${blockPath}`} />;
+    const nextPath = path.normalize(blockPath + `/tasks?bt={${boardType}}`);
+    return <Redirect to={nextPath} />;
+  }
+
+  // TODO: should we show error if block type is task?
+  if (!boardType && !resourceType) {
+    const nextPath = path.normalize(blockPath + `/tasks?bt=kanban`);
+    return <Redirect to={nextPath} />;
   }
 
   const renderBoardType = () => {
@@ -175,17 +146,17 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
         onClickDeleteBlock={() => onClickDeleteBlock(block)}
         onClickEditBlock={() => onClickUpdateBlock(block)}
         onNavigate={(navResourceType, navBoardType) => {
-          let path = `${blockPath}`;
+          let nextPath = `${blockPath}`;
 
           if (navResourceType) {
-            path = `${path}/${navResourceType}`;
+            nextPath = `${nextPath}/${navResourceType}`;
           }
 
           if (navBoardType) {
-            path = `${path}?bt=${navBoardType}`;
+            nextPath = `${nextPath}?bt=${navBoardType}`;
           }
 
-          history.push(path);
+          history.push(nextPath);
         }}
       />
     );

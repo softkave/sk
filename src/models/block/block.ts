@@ -79,6 +79,7 @@ export interface IBlock {
   type: BlockType;
   parent?: string;
   rootBlockID?: string;
+  boardId?: string;
   createdBy: string;
   taskCollaborationData?: ITaskCollaborationData;
   taskCollaborators?: ITaskCollaborator[];

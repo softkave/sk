@@ -3,8 +3,8 @@ import StyledContainer from "../styled/Container";
 
 const wrapWithMargin = (
   content: React.ReactNode,
-  marginLeft = 8,
-  marginRight = 8
+  marginLeft = 12,
+  marginRight = 12
 ) => {
   return (
     <StyledContainer s={{ marginLeft, marginRight }}>{content}</StyledContainer>

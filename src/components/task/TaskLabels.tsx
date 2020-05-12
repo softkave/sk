@@ -97,11 +97,11 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             No Labels
           </StyledContainer>
         )}
-        <Menu.Divider />
+        {/* <Menu.Divider />
         <Menu.Item>
           <PlusOutlined />
           Add or Edit Tags
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     );
 

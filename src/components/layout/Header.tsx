@@ -2,11 +2,12 @@ import {
   ArrowLeftOutlined,
   CaretDownFilled,
   HomeOutlined,
-  LogoutOutlined
+  LogoutOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
+import { ArrowLeft } from "react-feather";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
@@ -21,7 +22,7 @@ export interface IHeaderProps {
   onNavigateBack?: () => void;
 }
 
-const Header: React.FC<IHeaderProps> = props => {
+const Header: React.FC<IHeaderProps> = (props) => {
   const user = useSelector(getSignedInUserRequired);
   const history = useHistory();
 
@@ -29,7 +30,7 @@ const Header: React.FC<IHeaderProps> = props => {
     logoutUserOperationFunc();
   };
 
-  const onSelectAvatarMenu = event => {
+  const onSelectAvatarMenu = (event) => {
     if (event.key === "logout") {
       onLogout();
     }
@@ -71,15 +72,18 @@ const Header: React.FC<IHeaderProps> = props => {
     </Menu>
   );
 
+  // TODO: disabledback button for now
   return (
     <StyledHeaderContainer>
-      <StyledContainer s={{ alignItems: "center" }}>
+      {/* <StyledContainer s={{ alignItems: "center" }}>
         {onNavigateBack && (
           <StyledFlatButton
             onClick={onNavigateBack}
-            style={{ marginRight: "24px", paddingTop: "2px" }}
+            style={{ marginRight: "16px" }}
           >
-            <ArrowLeftOutlined />
+            <ArrowLeft
+              style={{ width: "20px", height: "20px", marginTop: "4px" }}
+            />
           </StyledFlatButton>
         )}
         <StyledFlatButton>
@@ -87,7 +91,7 @@ const Header: React.FC<IHeaderProps> = props => {
             <HomeOutlined />
           </Link>
         </StyledFlatButton>
-      </StyledContainer>
+      </StyledContainer> */}
       <StyledContainer s={{ flex: 1 }} />
       <StyledContainer s={{ marginLeft: "12px" }}>
         <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
@@ -111,14 +115,14 @@ export default Header;
 const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
-  padding: "16px 16px"
+  padding: "16px 16px",
 });
 
 const StyledAvatarButton = styled(Button)({
   border: "none",
   backgroundColor: "inherit",
   boxShadow: "none",
-  padding: 0
+  padding: 0,
 });
 
 const StyledMenuItem = styled(Menu.Item)({});
