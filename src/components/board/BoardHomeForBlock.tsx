@@ -11,10 +11,15 @@ import BoardTypeList from "./BoardTypeList";
 import BoardLandingPage from "./LandingPage";
 import {
   BoardResourceType,
-  BoardType,
+  BoardViewType,
   IBoardResourceTypePathMatch,
 } from "./types";
-import { getBlockResourceTypes, getBoardTypesForResourceType } from "./utils";
+import {
+  getBlockResourceTypes,
+  getBoardViewTypesForResourceType,
+  getDefaultBoardViewType,
+} from "./utils";
+import ViewByStatusContainer from "./ViewByStatusContainer";
 
 export interface IBoardHomeForBlockProps {
   blockPath: string;
@@ -55,7 +60,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
   const resourceType =
     resourceTypeMatch && resourceTypeMatch.params.resourceType;
   const searchParams = new URLSearchParams(window.location.search);
-  const boardType: BoardType = searchParams.get("bt") as BoardType;
+  const boardType: BoardViewType = searchParams.get("bt") as BoardViewType;
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries
@@ -64,12 +69,12 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
   // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
     const destPath = `${blockPath}/${resourceType}`;
-    const boardTypesForResourceType = getBoardTypesForResourceType(
+    const boardTypesForResourceType = getBoardViewTypesForResourceType(
       block,
       resourceType,
       isMobile
     );
-    const bt: BoardType = boardTypesForResourceType[0];
+    const bt: BoardViewType = boardTypesForResourceType[0];
 
     return <Redirect to={`${destPath}?bt=${bt}`} />;
   }
@@ -82,13 +87,14 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && !resourceType) {
-    const nextPath = path.normalize(blockPath + `/tasks?bt=kanban`);
+    const bt = getDefaultBoardViewType(block);
+    const nextPath = path.normalize(blockPath + `/tasks?bt=${bt}`);
     return <Redirect to={nextPath} />;
   }
 
   const renderBoardType = () => {
     switch (boardType) {
-      case "kanban":
+      case "group-kanban":
         return (
           <BoardTypeKanban
             block={block}
@@ -97,6 +103,14 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
             onClickDeleteBlock={onClickDeleteBlock}
+          />
+        );
+
+      case "status-kanban":
+        return (
+          <ViewByStatusContainer
+            block={block}
+            onClickUpdateBlock={onClickUpdateBlock}
           />
         );
 
@@ -110,11 +124,6 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
             onClickCreateNewBlock={onClickAddBlock}
           />
         );
-
-      case "tab":
-        // TODO:
-        return null;
-      //   return <BoardTypeTabs {...p} />;
     }
   };
 

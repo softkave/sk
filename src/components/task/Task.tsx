@@ -4,7 +4,7 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Button, Dropdown, Menu, Modal, Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
@@ -19,6 +19,7 @@ import ToggleSwitchContainer from "./ToggleSwitch";
 export interface ITaskProps {
   task: IBlock;
   onEdit?: (task: IBlock) => void;
+  onDelete?: (task: IBlock) => void;
 }
 
 // TODO: how do we show thelabels?
@@ -27,7 +28,20 @@ const Task: React.FC<ITaskProps> = (props) => {
   const { task, onEdit } = props;
 
   const onDeleteTask = () => {
-    deleteBlockOperationFunc({ block: task });
+    // TODO: should we show loading when deleting or cover the task with a mask?
+    Modal.confirm({
+      title: "Are you sure you want to delete this task?",
+      okText: "Yes",
+      cancelText: "No",
+      okType: "primary",
+      okButtonProps: { danger: true },
+      onOk() {
+        deleteBlockOperationFunc({ block: task });
+      },
+      onCancel() {
+        // do nothing
+      },
+    });
   };
 
   const menu = (
@@ -66,6 +80,7 @@ const Task: React.FC<ITaskProps> = (props) => {
           backgroundColor: "inherit",
           borderRadius: 0,
           boxShadow: "none",
+          height: "22px",
         }}
       />
     </Dropdown>

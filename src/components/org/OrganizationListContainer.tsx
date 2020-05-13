@@ -9,6 +9,7 @@ import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBl
 import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
+import { getDefaultBoardViewType } from "../board/utils";
 import GeneralError from "../GeneralError";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
@@ -29,11 +30,9 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const areOrganizationsLoaded = organizations.length === user.orgs.length;
 
   const onClickOrganization = (organization: IBlock) => {
+    const bt = getDefaultBoardViewType(organization);
     const routePath = path.normalize(
-      window.location.pathname +
-        "/" +
-        organization.customId +
-        "/tasks?bt=kanban"
+      window.location.pathname + "/" + organization.customId + `/tasks?bt=${bt}`
     );
 
     history.push(routePath);

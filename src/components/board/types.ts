@@ -7,7 +7,7 @@ export type BoardResourceType =
   | "collaborators"
   | "collaboration-requests";
 
-export type BoardType = "kanban" | "list" | "tab";
+export type BoardViewType = "group-kanban" | "status-kanban" | "list";
 
 export interface IBlockPathMatch {
   blockID: string;

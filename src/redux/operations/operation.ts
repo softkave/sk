@@ -326,3 +326,15 @@ export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
     resourceID
   );
 }
+
+export const operationHasStatusWithScopeID = (
+  operation?: IOperation,
+  scopeID?: string
+) => {
+  if (!operation || !scopeID) {
+    return false;
+  }
+
+  const statusHistory = operation.statusHistory;
+  return statusHistory.findIndex((status) => status.scopeID === scopeID) !== -1;
+};

@@ -13,31 +13,27 @@ const defaultEmptyDescription = "No data";
 
 class List<T> extends React.Component<IListProps<T>> {
   public static defaultProps: Partial<IListProps<any>> = {
-    emptyDescription: defaultEmptyDescription
+    emptyDescription: defaultEmptyDescription,
   };
 
   public render() {
-    const { dataSource, emptyDescription, rowKey } = this.props;
+    const { dataSource, emptyDescription, rowKey, renderItem } = this.props;
 
     if (dataSource.length === 0) {
       return <EmptyMessage>{emptyDescription}</EmptyMessage>;
     }
 
+    return dataSource.map(renderItem);
+
     return (
       <AntDList
         dataSource={dataSource}
         rowKey={rowKey}
-        renderItem={this.renderItem}
+        renderItem={renderItem}
         style={{ width: "100%" }}
       />
     );
   }
-
-  private renderItem = (item: T, index: number) => {
-    const { renderItem } = this.props;
-
-    return renderItem(item, index);
-  };
 }
 
 export default List;

@@ -23,8 +23,8 @@ export type RenderBasketFn<BasketType extends IBoardBasket> = (
   basket: BasketType,
   index: number,
   baskets: BasketType[],
-  porvided: DraggableProvided,
-  snapshot: DraggableStateSnapshot
+  porvided?: DraggableProvided,
+  snapshot?: DraggableStateSnapshot
 ) => React.ReactNode;
 
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
@@ -38,6 +38,7 @@ export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
   isDragDisabled?: boolean;
   emptyMessage?: string;
   hideEmptyBaskets?: boolean;
+  noDnD?: boolean;
   shouldRenderBasket?: (
     basket: BasketType,
     index: number,
@@ -61,6 +62,7 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
       isDropDisabled,
       dragType,
       sortBaskets,
+      noDnD,
       shouldRenderBasket: shouldRenderBasketFn,
     } = this.props;
     const baskets = getBaskets(blocks);
@@ -82,6 +84,21 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
           : true;
 
         if (shouldRenderBasket) {
+          if (noDnD) {
+            return (
+              <div
+                key={basket.key}
+                style={{
+                  height: "100%",
+                  padding: "0 16px",
+                  paddingTop: "16px",
+                }}
+              >
+                {renderBasket(basket, index, allBaskets)}
+              </div>
+            );
+          }
+
           // TODO: there is a multiple scroll parents warning while dragging
           return (
             <Draggable
@@ -126,6 +143,14 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
         <StyledContainer s={{ flex: 1, alignItems: "center" }}>
           <EmptyMessage>{emptyMessage || defaultEmptyMessage}</EmptyMessage>
         </StyledContainer>
+      );
+    }
+
+    if (noDnD) {
+      return (
+        <StyledBasketsContainerInner>
+          {renderBaskets()}
+        </StyledBasketsContainerInner>
       );
     }
 

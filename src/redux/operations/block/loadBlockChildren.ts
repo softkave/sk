@@ -15,6 +15,9 @@ import updateBlockOperationFunc from "./updateBlock";
 export interface ILoadBlockChildrenOperationFuncDataProps {
   block: IBlock;
   typeList?: BlockType[];
+  useBoardId?: boolean;
+  updateParentInStore?: boolean;
+  updateParentInBackend?: boolean;
 }
 
 export default async function loadBlockChildrenOperationFunc(
@@ -45,55 +48,62 @@ export default async function loadBlockChildrenOperationFunc(
   );
 
   try {
-    const result = await blockNet.getBlockChildren(block, typeList);
+    const result = await blockNet.getBlockChildren(
+      block,
+      typeList,
+      dataProps.useBoardId
+    );
 
     if (result && result.errors) {
       throw result.errors;
     }
 
     const { blocks } = result;
-
-    // TODO: this list should be based on the valid chidren types
-    const parentUpdate: Partial<IBlock> = {
-      tasks: [],
-      groups: [],
-      projects: [],
-      groupTaskContext: [],
-      groupProjectContext: [],
-    };
-
-    blocks.forEach((nextBlock) => {
-      const container = parentUpdate[`${nextBlock.type}s`];
-      container.push(nextBlock.customId);
-
-      if (nextBlock.type === "group") {
-        parentUpdate.groupTaskContext!.push(nextBlock.customId);
-        parentUpdate.groupProjectContext!.push(nextBlock.customId);
-      }
-    });
-
     store.dispatch(blockActions.bulkAddBlocksRedux(blocks));
 
-    // tslint:disable-next-line: forin
-    for (const key in parentUpdate) {
-      const typeContainer = parentUpdate[key];
+    if (dataProps.updateParentInStore) {
+      // TODO: this list should be based on the valid chidren types
+      const parentUpdate: Partial<IBlock> = {
+        tasks: [],
+        groups: [],
+        projects: [],
+        groupTaskContext: [],
+        groupProjectContext: [],
+      };
 
-      // To update children customIds if not present or some are missing
-      // { tasks: [], ... }
-      if (
-        !Array.isArray(block[key]) ||
-        block[key].length !== typeContainer.length
-      ) {
-        // TODO: Think on, this is currently fire and forget, should we wait for it?
-        updateBlockOperationFunc({ block, data: parentUpdate }, options);
+      blocks.forEach((nextBlock) => {
+        const container = parentUpdate[`${nextBlock.type}s`];
+        container.push(nextBlock.customId);
 
-        store.dispatch(
-          blockActions.updateBlockRedux(block.customId, parentUpdate, {
-            arrayUpdateStrategy: "replace",
-          })
-        );
+        if (nextBlock.type === "group") {
+          parentUpdate.groupTaskContext!.push(nextBlock.customId);
+          parentUpdate.groupProjectContext!.push(nextBlock.customId);
+        }
+      });
 
-        break;
+      // tslint:disable-next-line: forin
+      for (const key in parentUpdate) {
+        const typeContainer = parentUpdate[key];
+
+        // To update children customIds if not present or some are missing
+        // { tasks: [], ... }
+        if (
+          !Array.isArray(block[key]) ||
+          block[key].length !== typeContainer.length
+        ) {
+          if (dataProps.updateParentInBackend) {
+            // TODO: Think on, this is currently fire and forget, should we wait for it?
+            updateBlockOperationFunc({ block, data: parentUpdate }, options);
+          }
+
+          store.dispatch(
+            blockActions.updateBlockRedux(block.customId, parentUpdate, {
+              arrayUpdateStrategy: "replace",
+            })
+          );
+
+          break;
+        }
       }
     }
 

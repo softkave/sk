@@ -1,6 +1,6 @@
 import { BlockLandingPage, BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
-import { BoardResourceType, BoardType } from "./types";
+import { BoardResourceType, BoardViewType } from "./types";
 
 const cbReq = "collaboration-requests";
 
@@ -83,33 +83,27 @@ export function getBlockLandingPage(block: IBlock): BlockLandingPage | null {
   return "self";
 }
 
-export const getBoardTypesForResourceType = (
+export const getBoardViewTypesForResourceType = (
   block: IBlock,
   resourceType: BoardResourceType,
-  isMobile: boolean
-): BoardType[] => {
-  // const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
-  let boardTypes: BoardType[] = [];
+  isMobile: boolean = false
+): BoardViewType[] => {
+  let boardTypes: BoardViewType[] = [];
 
   switch (resourceType) {
     case "tasks":
-    case "projects":
-      // boardTypes = ["list"];
-      boardTypes = ["kanban"];
-
       if (block.type === "group") {
-        boardTypes = ["list"];
+        return ["list"];
+      } else {
+        return ["status-kanban", "group-kanban"];
       }
 
-      // if (hasGroups) {
-      //   boardTypes = ["kanban"]
-      // }
-
-      // if (hasGroups && !isMobile) {
-      //   boardTypes.unshift("kanban");
-      // }
-
-      break;
+    case "projects":
+      if (block.type === "group") {
+        boardTypes = ["list"];
+      } else {
+        boardTypes = ["group-kanban"];
+      }
 
     case "groups":
     case "collaborators":
@@ -118,6 +112,10 @@ export const getBoardTypesForResourceType = (
   }
 
   return boardTypes;
+};
+
+export const getDefaultBoardViewType = (block: IBlock) => {
+  return getBoardViewTypesForResourceType(block, "tasks")[0];
 };
 
 export const getBlockTypeFromResourceType = (

@@ -121,9 +121,9 @@ const getRootBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!]) {
+  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!], $useBoardId: Boolean) {
     block {
-      getBlockChildren (customId: $customId, typeList: $typeList) {
+      getBlockChildren (customId: $customId, typeList: $typeList, useBoardId: $useBoardId) {
         errors {
           ...errorFragment
         }

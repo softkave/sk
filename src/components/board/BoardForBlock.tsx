@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 import path from "path";
 import React from "react";
 import {
@@ -17,6 +17,7 @@ import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlo
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
 import transferBlockOperationFn from "../../redux/operations/block/transferBlock";
+import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
@@ -35,7 +36,7 @@ import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardHomeForBlock from "./BoardHomeForBlock";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
-import { getBlockLandingPage } from "./utils";
+import { getBlockLandingPage, getDefaultBoardViewType } from "./utils";
 
 interface IBlockFormState {
   formType: BlockFormType;
@@ -120,7 +121,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     if (!!!loadProps.operation) {
-      loadBlockChildrenOperationFunc({ block });
+      loadBlockChildrenOperationFunc({ block, updateParentInStore: true });
     }
   };
 
@@ -146,17 +147,17 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
     });
 
     const url = `${routeURL.pathname}${routeURL.search}`;
-    // const url = `/app${routeURL.pathname}${routeURL.search}`;
-
     history.push(url);
   };
 
   const onClickBlock = (blocks: IBlock[]) => {
+    const clickedBlock = blocks[blocks.length - 1];
+    const bt = getDefaultBoardViewType(clickedBlock);
     const nextPath = path.normalize(
       blockPath +
         "/" +
         blocks.map((b) => getPath(b)).join("") +
-        "/tasks?bt=kanban"
+        `/tasks?bt=${bt}`
     );
 
     pushRoute(nextPath);
@@ -233,6 +234,10 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
       loadErrors.push(loadRequestsStatus.error);
     }
 
+    if (loadChildrenStatus && loadChildrenStatus.error) {
+      loadErrors.push(loadChildrenStatus.error);
+    }
+
     return loadErrors;
   };
 
@@ -269,17 +274,22 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
     );
   };
 
-  const onDragEnd = React.useCallback(
+  const dndColumnWarning = () => {
+    message.warn("Drag and drop is not supported within a column");
+  };
+
+  const handleGroupRelatedDrag = React.useCallback(
     (result: DropResult, provided: ResponderProvided) => {
       if (!result.destination) {
         return;
       }
 
-      // did not move anywhere - can bail early
-      if (
-        result.source.droppableId === result.destination.droppableId &&
-        result.source.index === result.destination.index
-      ) {
+      // did not move out of group - can bail early
+      if (result.source.droppableId === result.destination.droppableId) {
+        if (result.source.index !== result.destination.index) {
+          dndColumnWarning();
+        }
+
         return;
       }
 
@@ -323,6 +333,55 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
           destinationBlockID: result.destination?.droppableId,
         },
       });
+    },
+    [store]
+  );
+
+  const handleStatusRelatedDrag = React.useCallback(
+    (result: DropResult, provided: ResponderProvided) => {
+      if (!result.destination) {
+        return;
+      }
+
+      // did not move out of status - can bail early
+      if (result.source.droppableId === result.destination.droppableId) {
+        if (result.source.index !== result.destination.index) {
+          dndColumnWarning();
+        }
+
+        return;
+      }
+
+      const destinationStatus = result.destination.droppableId;
+      const draggedBlockID = result.draggableId;
+
+      // TODO: volatile, blocks are possibly null OR undefined
+      const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+
+      console.log({ destinationStatus, draggedBlockID, draggedBlock });
+      return;
+
+      updateBlockOperationFunc({
+        block: draggedBlock,
+        data: {
+          status: destinationStatus,
+        },
+      });
+    },
+    [store]
+  );
+
+  const onDragEnd = React.useCallback(
+    (result: DropResult, provided: ResponderProvided) => {
+      console.log({ result });
+      if (result.type === "status") {
+        handleStatusRelatedDrag(result, provided);
+      } else if (
+        result.type === "groupTaskContext" ||
+        result.type === "groupProjectContext"
+      ) {
+        handleGroupRelatedDrag(result, provided);
+      }
     },
     [store]
   );

@@ -132,21 +132,25 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
 
   const renderGroupHeader = (
     group: IBlock,
-    provided: DraggableProvided,
-    snapshot: DraggableStateSnapshot,
-    isDragDisabled: boolean
+    provided?: DraggableProvided,
+    snapshot?: DraggableStateSnapshot,
+    isDragDisabled?: boolean
   ) => {
+    const dragHandleProps = provided ? provided.dragHandleProps : {};
+
     return (
       <StyledContainer
         s={{
           width: "100%",
           cursor: isDragDisabled
             ? undefined
-            : snapshot.isDragging
-            ? "grabbing"
-            : "grab",
+            : snapshot
+            ? snapshot.isDragging
+              ? "grabbing"
+              : "grab"
+            : undefined,
         }}
-        {...provided.dragHandleProps}
+        {...dragHandleProps}
       >
         <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
           <BlockThumbnail
@@ -286,4 +290,4 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   );
 };
 
-export default BoardTypeKanban;
+export default React.memo(BoardTypeKanban);

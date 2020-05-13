@@ -102,11 +102,16 @@ export function deleteBlock(block: IBlock) {
   );
 }
 
-export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
+export function getBlockChildren(
+  block: IBlock,
+  typeList?: BlockType[],
+  useBoardId?: boolean
+) {
+  console.log({ block, typeList, useBoardId });
   return auth(
     null,
     getBlockChildrenQuery,
-    { typeList, customId: block.customId },
+    { typeList, useBoardId, customId: block.customId },
     "data.block.getBlockChildren"
   );
 }

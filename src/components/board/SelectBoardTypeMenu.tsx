@@ -18,21 +18,22 @@ import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
   IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
-import { BoardResourceType, BoardType } from "./types";
-import { getBoardTypesForResourceType } from "./utils";
+import { BoardResourceType, BoardViewType } from "./types";
+import { getBoardViewTypesForResourceType } from "./utils";
 
 const boartTypesToIconMap = {
-  kanban: <Columns style={{ width: "16px" }} />,
+  ["group-kanban"]: <Columns style={{ width: "16px" }} />,
+  ["status-kanban"]: <Columns style={{ width: "16px" }} />,
   list: <MenuOutlined />,
   tab: <InsertRowAboveOutlined />,
 };
 
 export interface ISelectBoardTypeMenuProps {
-  boardType: BoardType;
+  boardType: BoardViewType;
   isMobile: boolean;
   resourceType: BoardResourceType;
   block: IBlock;
-  onSelect: (boardType: BoardType) => void;
+  onSelect: (boardType: BoardViewType) => void;
 }
 
 const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
@@ -62,14 +63,14 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
   ) => {
     const availableBoardTypes =
       (resourceType &&
-        getBoardTypesForResourceType(block, resourceType, isMobile)) ||
+        getBoardViewTypesForResourceType(block, resourceType, isMobile)) ||
       [];
 
     return (
       <Menu
         selectedKeys={boardType ? [boardType] : []}
         onClick={(event) => {
-          onSelect(event.key as BoardType);
+          onSelect(event.key as BoardViewType);
           renderMenuProps.closeMenu();
         }}
       >

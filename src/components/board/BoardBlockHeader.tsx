@@ -10,8 +10,8 @@ import SelectBlockOptionsMenu, {
 } from "./SelectBlockOptionsMenu";
 import SelectBoardTypeMenu from "./SelectBoardTypeMenu";
 import SelectResourceTypeMenu from "./SelectResourceTypeMenu";
-import { BoardResourceType, BoardType, CreateMenuKey } from "./types";
-import { getBoardTypesForResourceType } from "./utils";
+import { BoardResourceType, BoardViewType, CreateMenuKey } from "./types";
+import { getBoardViewTypesForResourceType } from "./utils";
 
 const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
   switch (type) {
@@ -29,7 +29,7 @@ const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
 
 export interface IBoardBlockHeaderProps {
   block: IBlock;
-  selectedBoardType: BoardType;
+  selectedBoardType: BoardViewType;
   isMobile: boolean;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
@@ -39,7 +39,7 @@ export interface IBoardBlockHeaderProps {
   onClickDeleteBlock: () => void;
   onNavigate: (
     resourceType: BoardResourceType | null,
-    boardType: BoardType | null
+    boardType: BoardViewType | null
   ) => void;
 
   resourceType?: BoardResourceType | null;
@@ -96,7 +96,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
   };
 
   const onSelectResourceTypeMenuItem = (key: BoardResourceType) => {
-    const boardTypesForResourceType = getBoardTypesForResourceType(
+    const boardTypesForResourceType = getBoardViewTypesForResourceType(
       block,
       key,
       isMobile
@@ -122,7 +122,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     }
   };
 
-  const onSelectBoardTypeMenuItem = (key: BoardType) => {
+  const onSelectBoardTypeMenuItem = (key: BoardViewType) => {
     onNavigate(resourceType!, key);
   };
 

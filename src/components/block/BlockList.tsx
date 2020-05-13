@@ -4,7 +4,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail, {
   BlockThumbnailShowField,
-  IBlockThumbnailProps
+  IBlockThumbnailProps,
 } from "../block/BlockThumnail";
 import List from "../styled/List";
 
@@ -27,7 +27,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
       emptyDescription,
       itemStyle,
       showExploreMenu,
-      onClickChildMenuItem
+      onClickChildMenuItem,
     } = this.props;
 
     return (
@@ -35,8 +35,8 @@ class BlockList extends React.PureComponent<IBlockListProps> {
         dataSource={blocks}
         rowKey="customId"
         emptyDescription={emptyDescription}
-        renderItem={block => (
-          <StyledBlockThumbnailContainer style={itemStyle}>
+        renderItem={(block) => (
+          <StyledBlockThumbnailContainer key={block.customId} style={itemStyle}>
             <BlockThumbnail
               block={block}
               showExploreMenu={showExploreMenu}
@@ -52,7 +52,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
 }
 
 const StyledBlockThumbnailContainer = styled.div({
-  padding: "16px 0"
+  padding: "16px 0",
 });
 
 export default BlockList;

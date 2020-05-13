@@ -17,18 +17,19 @@ export interface ILoadBlockChildrenProps {
 
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, getChildrenIDs } = props;
+  const [stopRetries, setStopRetries] = React.useState(false);
   const blockIDs = getChildrenIDs();
   const blocks = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, blockIDs)
   );
 
   const loadParentChildren = (loadProps: IUseOperationStatus) => {
-    if (blocks.length === blockIDs.length) {
-      return;
-    }
-
-    if (!!!loadProps.operation) {
-      loadBlockChildrenOperationFunc({ block: parent });
+    if (blocks.length < blockIDs.length && !stopRetries) {
+      setStopRetries(true);
+      loadBlockChildrenOperationFunc({
+        block: parent,
+        updateParentInStore: true,
+      });
     }
   };
 

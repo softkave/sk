@@ -11,6 +11,9 @@ import Task from "./Task";
 export interface ITaskListProps {
   tasks: IBlock[];
 
+  noDnD?: boolean;
+  droppableType?: string;
+  droppableId?: string;
   block?: IBlock;
   isDragDisabled?: boolean;
   isDropDisabled?: boolean;
@@ -26,6 +29,9 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
     isDragDisabled,
     isDropDisabled,
     block,
+    droppableId,
+    droppableType,
+    noDnD,
   } = props;
   const filteredTasks =
     isObject(selectedCollaborators) &&
@@ -46,6 +52,25 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
   const renderTask = (task: IBlock, i: number) => {
     const isNotLastTask = i < tasksToRender.length - 1;
 
+    if (noDnD) {
+      return (
+        <StyledBlockThumbnailContainer
+          key={task.customId}
+          style={{
+            borderBottom: isNotLastTask ? "1px solid #f0f0f0" : undefined,
+            paddingBottom: isNotLastTask ? "16px" : undefined,
+          }}
+        >
+          <Task
+            task={task}
+            onEdit={
+              toggleForm ? (editedTask) => toggleForm(editedTask) : undefined
+            }
+          />
+        </StyledBlockThumbnailContainer>
+      );
+    }
+
     return (
       <Draggable
         isDragDisabled={isDragDisabled}
@@ -64,7 +89,6 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                 borderBottom: isNotLastTask ? "1px solid #f0f0f0" : undefined,
                 paddingBottom: isNotLastTask ? "16px" : undefined,
                 backgroundColor: snapshot.isDragging ? "#eee" : undefined,
-                // backgroundColor: "inherit",
                 cursor: snapshot.isDragging ? "grabbing" : undefined,
                 ...provided.draggableProps.style,
               }}
@@ -95,11 +119,11 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
     );
   };
 
-  if (block) {
+  if (block && !noDnD) {
     return (
       <Droppable
-        droppableId={block.customId}
-        type="task"
+        droppableId={droppableId || block.customId}
+        type={droppableType || "task"}
         // direction="horizontal"
         isDropDisabled={isDropDisabled}
       >
@@ -119,7 +143,11 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
     );
   }
 
-  return renderList();
+  return (
+    <StyledContainer style={{ flexDirection: "column", width: "100%" }}>
+      {renderList()}
+    </StyledContainer>
+  );
 };
 
 const StyledBlockThumbnailContainer = styled.div`
