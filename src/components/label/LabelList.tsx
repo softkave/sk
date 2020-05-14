@@ -8,7 +8,7 @@ import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { newId } from "../../utils/utils";
-import { validateWithYupSchema } from "../form/utils";
+import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormikExtended from "../hooks/useFormikExtended";
 import { labelValidationSchemas } from "../label/validation";
@@ -22,7 +22,7 @@ export interface ILabelListProps {
   labelList: IBlockLabel[];
   saveChanges: (labelList: IBlockLabel[]) => Promise<void>;
 
-  errors?: FormikErrors<IBlockLabel[]>;
+  errors?: FormikErrors<{ labelList: IBlockLabel[] }>;
   isSubmitting?: boolean;
 }
 
@@ -35,7 +35,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     // TODO: should we alert the user before saving if they have editing labels?
 
     editingLabelList.reset();
-    newLabelList.reset();
+    // newLabelList.reset();
     saveChanges(values.labelList);
   };
 
@@ -51,8 +51,31 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       validationSchema: yup.object().shape({
         labelList: labelValidationSchemas.labelList,
       }),
+      validateOnBlur: true,
+      validateOnChange: true,
     },
   });
+
+  React.useEffect(() => {
+    const processErrors = () => {
+      if (errors && errors.labelList) {
+        const newEditingList: string[] = [];
+
+        (errors.labelList as any).forEach((e, i) => {
+          if (e) {
+            const status = formik.values.labelList[i];
+            newEditingList.push(status.customId);
+          }
+        });
+
+        if (newEditingList.length > 0) {
+          editingLabelList.set(newEditingList);
+        }
+      }
+    };
+
+    processErrors();
+  }, [errors, formik.values.labelList]);
 
   const onCommitChanges = (label: IBlockLabel, index: number) => {
     const err = validateWithYupSchema(
@@ -61,19 +84,29 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     );
 
     if (err) {
-      formik.setFieldTouched(`labelList.[${index}].name`, true);
-      formik.setFieldTouched(`labelList.[${index}].description`, true);
+      formik.setFieldTouched(
+        `labelList.[${index}]`,
+        getFormikTouched(err) as any,
+        true
+      );
+
+      formik.setFieldError(`labelList.[${index}]`, err);
+
+      // formik.setFieldTouched(`labelList.[${index}].name`, true);
+      // formik.setFieldTouched(`labelList.[${index}].description`, true);
       return;
     }
 
     editingLabelList.remove(label.customId);
-    newLabelList.remove(label.customId);
+    // newLabelList.remove(label.customId);
   };
 
-  const onDiscardChanges = (label: IBlockLabel, index: number) => {
-    formik.setFieldValue(`labelList.[${index}]`, label);
-    editingLabelList.remove(label.customId);
-    newLabelList.remove(label.customId);
+  const onDiscardChanges = (index: number, initialValue?: IBlockLabel) => {
+    if (initialValue) {
+      formik.setFieldValue(`labelList.[${index}]`, initialValue);
+      editingLabelList.remove(initialValue.customId);
+      // newLabelList.remove(initialValue.customId);
+    }
   };
 
   const onEdit = (id: string) => {
@@ -83,11 +116,14 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   const onChange = (index: number, data: Partial<IBlockLabel>) => {
     const nameField = `labelList.[${index}].name`;
     const descField = `labelList.[${index}].description`;
+    const changedFields = Object.keys(data);
 
-    if (data.name) {
-      formik.setFieldValue(nameField, data.name);
-    } else if (data.description) {
-      formik.setFieldValue(descField, data.description);
+    if (changedFields.includes("name")) {
+      formik.setFieldValue(nameField, data.name, true);
+    }
+
+    if (changedFields.includes("description")) {
+      formik.setFieldValue(descField, data.description, true);
     }
   };
 
@@ -96,15 +132,21 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     formik.handleBlur(fullField);
   };
 
+  const getInitialValue = (id: string) => {
+    return formik.initialValues.labelList.find(
+      (status) => status.customId === id
+    );
+  };
+
   const onDelete = React.useCallback(
     (index: number) => {
       const label = formik.values.labelList[index];
 
       deleteIndexInArrayField("labelList", index);
       editingLabelList.remove(label.customId);
-      newLabelList.remove(label.customId);
+      // newLabelList.remove(label.customId);
     },
-    [editingLabelList, formik.values.labelList, newLabelList]
+    [editingLabelList, formik.values.labelList]
   );
 
   const renderLabelItem = (label: IBlockLabel, index: number) => {
@@ -112,13 +154,15 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const touched = (formik.touched.labelList || [])[index];
     const labelErrors: any = (formik.errors.labelList || [])[index] || {};
     const values = formik.values.labelList[index];
+    const initialValue = getInitialValue(label.customId);
 
     return (
       <LabelFormItem
+        key={label.customId}
         onChange={(data) => onChange(index, data)}
         onCommitChanges={() => onCommitChanges(label, index)}
         onDelete={() => onDelete(index)}
-        onDiscardChanges={() => onDiscardChanges(label, index)}
+        onDiscardChanges={() => onDiscardChanges(index, initialValue)}
         onEdit={() => onEdit(label.customId)}
         value={values}
         disabled={isSubmitting}

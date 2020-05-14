@@ -4,9 +4,9 @@ const errorMessages = {
   requestHasBeenSentBefore:
     "Request has been sent before to this email address",
   sendingRequestToAnExistingCollaborator:
-    "User with this email address is already a part of this organization",
+    "A user with this email address exists in this organization",
   cannotRevokeRequest:
-    "Request does not exist, or has been accepted or declined"
+    "Request does not exist, or has been accepted or declined",
 };
 
 const errorFields = {
@@ -16,10 +16,10 @@ const errorFields = {
   requestHasBeenSentBefore: "system.notification.requestHasBeenSentBefore",
   cannotRevokeRequest: "system.notification.cannotRevokeRequest",
   sendingRequestToAnExistingCollaborator:
-    "system.notification.sendingRequestToAnExistingCollaborator"
+    "system.notification.sendingRequestToAnExistingCollaborator",
 };
 
 export {
   errorFields as notificationErrorFields,
-  errorMessages as notificationErrorMessages
+  errorMessages as notificationErrorMessages,
 };

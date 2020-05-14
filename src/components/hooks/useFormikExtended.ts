@@ -31,17 +31,15 @@ const useFormikExtended = <T>(
   React.useEffect(() => {
     if (props.errors) {
       formik.setErrors(props.errors);
-    } else {
-      formik.setErrors({});
     }
-  }, [props, formik]);
+  }, [props.errors, formik]);
 
   function getFieldFormikItems(field: string) {
     const currentList = get(formik.values, field);
     const currentTouched = get(formik.touched, field);
     const currentErrors = get(formik.errors, field);
-    const listTouched = Array.from((currentTouched as any) || []);
-    const listErrors = Array.from((currentErrors as any[]) || []);
+    const listTouched = [...Array.from((currentTouched as any) || [])];
+    const listErrors = [...Array.from((currentErrors as any[]) || [])];
     const list = [...currentList];
     return { list, listTouched, listErrors };
   }
@@ -53,7 +51,7 @@ const useFormikExtended = <T>(
     list: any[]
   ) {
     formik.setFieldTouched(field, listTouched as any);
-    // formik.setFieldError(field, listErrors as any);
+    formik.setFieldError(field, listErrors as any);
     formik.setFieldValue(field, list);
   }
 

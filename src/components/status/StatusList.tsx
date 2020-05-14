@@ -1,5 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import set from "lodash/set";
 import React from "react";
 import {
   DragDropContext,
@@ -20,7 +21,7 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../form/FormStyledComponents";
-import { validateWithYupSchema } from "../form/utils";
+import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormikExtended from "../hooks/useFormikExtended";
 import { labelValidationSchemas } from "../label/validation";
@@ -32,7 +33,7 @@ export interface IStatusListProps {
   statusList: IBlockStatus[];
   saveChanges: (statusList: IBlockStatus[]) => Promise<void>;
 
-  errors?: IFormikFormErrors<IBlockStatus[]>;
+  errors?: IFormikFormErrors<{ statusList: IBlockStatus[] }>;
   isSubmitting?: boolean;
 }
 
@@ -45,7 +46,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     // TODO: should we alert the user before saving if they have editing statuses?
 
     editingStatusList.reset();
-    newStatusList.reset();
+    // newStatusList.reset();
     saveChanges(values.statusList);
   };
 
@@ -62,8 +63,31 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       validationSchema: yup.object().shape({
         statusList: labelValidationSchemas.labelList,
       }),
+      validateOnBlur: true,
+      validateOnChange: true,
     },
   });
+
+  React.useEffect(() => {
+    const processErrors = () => {
+      if (errors && errors.statusList) {
+        const newEditingList: string[] = [];
+
+        (errors.statusList as any).forEach((e, i) => {
+          if (e) {
+            const status = formik.values.statusList[i];
+            newEditingList.push(status.customId);
+          }
+        });
+
+        if (newEditingList.length > 0) {
+          editingStatusList.set(newEditingList);
+        }
+      }
+    };
+
+    processErrors();
+  }, [errors, formik.values.statusList]);
 
   const onDelete = (index: number) => {
     const status = formik.values.statusList[index];
@@ -80,19 +104,30 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     );
 
     if (err) {
-      formik.setFieldTouched(`statusList.[${index}].name`, true);
-      formik.setFieldTouched(`statusList.[${index}].description`, true);
+      formik.setFieldTouched(
+        `statusList.[${index}]`,
+        getFormikTouched(err) as any,
+        true
+      );
+
+      formik.setFieldError(`statusList.[${index}]`, err);
+
+      // formik.validateField(`statusList.[${index}]`);
+      // formik.setFieldTouched(`statusList.[${index}].name`, true);
+      // formik.setFieldTouched(`statusList.[${index}].description`, true);
       return;
     }
 
     editingStatusList.remove(status.customId);
-    newStatusList.remove(status.customId);
+    // newStatusList.remove(status.customId);
   };
 
-  const onDiscardChanges = (status: IBlockStatus, index: number) => {
-    formik.setFieldValue(`statusList.[${index}]`, status);
-    editingStatusList.remove(status.customId);
-    newStatusList.remove(status.customId);
+  const onDiscardChanges = (index: number, initialValue?: IBlockStatus) => {
+    if (initialValue) {
+      formik.setFieldValue(`statusList.[${index}]`, initialValue);
+      editingStatusList.remove(initialValue.customId);
+      // newStatusList.remove(initialValue.customId);
+    }
   };
 
   const onEdit = (id: string) => {
@@ -102,11 +137,14 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   const onChange = (index: number, data: Partial<IBlockStatus>) => {
     const nameField = `statusList.[${index}].name`;
     const descField = `statusList.[${index}].description`;
+    const changedFields = Object.keys(data);
 
-    if (data.name) {
-      formik.setFieldValue(nameField, data.name);
-    } else if (data.description) {
-      formik.setFieldValue(descField, data.description);
+    if (changedFields.includes("name")) {
+      formik.setFieldValue(nameField, data.name, true);
+    }
+
+    if (changedFields.includes("description")) {
+      formik.setFieldValue(descField, data.description, true);
     }
   };
 
@@ -115,7 +153,11 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     formik.handleBlur(fullField);
   };
 
-  console.log({ formik });
+  const getInitialValue = (id: string) => {
+    return formik.initialValues.statusList.find(
+      (status) => status.customId === id
+    );
+  };
 
   const renderStatusItem = (
     status: IBlockStatus,
@@ -127,13 +169,14 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const touched = (formik.touched.statusList || [])[index];
     const statusErrors: any = (formik.errors.statusList || [])[index];
     const values = formik.values.statusList[index];
+    const initialValue = getInitialValue(status.customId);
 
     return (
       <StatusFormItem
         onChange={(data) => onChange(index, data)}
         onCommitChanges={() => onCommitChanges(status, index)}
         onDelete={() => onDelete(index)}
-        onDiscardChanges={() => onDiscardChanges(status, index)}
+        onDiscardChanges={() => onDiscardChanges(index, initialValue)}
         onEdit={() => onEdit(status.customId)}
         provided={provided}
         snapshot={snapshot}
@@ -251,12 +294,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       customId: newId(),
     };
 
-    addNewValueToArrayField(
-      "statusList",
-      status,
-      { name: "", description: "" },
-      {}
-    );
+    addNewValueToArrayField("statusList", status, { name: "" }, {});
     editingStatusList.add(status.customId);
     newStatusList.add(status.customId);
   };

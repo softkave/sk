@@ -35,11 +35,12 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   });
 
   const errors = operationStatus.error
-    ? flattenErrorListWithDepthInfinite(operationStatus.error).block
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.block && errors.block.availableStatus) {
-    errors.availableStatus = errors.block.availableStatus;
+  if (errors && errors.data && errors.data.availableStatus) {
+    errors.statusList = errors.data.availableStatus;
+    delete errors.data;
   }
 
   const onSaveChanges = async (values: IBlockStatus[]) => {

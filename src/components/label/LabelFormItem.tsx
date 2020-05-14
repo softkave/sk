@@ -2,7 +2,6 @@ import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Space } from "antd";
 import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
-import { values } from "lodash";
 import React from "react";
 import { Check, Trash, X } from "react-feather";
 import { IBlockLabel } from "../../models/block/block";
@@ -51,6 +50,8 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
     onEdit,
     style,
   } = props;
+
+  console.log({ props });
 
   const renderInputs = () => {
     return (
@@ -115,7 +116,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
           <RoundEdgeTags
             // contentColor="white"
             color={value.color}
-            children={values.name}
+            children={value.name}
           />
         </StyledContainer>
         <StyledContainer s={{ marginTop: "4px" }}>

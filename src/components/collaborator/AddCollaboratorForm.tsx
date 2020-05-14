@@ -1,5 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
+import delay from "lodash/delay";
+import isBoolean from "lodash/isBoolean";
 import isString from "lodash/isString";
 import moment from "moment";
 import React from "react";
@@ -50,7 +52,7 @@ const validationSchema = yup.object().shape({
     .string()
     .max(notificationConstants.maxAddCollaboratorMessageLength),
   expiresAt: yup.number(),
-  requests: yup
+  collaborators: yup
     .array()
     .of(requestSchema)
     .min(blockConstants.minAddCollaboratorValuesLength)
@@ -91,7 +93,60 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     errors: externalErrors,
   } = props;
 
+  const getEmailConflict = (email: string, itemIndex: number) => {
+    const collaborators = formik.values.collaborators;
+    email = email.toLowerCase();
+
+    let exists =
+      collaborators.findIndex((req, i) => {
+        if (i === itemIndex) {
+          return false;
+        }
+
+        return req.email.toLowerCase() === email;
+      }) !== -1;
+
+    if (exists) {
+      return emailExistsErrorMessage;
+    }
+
+    exists =
+      existingCollaborators.findIndex(
+        (user) => user.email.toLowerCase() === email
+      ) !== -1;
+
+    if (exists) {
+      return notificationErrorMessages.sendingRequestToAnExistingCollaborator;
+    }
+
+    exists =
+      existingCollaborationRequests.findIndex(
+        (req) => req.to.email.toLowerCase() === email
+      ) !== -1;
+
+    if (exists) {
+      return notificationErrorMessages.requestHasBeenSentBefore;
+    }
+  };
+
   const internalOnSubmit = (values: IAddCollaboratorFormValues) => {
+    // TODO: handle confict errors this way for now, and put them with validation
+    // using the validation schema in the validate function as formik prop
+    let hasError = false;
+    const errs = formik.values.collaborators.map((req, i) => {
+      const emailConflictError = getEmailConflict(req.email, i);
+
+      if (emailConflictError) {
+        hasError = true;
+        return { email: emailConflictError };
+      }
+    });
+
+    if (hasError) {
+      formik.setFieldError("collaborators", errs as any);
+      return;
+    }
+
     onSubmit({
       expiresAt: values.expiresAt,
       message: values.message,
@@ -115,36 +170,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
       validationSchema,
     },
   });
-
-  const getEmailConflict = (email: string, itemIndex: number) => {
-    const requests = formik.values.collaborators;
-
-    let exists = !!requests.find((req, i) => {
-      if (i === itemIndex) {
-        return false;
-      }
-
-      return req.email === email;
-    });
-
-    if (exists) {
-      return emailExistsErrorMessage;
-    }
-
-    exists = !!existingCollaborators.find((user) => user.email === email);
-
-    if (exists) {
-      return notificationErrorMessages.sendingRequestToAnExistingCollaborator;
-    }
-
-    exists = !!existingCollaborationRequests.find(
-      (req) => req.to.email === email
-    );
-
-    if (exists) {
-      return notificationErrorMessages.requestHasBeenSentBefore;
-    }
-  };
 
   const renderDefaultMessageInput = () => {
     const { touched, errors, values, handleChange, handleBlur } = formik;
@@ -195,28 +220,27 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
   };
 
   const onDelete = (index: number) => {
-    deleteIndexInArrayField("statusList", index);
+    deleteIndexInArrayField("collaborators", index);
   };
 
   const onChange = (
     index: number,
     data: Partial<IAddCollaboratorFormItemValues>
   ) => {
-    const emailPath = `statusList.[${index}].email`;
-    const bodyPath = `statusList.[${index}].body`;
-    const expiresAtPath = `statusList.[${index}].expiresAt`;
+    const emailPath = `collaborators.[${index}].email`;
+    const bodyPath = `collaborators.[${index}].body`;
+    const expiresAtPath = `collaborators.[${index}].expiresAt`;
+    const changedFields = Object.keys(data);
 
-    if (data.email) {
+    if (changedFields.includes("email")) {
       formik.setFieldValue(emailPath, data.email);
+    }
 
-      const emailError = getEmailConflict(data.email, index);
-
-      if (emailError) {
-        formik.setFieldError(emailPath, emailError);
-      }
-    } else if (data.body) {
+    if (changedFields.includes("body")) {
       formik.setFieldValue(bodyPath, data.body);
-    } else if (data.expiresAt) {
+    }
+
+    if (changedFields.includes("expiresAt")) {
       formik.setFieldValue(expiresAtPath, data.expiresAt);
     }
   };
@@ -257,7 +281,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
       <Form.Item
         label="Requests"
         help={
-          touched.collaborators &&
+          isBoolean(touched.collaborators) &&
           isString(errors.collaborators) && (
             <FormError>{errors.collaborators}</FormError>
           )

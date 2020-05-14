@@ -15,6 +15,7 @@ export interface IViewByStatusProps {
   onClickUpdateBlock: (block: IBlock) => void;
 }
 
+// TODO: implement drag and drop in this board view
 const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   const { block, onClickUpdateBlock, blocks } = props;
 

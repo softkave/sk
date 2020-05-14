@@ -38,6 +38,12 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
+  React.useEffect(() => {
+    if (operationStatus.isCompleted && !props.block) {
+      onClose();
+    }
+  });
+
   const onSubmit = async (values: IEditOrgFormValues) => {
     const data = { ...block, ...values };
     setBlock(data);
@@ -66,8 +72,6 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
       );
     }
   };
-
-  console.log({ operationStatus });
 
   return (
     <EditOrgForm

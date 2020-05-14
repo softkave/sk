@@ -11,7 +11,7 @@ import Message from "./Message";
 
 export interface IAddCollaboratorFormItemProps {
   value: IAddCollaboratorFormItemValues;
-  onChange: (value: IAddCollaboratorFormItemValues) => void;
+  onChange: (value: Partial<IAddCollaboratorFormItemValues>) => void;
   onDelete: (value: IAddCollaboratorFormItemValues) => void;
 
   disabled?: boolean;
@@ -55,7 +55,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             value={value.email}
             autoComplete="email"
             onChange={(event) => {
-              onChange({ ...value, email: event.target.value });
+              onChange({ email: event.target.value });
             }}
             disabled={disabled}
           />
@@ -72,7 +72,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             placeholder="Enter request message"
             value={value.body}
             onChange={(body) => {
-              onChange({ ...value, body });
+              onChange({ body });
             }}
             disabled={disabled}
           />
@@ -91,7 +91,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             value={value.expiresAt}
             minDate={moment().subtract(1, "day").endOf("day")}
             onChange={(date) => {
-              onChange({ ...value, expiresAt: date });
+              onChange({ expiresAt: date });
             }}
             disabled={disabled}
             style={{ width: "100%" }}

@@ -47,6 +47,7 @@ export function addBlock(block: IBlock) {
     "availableLabels",
     "labels",
     "status",
+    "boardId",
   ];
 
   return auth(

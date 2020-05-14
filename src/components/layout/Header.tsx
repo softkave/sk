@@ -75,8 +75,8 @@ const Header: React.FC<IHeaderProps> = (props) => {
   // TODO: disabledback button for now
   return (
     <StyledHeaderContainer>
-      {/* <StyledContainer s={{ alignItems: "center" }}>
-        {onNavigateBack && (
+      <StyledContainer s={{ alignItems: "center" }}>
+        {/* {onNavigateBack && (
           <StyledFlatButton
             onClick={onNavigateBack}
             style={{ marginRight: "16px" }}
@@ -85,13 +85,13 @@ const Header: React.FC<IHeaderProps> = (props) => {
               style={{ width: "20px", height: "20px", marginTop: "4px" }}
             />
           </StyledFlatButton>
-        )}
+        )} */}
         <StyledFlatButton>
           <Link to="/app">
             <HomeOutlined />
           </Link>
         </StyledFlatButton>
-      </StyledContainer> */}
+      </StyledContainer>
       <StyledContainer s={{ flex: 1 }} />
       <StyledContainer s={{ marginLeft: "12px" }}>
         <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>

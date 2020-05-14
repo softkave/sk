@@ -56,7 +56,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
       >
         <StyledMenuItem key="view">
           <PlayCircleOutlined />
-          View {blockTypeFullName}
+          View or Edit {blockTypeFullName}
         </StyledMenuItem>
         <StyledMenuItem key="delete">
           <DeleteOutlined />

@@ -56,6 +56,14 @@ export default function getNewBlock(
     collaborationRequests: type === "org" ? [] : undefined,
     availableLabels: [],
     availableStatus: type === "org" ? getDefaultStatuses(user) : undefined,
+    boardId:
+      type === "org"
+        ? undefined
+        : parent
+        ? parent.type === "group"
+          ? parent.parent
+          : parent.customId
+        : undefined,
   };
 
   return cast<IBlock>(newBlock);

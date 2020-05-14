@@ -50,8 +50,6 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
     style,
   } = props;
 
-  console.log(value.name, { touched, errors });
-
   const renderEditingStatus = () => {
     return (
       <StyledContainer s={{ flexDirection: "column", width: "100%" }}>

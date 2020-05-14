@@ -1,3 +1,7 @@
+import { FormikTouched } from "formik";
+import isArray from "lodash/isArray";
+import isObject from "lodash/isObject";
+
 export const validateWithYupSchema = (yupSchema, values) => {
   try {
     yupSchema.validateSync(values, { abortEarly: false });
@@ -21,4 +25,16 @@ export const validateWithYupSchema = (yupSchema, values) => {
 
     return err;
   }
+};
+
+export const getFormikTouched = <T>(val: T): FormikTouched<T> => {
+  return Object.keys(val).reduce((accumulator, field) => {
+    if (isObject(val[field]) || isArray(val[field])) {
+      accumulator[field] = getFormikTouched(val[field]);
+    } else {
+      accumulator[field] = true;
+    }
+
+    return accumulator;
+  }, {});
 };

@@ -16,14 +16,14 @@ export interface ICRProps {
   organization: IBlock;
 }
 
-const CollaborationRequests: React.FC<ICRProps> = props => {
+const CollaborationRequests: React.FC<ICRProps> = (props) => {
   const { organization } = props;
-  const requests = useSelector<IReduxState, INotification[]>(state =>
+  const requests = useSelector<IReduxState, INotification[]>((state) =>
     getNotificationsAsArray(state, organization.collaborationRequests!)
   );
   const requestsStatus = useOperation({
     operationID: getBlockCollaborationRequestsOperationID,
-    resourceID: organization.customId
+    resourceID: organization.customId,
   });
 
   if (requestsStatus.error) {
@@ -33,7 +33,7 @@ const CollaborationRequests: React.FC<ICRProps> = props => {
           width: "100%",
           height: "100%",
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <GeneralError error={requestsStatus.error} />
@@ -45,7 +45,7 @@ const CollaborationRequests: React.FC<ICRProps> = props => {
 
   const renderItem = (request: INotification) => {
     return (
-      <StyledContainer s={{ padding: "16px 0" }}>
+      <StyledContainer key={request.customId} s={{ padding: "16px 0" }}>
         <CollaborationRequestThumbnail request={request} />
       </StyledContainer>
     );

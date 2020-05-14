@@ -35,11 +35,12 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   });
 
   const errors = operationStatus.error
-    ? flattenErrorListWithDepthInfinite(operationStatus.error).block
+    ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.block && errors.block.availableLabels) {
-    errors.availableLabels = errors.block.availableLabels;
+  if (errors && errors.data && errors.data.availableLabels) {
+    errors.labelList = errors.data.availableLabels;
+    delete errors.data;
   }
 
   const onSaveChanges = async (values: IBlockLabel[]) => {

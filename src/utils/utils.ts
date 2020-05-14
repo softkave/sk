@@ -1,3 +1,5 @@
+import get from "lodash/get";
+import set from "lodash/set";
 import { indexArray } from "./object";
 
 const uuid = require("uuid/v4");
@@ -65,9 +67,10 @@ export const flattenErrorListWithDepthInfinite = (
 
   errors.forEach((error) => {
     const field = error.field || "error";
+    let errs: any = get(err, field);
 
-    if (err[field]) {
-      err[field].push(error.message);
+    if (errs) {
+      errs.push(error.message);
       return;
     }
 
@@ -84,7 +87,8 @@ export const flattenErrorListWithDepthInfinite = (
     });
 
     if (!parentExists) {
-      err[field] = [error.message];
+      errs = [error.message];
+      set(err, field, errs);
     }
   });
 
