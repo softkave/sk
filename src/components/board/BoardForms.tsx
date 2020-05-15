@@ -52,9 +52,6 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
       );
     }
 
-    const formActionType = !!block ? "Edit" : "Create";
-    const formName = getBlockTypeFullName(blockType);
-
     switch (blockType) {
       case "group":
         return (

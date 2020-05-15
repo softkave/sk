@@ -60,6 +60,8 @@ const StyledColumnBodyContainer = styled.div`
   flex: 1;
   display: flex;
   overflow: auto;
+  flex-direction: column;
+  width: 100%;
 `;
 
 export default React.memo(Column);

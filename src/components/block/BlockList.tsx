@@ -4,18 +4,15 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail, {
   BlockThumbnailShowField,
-  IBlockThumbnailProps,
 } from "../block/BlockThumnail";
 import List from "../styled/List";
 
 export interface IBlockListProps {
   blocks: IBlock[];
-  showExploreMenu?: boolean;
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
   itemStyle?: React.CSSProperties;
   onClick?: (block: IBlock) => void;
-  onClickChildMenuItem?: IBlockThumbnailProps["onClickChildMenuItem"];
 }
 
 class BlockList extends React.PureComponent<IBlockListProps> {
@@ -26,8 +23,6 @@ class BlockList extends React.PureComponent<IBlockListProps> {
       showFields,
       emptyDescription,
       itemStyle,
-      showExploreMenu,
-      onClickChildMenuItem,
     } = this.props;
 
     return (
@@ -39,10 +34,8 @@ class BlockList extends React.PureComponent<IBlockListProps> {
           <StyledBlockThumbnailContainer key={block.customId} style={itemStyle}>
             <BlockThumbnail
               block={block}
-              showExploreMenu={showExploreMenu}
               showFields={showFields}
               onClick={() => isFunction(onClick) && onClick(block)}
-              onClickChildMenuItem={onClickChildMenuItem}
             />
           </StyledBlockThumbnailContainer>
         )}

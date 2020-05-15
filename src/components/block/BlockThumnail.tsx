@@ -1,31 +1,38 @@
-import { LineOutlined } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { Badge } from "antd";
+import { Badge, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
-import { IBlockExploreChildrenMenuProps } from "./BlockExploreChildrenMenu";
 
 export type BlockThumbnailShowField = "name" | "type" | "description";
 
 export interface IBlockThumbnailProps {
   block: IBlock;
-  showExploreMenu?: boolean;
+
   showFields?: BlockThumbnailShowField[];
   className?: string;
-  onClick?: () => void;
-  onClickChildMenuItem?: IBlockExploreChildrenMenuProps["onClick"];
   avatarSize?: IItemAvatarProps["size"];
   count?: number;
+  parent?: IBlock;
+  style?: React.CSSProperties;
+  onClick?: () => void;
 }
 
 const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
-// const hoverSelector = "&:hover";
+const blockDescriptionMarginWidth = 16;
 
 const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
-  const { block, className, onClick, showFields, avatarSize, count } = props;
+  const {
+    block,
+    className,
+    onClick,
+    showFields,
+    avatarSize,
+    count,
+    parent,
+    style,
+  } = props;
 
   const color = block.color;
   const fieldsToShow: { [key in BlockThumbnailShowField]?: boolean } = (
@@ -35,10 +42,65 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
     return accumulator;
   }, {});
 
+  const renderParentInfo = () => {
+    if (parent) {
+      return (
+        <Typography.Paragraph style={{ marginBottom: 0 }}>
+          <Typography.Text strong>{block.type}</Typography.Text> in{" "}
+          <Typography.Text strong>{parent.name}</Typography.Text>
+        </Typography.Paragraph>
+      );
+    }
+
+    return null;
+  };
+
+  const renderName = () => {
+    if (fieldsToShow.name) {
+      return (
+        <StyledContainer s={{ alignItems: "center" }}>
+          <Typography.Text strong style={{ marginRight: "8px" }}>
+            {block.name}
+          </Typography.Text>
+          {count ? (
+            <Badge
+              count={count}
+              style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+            />
+          ) : null}
+        </StyledContainer>
+      );
+    }
+
+    return null;
+  };
+
+  const renderType = () => {
+    if (fieldsToShow.type && !parent) {
+      return (
+        <StyledContainer>{getBlockTypeFullName(block.type)}</StyledContainer>
+      );
+    }
+
+    return null;
+  };
+
+  const renderDesc = () => {
+    if (fieldsToShow.description) {
+      return (
+        <StyledContainer s={{ marginTop: "4px" }}>
+          {block.description}
+        </StyledContainer>
+      );
+    }
+
+    return null;
+  };
+
   // TODO: do line clamping on the texts
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
-    <StyledContainer s={{ flex: 1 }} className={className}>
+    <StyledContainer s={{ ...style, flex: 1 }} className={className}>
       <StyledContainer>
         <ItemAvatar size={avatarSize} color={color} />
       </StyledContainer>
@@ -54,29 +116,10 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
         }}
         onClick={onClick}
       >
-        {fieldsToShow.name && (
-          <StyledContainer s={{ alignItems: "center" }}>
-            <StyledContainer
-              s={{ color: "rgba(0, 0, 0, 0.85)", marginRight: "8px" }}
-            >
-              {block.name}
-            </StyledContainer>
-            {count ? (
-              <Badge
-                count={count}
-                style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
-              />
-            ) : null}
-          </StyledContainer>
-        )}
-        {fieldsToShow.type && (
-          <StyledContainer>{getBlockTypeFullName(block.type)}</StyledContainer>
-        )}
-        {fieldsToShow.description && (
-          <StyledContainer s={{ marginTop: "4px" }}>
-            {block.description}
-          </StyledContainer>
-        )}
+        {renderName()}
+        {renderType()}
+        {renderDesc()}
+        {renderParentInfo()}
       </StyledContainer>
     </StyledContainer>
   );
@@ -84,10 +127,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
 
 BlockThumbnail.defaultProps = {
   showFields: defaultFields,
+  style: {},
 };
 
 export default BlockThumbnail;
-
-const blockDescriptionMarginWidth = 16;
-
-const StyledBlockDescriptionContainer = styled.div({});

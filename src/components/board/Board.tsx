@@ -31,9 +31,9 @@ import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardForBlockContainer from "./BoardForBlockContainer";
+import BoardBlockContainer from "./BoardBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
-import BoardHomeForBlock from "./BoardHomeForBlock";
+import BoardMain from "./BoardMain";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
 import { getBlockLandingPage, getDefaultBoardViewType } from "./utils";
@@ -55,7 +55,7 @@ export type OnClickBlock = (block: IBlock[]) => void;
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
+const Board: React.FC<IBoardForBlockProps> = (props) => {
   const { block } = props;
   const history = useHistory();
   const store = useStore<IReduxState>();
@@ -265,10 +265,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
         parent={block}
         getChildrenIDs={getChildrenIDsFunc}
         render={() => (
-          <BoardForBlockContainer
-            blockID={childID!}
-            notFoundMessage={message}
-          />
+          <BoardBlockContainer blockID={childID!} notFoundMessage={message} />
         )}
       />
     );
@@ -358,7 +355,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
       // TODO: volatile, blocks are possibly null OR undefined
       const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
 
-      console.log({ destinationStatus, draggedBlockID, draggedBlock });
+      console.warn("not implemented yet");
       return;
 
       updateBlockOperationFunc({
@@ -401,7 +398,7 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
     }
 
     const renderBoardForBlock = (isMobile: boolean) => (
-      <BoardHomeForBlock
+      <BoardMain
         isMobile={isMobile}
         block={block}
         blockPath={blockPath}
@@ -462,4 +459,4 @@ const BoardForBlock: React.FC<IBoardForBlockProps> = (props) => {
   return render();
 };
 
-export default BoardForBlock;
+export default Board;

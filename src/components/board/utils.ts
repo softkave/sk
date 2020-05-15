@@ -88,8 +88,6 @@ export const getBoardViewTypesForResourceType = (
   resourceType: BoardResourceType,
   isMobile: boolean = false
 ): BoardViewType[] => {
-  let boardTypes: BoardViewType[] = [];
-
   switch (resourceType) {
     case "tasks":
       if (block.type === "group") {
@@ -100,18 +98,16 @@ export const getBoardViewTypesForResourceType = (
 
     case "projects":
       if (block.type === "group") {
-        boardTypes = ["list"];
+        return ["list"];
       } else {
-        boardTypes = ["group-kanban"];
+        return ["group-kanban"];
       }
 
     case "groups":
     case "collaborators":
     case "collaboration-requests":
-      boardTypes = ["list"];
+      return ["list"];
   }
-
-  return boardTypes;
 };
 
 export const getDefaultBoardViewType = (block: IBlock) => {

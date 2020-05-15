@@ -35,7 +35,7 @@ export interface IBoardHomeForBlockProps {
   onClickDeleteBlock: (block: IBlock) => void;
 }
 
-const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
+const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const {
     blockPath,
     block,
@@ -127,19 +127,7 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
     }
   };
 
-  let content: React.ReactNode = null;
-
-  if (!resourceType) {
-    content = (
-      <BoardLandingPage
-        block={block}
-        onNavigate={onNavigate}
-        resourceTypes={resourceTypes}
-      />
-    );
-  } else {
-    content = renderBoardType();
-  }
+  const content: React.ReactNode = renderBoardType();
 
   const renderHeader = () => {
     return (
@@ -167,20 +155,17 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
 
           history.push(nextPath);
         }}
+        style={{ marginBottom: "20px", padding: "0 16px" }}
       />
     );
   };
 
   return (
     <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
-      <StyledContainer s={{ marginBottom: "20px", padding: "0 16px" }}>
-        {renderHeader()}
-      </StyledContainer>
+      {renderHeader()}
       <StyledContainer
         s={{
-          flexDirection: "column",
-          width: "100%",
-          overflowX: "hidden",
+          overflow: "hidden",
           flex: 1,
         }}
       >
@@ -190,4 +175,4 @@ const BoardHomeForBlock: React.FC<IBoardHomeForBlockProps> = (props) => {
   );
 };
 
-export default BoardHomeForBlock;
+export default BoardMain;

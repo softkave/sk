@@ -173,26 +173,57 @@ export const isTaskCompleted = (task: IBlock, user: IUser) => {
 };
 
 export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
+  // return [
+  //   {
+  //     name: "Todo",
+  //     description: "Available tasks",
+  //     createdAt: Date.now(),
+  //     createdBy: user.customId,
+  //     customId: newId(),
+  //   },
+  //   {
+  //     name: "In Progress",
+  //     description: "Currently being worked on",
+  //     createdAt: Date.now(),
+  //     createdBy: user.customId,
+  //     customId: newId(),
+  //   },
+  //   {
+  //     name: "Done",
+  //     description: "Completed tasks",
+  //     createdAt: Date.now(),
+  //     createdBy: user.customId,
+  //     customId: newId(),
+  //   },
+  // ];
+
   return [
     {
       name: "Todo",
       description: "Available tasks",
       createdAt: Date.now(),
-      createdBy: user.customId,
+      createdBy: "system",
       customId: newId(),
     },
     {
-      name: "In Progress",
-      description: "Currently working on",
+      name: "In progress",
+      description: "Currently being worked on",
       createdAt: Date.now(),
-      createdBy: user.customId,
+      createdBy: "system",
+      customId: newId(),
+    },
+    {
+      name: "Pending review",
+      description: "Completed, pending review",
+      createdAt: Date.now(),
+      createdBy: "system",
       customId: newId(),
     },
     {
       name: "Done",
-      description: "Completed tasks",
+      description: "Completed, and reviewed",
       createdAt: Date.now(),
-      createdBy: user.customId,
+      createdBy: "system",
       customId: newId(),
     },
   ];

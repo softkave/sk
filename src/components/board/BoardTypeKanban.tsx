@@ -45,7 +45,13 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   const [
     hideEmptyGroups,
     // setHideEmptyGroups
-  ] = React.useState(false);
+  ] = React.useState(() => {
+    if (selectedResourceType === "projects") {
+      return true;
+    } else {
+      return false;
+    }
+  });
 
   if (
     selectedResourceType === "collaboration-requests" ||
@@ -252,7 +258,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
         flex: 1,
         width: "100%",
         height: "100%",
-        flexDirection: "column",
+        overflow: "hidden",
       }}
     >
       {/* {renderToggleEmptyGroups()} */}

@@ -4,7 +4,7 @@ import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
-import BoardForBlock from "./BoardForBlock";
+import Board from "./Board";
 
 const defaultNotFoundMessage = "Block not found.";
 
@@ -13,9 +13,9 @@ export interface IBoardForBlockContainerProps {
   notFoundMessage?: string;
 }
 
-const BoardForBlockContainer: React.FC<IBoardForBlockContainerProps> = props => {
+const BoardBlockContainer: React.FC<IBoardForBlockContainerProps> = (props) => {
   const { blockID, notFoundMessage } = props;
-  const block = useSelector<IReduxState, IBlock | undefined>(state =>
+  const block = useSelector<IReduxState, IBlock | undefined>((state) =>
     getBlock(state, blockID)
   );
 
@@ -25,7 +25,7 @@ const BoardForBlockContainer: React.FC<IBoardForBlockContainerProps> = props => 
     );
   }
 
-  return <BoardForBlock block={block} />;
+  return <Board block={block} />;
 };
 
-export default BoardForBlockContainer;
+export default BoardBlockContainer;

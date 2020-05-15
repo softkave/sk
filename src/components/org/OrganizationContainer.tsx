@@ -5,7 +5,7 @@ import { useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IReduxState } from "../../redux/store";
-import BoardForBlock from "../board/BoardForBlock";
+import Board from "../board/Board";
 import StyledCenterContainer from "../styled/CenterContainer";
 
 interface IRouteMatchParams {
@@ -20,7 +20,7 @@ const OrganizationContainer: React.FC<{}> = () => {
   const organizationID =
     selectedOrganizationRouteMatch &&
     selectedOrganizationRouteMatch.params.organizationID;
-  const organization = useSelector<IReduxState, IBlock | undefined>(state =>
+  const organization = useSelector<IReduxState, IBlock | undefined>((state) =>
     getBlock(state, organizationID)
   );
 
@@ -32,7 +32,7 @@ const OrganizationContainer: React.FC<{}> = () => {
     );
   }
 
-  return <BoardForBlock block={organization} />;
+  return <Board block={organization} />;
 };
 
 export default OrganizationContainer;

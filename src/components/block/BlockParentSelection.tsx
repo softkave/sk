@@ -16,6 +16,12 @@ export interface IBlockParentSelectionProps {
 
 const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
   const { value, possibleParents, onChange, disabled } = props;
+  const [parentsMap] = React.useState(() => {
+    return possibleParents.reduce((accumulator, p) => {
+      accumulator[p.customId] = p;
+      return accumulator;
+    }, {});
+  });
 
   React.useEffect(() => {
     if (!value && possibleParents.length === 1 && onChange) {
@@ -37,7 +43,11 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
     >
       {possibleParents.map((parent) => (
         <Menu.Item key={parent.customId}>
-          <BlockThumbnail block={parent} />
+          <BlockThumbnail
+            block={parent}
+            parent={parent.parent && parentsMap[parent.parent]}
+            style={{ marginBottom: "16px" }}
+          />
         </Menu.Item>
       ))}
     </Menu>

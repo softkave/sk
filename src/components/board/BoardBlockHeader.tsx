@@ -43,6 +43,7 @@ export interface IBoardBlockHeaderProps {
   ) => void;
 
   resourceType?: BoardResourceType | null;
+  style?: React.CSSProperties;
 }
 
 const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
@@ -58,6 +59,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     onNavigate,
     onClickAddOrEditLabel,
     onClickAddOrEditStatus,
+    style,
   } = props;
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
@@ -101,6 +103,8 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       key,
       isMobile
     );
+
+    console.log({ key, boardTypesForResourceType, block });
 
     switch (key) {
       case "groups":
@@ -180,6 +184,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
   return (
     <StyledContainer
       s={{
+        ...style,
         width: "100%",
         alignItems: "center",
       }}

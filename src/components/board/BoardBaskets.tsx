@@ -183,7 +183,6 @@ const StyledBasketsContainerInner = styled.div({
   boxSizing: "border-box",
   width: "100%",
   overflowX: "auto",
-  overflowY: "auto",
 });
 
 export default React.memo(BoardBaskets);

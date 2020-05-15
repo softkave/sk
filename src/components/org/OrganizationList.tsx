@@ -55,12 +55,10 @@ const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
           />
         </StyledContainer>
         <BlockList
-          showExploreMenu
           blocks={orgs}
           emptyDescription="Create an organization to get started."
           onClick={onClick}
           showFields={["name", "description"]}
-          onClickChildMenuItem={() => null}
         />
       </StyledContainer>
     </StyledContainer>
