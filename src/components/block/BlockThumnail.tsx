@@ -47,7 +47,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
       return (
         <Typography.Paragraph style={{ marginBottom: 0 }}>
           <Typography.Text strong>{block.type}</Typography.Text> in{" "}
-          <Typography.Text strong>{parent.name}</Typography.Text>
+          <Typography.Text strong>{parent.name}</Typography.Text> {parent.type}
         </Typography.Paragraph>
       );
     }

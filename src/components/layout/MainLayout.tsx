@@ -1,10 +1,9 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import Notifications from "../notification/Notifications";
 import OrganizationListContainer from "../org/OrganizationListContainer";
 import StyledContainer from "../styled/Container";
 import Header from "./Header";
-import HomeMenu from "./HomeMenu";
 
 const MainLayout: React.FC<{}> = () => {
   return (
@@ -17,7 +16,12 @@ const MainLayout: React.FC<{}> = () => {
             path="/app/organizations"
             component={OrganizationListContainer}
           />
-          <Route exact path="/app" component={HomeMenu} />
+          {/* <Route exact path="/app" component={HomeMenu} /> */}
+          <Route
+            exact
+            path="*"
+            render={() => <Redirect to="/app/organizations" />}
+          />
         </Switch>
       </StyledContainer>
     </StyledContainer>

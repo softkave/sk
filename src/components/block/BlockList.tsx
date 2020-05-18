@@ -11,27 +11,23 @@ export interface IBlockListProps {
   blocks: IBlock[];
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
-  itemStyle?: React.CSSProperties;
   onClick?: (block: IBlock) => void;
 }
 
 class BlockList extends React.PureComponent<IBlockListProps> {
   public render() {
-    const {
-      blocks,
-      onClick,
-      showFields,
-      emptyDescription,
-      itemStyle,
-    } = this.props;
+    const { blocks, onClick, showFields, emptyDescription } = this.props;
 
     return (
       <List
         dataSource={blocks}
         rowKey="customId"
         emptyDescription={emptyDescription}
-        renderItem={(block) => (
-          <StyledBlockThumbnailContainer key={block.customId} style={itemStyle}>
+        renderItem={(block, i) => (
+          <StyledBlockThumbnailContainer
+            key={block.customId}
+            style={{ paddingTop: i === 0 ? 0 : undefined }}
+          >
             <BlockThumbnail
               block={block}
               showFields={showFields}

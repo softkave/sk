@@ -19,7 +19,10 @@ import MenuWithTrigger, {
   IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 import { BoardResourceType, BoardViewType } from "./types";
-import { getBoardViewTypesForResourceType } from "./utils";
+import {
+  getBoardViewTypeFullName,
+  getBoardViewTypesForResourceType,
+} from "./utils";
 
 const boartTypesToIconMap = {
   ["group-kanban"]: <Columns style={{ width: "16px" }} />,
@@ -52,7 +55,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
         }}
       >
         {boartTypesToIconMap[boardType]}
-        {!isMobile && wrapWithMargin(boardType, 8, 0)}
+        {!isMobile && wrapWithMargin(getBoardViewTypeFullName(boardType), 8, 0)}
         <CaretDownOutlined style={{ marginLeft: "8px" }} />
       </StyledContainer>
     );
@@ -79,7 +82,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
             <StyledMenuItem key={type}>
               <StyledContainer s={{ alignItems: "center" }}>
                 {boartTypesToIconMap[type]}
-                {wrapWithMargin(type, 8, 0)}
+                {wrapWithMargin(getBoardViewTypeFullName(type), 8, 0)}
               </StyledContainer>
             </StyledMenuItem>
           );

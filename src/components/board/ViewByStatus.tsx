@@ -1,4 +1,4 @@
-import { Badge } from "antd";
+import { Badge, Typography } from "antd";
 import React from "react";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
@@ -79,11 +79,12 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   const renderColumnHeader = (name: string, count: number) => {
     return (
       <StyledContainer>
-        <StyledContainer
-          s={{ marginRight: "8px", textTransform: "capitalize" }}
+        <Typography.Text
+          strong
+          style={{ marginRight: "8px", textTransform: "capitalize" }}
         >
           {name}
-        </StyledContainer>
+        </Typography.Text>
         <Badge count={count} style={{ backgroundColor: "rgba(0,0,0,0.3)" }} />
       </StyledContainer>
     );

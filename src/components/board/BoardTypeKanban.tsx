@@ -42,6 +42,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
     onClickDeleteBlock,
     onClickUpdateBlock,
   } = props;
+
   const [
     hideEmptyGroups,
     // setHideEmptyGroups

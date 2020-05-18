@@ -3,7 +3,6 @@ const errorFragment = `
     field
     message
     action
-    type
     name
   }
 `;

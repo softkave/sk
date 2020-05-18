@@ -5,6 +5,7 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
+import Tabs from "../Tabs";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
@@ -16,6 +17,7 @@ import {
 } from "./types";
 import {
   getBlockResourceTypes,
+  getBoardResourceTypeFullName,
   getBoardViewTypesForResourceType,
   getDefaultBoardViewType,
 } from "./utils";
@@ -93,6 +95,22 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   }
 
   const renderBoardType = () => {
+    if (
+      resourceType === "collaboration-requests" ||
+      resourceType === "collaborators" ||
+      resourceType === "groups"
+    ) {
+      return (
+        <BoardTypeList
+          block={block}
+          onClickBlock={onClickBlock}
+          onClickCreateNewBlock={onClickAddBlock}
+          onClickUpdateBlock={onClickUpdateBlock}
+          selectedResourceType={resourceType}
+        />
+      );
+    }
+
     switch (boardType) {
       case "group-kanban":
         return (
@@ -127,8 +145,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     }
   };
 
-  const content: React.ReactNode = renderBoardType();
-
   const renderHeader = () => {
     return (
       <BoardBlockHeader
@@ -155,13 +171,20 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
           history.push(nextPath);
         }}
-        style={{ marginBottom: "20px", padding: "0 16px" }}
+        style={{ marginBottom: "24px", padding: "0 16px" }}
       />
     );
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", flex: 1, maxWidth: "100%" }}>
+    <StyledContainer
+      s={{
+        flexDirection: "column",
+        flex: 1,
+        maxWidth: "100%",
+        marginTop: "24px",
+      }}
+    >
       {renderHeader()}
       <StyledContainer
         s={{
@@ -169,7 +192,38 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           flex: 1,
         }}
       >
-        {content}
+        <Tabs
+          scrollInContent
+          tabs={resourceTypes.map((type) => {
+            return {
+              key: type,
+              title: getBoardResourceTypeFullName(type),
+              render() {
+                return (
+                  <StyledContainer
+                    s={{ paddingTop: "24px", width: "100%", flex: 1 }}
+                  >
+                    {renderBoardType()}
+                  </StyledContainer>
+                );
+              },
+            };
+          })}
+          activeTabKey={resourceType as string}
+          onChange={(key: string) => {
+            let nextPath = `${blockPath}/${key}`;
+            const viewType = getBoardViewTypesForResourceType(
+              block,
+              key as any
+            );
+
+            if (viewType && viewType.length > 0) {
+              nextPath = `${nextPath}?bt=${viewType[0]}`;
+            }
+
+            history.push(nextPath);
+          }}
+        />
       </StyledContainer>
     </StyledContainer>
   );

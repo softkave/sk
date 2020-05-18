@@ -1,6 +1,7 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import logoutUserOperationFunc from "../redux/operations/session/logoutUser";
+import { normalizeErrors } from "../redux/utils";
 import { devLog } from "../utils/log";
 import { IAnyObject } from "../utils/types";
 
@@ -65,7 +66,7 @@ export default async function query(
 
     const rawResultBody = await result.json();
     const resultBody = processQueryResult(rawResultBody, process);
-    devLog(__filename, resultBody);
+    devLog(__filename, rawResultBody);
 
     if (result.ok) {
       if (resultBody && shouldLoginAgain(resultBody.errors)) {
@@ -92,12 +93,9 @@ export default async function query(
     throw new Error(result.statusText);
   } catch (error) {
     devLog(__filename, error);
+    const errors = normalizeErrors(error);
 
-    if (Array.isArray(error)) {
-      throw error;
-    } else {
-      throw new Error("An error occurred");
-    }
+    throw errors;
   }
 }
 
@@ -105,7 +103,7 @@ export interface INetError {
   field?: string;
   message?: string;
   action?: string;
-  type: string;
+  name: string;
 }
 
 export interface INetResult extends IAnyObject {

@@ -32,6 +32,24 @@ export const getBoardResourceTypeFullName = (
   }
 };
 
+export const getBoardViewTypeFullName = (
+  resourceType?: BoardViewType | null
+) => {
+  switch (resourceType) {
+    case "group-kanban":
+      return "group kanban";
+
+    case "list":
+      return "list";
+
+    case "status-kanban":
+      return "status kanban";
+
+    default:
+      return null;
+  }
+};
+
 export const sortBlockResourceTypesByCount = (
   block: IBlock,
   resourceTypes: BoardResourceType[]

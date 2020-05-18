@@ -10,6 +10,10 @@ body,
   /* font-weight: 400; */
 }
 
+.ant-btn {
+  font-weight: 500;
+}
+
 .color-1 {
   color: #56667D;
 }

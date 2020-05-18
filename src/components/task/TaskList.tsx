@@ -51,6 +51,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
 
   const renderTask = (task: IBlock, i: number) => {
     const isNotLastTask = i < tasksToRender.length - 1;
+    const isFirstTask = i === 0;
 
     if (noDnD) {
       return (
@@ -59,6 +60,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
           style={{
             borderBottom: isNotLastTask ? "1px solid #f0f0f0" : undefined,
             paddingBottom: isNotLastTask ? "16px" : undefined,
+            paddingTop: isFirstTask ? 0 : undefined,
           }}
         >
           <Task
@@ -88,6 +90,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
               style={{
                 borderBottom: isNotLastTask ? "1px solid #f0f0f0" : undefined,
                 paddingBottom: isNotLastTask ? "16px" : undefined,
+                paddingTop: isFirstTask ? 0 : undefined,
                 backgroundColor: snapshot.isDragging ? "#eee" : undefined,
                 cursor: snapshot.isDragging ? "grabbing" : undefined,
                 ...provided.draggableProps.style,
@@ -131,7 +134,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
           return (
             <StyledContainer
               ref={provided.innerRef}
-              style={{ flexDirection: "column", width: "100%" }}
+              style={{ flexDirection: "column", width: "100%", height: "100%" }}
               {...provided.droppableProps}
             >
               {renderList()}
@@ -144,7 +147,9 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
   }
 
   return (
-    <StyledContainer style={{ flexDirection: "column", width: "100%" }}>
+    <StyledContainer
+      style={{ flexDirection: "column", width: "100%", height: "100%" }}
+    >
       {renderList()}
     </StyledContainer>
   );

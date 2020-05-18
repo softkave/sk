@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Typography } from "antd";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 import NotificationListItem from "./NotificationListItem";
@@ -12,11 +13,11 @@ export interface INotificationListProps {
 class NotificationList extends React.Component<INotificationListProps> {
   public findNotification(id: string) {
     return this.props.notifications.find(
-      nextNotification => nextNotification.customId === id
+      (nextNotification) => nextNotification.customId === id
     )!;
   }
 
-  public onClickNotication = id => {
+  public onClickNotication = (id) => {
     const { currentNotificationID } = this.props;
 
     if (currentNotificationID !== id) {
@@ -30,9 +31,11 @@ class NotificationList extends React.Component<INotificationListProps> {
 
     return (
       <StyledNotificationList>
-        <StyledHeader>Notifications</StyledHeader>
+        <Typography.Title level={4} style={{ margin: "0 16px" }}>
+          Notifications
+        </Typography.Title>
         <StyledList>
-          {notifications.map(notification => {
+          {notifications.map((notification) => {
             return (
               <NotificationListItem
                 key={notification.customId}
@@ -55,14 +58,14 @@ export default NotificationList;
 const StyledNotificationList = styled.div({
   height: "100%",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
 });
 
 const StyledHeader = styled.h1({
   padding: "0 16px",
-  marginBottom: 0
+  marginBottom: 0,
 });
 
 const StyledList = styled.div({
-  overflow: "auto"
+  overflow: "auto",
 });

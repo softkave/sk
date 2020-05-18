@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { LoadingOutlined } from "@ant-design/icons";
+import styled from "@emotion/styled";
 import { Button, Empty, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -7,13 +7,13 @@ import { useHistory, useRouteMatch } from "react-router";
 import {
   INotification,
   notificationStatus,
-  NotificationStatusText
+  NotificationStatusText,
 } from "../../models/notification/notification";
 import { getNotification } from "../../redux/notifications/selectors";
 import respondToNotificationOperationFunc from "../../redux/operations/notification/respondToNotification";
 import IOperation, {
   getOperationLastError,
-  isOperationStartedOrPending
+  isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import { respondToNotificationOperationID } from "../../redux/operations/operationIDs";
 import { getOperationWithIDForResource } from "../../redux/operations/selectors";
@@ -24,10 +24,10 @@ import StyledCenterContainer from "../styled/CenterContainer";
 import {
   getNotificationLatestStatus,
   INotificationsPathParams,
-  isNotificationExpired
+  isNotificationExpired,
 } from "./utils";
 
-const Notification: React.FC<{}> = props => {
+const Notification: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch<INotificationsPathParams>(
     "/app/notifications/:notificationID"
@@ -37,9 +37,9 @@ const Notification: React.FC<{}> = props => {
       ? routeMatch.params.notificationID
       : undefined;
   const notification = useSelector<IReduxState, INotification | undefined>(
-    state => getNotification(state, currentNotificationID!)
+    (state) => getNotification(state, currentNotificationID!)
   );
-  const operation = useSelector<IReduxState, IOperation | undefined>(state =>
+  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
     getOperationWithIDForResource(
       state,
       respondToNotificationOperationID,
@@ -65,7 +65,7 @@ const Notification: React.FC<{}> = props => {
   const onRespond = (selectedResponse: NotificationStatusText) => {
     respondToNotificationOperationFunc({
       response: selectedResponse,
-      request: notification!
+      request: notification!,
     });
   };
 
@@ -125,9 +125,9 @@ const Notification: React.FC<{}> = props => {
   return (
     <StyledNotificationBody>
       <StyledNotificationBodyHead>
-        <StyledTitle>
+        <Typography.Title level={4}>
           Collaboration Request From {notification!.from.blockName}
-        </StyledTitle>
+        </Typography.Title>
         <Typography.Text>
           {new Date(notification!.createdAt).toDateString()}
         </Typography.Text>
@@ -143,18 +143,18 @@ export default Notification;
 const StyledNotificationBody = styled.div({
   padding: "0 16px",
   backgroundColor: "white",
-  height: "100%"
+  height: "100%",
 });
 
 const StyledNotificationBodyHead = styled.div({
-  marginBottom: "32px"
+  marginBottom: "32px",
 });
 
 const StyledTitle = styled.h2({
   // fontSize: 20,
-  marginBottom: 0
+  marginBottom: 0,
 });
 
 const StyledMessage = styled.p({
-  marginBottom: "32px"
+  marginBottom: "32px",
 });

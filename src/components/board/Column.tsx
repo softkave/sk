@@ -18,7 +18,7 @@ const Column: React.FC<IColumnProps> = (props) => {
       width: "100%",
       flexDirection: "column",
       boxSizing: "border-box",
-      // padding: "0 16px"
+      minWidth: "280px",
     };
 
     if (desktop) {
@@ -62,6 +62,7 @@ const StyledColumnBodyContainer = styled.div`
   overflow: auto;
   flex-direction: column;
   width: 100%;
+  padding-top: 16px;
 `;
 
 export default React.memo(Column);

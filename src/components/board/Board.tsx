@@ -34,6 +34,7 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardBlockContainer from "./BoardBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
+import BoardTypeTabs from "./BoardTypeTabs";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
 import { getBlockLandingPage, getDefaultBoardViewType } from "./utils";
@@ -168,7 +169,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
-    deleteBlockOperationFunc({ block });
+    deleteBlockOperationFunc({ block: blockToDelete });
 
     // TODO: wait for block to complete deleting before pushing
     if (blockToDelete.customId === block.customId) {
@@ -281,22 +282,26 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
         return;
       }
 
+      const draggedBlockID = result.draggableId;
+      const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+
       // did not move out of group - can bail early
       if (result.source.droppableId === result.destination.droppableId) {
-        if (result.source.index !== result.destination.index) {
-          dndColumnWarning();
+        if (result.source.index === result.destination.index) {
+          return;
         }
 
-        return;
+        if (draggedBlock.type !== "group") {
+          dndColumnWarning();
+          return;
+        }
       }
 
       let dropPosition: number = result.destination?.index;
       const sourceBlockID = result.source.droppableId;
-      const draggedBlockID = result.draggableId;
 
       // TODO: volatile, blocks are possibly null OR undefined
       const sourceBlock = getBlock(store.getState(), sourceBlockID)!;
-      const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
 
       if (draggedBlock.type === "org" || draggedBlock.type === "project") {
         return;
@@ -397,53 +402,103 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
       return renderChild();
     }
 
-    const renderBoardForBlock = (isMobile: boolean) => (
-      <BoardMain
-        isMobile={isMobile}
-        block={block}
-        blockPath={blockPath}
-        onClickBlock={onClickBlock}
-        onClickDeleteBlock={promptConfirmDelete}
-        onNavigate={onNavigate}
-        onClickAddBlock={(parentBlock, blockType) => {
-          setBlockForm({
-            blockType,
-            parentBlock,
-            formType: "block-form",
-            orgID: block.rootBlockID!,
-          });
-        }}
-        onClickUpdateBlock={(blockToUpdate) =>
-          setBlockForm({
-            block: blockToUpdate,
-            formType: "block-form",
-            orgID: block.rootBlockID!,
-            blockType: blockToUpdate.type,
-          })
-        }
-        onClickAddCollaborator={() =>
-          setBlockForm({
-            block,
-            formType: "collaborator-form",
-            orgID: block.rootBlockID!,
-          })
-        }
-        onClickAddOrEditLabel={() =>
-          setBlockForm({
-            block,
-            formType: "label-list-form",
-            orgID: block.rootBlockID!,
-          })
-        }
-        onClickAddOrEditStatus={() =>
-          setBlockForm({
-            block,
-            formType: "status-list-form",
-            orgID: block.rootBlockID!,
-          })
-        }
-      />
-    );
+    const renderBoardForBlock = (isMobile: boolean) => {
+      // return (
+      //   <BoardTypeTabs
+      //     isMobile={isMobile}
+      //     block={block}
+      //     blockPath={blockPath}
+      //     onClickBlock={onClickBlock}
+      //     onClickDeleteBlock={promptConfirmDelete}
+      //     onNavigate={onNavigate}
+      //     onClickAddBlock={(parentBlock, blockType) => {
+      //       setBlockForm({
+      //         blockType,
+      //         parentBlock,
+      //         formType: "block-form",
+      //         orgID: block.rootBlockID!,
+      //       });
+      //     }}
+      //     onClickUpdateBlock={(blockToUpdate) =>
+      //       setBlockForm({
+      //         block: blockToUpdate,
+      //         formType: "block-form",
+      //         orgID: block.rootBlockID!,
+      //         blockType: blockToUpdate.type,
+      //       })
+      //     }
+      //     onClickAddCollaborator={() =>
+      //       setBlockForm({
+      //         block,
+      //         formType: "collaborator-form",
+      //         orgID: block.rootBlockID!,
+      //       })
+      //     }
+      //     onClickAddOrEditLabel={() =>
+      //       setBlockForm({
+      //         block,
+      //         formType: "label-list-form",
+      //         orgID: block.rootBlockID!,
+      //       })
+      //     }
+      //     onClickAddOrEditStatus={() =>
+      //       setBlockForm({
+      //         block,
+      //         formType: "status-list-form",
+      //         orgID: block.rootBlockID!,
+      //       })
+      //     }
+      //   />
+      // );
+
+      return (
+        <BoardMain
+          isMobile={isMobile}
+          block={block}
+          blockPath={blockPath}
+          onClickBlock={onClickBlock}
+          onClickDeleteBlock={promptConfirmDelete}
+          onNavigate={onNavigate}
+          onClickAddBlock={(parentBlock, blockType) => {
+            setBlockForm({
+              blockType,
+              parentBlock,
+              formType: "block-form",
+              orgID: block.rootBlockID!,
+            });
+          }}
+          onClickUpdateBlock={(blockToUpdate) =>
+            setBlockForm({
+              block: blockToUpdate,
+              formType: "block-form",
+              orgID: block.rootBlockID!,
+              blockType: blockToUpdate.type,
+            })
+          }
+          onClickAddCollaborator={() =>
+            setBlockForm({
+              block,
+              formType: "collaborator-form",
+              orgID: block.rootBlockID!,
+            })
+          }
+          onClickAddOrEditLabel={() =>
+            setBlockForm({
+              block,
+              formType: "label-list-form",
+              orgID: block.rootBlockID!,
+            })
+          }
+          onClickAddOrEditStatus={() =>
+            setBlockForm({
+              block,
+              formType: "status-list-form",
+              orgID: block.rootBlockID!,
+            })
+          }
+        />
+      );
+    };
 
     return (
       <DragDropContext onDragEnd={onDragEnd}>

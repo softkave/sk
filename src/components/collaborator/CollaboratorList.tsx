@@ -16,14 +16,14 @@ export interface ICProps {
   organization: IBlock;
 }
 
-const CollaboratorList: React.FC<ICProps> = props => {
+const CollaboratorList: React.FC<ICProps> = (props) => {
   const { organization } = props;
-  const collaborators = useSelector<IReduxState, IUser[]>(state =>
+  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
     getUsersAsArray(state, organization.collaborators!)
   );
   const collaboratorsStatus = useOperation({
     operationID: getBlockCollaboratorsOperationID,
-    resourceID: organization.customId
+    resourceID: organization.customId,
   });
 
   if (collaboratorsStatus.error) {
@@ -33,7 +33,7 @@ const CollaboratorList: React.FC<ICProps> = props => {
           width: "100%",
           height: "100%",
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <GeneralError error={collaboratorsStatus.error} />
@@ -43,9 +43,11 @@ const CollaboratorList: React.FC<ICProps> = props => {
     return <EmptyMessage>No collaborators yet.</EmptyMessage>;
   }
 
-  const renderItem = (collaborator: IUser) => {
+  const renderItem = (collaborator: IUser, i: number) => {
     return (
-      <StyledContainer s={{ padding: "16px 0" }}>
+      <StyledContainer
+        s={{ padding: "16px 0", paddingTop: i == 0 ? 0 : undefined }}
+      >
         <CollaboratorThumbnail collaborator={collaborator} />
       </StyledContainer>
     );

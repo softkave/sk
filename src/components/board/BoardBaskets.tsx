@@ -91,7 +91,6 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
                 style={{
                   height: "100%",
                   padding: "0 16px",
-                  paddingTop: "16px",
                 }}
               >
                 {renderBasket(basket, index, allBaskets)}
@@ -115,7 +114,6 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
                     style={{
                       height: "100%",
                       padding: "0 16px",
-                      paddingTop: "16px",
                       backgroundColor: snapshot.isDragging ? "#eee" : "white",
                       ...provided.draggableProps.style,
                     }}

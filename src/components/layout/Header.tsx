@@ -1,19 +1,23 @@
 import {
-  ArrowLeftOutlined,
+  AppstoreFilled,
+  BorderOutlined,
   CaretDownFilled,
+  HomeFilled,
   HomeOutlined,
   LogoutOutlined,
+  MailFilled,
+  MailOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Tooltip } from "antd";
 import React from "react";
-import { ArrowLeft } from "react-feather";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import ItemAvatar from "../ItemAvatar";
+import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import theme from "../theme";
@@ -24,7 +28,6 @@ export interface IHeaderProps {
 
 const Header: React.FC<IHeaderProps> = (props) => {
   const user = useSelector(getSignedInUserRequired);
-  const history = useHistory();
 
   const onLogout = () => {
     logoutUserOperationFunc();
@@ -36,27 +39,6 @@ const Header: React.FC<IHeaderProps> = (props) => {
     }
   };
 
-  // const navigateToPath = (key: string) => {
-  //   const path = `/app/${key}`;
-  //   history.push(path);
-  // };
-
-  const isInBasePath = () => {
-    return window.location.pathname.split("/").pop() === "app";
-  };
-
-  const defaultOnNavigateBack = () => {
-    const pathArr = window.location.pathname.split("/");
-    pathArr.pop();
-    const destPath = pathArr.join("/");
-
-    // TODO: Prefferably, first check if the destPath is contained in the stack,
-    // and remove it if it does. Otherwise, go to the destPath
-    history.push(destPath);
-  };
-
-  const onNavigateBack =
-    props.onNavigateBack || (!isInBasePath() && defaultOnNavigateBack);
   const avatarMenuOverlay = (
     <Menu onClick={onSelectAvatarMenu} style={{ minWidth: "120px" }}>
       <StyledMenuItem key="logout">
@@ -72,41 +54,77 @@ const Header: React.FC<IHeaderProps> = (props) => {
     </Menu>
   );
 
-  // TODO: disabledback button for now
+  const render = (isMobile: boolean) => {
+    // TODO: disabledback button for now
+    return (
+      <StyledHeaderContainer>
+        <StyledContainer s={{ alignItems: "center" }}>
+          {/* <Tooltip title="Home">
+            <StyledFlatButton style={{ marginRight: "16px" }}>
+              <Link to="/app">
+                {window.location.pathname === "/app" ? (
+                  <HomeFilled />
+                ) : (
+                  <HomeOutlined />
+                )}
+                {!isMobile && <span style={{ paddingLeft: "12px" }}>Home</span>}
+              </Link>
+            </StyledFlatButton>
+          </Tooltip> */}
+          <Tooltip title="Messages">
+            <StyledFlatButton style={{ marginRight: "16px" }}>
+              <Link to="/app/notifications">
+                {window.location.pathname.includes("notification") ? (
+                  <MailFilled />
+                ) : (
+                  <MailOutlined />
+                )}
+                {!isMobile && (
+                  <span style={{ paddingLeft: "12px" }}>Messages</span>
+                )}
+              </Link>
+            </StyledFlatButton>
+          </Tooltip>
+          <Tooltip title="Organizations">
+            <StyledFlatButton>
+              <Link to="/app/organizations">
+                {window.location.pathname.includes("organizations") ? (
+                  <AppstoreFilled />
+                ) : (
+                  <BorderOutlined />
+                )}
+                {!isMobile && (
+                  <span style={{ paddingLeft: "12px" }}>Organizations</span>
+                )}
+              </Link>
+            </StyledFlatButton>
+          </Tooltip>
+        </StyledContainer>
+        <StyledContainer s={{ flex: 1 }} />
+        <StyledContainer s={{ marginLeft: "12px" }}>
+          <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
+            <StyledAvatarButton>
+              <ItemAvatar
+                clickable
+                size="small"
+                onClick={() => null}
+                color={user.color || theme.colors.defaults.avatar}
+              />
+              <CaretDownFilled
+                style={{ marginLeft: "4px", fontSize: "14px" }}
+              />
+            </StyledAvatarButton>
+          </Dropdown>
+        </StyledContainer>
+      </StyledHeaderContainer>
+    );
+  };
+
   return (
-    <StyledHeaderContainer>
-      <StyledContainer s={{ alignItems: "center" }}>
-        {/* {onNavigateBack && (
-          <StyledFlatButton
-            onClick={onNavigateBack}
-            style={{ marginRight: "16px" }}
-          >
-            <ArrowLeft
-              style={{ width: "20px", height: "20px", marginTop: "4px" }}
-            />
-          </StyledFlatButton>
-        )} */}
-        <StyledFlatButton>
-          <Link to="/app">
-            <HomeOutlined />
-          </Link>
-        </StyledFlatButton>
-      </StyledContainer>
-      <StyledContainer s={{ flex: 1 }} />
-      <StyledContainer s={{ marginLeft: "12px" }}>
-        <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
-          <StyledAvatarButton>
-            <ItemAvatar
-              clickable
-              size="small"
-              onClick={() => null}
-              color={user.color || theme.colors.defaults.avatar}
-            />
-            <CaretDownFilled style={{ marginLeft: "4px", fontSize: "14px" }} />
-          </StyledAvatarButton>
-        </Dropdown>
-      </StyledContainer>
-    </StyledHeaderContainer>
+    <RenderForDevice
+      renderForDesktop={() => render(false)}
+      renderForMobile={() => render(true)}
+    />
   );
 };
 
@@ -116,6 +134,7 @@ const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
   padding: "16px 16px",
+  borderBottom: "1px solid #b0b0b0",
 });
 
 const StyledAvatarButton = styled(Button)({

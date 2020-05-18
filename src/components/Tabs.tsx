@@ -15,24 +15,28 @@ export interface ITabsProps {
   scrollInContent?: boolean;
 }
 
-const Tabs: React.FC<ITabsProps> = props => {
+const Tabs: React.FC<ITabsProps> = (props) => {
   const { tabs, activeTabKey, onChange, alignHeader, scrollInContent } = props;
 
   const getActiveTab = () => {
-    return tabs.find(tab => tab.key === activeTabKey);
+    return tabs.find((tab) => tab.key === activeTabKey);
   };
 
   const activeTab = getActiveTab();
 
-  const renderTabHeader = (tab: ITab) => {
+  const renderTabHeader = (tab: ITab, i: number) => {
     return (
       <StyledContainer
         key={tab.key}
         onClick={() => onChange(tab.key)}
         s={{
-          padding: "0 8px",
+          paddingRight: "16px",
+          paddingLeft: i === 0 ? "16px" : 0,
           color: activeTab?.key === tab.key ? "rgb(66,133,244)" : "inherit",
-          cursor: "pointer"
+          cursor: "pointer",
+
+          // TODO: this should not be doen here
+          whiteSpace: "nowrap",
         }}
       >
         {tab.title}
@@ -47,11 +51,9 @@ const Tabs: React.FC<ITabsProps> = props => {
           flexWrap: "nowrap",
           overflowX: "auto",
           justifyContent: alignHeader,
-          marginBottom: "10px",
-          padding: "0 8px"
         }}
       >
-        {tabs.map(tab => renderTabHeader(tab))}
+        {tabs.map((tab, i) => renderTabHeader(tab, i))}
       </StyledContainer>
     );
   };
@@ -61,7 +63,7 @@ const Tabs: React.FC<ITabsProps> = props => {
       <StyledContainer
         s={{
           flex: 1,
-          overflow: scrollInContent ? "auto" : "initial"
+          overflow: scrollInContent ? "auto" : "initial",
         }}
       >
         {activeTab?.render()}

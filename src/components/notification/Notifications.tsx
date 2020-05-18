@@ -11,7 +11,7 @@ import { loadUserNotificationsOperationID } from "../../redux/operations/operati
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import SingleOperationHelper, {
-  ISingleOperationHelperDerivedProps
+  ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
 import StyledContainer from "../styled/Container";
 import theme from "../theme";
@@ -19,14 +19,14 @@ import Notification from "./Notification";
 import NotificationList from "./NotificationList";
 import { INotificationsPathParams } from "./utils";
 
-const Notifications: React.FC<{}> = props => {
+const Notifications: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch()!;
   const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(
     "/app/notifications/:notificationID"
   );
   const user = useSelector(getSignedInUserRequired);
-  const notifications = useSelector<IReduxState, INotification[]>(state =>
+  const notifications = useSelector<IReduxState, INotification[]>((state) =>
     getNotificationsAsArray(state, user.notifications || [])
   );
   const userHasNoNotifications = notifications.length === 0;
@@ -58,7 +58,7 @@ const Notifications: React.FC<{}> = props => {
           width: "100%",
           height: "100%",
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <Empty description="You currently have no notifications." />
@@ -89,11 +89,17 @@ const Notifications: React.FC<{}> = props => {
   };
 
   const renderNotificationsForMobile = () => {
+    let content: React.ReactNode = null;
+
     if (currentNotificationID) {
-      return renderCurrentNotification();
+      content = renderCurrentNotification();
+    } else {
+      content = renderNotificationList();
     }
 
-    return renderNotificationList();
+    return (
+      <StyledContainer s={{ marginTop: "16px" }}>{content}</StyledContainer>
+    );
   };
 
   const renderNotificationsForDesktop = () => {
@@ -117,7 +123,7 @@ const Notifications: React.FC<{}> = props => {
 
     return (
       <Media queries={{ mobile: `(max-width: ${theme.breakpoints.sm}px)` }}>
-        {matches => (
+        {(matches) => (
           <React.Fragment>
             {matches.mobile && renderNotificationsForMobile()}
             {!matches.mobile && renderNotificationsForDesktop()}
@@ -146,14 +152,15 @@ const StyledDesktopNotificationContainer = styled.div({
   flex: 1,
   width: "100%",
   height: "100%",
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  marginTop: "20px",
 });
 
 const StyledDesktopNotificationBodyContainer = styled.div({
   display: "flex",
-  flex: 1
+  flex: 1,
 });
 
 const StyledDesktopNotificationListContainer = styled.div({
-  width: "300px"
+  minWidth: "400px",
 });

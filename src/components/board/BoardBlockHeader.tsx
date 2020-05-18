@@ -189,34 +189,10 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
         alignItems: "center",
       }}
     >
-      {/* <StyledContainer>
-        <ItemAvatar color={block.color} />
-      </StyledContainer>
-      <StyledContainer
-        s={{
-          flex: 1,
-          flexDirection: "column",
-          margin: "0 16px",
-          justifyContent: "center",
-        }}
-      >
-        <StyledContainerAsH1
-          s={{
-            fontSize: "18px",
-            textOverflow: "ellipsis",
-            flex: 1,
-            margin: 0,
-            lineHeight: "18px",
-          }}
-        >
-          {block.name}
-        </StyledContainerAsH1>
-        <StyledContainer>{block.type}</StyledContainer>
-      </StyledContainer> */}
       <BlockThumbnail block={block} showFields={["name", "type"]} />
       <StyledContainer s={{ alignItems: "center" }}>
         {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
-        {!isMobile && wrapWithMargin(renderResourceTypeMenu())}
+        {/* {!isMobile && wrapWithMargin(renderResourceTypeMenu())} */}
         {isBlockRelatedResourceType(resourceType) &&
           wrapWithMargin(renderBoardTypeMenu())}
         {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
