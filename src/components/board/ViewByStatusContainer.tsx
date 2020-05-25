@@ -15,6 +15,8 @@ const scopeID = "status-container";
 export interface IViewByStatusContainerProps {
   block: IBlock;
   onClickUpdateBlock: (block: IBlock) => void;
+
+  style?: React.CSSProperties;
 }
 
 export type OnClickBlock = (block: IBlock[]) => void;
@@ -22,7 +24,7 @@ export type OnClickBlock = (block: IBlock[]) => void;
 const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
-  const { block, onClickUpdateBlock } = props;
+  const { block, onClickUpdateBlock, style } = props;
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;
@@ -102,6 +104,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
         block={block}
         onClickUpdateBlock={onClickUpdateBlock}
         blocks={blocks}
+        // style={style}
       />
     );
   };

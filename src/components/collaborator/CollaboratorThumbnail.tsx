@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import cloneWithWidth from "../styled/cloneWithWidth";
+import StyledContainer from "../styled/Container";
 import StyledFlexContainer from "../styled/FlexContainer";
 
 export interface ICollaboratorThumbnailProps {
@@ -13,19 +13,28 @@ export interface ICollaboratorThumbnailProps {
   onClick?: () => void;
 }
 
-const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = props => {
+const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = (
+  props
+) => {
   const { collaborator, style, onClick, className } = props;
 
   return (
     <StyledFlexContainer style={style} onClick={onClick} className={className}>
       <ItemAvatar color={collaborator.color} />
       {cloneWithWidth(
-        <StyledCollaboratorDataContainer>
+        <StyledContainer
+          s={{
+            flex: 1,
+            marginLeft: 16,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <Typography.Text strong ellipsis>
             {collaborator.name}
           </Typography.Text>
           <Typography.Text>{collaborator.email}</Typography.Text>
-        </StyledCollaboratorDataContainer>,
+        </StyledContainer>,
         { marginLeft: 16 }
       )}
     </StyledFlexContainer>
@@ -33,12 +42,3 @@ const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = props => {
 };
 
 export default CollaboratorThumbnail;
-
-const StyledCollaboratorDataContainer = styled.div(props => {
-  return {
-    flex: 1,
-    marginLeft: 16,
-    display: "flex",
-    flexDirection: "column"
-  };
-});

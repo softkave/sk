@@ -1,11 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-import {
-  Draggable,
-  DraggableProvided,
-  DraggableStateSnapshot,
-  Droppable,
-} from "react-beautiful-dnd";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 
@@ -22,9 +16,7 @@ export type GetBasketsFunc<T> = (blocks: any[]) => T[];
 export type RenderBasketFn<BasketType extends IBoardBasket> = (
   basket: BasketType,
   index: number,
-  baskets: BasketType[],
-  porvided?: DraggableProvided,
-  snapshot?: DraggableStateSnapshot
+  baskets: BasketType[]
 ) => React.ReactNode;
 
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
@@ -33,12 +25,9 @@ export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
   getBaskets: (blocks: any[]) => BasketType[];
   renderBasket: RenderBasketFn<BasketType>;
 
-  dragType?: string;
-  isDropDisabled?: boolean;
-  isDragDisabled?: boolean;
   emptyMessage?: string;
   hideEmptyBaskets?: boolean;
-  noDnD?: boolean;
+  style?: React.CSSProperties;
   shouldRenderBasket?: (
     basket: BasketType,
     index: number,
@@ -58,11 +47,8 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
       renderBasket,
       emptyMessage,
       hideEmptyBaskets,
-      isDragDisabled,
-      isDropDisabled,
-      dragType,
       sortBaskets,
-      noDnD,
+      style,
       shouldRenderBasket: shouldRenderBasketFn,
     } = this.props;
     const baskets = getBaskets(blocks);
@@ -84,51 +70,17 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
           : true;
 
         if (shouldRenderBasket) {
-          if (noDnD) {
-            return (
-              <div
-                key={basket.key}
-                style={{
-                  height: "100%",
-                  padding: "0 16px",
-                }}
-              >
-                {renderBasket(basket, index, allBaskets)}
-              </div>
-            );
-          }
-
-          // TODO: there is a multiple scroll parents warning while dragging
           return (
-            <Draggable
-              isDragDisabled={isDragDisabled || basket.isDragDisabled}
+            <div
               key={basket.key}
-              draggableId={basket.key}
-              index={index}
-            >
-              {(provided, snapshot) => {
-                return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    style={{
-                      height: "100%",
-                      padding: "0 16px",
-                      backgroundColor: snapshot.isDragging ? "#eee" : "white",
-                      ...provided.draggableProps.style,
-                    }}
-                  >
-                    {renderBasket(
-                      basket,
-                      index,
-                      allBaskets,
-                      provided,
-                      snapshot
-                    )}
-                  </div>
-                );
+              style={{
+                height: "100%",
+                padding: "0 16px",
+                paddingTop: "16px",
               }}
-            </Draggable>
+            >
+              {renderBasket(basket, index, allBaskets)}
+            </div>
           );
         }
 
@@ -144,43 +96,20 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
       );
     }
 
-    if (noDnD) {
-      return (
-        <StyledBasketsContainerInner>
-          {renderBaskets()}
-        </StyledBasketsContainerInner>
-      );
-    }
-
     return (
-      <Droppable
-        droppableId={id}
-        type={dragType}
-        direction="horizontal"
-        isDropDisabled={isDropDisabled}
-      >
-        {(provided, snapshot) => {
-          return (
-            <StyledBasketsContainerInner
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {renderBaskets()}
-              {provided.placeholder}
-            </StyledBasketsContainerInner>
-          );
-        }}
-      </Droppable>
+      <StyledBasketsContainerInner style={style}>
+        {renderBaskets()}
+      </StyledBasketsContainerInner>
     );
   }
 }
 
 const StyledBasketsContainerInner = styled.div({
-  height: "100%",
   display: "flex",
   boxSizing: "border-box",
   width: "100%",
   overflowX: "auto",
+  overflowY: "hidden",
 });
 
 export default React.memo(BoardBaskets);

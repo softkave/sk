@@ -18,7 +18,6 @@ const LoadBlockTasks: React.FC<ILoadBlockTasksProps> = (props) => {
         getChildrenIDs={() => block.tasks || []}
         render={(tasks) => (
           <TaskList
-            block={block}
             tasks={tasks}
             toggleForm={(task) => onClickUpdateBlock(task)}
           />

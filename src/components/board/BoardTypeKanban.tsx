@@ -31,6 +31,8 @@ export interface IBoardTypeKanbanProps {
   onClickBlock: (blocks: IBlock[]) => void;
   onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
   onClickDeleteBlock: (block: IBlock) => void;
+
+  style?: React.CSSProperties;
 }
 
 const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
@@ -41,6 +43,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
     onClickCreateNewBlock,
     onClickDeleteBlock,
     onClickUpdateBlock,
+    style,
   } = props;
 
   const [
@@ -105,8 +108,8 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   ) => {
     return (
       <BoardBaskets
+        style={style}
         id={block.customId}
-        dragType={getGroupContext()}
         hideEmptyBaskets={hideEmptyGroups}
         blocks={blocks}
         emptyMessage={emptyMessage}
@@ -137,27 +140,13 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
     />
   );
 
-  const renderGroupHeader = (
-    group: IBlock,
-    provided?: DraggableProvided,
-    snapshot?: DraggableStateSnapshot,
-    isDragDisabled?: boolean
-  ) => {
-    const dragHandleProps = provided ? provided.dragHandleProps : {};
-
+  const renderGroupHeader = (group: IBlock) => {
     return (
       <StyledContainer
         s={{
           width: "100%",
-          cursor: isDragDisabled
-            ? undefined
-            : snapshot
-            ? snapshot.isDragging
-              ? "grabbing"
-              : "grab"
-            : undefined,
+          height: "36px",
         }}
-        {...dragHandleProps}
       >
         <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
           <BlockThumbnail
@@ -188,20 +177,13 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
   const renderGroup: RenderBasketFn<IBoardBasket> = (
     groupBasket,
     index,
-    baskets,
-    provided,
-    snapshot
+    baskets
   ) => {
     const group: IBlock = groupBasket.items[0];
 
     return (
       <Column
-        header={renderGroupHeader(
-          group,
-          provided,
-          snapshot,
-          !!groupBasket.isDragDisabled
-        )}
+        header={renderGroupHeader(group)}
         body={
           <RenderBlockChildren
             {...props}
@@ -221,79 +203,36 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
     );
   };
 
-  // const renderToggleEmptyGroups = () => {
-  //   let content: React.ReactNode = null;
-
-  //   if (hideEmptyGroups) {
-  //     content = "Show Empty Groups";
-  //   } else {
-  //     content = "Hide Empty Groups";
-  //   }
-
-  //   return (
-  //     <StyledContainer
-  //       s={{
-  //         justifyContent: "flex-end",
-  //         marginBottom: "20px",
-  //         padding: "0 16px"
-  //       }}
-  //     >
-  //       <StyledButton
-  //         s={{
-  //           color: "rgb(66,133,244)",
-  //           border: "none",
-  //           backgroundColor: "inherit",
-  //           cursor: "pointer"
-  //         }}
-  //         onClick={toggleHideEmptyGroups}
-  //       >
-  //         {content}
-  //       </StyledButton>
-  //     </StyledContainer>
-  //   );
-  // };
-
   return (
-    <StyledContainer
-      s={{
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-      }}
-    >
-      {/* {renderToggleEmptyGroups()} */}
-      <BoardBlockChildren
-        parent={block}
-        getChildrenIDs={() => block.groups || []}
-        render={(blocks) =>
-          renderBaskets(
-            blocks,
-            "No groups yet.",
-            (groups) => {
-              let baskets: IBoardBasket[] = [];
+    <BoardBlockChildren
+      parent={block}
+      getChildrenIDs={() => block.groups || []}
+      render={(blocks) =>
+        renderBaskets(
+          blocks,
+          "No groups yet.",
+          (groups) => {
+            let baskets: IBoardBasket[] = [];
 
-              if (
-                block[selectedResourceType] &&
-                (block[selectedResourceType] || []).length > 0
-              ) {
-                baskets.push({
-                  key: block.customId,
-                  items: [block],
-                  // isDragDisabled: true
-                });
-              }
+            if (
+              block[selectedResourceType] &&
+              (block[selectedResourceType] || []).length > 0
+            ) {
+              baskets.push({
+                key: block.customId,
+                items: [block],
+              });
+            }
 
-              baskets = baskets.concat(
-                groups.map((group) => ({ key: group.customId, items: [group] }))
-              );
-              return baskets;
-            },
-            renderGroup
-          )
-        }
-      />
-    </StyledContainer>
+            baskets = baskets.concat(
+              groups.map((group) => ({ key: group.customId, items: [group] }))
+            );
+            return baskets;
+          },
+          renderGroup
+        )
+      }
+    />
   );
 };
 

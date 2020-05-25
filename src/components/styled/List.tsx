@@ -1,4 +1,3 @@
-import { List as AntDList } from "antd";
 import React from "react";
 import EmptyMessage from "../EmptyMessage";
 
@@ -24,15 +23,6 @@ class List<T> extends React.Component<IListProps<T>> {
     }
 
     return dataSource.map(renderItem);
-
-    return (
-      <AntDList
-        dataSource={dataSource}
-        rowKey={rowKey}
-        renderItem={renderItem}
-        style={{ width: "100%" }}
-      />
-    );
   }
 }
 

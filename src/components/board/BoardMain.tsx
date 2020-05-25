@@ -121,6 +121,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
             onClickDeleteBlock={onClickDeleteBlock}
+            style={{ marginTop: "8px", flex: 1 }}
           />
         );
 
@@ -182,49 +183,42 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
         flexDirection: "column",
         flex: 1,
         maxWidth: "100%",
-        marginTop: "24px",
       }}
     >
       {renderHeader()}
       <StyledContainer
         s={{
-          overflow: "hidden",
-          flex: 1,
+          flexWrap: "nowrap",
+          overflowX: "auto",
         }}
       >
-        <Tabs
-          scrollInContent
-          tabs={resourceTypes.map((type) => {
-            return {
-              key: type,
-              title: getBoardResourceTypeFullName(type),
-              render() {
-                return (
-                  <StyledContainer
-                    s={{ paddingTop: "24px", width: "100%", flex: 1 }}
-                  >
-                    {renderBoardType()}
-                  </StyledContainer>
-                );
-              },
-            };
-          })}
-          activeTabKey={resourceType as string}
-          onChange={(key: string) => {
-            let nextPath = `${blockPath}/${key}`;
-            const viewType = getBoardViewTypesForResourceType(
-              block,
-              key as any
-            );
+        {resourceTypes.map((type, i) => {
+          return (
+            <StyledContainer
+              key={type}
+              s={{
+                marginRight: "24px",
+                marginLeft: i === 0 ? "16px" : undefined,
+                color: type === resourceType ? "rgb(66,133,244)" : "inherit",
+                cursor: "pointer",
+              }}
+              onChange={() => {
+                let nextPath = `${blockPath}/${type}`;
+                const viewTypes = getBoardViewTypesForResourceType(block, type);
 
-            if (viewType && viewType.length > 0) {
-              nextPath = `${nextPath}?bt=${viewType[0]}`;
-            }
+                if (viewTypes && viewTypes.length > 0) {
+                  nextPath = `${nextPath}?bt=${viewTypes[0]}`;
+                }
 
-            history.push(nextPath);
-          }}
-        />
+                history.push(nextPath);
+              }}
+            >
+              {getBoardResourceTypeFullName(type)}
+            </StyledContainer>
+          );
+        })}
       </StyledContainer>
+      {renderBoardType()}
     </StyledContainer>
   );
 };

@@ -36,7 +36,8 @@ const Column: React.FC<IColumnProps> = (props) => {
         {header && (
           <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
         )}
-        <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer>
+        {body}
+        {/* <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer> */}
       </StyledContainer>
     );
   };
@@ -54,15 +55,6 @@ const StyledColumnHeaderContainer = styled.div`
   flex-direction: row;
   padding-bottom: 12px;
   border-bottom: 1px solid #d9d9d9;
-`;
-
-const StyledColumnBodyContainer = styled.div`
-  flex: 1;
-  display: flex;
-  overflow: auto;
-  flex-direction: column;
-  width: 100%;
-  padding-top: 16px;
 `;
 
 export default React.memo(Column);

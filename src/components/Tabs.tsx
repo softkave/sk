@@ -30,7 +30,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
         key={tab.key}
         onClick={() => onChange(tab.key)}
         s={{
-          paddingRight: "16px",
+          paddingRight: "24px",
           paddingLeft: i === 0 ? "16px" : 0,
           color: activeTab?.key === tab.key ? "rgb(66,133,244)" : "inherit",
           cursor: "pointer",

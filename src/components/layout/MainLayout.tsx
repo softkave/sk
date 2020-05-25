@@ -9,7 +9,7 @@ const MainLayout: React.FC<{}> = () => {
   return (
     <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
       <Header />
-      <StyledContainer s={{ flex: 1, overflowY: "hidden" }}>
+      <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
         <Switch>
           <Route path="/app/notifications" component={Notifications} />
           <Route

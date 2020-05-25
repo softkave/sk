@@ -5,9 +5,6 @@ import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import Column from "./Column";
-import BoardBlockChildren from "./LoadBlockChildren";
-
-// const StyledButton = StyledContainer.withComponent("button");
 
 export interface IViewByStatusProps {
   block: IBlock;
@@ -93,25 +90,12 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   const renderStatus = (basket: IBoardBasket) => {
     const status = statusMap[basket.key];
     const statusBlocks = basket.items;
-    const isNoStatus = !status;
     const statusName = status ? status.name : "No status";
-    const statusId = isNoStatus ? "No status" : status.customId;
 
     return (
       <Column
         header={renderColumnHeader(statusName, statusBlocks.length)}
-        body={
-          <TaskList
-            noDnD
-            tasks={statusBlocks}
-            block={block}
-            isDragDisabled={false}
-            isDropDisabled={isNoStatus}
-            toggleForm={onClickUpdateBlock}
-            droppableId={statusId}
-            droppableType="status"
-          />
-        }
+        body={<TaskList tasks={statusBlocks} toggleForm={onClickUpdateBlock} />}
       />
     );
   };
@@ -119,7 +103,6 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   const renderBaskets = () => {
     return (
       <BoardBaskets
-        noDnD
         blocks={blocks}
         getBaskets={getBaskets}
         id={block.customId}

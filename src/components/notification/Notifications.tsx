@@ -153,7 +153,6 @@ const StyledDesktopNotificationContainer = styled.div({
   width: "100%",
   height: "100%",
   boxSizing: "border-box",
-  marginTop: "20px",
 });
 
 const StyledDesktopNotificationBodyContainer = styled.div({

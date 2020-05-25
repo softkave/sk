@@ -134,7 +134,8 @@ const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
   padding: "16px 16px",
-  borderBottom: "1px solid #b0b0b0",
+  paddingBottom: "24px",
+  // borderBottom: "1px solid #b0b0b0"
 });
 
 const StyledAvatarButton = styled(Button)({
