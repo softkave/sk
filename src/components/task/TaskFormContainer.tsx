@@ -98,8 +98,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     }
   };
 
-  console.log({ operationStatus, props, errors });
-
   return (
     <TaskForm
       // isSubmitting

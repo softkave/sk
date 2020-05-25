@@ -1,13 +1,11 @@
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import GroupFormInDrawer from "../group/GroupFormInDrawer";
 import LabelListWithDrawer from "../label/LabelListWithDrawer";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import ProjectFormInDrawer from "../project/ProjectFormInDrawer";
 import StatusListWithDrawer from "../status/StatusListWithDrawer";
-import StyledCapitalizeText from "../styled/StyledCapitalizeText";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 
 export type BlockFormType =
@@ -28,8 +26,6 @@ export interface IBlockFormsProps {
 
 const BlockForms: React.FC<IBlockFormsProps> = (props) => {
   const { block, formType, onClose, orgID, blockType, parentBlock } = props;
-
-  console.log({ props });
 
   const noBlockWarning = () => {
     console.warn("Block is required for form type, but was not provided");

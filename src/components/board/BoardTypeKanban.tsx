@@ -1,6 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
 import React from "react";
-import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
 import { sortItemsByPosition } from "../../utils/sortItemsByPosition";
 import BlockThumbnail from "../block/BlockThumnail";
@@ -109,7 +108,6 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
     return (
       <BoardBaskets
         style={style}
-        id={block.customId}
         hideEmptyBaskets={hideEmptyGroups}
         blocks={blocks}
         emptyMessage={emptyMessage}

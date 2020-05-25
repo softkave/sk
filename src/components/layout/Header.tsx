@@ -2,8 +2,6 @@ import {
   AppstoreFilled,
   BorderOutlined,
   CaretDownFilled,
-  HomeFilled,
-  HomeOutlined,
   LogoutOutlined,
   MailFilled,
   MailOutlined,
@@ -12,7 +10,6 @@ import styled from "@emotion/styled";
 import { Button, Dropdown, Menu, Tooltip } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";

@@ -21,8 +21,6 @@ const LoginContainer: React.FC<{}> = () => {
     return loginUserOperationFunc(store.getState(), dispatch, { user });
   };
 
-  console.log({ operationStatus });
-
   return (
     <Login
       onSubmit={onSubmit}

@@ -51,8 +51,6 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     errors: externalErrors,
   } = props;
 
-  console.log({ props });
-
   // const [fieldsEditing, setFieldsEditing] = React.useState<string[]>(() => {
   //   const initialFieldsEditing: string[] = [];
 

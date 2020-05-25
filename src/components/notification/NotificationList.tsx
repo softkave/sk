@@ -61,11 +61,6 @@ const StyledNotificationList = styled.div({
   flexDirection: "column",
 });
 
-const StyledHeader = styled.h1({
-  padding: "0 16px",
-  marginBottom: 0,
-});
-
 const StyledList = styled.div({
   overflow: "auto",
 });

@@ -150,11 +150,6 @@ const StyledNotificationBodyHead = styled.div({
   marginBottom: "32px",
 });
 
-const StyledTitle = styled.h2({
-  // fontSize: 20,
-  marginBottom: 0,
-});
-
 const StyledMessage = styled.p({
   marginBottom: "32px",
 });

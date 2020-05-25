@@ -20,7 +20,6 @@ export type RenderBasketFn<BasketType extends IBoardBasket> = (
 ) => React.ReactNode;
 
 export interface IBoardBasketsProps<BasketType extends IBoardBasket> {
-  id: string;
   blocks: any[];
   getBaskets: (blocks: any[]) => BasketType[];
   renderBasket: RenderBasketFn<BasketType>;
@@ -41,7 +40,6 @@ class BoardBaskets<T extends IBoardBasket> extends React.Component<
 > {
   public render() {
     const {
-      id,
       blocks,
       getBaskets,
       renderBasket,

@@ -5,11 +5,9 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
-import Tabs from "../Tabs";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
-import BoardLandingPage from "./LandingPage";
 import {
   BoardResourceType,
   BoardViewType,
@@ -29,7 +27,6 @@ export interface IBoardHomeForBlockProps {
   isMobile: boolean;
   onClickUpdateBlock: (block: IBlock) => void;
   onClickAddBlock: (block: IBlock, type: BlockType) => void;
-  onNavigate: (resourceType: BoardResourceType) => void;
   onClickBlock: (blocks: IBlock[]) => void;
   onClickAddCollaborator: () => void;
   onClickAddOrEditLabel: () => void;
@@ -41,7 +38,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const {
     blockPath,
     block,
-    onNavigate,
     onClickAddBlock,
     onClickAddCollaborator,
     onClickDeleteBlock,
@@ -107,6 +103,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           onClickCreateNewBlock={onClickAddBlock}
           onClickUpdateBlock={onClickUpdateBlock}
           selectedResourceType={resourceType}
+          style={{ marginTop: "8px" }}
         />
       );
     }
@@ -141,6 +138,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
             onClickBlock={onClickBlock}
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
+            style={{ marginTop: "8px" }}
           />
         );
     }
@@ -177,6 +175,28 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     );
   };
 
+  const onSelectResourceType = (key: BoardResourceType) => {
+    let nextPath = `${blockPath}/${key}`;
+    const viewTypes = getBoardViewTypesForResourceType(block, key);
+
+    switch (key) {
+      case "groups":
+      case "projects":
+      case "tasks":
+        if (viewTypes && viewTypes.length > 0) {
+          nextPath = `${nextPath}?bt=${viewTypes[0]}`;
+        }
+
+        history.push(nextPath);
+        break;
+
+      case "collaboration-requests":
+      case "collaborators":
+        history.push(nextPath);
+        break;
+    }
+  };
+
   return (
     <StyledContainer
       s={{
@@ -202,15 +222,8 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
                 color: type === resourceType ? "rgb(66,133,244)" : "inherit",
                 cursor: "pointer",
               }}
-              onChange={() => {
-                let nextPath = `${blockPath}/${type}`;
-                const viewTypes = getBoardViewTypesForResourceType(block, type);
-
-                if (viewTypes && viewTypes.length > 0) {
-                  nextPath = `${nextPath}?bt=${viewTypes[0]}`;
-                }
-
-                history.push(nextPath);
+              onClick={() => {
+                onSelectResourceType(type);
               }}
             >
               {getBoardResourceTypeFullName(type)}

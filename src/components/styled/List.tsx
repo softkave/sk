@@ -3,7 +3,6 @@ import EmptyMessage from "../EmptyMessage";
 
 export interface IListProps<T> {
   dataSource: T[];
-  rowKey: ((item: T) => string) | string;
   renderItem: (item: T, index: number) => React.ReactNode;
   emptyDescription?: string | React.ReactNode;
 }
@@ -16,7 +15,7 @@ class List<T> extends React.Component<IListProps<T>> {
   };
 
   public render() {
-    const { dataSource, emptyDescription, rowKey, renderItem } = this.props;
+    const { dataSource, emptyDescription, renderItem } = this.props;
 
     if (dataSource.length === 0) {
       return <EmptyMessage>{emptyDescription}</EmptyMessage>;

@@ -8,13 +8,10 @@ import { Button, Dropdown, Menu, Modal, Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
-import DeleteButtonWithPrompt from "../DeleteButtonWithPrompt";
 import StyledContainer from "../styled/Container";
-import StyledFlatButton from "../styled/FlatButton";
 import Text from "../Text";
-import Priority, { priorityToColorMap } from "./Priority";
+import { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
-import ToggleSwitchContainer from "./ToggleSwitch";
 
 export interface ITaskProps {
   task: IBlock;

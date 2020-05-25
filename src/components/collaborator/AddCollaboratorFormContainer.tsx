@@ -71,8 +71,6 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     );
   };
 
-  console.log({ operationStatus });
-
   return (
     <AddCollaboratorForm
       existingCollaborationRequests={requests}

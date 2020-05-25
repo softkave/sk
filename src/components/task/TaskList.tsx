@@ -39,7 +39,6 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
     return (
       <List
         dataSource={tasksToRender}
-        rowKey="customId"
         emptyDescription="No tasks available."
         renderItem={renderTask}
       />

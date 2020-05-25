@@ -75,7 +75,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     };
 
     processErrors();
-  }, [errors, formik.values.labelList]);
+  }, [errors, formik.values.labelList, editingLabelList]);
 
   const onCommitChanges = (label: IBlockLabel, index: number) => {
     const err = validateWithYupSchema(
@@ -146,7 +146,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       editingLabelList.remove(label.customId);
       // newLabelList.remove(label.customId);
     },
-    [editingLabelList, formik.values.labelList]
+    [editingLabelList, formik.values.labelList, deleteIndexInArrayField]
   );
 
   const renderLabelItem = (label: IBlockLabel, index: number) => {
@@ -230,7 +230,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
     editingLabelList.add(label.customId);
     newLabelList.add(label.customId);
-  }, [editingLabelList, newLabelList, user]);
+  }, [editingLabelList, newLabelList, user, addNewValueToArrayField]);
 
   const renderAddControls = () => {
     return (

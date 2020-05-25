@@ -63,8 +63,6 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     );
   };
 
-  console.log({ operationStatus });
-
   return (
     <StatusList
       // isSubmitting

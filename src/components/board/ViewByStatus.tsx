@@ -10,11 +10,13 @@ export interface IViewByStatusProps {
   block: IBlock;
   blocks: IBlock[];
   onClickUpdateBlock: (block: IBlock) => void;
+
+  style?: React.CSSProperties;
 }
 
 // TODO: implement drag and drop in this board view
 const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
-  const { block, onClickUpdateBlock, blocks } = props;
+  const { block, onClickUpdateBlock, blocks, style } = props;
 
   const availableStatus = block.availableStatus || [];
   const statusMap = availableStatus.reduce((accumulator, status) => {
@@ -105,7 +107,6 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
       <BoardBaskets
         blocks={blocks}
         getBaskets={getBaskets}
-        id={block.customId}
         renderBasket={renderStatus}
         emptyMessage="No blocks available"
         hideEmptyBaskets={false}
@@ -116,6 +117,7 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   return (
     <StyledContainer
       s={{
+        ...style,
         flex: 1,
         width: "100%",
         height: "100%",
@@ -126,5 +128,7 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
     </StyledContainer>
   );
 };
+
+ViewByStatus.defaultProps = { style: {} };
 
 export default React.memo(ViewByStatus);

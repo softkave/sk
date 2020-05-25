@@ -21,13 +21,9 @@ class BlockList extends React.PureComponent<IBlockListProps> {
     return (
       <List
         dataSource={blocks}
-        rowKey="customId"
         emptyDescription={emptyDescription}
         renderItem={(block, i) => (
-          <StyledBlockThumbnailContainer
-            key={block.customId}
-            style={{ paddingTop: i === 0 ? 0 : undefined }}
-          >
+          <StyledBlockThumbnailContainer key={block.customId}>
             <BlockThumbnail
               block={block}
               showFields={showFields}

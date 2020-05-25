@@ -1,6 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
-import delay from "lodash/delay";
 import isBoolean from "lodash/isBoolean";
 import isString from "lodash/isString";
 import moment from "moment";
@@ -140,6 +139,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         hasError = true;
         return { email: emailConflictError };
       }
+
+      return undefined;
     });
 
     if (hasError) {

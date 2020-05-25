@@ -73,8 +73,6 @@ const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
     }
   };
 
-  console.log({ operationStatus });
-
   return (
     <ProjectForm
       value={block}

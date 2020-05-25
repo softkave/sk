@@ -1,16 +1,12 @@
-import Icon, {
+import {
   CaretDownOutlined,
   InsertRowAboveOutlined,
   MenuOutlined,
-  ProfileOutlined,
-  UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
-import { Columns, Minus } from "react-feather";
+import { Columns } from "react-feather";
 import { IBlock } from "../../models/block/block";
-import KanbanSVG from "../icons/svg/KanbanSVG";
-import TabSVG from "../icons/svg/TabSVG";
 import StyledContainer from "../styled/Container";
 import StyledMenuItem from "../styled/StyledMenuItem";
 import wrapWithMargin from "../utilities/wrapWithMargin";
@@ -25,8 +21,8 @@ import {
 } from "./utils";
 
 const boartTypesToIconMap = {
-  ["group-kanban"]: <Columns style={{ width: "16px" }} />,
-  ["status-kanban"]: <Columns style={{ width: "16px" }} />,
+  "group-kanban": <Columns style={{ width: "16px" }} />,
+  "status-kanban": <Columns style={{ width: "16px" }} />,
   list: <MenuOutlined />,
   tab: <InsertRowAboveOutlined />,
 };

@@ -5,7 +5,6 @@ const useInsertFormikErrors = (errors: any) => {
 
   React.useEffect(() => {
     if (formikRef.current) {
-      console.log(formikRef.current);
       if (errors) {
         formikRef.current.setErrors(errors);
       } else {

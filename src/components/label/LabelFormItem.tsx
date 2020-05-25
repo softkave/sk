@@ -51,8 +51,6 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
     style,
   } = props;
 
-  console.log({ props });
-
   const renderInputs = () => {
     return (
       <StyledContainer s={{ flexDirection: "column", width: "100%" }}>

@@ -104,7 +104,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
         block={block}
         onClickUpdateBlock={onClickUpdateBlock}
         blocks={blocks}
-        // style={style}
+        style={style}
       />
     );
   };

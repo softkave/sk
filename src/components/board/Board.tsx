@@ -1,30 +1,18 @@
-import { message, Modal } from "antd";
+import { Modal } from "antd";
 import path from "path";
 import React from "react";
-import {
-  DragDropContext,
-  DropResult,
-  ResponderProvided,
-} from "react-beautiful-dnd";
-import { useStore } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { BlockGroupContext, BlockType, IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { getBlock } from "../../redux/blocks/selectors";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
-import getBlockLandingPageOperationFunc from "../../redux/operations/block/getBlockLandingPage";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
-import transferBlockOperationFn from "../../redux/operations/block/transferBlock";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
   getBlockChildrenOperationID,
   getBlockCollaborationRequestsOperationID,
   getBlockCollaboratorsOperationID,
-  getBlockLandingPageOperationID,
 } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
 import { pluralize } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParent";
@@ -34,10 +22,9 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardBlockContainer from "./BoardBlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
-import BoardTypeTabs from "./BoardTypeTabs";
 import BoardBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
-import { getBlockLandingPage, getDefaultBoardViewType } from "./utils";
+import { getDefaultBoardViewType } from "./utils";
 
 interface IBlockFormState {
   formType: BlockFormType;
@@ -59,7 +46,6 @@ export type OnClickBlock = (block: IBlock[]) => void;
 const Board: React.FC<IBoardForBlockProps> = (props) => {
   const { block } = props;
   const history = useHistory();
-  const store = useStore<IReduxState>();
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
     null
   );
@@ -162,10 +148,6 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     );
 
     pushRoute(nextPath);
-  };
-
-  const onNavigate = (route: string) => {
-    pushRoute(path.normalize(blockPath + route));
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
@@ -294,7 +276,6 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
           blockPath={blockPath}
           onClickBlock={onClickBlock}
           onClickDeleteBlock={promptConfirmDelete}
-          onNavigate={onNavigate}
           onClickAddBlock={(parentBlock, blockType) => {
             setBlockForm({
               blockType,

@@ -10,6 +10,8 @@ export interface IBoardTypeListProps {
   onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
   onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
+
+  style?: React.CSSProperties;
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
@@ -18,16 +20,18 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
     onClickUpdateBlock,
     onClickBlock,
     selectedResourceType,
+    style,
   } = props;
 
   return (
     <StyledContainer
+      style={style}
       s={{
         flexDirection: "column",
-        height: "100%",
         flex: 1,
         width: "100%",
         padding: "0 16px",
+        overflowY: "auto",
       }}
     >
       <RenderBlockChildren

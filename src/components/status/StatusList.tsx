@@ -1,6 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import set from "lodash/set";
 import React from "react";
 import {
   DragDropContext,
@@ -87,7 +86,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     };
 
     processErrors();
-  }, [errors, formik.values.statusList]);
+  }, [errors, formik.values.statusList, editingStatusList]);
 
   const onDelete = (index: number) => {
     const status = formik.values.statusList[index];

@@ -73,8 +73,6 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
     }
   };
 
-  console.log({ operationStatus });
-
   return (
     <GroupForm
       value={block}

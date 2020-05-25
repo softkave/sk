@@ -108,7 +108,6 @@ export function getBlockChildren(
   typeList?: BlockType[],
   useBoardId?: boolean
 ) {
-  console.log({ block, typeList, useBoardId });
   return auth(
     null,
     getBlockChildrenQuery,

@@ -1,7 +1,6 @@
 import {
   BorderOutlined,
   CaretDownOutlined,
-  MenuFoldOutlined,
   SolutionOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
@@ -22,8 +21,10 @@ import { getBlockResourceTypes, getBoardResourceTypeFullName } from "./utils";
 const getBlockResourceTypeIcon = (type: BoardResourceType) => {
   switch (type) {
     case "tasks":
+      return <BorderOutlined />;
 
     case "projects":
+      return <BorderOutlined />;
 
     case "groups":
       return <BorderOutlined />;

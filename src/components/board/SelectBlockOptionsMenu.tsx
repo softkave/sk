@@ -1,6 +1,5 @@
 import {
   DeleteOutlined,
-  EditOutlined,
   EllipsisOutlined,
   PlayCircleOutlined,
 } from "@ant-design/icons";

@@ -1,4 +1,3 @@
-import { HomeOutlined } from "@ant-design/icons";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
@@ -9,9 +8,7 @@ import SelectBlockOptionsMenu, {
   SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
 import SelectBoardTypeMenu from "./SelectBoardTypeMenu";
-import SelectResourceTypeMenu from "./SelectResourceTypeMenu";
 import { BoardResourceType, BoardViewType, CreateMenuKey } from "./types";
-import { getBoardViewTypesForResourceType } from "./utils";
 
 const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
   switch (type) {
@@ -97,62 +94,9 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     }
   };
 
-  const onSelectResourceTypeMenuItem = (key: BoardResourceType) => {
-    const boardTypesForResourceType = getBoardViewTypesForResourceType(
-      block,
-      key,
-      isMobile
-    );
-
-    console.log({ key, boardTypesForResourceType, block });
-
-    switch (key) {
-      case "groups":
-      case "projects":
-      case "tasks":
-        onNavigate(
-          key,
-          selectedBoardType &&
-            boardTypesForResourceType.includes(selectedBoardType)
-            ? selectedBoardType
-            : boardTypesForResourceType[0]
-        );
-        break;
-
-      case "collaboration-requests":
-      case "collaborators":
-        onNavigate(key, null);
-        break;
-    }
-  };
-
   const onSelectBoardTypeMenuItem = (key: BoardViewType) => {
     onNavigate(resourceType!, key);
   };
-
-  const renderSelfButton = () => {
-    return (
-      <StyledContainer
-        onClick={() => onNavigate(null, null)}
-        s={{
-          alignItems: "center",
-          cursor: "pointer",
-          textTransform: "capitalize",
-        }}
-      >
-        <HomeOutlined />
-        {!isMobile && wrapWithMargin("home", 8, 0)}
-      </StyledContainer>
-    );
-  };
-
-  const renderResourceTypeMenu = () => (
-    <SelectResourceTypeMenu
-      block={block}
-      resourceType={resourceType}
-      onSelect={onSelectResourceTypeMenuItem}
-    />
-  );
 
   const renderBoardTypeMenu = () => {
     if (resourceType) {
@@ -192,7 +136,6 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       <BlockThumbnail block={block} showFields={["name", "type"]} />
       <StyledContainer s={{ alignItems: "center" }}>
         {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
-        {/* {!isMobile && wrapWithMargin(renderResourceTypeMenu())} */}
         {isBlockRelatedResourceType(resourceType) &&
           wrapWithMargin(renderBoardTypeMenu())}
         {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
