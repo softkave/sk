@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
+import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { operationHasStatusWithScopeID } from "../../redux/operations/operation";
 import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
@@ -19,12 +20,14 @@ export interface IViewByStatusContainerProps {
   style?: React.CSSProperties;
 }
 
-export type OnClickBlock = (block: IBlock[]) => void;
-
 const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
+  const org = useSelector<IReduxState, IBlock>(
+    (state) => getBlock(state, block.rootBlockID)!
+  );
+  const statuses = org.availableStatus || [];
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;
@@ -101,7 +104,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
     return (
       <ViewByStatus
-        block={block}
+        statuses={statuses}
         onClickUpdateBlock={onClickUpdateBlock}
         blocks={blocks}
         style={style}

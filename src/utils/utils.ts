@@ -94,3 +94,5 @@ export const flattenErrorListWithDepthInfinite = (
 
   return err;
 };
+
+export const noop = () => {};

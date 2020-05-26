@@ -2,16 +2,24 @@ import path from "path";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
-import { BlockType, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
+import BoardGroupList from "./BoardGroupList";
 import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
 import {
   BoardResourceType,
   BoardViewType,
   IBoardResourceTypePathMatch,
+  OnClickAddBlock,
+  OnClickAddCollaborator,
+  OnClickAddOrEditLabel,
+  OnClickAddOrEditStatus,
+  OnClickBlockWithSearchParamKey,
+  OnClickDeleteBlock,
+  OnClickUpdateBlock,
 } from "./types";
 import {
   getBlockResourceTypes,
@@ -25,13 +33,16 @@ export interface IBoardHomeForBlockProps {
   blockPath: string;
   block: IBlock;
   isMobile: boolean;
-  onClickUpdateBlock: (block: IBlock) => void;
-  onClickAddBlock: (block: IBlock, type: BlockType) => void;
-  onClickBlock: (blocks: IBlock[]) => void;
-  onClickAddCollaborator: () => void;
-  onClickAddOrEditLabel: () => void;
-  onClickAddOrEditStatus: () => void;
-  onClickDeleteBlock: (block: IBlock) => void;
+  onClickUpdateBlock: OnClickUpdateBlock;
+  onClickAddBlock: OnClickAddBlock;
+  onClickBlock: OnClickBlockWithSearchParamKey;
+  onClickAddCollaborator: OnClickAddCollaborator;
+  onClickAddOrEditLabel: OnClickAddOrEditLabel;
+  onClickAddOrEditStatus: OnClickAddOrEditStatus;
+  onClickDeleteBlock: OnClickDeleteBlock;
+
+  noExtraCreateMenuItems?: boolean;
+  boardTypeSearchParamKey?: string;
 }
 
 const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
@@ -46,6 +57,8 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     isMobile,
     onClickAddOrEditLabel,
     onClickAddOrEditStatus,
+    boardTypeSearchParamKey,
+    noExtraCreateMenuItems,
   } = props;
 
   const childrenTypes = useBlockChildrenTypes(block);
@@ -58,7 +71,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const resourceType =
     resourceTypeMatch && resourceTypeMatch.params.resourceType;
   const searchParams = new URLSearchParams(window.location.search);
-  const boardType: BoardViewType = searchParams.get("bt") as BoardViewType;
+  const boardType: BoardViewType = searchParams.get(
+    boardTypeSearchParamKey!
+  ) as BoardViewType;
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries
@@ -66,40 +81,65 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
-    const destPath = `${blockPath}/${resourceType}`;
-    const boardTypesForResourceType = getBoardViewTypesForResourceType(
-      block,
-      resourceType,
-      isMobile
-    );
-    const bt: BoardViewType = boardTypesForResourceType[0];
+    console.log("a", block);
+    return null;
+    // const destPath = `${blockPath}/${resourceType}`;
+    // const boardTypesForResourceType = getBoardViewTypesForResourceType(
+    //   block,
+    //   resourceType,
+    //   isMobile
+    // );
+    // const newBoardType: BoardViewType = boardTypesForResourceType[0];
 
-    return <Redirect to={`${destPath}?bt=${bt}`} />;
+    // return (
+    //   <Redirect to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`} />
+    // );
   }
 
   // TODO: should we show error if block type is task?
   if (boardType && !resourceType) {
-    const nextPath = path.normalize(blockPath + `/tasks?bt=${boardType}`);
+    console.log("b", block);
+    const nextPath = path.normalize(
+      blockPath + `/tasks?${boardTypeSearchParamKey}=${boardType}`
+    );
     return <Redirect to={nextPath} />;
   }
 
   // TODO: should we show error if block type is task?
   if (!boardType && !resourceType) {
-    const bt = getDefaultBoardViewType(block);
-    const nextPath = path.normalize(blockPath + `/tasks?bt=${bt}`);
+    console.log("c", block);
+    const newBoardType = getDefaultBoardViewType(block);
+    const nextPath = path.normalize(
+      blockPath + `/tasks?${boardTypeSearchParamKey}=${newBoardType}`
+    );
     return <Redirect to={nextPath} />;
   }
 
   const renderBoardType = () => {
+    if (resourceType === "groups") {
+      return (
+        <BoardGroupList
+          block={block}
+          blockPath={blockPath}
+          onClickBlock={onClickBlock}
+          onClickCreateNewBlock={onClickAddBlock}
+          onClickDeleteBlock={onClickDeleteBlock}
+          onClickUpdateBlock={onClickUpdateBlock}
+          style={{ marginTop: "8px" }}
+        />
+      );
+    }
+
     if (
       resourceType === "collaboration-requests" ||
-      resourceType === "collaborators" ||
-      resourceType === "groups"
+      resourceType === "collaborators"
     ) {
       return (
         <BoardTypeList
           block={block}
-          onClickBlock={onClickBlock}
+          onClickBlock={(blocks) =>
+            onClickBlock(blocks, boardTypeSearchParamKey)
+          }
           onClickCreateNewBlock={onClickAddBlock}
           onClickUpdateBlock={onClickUpdateBlock}
           selectedResourceType={resourceType}
@@ -114,7 +154,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           <BoardTypeKanban
             block={block}
             onClickUpdateBlock={onClickUpdateBlock}
-            onClickBlock={onClickBlock}
+            onClickBlock={(blocks) =>
+              onClickBlock(blocks, boardTypeSearchParamKey)
+            }
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
             onClickDeleteBlock={onClickDeleteBlock}
@@ -135,7 +177,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           <BoardTypeList
             block={block}
             onClickUpdateBlock={onClickUpdateBlock}
-            onClickBlock={onClickBlock}
+            onClickBlock={(blocks) =>
+              onClickBlock(blocks, boardTypeSearchParamKey)
+            }
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
             style={{ marginTop: "8px" }}
@@ -147,6 +191,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const renderHeader = () => {
     return (
       <BoardBlockHeader
+        noExtraCreateMenuItems={noExtraCreateMenuItems}
         isMobile={isMobile}
         block={block}
         selectedBoardType={boardType}
@@ -165,7 +210,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           }
 
           if (navBoardType) {
-            nextPath = `${nextPath}?bt=${navBoardType}`;
+            nextPath = `${nextPath}?${boardTypeSearchParamKey}=${navBoardType}`;
           }
 
           history.push(nextPath);
@@ -178,13 +223,15 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const onSelectResourceType = (key: BoardResourceType) => {
     let nextPath = `${blockPath}/${key}`;
     const viewTypes = getBoardViewTypesForResourceType(block, key);
+    const search = new URLSearchParams(window.location.search);
 
     switch (key) {
       case "groups":
       case "projects":
       case "tasks":
         if (viewTypes && viewTypes.length > 0) {
-          nextPath = `${nextPath}?bt=${viewTypes[0]}`;
+          search.set(boardTypeSearchParamKey!, viewTypes[0]);
+          nextPath = `${nextPath}?${search.toString()}`;
         }
 
         history.push(nextPath);
@@ -221,6 +268,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
                 marginLeft: i === 0 ? "16px" : undefined,
                 color: type === resourceType ? "rgb(66,133,244)" : "inherit",
                 cursor: "pointer",
+                whiteSpace: "nowrap",
               }}
               onClick={() => {
                 onSelectResourceType(type);
@@ -234,6 +282,10 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
       {renderBoardType()}
     </StyledContainer>
   );
+};
+
+BoardMain.defaultProps = {
+  boardTypeSearchParamKey: "bt",
 };
 
 export default BoardMain;

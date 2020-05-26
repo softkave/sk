@@ -39,6 +39,7 @@ export interface IBoardBlockHeaderProps {
     boardType: BoardViewType | null
   ) => void;
 
+  noExtraCreateMenuItems?: boolean;
   resourceType?: BoardResourceType | null;
   style?: React.CSSProperties;
 }
@@ -57,6 +58,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     onClickAddOrEditLabel,
     onClickAddOrEditStatus,
     style,
+    noExtraCreateMenuItems,
   } = props;
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
@@ -116,6 +118,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
 
   const renderCreateNewMenu = () => (
     <SelectBlockCreateNewOptionsMenu
+      noExtraMenuItems={noExtraCreateMenuItems}
       block={block}
       onSelect={onSelectCreateMenuItem}
     />

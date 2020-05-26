@@ -20,12 +20,14 @@ import { CreateMenuKey } from "./types";
 export interface ISelectBlockCreateNewOptionsMenuProps {
   block: IBlock;
   onSelect: (key: CreateMenuKey) => void;
+
+  noExtraMenuItems?: boolean;
 }
 
 const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenuProps> = (
   props
 ) => {
-  const { onSelect, block } = props;
+  const { onSelect, block, noExtraMenuItems } = props;
   const childrenTypes = useBlockChildrenTypes(block);
   const hasCollaborators = block.type === "org";
 
@@ -48,6 +50,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
   const renderCreateNewOptions = (
     renderMenuProps: IMenuWithTriggerRenderMenuProps
   ) => {
+    let addedDivider = false;
     const createMenuItems = childrenTypes.map((type) => (
       <StyledMenuItem key={type}>
         <BorderOutlined />
@@ -56,6 +59,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
     ));
 
     if (hasCollaborators) {
+      addedDivider = true;
       createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
       createMenuItems.push(
         <StyledMenuItem key="collaborator">
@@ -65,16 +69,22 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
       );
     }
 
-    createMenuItems.push(
-      <StyledMenuItem key="status">
-        <ReconciliationOutlined />
-        Add or Edit Status
-      </StyledMenuItem>,
-      <StyledMenuItem key="label">
-        <TagOutlined />
-        Add or Edit Labels
-      </StyledMenuItem>
-    );
+    if (!noExtraMenuItems) {
+      if (!addedDivider) {
+        createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
+      }
+
+      createMenuItems.push(
+        <StyledMenuItem key="status">
+          <ReconciliationOutlined />
+          Add or Edit Status
+        </StyledMenuItem>,
+        <StyledMenuItem key="label">
+          <TagOutlined />
+          Add or Edit Labels
+        </StyledMenuItem>
+      );
+    }
 
     const createMenu = (
       <Menu

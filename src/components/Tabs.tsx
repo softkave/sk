@@ -35,7 +35,7 @@ const Tabs: React.FC<ITabsProps> = (props) => {
           color: activeTab?.key === tab.key ? "rgb(66,133,244)" : "inherit",
           cursor: "pointer",
 
-          // TODO: this should not be doen here
+          // TODO: this should not be done here
           whiteSpace: "nowrap",
         }}
       >

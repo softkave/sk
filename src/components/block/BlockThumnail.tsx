@@ -100,21 +100,23 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
   // TODO: do line clamping on the texts
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
-    <StyledContainer s={{ ...style, flex: 1 }} className={className}>
+    <StyledContainer
+      s={{ ...style, flex: 1, cursor: onClick ? "pointer" : undefined }}
+      className={className}
+      onClick={onClick}
+    >
       <StyledContainer>
         <ItemAvatar size={avatarSize} color={color} />
       </StyledContainer>
       <StyledContainer
         s={{
           lineHeight: "16px",
-          cursor: onClick ? "pointer" : undefined,
           flex: 1,
           marginLeft: blockDescriptionMarginWidth,
           flexDirection: "column",
           boxSizing: "border-box",
           display: "flex",
         }}
-        onClick={onClick}
       >
         {renderName()}
         {renderType()}

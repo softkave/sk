@@ -1,4 +1,4 @@
-import { BlockType } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 
 export type BoardResourceType =
   | "groups"
@@ -18,3 +18,14 @@ export interface IBoardResourceTypePathMatch {
 }
 
 export type CreateMenuKey = BlockType | "collaborator" | "status" | "label";
+export type OnClickBlock = (blocks: IBlock[]) => void;
+export type OnClickBlockWithSearchParamKey = (
+  blocks: IBlock[],
+  searchParamKey?: string
+) => void;
+export type OnClickUpdateBlock = (block: IBlock) => void;
+export type OnClickAddBlock = (block: IBlock, type: BlockType) => void;
+export type OnClickAddCollaborator = () => void;
+export type OnClickAddOrEditLabel = () => void;
+export type OnClickAddOrEditStatus = () => void;
+export type OnClickDeleteBlock = (block: IBlock) => void;
