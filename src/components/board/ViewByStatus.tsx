@@ -7,7 +7,7 @@ import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
 import Column from "./Column";
 
 export interface IViewByStatusProps {
-  block: IBlock;
+  statuses: IBlockStatus[];
   blocks: IBlock[];
   onClickUpdateBlock: (block: IBlock) => void;
 
@@ -16,10 +16,9 @@ export interface IViewByStatusProps {
 
 // TODO: implement drag and drop in this board view
 const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
-  const { block, onClickUpdateBlock, blocks, style } = props;
+  const { statuses, onClickUpdateBlock, blocks, style } = props;
 
-  const availableStatus = block.availableStatus || [];
-  const statusMap = availableStatus.reduce((accumulator, status) => {
+  const statusMap = statuses.reduce((accumulator, status) => {
     accumulator[status.customId] = status;
     return accumulator;
   }, {} as { [key: string]: IBlockStatus });
@@ -27,7 +26,7 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
   const sortByStatus = () => {
     const statusIdToBlocksMap: {
       [key: string]: IBlock[];
-    } = availableStatus.reduce((accumulator, status) => {
+    } = statuses.reduce((accumulator, status) => {
       accumulator[status.customId] = [];
       return accumulator;
     }, {});
@@ -36,6 +35,7 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
 
     blocks.forEach((nextBlock) => {
       if (!nextBlock.status) {
+        console.log({ nextBlock });
         noStatusList.push(nextBlock);
         return;
       }

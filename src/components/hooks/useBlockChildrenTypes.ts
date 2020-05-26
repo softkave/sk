@@ -1,6 +1,6 @@
 import { IBlock } from "../../models/block/block";
 import { getBlockValidChildrenTypes } from "../../models/block/utils";
-import useBlockParents from "./useBlockParent";
+import useBlockParents from "./useBlockParents";
 
 const useBlockChildrenTypes = (block: IBlock) => {
   const parents = useBlockParents(block);
@@ -11,7 +11,7 @@ const useBlockChildrenTypes = (block: IBlock) => {
 
   if (block.type === "group") {
     if (parent0 && parent0.type === "project") {
-      childrenTypes = childrenTypes.filter(type => type !== "project");
+      childrenTypes = childrenTypes.filter((type) => type !== "project");
     }
   }
 

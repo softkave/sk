@@ -1,9 +1,7 @@
 import path from "path";
 import React from "react";
-import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router";
-import { BlockType, IBlock } from "../../models/block/block";
-import { IReduxState } from "../../redux/store";
+import { IBlock } from "../../models/block/block";
 import { noop } from "../../utils/utils";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
@@ -98,6 +96,7 @@ const BoardGroupList: React.FC<IBoardGroupListProps> = (props) => {
           maxWidth: "100%",
           overflow: "auto",
           height: "100%",
+          borderRight: "1px solid #d9d9d9",
         }}
       >
         {renderGroupList()}

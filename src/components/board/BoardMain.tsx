@@ -81,21 +81,24 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
-    const destPath = `${blockPath}/${resourceType}`;
-    const boardTypesForResourceType = getBoardViewTypesForResourceType(
-      block,
-      resourceType,
-      isMobile
-    );
-    const newBoardType: BoardViewType = boardTypesForResourceType[0];
+    console.log("a", block);
+    return null;
+    // const destPath = `${blockPath}/${resourceType}`;
+    // const boardTypesForResourceType = getBoardViewTypesForResourceType(
+    //   block,
+    //   resourceType,
+    //   isMobile
+    // );
+    // const newBoardType: BoardViewType = boardTypesForResourceType[0];
 
-    return (
-      <Redirect to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`} />
-    );
+    // return (
+    //   <Redirect to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`} />
+    // );
   }
 
   // TODO: should we show error if block type is task?
   if (boardType && !resourceType) {
+    console.log("b", block);
     const nextPath = path.normalize(
       blockPath + `/tasks?${boardTypeSearchParamKey}=${boardType}`
     );
@@ -104,6 +107,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && !resourceType) {
+    console.log("c", block);
     const newBoardType = getDefaultBoardViewType(block);
     const nextPath = path.normalize(
       blockPath + `/tasks?${boardTypeSearchParamKey}=${newBoardType}`
@@ -219,13 +223,15 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const onSelectResourceType = (key: BoardResourceType) => {
     let nextPath = `${blockPath}/${key}`;
     const viewTypes = getBoardViewTypesForResourceType(block, key);
+    const search = new URLSearchParams(window.location.search);
 
     switch (key) {
       case "groups":
       case "projects":
       case "tasks":
         if (viewTypes && viewTypes.length > 0) {
-          nextPath = `${nextPath}?${boardTypeSearchParamKey}=${viewTypes[0]}`;
+          search.set(boardTypeSearchParamKey!, viewTypes[0]);
+          nextPath = `${nextPath}?${search.toString()}`;
         }
 
         history.push(nextPath);

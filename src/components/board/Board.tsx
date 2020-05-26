@@ -15,7 +15,7 @@ import {
 } from "../../redux/operations/operationIDs";
 import { pluralize } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
-import useBlockParents from "../hooks/useBlockParent";
+import useBlockParents from "../hooks/useBlockParents";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";

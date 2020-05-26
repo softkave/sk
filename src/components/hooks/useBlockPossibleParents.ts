@@ -1,7 +1,7 @@
 import { useStore } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
-import useBlockParents from "./useBlockParent";
+import useBlockParents from "./useBlockParents";
 
 const useBlockPossibleParents = (block: IBlock) => {
   const store = useStore();
