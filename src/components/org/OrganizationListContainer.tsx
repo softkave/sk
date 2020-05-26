@@ -54,7 +54,12 @@ const OrganizationListContainer: React.FC<{}> = () => {
     const renderOrganizations = () => {
       return (
         <StyledContainer
-          s={{ justifyContent: "center", width: "100%", padding: "32px 16px" }}
+          s={{
+            justifyContent: "center",
+            width: "100%",
+            padding: "32px 16px",
+            paddingTop: 0,
+          }}
         >
           <OrganizationList
             orgs={organizations}

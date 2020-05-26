@@ -79,7 +79,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (boardType && !resourceType) {
-    const nextPath = path.normalize(blockPath + `/tasks?bt={${boardType}}`);
+    const nextPath = path.normalize(blockPath + `/tasks?bt=${boardType}`);
     return <Redirect to={nextPath} />;
   }
 
