@@ -116,7 +116,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   }
 
   const renderBoardType = () => {
-    if (resourceType === "groups") {
+    if (resourceType === "groups" && isMobile) {
       return (
         <BoardGroupList
           block={block}
@@ -132,7 +132,8 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
     if (
       resourceType === "collaboration-requests" ||
-      resourceType === "collaborators"
+      resourceType === "collaborators" ||
+      resourceType === "groups"
     ) {
       return (
         <BoardTypeList

@@ -25,7 +25,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 ) => {
   const { block, onClickUpdateBlock, style } = props;
   const org = useSelector<IReduxState, IBlock>(
-    (state) => getBlock(state, block.rootBlockID)!
+    (state) => getBlock(state, block.rootBlockID || block.customId)!
   );
   const statuses = org.availableStatus || [];
 

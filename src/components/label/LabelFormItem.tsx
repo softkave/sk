@@ -111,11 +111,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
             color: "rgba(0,0,0,0.85)",
           }}
         >
-          <RoundEdgeTags
-            // contentColor="white"
-            color={value.color}
-            children={value.name}
-          />
+          <RoundEdgeTags color={value.color} children={value.name} />
         </StyledContainer>
         <StyledContainer s={{ marginTop: "4px" }}>
           {value.description}

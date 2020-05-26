@@ -116,6 +116,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   const onChange = (index: number, data: Partial<IBlockLabel>) => {
     const nameField = `labelList.[${index}].name`;
     const descField = `labelList.[${index}].description`;
+    const colorField = `labelList.[${index}].color`;
     const changedFields = Object.keys(data);
 
     if (changedFields.includes("name")) {
@@ -124,6 +125,10 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
     if (changedFields.includes("description")) {
       formik.setFieldValue(descField, data.description, true);
+    }
+
+    if (changedFields.includes("color")) {
+      formik.setFieldValue(colorField, data.color, true);
     }
   };
 
@@ -155,6 +160,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const labelErrors: any = (formik.errors.labelList || [])[index] || {};
     const values = formik.values.labelList[index];
     const initialValue = getInitialValue(label.customId);
+    console.log({ values });
 
     return (
       <LabelFormItem
