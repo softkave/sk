@@ -19,8 +19,6 @@ export interface IViewByStatusContainerProps {
   style?: React.CSSProperties;
 }
 
-export type OnClickBlock = (block: IBlock[]) => void;
-
 const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {

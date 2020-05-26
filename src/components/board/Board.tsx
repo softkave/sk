@@ -19,7 +19,7 @@ import useBlockParents from "../hooks/useBlockParent";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardBlockContainer from "./BoardBlockContainer";
+import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
 import BoardBlockChildren from "./LoadBlockChildren";
@@ -37,8 +37,6 @@ interface IBlockFormState {
 export interface IBoardForBlockProps {
   block: IBlock;
 }
-
-export type OnClickBlock = (block: IBlock[]) => void;
 
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
@@ -60,9 +58,6 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
 
   // TODO: we need to rebuild the path when the user transfers the block
   const blockPath = `${parentPath}${getPath(block)}`;
-  const childGroupMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/groups/:blockID`
-  );
 
   const childProjectMatch = useRouteMatch<IBlockPathMatch>(
     `${blockPath}/projects/:blockID`
@@ -137,14 +132,14 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     history.push(url);
   };
 
-  const onClickBlock = (blocks: IBlock[]) => {
+  const onClickBlock = (blocks: IBlock[], searchParamKey = "bt") => {
     const clickedBlock = blocks[blocks.length - 1];
-    const bt = getDefaultBoardViewType(clickedBlock);
+    const boardType = getDefaultBoardViewType(clickedBlock);
     const nextPath = path.normalize(
       blockPath +
         "/" +
         blocks.map((b) => getPath(b)).join("") +
-        `/tasks?bt=${bt}`
+        `/tasks?${searchParamKey}=${boardType}`
     );
 
     pushRoute(nextPath);
@@ -229,11 +224,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     let message: string = "";
     let getChildrenIDsFunc: () => string[] = () => [];
 
-    if (childGroupMatch) {
-      childID = childGroupMatch.params.blockID;
-      message = "Group not found.";
-      getChildrenIDsFunc = () => block.groups || [];
-    } else if (childProjectMatch) {
+    if (childProjectMatch) {
       childID = childProjectMatch.params.blockID;
       message = "Project not found.";
       getChildrenIDsFunc = () => block.projects || [];
@@ -248,7 +239,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
         parent={block}
         getChildrenIDs={getChildrenIDsFunc}
         render={() => (
-          <BoardBlockContainer blockID={childID!} notFoundMessage={message} />
+          <BlockContainer blockID={childID!} notFoundMessage={message} />
         )}
       />
     );
@@ -264,7 +255,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
       return <GeneralErrorList fill errors={loadErrors} />;
     }
 
-    if (childGroupMatch || childProjectMatch) {
+    if (childProjectMatch) {
       return renderChild();
     }
 

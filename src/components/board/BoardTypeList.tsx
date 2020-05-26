@@ -1,15 +1,20 @@
 import React from "react";
-import { BlockType, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import RenderBlockChildren from "./RenderBlockChildren";
-import { BoardResourceType } from "./types";
+import {
+  BoardResourceType,
+  OnClickAddBlock,
+  OnClickBlock,
+  OnClickUpdateBlock,
+} from "./types";
 
 export interface IBoardTypeListProps {
   block: IBlock;
   selectedResourceType: BoardResourceType;
-  onClickUpdateBlock: (block: IBlock) => void;
-  onClickBlock: (blocks: IBlock[]) => void;
-  onClickCreateNewBlock: (block: IBlock, type: BlockType) => void;
+  onClickUpdateBlock: OnClickUpdateBlock;
+  onClickBlock: OnClickBlock;
+  onClickCreateNewBlock: OnClickAddBlock;
 
   style?: React.CSSProperties;
 }
