@@ -10,7 +10,6 @@ import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getDefaultBoardViewType } from "../board/utils";
-import GeneralError from "../GeneralError";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -18,16 +17,17 @@ import StyledContainer from "../styled/Container";
 import OrganizationContainer from "./OrganizationContainer";
 import OrganizationList from "./OrganizationList";
 
+// TODO: write a script to delete stale or blocks not found and their refs ( their ids ) in other documents
+// TODO: remove all TODOs to a separate file or find a way to remove them from the final production build,
+//  it's showing up in the built code
+// TODO: find a way or config to only import the ant icons you use, all of them are getting pulled in into the bundle
+
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
   const organizations = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, user.orgs)
   );
-
-  // TODO: Trim organizations not found when root blocks are loaded ( in the loadRootBlocks function )
-  // TODO: Should we use length comparison or operation status?
-  const areOrganizationsLoaded = organizations.length === user.orgs.length;
 
   const onClickOrganization = (organization: IBlock) => {
     const bt = getDefaultBoardViewType(organization);
@@ -69,19 +69,15 @@ const OrganizationListContainer: React.FC<{}> = () => {
       );
     };
 
-    if (areOrganizationsLoaded) {
-      return (
-        <Switch>
-          <Route exact path="/app/organizations" render={renderOrganizations} />
-          <Route
-            path="/app/organizations/:organizationID"
-            component={OrganizationContainer}
-          />
-        </Switch>
-      );
-    }
-
-    return <GeneralError />;
+    return (
+      <Switch>
+        <Route exact path="/app/organizations" render={renderOrganizations} />
+        <Route
+          path="/app/organizations/:organizationID"
+          component={OrganizationContainer}
+        />
+      </Switch>
+    );
   };
 
   return (
