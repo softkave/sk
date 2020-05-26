@@ -17,6 +17,11 @@ import StyledContainer from "../styled/Container";
 import OrganizationContainer from "./OrganizationContainer";
 import OrganizationList from "./OrganizationList";
 
+// TODO: write a script to delete stale or blocks not found and their refs ( their ids ) in other documents
+// TODO: remove all TODOs to a separate file or find a way to remove them from the final production build,
+//  it's showing up in the built code
+// TODO: find a way or config to only import the ant icons you use, all of them are getting pulled in into the bundle
+
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
