@@ -35,7 +35,6 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
 
     blocks.forEach((nextBlock) => {
       if (!nextBlock.status) {
-        console.log({ nextBlock });
         noStatusList.push(nextBlock);
         return;
       }

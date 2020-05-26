@@ -160,7 +160,6 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const labelErrors: any = (formik.errors.labelList || [])[index] || {};
     const values = formik.values.labelList[index];
     const initialValue = getInitialValue(label.customId);
-    console.log({ values });
 
     return (
       <LabelFormItem

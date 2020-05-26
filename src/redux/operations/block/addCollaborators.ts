@@ -73,9 +73,10 @@ export default async function addCollaboratorsOperationFunc(
       throw result.errors;
     }
 
-    const requestIds = proccessedCollaborators.map(
-      (request) => request.customId
-    );
+    // TODO
+    // const requestIds = proccessedCollaborators.map(
+    //   (request) => request.customId
+    // );
 
     /**
      * Currently, the only the request IDs are stored, which will trigger a refetch of all the block's notifications
@@ -86,15 +87,15 @@ export default async function addCollaboratorsOperationFunc(
      * as updates will be pushed as they occur
      */
     // TODO: Block data loader is not reloading, look into why
-    store.dispatch(
-      blockActions.updateBlockRedux(
-        block.customId,
-        {
-          collaborationRequests: requestIds,
-        },
-        { arrayUpdateStrategy: "concat" }
-      )
-    );
+    // store.dispatch(
+    //   blockActions.updateBlockRedux(
+    //     block.customId,
+    //     {
+    //       collaborationRequests: requestIds,
+    //     },
+    //     { arrayUpdateStrategy: "concat" }
+    //   )
+    // );
 
     store.dispatch(
       pushOperation(

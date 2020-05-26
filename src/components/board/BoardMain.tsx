@@ -81,24 +81,29 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
-    console.log("a", block);
-    return null;
-    // const destPath = `${blockPath}/${resourceType}`;
-    // const boardTypesForResourceType = getBoardViewTypesForResourceType(
-    //   block,
-    //   resourceType,
-    //   isMobile
-    // );
-    // const newBoardType: BoardViewType = boardTypesForResourceType[0];
+    if (
+      resourceType === "groups" ||
+      resourceType === "projects" ||
+      resourceType === "tasks"
+    ) {
+      const destPath = `${blockPath}/${resourceType}`;
+      const boardTypesForResourceType = getBoardViewTypesForResourceType(
+        block,
+        resourceType,
+        isMobile
+      );
+      const newBoardType: BoardViewType = boardTypesForResourceType[0];
 
-    // return (
-    //   <Redirect to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`} />
-    // );
+      return (
+        <Redirect
+          to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`}
+        />
+      );
+    }
   }
 
   // TODO: should we show error if block type is task?
   if (boardType && !resourceType) {
-    console.log("b", block);
     const nextPath = path.normalize(
       blockPath + `/tasks?${boardTypeSearchParamKey}=${boardType}`
     );
@@ -107,7 +112,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && !resourceType) {
-    console.log("c", block);
     const newBoardType = getDefaultBoardViewType(block);
     const nextPath = path.normalize(
       blockPath + `/tasks?${boardTypeSearchParamKey}=${newBoardType}`

@@ -208,7 +208,7 @@ const BoardTypeKanban: React.FC<IBoardTypeKanbanProps> = (props) => {
       render={(blocks) =>
         renderBaskets(
           blocks,
-          "No tasks or groups yet.",
+          `No ${selectedResourceType} or groups yet.`,
           (groups) => {
             let baskets: IBoardBasket[] = [];
 

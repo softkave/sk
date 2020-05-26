@@ -15,6 +15,7 @@ const successMessage = `
 
 const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
+  const [key, setKey] = React.useState(Math.random().toString());
   const store = useStore();
   const operationStatus = useOperation({
     operationID: requestForgotPasswordOperationID,
@@ -38,6 +39,8 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
           timestamp: Date.now(),
         })
       );
+
+      setKey(Math.random().toString());
     }
   }, [operationStatus, dispatch]);
 
@@ -47,6 +50,7 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
 
   return (
     <ForgotPassword
+      key={key}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}

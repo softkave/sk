@@ -1,11 +1,14 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
+import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
+import { operationStatusTypes } from "../../redux/operations/operation";
 import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
 import { IReduxState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
@@ -27,6 +30,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
   props
 ) => {
   const { onClose, orgID } = props;
+  const dispatch = useDispatch();
 
   const organizationID = orgID;
 
@@ -62,6 +66,21 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
+
+  React.useEffect(() => {
+    if (operationStatus.isCompleted) {
+      onClose();
+      dispatch(
+        pushOperation(addCollaboratorsOperationID, {
+          scopeID,
+          status: operationStatusTypes.consumed,
+          timestamp: Date.now(),
+        })
+      );
+
+      loadBlockCollaborationRequestsOperationFunc({ block: organization });
+    }
+  });
 
   const onSubmit = async (values: IAddCollaboratorFormValues) => {
     setData(data);

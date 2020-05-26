@@ -76,7 +76,6 @@ const ColorPicker: React.FC<IColorPickerProps> = (props) => {
 
       pickr.on("save", () => {
         const color = pickr.getColor()!.toHEXA().toString();
-        console.log({ color });
         onChange(color);
         pickr.hide();
       });
