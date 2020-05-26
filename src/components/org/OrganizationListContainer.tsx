@@ -10,7 +10,6 @@ import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IReduxState } from "../../redux/store";
 import { getDefaultBoardViewType } from "../board/utils";
-import GeneralError from "../GeneralError";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -24,10 +23,6 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const organizations = useSelector<IReduxState, IBlock[]>((state) =>
     getBlocksAsArray(state, user.orgs)
   );
-
-  // TODO: Trim organizations not found when root blocks are loaded ( in the loadRootBlocks function )
-  // TODO: Should we use length comparison or operation status?
-  const areOrganizationsLoaded = organizations.length === user.orgs.length;
 
   const onClickOrganization = (organization: IBlock) => {
     const bt = getDefaultBoardViewType(organization);
@@ -69,19 +64,15 @@ const OrganizationListContainer: React.FC<{}> = () => {
       );
     };
 
-    if (areOrganizationsLoaded) {
-      return (
-        <Switch>
-          <Route exact path="/app/organizations" render={renderOrganizations} />
-          <Route
-            path="/app/organizations/:organizationID"
-            component={OrganizationContainer}
-          />
-        </Switch>
-      );
-    }
-
-    return <GeneralError />;
+    return (
+      <Switch>
+        <Route exact path="/app/organizations" render={renderOrganizations} />
+        <Route
+          path="/app/organizations/:organizationID"
+          component={OrganizationContainer}
+        />
+      </Switch>
+    );
   };
 
   return (
