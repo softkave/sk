@@ -54,6 +54,11 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
   const renderInputs = () => {
     return (
       <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+        {value.name && (
+          <Form.Item style={{ marginBottom: 8 }}>
+            <RoundEdgeTags color={value.color} children={value.name} />
+          </Form.Item>
+        )}
         <Form.Item
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
@@ -106,11 +111,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
       <StyledContainer
         s={{ flexDirection: "column", width: "100%", marginBottom: "8px" }}
       >
-        <StyledContainer
-          style={{
-            color: "rgba(0,0,0,0.85)",
-          }}
-        >
+        <StyledContainer>
           <RoundEdgeTags color={value.color} children={value.name} />
         </StyledContainer>
         <StyledContainer s={{ marginTop: "4px" }}>
@@ -191,4 +192,4 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
   return renderLabel();
 };
 
-export default LabelFormItem;
+export default React.memo(LabelFormItem);

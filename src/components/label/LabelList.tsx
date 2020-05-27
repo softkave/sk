@@ -114,10 +114,11 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   };
 
   const onChange = (index: number, data: Partial<IBlockLabel>) => {
+    const changedFields = Object.keys(data);
+
     const nameField = `labelList.[${index}].name`;
     const descField = `labelList.[${index}].description`;
     const colorField = `labelList.[${index}].color`;
-    const changedFields = Object.keys(data);
 
     if (changedFields.includes("name")) {
       formik.setFieldValue(nameField, data.name, true);
@@ -158,18 +159,19 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const isEditing = editingLabelList.exists(label.customId);
     const touched = (formik.touched.labelList || [])[index];
     const labelErrors: any = (formik.errors.labelList || [])[index] || {};
-    const values = formik.values.labelList[index];
     const initialValue = getInitialValue(label.customId);
 
     return (
       <LabelFormItem
         key={label.customId}
-        onChange={(data) => onChange(index, data)}
+        onChange={(data) => {
+          onChange(index, data);
+        }}
         onCommitChanges={() => onCommitChanges(label, index)}
         onDelete={() => onDelete(index)}
         onDiscardChanges={() => onDiscardChanges(index, initialValue)}
         onEdit={() => onEdit(label.customId)}
-        value={values}
+        value={label}
         disabled={isSubmitting}
         errors={labelErrors}
         handleBlur={(field, evt) => handleBlur(index, field)}

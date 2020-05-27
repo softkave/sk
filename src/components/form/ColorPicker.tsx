@@ -66,6 +66,17 @@ const ColorPicker: React.FC<IColorPickerProps> = (props) => {
     }
   }, [value, divRef, pickr]);
 
+  const internalOnChange = React.useCallback(() => {
+    if (pickr) {
+      const color = pickr.getColor()!.toHEXA().toString();
+      pickr.hide();
+
+      if (color !== value) {
+        onChange(color);
+      }
+    }
+  }, [onChange, pickr, value]);
+
   React.useEffect(() => {
     if (pickr) {
       if (disabled) {
@@ -74,13 +85,15 @@ const ColorPicker: React.FC<IColorPickerProps> = (props) => {
         pickr.enable();
       }
 
-      pickr.on("save", () => {
-        const color = pickr.getColor()!.toHEXA().toString();
-        onChange(color);
-        pickr.hide();
-      });
+      pickr.on("save", internalOnChange);
     }
-  }, [pickr, disabled, onChange]);
+
+    return () => {
+      if (pickr) {
+        pickr.off("save", internalOnChange);
+      }
+    };
+  }, [pickr, disabled, internalOnChange]);
 
   return <div ref={divRef}></div>;
 };
