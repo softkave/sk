@@ -10,7 +10,7 @@ import {
   Switch,
   Typography,
 } from "antd";
-import { Formik, FormikProps } from "formik";
+import { FormikProps } from "formik";
 import moment from "moment";
 import React from "react";
 import {
@@ -34,11 +34,12 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../form/FormStyledComponents";
-import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
+import useFormikExtended from "../hooks/useFormikExtended";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
+import SubTaskList from "./SubTaskList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import TaskLabels from "./TaskLabels";
 import TaskStatus from "./TaskStatus";
@@ -100,7 +101,19 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     })
   );
 
-  const formikRef = useInsertFormikErrors(externalErrors);
+  const {
+    formik,
+    addNewValueToArrayField,
+    deleteIndexInArrayField,
+  } = useFormikExtended({
+    errors: externalErrors,
+    formikProps: {
+      // TODO: show a message on form submit or close the form
+      onSubmit,
+      initialValues: value,
+      validationSchema: blockValidationSchemas.task,
+    },
+  });
 
   const renderParentInput = (formikProps: TaskFormFormikProps) => {
     const { touched, errors, values, setFieldValue } = formikProps;
@@ -432,47 +445,52 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
-  // const onChangeSubTasks = (
-  //   subTasks: ISubTask[],
-  //   formikProps: TaskFormFormikProps
-  // ) => {
-  //   const { values, setValues } = formikProps;
-  //   const update: ITaskFormValues = { ...values, subTasks };
-  //   const now = Date.now();
+  const onChangeSubTasks = (
+    subTasks: ISubTask[],
+    formikProps: TaskFormFormikProps
+  ) => {
+    const { values, setValues } = formikProps;
+    const update: ITaskFormValues = { ...values, subTasks };
 
-  //   if (Array.isArray(subTasks) && subTasks.length > 0) {
-  //     const areSubTasksCompleted = !!!subTasks.find(
-  //       (subTask) => !!!subTask.completedAt
-  //     );
+    setValues(update);
+  };
 
-  //     if (areSubTasksCompleted !== !!values.taskCollaborationData.completedAt) {
-  //       update.taskCollaborationData = {
-  //         ...update.taskCollaborationData,
-  //         completedAt: areSubTasksCompleted ? now : null,
-  //         completedBy: areSubTasksCompleted ? user.customId : null,
-  //       };
-  //     }
-  //   }
+  const onDiscardSubTaskChanges = (index: number) => {
+    const taskInitialValue = formik.initialValues || {};
+    const initialSubTasks = taskInitialValue.subTasks || [];
+    const initialValue = initialSubTasks[index];
 
-  //   setValues(update);
-  // };
+    if (initialValue) {
+      formik.setFieldValue(`subTasks.[${index}]`, initialValue);
+    }
+  };
 
-  // const renderSubTasks = (formikProps: TaskFormFormikProps) => {
-  //   const { values, touched, errors } = formikProps;
+  const renderSubTasks = (formikProps: TaskFormFormikProps) => {
+    const { values, touched, errors } = formikProps;
+    console.log({ errors, touched });
 
-  //   return (
-  //     <StyledContainer
-  //       s={{ flexDirection: "column", width: "100%", marginBottom: "24px" }}
-  //     >
-  //       <SubTaskList
-  //         subTasks={values.subTasks || []}
-  //         errors={touched.subTasks && (errors.subTasks as any)}
-  //         onChange={(subTasks) => onChangeSubTasks(subTasks, formikProps)}
-  //         disabled={isSubmitting}
-  //       />
-  //     </StyledContainer>
-  //   );
-  // };
+    return (
+      <StyledContainer
+        s={{ flexDirection: "column", width: "100%", marginBottom: "24px" }}
+      >
+        <SubTaskList
+          user={user}
+          subTasks={values.subTasks || []}
+          errors={errors.subTasks as any}
+          touched={touched.subTasks as any}
+          onChange={(subTasks) => onChangeSubTasks(subTasks, formikProps)}
+          disabled={isSubmitting}
+          onAddSubTask={(subTask) => {
+            addNewValueToArrayField("subTasks", subTask, {}, {});
+          }}
+          onDeleteSubTask={(index) => {
+            deleteIndexInArrayField("subTasks", index);
+          }}
+          onDiscardSubTaskChanges={onDiscardSubTaskChanges}
+        />
+      </StyledContainer>
+    );
+  };
 
   const getSubmitLabel = () => {
     if (isSubmitting) {
@@ -512,7 +530,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   const renderForm = (formikProps: TaskFormFormikProps) => {
     const { handleSubmit, errors } = formikProps;
     const globalError = getGlobalError(errors);
-    formikRef.current = formikProps;
 
     return (
       <StyledForm onSubmit={handleSubmit}>
@@ -533,8 +550,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             {/* {renderCollaborationTypeInput(formikProps)} */}
             {renderAssignedToInput(formikProps)}
             {/* TODO: work on sub-tasks, there is a bug preventing adding tasks, and add disabled */}
-            {/* TODO: pattern the implementation and UX like status and label lists */}
-            {/* {renderSubTasks(formikProps)} */}
+            {renderSubTasks(formikProps)}
           </StyledContainer>
           {renderControls()}
         </StyledContainer>
@@ -542,16 +558,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
-  return (
-    <Formik
-      initialValues={value}
-      validationSchema={blockValidationSchemas.task}
-      // TODO: show a message on form submit or close the form
-      onSubmit={onSubmit}
-    >
-      {(formikProps) => renderForm(formikProps)}
-    </Formik>
-  );
+  return renderForm(formik);
 };
 
 const StyledTaskCollaboaratorsContainer = styled.div({

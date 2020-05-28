@@ -71,7 +71,12 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   const renderSelectedLabels = () => {
     return labelIDs.map((id) => {
       const label: IBlockLabel = idToLabelMap[id];
-      return renderLabelTag(label, true);
+
+      if (label) {
+        return renderLabelTag(label, true);
+      }
+
+      return null;
     });
   };
 

@@ -23,7 +23,7 @@ const org = yup.object().shape({
 });
 
 const subTaskSchema = yup.object().shape({
-  description: descriptionOptional.required(),
+  description: descriptionOptional.required("Field is required"),
 });
 
 const task = yup.object().shape({
