@@ -125,7 +125,9 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     );
 
     search.forEach((value, key) => {
-      routeURL.searchParams.set(key, value);
+      if (!routeURL.searchParams.get(key)) {
+        routeURL.searchParams.set(key, value);
+      }
     });
 
     const url = `${routeURL.pathname}${routeURL.search}`;
