@@ -3,62 +3,60 @@ import { errorFragment } from "./error";
 const blockFragment = `
   fragment blockFragment on Block {
     customId
-    name
-    description
-    priority
-    expectedEndAt
+    createdBy
     createdAt
+    type
+    name
+    lowerCasedName
+    description
+    dueAt
     color
     updatedAt
-    type
+    updatedBy
     parent
-    rootBlockID
-    boardId
-    createdBy
-    tasks
-    groups
-    projects
-    groupTaskContext
-    groupProjectContext
-    taskCollaborationData {
-      collaborationType
-      completedAt
-      completedBy
-    }
-    taskCollaborators {
+    rootBlockId
+    assignees {
       userId
       assignedAt
       assignedBy
-      completedAt
     }
+    priority
     subTasks {
       customId
       description
-      completedAt
-      completedBy
-    }
-    landingPage
-    availableStatus {
-      customId
-      name
-      description
-      createdBy
       createdAt
-      updatedBy
-      updatedAt
+      createdBy
+      completedBy
+      completedAt
     }
-    availableLabels {
+    boardStatuses {
       customId
       name
       color
-      description
       createdBy
       createdAt
+      description
       updatedBy
       updatedAt
     }
-    labels
+    boardLabels {
+      customId
+      name
+      color
+      createdBy
+      createdAt
+      description
+      updatedBy
+      updatedAt
+    }
     status
+    statusAssignedBy
+    statusAssignedAt
+    labels {
+      customId
+      assignedBy
+      assignedAt
+    }
   }
 `;
 

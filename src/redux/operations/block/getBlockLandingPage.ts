@@ -24,7 +24,7 @@ export default async function getBlockLandingPageOperationFunc(
     getBlockLandingPageOperationID
   );
 
-  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeId)) {
     return;
   }
 
@@ -32,7 +32,7 @@ export default async function getBlockLandingPageOperationFunc(
     pushOperation(
       getBlockLandingPageOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -65,7 +65,7 @@ export default async function getBlockLandingPageOperationFunc(
       pushOperation(
         getBlockLandingPageOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -78,7 +78,7 @@ export default async function getBlockLandingPageOperationFunc(
         getBlockLandingPageOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

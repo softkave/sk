@@ -4,7 +4,7 @@ import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -19,7 +19,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, getChildrenIDs } = props;
   const [stopRetries, setStopRetries] = React.useState(false);
   const blockIDs = getChildrenIDs();
-  const blocks = useSelector<IReduxState, IBlock[]>((state) =>
+  const blocks = useSelector<IAppState, IBlock[]>((state) =>
     getBlocksAsArray(state, blockIDs)
   );
 

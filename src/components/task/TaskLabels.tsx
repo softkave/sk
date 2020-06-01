@@ -5,7 +5,7 @@ import { X as CloseIcon } from "react-feather";
 import { useSelector } from "react-redux";
 import { IBlock, IBlockLabel } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { indexArray } from "../../utils/object";
 import StyledContainer from "../styled/Container";
 import RoundEdgeTags from "../utilities/RoundEdgeTags";
@@ -20,7 +20,7 @@ export interface ITaskLabelsProps {
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   const { orgID, onChange, disabled } = props;
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     return getBlock(state, orgID)!;
   });
 

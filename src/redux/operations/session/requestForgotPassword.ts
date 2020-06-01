@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -17,7 +17,7 @@ export interface IRequestForgotPasswordOperationFuncDataProps {
 }
 
 export default async function requestForgotPasswordOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: IRequestForgotPasswordOperationFuncDataProps,
   options: IOperationFuncOptions = {}
@@ -28,14 +28,14 @@ export default async function requestForgotPasswordOperationFunc(
     requestForgotPasswordOperationID
   );
 
-  if (isOperationStarted(operation, options.scopeID)) {
+  if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: requestForgotPasswordOperationID,
+    operationId: requestForgotPasswordOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);

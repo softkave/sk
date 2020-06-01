@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { userErrorMessages } from "../../../models/user/userErrorMessages";
 import * as userNet from "../../../net/user";
 import { loginUserRedux } from "../../session/actions";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import {
   dispatchOperationComplete,
@@ -23,7 +23,7 @@ export interface IChangePasswordOperationFuncDataProps {
 }
 
 export default async function changePasswordOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: IChangePasswordOperationFuncDataProps,
   options: IOperationFuncOptions = {}
@@ -32,7 +32,7 @@ export default async function changePasswordOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: changePasswordOperationID,
+    operationId: changePasswordOperationID,
   };
 
   if (!token) {
@@ -46,7 +46,7 @@ export default async function changePasswordOperationFunc(
 
   const operation = getFirstOperationWithID(state, changePasswordOperationID);
 
-  if (isOperationStarted(operation, options.scopeID)) {
+  if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 

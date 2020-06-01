@@ -4,7 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskStatusProps {
@@ -19,7 +19,7 @@ export interface ITaskStatusProps {
 
 const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   const { orgID, statusID: value, onChange, disabled } = props;
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     return getBlock(state, orgID)!;
   });
 

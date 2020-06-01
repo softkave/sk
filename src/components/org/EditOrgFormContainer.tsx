@@ -55,8 +55,8 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -66,8 +66,8 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     }

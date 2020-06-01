@@ -10,7 +10,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { getBlockCollaboratorsOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface ILoadBlockCollaboratorsOperationFuncDataProps {
   block: IBlock;
@@ -21,13 +21,13 @@ export default async function loadBlockCollaboratorsOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     getBlockCollaboratorsOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -35,7 +35,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
     pushOperation(
       getBlockCollaboratorsOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -67,7 +67,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
       pushOperation(
         getBlockCollaboratorsOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -80,7 +80,7 @@ export default async function loadBlockCollaboratorsOperationFunc(
         getBlockCollaboratorsOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

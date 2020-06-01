@@ -10,7 +10,7 @@ import addCollaboratorsOperationFunc from "../../redux/operations/block/addColla
 import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import { operationStatusTypes } from "../../redux/operations/operation";
 import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
@@ -34,7 +34,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
 
   const organizationID = orgID;
 
-  const organization = useSelector<IReduxState, IBlock>(
+  const organization = useSelector<IAppState, IBlock>(
     (state) => getBlock(state, organizationID)!
   );
 
@@ -42,7 +42,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     ? organization.collaborators
     : [];
 
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
     getUsersAsArray(state, collaboratorIDs)
   );
 
@@ -50,7 +50,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     ? organization.collaborationRequests
     : [];
 
-  const requests = useSelector<IReduxState, INotification[]>((state) =>
+  const requests = useSelector<IAppState, INotification[]>((state) =>
     getNotificationsAsArray(state, requestIDs)
   );
 
@@ -72,7 +72,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
       onClose();
       dispatch(
         pushOperation(addCollaboratorsOperationID, {
-          scopeID,
+          scopeId: scopeID,
           status: operationStatusTypes.consumed,
           timestamp: Date.now(),
         })
@@ -86,7 +86,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     setData(data);
     addCollaboratorsOperationFunc(
       { block: organization, ...values },
-      { scopeID }
+      { scopeId: scopeID }
     );
   };
 

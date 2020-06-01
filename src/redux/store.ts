@@ -3,13 +3,13 @@ import { combineReducers } from "redux";
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
 import {
   INotificationsState,
-  notificationsReducer
+  notificationsReducer,
 } from "./notifications/reducer";
 import operationsReducer, { IOperationState } from "./operations/reducer";
 import { ISessionState, sessionReducer } from "./session/reducer";
 import { IUsersState, usersReducer } from "./users/reducer";
 
-export interface IReduxState {
+export interface IAppState {
   blocks: IBlocksState;
   users: IUsersState;
   notifications: INotificationsState;
@@ -22,11 +22,11 @@ const reducer = combineReducers({
   users: usersReducer,
   notifications: notificationsReducer,
   session: sessionReducer,
-  operations: operationsReducer
+  operations: operationsReducer,
 });
 
 const store = configureStore({
-  reducer
+  reducer,
 });
 
 export default store;

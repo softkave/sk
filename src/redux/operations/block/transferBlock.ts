@@ -11,7 +11,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { transferBlockOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface ITransferBlockProps {
   data: {
@@ -28,13 +28,13 @@ export default async function transferBlockOperationFn(
   options: IOperationFuncOptions = {}
 ) {
   const { sourceBlockID } = dataProps.data;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     transferBlockOperationID,
     sourceBlockID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -42,7 +42,7 @@ export default async function transferBlockOperationFn(
     pushOperation(
       transferBlockOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -85,7 +85,7 @@ export default async function transferBlockOperationFn(
       pushOperation(
         transferBlockOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -98,7 +98,7 @@ export default async function transferBlockOperationFn(
         transferBlockOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

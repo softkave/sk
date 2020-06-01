@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlockCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import EmptyMessage from "../EmptyMessage";
 import GeneralError from "../GeneralError";
@@ -18,7 +18,7 @@ export interface ICProps {
 
 const CollaboratorList: React.FC<ICProps> = (props) => {
   const { organization } = props;
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
     getUsersAsArray(state, organization.collaborators!)
   );
   const collaboratorsStatus = useOperation({

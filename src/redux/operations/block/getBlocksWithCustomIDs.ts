@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import * as blockNet from "../../../net/block";
 import * as blockActions from "../../blocks/actions";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -18,7 +18,7 @@ export interface IGetBlocksWithCustomIDsOperationFuncProps {
 }
 
 export default async function getBlocksWithCustomIDsOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: IGetBlocksWithCustomIDsOperationFuncProps,
   options: IOperationFuncOptions = {}
@@ -28,14 +28,14 @@ export default async function getBlocksWithCustomIDsOperationFunc(
     getBlocksWithCustomIDsOperationID
   );
 
-  if (operations[0] && isOperationStarted(operations[0], options.scopeID)) {
+  if (operations[0] && isOperationStarted(operations[0], options.scopeId)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: getBlocksWithCustomIDsOperationID,
+    operationId: getBlocksWithCustomIDsOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);

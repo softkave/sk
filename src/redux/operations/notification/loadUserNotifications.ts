@@ -22,13 +22,13 @@ export default async function loadUserNotificationsOperationFunc(
     loadUserNotificationsOperationID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
     pushOperation(loadUserNotificationsOperationID, {
-      scopeID: options.scopeID,
+      scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
     })
@@ -57,7 +57,7 @@ export default async function loadUserNotificationsOperationFunc(
 
     store.dispatch(
       pushOperation(loadUserNotificationsOperationID, {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
       })
@@ -66,7 +66,7 @@ export default async function loadUserNotificationsOperationFunc(
     store.dispatch(
       pushOperation(loadUserNotificationsOperationID, {
         error,
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationError,
         timestamp: Date.now(),
       })

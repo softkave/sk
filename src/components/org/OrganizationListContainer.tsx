@@ -8,7 +8,7 @@ import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
 import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getDefaultBoardViewType } from "../board/utils";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
@@ -25,7 +25,7 @@ import OrganizationList from "./OrganizationList";
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
-  const organizations = useSelector<IReduxState, IBlock[]>((state) =>
+  const organizations = useSelector<IAppState, IBlock[]>((state) =>
     getBlocksAsArray(state, user.orgs)
   );
 

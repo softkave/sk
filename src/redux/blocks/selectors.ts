@@ -2,31 +2,28 @@ import { IBlock } from "../../models/block/block";
 import { isBlockParentOf } from "../../models/block/utils";
 import {
   filterCollectionItemsWith,
-  getCollectionItemsAsArray
+  getCollectionItemsAsArray,
 } from "../collection";
-import { IReduxState } from "../store";
+import { IAppState } from "../store";
 
-export function getBlock(state: IReduxState, blockID?: string | null) {
+export function getBlock(state: IAppState, blockID?: string | null) {
   if (blockID) {
     const blocks = getCollectionItemsAsArray(state.blocks, [blockID]);
     return blocks[0];
   }
 }
 
-export function getBlocksAsArray(state: IReduxState, ids: string[]) {
+export function getBlocksAsArray(state: IAppState, ids: string[]) {
   return getCollectionItemsAsArray(state.blocks, ids);
 }
 
-export function getEveryBlockChildrenInState(
-  state: IReduxState,
-  block: IBlock
-) {
-  return filterCollectionItemsWith(state.blocks, next =>
+export function getEveryBlockChildrenInState(state: IAppState, block: IBlock) {
+  return filterCollectionItemsWith(state.blocks, (next) =>
     isBlockParentOf(block, next)
   );
 }
 
-export function getBlockParents(state: IReduxState, block: IBlock) {
+export function getBlockParents(state: IAppState, block: IBlock) {
   let b: IBlock = block;
   const parents: IBlock[] = [];
 

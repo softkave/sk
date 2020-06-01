@@ -16,8 +16,8 @@ import IOperation, {
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import { respondToNotificationOperationID } from "../../redux/operations/operationIDs";
-import { getOperationWithIDForResource } from "../../redux/operations/selectors";
-import { IReduxState } from "../../redux/store";
+import { getOperationWithIdForResource } from "../../redux/operations/selectors";
+import { IAppState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
@@ -36,11 +36,11 @@ const Notification: React.FC<{}> = (props) => {
     routeMatch && routeMatch.params
       ? routeMatch.params.notificationID
       : undefined;
-  const notification = useSelector<IReduxState, INotification | undefined>(
+  const notification = useSelector<IAppState, INotification | undefined>(
     (state) => getNotification(state, currentNotificationID!)
   );
-  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
-    getOperationWithIDForResource(
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
+    getOperationWithIdForResource(
       state,
       respondToNotificationOperationID,
       currentNotificationID

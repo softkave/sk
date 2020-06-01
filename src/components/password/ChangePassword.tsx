@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
-import { passwordPattern } from "../../models/user/descriptor";
+import { passwordPattern } from "../../models/user/validation";
 import cast from "../../utils/cast";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";

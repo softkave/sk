@@ -9,7 +9,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { getBlockChildrenOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 import updateBlockOperationFunc from "./updateBlock";
 
 export interface ILoadBlockChildrenOperationFuncDataProps {
@@ -25,7 +25,7 @@ export default async function loadBlockChildrenOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { block, typeList } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     getBlockChildrenOperationID,
     block.customId
@@ -39,7 +39,7 @@ export default async function loadBlockChildrenOperationFunc(
     pushOperation(
       getBlockChildrenOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -111,7 +111,7 @@ export default async function loadBlockChildrenOperationFunc(
       pushOperation(
         getBlockChildrenOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -124,7 +124,7 @@ export default async function loadBlockChildrenOperationFunc(
         getBlockChildrenOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

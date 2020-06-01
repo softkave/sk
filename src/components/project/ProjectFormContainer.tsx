@@ -55,8 +55,8 @@ const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -66,8 +66,8 @@ const ProjectFormContainer: React.FC<IProjectFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     }

@@ -10,7 +10,7 @@ import {
   updateBlockOperationID,
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
@@ -31,7 +31,7 @@ export interface ITaskFormContainerProps {
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   const { onClose, orgID, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     return getBlock(state, orgID)!;
   });
 
@@ -39,7 +39,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     ? org.collaborators
     : [];
 
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
     getUsersAsArray(state, collaboratorIDs)
   );
 
@@ -80,8 +80,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -91,8 +91,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId: scopeID,
+          resourceId: block.customId,
         }
       );
     }

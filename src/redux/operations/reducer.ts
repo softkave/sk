@@ -11,11 +11,11 @@ function isOperation(
 ) {
   if (resourceID) {
     return (
-      operation.operationID === operationID &&
-      operation.resourceID === resourceID
+      operation.operationId === operationID &&
+      operation.resourceId === resourceID
     );
   } else {
-    return operation.operationID === operationID;
+    return operation.operationId === operationID;
   }
 }
 
@@ -30,24 +30,24 @@ export default function operationsReducer(
   switch (action.type) {
     case PUSH_OPERATION: {
       const { operationID, resourceID, status } = action.payload;
-      const existingOperationIndex = state.operations.findIndex(operation => {
+      const existingOperationIndex = state.operations.findIndex((operation) => {
         return isOperation(operation, operationID, resourceID);
       });
 
       if (existingOperationIndex === -1) {
         return {
           operations: state.operations.concat({
-            operationID,
-            resourceID,
-            statusHistory: [status]
-          })
+            operationId: operationID,
+            resourceId: resourceID,
+            statusHistory: [status],
+          }),
         };
       } else {
         const operations = [...state.operations];
         const operation = operations[existingOperationIndex];
         operations[existingOperationIndex] = {
           ...operation,
-          statusHistory: [...operation.statusHistory, status]
+          statusHistory: [...operation.statusHistory, status],
         };
 
         return { operations };

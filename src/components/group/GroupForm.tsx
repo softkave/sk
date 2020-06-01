@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
@@ -62,10 +62,10 @@ const GroupForm: React.FC<IGroupFormProps> = (props) => {
     (parent) => parent.customId === immediateParentID
   );
   const groupIDs = (immediateParent && immediateParent!.groups) || [];
-  const groups = useSelector<IReduxState, IBlock[]>((state) =>
+  const groups = useSelector<IAppState, IBlock[]>((state) =>
     getBlocksAsArray(state, groupIDs)
   );
-  const blockToUpdate = useSelector<IReduxState, IBlock | undefined>((state) =>
+  const blockToUpdate = useSelector<IAppState, IBlock | undefined>((state) =>
     getBlock(state, value.customId)
   );
 

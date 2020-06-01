@@ -6,13 +6,13 @@ import IOperation, {
   getOperationLastStatus,
   IOperationStatus,
   isOperationCompleted,
-  isOperationStartedOrPending
+  isOperationStartedOrPending,
 } from "../redux/operations/operation";
 import {
   getFirstOperationWithID,
-  getOperationWithIDForResource
+  getOperationWithIdForResource,
 } from "../redux/operations/selectors";
-import { IReduxState } from "../redux/store";
+import { IAppState } from "../redux/store";
 import GeneralError from "./GeneralError";
 import Loading from "./Loading";
 
@@ -20,7 +20,7 @@ export interface ISingleOperationHelperDerivedProps {
   isLoading: boolean;
   isError: boolean;
   isCompleted: boolean;
-  state: IReduxState;
+  state: IAppState;
   error?: any;
   operation?: IOperation;
   currentStatus?: IOperationStatus;
@@ -37,19 +37,19 @@ export interface IOperationHelperProps {
   loadFunc?: (props: ISingleOperationHelperDerivedProps) => void;
 }
 
-const SingleOperationHelper: React.FC<IOperationHelperProps> = props => {
+const SingleOperationHelper: React.FC<IOperationHelperProps> = (props) => {
   const {
     operationID,
     render,
     loadFunc,
     scopeID,
     dontManageRender,
-    resourceID
+    resourceID,
   } = props;
-  const store = useStore<IReduxState>();
-  const operation = useSelector<IReduxState, IOperation | undefined>(state =>
+  const store = useStore<IAppState>();
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
     resourceID
-      ? getOperationWithIDForResource(state, operationID, resourceID)
+      ? getOperationWithIdForResource(state, operationID, resourceID)
       : getFirstOperationWithID(state, operationID)
   );
   const isLoading = isOperationStartedOrPending(operation, scopeID);
@@ -63,14 +63,14 @@ const SingleOperationHelper: React.FC<IOperationHelperProps> = props => {
     error,
     isError: !!error,
     currentStatus: status,
-    state: store.getState()
+    state: store.getState(),
   };
 
   React.useEffect(() => {
     if (isFunction(loadFunc)) {
       loadFunc({
         ...derivedProps,
-        state: store.getState()
+        state: store.getState(),
       });
     }
   }, [loadFunc, derivedProps, store]);

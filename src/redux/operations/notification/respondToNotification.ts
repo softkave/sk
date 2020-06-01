@@ -17,7 +17,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { respondToNotificationOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
   request: INotification;
@@ -30,13 +30,13 @@ export default async function respondToNotificationOperationFunc(
 ) {
   const user = getSignedInUserRequired(store.getState());
   const { request, response } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     respondToNotificationOperationID,
     request.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -44,7 +44,7 @@ export default async function respondToNotificationOperationFunc(
     pushOperation(
       respondToNotificationOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -96,7 +96,7 @@ export default async function respondToNotificationOperationFunc(
       pushOperation(
         respondToNotificationOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -109,7 +109,7 @@ export default async function respondToNotificationOperationFunc(
         respondToNotificationOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

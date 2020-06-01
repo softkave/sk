@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import { saveUserTokenToStorage } from "../../../storage/userSession";
 import { loginUserRedux } from "../../session/actions";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import {
   dispatchOperationComplete,
@@ -28,7 +28,7 @@ export interface ILoginUserOperationFuncDataProps {
 }
 
 export default async function loginUserOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: ILoginUserOperationFuncDataProps,
   options: IOperationFuncOptions = {}
@@ -36,14 +36,14 @@ export default async function loginUserOperationFunc(
   const { user } = dataProps;
   const operation = getFirstOperationWithID(state, loginUserOperationID);
 
-  if (isOperationStarted(operation, options.scopeID)) {
+  if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: loginUserOperationID,
+    operationId: loginUserOperationID,
   };
 
   dispatchOperationStarted(dispatchOptions);

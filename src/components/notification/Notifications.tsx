@@ -9,7 +9,7 @@ import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
 import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -26,7 +26,7 @@ const Notifications: React.FC<{}> = (props) => {
     "/app/notifications/:notificationID"
   );
   const user = useSelector(getSignedInUserRequired);
-  const notifications = useSelector<IReduxState, INotification[]>((state) =>
+  const notifications = useSelector<IAppState, INotification[]>((state) =>
     getNotificationsAsArray(state, user.notifications || [])
   );
   const userHasNoNotifications = notifications.length === 0;

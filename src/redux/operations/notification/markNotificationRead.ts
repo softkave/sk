@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { INotification } from "../../../models/notification/notification";
 import * as userNet from "../../../net/user";
 import * as notificationActions from "../../notifications/actions";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
@@ -12,34 +12,34 @@ import {
   isOperationStarted,
 } from "../operation";
 import { updateNotificationOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface IMarkNotificationReadOperationFuncDataProps {
   notification: INotification;
 }
 
 export default async function markNotificationReadOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: IMarkNotificationReadOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { notification } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     state,
     updateNotificationOperationID,
     notification.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: updateNotificationOperationID,
-    resourceID: notification.customId,
+    operationId: updateNotificationOperationID,
+    resourceId: notification.customId,
   };
 
   dispatchOperationStarted(dispatchOptions);

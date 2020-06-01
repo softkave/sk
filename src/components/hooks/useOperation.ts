@@ -10,9 +10,9 @@ import IOperation, {
 } from "../../redux/operations/operation";
 import {
   getFirstOperationWithID,
-  getOperationWithIDForResource,
+  getOperationWithIdForResource,
 } from "../../redux/operations/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 
 export interface IUseOperationStatus {
   isLoading: boolean;
@@ -54,9 +54,9 @@ export const getOperationDetailedStatus = (
   };
 };
 
-const getOperation = (state: IReduxState, selector: IOperationSelector) => {
+const getOperation = (state: IAppState, selector: IOperationSelector) => {
   return selector.resourceID
-    ? getOperationWithIDForResource(
+    ? getOperationWithIdForResource(
         state,
         selector.operationID,
         selector.resourceID
@@ -65,7 +65,7 @@ const getOperation = (state: IReduxState, selector: IOperationSelector) => {
 };
 
 const useOperation: UseOperation = (selector, loadOperation) => {
-  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
     getOperation(state, selector)
   );
   const statusData = getOperationDetailedStatus(operation, selector.scopeID);

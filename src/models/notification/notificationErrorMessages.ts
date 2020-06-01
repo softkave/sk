@@ -9,17 +9,4 @@ const errorMessages = {
     "Request does not exist, or has been accepted or declined",
 };
 
-const errorFields = {
-  notification: "system.notification",
-  requestDoesNotExist: "system.notification.requestDoesNotExist",
-  sendRequestEmailError: "system.notification.sendRequestEmailError",
-  requestHasBeenSentBefore: "system.notification.requestHasBeenSentBefore",
-  cannotRevokeRequest: "system.notification.cannotRevokeRequest",
-  sendingRequestToAnExistingCollaborator:
-    "system.notification.sendingRequestToAnExistingCollaborator",
-};
-
-export {
-  errorFields as notificationErrorFields,
-  errorMessages as notificationErrorMessages,
-};
+export { errorMessages as notificationErrorMessages };

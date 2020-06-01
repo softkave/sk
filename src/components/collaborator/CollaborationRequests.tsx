@@ -4,7 +4,7 @@ import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { getBlockCollaborationRequestsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
 import GeneralError from "../GeneralError";
 import useOperation from "../hooks/useOperation";
@@ -18,7 +18,7 @@ export interface ICRProps {
 
 const CollaborationRequests: React.FC<ICRProps> = (props) => {
   const { organization } = props;
-  const requests = useSelector<IReduxState, INotification[]>((state) =>
+  const requests = useSelector<IAppState, INotification[]>((state) =>
     getNotificationsAsArray(state, organization.collaborationRequests!)
   );
   const requestsStatus = useOperation({

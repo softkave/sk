@@ -1,12 +1,3 @@
-const errorMessages = {
-  dataInvalid: "Input is invalid",
-  requiredError: "Field is required",
-  notUniqueError: "Input is not unique",
-  invalidColor: "Color data is invalid"
-};
-
-const errorFields = {};
-
 function getErrorMessageWithMin(min, type) {
   switch (type) {
     case "number":
@@ -39,9 +30,4 @@ function getErrorMessageWithMax(max, type) {
   }
 }
 
-export {
-  errorMessages as validationErrorMessages,
-  errorFields as validationErrorFields,
-  getErrorMessageWithMin,
-  getErrorMessageWithMax
-};
+export { getErrorMessageWithMin, getErrorMessageWithMax };

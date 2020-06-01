@@ -5,7 +5,7 @@ import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { operationHasStatusWithScopeID } from "../../redux/operations/operation";
 import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -24,7 +24,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
-  const org = useSelector<IReduxState, IBlock>(
+  const org = useSelector<IAppState, IBlock>(
     (state) => getBlock(state, block.rootBlockID || block.customId)!
   );
   const statuses = org.availableStatus || [];
@@ -40,7 +40,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
           useBoardId: true,
           typeList: ["task"],
         },
-        { scopeID, resourceID: block.customId }
+        { scopeId: scopeID, resourceId: block.customId }
       );
     }
   };
@@ -55,7 +55,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   );
 
   // TODO: how can we memoize previous filters to make search faster
-  const blocks = useSelector<IReduxState, IBlock[]>((state) => {
+  const blocks = useSelector<IAppState, IBlock[]>((state) => {
     if (!loadChildrenStatus.isCompleted) {
       return [];
     }

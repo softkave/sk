@@ -11,7 +11,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { updateBlockOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 import {
   hasBlockParentChanged,
@@ -28,13 +28,13 @@ export default async function updateBlockOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { block, data } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     updateBlockOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -48,7 +48,7 @@ export default async function updateBlockOperationFunc(
     pushOperation(
       updateBlockOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -86,7 +86,7 @@ export default async function updateBlockOperationFunc(
       pushOperation(
         updateBlockOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -99,7 +99,7 @@ export default async function updateBlockOperationFunc(
         updateBlockOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

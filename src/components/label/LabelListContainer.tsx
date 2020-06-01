@@ -5,7 +5,7 @@ import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationID } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import LabelList from "./LabelList";
@@ -19,7 +19,7 @@ export interface ILabelListContainerProps {
 const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const { block } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     if (block.type === "org") {
       return getBlock(state, block.customId)!;
     } else {
@@ -56,8 +56,8 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
         },
       },
       {
-        scopeID,
-        resourceID: org.customId,
+        scopeId: scopeID,
+        resourceId: org.customId,
       }
     );
   };

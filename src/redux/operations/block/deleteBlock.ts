@@ -16,7 +16,7 @@ import {
   operationStatusTypes,
 } from "../operation";
 import { deleteBlockOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { getOperationWithIdForResource } from "../selectors";
 import { removeTaskFromUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IDeleteBlockOperationFuncDataProps {
@@ -28,13 +28,13 @@ export default async function deleteBlockOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { block } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
     deleteBlockOperationID,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -42,7 +42,7 @@ export default async function deleteBlockOperationFunc(
     pushOperation(
       deleteBlockOperationID,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -120,7 +120,7 @@ export default async function deleteBlockOperationFunc(
       pushOperation(
         deleteBlockOperationID,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -133,7 +133,7 @@ export default async function deleteBlockOperationFunc(
         deleteBlockOperationID,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

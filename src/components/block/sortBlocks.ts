@@ -1,9 +1,9 @@
-import { IBlock, taskPriority } from "../../models/block/block";
+import { BlockPriority, IBlock } from "../../models/block/block";
 
 const blockPriorityToNumMap = {
-  [taskPriority["very important"]]: -1,
-  important: 0,
-  [taskPriority["not important"]]: 1
+  [BlockPriority.VeryImportant]: -1,
+  [BlockPriority.Important]: 0,
+  [BlockPriority.NotImportant]: 1,
 };
 
 export function sortBlocksByPriority(blocks: IBlock[] = []) {
@@ -14,6 +14,3 @@ export function sortBlocksByPriority(blocks: IBlock[] = []) {
     return blockAPriorityNum - blockBPriorityNum;
   });
 }
-
-// TODO: Implement
-export function sortBlocksByExpirationDate(blocks: IBlock[]) {}

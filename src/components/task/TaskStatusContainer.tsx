@@ -35,7 +35,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
         pushOperation(
           updateBlockOperationID,
           {
-            scopeID,
+            scopeId: scopeID,
             status: operationStatusTypes.operationComplete,
             timestamp: Date.now(),
           },
@@ -56,7 +56,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       onChange={(value) => {
         updateBlockOperationFunc(
           { block: task, data: { status: value } },
-          { scopeID, resourceID: task.customId }
+          { scopeId: scopeID, resourceId: task.customId }
         );
       }}
     />

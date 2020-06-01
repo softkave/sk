@@ -23,13 +23,13 @@ export default async function getTasksAssignedToUserOperationFunc(
     getTasksAssignedToUserOperationID
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
     pushOperation(getTasksAssignedToUserOperationID, {
-      scopeID: options.scopeID,
+      scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
     })
@@ -59,7 +59,7 @@ export default async function getTasksAssignedToUserOperationFunc(
 
     store.dispatch(
       pushOperation(getTasksAssignedToUserOperationID, {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
       })
@@ -68,7 +68,7 @@ export default async function getTasksAssignedToUserOperationFunc(
     store.dispatch(
       pushOperation(getTasksAssignedToUserOperationID, {
         error,
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationError,
         timestamp: Date.now(),
       })

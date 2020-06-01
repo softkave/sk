@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
 import Board from "./Board";
 
@@ -17,7 +17,7 @@ export interface IBlockContainerProps {
 
 const BlockContainer: React.FC<IBlockContainerProps> = (props) => {
   const { blockID, notFoundMessage, render } = props;
-  const block = useSelector<IReduxState, IBlock | undefined>((state) =>
+  const block = useSelector<IAppState, IBlock | undefined>((state) =>
     getBlock(state, blockID)
   );
 
