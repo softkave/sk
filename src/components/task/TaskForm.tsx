@@ -542,7 +542,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             )}
             {renderDescriptionInput(formikProps)}
             {renderParentInput(formikProps)}
-            {renderToggleSwitch(formikProps)}
+            {/* {renderToggleSwitch(formikProps)} */}
             {renderPriority(formikProps)}
             {renderStatus(formikProps)}
             {renderLabels(formikProps)}

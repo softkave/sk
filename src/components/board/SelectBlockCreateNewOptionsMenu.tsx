@@ -54,7 +54,7 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
     const createMenuItems = childrenTypes.map((type) => (
       <StyledMenuItem key={type}>
         <BorderOutlined />
-        Create {type}
+        New {type}
       </StyledMenuItem>
     ));
 
