@@ -13,13 +13,15 @@ export interface ICollaborationRequestThumbnailProps {
   onClick?: () => void;
 }
 
-const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailProps> = props => {
+const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailProps> = (
+  props
+) => {
   const { request, style, onClick, className } = props;
-  const latestStatus = request.statusHistory[request.statusHistory.length - 1];
+  const statusHistory = request.statusHistory || [];
+  const latestStatus = statusHistory[statusHistory.length - 1];
 
   return (
     <StyledFlexContainer style={style} onClick={onClick} className={className}>
-      {/* <ItemAvatar color={collaborator.color} /> */}
       {cloneWithWidth(
         <StyledRequestDataContainer>
           <Typography.Text strong ellipsis>
@@ -45,5 +47,5 @@ export default CollaborationRequestThumbnail;
 const StyledRequestDataContainer = styled.div({
   flex: 1,
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
 });

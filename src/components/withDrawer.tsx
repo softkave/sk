@@ -14,19 +14,8 @@ interface IDrawerWrapperState {
   currentDeviceWidth: number;
 }
 
-// export interface IWithDrawerConfirmCloseResult {
-//   canClose: boolean;
-//   message?: React.ReactNode;
-// }
-
-// export interface IWithDrawerConfirmCloseProps {
-//   ref: React.RefObject<any>;
-// }
-
 export interface IWithDrawerProps {
   className?: string;
-  // confirmClose?: (props: IWithDrawerConfirmCloseProps) => IWithDrawerConfirmCloseResult;
-  // passProps?: () => any;
 }
 
 export default function withDrawer<

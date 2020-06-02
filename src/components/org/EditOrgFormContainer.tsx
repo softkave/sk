@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
@@ -25,11 +25,11 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   const { onClose } = props;
   const user = useSelector(getSignedInUserRequired);
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "org")
+    props.block || getNewBlock(user, BlockType.Org)
   );
 
   const operationStatus = useOperation({
-    scopeId: scopeId,
+    scopeId,
     operationId: props.block ? updateBlockOperationId : addBlockOperationId,
     resourceId: block.customId,
   });
@@ -55,7 +55,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeId: scopeId,
+          scopeId,
           resourceId: block.customId,
         }
       );
@@ -66,7 +66,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeId: scopeId,
+          scopeId,
           resourceId: block.customId,
         }
       );

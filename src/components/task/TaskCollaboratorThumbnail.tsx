@@ -3,10 +3,7 @@ import styled from "@emotion/styled";
 import { Switch, Typography } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
-import {
-  ITaskCollaborator,
-  TaskCollaborationType,
-} from "../../models/block/block";
+import { ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
@@ -14,8 +11,6 @@ import StyledFlatButton from "../styled/FlatButton";
 
 export interface ITaskCollaboratorThumbnailProps {
   collaborator: IUser;
-  taskCollaborator: ITaskCollaborator;
-  collaborationType: TaskCollaborationType;
   onUnassign: () => void;
 
   disabled?: boolean;
@@ -24,13 +19,7 @@ export interface ITaskCollaboratorThumbnailProps {
 const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = (
   props
 ) => {
-  const {
-    collaborator,
-    taskCollaborator,
-    onUnassign,
-    collaborationType,
-    disabled,
-  } = props;
+  const { collaborator, onUnassign, disabled } = props;
 
   return (
     <StyledMainContainer>
@@ -43,14 +32,6 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = (
         )}
       </SizeMe>
       <StyledContainer s={{ alignItems: "center" }}>
-        {collaborationType === "individual" && (
-          <Switch
-            disabled={true}
-            checked={!!taskCollaborator.completedAt}
-            onChange={() => null}
-            style={{ marginRight: "16px" }}
-          />
-        )}
         <StyledFlatButton
           onClick={onUnassign}
           style={{ color: "rgb(255, 77, 79)" }}

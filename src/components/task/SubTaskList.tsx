@@ -5,7 +5,7 @@ import React from "react";
 import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { newId } from "../../utils/utils";
+import { getDateString, newId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
@@ -45,6 +45,8 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     const subTask: ISubTask = {
       customId: newId(),
       description: "",
+      createdAt: getDateString(),
+      createdBy: user.customId,
     };
 
     onAddSubTask(subTask);
@@ -64,8 +66,8 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     const isCompleted = !!subTask.completedAt;
 
     internalOnEditSubTask(index, {
-      completedAt: isCompleted ? null : Date.now(),
-      completedBy: isCompleted ? null : user.customId,
+      completedAt: isCompleted ? undefined : getDateString(),
+      completedBy: isCompleted ? undefined : user.customId,
     });
   };
 

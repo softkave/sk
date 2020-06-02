@@ -24,7 +24,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     return getBlock(state, orgId)!;
   });
 
-  const labelList = org.availableLabels || [];
+  const labelList = org.boardLabels || [];
   const labelIds = props.labelIds || [];
   const idToLabelMap = React.useMemo(
     () => indexArray(labelList || [], { path: "customId" }),
@@ -102,11 +102,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             No Labels
           </StyledContainer>
         )}
-        {/* <Menu.Divider />
-        <Menu.Item>
-          <PlusOutlined />
-          Add or Edit Tags
-        </Menu.Item> */}
       </Menu>
     );
 
@@ -117,29 +112,9 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     );
   };
 
-  // const renderSelectLabel = () => {
-  //   return (
-  //     <Select
-  //       placeholder="Select label"
-  //       value={undefined}
-  //       onChange={(labelId) => onAdd(labelId as string)}
-  //     >
-  //       {labelIds.map((id) => {
-  //         const label = idToLabelMap[id];
-  //         return (
-  //           <Select.Option value={id} key={label.customId}>
-  //             {renderLabelTag(label, false)}
-  //           </Select.Option>
-  //         );
-  //       })}
-  //     </Select>
-  //   );
-  // };
-
   return (
     <StyledContainer>
       <Space direction="vertical">
-        {/* {renderSelectLabel()} */}
         <Space>
           {renderSelectedLabels()}
           {!disabled && renderAddNewLabel()}

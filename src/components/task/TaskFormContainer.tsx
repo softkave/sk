@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
@@ -47,10 +47,10 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     if (props.block) {
       return props.block;
     } else {
-      const newBlock = getNewBlock(user, "task", parentBlock);
+      const newBlock = getNewBlock(user, BlockType.Task, parentBlock);
 
-      if (org.availableStatus && org.availableStatus.length > 0) {
-        newBlock.status = org.availableStatus[0].customId;
+      if (org.boardStatuses && org.boardStatuses.length > 0) {
+        newBlock.status = org.boardStatuses[0].customId;
       }
 
       return newBlock;
@@ -60,7 +60,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
-    scopeId: scopeId,
+    scopeId,
     operationId: props.block ? updateBlockOperationId : addBlockOperationId,
     resourceId: block.customId,
   });
@@ -80,7 +80,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeId: scopeId,
+          scopeId,
           resourceId: block.customId,
         }
       );
@@ -91,7 +91,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeId: scopeId,
+          scopeId,
           resourceId: block.customId,
         }
       );

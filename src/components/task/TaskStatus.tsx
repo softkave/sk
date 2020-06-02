@@ -23,7 +23,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
     return getBlock(state, orgId)!;
   });
 
-  const statusList = org.availableStatus || [];
+  const statusList = org.boardStatuses || [];
 
   const selectedStatus = value
     ? statusList.find((status) => {

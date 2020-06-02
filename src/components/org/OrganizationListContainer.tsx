@@ -26,7 +26,10 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
   const organizations = useSelector<IAppState, IBlock[]>((state) =>
-    getBlocksAsArray(state, user.orgs)
+    getBlocksAsArray(
+      state,
+      user.orgs.map((org) => org.customId)
+    )
   );
 
   const onClickOrganization = (organization: IBlock) => {
