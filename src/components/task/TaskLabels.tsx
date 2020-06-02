@@ -11,37 +11,37 @@ import StyledContainer from "../styled/Container";
 import RoundEdgeTags from "../utilities/RoundEdgeTags";
 
 export interface ITaskLabelsProps {
-  orgID: string;
+  orgId: string;
   onChange: (ids: string[]) => void;
 
   disabled?: boolean;
-  labelIDs?: string[];
+  labelIds?: string[];
 }
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-  const { orgID, onChange, disabled } = props;
+  const { orgId, onChange, disabled } = props;
   const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
+    return getBlock(state, orgId)!;
   });
 
   const labelList = org.availableLabels || [];
-  const labelIDs = props.labelIDs || [];
+  const labelIds = props.labelIds || [];
   const idToLabelMap = React.useMemo(
     () => indexArray(labelList || [], { path: "customId" }),
     [labelList]
   );
 
   const onAdd = (id: string) => {
-    if (labelIDs.indexOf(id) === -1) {
-      onChange([...labelIDs, id]);
+    if (labelIds.indexOf(id) === -1) {
+      onChange([...labelIds, id]);
     }
   };
 
   const onRemove = (id: string) => {
-    const index = labelIDs.indexOf(id);
-    const newIDs = [...labelIDs];
-    newIDs.splice(index, 1);
-    onChange(newIDs);
+    const index = labelIds.indexOf(id);
+    const newIds = [...labelIds];
+    newIds.splice(index, 1);
+    onChange(newIds);
   };
 
   const renderLabelTag = (label: IBlockLabel, canRemove) => {
@@ -69,7 +69,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   };
 
   const renderSelectedLabels = () => {
-    return labelIDs.map((id) => {
+    return labelIds.map((id) => {
       const label: IBlockLabel = idToLabelMap[id];
 
       if (label) {
@@ -94,7 +94,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         onClick={(evt) => {
           onAdd(evt.key);
         }}
-        selectedKeys={labelIDs}
+        selectedKeys={labelIds}
       >
         {renderedLabelMenuItems}
         {renderedLabelMenuItems.length === 0 && (
@@ -122,9 +122,9 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   //     <Select
   //       placeholder="Select label"
   //       value={undefined}
-  //       onChange={(labelID) => onAdd(labelID as string)}
+  //       onChange={(labelId) => onAdd(labelId as string)}
   //     >
-  //       {labelIDs.map((id) => {
+  //       {labelIds.map((id) => {
   //         const label = idToLabelMap[id];
   //         return (
   //           <Select.Option value={id} key={label.customId}>

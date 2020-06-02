@@ -6,9 +6,9 @@ import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  addBlockOperationID,
-  updateBlockOperationID,
-} from "../../redux/operations/operationIDs";
+  addBlockOperationId,
+  updateBlockOperationId,
+} from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
@@ -18,10 +18,10 @@ import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
 import TaskForm, { ITaskFormValues } from "./TaskForm";
 
-const scopeID = "TaskFormContainer";
+const scopeId = "TaskFormContainer";
 
 export interface ITaskFormContainerProps {
-  orgID: string;
+  orgId: string;
   onClose: () => void;
 
   parentBlock?: IBlock;
@@ -29,18 +29,18 @@ export interface ITaskFormContainerProps {
 }
 
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
-  const { onClose, orgID, parentBlock } = props;
+  const { onClose, orgId, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
   const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
+    return getBlock(state, orgId)!;
   });
 
-  const collaboratorIDs = Array.isArray(org.collaborators)
+  const collaboratorIds = Array.isArray(org.collaborators)
     ? org.collaborators
     : [];
 
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIDs)
+    getUsersAsArray(state, collaboratorIds)
   );
 
   const [block, setBlock] = React.useState<IBlock>(() => {
@@ -60,9 +60,9 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
-    scopeID,
-    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
-    resourceID: block.customId,
+    scopeId: scopeId,
+    operationId: props.block ? updateBlockOperationId : addBlockOperationId,
+    resourceId: block.customId,
   });
 
   const errors = operationStatus.error
@@ -80,7 +80,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeId: scopeID,
+          scopeId: scopeId,
           resourceId: block.customId,
         }
       );
@@ -91,7 +91,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeId: scopeID,
+          scopeId: scopeId,
           resourceId: block.customId,
         }
       );
@@ -103,7 +103,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
       // isSubmitting
       value={block as any}
       collaborators={collaborators}
-      orgID={orgID}
+      orgId={orgId}
       user={user}
       onClose={onClose}
       formOnly={!props.block}

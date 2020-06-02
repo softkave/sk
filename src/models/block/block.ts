@@ -83,7 +83,7 @@ export interface IBlock {
   tasks?: string[];
   boards?: string[];
   collaborators?: string[];
-  collaborationRequests?: string[];
+  notifications?: string[];
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

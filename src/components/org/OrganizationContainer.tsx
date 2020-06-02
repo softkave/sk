@@ -9,19 +9,19 @@ import Board from "../board/Board";
 import StyledCenterContainer from "../styled/CenterContainer";
 
 interface IRouteMatchParams {
-  organizationID?: string;
+  organizationId?: string;
 }
 
 const OrganizationContainer: React.FC<{}> = () => {
-  const organizationPath = "/app/organizations/:organizationID";
+  const organizationPath = "/app/organizations/:organizationId";
   const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
     organizationPath
   );
-  const organizationID =
+  const organizationId =
     selectedOrganizationRouteMatch &&
-    selectedOrganizationRouteMatch.params.organizationID;
+    selectedOrganizationRouteMatch.params.organizationId;
   const organization = useSelector<IAppState, IBlock | undefined>((state) =>
-    getBlock(state, organizationID)
+    getBlock(state, organizationId)
   );
 
   if (!organization) {

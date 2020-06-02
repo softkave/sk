@@ -1,9 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
+import { BlockType, IBlock } from "../../models/block/block";
+import { getBlockChildren } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
 import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
@@ -11,44 +10,42 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
 export interface ILoadBlockChildrenProps {
   parent: IBlock;
-  getChildrenIDs: () => string[];
+  type: BlockType;
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
+const baseOpId = "load-block-children";
+
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
-  const { parent, render, getChildrenIDs } = props;
-  const [stopRetries, setStopRetries] = React.useState(false);
-  const blockIDs = getChildrenIDs();
+  const { parent, render, type } = props;
   const blocks = useSelector<IAppState, IBlock[]>((state) =>
-    getBlocksAsArray(state, blockIDs)
+    getBlockChildren(state, parent, type)
   );
 
-  const loadParentChildren = (loadProps: IUseOperationStatus) => {
-    if (blocks.length < blockIDs.length && !stopRetries) {
-      setStopRetries(true);
+  const opId = baseOpId + "-" + type;
+  const loadChildren = (loadProps: IUseOperationStatus) => {
+    if (!loadProps.operation) {
       loadBlockChildrenOperationFunc({
         block: parent,
-        updateParentInStore: true,
+        typeList: [type],
+        operationId: opId,
       });
     }
   };
 
-  const loadParentChildrenStatus = useOperation(
-    { operationID: getBlockChildrenOperationID, resourceID: parent.customId },
-    loadParentChildren
+  const loadStatus = useOperation(
+    { operationId: opId, resourceId: parent.customId },
+    loadChildren
   );
 
-  if (blocks.length === blockIDs.length) {
+  if (loadStatus.isCompleted) {
     return <React.Fragment>{render(blocks)}</React.Fragment>;
   }
 
-  if (
-    loadParentChildrenStatus.isLoading ||
-    !!!loadParentChildrenStatus.operation
-  ) {
+  if (loadStatus.isLoading || !!!loadStatus.operation) {
     return <LoadingEllipsis />;
-  } else if (loadParentChildrenStatus.error) {
-    return <GeneralErrorList errors={loadParentChildrenStatus.error} />;
+  } else if (loadStatus.error) {
+    return <GeneralErrorList errors={loadStatus.error} />;
   }
 
   return <React.Fragment>{render(blocks)}</React.Fragment>;

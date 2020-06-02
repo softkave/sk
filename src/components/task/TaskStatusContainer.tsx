@@ -6,11 +6,11 @@ import { IBlock } from "../../models/block/block";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { operationStatusTypes } from "../../redux/operations/operation";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import useOperation from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
-const scopeID = "TaskStatusContainer";
+const scopeId = "TaskStatusContainer";
 
 export interface ITaskStatusContainerProps {
   task: IBlock;
@@ -23,9 +23,9 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
   const { task } = props;
   const dispatch = useDispatch();
   const operation = useOperation({
-    scopeID,
-    operationID: updateBlockOperationID,
-    resourceID: task.customId,
+    scopeId: scopeId,
+    operationId: updateBlockOperationId,
+    resourceId: task.customId,
   });
 
   React.useEffect(() => {
@@ -33,9 +33,9 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       message.error("Error updating task status");
       dispatch(
         pushOperation(
-          updateBlockOperationID,
+          updateBlockOperationId,
           {
-            scopeId: scopeID,
+            scopeId: scopeId,
             status: operationStatusTypes.operationComplete,
             timestamp: Date.now(),
           },
@@ -51,12 +51,12 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
   return (
     <TaskStatus
-      orgID={task.rootBlockID!}
-      statusID={task.status}
+      orgId={task.rootBlockId!}
+      statusId={task.status}
       onChange={(value) => {
         updateBlockOperationFunc(
           { block: task, data: { status: value } },
-          { scopeId: scopeID, resourceId: task.customId }
+          { scopeId: scopeId, resourceId: task.customId }
         );
       }}
     />

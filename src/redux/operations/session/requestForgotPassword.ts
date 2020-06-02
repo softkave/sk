@@ -5,12 +5,12 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  IdispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { requestForgotPasswordOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { requestForgotPasswordOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export interface IRequestForgotPasswordOperationFuncDataProps {
   email: string;
@@ -23,19 +23,19 @@ export default async function requestForgotPasswordOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { email } = dataProps;
-  const operation = getFirstOperationWithID(
+  const operation = getFirstOperationWithId(
     state,
-    requestForgotPasswordOperationID
+    requestForgotPasswordOperationId
   );
 
   if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
+  const dispatchOptions: IdispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: requestForgotPasswordOperationID,
+    operationId: requestForgotPasswordOperationId,
   };
 
   dispatchOperationStarted(dispatchOptions);

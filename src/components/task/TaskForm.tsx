@@ -66,7 +66,7 @@ export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
 export interface ITaskFormProps {
   user: IUser;
   collaborators: IUser[];
-  orgID: string;
+  orgId: string;
   possibleParents: IBlock[];
   value: ITaskFormValues;
   onClose: () => void;
@@ -90,7 +90,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     value,
     onSubmit,
     collaborators,
-    orgID,
+    orgId,
     user,
     errors: externalErrors,
   } = props;
@@ -250,9 +250,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskStatus
-          orgID={orgID}
+          orgId={orgId}
           onChange={(val: string) => setFieldValue("status", val)}
-          statusID={values.status}
+          statusId={values.status}
           disabled={isSubmitting}
         />
       </Form.Item>
@@ -271,9 +271,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskLabels
-          orgID={orgID}
+          orgId={orgId}
           onChange={(val: string[]) => setFieldValue("labels", val)}
-          labelIDs={values.labels}
+          labelIds={values.labels}
           disabled={isSubmitting}
         />
       </Form.Item>

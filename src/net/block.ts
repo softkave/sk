@@ -1,4 +1,4 @@
-import { BlockGroupContext, BlockType, IBlock } from "../models/block/block";
+import { BlockType, IBlock } from "../models/block/block";
 import { INotification } from "../models/notification/notification";
 import { IAddCollaboratorFormItemValues } from "../models/types";
 import { IUser } from "../models/user/user";
@@ -9,12 +9,7 @@ import {
   addCollaboratorsMutation,
   deleteBlockMutation,
   getBlockChildrenQuery,
-  getBlockLandingPageQuery,
-  getBlocksWithCustomIDsQuery,
-  getCollaboratorsQuery,
-  getCollabRequestsQuery,
   getRootBlocksQuery,
-  getTasksAssignedToUserQuery,
   removeCollaboratorMutation,
   revokeRequestMutation,
   transferBlockMutation,
@@ -26,28 +21,23 @@ export function addBlock(block: IBlock) {
   // mongo schemas, graphql schemas, extract functions, and other places.
   // TODO: define the type of the arguments, so that we can avoid using fields
   const fields = [
-    "name",
     "customId",
-    "description",
-    "expectedEndAt",
-    "color",
     "type",
+    "name",
+    "description",
+    "dueAt",
+    "color",
     "parent",
-    "rootBlockID",
+    "rootBlockId",
+    "assignees",
     "priority",
-    "taskCollaborationData",
-    "taskCollaborators",
     "subTasks",
-    "groups",
-    "projects",
-    "tasks",
-    "groupTaskContext",
-    "groupProjectContext",
-    "availableStatus",
-    "availableLabels",
-    "labels",
+    "boardStatuses",
+    "boardLabels",
     "status",
-    "boardId",
+    "statusAssignedBy",
+    "statusAssignedAt",
+    "labels",
   ];
 
   return auth(
@@ -62,22 +52,18 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
   const dataFields = [
     "name",
     "description",
-    "expectedEndAt",
     "color",
     "priority",
-    "taskCollaborationData",
-    "taskCollaborators",
     "parent",
-    "groups",
-    "projects",
-    "tasks",
-    "groupTaskContext",
-    "groupProjectContext",
     "subTasks",
-    "availableStatus",
-    "availableLabels",
-    "labels",
+    "dueAt",
+    "assignees",
+    "boardStatuses",
+    "boardLabels",
     "status",
+    "statusAssignedBy",
+    "statusAssignedAt",
+    "labels",
   ];
 
   return auth(
@@ -103,15 +89,11 @@ export function deleteBlock(block: IBlock) {
   );
 }
 
-export function getBlockChildren(
-  block: IBlock,
-  typeList?: BlockType[],
-  useBoardId?: boolean
-) {
+export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
   return auth(
     null,
     getBlockChildrenQuery,
-    { typeList, useBoardId, customId: block.customId },
+    { typeList, customId: block.customId },
     "data.block.getBlockChildren"
   );
 }
@@ -146,43 +128,9 @@ export function removeCollaborator(block: IBlock, collaborator: IUser) {
   );
 }
 
-export function getCollaborators(block: IBlock) {
-  return auth(
-    null,
-    getCollaboratorsQuery,
-    {
-      customId: block.customId,
-    },
-    "data.block.getBlockCollaborators"
-  );
-}
-
-export function getCollabRequests(block: IBlock) {
-  return auth(
-    null,
-    getCollabRequestsQuery,
-    {
-      customId: block.customId,
-    },
-    "data.block.getBlockCollaborationRequests"
-  );
-}
-
 export function getRootBlocks() {
   return auth(null, getRootBlocksQuery, {}, "data.block.getRootBlocks");
 }
-
-// export function toggleTask({ block, data }) {
-//   return auth(
-//     null,
-//     toggleTaskMutation,
-//     {
-//       data,
-//       customId: block.customId
-//     },
-//     "data.block.toggleTask"
-//   );
-// }
 
 export function revokeRequest(block: IBlock, request: INotification) {
   return auth(
@@ -196,50 +144,14 @@ export function revokeRequest(block: IBlock, request: INotification) {
   );
 }
 
-export function transferBlock(
-  sourceBlock: IBlock,
-  draggedBlock: IBlock,
-  destinationBlock: IBlock,
-  dropPosition?: number,
-  groupContext?: BlockGroupContext
-) {
+export function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
   return auth(
     null,
     transferBlockMutation,
     {
-      dropPosition,
-      groupContext,
-      sourceBlock: sourceBlock.customId,
       draggedBlock: draggedBlock.customId,
       destinationBlock: destinationBlock.customId,
     },
     "data.block.transferBlock"
-  );
-}
-
-export function getTasksAssignedToUser() {
-  return auth(
-    null,
-    getTasksAssignedToUserQuery,
-    {},
-    "data.block.getAssignedTasks"
-  );
-}
-
-export function getBlocksWithCustomIDs(customIds: string[]) {
-  return auth(
-    null,
-    getBlocksWithCustomIDsQuery,
-    { customIds },
-    "data.block.getBlocksWithCustomIDs"
-  );
-}
-
-export function getBlockLandingPage(customId: string) {
-  return auth(
-    null,
-    getBlockLandingPageQuery,
-    { customId },
-    "data.block.getBlockLandingPage"
   );
 }

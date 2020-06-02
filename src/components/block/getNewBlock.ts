@@ -1,5 +1,6 @@
 import randomColor from "randomcolor";
 import {
+  BlockPriority,
   BlockType,
   IBlock,
   ISubTask,
@@ -11,7 +12,7 @@ import {
 } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
 import cast from "../../utils/cast";
-import { newId } from "../../utils/utils";
+import { getDateString, newId } from "../../utils/utils";
 
 export default function getNewBlock(
   user: IUser,
@@ -25,45 +26,38 @@ export default function getNewBlock(
   const newBlock: IBlock = {
     type,
     customId: newId(),
-    createdAt: Date.now(),
+    createdAt: getDateString(),
     createdBy: user.customId,
     color: randomColor(),
-    groupTaskContext: [],
-    groupProjectContext: [],
     parent: parent ? parent.customId : undefined,
-    rootBlockID: parent
-      ? parent.type === "org"
+    rootBlockId: parent
+      ? parent.type === BlockType.Org
         ? parent.customId
-        : parent.rootBlockID
+        : parent.rootBlockId
       : undefined,
-    collaborators: type === "org" ? [user.customId] : undefined,
-    taskCollaborationData:
-      type === "task" ? { collaborationType: "collective" } : undefined,
-    taskCollaborators:
-      type === "task" ? ([] as ITaskCollaborator[]) : undefined,
-    tasks: childrenTypes.indexOf("task") ? [] : undefined,
-    projects: childrenTypes.indexOf("group") ? [] : undefined,
-    groups: childrenTypes.indexOf("project") ? [] : undefined,
+    assignees:
+      type === BlockType.Task ? ([] as ITaskCollaborator[]) : undefined,
+    tasks: childrenTypes.indexOf(BlockType.Task) ? [] : undefined,
+    boards: childrenTypes.indexOf(BlockType.Board) ? [] : undefined,
 
     // @ts-ignore
     name: undefined,
     description: undefined,
-    expectedEndAt: undefined,
+    dueAt: undefined,
     updatedAt: undefined,
-    priority: type === "task" ? "important" : undefined,
-    isBacklog: false,
-    roles: undefined,
-    collaborationRequests: type === "org" ? [] : undefined,
-    availableLabels: [],
-    availableStatus: type === "org" ? getDefaultStatuses(user) : undefined,
-    boardId:
-      type === "org"
-        ? undefined
-        : parent
-        ? parent.type === "group"
-          ? parent.parent
-          : parent.customId
-        : undefined,
+    priority: type === BlockType.Task ? BlockPriority.Important : undefined,
+    boardLabels: [],
+    boardStatuses:
+      type === BlockType.Org ? getDefaultStatuses(user) : undefined,
+    updatedBy: undefined,
+    subTasks: [],
+    status: undefined, // TODO: where is task initial status set?
+    statusAssignedBy: user.customId,
+    statusAssignedAt: getDateString(),
+    labels: [],
+
+    notifications: type === "org" ? [] : undefined,
+    collaborators: type === "org" ? [user.customId] : undefined,
   };
 
   return cast<IBlock>(newBlock);
@@ -71,7 +65,7 @@ export default function getNewBlock(
 
 export type INewBlock = ReturnType<typeof getNewBlock>;
 
-export function addCustomIDToSubTasks(subTasks?: ISubTask[]) {
+export function addCustomIdToSubTasks(subTasks?: ISubTask[]) {
   return Array.isArray(subTasks)
     ? subTasks.map((subTask) => ({
         ...subTask,

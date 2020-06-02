@@ -9,8 +9,8 @@ export function sortItemsByPosition(
   // TODO: should we sort it in place?
   // if we do, we get O(logN), right now, we get O(N)
 
-  const indexedIDs = indexArray(sortIds, {
-    proccessValue: (id, existingItem, path, index) => index
+  const indexedIds = indexArray(sortIds, {
+    proccessValue: (id, existingItem, path, index) => index,
   });
   const unknownItems: any[] = [];
   let sortedItems: any[] = [];
@@ -18,8 +18,8 @@ export function sortItemsByPosition(
   items.forEach((item, i) => {
     const key = getIndex(item, i);
 
-    if (indexedIDs[key] >= 0) {
-      sortedItems.splice(indexedIDs[key], 0, item);
+    if (indexedIds[key] >= 0) {
+      sortedItems.splice(indexedIds[key], 0, item);
     } else {
       unknownItems.push(item);
     }

@@ -9,16 +9,16 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { initializeAppSessionOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { initializeAppSessionOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export default async function initializeAppSessionOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const state = store.getState();
-  const operation = getFirstOperationWithID(
+  const operation = getFirstOperationWithId(
     state,
-    initializeAppSessionOperationID
+    initializeAppSessionOperationId
   );
 
   if (operation && isOperationStarted(operation, options.scopeId)) {
@@ -26,7 +26,7 @@ export default async function initializeAppSessionOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(initializeAppSessionOperationID, {
+    pushOperation(initializeAppSessionOperationId, {
       scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
@@ -52,7 +52,7 @@ export default async function initializeAppSessionOperationFunc(
     }
 
     store.dispatch(
-      pushOperation(initializeAppSessionOperationID, {
+      pushOperation(initializeAppSessionOperationId, {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
@@ -62,7 +62,7 @@ export default async function initializeAppSessionOperationFunc(
     store.dispatch(setSessionToWeb());
 
     store.dispatch(
-      pushOperation(initializeAppSessionOperationID, {
+      pushOperation(initializeAppSessionOperationId, {
         error,
         scopeId: options.scopeId,
         status: operationStatusTypes.operationError,

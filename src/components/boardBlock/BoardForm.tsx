@@ -20,9 +20,9 @@ import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
 
 // TODO: Move to error messages file
-const projectExistsErrorMessage = "Project with the same name exists";
+const boardExistsErrorMessage = "Board with the same name exists";
 
-export interface IProjectFormValues {
+export interface IBoardFormValues {
   customId: string;
   type: BlockType;
   name: string;
@@ -30,25 +30,25 @@ export interface IProjectFormValues {
   parent?: string;
 }
 
-type ProjectFormFormikProps = FormikProps<IProjectFormValues>;
-export type ProjectFormErrors = IFormikFormErrors<IProjectFormValues>;
+type BoardFormFormikProps = FormikProps<IBoardFormValues>;
+export type BoardFormErrors = IFormikFormErrors<IBoardFormValues>;
 
-export interface IProjectFormProps {
+export interface IBoardFormProps {
   possibleParents: IBlock[];
-  value: IProjectFormValues;
+  value: IBoardFormValues;
   onClose: () => void;
-  onSubmit: (values: IProjectFormValues) => void;
+  onSubmit: (values: IBoardFormValues) => void;
 
   formOnly?: boolean;
-  project?: IBlock;
+  board?: IBlock;
   isSubmitting?: boolean;
-  errors?: ProjectFormErrors;
+  errors?: BoardFormErrors;
 }
 
-const ProjectForm: React.FC<IProjectFormProps> = (props) => {
+const BoardForm: React.FC<IBoardFormProps> = (props) => {
   const {
     formOnly,
-    project,
+    board,
     isSubmitting,
     possibleParents,
     onClose,
@@ -57,13 +57,13 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     errors: externalErrors,
   } = props;
 
-  const immediateParentID = value.parent;
+  const immediateParentId = value.parent;
   const immediateParent = possibleParents.find(
-    (parent) => parent.customId === immediateParentID
+    (parent) => parent.customId === immediateParentId
   );
-  const projectIDs = (immediateParent && immediateParent!.projects) || [];
-  const projects = useSelector<IAppState, IBlock[]>((state) =>
-    getBlocksAsArray(state, projectIDs)
+  const boardIds = (immediateParent && immediateParent!.boards) || [];
+  const boards = useSelector<IAppState, IBlock[]>((state) =>
+    getBlocksAsArray(state, boardIds)
   );
   const blockToUpdate = useSelector<IAppState, IBlock | undefined>((state) =>
     getBlock(state, value.customId)
@@ -71,23 +71,20 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
 
   const formikRef = useInsertFormikErrors(externalErrors);
 
-  const getProjectExistsError = (name: string) => {
+  const getBoardExistsError = (name: string) => {
     if (name && name.length > 0) {
       name = name.toLowerCase();
-      const existingProject = projects.find(
-        (proj) => proj.name.toLowerCase() === name
+      const existingBoard = boards.find(
+        (proj) => proj.name?.toLowerCase() === name
       );
 
-      if (
-        existingProject &&
-        existingProject.customId !== blockToUpdate?.customId
-      ) {
-        return projectExistsErrorMessage;
+      if (existingBoard && existingBoard.customId !== blockToUpdate?.customId) {
+        return boardExistsErrorMessage;
       }
     }
   };
 
-  const renderParentInput = (formikProps: ProjectFormFormikProps) => {
+  const renderParentInput = (formikProps: BoardFormFormikProps) => {
     const { touched, errors, values, setFieldValue } = formikProps;
 
     return (
@@ -107,17 +104,17 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     );
   };
 
-  const renderNameInput = (formikProps: ProjectFormFormikProps) => {
+  const renderNameInput = (formikProps: BoardFormFormikProps) => {
     const { touched, values, errors } = formikProps;
 
     // TODO: can this be more efficient?
-    const projectNameError = errors.name || getProjectExistsError(values.name);
+    const boardNameError = errors.name || getBoardExistsError(values.name);
 
     return (
       <Form.Item
         required
-        label="Project Name"
-        help={touched.name && <FormError error={projectNameError} />}
+        label="Board Name"
+        help={touched.name && <FormError error={boardNameError} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
       >
@@ -128,7 +125,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
             onBlur={formikProps.handleBlur}
             onChange={formikProps.handleChange}
             value={values.name}
-            placeholder="Enter project name"
+            placeholder="Enter board name"
             disabled={isSubmitting}
             maxLength={blockConstants.maxNameLength}
           />
@@ -147,7 +144,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     );
   };
 
-  const renderDescriptionInput = (formikProps: ProjectFormFormikProps) => {
+  const renderDescriptionInput = (formikProps: BoardFormFormikProps) => {
     const { touched, handleBlur, values, errors, handleChange } = formikProps;
 
     return (
@@ -165,7 +162,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
             onBlur={handleBlur}
             onChange={handleChange}
             value={values.description}
-            placeholder="Enter project description"
+            placeholder="Enter board description"
             disabled={isSubmitting}
             maxLength={blockConstants.maxDescriptionLength}
           />
@@ -186,32 +183,32 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
 
   const preSubmit = (
     event: React.FormEvent<HTMLFormElement>,
-    formikProps: ProjectFormFormikProps
+    formikProps: BoardFormFormikProps
   ) => {
     event.preventDefault();
 
     const { errors, values, handleSubmit } = formikProps;
 
     // TODO: can this be more efficient?
-    const projectNameError = errors.name || getProjectExistsError(values.name);
+    const boardNameError = errors.name || getBoardExistsError(values.name);
 
-    if (!projectNameError) {
+    if (!boardNameError) {
       handleSubmit(event);
     }
   };
 
   const getSubmitLabel = () => {
     if (isSubmitting) {
-      if (project) {
+      if (board) {
         return "Saving Changes";
       } else {
-        return "Creating Project";
+        return "Creating Board";
       }
     } else {
-      if (project) {
+      if (board) {
         return "Save Changes";
       } else {
-        return "Create Project";
+        return "Create Board";
       }
     }
   };
@@ -235,7 +232,7 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
     );
   };
 
-  const renderForm = (formikProps: ProjectFormFormikProps) => {
+  const renderForm = (formikProps: BoardFormFormikProps) => {
     const { errors } = formikProps;
     const globalError = getGlobalError(errors);
     formikRef.current = formikProps;
@@ -270,4 +267,4 @@ const ProjectForm: React.FC<IProjectFormProps> = (props) => {
   );
 };
 
-export default React.memo(ProjectForm);
+export default React.memo(BoardForm);

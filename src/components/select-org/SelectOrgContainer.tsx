@@ -28,7 +28,7 @@
 //   const currentOrgView = getView<ICurrentOrgView>(state, currentOrgViewName);
 
 //   return {
-//     currentOrgID: currentOrgView ? currentOrgView.orgID : undefined,
+//     currentOrgId: currentOrgView ? currentOrgView.orgId : undefined,
 //     orgs: getBlocksAsArray(state, user.orgs),
 //     onSelectOrg(org: IBlock) {
 //       dispatch(setRootView(makeOrgsView()));

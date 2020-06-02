@@ -16,7 +16,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { respondToNotificationOperationID } from "../operationIDs";
+import { respondToNotificationOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
@@ -32,7 +32,7 @@ export default async function respondToNotificationOperationFunc(
   const { request, response } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    respondToNotificationOperationID,
+    respondToNotificationOperationId,
     request.customId
   );
 
@@ -42,7 +42,7 @@ export default async function respondToNotificationOperationFunc(
 
   store.dispatch(
     pushOperation(
-      respondToNotificationOperationID,
+      respondToNotificationOperationId,
       {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
@@ -94,7 +94,7 @@ export default async function respondToNotificationOperationFunc(
 
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationID,
+        respondToNotificationOperationId,
         {
           scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
@@ -106,7 +106,7 @@ export default async function respondToNotificationOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationID,
+        respondToNotificationOperationId,
         {
           error,
           scopeId: options.scopeId,

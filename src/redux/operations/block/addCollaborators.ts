@@ -11,7 +11,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addCollaboratorsOperationID } from "../operationIDs";
+import { addCollaboratorsOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddCollaboratorOperationFuncDataProps {
@@ -30,7 +30,7 @@ export default async function addCollaboratorsOperationFunc(
   const { block, collaborators, message, expiresAt } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    addCollaboratorsOperationID,
+    addCollaboratorsOperationId,
     block.customId
   );
 
@@ -40,7 +40,7 @@ export default async function addCollaboratorsOperationFunc(
 
   store.dispatch(
     pushOperation(
-      addCollaboratorsOperationID,
+      addCollaboratorsOperationId,
       {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
@@ -79,7 +79,7 @@ export default async function addCollaboratorsOperationFunc(
     // );
 
     /**
-     * Currently, the only the request IDs are stored, which will trigger a refetch of all the block's notifications
+     * Currently, the only the request Ids are stored, which will trigger a refetch of all the block's notifications
      * including the ones already fetched. The advantage to this, is that out-of-date notifications will be updated.
      *
      * TODO: When real-time data update is eventually implemented,
@@ -99,7 +99,7 @@ export default async function addCollaboratorsOperationFunc(
 
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationID,
+        addCollaboratorsOperationId,
         {
           scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
@@ -111,7 +111,7 @@ export default async function addCollaboratorsOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationID,
+        addCollaboratorsOperationId,
         {
           error,
           scopeId: options.scopeId,

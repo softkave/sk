@@ -44,6 +44,21 @@ fragment notificationFragment on Notification {
 }
 `;
 
+export const userFragment = `
+fragment userFragment on User {
+  customId
+  name
+  email
+  createdAt
+  rootBlockId
+  orgs {
+    customId
+  }
+  color
+  notificationsLastCheckedAt
+}
+`;
+
 export const blockFragment = `
 fragment blockFragment on Block {
   customId

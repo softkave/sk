@@ -10,14 +10,14 @@
 //   orgs: IBlock[];
 //   onSelectOrg: (org: IBlock) => void;
 //   gotoOrgs: () => void;
-//   currentOrgID?: string;
+//   currentOrgId?: string;
 //   trigger?: Array<"click" | "hover" | "contextMenu">;
 //   placeholder?: string;
 // }
 
 // const SelectOrg: React.SFC<ISelectOrgProps> = props => {
 //   const {
-//     currentOrgID,
+//     currentOrgId,
 //     orgs,
 //     onSelectOrg,
 //     gotoOrgs,
@@ -35,7 +35,7 @@
 //         }
 //       }}
 //     >
-//       <Menu.Item key={orgsViewName} disabled={!currentOrgID}>
+//       <Menu.Item key={orgsViewName} disabled={!currentOrgId}>
 //         Organizations
 //       </Menu.Item>
 //       <Menu.Divider />
@@ -49,8 +49,8 @@
 //     </StyledMenu>
 //   );
 
-//   const currentOrg = currentOrgID
-//     ? orgs.find(org => org.customId === currentOrgID)
+//   const currentOrg = currentOrgId
+//     ? orgs.find(org => org.customId === currentOrgId)
 //     : null;
 
 //   const content = currentOrg ? currentOrg.name : placeholder;

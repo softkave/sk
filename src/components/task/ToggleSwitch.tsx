@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { isTaskCompleted } from "../../models/block/utils";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { toggleTaskOperationID } from "../../redux/operations/operationIDs";
+import { toggleTaskOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
@@ -18,8 +18,8 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
   const { disabled, task } = props;
   const user = useSelector(getSignedInUserRequired);
   const toggleTaskOperation = useOperation({
-    operationID: toggleTaskOperationID,
-    resourceID: task.customId,
+    operationId: toggleTaskOperationId,
+    resourceId: task.customId,
   });
 
   const [lastStatusTimestamp, setLastStatusTimestamp] = React.useState(

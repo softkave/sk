@@ -1,64 +1,4 @@
-import { errorFragment } from "./error";
-
-const blockFragment = `
-  fragment blockFragment on Block {
-    customId
-    createdBy
-    createdAt
-    type
-    name
-    lowerCasedName
-    description
-    dueAt
-    color
-    updatedAt
-    updatedBy
-    parent
-    rootBlockId
-    assignees {
-      userId
-      assignedAt
-      assignedBy
-    }
-    priority
-    subTasks {
-      customId
-      description
-      createdAt
-      createdBy
-      completedBy
-      completedAt
-    }
-    boardStatuses {
-      customId
-      name
-      color
-      createdBy
-      createdAt
-      description
-      updatedBy
-      updatedAt
-    }
-    boardLabels {
-      customId
-      name
-      color
-      createdBy
-      createdAt
-      description
-      updatedBy
-      updatedAt
-    }
-    status
-    statusAssignedBy
-    statusAssignedAt
-    labels {
-      customId
-      assignedBy
-      assignedAt
-    }
-  }
-`;
+import { blockFragment, errorFragment } from "../../models/fragments";
 
 const addBlockMutation = `
   ${errorFragment}
@@ -119,9 +59,9 @@ const getRootBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!], $useBoardId: Boolean) {
+  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!]) {
     block {
-      getBlockChildren (customId: $customId, typeList: $typeList, useBoardId: $useBoardId) {
+      getBlockChildren (customId: $customId, typeList: $typeList) {
         errors {
           ...errorFragment
         }
@@ -149,63 +89,6 @@ const addCollaboratorsMutation = `
   }
 `;
 
-const getCollaboratorsQuery = `
-  ${errorFragment}
-  query GetBlockCollaboratorsQuery ($customId: String!) {
-    block {
-      getBlockCollaborators (customId: $customId) {
-        errors {
-          ...errorFragment
-        }
-        collaborators {
-          name
-          email
-          customId
-        }
-      }
-    }
-  }
-`;
-
-const getCollabRequestsQuery = `
-  ${errorFragment}
-  query GetBlockCollaborationRequestsQuery ($customId: String!) {
-    block {
-      getBlockCollaborationRequests (customId: $customId) {
-        errors {
-          ...errorFragment
-        }
-        requests {
-          customId
-          from {
-            userId
-            name
-            blockId
-            blockName
-            blockType
-          }
-          createdAt
-          body
-          readAt
-          to {
-            email
-            userId
-          }
-          statusHistory {
-            status
-            date
-          }
-          sentEmailHistory {
-            date
-          }
-          type
-          root
-        }
-      }
-    }
-  }
-`;
-
 const removeCollaboratorMutation = `
   ${errorFragment}
   mutation RemoveCollaboratorsMutation ($customId: String!, $collaborator: String!) {
@@ -218,19 +101,6 @@ const removeCollaboratorMutation = `
     }
   }
 `;
-
-// const toggleTaskMutation = `
-//   ${errorFragment}
-//   mutation ToggleTaskMutation ($customId: String!,  $data: Boolean!) {
-//     block {
-//        toggleTask (customId: $customId, data: $data) {
-//         errors {
-//           ...errorFragment
-//         }
-//       }
-//     }
-//   }
-// `;
 
 const revokeRequestMutation = `
   ${errorFragment}
@@ -248,71 +118,17 @@ const revokeRequestMutation = `
 const transferBlockMutation = `
   ${errorFragment}
   mutation DragAndDropMutation (
-    $sourceBlock: String!,
     $draggedBlock: String!,
-    $destinationBlock: String!,
-    $dropPosition: Float,
-    $groupContext: String
+    $destinationBlock: String!
   ) {
     block {
       transferBlock (
-        sourceBlock: $sourceBlock,
         draggedBlock: $draggedBlock,
-        destinationBlock: $destinationBlock,
-        dropPosition: $dropPosition,
-        groupContext: $groupContext
+        destinationBlock: $destinationBlock
       ) {
         errors {
           ...errorFragment
         }
-      }
-    }
-  }
-`;
-
-export const getBlocksWithCustomIDsQuery = `
-  ${blockFragment}
-  ${errorFragment}
-  query GetBlocksWithCustomIdsQuery ($customIds: [String!]!) {
-    block {
-      getBlocksWithCustomIds (customIds: $customIds) {
-        errors {
-          ...errorFragment
-        }
-        blocks {
-          ...blockFragment
-        }
-      }
-    }
-  }
-`;
-
-export const getTasksAssignedToUserQuery = `
-  ${blockFragment}
-  ${errorFragment}
-  query GetTasksAssignedToUserQuery {
-    block {
-      getAssignedTasks {
-        errors {
-          ...errorFragment
-        }
-        blocks {
-          ...blockFragment
-        }
-      }
-    }
-  }
-`;
-
-export const getBlockLandingPageQuery = `
-  ${errorFragment}
-  query GetBlockLandingPageQuery($customId: String!) {
-    block {
-      getBlockLandingPage(customId: $customId) {
-        errors {
-          ...errorFragment
-        }
-        page
       }
     }
   }
@@ -325,11 +141,8 @@ export {
   getBlockChildrenQuery,
   blockFragment,
   addCollaboratorsMutation,
-  getCollabRequestsQuery,
-  getCollaboratorsQuery,
   getRootBlocksQuery,
   removeCollaboratorMutation,
-  // toggleTaskMutation,
   revokeRequestMutation,
   transferBlockMutation,
 };

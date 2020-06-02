@@ -1,4 +1,4 @@
-import { BlockLandingPage, BlockType, IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
 import { BoardResourceType, BoardViewType } from "./types";
 
@@ -9,8 +9,7 @@ export const blockResourceTypeToBlockKeyMap: {
 } = {
   [cbReq]: "collaborationRequests",
   collaborators: "collaborators",
-  groups: "groups",
-  projects: "projects",
+  boards: "boards",
   tasks: "tasks",
 };
 
@@ -22,8 +21,7 @@ export const getBoardResourceTypeFullName = (
       return "collaboration requests";
 
     case "collaborators":
-    case "groups":
-    case "projects":
+    case "boards":
     case "tasks":
       return resourceType;
 
@@ -36,9 +34,6 @@ export const getBoardViewTypeFullName = (
   resourceType?: BoardViewType | null
 ) => {
   switch (resourceType) {
-    case "group-kanban":
-      return "group kanban";
-
     case "list":
       return "list";
 
@@ -80,48 +75,17 @@ export const getBlockResourceTypes = (
   return blockResourceTypes;
 };
 
-export function getBlockLandingPage(block: IBlock): BlockLandingPage | null {
-  const hasGroups = Array.isArray(block.groups) && block.groups.length > 0;
-  const hasTasks = Array.isArray(block.tasks) && block.tasks.length > 0;
-  const hasProjects =
-    Array.isArray(block.projects) && block.projects.length > 0;
-
-  if (block.type === "org") {
-    if (hasGroups) {
-      return null;
-    }
-  } else if (block.type === "project" && hasGroups) {
-    return "tasks";
-  } else if (hasTasks) {
-    return "tasks";
-  } else if (hasProjects) {
-    return "projects";
-  }
-
-  return "self";
-}
-
 export const getBoardViewTypesForResourceType = (
   block: IBlock,
-  resourceType: BoardResourceType,
-  isMobile: boolean = false
+  resourceType: BoardResourceType
 ): BoardViewType[] => {
   switch (resourceType) {
     case "tasks":
-      if (block.type === "group") {
-        return ["list"];
-      } else {
-        return ["status-kanban", "group-kanban"];
-      }
+      return ["status-kanban"];
 
-    case "projects":
-      if (block.type === "group") {
-        return ["list"];
-      } else {
-        return ["group-kanban"];
-      }
+    case "boards":
+      return ["list"];
 
-    case "groups":
     case "collaborators":
     case "collaboration-requests":
       return ["list"];
@@ -136,14 +100,11 @@ export const getBlockTypeFromResourceType = (
   resourceType: BoardResourceType
 ): BlockType | null => {
   switch (resourceType) {
-    case "groups":
-      return "group";
-
-    case "projects":
-      return "project";
+    case "boards":
+      return BlockType.Board;
 
     case "tasks":
-      return "task";
+      return BlockType.Task;
 
     default:
       return null;

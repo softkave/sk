@@ -6,7 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
+import { loadRootBlocksOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getDefaultBoardViewType } from "../board/utils";
@@ -73,7 +73,7 @@ const OrganizationListContainer: React.FC<{}> = () => {
       <Switch>
         <Route exact path="/app/organizations" render={renderOrganizations} />
         <Route
-          path="/app/organizations/:organizationID"
+          path="/app/organizations/:organizationId"
           component={OrganizationContainer}
         />
       </Switch>
@@ -82,7 +82,7 @@ const OrganizationListContainer: React.FC<{}> = () => {
 
   return (
     <SingleOperationHelper
-      operationID={loadRootBlocksOperationID}
+      operationId={loadRootBlocksOperationId}
       render={render}
       loadFunc={loadOrganizations}
     />

@@ -1,4 +1,4 @@
-import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
+import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
@@ -12,7 +12,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addBlockOperationID } from "../operationIDs";
+import { addBlockOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
 import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 
@@ -28,7 +28,7 @@ export default async function addBlockOperationFunc(
   const { user, block } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    addBlockOperationID,
+    addBlockOperationId,
     block.customId
   );
 
@@ -40,7 +40,7 @@ export default async function addBlockOperationFunc(
 
   store.dispatch(
     pushOperation(
-      addBlockOperationID,
+      addBlockOperationId,
       {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
@@ -52,7 +52,7 @@ export default async function addBlockOperationFunc(
 
   try {
     if (newBlock.type === "task") {
-      newBlock.subTasks = addCustomIDToSubTasks(newBlock.subTasks);
+      newBlock.subTasks = addCustomIdToSubTasks(newBlock.subTasks);
     }
 
     const result = await blockNet.addBlock(newBlock);
@@ -103,7 +103,7 @@ export default async function addBlockOperationFunc(
 
     store.dispatch(
       pushOperation(
-        addBlockOperationID,
+        addBlockOperationId,
         {
           scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
@@ -115,7 +115,7 @@ export default async function addBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        addBlockOperationID,
+        addBlockOperationId,
         {
           error,
           scopeId: options.scopeId,

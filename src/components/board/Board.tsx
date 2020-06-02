@@ -13,7 +13,7 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
-import { l } from "./data-loaders/loadBoardData";
+import { useBoardData } from "./data-loaders/loadBoardData";
 import { IBlockPathMatch } from "./types";
 import { getDefaultBoardViewType } from "./utils";
 
@@ -50,10 +50,10 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   // TODO: we need to rebuild the path when the user transfers the block
   const blockPath = `${parentPath}${getPath(block)}`;
   const boardMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/boards/:blockID`
+    `${blockPath}/boards/:blockId`
   );
 
-  const lop = l(block);
+  const lop = useBoardData(block);
 
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
@@ -102,7 +102,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     if (blockForm) {
       return (
         <BlockForms
-          orgID={block.rootBlockId || block.customId}
+          orgId={block.rootBlockId || block.customId}
           blockType={blockForm.blockType}
           block={blockForm.block}
           formType={blockForm.formType}
@@ -116,18 +116,18 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const renderChild = () => {
-    let childId: string | null = null;
+    let boardId: string | null = null;
 
     if (boardMatch) {
-      childId = boardMatch.params.blockId;
+      boardId = boardMatch.params.blockId;
     }
 
-    if (childId === null) {
+    if (boardId === null) {
       return null;
     }
 
     return (
-      <BlockContainer blockID={childId!} notFoundMessage="Board not found" />
+      <BlockContainer blockId={boardId!} notFoundMessage="Board not found" />
     );
   };
 

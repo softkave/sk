@@ -1,72 +1,50 @@
 // block
-export const loadRootBlocksOperationID = "loadRootBlocksOperationID";
-export const addBlockOperationID = "addBlockOperationID";
-export const updateBlockOperationID = "updateBlockOperationID";
-export const toggleTaskOperationID = "toggleTaskOperationID";
-export const deleteBlockOperationID = "deleteBlockOperationID";
-export const addCollaboratorsOperationID = "addCollaboratorsOperationID";
-export const getBlockOperationID = "getBlockOperationID";
-export const getBlockChildrenOperationID = "getBlockChildrenOperationID";
-export const getBlockCollaboratorsOperationID =
-  "getBlockCollaboratorsOperationID";
-export const getBlockCollaborationRequestsOperationID =
-  "getBlockCollaborationRequestsOperationID";
-export const transferBlockOperationID = "transferBlockOperationID";
-export const getTasksAssignedToUserOperationID =
-  "getTasksAssignedToUserOperationID";
-export const getBlocksWithCustomIDsOperationID =
-  "getBlocksWithCustomIDsOperationID";
+export const loadRootBlocksOperationId = "loadRootBlocksOperationId";
+export const addBlockOperationId = "addBlockOperationId";
+export const updateBlockOperationId = "updateBlockOperationId";
+export const deleteBlockOperationId = "deleteBlockOperationId";
+export const addCollaboratorsOperationId = "addCollaboratorsOperationId";
 
 // notification
-export const loadUserNotificationsOperationID =
-  "loadUserNotificationsOperationID";
-export const updateNotificationOperationID = "updateNotificationOperationID";
-export const respondToNotificationOperationID =
-  "respondToNotificationOperationID";
+export const loadUserNotificationsOperationId =
+  "loadUserNotificationsOperationId";
+export const updateNotificationOperationId = "updateNotificationOperationId";
+export const respondToNotificationOperationId =
+  "respondToNotificationOperationId";
 
 // user
-export const updateUserOperationID = "updateUserOperationID";
+export const updateUserOperationId = "updateUserOperationId";
 
 // session
-export const initializeAppSessionOperationID =
-  "initializeAppSessionOperationID";
-export const signupUserOperationID = "signupUserOperationID";
-export const loginUserOperationID = "loginUserOperationID";
-export const requestForgotPasswordOperationID =
-  "requestForgotPasswordOperationID";
-export const changePasswordOperationID = "changePasswordOperationID";
-export const getBlockLandingPageOperationID = "getBlockLandingPageOperationID";
+export const initializeAppSessionOperationId =
+  "initializeAppSessionOperationId";
+export const signupUserOperationId = "signupUserOperationId";
+export const loginUserOperationId = "loginUserOperationId";
+export const requestForgotPasswordOperationId =
+  "requestForgotPasswordOperationId";
+export const changePasswordOperationId = "changePasswordOperationId";
 
-export default class OperationIDs {
+export default class OperationIds {
   // block
-  public static loadRootBlocks = loadRootBlocksOperationID;
-  public static addBlock = addBlockOperationID;
-  public static updateBlock = updateBlockOperationID;
-  public static toggleTask = toggleTaskOperationID;
-  public static deleteBlock = deleteBlockOperationID;
-  public static addCollaborators = addCollaboratorsOperationID;
-  public static getBlock = getBlockOperationID;
-  public static getBlockChildren = getBlockChildrenOperationID;
-  public static getBlockCollaborators = getBlockCollaboratorsOperationID;
-  public static getBlockCollaborationRequests = getBlockCollaborationRequestsOperationID;
-  public static transferBlock = transferBlockOperationID;
-  public static getTasksAssignedToUser = getTasksAssignedToUserOperationID;
-  public static getBlocksWithCustomIDs = getBlocksWithCustomIDsOperationID;
+  public static loadRootBlocks = loadRootBlocksOperationId;
+  public static addBlock = addBlockOperationId;
+  public static updateBlock = updateBlockOperationId;
+  public static deleteBlock = deleteBlockOperationId;
+  public static addCollaborators = addCollaboratorsOperationId;
 
   // notification
-  public static loadUserNotifications = loadUserNotificationsOperationID;
-  public static updateNotification = updateNotificationOperationID;
-  public static respondToNotification = respondToNotificationOperationID;
+  public static loadUserNotifications = loadUserNotificationsOperationId;
+  public static updateNotification = updateNotificationOperationId;
+  public static respondToNotification = respondToNotificationOperationId;
 
   // user
-  public static updateUser = updateUserOperationID;
+  public static updateUser = updateUserOperationId;
 
   // session
-  public static initializeAppSession = initializeAppSessionOperationID;
-  public static signupUser = signupUserOperationID;
-  public static loginUser = loginUserOperationID;
-  public static requestForgotPassword = requestForgotPasswordOperationID;
-  public static changePassword = changePasswordOperationID;
+  public static initializeAppSession = initializeAppSessionOperationId;
+  public static signupUser = signupUserOperationId;
+  public static loginUser = loginUserOperationId;
+  public static requestForgotPassword = requestForgotPasswordOperationId;
+  public static changePassword = changePasswordOperationId;
   public static getSessionDetails = "getSessionDetails";
-  public static getBlockLandingPageOperationID = getBlockLandingPageOperationID;
 }

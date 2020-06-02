@@ -8,12 +8,12 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  IdispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { loginUserOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { loginUserOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export interface ILoginUserData {
   email: string;
@@ -34,16 +34,16 @@ export default async function loginUserOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
-  const operation = getFirstOperationWithID(state, loginUserOperationID);
+  const operation = getFirstOperationWithId(state, loginUserOperationId);
 
   if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
+  const dispatchOptions: IdispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: loginUserOperationID,
+    operationId: loginUserOperationId,
   };
 
   dispatchOperationStarted(dispatchOptions);

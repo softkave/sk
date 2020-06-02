@@ -7,11 +7,11 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  IdispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { updateNotificationOperationID } from "../operationIDs";
+import { updateNotificationOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IMarkNotificationReadOperationFuncDataProps {
@@ -27,7 +27,7 @@ export default async function markNotificationReadOperationFunc(
   const { notification } = dataProps;
   const operation = getOperationWithIdForResource(
     state,
-    updateNotificationOperationID,
+    updateNotificationOperationId,
     notification.customId
   );
 
@@ -35,10 +35,10 @@ export default async function markNotificationReadOperationFunc(
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
+  const dispatchOptions: IdispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: updateNotificationOperationID,
+    operationId: updateNotificationOperationId,
     resourceId: notification.customId,
   };
 

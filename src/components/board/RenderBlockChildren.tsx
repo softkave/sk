@@ -1,26 +1,19 @@
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
+import BoardList from "../boardBlock/BoardList";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
-import LoadBlockGroupChildren from "./LoadBlockGroupChildren";
-import LoadBlockProjects from "./LoadBlockProjects";
-import LoadBlockTasks from "./LoadBlockTasks";
+import LoadBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
 
 export interface IRenderBlockChildrenProps {
   block: IBlock;
   selectedResourceType: BoardResourceType;
-  onClickUpdateBlock: (block: IBlock) => void;
   onClickBlock: (blocks: IBlock[]) => void;
 }
 
 const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
-  const {
-    block,
-    onClickUpdateBlock,
-    onClickBlock,
-    selectedResourceType,
-  } = props;
+  const { block, onClickBlock, selectedResourceType } = props;
 
   const renderCollaborators = () => {
     return <CollaboratorList organization={block} />;
@@ -37,19 +30,22 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
     case "collaborators":
       return renderCollaborators();
 
-    case "groups":
+    case "boards":
       return (
-        <LoadBlockGroupChildren block={block} onClickBlock={onClickBlock} />
-      );
-
-    case "projects":
-      return <LoadBlockProjects block={block} onClickBlock={onClickBlock} />;
-
-    case "tasks":
-      return (
-        <LoadBlockTasks block={block} onClickUpdateBlock={onClickUpdateBlock} />
+        <LoadBlockChildren
+          parent={block}
+          type={BlockType.Board}
+          render={(blocks) => (
+            <BoardList
+              boards={blocks}
+              onClick={(board) => onClickBlock([board])}
+            />
+          )}
+        />
       );
   }
+
+  return null;
 };
 
 export default React.memo(RenderBlockChildren);

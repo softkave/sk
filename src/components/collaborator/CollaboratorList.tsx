@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlockCollaboratorsOperationID } from "../../redux/operations/operationIDs";
+import { getBlockCollaboratorsOperationId } from "../../redux/operations/operationIds";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import EmptyMessage from "../EmptyMessage";
@@ -22,8 +22,8 @@ const CollaboratorList: React.FC<ICProps> = (props) => {
     getUsersAsArray(state, organization.collaborators!)
   );
   const collaboratorsStatus = useOperation({
-    operationID: getBlockCollaboratorsOperationID,
-    resourceID: organization.customId,
+    operationId: getBlockCollaboratorsOperationId,
+    resourceId: organization.customId,
   });
 
   if (collaboratorsStatus.error) {

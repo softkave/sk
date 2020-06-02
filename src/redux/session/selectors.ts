@@ -46,7 +46,3 @@ export function getUserTokenRequired(state: IAppState) {
 export function getSessionType(state: IAppState) {
   return state.session.sessionType;
 }
-
-export function getSessionDetails(state: IAppState) {
-  return state.session.sessionDetails;
-}

@@ -9,12 +9,12 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
+  IdispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { signupUserOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { signupUserOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export interface ISignupUserData {
   name: string;
@@ -33,7 +33,7 @@ export default async function signupUserOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
-  const operation = getFirstOperationWithID(state, signupUserOperationID);
+  const operation = getFirstOperationWithId(state, signupUserOperationId);
 
   if (isOperationStarted(operation, options.scopeId)) {
     return;
@@ -41,10 +41,10 @@ export default async function signupUserOperationFunc(
 
   const data = { ...user, color: randomColor() };
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
+  const dispatchOptions: IdispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: signupUserOperationID,
+    operationId: signupUserOperationId,
   };
 
   dispatchOperationStarted(dispatchOptions);

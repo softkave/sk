@@ -7,7 +7,7 @@ import NotificationListItem from "./NotificationListItem";
 export interface INotificationListProps {
   notifications: INotification[];
   onClickNotification: (notification: INotification) => void;
-  currentNotificationID?: string;
+  currentNotificationId?: string;
 }
 
 class NotificationList extends React.Component<INotificationListProps> {
@@ -18,16 +18,16 @@ class NotificationList extends React.Component<INotificationListProps> {
   }
 
   public onClickNotication = (id) => {
-    const { currentNotificationID } = this.props;
+    const { currentNotificationId } = this.props;
 
-    if (currentNotificationID !== id) {
+    if (currentNotificationId !== id) {
       this.setState({ currentNotification: id });
       this.props.onClickNotification(this.findNotification(id));
     }
   };
 
   public render() {
-    const { notifications, currentNotificationID } = this.props;
+    const { notifications, currentNotificationId } = this.props;
 
     return (
       <StyledNotificationList>
@@ -42,7 +42,7 @@ class NotificationList extends React.Component<INotificationListProps> {
                 notification={notification}
                 onClick={() => this.onClickNotication(notification.customId)}
                 isSelected={
-                  currentNotificationID === notification.customId ? true : false
+                  currentNotificationId === notification.customId ? true : false
                 }
               />
             );

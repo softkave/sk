@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useStore } from "react-redux";
 import { pushOperation } from "../../redux/operations/actions";
 import { operationStatusTypes } from "../../redux/operations/operation";
-import { changePasswordOperationID } from "../../redux/operations/operationIDs";
+import { changePasswordOperationId } from "../../redux/operations/operationIds";
 import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
@@ -19,7 +19,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
   const operationStatus = useOperation({
-    operationID: changePasswordOperationID,
+    operationId: changePasswordOperationId,
   });
 
   const errors = operationStatus.error
@@ -31,7 +31,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
       message.success(changePasswordSuccessMessage);
 
       dispatch(
-        pushOperation(changePasswordOperationID, {
+        pushOperation(changePasswordOperationId, {
           status: operationStatusTypes.consumed,
           timestamp: Date.now(),
         })

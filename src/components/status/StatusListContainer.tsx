@@ -3,14 +3,14 @@ import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
-const scopeID = "StatusListContainer";
+const scopeId = "StatusListContainer";
 
 export interface IStatusListContainerProps {
   block: IBlock;
@@ -23,15 +23,15 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     if (block.type === "org") {
       return getBlock(state, block.customId)!;
     } else {
-      return getBlock(state, block.rootBlockID)!;
+      return getBlock(state, block.rootBlockId)!;
     }
   });
 
   const statusList = org.availableStatus || [];
   const operationStatus = useOperation({
-    scopeID,
-    operationID: updateBlockOperationID,
-    resourceID: org.customId,
+    scopeId: scopeId,
+    operationId: updateBlockOperationId,
+    resourceId: org.customId,
   });
 
   const errors = operationStatus.error
@@ -57,7 +57,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
         },
       },
       {
-        scopeId: scopeID,
+        scopeId: scopeId,
         resourceId: org.customId,
       }
     );

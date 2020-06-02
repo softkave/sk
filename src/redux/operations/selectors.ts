@@ -1,12 +1,12 @@
 import { IAppState } from "../store";
 
-export function getOperationsWithID(state: IAppState, operationId: string) {
+export function getOperationsWithId(state: IAppState, operationId: string) {
   return state.operations.operations.filter((operation) => {
     return operation.operationId === operationId;
   });
 }
 
-export function getFirstOperationWithID(state: IAppState, operationId: string) {
+export function getFirstOperationWithId(state: IAppState, operationId: string) {
   return state.operations.operations.find((operation) => {
     return operation.operationId === operationId;
   });
@@ -32,5 +32,5 @@ export function getOperationWithIdForResource(
 }
 
 export function operationExists(state: IAppState, operationId: string) {
-  return !!getOperationsWithID(state, operationId);
+  return !!getOperationsWithId(state, operationId);
 }

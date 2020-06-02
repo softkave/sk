@@ -3,7 +3,7 @@ import {
   ICollectionAddItemPayload,
   ICollectionDeleteItemPayload,
   ICollectionUpdateItemPayload,
-  IUpdateResourceMeta
+  IUpdateResourceMeta,
 } from "../collection";
 import {
   ADD_NOTIFICATION,
@@ -11,7 +11,7 @@ import {
   BULK_DELETE_NOTIFICATIONS,
   BULK_UPDATE_NOTIFICATIONS,
   DELETE_NOTIFICATION,
-  UPDATE_NOTIFICATION
+  UPDATE_NOTIFICATION,
 } from "./constants";
 
 export interface IAddNotificationAction {
@@ -26,8 +26,8 @@ export function addNotificationRedux(
     type: ADD_NOTIFICATION,
     payload: {
       id: notification.customId,
-      data: notification
-    }
+      data: notification,
+    },
   };
 }
 
@@ -47,22 +47,22 @@ export function updateNotificationRedux(
     type: UPDATE_NOTIFICATION,
     payload: {
       id,
-      data: notification
-    }
+      data: notification,
+    },
   };
 }
 
-export interface IDeleteNotificationAction {
+export interface IdeleteNotificationAction {
   type: DELETE_NOTIFICATION;
   payload: ICollectionDeleteItemPayload;
 }
 
-export function deleteNotificationRedux(id: string): IDeleteNotificationAction {
+export function deleteNotificationRedux(id: string): IdeleteNotificationAction {
   return {
     type: DELETE_NOTIFICATION,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
@@ -76,10 +76,10 @@ export function bulkAddNotificationsRedux(
 ): IBulkAddNotificationsAction {
   return {
     type: BULK_ADD_NOTIFICATIONS,
-    payload: notifications.map(notification => ({
+    payload: notifications.map((notification) => ({
       id: notification.customId,
-      data: notification
-    }))
+      data: notification,
+    })),
   };
 }
 
@@ -96,7 +96,7 @@ export function bulkUpdateNotificationsRedux(
   return {
     meta,
     type: BULK_UPDATE_NOTIFICATIONS,
-    payload: notifications
+    payload: notifications,
   };
 }
 
@@ -110,14 +110,14 @@ export function bulkDeleteNotificationsRedux(
 ): IBulkDeleteNotificationsAction {
   return {
     type: BULK_DELETE_NOTIFICATIONS,
-    payload: notifications.map(id => ({ id }))
+    payload: notifications.map((id) => ({ id })),
   };
 }
 
 export type INotificationsAction =
   | IAddNotificationAction
   | IUpdateNotificationAction
-  | IDeleteNotificationAction
+  | IdeleteNotificationAction
   | IBulkAddNotificationsAction
   | IBulkUpdateNotificationsAction
   | IBulkDeleteNotificationsAction;

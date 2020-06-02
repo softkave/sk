@@ -1,14 +1,14 @@
 import isNumber from "lodash/isNumber";
 import {
   INotification,
-  notificationStatus
+  notificationStatus,
 } from "../../models/notification/notification";
 
 export function getNotificationLatestStatus(notification: INotification) {
   if (Array.isArray(notification.statusHistory)) {
     const possibleUserResponses = {
       [notificationStatus.accepted]: true,
-      [notificationStatus.declined]: true
+      [notificationStatus.declined]: true,
     };
 
     return notification.statusHistory.find(({ status }) => {
@@ -28,7 +28,7 @@ export function canRespondToNotification(notification: INotification) {
   const invalidStatuses = {
     [notificationStatus.accepted]: true,
     [notificationStatus.declined]: true,
-    [notificationStatus.revoked]: true
+    [notificationStatus.revoked]: true,
   };
 
   if (Array.isArray(statusHistory)) {
@@ -51,5 +51,5 @@ export function isNotificationExpired(notification: INotification) {
 }
 
 export interface INotificationsPathParams {
-  notificationID?: string;
+  notificationId?: string;
 }

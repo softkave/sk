@@ -1,17 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { operationHasStatusWithScopeID } from "../../redux/operations/operation";
-import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
+import { operationHasStatusWithScopeId } from "../../redux/operations/operation";
+import { getBlockChildrenOperationId } from "../../redux/operations/operationIds";
 import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import ViewByStatus from "./ViewByStatus";
 
-const scopeID = "status-container";
+const scopeId = "status-container";
 
 export interface IViewByStatusContainerProps {
   block: IBlock;
@@ -25,31 +25,31 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 ) => {
   const { block, onClickUpdateBlock, style } = props;
   const org = useSelector<IAppState, IBlock>(
-    (state) => getBlock(state, block.rootBlockID || block.customId)!
+    (state) => getBlock(state, block.rootBlockId || block.customId)!
   );
-  const statuses = org.availableStatus || [];
+  const statuses = org.boardStatuses || [];
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;
-    const shouldLoad = !operationHasStatusWithScopeID(operation, scopeID);
+    const shouldLoad = !operationHasStatusWithScopeId(operation, scopeId);
 
     if (shouldLoad) {
       loadBlockChildrenOperationFunc(
         {
           block,
-          useBoardId: true,
-          typeList: ["task"],
+          typeList: [BlockType.Task],
+          operationId: "view-by-status",
         },
-        { scopeId: scopeID, resourceId: block.customId }
+        { scopeId, resourceId: block.customId }
       );
     }
   };
 
   const loadChildrenStatus = useOperation(
     {
-      scopeID,
-      operationID: getBlockChildrenOperationID,
-      resourceID: block.customId,
+      scopeId,
+      operationId: getBlockChildrenOperationId,
+      resourceId: block.customId,
     },
     loadBlockChildren
   );
@@ -66,7 +66,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
       if (
         resource.resource.type === "task" &&
-        resource.resource.boardId === block.customId
+        resource.resource.parent === block.customId
       ) {
         blockList.push(resource.resource);
       }

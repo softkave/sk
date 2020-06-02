@@ -2,9 +2,9 @@ import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
 import ErrorMessages from "../models/ErrorMessages";
-import { INetError } from "../net/query";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
+import { INetError } from "./types";
 
 const isExpectedErrorType = (errors) => {
   return Array.isArray(errors) && !!errors.find((e) => !!e.name);
@@ -36,7 +36,13 @@ export interface INetCallProps {
   headers?: OutgoingHttpHeaders;
 }
 
-export async function netCall(props: INetCallProps) {
+export interface INetCallResult {
+  errors?: INetError[];
+  result?: any;
+  data: { [key: string]: any };
+}
+
+export async function netCall(props: INetCallProps): Promise<INetCallResult> {
   const { query, variables, paths } = props;
 
   try {
@@ -60,20 +66,23 @@ export async function netCall(props: INetCallProps) {
     }
 
     const body = await result.json();
-    const errors = body
-      ? paths.reduce((accumulator, path) => {
-          const d = get(body, path);
+    const data: any = {};
+    let errors: any;
 
-          if (d && d.errors) {
-            accumulator = accumulator.concat(d.errors);
-          }
+    if (body) {
+      paths.forEach((path) => {
+        const d = get(body, path);
 
-          return accumulator;
-        }, [])
-      : undefined;
+        if (d && d.errors) {
+          errors = (errors || []).concat(d.errors);
+        }
+
+        data[path] = d;
+      });
+    }
 
     if (result.ok) {
-      return body;
+      return { errors, data, result: body };
     } else {
       if (result.status === 500 || result.status === 401) {
         if (errors) {
@@ -81,7 +90,7 @@ export async function netCall(props: INetCallProps) {
             const continueProcessing = processServerRecommendedActions(errors);
 
             if (continueProcessing) {
-              return body;
+              return { errors, data, result: body };
             }
 
             // TODO: what should we do on else

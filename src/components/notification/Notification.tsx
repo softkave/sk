@@ -15,7 +15,7 @@ import IOperation, {
   getOperationLastError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import { respondToNotificationOperationID } from "../../redux/operations/operationIDs";
+import { respondToNotificationOperationId } from "../../redux/operations/operationIds";
 import { getOperationWithIdForResource } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/store";
 import FormError from "../form/FormError";
@@ -30,24 +30,24 @@ import {
 const Notification: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch<INotificationsPathParams>(
-    "/app/notifications/:notificationID"
+    "/app/notifications/:notificationId"
   );
-  const currentNotificationID =
+  const currentNotificationId =
     routeMatch && routeMatch.params
-      ? routeMatch.params.notificationID
+      ? routeMatch.params.notificationId
       : undefined;
   const notification = useSelector<IAppState, INotification | undefined>(
-    (state) => getNotification(state, currentNotificationID!)
+    (state) => getNotification(state, currentNotificationId!)
   );
   const operation = useSelector<IAppState, IOperation | undefined>((state) =>
     getOperationWithIdForResource(
       state,
-      respondToNotificationOperationID,
-      currentNotificationID
+      respondToNotificationOperationId,
+      currentNotificationId
     )
   );
 
-  if (!currentNotificationID) {
+  if (!currentNotificationId) {
     history.push(getFullBaseNavPath());
     return null;
   }

@@ -5,7 +5,7 @@ import {
   deleteBlockRedux,
   updateBlockRedux,
 } from "../../blocks/actions";
-import { getBlock, getEveryBlockChildrenInState } from "../../blocks/selectors";
+import { getBlock, getBlockChildren } from "../../blocks/selectors";
 import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
 import * as userActions from "../../users/actions";
@@ -15,9 +15,8 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { deleteBlockOperationID } from "../operationIDs";
+import { deleteBlockOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
-import { removeTaskFromUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IDeleteBlockOperationFuncDataProps {
   block: IBlock;
@@ -30,7 +29,7 @@ export default async function deleteBlockOperationFunc(
   const { block } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    deleteBlockOperationID,
+    deleteBlockOperationId,
     block.customId
   );
 
@@ -40,7 +39,7 @@ export default async function deleteBlockOperationFunc(
 
   store.dispatch(
     pushOperation(
-      deleteBlockOperationID,
+      deleteBlockOperationId,
       {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
@@ -58,7 +57,7 @@ export default async function deleteBlockOperationFunc(
     }
 
     // TODO: find a more efficient way to do this
-    const blockChildren = getEveryBlockChildrenInState(store.getState(), block);
+    const blockChildren = getBlockChildren(store.getState(), block);
 
     if (blockChildren.length > 0) {
       store.dispatch(
@@ -66,10 +65,10 @@ export default async function deleteBlockOperationFunc(
       );
     }
 
-    const parentID = block.parent;
+    const parentId = block.parent;
 
-    if (parentID) {
-      const parent = getBlock(store.getState(), parentID);
+    if (parentId) {
+      const parent = getBlock(store.getState(), parentId);
 
       if (parent) {
         const pluralType = `${block.type}s`;
@@ -77,17 +76,6 @@ export default async function deleteBlockOperationFunc(
         const parentUpdate = {
           [pluralType]: container.filter((id) => id !== block.customId),
         };
-
-        if (block.type === "group") {
-          const groupTaskContext = parent.groupTaskContext || [];
-          const groupProjectContext = parent.groupProjectContext || [];
-          parentUpdate.groupTaskContext = groupTaskContext.filter(
-            (id) => id !== block.customId
-          );
-          parentUpdate.groupProjectContext = groupProjectContext.filter(
-            (id) => id !== block.customId
-          );
-        }
 
         store.dispatch(
           updateBlockRedux(parent.customId, parentUpdate, {
@@ -100,7 +88,9 @@ export default async function deleteBlockOperationFunc(
     const user = getSignedInUserRequired(store.getState());
 
     if (block.type === "org") {
-      const orgIndex = user.orgs.indexOf(block.customId);
+      const orgIndex = user.orgs.findIndex(
+        (org) => org.customId === block.customId
+      );
       const orgs = [...user.orgs];
       orgs.splice(orgIndex, 1);
 
@@ -113,12 +103,11 @@ export default async function deleteBlockOperationFunc(
       );
     }
 
-    removeTaskFromUserIfAssigned(block);
     store.dispatch(deleteBlockRedux(block.customId));
 
     store.dispatch(
       pushOperation(
-        deleteBlockOperationID,
+        deleteBlockOperationId,
         {
           scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
@@ -130,7 +119,7 @@ export default async function deleteBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        deleteBlockOperationID,
+        deleteBlockOperationId,
         {
           error,
           scopeId: options.scopeId,

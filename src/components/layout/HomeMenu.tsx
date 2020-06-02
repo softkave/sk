@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { IUserSessionDetails } from "../../models/user/user";
-import OperationIDs from "../../redux/operations/operationIDs";
+import OperationIds from "../../redux/operations/operationIds";
 import getSessionDetailsOperationFunc from "../../redux/operations/session/getSessionDetails";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSessionDetails } from "../../redux/session/selectors";
@@ -30,8 +30,8 @@ const HomeMenu: React.FC<{}> = () => {
   const sessionDetails =
     useSelector(getSessionDetails) || cast<IUserSessionDetails>({});
   const sessionDetailsOperation = useOperation(
-    { operationID: OperationIDs.getSessionDetails },
-    loadProps => {
+    { operationId: OperationIds.getSessionDetails },
+    (loadProps) => {
       if (!!!loadProps.operation) {
         getSessionDetailsOperationFunc();
       }
@@ -52,7 +52,7 @@ const HomeMenu: React.FC<{}> = () => {
         width: "100%",
         margin: "32px auto",
         flex: 1,
-        padding: "0 16px"
+        padding: "0 16px",
       }}
     >
       <StyledContainer s={{ flex: 1, flexDirection: "column" }}>

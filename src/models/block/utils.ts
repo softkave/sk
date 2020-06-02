@@ -24,18 +24,18 @@ export function getBlockValidChildrenTypes(
   parentType?: BlockType | null
 ): BlockType[] {
   const validChildrenTypesMap: BlockTypeToTypesMap = {
-    root: ["project", "group", "task"],
-    org: ["project", "group", "task"],
-    project: ["group", "task"],
-    group: ["project", "task"],
+    root: ["board", "group", "task"],
+    org: ["board", "group", "task"],
+    board: ["group", "task"],
+    group: ["board", "task"],
     task: [],
   };
 
   let types = validChildrenTypesMap[type] || [];
 
   if (type === "group") {
-    if (parentType === "project") {
-      types = types.filter((nextType) => nextType !== "project");
+    if (parentType === "board") {
+      types = types.filter((nextType) => nextType !== "board");
     }
   }
 
@@ -54,9 +54,9 @@ export function getBlockValidParentTypes(type: BlockType): BlockType[] {
   const validParentsMap: BlockTypeToTypesMap = {
     root: [],
     org: [],
-    project: ["root", "org", "group"],
-    group: ["root", "org", "project"],
-    task: ["root", "org", "project", "group"],
+    board: ["root", "org", "group"],
+    group: ["root", "org", "board"],
+    task: ["root", "org", "board", "group"],
   };
 
   const types = validParentsMap[type] || [];
@@ -94,8 +94,8 @@ export const getBlockTypeFullName = (type: BlockType) => {
       return "organization";
     case "group":
       return "group";
-    case "project":
-      return "project";
+    case "board":
+      return "board";
     case "task":
       return "task";
     default:

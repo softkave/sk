@@ -9,17 +9,17 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { loadUserNotificationsOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { loadUserNotificationsOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadUserNotificationsOperationFunc(
   dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
   const user = getSignedInUserRequired(store.getState());
-  const operation = getFirstOperationWithID(
+  const operation = getFirstOperationWithId(
     store.getState(),
-    loadUserNotificationsOperationID
+    loadUserNotificationsOperationId
   );
 
   if (operation && isOperationStarted(operation, options.scopeId)) {
@@ -27,7 +27,7 @@ export default async function loadUserNotificationsOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(loadUserNotificationsOperationID, {
+    pushOperation(loadUserNotificationsOperationId, {
       scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
@@ -56,7 +56,7 @@ export default async function loadUserNotificationsOperationFunc(
     );
 
     store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
+      pushOperation(loadUserNotificationsOperationId, {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
@@ -64,7 +64,7 @@ export default async function loadUserNotificationsOperationFunc(
     );
   } catch (error) {
     store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
+      pushOperation(loadUserNotificationsOperationId, {
         error,
         scopeId: options.scopeId,
         status: operationStatusTypes.operationError,

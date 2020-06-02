@@ -23,7 +23,7 @@ const getBlockResourceTypeIcon = (type: BoardResourceType) => {
     case "tasks":
       return <BorderOutlined />;
 
-    case "projects":
+    case "boards":
       return <BorderOutlined />;
 
     case "groups":

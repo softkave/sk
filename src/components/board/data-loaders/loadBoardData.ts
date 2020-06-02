@@ -1,4 +1,4 @@
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../../models/block/block";
 import {
   blockFragment,
   collaboratorFragment,
@@ -7,8 +7,17 @@ import {
 } from "../../../models/fragments";
 import { INetError } from "../../../net/types";
 import { netCall } from "../../../net/utils";
-import { IOperationFuncOptions } from "../../../redux/operations/operation";
+import * as blockActions from "../../../redux/blocks/actions";
+import * as notificationActions from "../../../redux/notifications/actions";
+import { pushOperation } from "../../../redux/operations/actions";
+import {
+  isOperationStarted,
+  operationStatusTypes,
+} from "../../../redux/operations/operation";
 import { getOperationWithIdForResource } from "../../../redux/operations/selectors";
+import store from "../../../redux/store";
+import * as userActions from "../../../redux/users/actions";
+import useOperation, { IUseOperationStatus } from "../../hooks/useOperation";
 
 const query = `
 ${errorFragment}
@@ -38,7 +47,9 @@ query LoadBoardDataQuery ($customId: String!) {
 `;
 
 const opId = "load-board-data";
-const paths = ["block.getBlockCollaborators", "block.getBlockNotifications"];
+const collaboratorsPath = "block.getBlockCollaborators";
+const notificationsPath = "block.getBlockNotifications";
+const paths = [collaboratorsPath, notificationsPath];
 
 async function getData(block: IBlock) {
   return netCall({
@@ -48,17 +59,14 @@ async function getData(block: IBlock) {
   });
 }
 
-export default async function lo(
-  block: IBlock,
-  options: IOperationFuncOptions = {}
-) {
+export default async function lo(block: IBlock) {
   const operation = getOperationWithIdForResource(
     store.getState(),
     opId,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (operation && isOperationStarted(operation)) {
     return;
   }
 
@@ -66,7 +74,6 @@ export default async function lo(
     pushOperation(
       opId,
       {
-        scopeID: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -77,18 +84,29 @@ export default async function lo(
   try {
     const result = await getData(block);
 
-    if (result && result.errors) {
+    if (result.errors) {
       throw result.errors;
     }
 
-    const { collaborators } = result;
-    const ids = collaborators.map((collaborator) => collaborator.customId);
+    const collaborators = result.data[collaboratorsPath];
+    const notifications = result.data[notificationsPath];
+
+    const collaboratorIds = collaborators.map(
+      (collaborator) => collaborator.customId
+    );
+    const notificationIds = notifications.map(
+      (notification) => notification.customId
+    );
     store.dispatch(userActions.bulkAddUsersRedux(collaborators));
+    store.dispatch(
+      notificationActions.bulkAddNotificationsRedux(notifications)
+    );
     store.dispatch(
       blockActions.updateBlockRedux(
         block.customId,
         {
-          collaborators: ids,
+          collaborators: collaboratorIds,
+          notifications: notificationIds,
         },
         { arrayUpdateStrategy: "replace" }
       )
@@ -98,7 +116,6 @@ export default async function lo(
       pushOperation(
         opId,
         {
-          scopeID: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -111,7 +128,6 @@ export default async function lo(
         opId,
         {
           error,
-          scopeID: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },
@@ -126,50 +142,24 @@ export interface ILResult {
   errors?: INetError[];
 }
 
-export function l(block: IBlock): ILResult {
-  const loadBlockChildren = (loadProps: IUseOperationStatus) => {
-    if (!loadProps.operation) {
-      loadBlockChildrenOperationFunc({ block, updateParentInStore: true });
+export function useBoardData(block: IBlock): ILResult {
+  const loadStatus = useOperation(
+    {
+      operationId: opId,
+      resourceId: block.customId,
+    },
+    (loadProps: IUseOperationStatus) => {
+      if (block.type === BlockType.Org && !loadProps.operation) {
+        lo(block);
+      }
     }
-  };
-
-  const loadChildrenStatus = useOperation(
-    {
-      operationID: getBlockChildrenOperationID,
-      resourceID: block.customId,
-    },
-    loadBlockChildren
   );
 
-  const hasCollaborators = block.type === "org";
-  const loadCollaboratorsStatus = useOperation(
-    {
-      operationID: getBlockCollaboratorsOperationID,
-      resourceID: block.customId,
-    },
-    hasCollaborators && loadOrgCollaborators
-  );
-
-  const isLoadingCollaborators =
-    hasCollaborators &&
-    (loadCollaboratorsStatus.isLoading || !!!loadCollaboratorsStatus.operation);
-
-  const hasRequests = block.type === "org";
-  const loadRequestsStatus = useOperation(
-    {
-      operationID: getBlockCollaborationRequestsOperationID,
-      resourceID: block.customId,
-    },
-    hasRequests && loadOrgCollaborationRequests
-  );
-
-  const isLoadingRequests =
-    hasRequests &&
-    (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
-
-  const loadBlockChildren = (loadProps: IUseOperationStatus) => {
-    if (!!!loadProps.operation) {
-      loadBlockChildrenOperationFunc({ block, updateParentInStore: true });
-    }
+  return {
+    loading:
+      block.type === BlockType.Org
+        ? loadStatus.isLoading || !loadStatus.operation
+        : false,
+    errors: loadStatus.error,
   };
 }

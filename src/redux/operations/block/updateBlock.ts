@@ -1,18 +1,18 @@
 import moment from "moment";
-import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
+import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
+import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { updateBlockOperationID } from "../operationIDs";
+import { updateBlockOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
-import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 import {
   hasBlockParentChanged,
   transferBlockStateHelper,
@@ -30,7 +30,7 @@ export default async function updateBlockOperationFunc(
   const { block, data } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    updateBlockOperationID,
+    updateBlockOperationId,
     block.customId
   );
 
@@ -38,15 +38,15 @@ export default async function updateBlockOperationFunc(
     return;
   }
 
-  if (data.expectedEndAt && typeof data.expectedEndAt !== "number") {
-    data.expectedEndAt = moment(data.expectedEndAt).valueOf();
+  if (data.dueAt) {
+    data.dueAt = moment(data.dueAt).toString();
   } else if (data.type === "task") {
-    data.subTasks = addCustomIDToSubTasks(data.subTasks);
+    data.subTasks = addCustomIdToSubTasks(data.subTasks);
   }
 
   store.dispatch(
     pushOperation(
-      updateBlockOperationID,
+      updateBlockOperationId,
       {
         scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
@@ -63,15 +63,13 @@ export default async function updateBlockOperationFunc(
       throw result.errors;
     }
 
-    addTaskToUserIfAssigned(block);
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentChanged(block, forTransferBlockOnly)) {
       transferBlockStateHelper({
         data: {
-          draggedBlockID: forTransferBlockOnly.customId,
-          sourceBlockID: block.parent!,
-          destinationBlockID: data.parent!,
+          draggedBlockId: forTransferBlockOnly.customId,
+          destinationBlockId: data.parent!,
         },
       });
     }
@@ -84,7 +82,7 @@ export default async function updateBlockOperationFunc(
 
     store.dispatch(
       pushOperation(
-        updateBlockOperationID,
+        updateBlockOperationId,
         {
           scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
@@ -96,7 +94,7 @@ export default async function updateBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        updateBlockOperationID,
+        updateBlockOperationId,
         {
           error,
           scopeId: options.scopeId,

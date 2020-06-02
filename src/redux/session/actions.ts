@@ -1,10 +1,8 @@
-import { IUserSessionDetails } from "../../models/user/user";
 import {
   LOGIN_USER,
   LOGOUT_USER,
-  SET_SESSION_DETAILS,
   SET_SESSION_TO_WEB,
-  UPDATE_TOKEN
+  UPDATE_TOKEN,
 } from "./constants";
 
 export interface ILoginUserAction {
@@ -23,8 +21,8 @@ export function loginUserRedux(
     type: LOGIN_USER,
     payload: {
       token,
-      userId
-    }
+      userId,
+    },
   };
 }
 
@@ -34,7 +32,7 @@ export interface ILogoutUserAction {
 
 export function logoutUserRedux(): ILogoutUserAction {
   return {
-    type: LOGOUT_USER
+    type: LOGOUT_USER,
   };
 }
 
@@ -49,8 +47,8 @@ export function updateTokenRedux(token: string): IUpdateTokenAction {
   return {
     type: UPDATE_TOKEN,
     payload: {
-      token
-    }
+      token,
+    },
   };
 }
 
@@ -60,26 +58,11 @@ export interface ISetSessionToWebAction {
 
 export function setSessionToWeb(): ISetSessionToWebAction {
   return {
-    type: SET_SESSION_TO_WEB
-  };
-}
-
-export interface ISetSessionDetailsAction {
-  type: SET_SESSION_DETAILS;
-  payload: IUserSessionDetails;
-}
-
-export function setSessionDetails(
-  details: IUserSessionDetails
-): ISetSessionDetailsAction {
-  return {
-    type: SET_SESSION_DETAILS,
-    payload: details
+    type: SET_SESSION_TO_WEB,
   };
 }
 
 export type ISessionAction =
   | ILoginUserAction
   | ILogoutUserAction
-  | ISetSessionToWebAction
-  | ISetSessionDetailsAction;
+  | ISetSessionToWebAction;

@@ -9,16 +9,16 @@ import Board from "./Board";
 const defaultNotFoundMessage = "Block not found.";
 
 export interface IBlockContainerProps {
-  blockID: string;
+  blockId: string;
 
   notFoundMessage?: string;
   render?: (block: IBlock) => React.ReactElement;
 }
 
 const BlockContainer: React.FC<IBlockContainerProps> = (props) => {
-  const { blockID, notFoundMessage, render } = props;
+  const { blockId: blockId, notFoundMessage, render } = props;
   const block = useSelector<IAppState, IBlock | undefined>((state) =>
-    getBlock(state, blockID)
+    getBlock(state, blockId)
   );
 
   if (!block) {

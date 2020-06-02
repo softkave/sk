@@ -4,24 +4,24 @@ import { IOperationStatus } from "./operation";
 export interface IPushOperationAction {
   type: PUSH_OPERATION;
   payload: {
-    operationID: string;
+    operationId: string;
     status: IOperationStatus;
-    resourceID?: string | null;
+    resourceId?: string | null;
   };
 }
 
 export function pushOperation(
-  operationID: string,
+  operationId: string,
   status: IOperationStatus,
-  resourceID?: string | null
+  resourceId?: string | null
 ): IPushOperationAction {
   return {
     type: PUSH_OPERATION,
     payload: {
-      operationID,
+      operationId,
       status,
-      resourceID
-    }
+      resourceId,
+    },
   };
 }
 

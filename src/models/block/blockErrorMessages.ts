@@ -4,7 +4,7 @@ const errorMessages = {
   groupExists: "Group exists",
   taskExists: "Task exists",
   rootExists: "Root block exists",
-  projectExists: "Project exists",
+  boardExists: "Project exists",
   transferSourceBlockMissing: "Source block missing",
   transferDraggedBlockMissing: "Transfered block missing",
   transferDestinationBlockMissing: "Destination block missing",

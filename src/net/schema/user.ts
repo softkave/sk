@@ -1,5 +1,9 @@
+import {
+  errorFragment,
+  notificationFragment,
+  userFragment,
+} from "../../models/fragments";
 import { blockFragment } from "./block";
-import { errorFragment } from "./error";
 
 export const userExistsQuery = `
   ${errorFragment}
@@ -30,18 +34,13 @@ export const updateUserMutation = `
 
 export const userLoginFragement = `
   ${errorFragment}
+  ${userFragment}
   fragment userQueryResult on UserQueryResult {
     errors {
       ...errorFragment
     }
     user {
-      name
-      email
-      customId
-      createdAt
-      lastNotificationCheckTime
-      color
-      orgs
+      ...userFragment
     }
     token
   }
@@ -106,39 +105,17 @@ export const changePasswordWithTokenMutation = `
   }
 `;
 
-export const getCollaborationRequestsQuery = `
+export const getNotificationsQuery = `
   ${errorFragment}
+  ${notificationFragment}
   query GetCollaborationRequestsQuery {
     user {
       getCollaborationRequests {
         errors {
           ...errorFragment
         }
-        requests {
-          customId
-          from {
-            userId
-            name
-            blockId
-            blockName
-            blockType
-          }
-          createdAt
-          body
-          readAt
-          to {
-            email
-            userId
-          }
-          statusHistory {
-            status
-            date
-          }
-          sentEmailHistory {
-            date
-          }
-          type
-          root
+        notifications {
+          ...notificationFragment
         }
       }
     }
@@ -185,22 +162,6 @@ export const respondToCollaborationRequestMutation = `
         block {
           ...blockFragment
         }
-      }
-    }
-  }
-`;
-
-export const getSessionDetailsQuery = `
-  ${errorFragment}
-  query GetSessionDetailsQuery {
-    user {
-      getSessionDetails {
-        errors {
-          ...errorFragment
-        }
-        notificationsCount
-        organizationsCount
-        assignedTasksCount
       }
     }
   }

@@ -1,5 +1,5 @@
 import isString from "lodash/isString";
-import { INetError } from "../net/query";
+import { INetError } from "../net/types";
 
 export const errorToObject = (err: Error | INetError | string): INetError => {
   const error = isString(err) ? new Error(err) : err;
