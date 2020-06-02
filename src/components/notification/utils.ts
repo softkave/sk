@@ -1,14 +1,14 @@
 import isNumber from "lodash/isNumber";
 import {
+  CollaborationRequestStatusType,
   INotification,
-  notificationStatus,
 } from "../../models/notification/notification";
 
 export function getNotificationLatestStatus(notification: INotification) {
   if (Array.isArray(notification.statusHistory)) {
     const possibleUserResponses = {
-      [notificationStatus.accepted]: true,
-      [notificationStatus.declined]: true,
+      [CollaborationRequestStatusType.Accepted]: true,
+      [CollaborationRequestStatusType.Declined]: true,
     };
 
     return notification.statusHistory.find(({ status }) => {
@@ -26,9 +26,9 @@ export function canRespondToNotification(notification: INotification) {
 
   const statusHistory = notification.statusHistory;
   const invalidStatuses = {
-    [notificationStatus.accepted]: true,
-    [notificationStatus.declined]: true,
-    [notificationStatus.revoked]: true,
+    [CollaborationRequestStatusType.Accepted]: true,
+    [CollaborationRequestStatusType.Declined]: true,
+    [CollaborationRequestStatusType.Revoked]: true,
   };
 
   if (Array.isArray(statusHistory)) {

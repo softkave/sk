@@ -4,7 +4,6 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { operationHasStatusWithScopeId } from "../../redux/operations/operation";
-import { getBlockChildrenOperationId } from "../../redux/operations/operationIds";
 import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
@@ -12,6 +11,7 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import ViewByStatus from "./ViewByStatus";
 
 const scopeId = "status-container";
+const opId = "view-by-status";
 
 export interface IViewByStatusContainerProps {
   block: IBlock;
@@ -38,7 +38,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
         {
           block,
           typeList: [BlockType.Task],
-          operationId: "view-by-status",
+          operationId: opId,
         },
         { scopeId, resourceId: block.customId }
       );
@@ -48,7 +48,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   const loadChildrenStatus = useOperation(
     {
       scopeId,
-      operationId: getBlockChildrenOperationId,
+      operationId: opId,
       resourceId: block.customId,
     },
     loadBlockChildren

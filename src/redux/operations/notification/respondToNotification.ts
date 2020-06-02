@@ -1,10 +1,11 @@
 import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
 import {
+  CollaborationRequestStatusType,
   INotification,
-  NotificationStatusText,
 } from "../../../models/notification/notification";
 import * as userNet from "../../../net/user";
+import { getDateString } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
@@ -21,7 +22,7 @@ import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
   request: INotification;
-  response: NotificationStatusText;
+  response: CollaborationRequestStatusType;
 }
 
 export default async function respondToNotificationOperationFunc(
@@ -66,10 +67,11 @@ export default async function respondToNotificationOperationFunc(
       throw result.errors;
     }
 
-    const statusHistory = request.statusHistory.concat({
-      status: response,
-      date: Date.now(),
-    });
+    const statusHistory =
+      request.statusHistory?.concat({
+        status: response,
+        date: getDateString(),
+      }) || [];
 
     const update = { statusHistory };
 
@@ -86,7 +88,7 @@ export default async function respondToNotificationOperationFunc(
       store.dispatch(
         userActions.updateUserRedux(
           user.customId,
-          { orgs: [request.from.blockId] },
+          { orgs: [{ customId: request!.from!.blockId }] },
           { arrayUpdateStrategy: "concat" }
         )
       );

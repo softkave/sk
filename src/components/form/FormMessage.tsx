@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { INetError } from "../../net/query";
+import { INetError } from "../../net/types";
 
 export interface IFormMessageProps {
   message?: string | string[] | Error | Error[] | INetError | INetError[];

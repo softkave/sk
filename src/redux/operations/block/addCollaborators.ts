@@ -3,7 +3,6 @@ import { IBlock } from "../../../models/block/block";
 import { IAddCollaboratorFormItemValues } from "../../../models/types";
 import * as blockNet from "../../../net/block";
 import { newId } from "../../../utils/utils";
-import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {

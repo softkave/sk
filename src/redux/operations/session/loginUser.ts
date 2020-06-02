@@ -8,7 +8,7 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IdispatchOperationFuncProps,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
@@ -40,7 +40,7 @@ export default async function loginUserOperationFunc(
     return;
   }
 
-  const dispatchOptions: IdispatchOperationFuncProps = {
+  const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
     operationId: loginUserOperationId,

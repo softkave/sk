@@ -5,9 +5,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
+  CollaborationRequestStatusType,
   INotification,
-  notificationStatus,
-  NotificationStatusText,
 } from "../../models/notification/notification";
 import { getNotification } from "../../redux/notifications/selectors";
 import respondToNotificationOperationFunc from "../../redux/operations/notification/respondToNotification";
@@ -62,7 +61,7 @@ const Notification: React.FC<{}> = (props) => {
     );
   }
 
-  const onRespond = (selectedResponse: NotificationStatusText) => {
+  const onRespond = (selectedResponse: CollaborationRequestStatusType) => {
     respondToNotificationOperationFunc({
       response: selectedResponse,
       request: notification!,
@@ -75,11 +74,11 @@ const Notification: React.FC<{}> = (props) => {
 
     if (response) {
       const hasRespondedToNotification =
-        response.status === notificationStatus.accepted ||
-        response.status === notificationStatus.declined;
+        response.status === CollaborationRequestStatusType.Accepted ||
+        response.status === CollaborationRequestStatusType.Declined;
 
       const isNotificationRevoked =
-        response.status === notificationStatus.revoked;
+        response.status === CollaborationRequestStatusType.Revoked;
 
       return (
         <React.Fragment>
@@ -109,10 +108,18 @@ const Notification: React.FC<{}> = (props) => {
           {responseError && <FormError error={responseError} />}
           {!isResponseLoading && (
             <Button.Group>
-              <Button onClick={() => onRespond(notificationStatus.accepted)}>
+              <Button
+                onClick={() =>
+                  onRespond(CollaborationRequestStatusType.Accepted)
+                }
+              >
                 Accept Request
               </Button>
-              <Button onClick={() => onRespond(notificationStatus.declined)}>
+              <Button
+                onClick={() =>
+                  onRespond(CollaborationRequestStatusType.Declined)
+                }
+              >
                 Decline Request
               </Button>
             </Button.Group>
@@ -126,7 +133,7 @@ const Notification: React.FC<{}> = (props) => {
     <StyledNotificationBody>
       <StyledNotificationBodyHead>
         <Typography.Title level={4}>
-          Collaboration Request From {notification!.from.blockName}
+          Collaboration Request From {notification!.from!.blockName}
         </Typography.Title>
         <Typography.Text>
           {new Date(notification!.createdAt).toDateString()}

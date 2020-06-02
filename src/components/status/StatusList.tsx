@@ -1,5 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import randomColor from "randomcolor";
 import React from "react";
 import {
   DragDropContext,
@@ -14,7 +15,7 @@ import * as yup from "yup";
 import { IBlockStatus } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { newId } from "../../utils/utils";
+import { getDateString, newId } from "../../utils/utils";
 import { IFormikFormErrors } from "../form/formik-utils";
 import {
   formInputContentWrapperStyle,
@@ -288,7 +289,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const status: IBlockStatus = {
       name: "",
       description: "",
-      createdAt: Date.now(),
+      color: randomColor(),
+      createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
     };

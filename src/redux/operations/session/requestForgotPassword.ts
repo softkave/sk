@@ -5,7 +5,7 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IdispatchOperationFuncProps,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
@@ -32,7 +32,7 @@ export default async function requestForgotPasswordOperationFunc(
     return;
   }
 
-  const dispatchOptions: IdispatchOperationFuncProps = {
+  const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
     operationId: requestForgotPasswordOperationId,

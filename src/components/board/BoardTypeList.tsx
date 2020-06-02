@@ -2,12 +2,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import RenderBlockChildren from "./RenderBlockChildren";
-import {
-  BoardResourceType,
-  OnClickAddBlock,
-  OnClickBlock,
-  OnClickUpdateBlock,
-} from "./types";
+import { BoardResourceType, OnClickAddBlock, OnClickBlock } from "./types";
 
 export interface IBoardTypeListProps {
   block: IBlock;

@@ -6,7 +6,10 @@ import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import LabelList from "./LabelList";
 
@@ -27,9 +30,9 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
     }
   });
 
-  const labelList = org.availableLabels || [];
+  const labelList = org.boardLabels || [];
   const operationStatus = useOperation({
-    scopeId: scopeId,
+    scopeId,
     operationId: updateBlockOperationId,
     resourceId: org.customId,
   });
@@ -38,8 +41,8 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.data && errors.data.availableLabels) {
-    errors.labelList = errors.data.availableLabels;
+  if (errors && errors.data && errors.data.boardLabels) {
+    errors.labelList = errors.data.boardLabels;
     delete errors.data;
   }
 
@@ -48,15 +51,15 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
       {
         block: org,
         data: {
-          availableLabels: values.map((value) => ({
+          boardLabels: values.map((value) => ({
             ...value,
-            updatedAt: Date.now(),
+            updatedAt: getDateString(),
             updatedBy: user.customId,
           })),
         },
       },
       {
-        scopeId: scopeId,
+        scopeId,
         resourceId: org.customId,
       }
     );

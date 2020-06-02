@@ -1,4 +1,5 @@
 import { Modal } from "antd";
+import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 

@@ -16,7 +16,7 @@ export interface IBlockContainerProps {
 }
 
 const BlockContainer: React.FC<IBlockContainerProps> = (props) => {
-  const { blockId: blockId, notFoundMessage, render } = props;
+  const { blockId, notFoundMessage, render } = props;
   const block = useSelector<IAppState, IBlock | undefined>((state) =>
     getBlock(state, blockId)
   );

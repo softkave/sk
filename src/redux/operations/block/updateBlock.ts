@@ -4,7 +4,6 @@ import { IBlock } from "../../../models/block/block";
 import * as blockNet from "../../../net/block";
 import * as blockActions from "../../blocks/actions";
 import store from "../../store";
-import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,

@@ -7,7 +7,6 @@ import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import { operationStatusTypes } from "../../redux/operations/operation";
 import { addCollaboratorsOperationId } from "../../redux/operations/operationIds";
 import { IAppState } from "../../redux/store";
@@ -78,7 +77,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
         })
       );
 
-      loadBlockCollaborationRequestsOperationFunc({ block: organization });
+      // TODO: we need a loadBlockNotifications func
     }
   });
 

@@ -3,11 +3,8 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
-import { getBlockCollaborationRequestsOperationId } from "../../redux/operations/operationIds";
 import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
-import GeneralError from "../GeneralError";
-import useOperation from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
@@ -21,25 +18,8 @@ const CollaborationRequests: React.FC<ICRProps> = (props) => {
   const requests = useSelector<IAppState, INotification[]>((state) =>
     getNotificationsAsArray(state, organization.notifications!)
   );
-  const requestsStatus = useOperation({
-    operationId: getBlockCollaborationRequestsOperationId,
-    resourceId: organization.customId,
-  });
 
-  if (requestsStatus.error) {
-    return (
-      <StyledContainer
-        s={{
-          width: "100%",
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <GeneralError error={requestsStatus.error} />
-      </StyledContainer>
-    );
-  } else if (requests.length === 0) {
+  if (requests.length === 0) {
     return <EmptyMessage>No collaboration requests yet.</EmptyMessage>;
   }
 

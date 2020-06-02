@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { newId } from "../../utils/utils";
+import { getDateString, newId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormikExtended from "../hooks/useFormikExtended";
@@ -228,7 +228,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       name: "",
       description: "",
       color: randomColor(),
-      createdAt: Date.now(),
+      createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
     };

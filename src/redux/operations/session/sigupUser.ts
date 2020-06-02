@@ -9,7 +9,7 @@ import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IdispatchOperationFuncProps,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
@@ -41,7 +41,7 @@ export default async function signupUserOperationFunc(
 
   const data = { ...user, color: randomColor() };
 
-  const dispatchOptions: IdispatchOperationFuncProps = {
+  const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
     operationId: signupUserOperationId,

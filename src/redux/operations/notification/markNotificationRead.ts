@@ -1,13 +1,14 @@
 import { Dispatch } from "redux";
 import { INotification } from "../../../models/notification/notification";
 import * as userNet from "../../../net/user";
+import { getDateString } from "../../../utils/utils";
 import * as notificationActions from "../../notifications/actions";
 import { IAppState } from "../../store";
 import {
   dispatchOperationComplete,
   dispatchOperationError,
   dispatchOperationStarted,
-  IdispatchOperationFuncProps,
+  IDispatchOperationFuncProps,
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
@@ -35,7 +36,7 @@ export default async function markNotificationReadOperationFunc(
     return;
   }
 
-  const dispatchOptions: IdispatchOperationFuncProps = {
+  const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
     operationId: updateNotificationOperationId,
@@ -45,7 +46,7 @@ export default async function markNotificationReadOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const data = { readAt: Date.now() };
+    const data = { readAt: getDateString() };
     const result = await userNet.updateCollaborationRequest(notification, data);
 
     if (result && result.errors) {

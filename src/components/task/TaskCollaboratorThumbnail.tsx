@@ -1,9 +1,8 @@
 import { DeleteFilled } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Switch, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
 import { SizeMe } from "react-sizeme";
-import { ITaskCollaborator } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";

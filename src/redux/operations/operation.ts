@@ -35,12 +35,10 @@ export interface IOperationStatus<StatusType extends string = string> {
 
 export default interface IOperation<
   StatusType extends string = string,
-  OperationStatus extends IOperationStatus<StatusType> = IOperationStatus<
-    StatusType
-  >
+  OpStatus extends IOperationStatus<StatusType> = IOperationStatus<StatusType>
 > {
   operationId: string;
-  statusHistory: OperationStatus[];
+  statusHistory: OpStatus[];
   resourceId?: string | null;
 }
 
@@ -160,7 +158,7 @@ export interface IOperationFuncOptions {
   scopeId?: string | number;
 }
 
-export interface IdispatchOperationFuncProps {
+export interface IDispatchOperationFuncProps {
   dispatch: Dispatch;
   operationId: string;
   resourceId?: string | null;
@@ -178,7 +176,7 @@ function dispatchOperationStatus(
   dispatch(pushOperation(operationId, status, resourceId));
 }
 
-export function dispatchOperationStarted(props: IdispatchOperationFuncProps) {
+export function dispatchOperationStarted(props: IDispatchOperationFuncProps) {
   const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
@@ -193,7 +191,7 @@ export function dispatchOperationStarted(props: IdispatchOperationFuncProps) {
   );
 }
 
-export function dispatchOperationPending(props: IdispatchOperationFuncProps) {
+export function dispatchOperationPending(props: IDispatchOperationFuncProps) {
   const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
@@ -208,7 +206,7 @@ export function dispatchOperationPending(props: IdispatchOperationFuncProps) {
   );
 }
 
-export function dispatchOperationError(props: IdispatchOperationFuncProps) {
+export function dispatchOperationError(props: IDispatchOperationFuncProps) {
   const { dispatch, operationId, resourceId, data, scopeId, error } = props;
   dispatchOperationStatus(
     dispatch,
@@ -224,14 +222,14 @@ export function dispatchOperationError(props: IdispatchOperationFuncProps) {
   );
 }
 
-export function dispatchOperationComplete(props: IdispatchOperationFuncProps) {
-  const { dispatch, operationId, resourceId, data, scopeId: scopeId } = props;
+export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
+  const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
     operationId,
     {
       data,
-      scopeId: scopeId,
+      scopeId,
       status: operationStatusTypes.operationComplete,
       timestamp: Date.now(),
     },

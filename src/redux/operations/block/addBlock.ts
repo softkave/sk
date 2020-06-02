@@ -14,7 +14,6 @@ import {
 } from "../operation";
 import { addBlockOperationId } from "../operationIds";
 import { getOperationWithIdForResource } from "../selectors";
-import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
 
 export interface IAddBlockOperationFuncDataProps {
   user: IUser;
@@ -77,11 +76,6 @@ export default async function addBlockOperationFunc(
       const pluralType = `${newBlock.type}s`;
       const parentUpdate = { [pluralType]: [newBlock.customId] };
 
-      if (newBlock.type === "group") {
-        parentUpdate.groupTaskContext = [newBlock.customId!];
-        parentUpdate.groupProjectContext = [newBlock.customId!];
-      }
-
       store.dispatch(
         blockActions.updateBlockRedux(parent.customId, parentUpdate, {
           arrayUpdateStrategy: "concat",
@@ -93,13 +87,11 @@ export default async function addBlockOperationFunc(
       store.dispatch(
         userActions.updateUserRedux(
           user.customId,
-          { orgs: [newBlock.customId] },
+          { orgs: [{ customId: newBlock.customId }] },
           { arrayUpdateStrategy: "concat" }
         )
       );
     }
-
-    addTaskToUserIfAssigned(block);
 
     store.dispatch(
       pushOperation(

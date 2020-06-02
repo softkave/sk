@@ -1,6 +1,7 @@
 import { Dropdown, Menu } from "antd";
 import React from "react";
 
+import { BlockPriority } from "../../models/block/block";
 import Priority, { TaskPriority } from "./Priority";
 
 export interface IEditPriorityProps {
@@ -17,13 +18,13 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
     const menu = (
       <Menu onClick={({ key }) => onChange(key)}>
         <Menu.Item key="very important">
-          <Priority level="very important" />
+          <Priority level={BlockPriority.VeryImportant} />
         </Menu.Item>
         <Menu.Item key="not important">
-          <Priority level="not important" />
+          <Priority level={BlockPriority.NotImportant} />
         </Menu.Item>
         <Menu.Item key="important">
-          <Priority level="important" />
+          <Priority level={BlockPriority.Important} />
         </Menu.Item>
       </Menu>
     );

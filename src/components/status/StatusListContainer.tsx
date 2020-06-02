@@ -6,7 +6,10 @@ import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
@@ -27,9 +30,9 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     }
   });
 
-  const statusList = org.availableStatus || [];
+  const statusList = org.boardStatuses || [];
   const operationStatus = useOperation({
-    scopeId: scopeId,
+    scopeId,
     operationId: updateBlockOperationId,
     resourceId: org.customId,
   });
@@ -38,8 +41,8 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.data && errors.data.availableStatus) {
-    errors.statusList = errors.data.availableStatus;
+  if (errors && errors.data && errors.data.boardStatuses) {
+    errors.statusList = errors.data.boardStatuses;
     delete errors.data;
   }
 
@@ -49,15 +52,15 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
         block: org,
         data: {
           // TODO: find a better way to only update the ones that changed
-          availableStatus: values.map((value) => ({
+          boardStatuses: values.map((value) => ({
             ...value,
-            updatedAt: Date.now(),
+            updatedAt: getDateString(),
             updatedBy: user.customId,
           })),
         },
       },
       {
-        scopeId: scopeId,
+        scopeId,
         resourceId: org.customId,
       }
     );

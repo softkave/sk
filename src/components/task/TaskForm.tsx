@@ -225,8 +225,11 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       >
         <TaskLabels
           orgId={orgId}
-          onChange={(val: string[]) => setFieldValue("labels", val)}
-          labelIds={values.labels}
+          user={user}
+          onChange={(val: IBlockAssignedLabel[]) =>
+            setFieldValue("labels", val)
+          }
+          labels={values.labels}
           disabled={isSubmitting}
         />
       </Form.Item>

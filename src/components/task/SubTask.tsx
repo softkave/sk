@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Space, Switch } from "antd";
+import { Button, Checkbox, Form, Input, Space } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
 import { Check, Trash, X } from "react-feather";

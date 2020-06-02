@@ -9,7 +9,7 @@ export interface INotificationListItemProps {
   onClick: () => void;
 }
 
-const NotificationListItem: React.FC<INotificationListItemProps> = props => {
+const NotificationListItem: React.FC<INotificationListItemProps> = (props) => {
   const { notification, isSelected, onClick } = props;
   return (
     <StyledNotificationListItem
@@ -18,7 +18,7 @@ const NotificationListItem: React.FC<INotificationListItemProps> = props => {
       isRead={!!notification.readAt}
     >
       <Typography.Text strong>
-        Collaboration Request From {notification.from.blockName}
+        Collaboration Request From {notification!.from!.blockName}
       </Typography.Text>
       <Typography.Text>
         {new Date(notification.createdAt).toDateString()}
@@ -38,7 +38,7 @@ const seenNotificationColor = "#777";
 
 const StyledNotificationListItem = styled("div")<
   IStyledNotificationListItemProps
->(props => ({
+>((props) => ({
   padding: "16px 16px",
   cursor: "pointer",
   color: props.isSelected
@@ -48,7 +48,7 @@ const StyledNotificationListItem = styled("div")<
     : "black",
   backgroundColor: props.isSelected ? "#e6f7ff" : "inherit",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "column",
 
   // [childrenSelector]: {
   //   color: props.isSelected
