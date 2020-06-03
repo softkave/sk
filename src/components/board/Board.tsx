@@ -14,6 +14,7 @@ import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
 import { useBoardData } from "./data-loaders/loadBoardData";
+import LoadBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
 import { getDefaultBoardViewType } from "./utils";
 
@@ -126,8 +127,18 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
       return null;
     }
 
+    // TODO: this is an hack, find a better way to load
     return (
-      <BlockContainer blockId={boardId!} notFoundMessage="Board not found" />
+      <LoadBlockChildren
+        parent={block}
+        type={BlockType.Board}
+        render={() => (
+          <BlockContainer
+            blockId={boardId!}
+            notFoundMessage="Board not found"
+          />
+        )}
+      />
     );
   };
 

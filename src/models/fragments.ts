@@ -23,7 +23,7 @@ fragment notificationFragment on Notification {
     email
   }
   body
-  collaborationRequestFrom {
+  from {
     userId
     name
     blockId
@@ -66,7 +66,6 @@ fragment blockFragment on Block {
   createdAt
   type
   name
-  lowerCasedName
   description
   dueAt
   color
@@ -87,6 +86,8 @@ fragment blockFragment on Block {
     createdBy
     completedBy
     completedAt
+    updatedAt
+    updatedBy
   }
   boardStatuses {
     customId

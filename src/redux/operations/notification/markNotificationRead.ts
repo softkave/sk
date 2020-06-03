@@ -46,8 +46,8 @@ export default async function markNotificationReadOperationFunc(
   dispatchOperationStarted(dispatchOptions);
 
   try {
-    const data = { readAt: getDateString() };
-    const result = await userNet.updateCollaborationRequest(notification, data);
+    const readAt = getDateString();
+    const result = await userNet.markNotificationRead(notification, readAt);
 
     if (result && result.errors) {
       throw result.errors;
@@ -55,9 +55,13 @@ export default async function markNotificationReadOperationFunc(
 
     // TODO: Should control wait for net call, or should it happen before net call?
     dispatch(
-      notificationActions.updateNotificationRedux(notification.customId, data, {
-        arrayUpdateStrategy: "replace",
-      })
+      notificationActions.updateNotificationRedux(
+        notification.customId,
+        { readAt },
+        {
+          arrayUpdateStrategy: "replace",
+        }
+      )
     );
 
     dispatchOperationComplete(dispatchOptions);

@@ -1,3 +1,4 @@
+import mapValues from "lodash/mapValues";
 import { useStore } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockChildren } from "../../redux/blocks/selectors";
@@ -7,6 +8,7 @@ const useBlockPossibleParents = (block: IBlock) => {
   const store = useStore();
   const parents = useBlockParents(block);
   const org = parents[0];
+  const cache: any = {};
   let pp: IBlock[] = [];
 
   parents.reverse().forEach((p) => {
@@ -19,7 +21,15 @@ const useBlockPossibleParents = (block: IBlock) => {
     pp = pp.concat(p, extra);
   });
 
-  pp = pp.filter((p) => p.type !== block.type);
+  pp.forEach((p) => {
+    if (p.type === block.type || !!cache[p.customId]) {
+      return;
+    }
+
+    cache[p.customId] = p;
+  });
+
+  pp = Object.keys(cache).map((id) => cache[id]);
 
   return pp;
 };

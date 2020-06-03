@@ -105,12 +105,12 @@ export const changePasswordWithTokenMutation = `
   }
 `;
 
-export const getNotificationsQuery = `
+export const getUserNotificationsQuery = `
   ${errorFragment}
   ${notificationFragment}
-  query GetCollaborationRequestsQuery {
+  query GetUserNotificationsQuery {
     user {
-      getCollaborationRequests {
+      getUserNotifications {
         errors {
           ...errorFragment
         }
@@ -133,13 +133,13 @@ export const getUserDataQuery = `
   }
 `;
 
-export const updateCollaborationRequestMutation = `
+export const markNotificationReadMutation = `
   ${errorFragment}
-  mutation UpdateCollaborationRequestMutation (
-    $customId: String!, $data: UpdateCollaborationRequestInput!
+  mutation MarkNotificationReadMutation (
+    $notificationId: String!, $readAt: String!
   ) {
     user {
-      updateCollaborationRequest (customId: $customId, data: $data) {
+      markNotificationRead (notificationId: $notificationId, readAt: $readAt) {
         errors {
           ...errorFragment
         }
@@ -152,10 +152,10 @@ export const respondToCollaborationRequestMutation = `
   ${blockFragment}
   ${errorFragment}
   mutation RespondToCollaborationRequestMutation (
-    $customId: String!, $response: String!
+    $requestId: String!, $response: String!
   ) {
     user {
-      respondToCollaborationRequest (customId: $customId, response: $response) {
+      respondToCollaborationRequest (requestId: $requestId, response: $response) {
         errors {
           ...errorFragment
         }

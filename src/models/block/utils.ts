@@ -1,9 +1,9 @@
 import randomColor from "randomcolor";
 import { getDateString, newId } from "../../utils/utils";
 import { IUser } from "../user/user";
-import { BlockType, IBlock, IBlockStatus, ITaskCollaborator } from "./block";
+import { BlockType, IAssignee, IBlock, IBlockStatus } from "./block";
 
-export function assignTask(collaborator: IUser, by?: IUser): ITaskCollaborator {
+export function assignTask(collaborator: IUser, by?: IUser): IAssignee {
   return {
     userId: collaborator.customId,
     assignedAt: getDateString(),
@@ -18,8 +18,8 @@ export function getBlockValidChildrenTypes(
   parentType?: BlockType | null
 ): BlockType[] {
   const validChildrenTypesMap: BlockTypeToTypesMap = {
-    root: [BlockType.Board, BlockType.Task],
-    org: [BlockType.Board, BlockType.Task],
+    root: [BlockType.Board],
+    org: [BlockType.Board],
     board: [BlockType.Task],
     task: [],
   };

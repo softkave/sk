@@ -125,7 +125,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           }
           onClickCreateNewBlock={onClickAddBlock}
           selectedResourceType={resourceType}
-          style={{ marginTop: "8px" }}
+          style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
         />
       );
     }
@@ -148,7 +148,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
             }
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
-            style={{ marginTop: "8px" }}
+            style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
           />
         );
     }
@@ -209,15 +209,12 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     }
   };
 
-  return (
-    <StyledContainer
-      s={{
-        flexDirection: "column",
-        flex: 1,
-        maxWidth: "100%",
-      }}
-    >
-      {renderHeader()}
+  const renderTabs = () => {
+    if (resourceTypes.length < 2) {
+      return null;
+    }
+
+    return (
       <StyledContainer
         s={{
           flexWrap: "nowrap",
@@ -244,6 +241,19 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           );
         })}
       </StyledContainer>
+    );
+  };
+
+  return (
+    <StyledContainer
+      s={{
+        flexDirection: "column",
+        flex: 1,
+        maxWidth: "100%",
+      }}
+    >
+      {renderHeader()}
+      {renderTabs()}
       {renderBoardType()}
     </StyledContainer>
   );

@@ -2,6 +2,8 @@ import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
 import ErrorMessages from "../models/ErrorMessages";
+import { getUserToken } from "../redux/session/selectors";
+import store from "../redux/store";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { INetError } from "./types";
@@ -71,7 +73,7 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
 
     if (body) {
       paths.forEach((path) => {
-        const d = get(body, path);
+        const d = get(body, `data.${path}`);
 
         if (d && d.errors) {
           errors = (errors || []).concat(d.errors);
@@ -82,6 +84,18 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
     }
 
     if (result.ok) {
+      if (errors && errors.length > 0) {
+        const continueProcessing = processServerRecommendedActions(errors);
+
+        if (continueProcessing) {
+          return { errors, data, result: body };
+        } else {
+          throw new Error(ErrorMessages.anErrorOccurred);
+        }
+
+        // TODO: what should we do on else
+      }
+
       return { errors, data, result: body };
     } else {
       if (result.status === 500 || result.status === 401) {
@@ -106,4 +120,28 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
     const errors = toNetErrorsArray(error);
     throw errors;
   }
+}
+
+function getToken() {
+  return getUserToken(store.getState());
+}
+
+export interface INetCallWithAuthProps extends INetCallProps {
+  token?: string;
+}
+
+export async function netCallWithAuth(props: INetCallWithAuthProps) {
+  const requestToken = props.token || getToken();
+
+  if (!requestToken) {
+    throw new Error("Invalid credentials");
+  }
+
+  return netCall({
+    ...props,
+    headers: {
+      Authorization: `Bearer ${requestToken}`,
+      ...props.headers,
+    },
+  });
 }

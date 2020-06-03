@@ -85,6 +85,7 @@ const WebHeader: React.SFC<{}> = () => {
               padding: 0,
               color: "rgba(0,0,0,0.65)",
               display: "inline-flex",
+              alignItems: "center",
             }}
             onClick={() => setShowMenu(!showMenu)}
           >

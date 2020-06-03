@@ -13,7 +13,7 @@ export enum BlockType {
   Task = "task",
 }
 
-export interface ITaskCollaborator {
+export interface IAssignee {
   userId: string;
   assignedAt: string;
   assignedBy: string;
@@ -26,6 +26,8 @@ export interface ISubTask {
   createdBy: string;
   completedBy?: string;
   completedAt?: string;
+  updatedAt?: string;
+  updatedBy?: string;
 }
 
 export interface IBlockLabel {
@@ -62,7 +64,6 @@ export interface IBlock {
   createdAt: string;
   type: BlockType;
   name?: string;
-  lowerCasedName?: string;
   description?: string;
   dueAt?: string;
   color?: string;
@@ -70,7 +71,7 @@ export interface IBlock {
   updatedBy?: string;
   parent?: string;
   rootBlockId?: string;
-  assignees?: ITaskCollaborator[];
+  assignees?: IAssignee[];
   priority?: string;
   subTasks?: ISubTask[]; // should sub-tasks be their own blocks?
   boardStatuses?: IBlockStatus[];

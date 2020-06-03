@@ -15,9 +15,9 @@ const addBlockMutation = `
 
 const updateBlockMutation = `
   ${errorFragment}
-  mutation UpdateBlockMutation ($customId: String!, $data: UpdateBlockInput!) {
+  mutation UpdateBlockMutation ($blockId: String!, $data: UpdateBlockInput!) {
     block {
-      updateBlock (customId: $customId, data: $data) {
+      updateBlock (blockId: $blockId, data: $data) {
         errors {
           ...errorFragment
         }
@@ -28,9 +28,9 @@ const updateBlockMutation = `
 
 const deleteBlockMutation = `
   ${errorFragment}
-  mutation DeleteBlockMutation ($customId: String!) {
+  mutation DeleteBlockMutation ($blockId: String!) {
     block {
-      deleteBlock (customId: $customId) {
+      deleteBlock (blockId: $blockId) {
         errors {
           ...errorFragment
         }
@@ -39,12 +39,12 @@ const deleteBlockMutation = `
   }
 `;
 
-const getRootBlocksQuery = `
+const getUserRootBlocksQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetRootBlocksQuery {
+  query GetUserRootBlocksQuery {
     block {
-      getRootBlocks {
+      getUserRootBlocks {
         errors {
           ...errorFragment
         }
@@ -59,9 +59,9 @@ const getRootBlocksQuery = `
 const getBlockChildrenQuery = `
   ${blockFragment}
   ${errorFragment}
-  query GetBlockChildrenQuery ($customId: String!, $typeList: [String!]) {
+  query GetBlockChildrenQuery ($blockId: String!, $typeList: [String!]) {
     block {
-      getBlockChildren (customId: $customId, typeList: $typeList) {
+      getBlockChildren (blockId: $blockId, typeList: $typeList) {
         errors {
           ...errorFragment
         }
@@ -76,11 +76,11 @@ const getBlockChildrenQuery = `
 const addCollaboratorsMutation = `
   ${errorFragment}
   mutation AddCollaborators (
-    $customId: String!,
+    $blockId: String!,
     $collaborators: [AddCollaboratorInput!]!
   ) {
     block {
-      addCollaborators (customId: $customId, collaborators: $collaborators) {
+      addCollaborators (blockId: $blockId, collaborators: $collaborators) {
         errors {
           ...errorFragment
         }
@@ -91,9 +91,9 @@ const addCollaboratorsMutation = `
 
 const removeCollaboratorMutation = `
   ${errorFragment}
-  mutation RemoveCollaboratorsMutation ($customId: String!, $collaborator: String!) {
+  mutation RemoveCollaboratorsMutation ($blockId: String!, $collaboratorId: String!) {
     block {
-      removeCollaborator (customId: $customId, collaborator: $collaborator) {
+      removeCollaborator (blockId: $blockId, collaboratorId: $collaboratorId) {
         errors {
           ...errorFragment
         }
@@ -104,9 +104,9 @@ const removeCollaboratorMutation = `
 
 const revokeRequestMutation = `
   ${errorFragment}
-  mutation RevokeCollaborationRequestMutation ($customId: String!, $request: String!) {
+  mutation RevokeCollaborationRequestMutation ($blockId: String!, $requestId: String!) {
     block {
-      revokeCollaborationRequest (customId: $customId, request: $request) {
+      revokeCollaborationRequest (blockId: $blockId, requestId: $requestId) {
         errors {
           ...errorFragment
         }
@@ -118,13 +118,13 @@ const revokeRequestMutation = `
 const transferBlockMutation = `
   ${errorFragment}
   mutation DragAndDropMutation (
-    $draggedBlock: String!,
-    $destinationBlock: String!
+    $draggedBlockId: String!,
+    $destinationBlockId: String!
   ) {
     block {
       transferBlock (
-        draggedBlock: $draggedBlock,
-        destinationBlock: $destinationBlock
+        draggedBlockId: $draggedBlockId,
+        destinationBlockId: $destinationBlockId
       ) {
         errors {
           ...errorFragment
@@ -141,7 +141,7 @@ export {
   getBlockChildrenQuery,
   blockFragment,
   addCollaboratorsMutation,
-  getRootBlocksQuery,
+  getUserRootBlocksQuery as getRootBlocksQuery,
   removeCollaboratorMutation,
   revokeRequestMutation,
   transferBlockMutation,

@@ -1,12 +1,11 @@
 import { BlockType, IBlock } from "../../../models/block/block";
 import {
-  blockFragment,
   collaboratorFragment,
   errorFragment,
   notificationFragment,
 } from "../../../models/fragments";
 import { INetError } from "../../../net/types";
-import { netCall } from "../../../net/utils";
+import { netCallWithAuth } from "../../../net/utils";
 import * as blockActions from "../../../redux/blocks/actions";
 import * as notificationActions from "../../../redux/notifications/actions";
 import { pushOperation } from "../../../redux/operations/actions";
@@ -22,11 +21,10 @@ import useOperation, { IUseOperationStatus } from "../../hooks/useOperation";
 const query = `
 ${errorFragment}
 ${collaboratorFragment}
-${blockFragment}
 ${notificationFragment}
-query LoadBoardDataQuery ($customId: String!) {
+query LoadBoardDataQuery ($blockId: String!) {
   block {
-    getBlockCollaborators (customId: $customId) {
+    getBlockCollaborators (blockId: $blockId) {
       errors {
         ...errorFragment
       }
@@ -34,7 +32,7 @@ query LoadBoardDataQuery ($customId: String!) {
         ...collaboratorFragment
       }
     }
-    getBlockNotifications (customId: $customId) {
+    getBlockNotifications (blockId: $blockId) {
       errors {
         ...errorFragment
       }
@@ -52,14 +50,14 @@ const notificationsPath = "block.getBlockNotifications";
 const paths = [collaboratorsPath, notificationsPath];
 
 async function getData(block: IBlock) {
-  return netCall({
+  return netCallWithAuth({
     query,
     paths,
-    variables: { customId: block.customId },
+    variables: { blockId: block.customId },
   });
 }
 
-export default async function lo(block: IBlock) {
+export default async function loadBoardData(block: IBlock) {
   const operation = getOperationWithIdForResource(
     store.getState(),
     opId,
@@ -88,8 +86,9 @@ export default async function lo(block: IBlock) {
       throw result.errors;
     }
 
-    const collaborators = result.data[collaboratorsPath];
-    const notifications = result.data[notificationsPath];
+    // TODO: find a better way to do this
+    const collaborators = result.data[collaboratorsPath].collaborators;
+    const notifications = result.data[notificationsPath].notifications;
 
     const collaboratorIds = collaborators.map(
       (collaborator) => collaborator.customId
@@ -137,12 +136,12 @@ export default async function lo(block: IBlock) {
   }
 }
 
-export interface ILResult {
+export interface IUseBoardDataResult {
   loading: boolean;
   errors?: INetError[];
 }
 
-export function useBoardData(block: IBlock): ILResult {
+export function useBoardData(block: IBlock): IUseBoardDataResult {
   const loadStatus = useOperation(
     {
       operationId: opId,
@@ -150,7 +149,7 @@ export function useBoardData(block: IBlock): ILResult {
     },
     (loadProps: IUseOperationStatus) => {
       if (block.type === BlockType.Org && !loadProps.operation) {
-        lo(block);
+        loadBoardData(block);
       }
     }
   );

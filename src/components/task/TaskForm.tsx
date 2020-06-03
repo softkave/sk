@@ -15,10 +15,10 @@ import React from "react";
 import {
   BlockPriority,
   BlockType,
+  IAssignee,
   IBlock,
   IBlockAssignedLabel,
   ISubTask,
-  ITaskCollaborator,
 } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
@@ -49,7 +49,7 @@ export interface ITaskFormValues {
   // name: string;
   customId: string;
   type: BlockType;
-  assignees: ITaskCollaborator[];
+  assignees: IAssignee[];
   expectedEndAt: number;
   description?: string;
   parent?: string;
@@ -267,8 +267,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const unassignCollaborator = (
-    collaboratorData: ITaskCollaborator,
-    taskCollaborators: ITaskCollaborator[]
+    collaboratorData: IAssignee,
+    taskCollaborators: IAssignee[]
   ) => {
     const index = taskCollaborators.findIndex((next) => {
       return next.userId === collaboratorData.userId;
@@ -285,8 +285,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const assignCollaborator = (
     collaborator: IUser,
-    taskCollaborators: ITaskCollaborator[]
-  ): ITaskCollaborator[] => {
+    taskCollaborators: IAssignee[]
+  ): IAssignee[] => {
     const collaboratorExists = !!taskCollaborators.find((next) => {
       return collaborator.customId === next.userId;
     });
@@ -416,7 +416,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const renderSubTasks = (formikProps: TaskFormFormikProps) => {
     const { values, touched, errors } = formikProps;
-    console.log({ errors, touched });
 
     return (
       <StyledContainer
@@ -491,12 +490,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             )}
             {renderDescriptionInput(formikProps)}
             {renderParentInput(formikProps)}
-            {/* {renderToggleSwitch(formikProps)} */}
             {renderPriority(formikProps)}
             {renderStatus(formikProps)}
             {renderLabels(formikProps)}
             {renderDueDateInput(formikProps)}
-            {/* {renderCollaborationTypeInput(formikProps)} */}
             {renderAssignedToInput(formikProps)}
             {/* TODO: work on sub-tasks, there is a bug preventing adding tasks, and add disabled */}
             {renderSubTasks(formikProps)}

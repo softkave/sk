@@ -2,9 +2,9 @@ import randomColor from "randomcolor";
 import {
   BlockPriority,
   BlockType,
+  IAssignee,
   IBlock,
   ISubTask,
-  ITaskCollaborator,
 } from "../../models/block/block";
 import {
   getBlockValidChildrenTypes,
@@ -35,8 +35,7 @@ export default function getNewBlock(
         ? parent.customId
         : parent.rootBlockId
       : undefined,
-    assignees:
-      type === BlockType.Task ? ([] as ITaskCollaborator[]) : undefined,
+    assignees: type === BlockType.Task ? ([] as IAssignee[]) : undefined,
     tasks: childrenTypes.indexOf(BlockType.Task) ? [] : undefined,
     boards: childrenTypes.indexOf(BlockType.Board) ? [] : undefined,
 

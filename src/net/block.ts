@@ -70,10 +70,9 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
     null,
     updateBlockMutation,
     {
-      customId: block.customId,
+      blockId: block.customId,
       data: {
         ...getDataFromObject(data, dataFields),
-        type: block.type,
       },
     },
     "data.block.updateBlock"
@@ -84,7 +83,7 @@ export function deleteBlock(block: IBlock) {
   return auth(
     null,
     deleteBlockMutation,
-    { customId: block.customId },
+    { blockId: block.customId },
     "data.block.deleteBlock"
   );
 }
@@ -93,7 +92,7 @@ export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
   return auth(
     null,
     getBlockChildrenQuery,
-    { typeList, customId: block.customId },
+    { typeList, blockId: block.customId },
     "data.block.getBlockChildren"
   );
 }
@@ -107,7 +106,7 @@ export function addCollaborators(
     null,
     addCollaboratorsMutation,
     {
-      customId: block.customId,
+      blockId: block.customId,
       collaborators: collaborators.map((request) =>
         getDataFromObject(request, collaboratorFields)
       ),
@@ -121,15 +120,15 @@ export function removeCollaborator(block: IBlock, collaborator: IUser) {
     null,
     removeCollaboratorMutation,
     {
-      customId: block.customId,
-      collaborator: collaborator.customId,
+      blockId: block.customId,
+      collaboratorId: collaborator.customId,
     },
     "data.block.removeCollaborator"
   );
 }
 
-export function getRootBlocks() {
-  return auth(null, getRootBlocksQuery, {}, "data.block.getRootBlocks");
+export function getUserRootBlocks() {
+  return auth(null, getRootBlocksQuery, {}, "data.block.getUserRootBlocks");
 }
 
 export function revokeRequest(block: IBlock, request: INotification) {
@@ -137,8 +136,8 @@ export function revokeRequest(block: IBlock, request: INotification) {
     null,
     revokeRequestMutation,
     {
-      request: request.customId,
-      customId: block.customId,
+      requestId: request.customId,
+      blockId: block.customId,
     },
     "data.block.revokeCollaborationRequest"
   );
@@ -149,8 +148,8 @@ export function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
     null,
     transferBlockMutation,
     {
-      draggedBlock: draggedBlock.customId,
-      destinationBlock: destinationBlock.customId,
+      draggedBlockId: draggedBlock.customId,
+      destinationBlockId: destinationBlock.customId,
     },
     "data.block.transferBlock"
   );
