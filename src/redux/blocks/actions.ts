@@ -3,7 +3,7 @@ import {
   ICollectionAddItemPayload,
   ICollectionDeleteItemPayload,
   ICollectionUpdateItemPayload,
-  IUpdateResourceMeta
+  IUpdateResourceMeta,
 } from "../collection";
 import {
   ADD_BLOCK,
@@ -11,7 +11,7 @@ import {
   BULK_DELETE_BLOCKS,
   BULK_UPDATE_BLOCKS,
   DELETE_BLOCK,
-  UPDATE_BLOCK
+  UPDATE_BLOCK,
 } from "./constants";
 
 export interface IAddBlockAction {
@@ -24,8 +24,8 @@ export function addBlockRedux(block: IBlock): IAddBlockAction {
     type: ADD_BLOCK,
     payload: {
       id: block.customId,
-      data: block
-    }
+      data: block,
+    },
   };
 }
 
@@ -45,22 +45,22 @@ export function updateBlockRedux(
     type: UPDATE_BLOCK,
     payload: {
       id,
-      data: block
-    }
+      data: block,
+    },
   };
 }
 
-export interface IDeleteBlockAction {
+export interface IdeleteBlockAction {
   type: DELETE_BLOCK;
   payload: ICollectionDeleteItemPayload;
 }
 
-export function deleteBlockRedux(id: string): IDeleteBlockAction {
+export function deleteBlockRedux(id: string): IdeleteBlockAction {
   return {
     type: DELETE_BLOCK,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
@@ -72,10 +72,10 @@ export interface IBulkAddBlocksAction {
 export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
   return {
     type: BULK_ADD_BLOCKS,
-    payload: blocks.map(block => ({
+    payload: blocks.map((block) => ({
       id: block.customId,
-      data: block
-    }))
+      data: block,
+    })),
   };
 }
 
@@ -92,7 +92,7 @@ export function bulkUpdateBlocksRedux(
   return {
     meta,
     type: BULK_UPDATE_BLOCKS,
-    payload: blocks
+    payload: blocks,
   };
 }
 
@@ -106,14 +106,14 @@ export function bulkDeleteBlocksRedux(
 ): IBulkDeleteBlocksAction {
   return {
     type: BULK_DELETE_BLOCKS,
-    payload: blocks.map(id => ({ id }))
+    payload: blocks.map((id) => ({ id })),
   };
 }
 
 export type IBlocksAction =
   | IAddBlockAction
   | IUpdateBlockAction
-  | IDeleteBlockAction
+  | IdeleteBlockAction
   | IBulkAddBlocksAction
   | IBulkUpdateBlocksAction
   | IBulkDeleteBlocksAction;

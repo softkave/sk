@@ -6,13 +6,13 @@ import IOperation, {
   getOperationLastStatus,
   IOperationStatus,
   isOperationCompleted,
-  isOperationStartedOrPending
+  isOperationStartedOrPending,
 } from "../redux/operations/operation";
 import {
-  getFirstOperationWithID,
-  getOperationWithIDForResource
+  getFirstOperationWithId,
+  getOperationWithIdForResource,
 } from "../redux/operations/selectors";
-import { IReduxState } from "../redux/store";
+import { IAppState } from "../redux/store";
 import GeneralError from "./GeneralError";
 import Loading from "./Loading";
 
@@ -20,42 +20,42 @@ export interface ISingleOperationHelperDerivedProps {
   isLoading: boolean;
   isError: boolean;
   isCompleted: boolean;
-  state: IReduxState;
+  state: IAppState;
   error?: any;
   operation?: IOperation;
   currentStatus?: IOperationStatus;
 }
 
 export interface IOperationHelperProps {
-  operationID: string;
+  operationId: string;
   render: (
     props: ISingleOperationHelperDerivedProps
   ) => React.ReactElement | null;
-  resourceID?: string;
-  scopeID?: string;
+  resourceId?: string;
+  scopeId?: string;
   dontManageRender?: boolean;
   loadFunc?: (props: ISingleOperationHelperDerivedProps) => void;
 }
 
-const SingleOperationHelper: React.FC<IOperationHelperProps> = props => {
+const SingleOperationHelper: React.FC<IOperationHelperProps> = (props) => {
   const {
-    operationID,
+    operationId,
     render,
     loadFunc,
-    scopeID,
+    scopeId,
     dontManageRender,
-    resourceID
+    resourceId,
   } = props;
-  const store = useStore<IReduxState>();
-  const operation = useSelector<IReduxState, IOperation | undefined>(state =>
-    resourceID
-      ? getOperationWithIDForResource(state, operationID, resourceID)
-      : getFirstOperationWithID(state, operationID)
+  const store = useStore<IAppState>();
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
+    resourceId
+      ? getOperationWithIdForResource(state, operationId, resourceId)
+      : getFirstOperationWithId(state, operationId)
   );
-  const isLoading = isOperationStartedOrPending(operation, scopeID);
-  const isCompleted = isOperationCompleted(operation, scopeID);
-  const status = getOperationLastStatus(operation, scopeID);
-  const error = getOperationLastError(operation, scopeID);
+  const isLoading = isOperationStartedOrPending(operation, scopeId);
+  const isCompleted = isOperationCompleted(operation, scopeId);
+  const status = getOperationLastStatus(operation, scopeId);
+  const error = getOperationLastError(operation, scopeId);
   const derivedProps: ISingleOperationHelperDerivedProps = {
     operation,
     isLoading,
@@ -63,14 +63,14 @@ const SingleOperationHelper: React.FC<IOperationHelperProps> = props => {
     error,
     isError: !!error,
     currentStatus: status,
-    state: store.getState()
+    state: store.getState(),
   };
 
   React.useEffect(() => {
     if (isFunction(loadFunc)) {
       loadFunc({
         ...derivedProps,
-        state: store.getState()
+        state: store.getState(),
       });
     }
   }, [loadFunc, derivedProps, store]);

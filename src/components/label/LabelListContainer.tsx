@@ -3,14 +3,17 @@ import { useSelector } from "react-redux";
 import { IBlock, IBlockLabel } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import { IAppState } from "../../redux/store";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import LabelList from "./LabelList";
 
-const scopeID = "LabelListContainer";
+const scopeId = "LabelListContainer";
 
 export interface ILabelListContainerProps {
   block: IBlock;
@@ -19,27 +22,27 @@ export interface ILabelListContainerProps {
 const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const { block } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     if (block.type === "org") {
       return getBlock(state, block.customId)!;
     } else {
-      return getBlock(state, block.rootBlockID)!;
+      return getBlock(state, block.rootBlockId)!;
     }
   });
 
-  const labelList = org.availableLabels || [];
+  const labelList = org.boardLabels || [];
   const operationStatus = useOperation({
-    scopeID,
-    operationID: updateBlockOperationID,
-    resourceID: org.customId,
+    scopeId,
+    operationId: updateBlockOperationId,
+    resourceId: org.customId,
   });
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.data && errors.data.availableLabels) {
-    errors.labelList = errors.data.availableLabels;
+  if (errors && errors.data && errors.data.boardLabels) {
+    errors.labelList = errors.data.boardLabels;
     delete errors.data;
   }
 
@@ -48,16 +51,17 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
       {
         block: org,
         data: {
-          availableLabels: values.map((value) => ({
+          // TODO: find a better way to only update the ones that changed
+          boardLabels: values.map((value) => ({
             ...value,
-            updatedAt: Date.now(),
+            updatedAt: getDateString(),
             updatedBy: user.customId,
           })),
         },
       },
       {
-        scopeID,
-        resourceID: org.customId,
+        scopeId,
+        resourceId: org.customId,
       }
     );
   };

@@ -7,32 +7,32 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { loadRootBlocksOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { loadRootBlocksOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadRootBlocksOperationFunc(
   dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
-  const operation = getFirstOperationWithID(
+  const operation = getFirstOperationWithId(
     store.getState(),
-    loadRootBlocksOperationID
+    loadRootBlocksOperationId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
-    pushOperation(loadRootBlocksOperationID, {
-      scopeID: options.scopeID,
+    pushOperation(loadRootBlocksOperationId, {
+      scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
     })
   );
 
   try {
-    const result = await blockNet.getRootBlocks();
+    const result = await blockNet.getUserRootBlocks();
 
     if (result && result.errors) {
       throw result.errors;
@@ -42,17 +42,17 @@ export default async function loadRootBlocksOperationFunc(
 
     store.dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
     store.dispatch(
-      pushOperation(loadRootBlocksOperationID, {
-        scopeID: options.scopeID,
+      pushOperation(loadRootBlocksOperationId, {
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
       })
     );
   } catch (error) {
     store.dispatch(
-      pushOperation(loadRootBlocksOperationID, {
+      pushOperation(loadRootBlocksOperationId, {
         error,
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationError,
         timestamp: Date.now(),
       })

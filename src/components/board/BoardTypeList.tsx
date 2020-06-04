@@ -2,17 +2,11 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import RenderBlockChildren from "./RenderBlockChildren";
-import {
-  BoardResourceType,
-  OnClickAddBlock,
-  OnClickBlock,
-  OnClickUpdateBlock,
-} from "./types";
+import { BoardResourceType, OnClickAddBlock, OnClickBlock } from "./types";
 
 export interface IBoardTypeListProps {
   block: IBlock;
   selectedResourceType: BoardResourceType;
-  onClickUpdateBlock: OnClickUpdateBlock;
   onClickBlock: OnClickBlock;
   onClickCreateNewBlock: OnClickAddBlock;
 
@@ -20,13 +14,7 @@ export interface IBoardTypeListProps {
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
-  const {
-    block,
-    onClickUpdateBlock,
-    onClickBlock,
-    selectedResourceType,
-    style,
-  } = props;
+  const { block, onClickBlock, selectedResourceType, style } = props;
 
   return (
     <StyledContainer
@@ -42,7 +30,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
       <RenderBlockChildren
         block={block}
         onClickBlock={onClickBlock}
-        onClickUpdateBlock={onClickUpdateBlock}
         selectedResourceType={selectedResourceType}
       />
     </StyledContainer>

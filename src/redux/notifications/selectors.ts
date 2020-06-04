@@ -1,14 +1,14 @@
 import { getCollectionItemsAsArray } from "../collection";
-import { IReduxState } from "../store";
+import { IAppState } from "../store";
 
-export function getNotification(state: IReduxState, id?: string) {
+export function getNotification(state: IAppState, id?: string) {
   if (id) {
     const notifications = getCollectionItemsAsArray(state.notifications, [id]);
     return notifications[0];
   }
 }
 
-export function getNotificationRequired(state: IReduxState, id: string) {
+export function getNotificationRequired(state: IAppState, id: string) {
   const notification = getNotification(state, id);
 
   if (!notification) {
@@ -20,6 +20,6 @@ export function getNotificationRequired(state: IReduxState, id: string) {
   return notification;
 }
 
-export function getNotificationsAsArray(state: IReduxState, ids: string[]) {
+export function getNotificationsAsArray(state: IAppState, ids: string[]) {
   return getCollectionItemsAsArray(state.notifications, ids);
 }

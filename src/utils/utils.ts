@@ -9,6 +9,10 @@ export function newId() {
   return uuid();
 }
 
+export function getDateString() {
+  return new Date().toISOString();
+}
+
 export const pluralize = (str: string) => {
   return `${str}s`;
 };

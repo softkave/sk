@@ -1,32 +1,50 @@
-import { IBlock } from "../../models/block/block";
-import { isBlockParentOf } from "../../models/block/utils";
+import { BlockType, IBlock } from "../../models/block/block";
 import {
   filterCollectionItemsWith,
-  getCollectionItemsAsArray
+  getCollectionItemsAsArray,
 } from "../collection";
-import { IReduxState } from "../store";
+import { IAppState } from "../store";
 
-export function getBlock(state: IReduxState, blockID?: string | null) {
-  if (blockID) {
-    const blocks = getCollectionItemsAsArray(state.blocks, [blockID]);
+export function getBlock(state: IAppState, blockId?: string | null) {
+  if (blockId) {
+    const blocks = getCollectionItemsAsArray(state.blocks, [blockId]);
     return blocks[0];
   }
 }
 
-export function getBlocksAsArray(state: IReduxState, ids: string[]) {
+export function getBlocksAsArray(state: IAppState, ids: string[]) {
   return getCollectionItemsAsArray(state.blocks, ids);
 }
 
-export function getEveryBlockChildrenInState(
-  state: IReduxState,
-  block: IBlock
-) {
-  return filterCollectionItemsWith(state.blocks, next =>
-    isBlockParentOf(block, next)
-  );
+export function getOrgTasks(state: IAppState, block: IBlock) {
+  return filterCollectionItemsWith(state.blocks, (next) => {
+    if (BlockType.Task === next.type && block.customId === next.rootBlockId) {
+      return true;
+    }
+
+    return false;
+  });
 }
 
-export function getBlockParents(state: IReduxState, block: IBlock) {
+export function getBlockChildren(
+  state: IAppState,
+  block: IBlock,
+  type?: BlockType
+) {
+  return filterCollectionItemsWith(state.blocks, (next) => {
+    if (type && type !== next.type) {
+      return false;
+    }
+
+    if (block.customId === next.parent) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+export function getBlockParents(state: IAppState, block: IBlock) {
   let b: IBlock = block;
   const parents: IBlock[] = [];
 

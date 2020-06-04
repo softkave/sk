@@ -1,27 +1,30 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  addBlockOperationID,
-  updateBlockOperationID,
-} from "../../redux/operations/operationIDs";
+  addBlockOperationId,
+  updateBlockOperationId,
+} from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
 import TaskForm, { ITaskFormValues } from "./TaskForm";
 
-const scopeID = "TaskFormContainer";
+const scopeId = "TaskFormContainer";
 
 export interface ITaskFormContainerProps {
-  orgID: string;
+  orgId: string;
   onClose: () => void;
 
   parentBlock?: IBlock;
@@ -29,28 +32,30 @@ export interface ITaskFormContainerProps {
 }
 
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
-  const { onClose, orgID, parentBlock } = props;
+  const { onClose, orgId, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IReduxState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
+  const org = useSelector<IAppState, IBlock>((state) => {
+    return getBlock(state, orgId)!;
   });
 
-  const collaboratorIDs = Array.isArray(org.collaborators)
+  const collaboratorIds = Array.isArray(org.collaborators)
     ? org.collaborators
     : [];
 
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIDs)
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
+    getUsersAsArray(state, collaboratorIds)
   );
 
   const [block, setBlock] = React.useState<IBlock>(() => {
     if (props.block) {
       return props.block;
     } else {
-      const newBlock = getNewBlock(user, "task", parentBlock);
+      const newBlock = getNewBlock(user, BlockType.Task, parentBlock);
 
-      if (org.availableStatus && org.availableStatus.length > 0) {
-        newBlock.status = org.availableStatus[0].customId;
+      if (org.boardStatuses && org.boardStatuses.length > 0) {
+        newBlock.status = org.boardStatuses[0].customId;
+        newBlock.statusAssignedAt = getDateString();
+        newBlock.statusAssignedBy = user.customId;
       }
 
       return newBlock;
@@ -60,9 +65,9 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
-    scopeID,
-    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
-    resourceID: block.customId,
+    scopeId,
+    operationId: props.block ? updateBlockOperationId : addBlockOperationId,
+    resourceId: block.customId,
   });
 
   const errors = operationStatus.error
@@ -80,8 +85,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -91,8 +96,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     }
@@ -103,7 +108,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
       // isSubmitting
       value={block as any}
       collaborators={collaborators}
-      orgID={orgID}
+      orgId={orgId}
       user={user}
       onClose={onClose}
       formOnly={!props.block}

@@ -1,4 +1,4 @@
-import { addCustomIDToSubTasks } from "../../../components/block/getNewBlock";
+import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
 import { IBlock } from "../../../models/block/block";
 import { IUser } from "../../../models/user/user";
 import * as blockNet from "../../../net/block";
@@ -12,9 +12,8 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addBlockOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
-import { addTaskToUserIfAssigned } from "./getTasksAssignedToUser";
+import { addBlockOperationId } from "../operationIds";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddBlockOperationFuncDataProps {
   user: IUser;
@@ -26,13 +25,13 @@ export default async function addBlockOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { user, block } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
-    addBlockOperationID,
+    addBlockOperationId,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
@@ -40,9 +39,9 @@ export default async function addBlockOperationFunc(
 
   store.dispatch(
     pushOperation(
-      addBlockOperationID,
+      addBlockOperationId,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -52,7 +51,7 @@ export default async function addBlockOperationFunc(
 
   try {
     if (newBlock.type === "task") {
-      newBlock.subTasks = addCustomIDToSubTasks(newBlock.subTasks);
+      newBlock.subTasks = addCustomIdToSubTasks(newBlock.subTasks);
     }
 
     const result = await blockNet.addBlock(newBlock);
@@ -77,11 +76,6 @@ export default async function addBlockOperationFunc(
       const pluralType = `${newBlock.type}s`;
       const parentUpdate = { [pluralType]: [newBlock.customId] };
 
-      if (newBlock.type === "group") {
-        parentUpdate.groupTaskContext = [newBlock.customId!];
-        parentUpdate.groupProjectContext = [newBlock.customId!];
-      }
-
       store.dispatch(
         blockActions.updateBlockRedux(parent.customId, parentUpdate, {
           arrayUpdateStrategy: "concat",
@@ -93,19 +87,17 @@ export default async function addBlockOperationFunc(
       store.dispatch(
         userActions.updateUserRedux(
           user.customId,
-          { orgs: [newBlock.customId] },
+          { orgs: [{ customId: newBlock.customId }] },
           { arrayUpdateStrategy: "concat" }
         )
       );
     }
 
-    addTaskToUserIfAssigned(block);
-
     store.dispatch(
       pushOperation(
-        addBlockOperationID,
+        addBlockOperationId,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -115,10 +107,10 @@ export default async function addBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        addBlockOperationID,
+        addBlockOperationId,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

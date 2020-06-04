@@ -9,10 +9,10 @@ import IOperation, {
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import {
-  getFirstOperationWithID,
-  getOperationWithIDForResource,
+  getFirstOperationWithId,
+  getOperationWithIdForResource,
 } from "../../redux/operations/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 
 export interface IUseOperationStatus {
   isLoading: boolean;
@@ -24,9 +24,9 @@ export interface IUseOperationStatus {
 }
 
 export interface IOperationSelector {
-  operationID: string;
-  resourceID?: string;
-  scopeID?: string;
+  operationId: string;
+  resourceId?: string;
+  scopeId?: string;
 }
 
 type LoadOperation = (statusData: IUseOperationStatus) => void;
@@ -37,12 +37,12 @@ type UseOperation = (
 
 export const getOperationDetailedStatus = (
   operation: IOperation | undefined,
-  scopeID?: string
+  scopeId?: string
 ): IUseOperationStatus => {
-  const isLoading = isOperationStartedOrPending(operation, scopeID);
-  const isCompleted = isOperationCompleted(operation, scopeID);
-  const status = getOperationLastStatus(operation, scopeID);
-  const error = getOperationLastError(operation, scopeID);
+  const isLoading = isOperationStartedOrPending(operation, scopeId);
+  const isCompleted = isOperationCompleted(operation, scopeId);
+  const status = getOperationLastStatus(operation, scopeId);
+  const error = getOperationLastError(operation, scopeId);
 
   return {
     isLoading,
@@ -54,21 +54,21 @@ export const getOperationDetailedStatus = (
   };
 };
 
-const getOperation = (state: IReduxState, selector: IOperationSelector) => {
-  return selector.resourceID
-    ? getOperationWithIDForResource(
+const getOperation = (state: IAppState, selector: IOperationSelector) => {
+  return selector.resourceId
+    ? getOperationWithIdForResource(
         state,
-        selector.operationID,
-        selector.resourceID
+        selector.operationId,
+        selector.resourceId
       )
-    : getFirstOperationWithID(state, selector.operationID);
+    : getFirstOperationWithId(state, selector.operationId);
 };
 
 const useOperation: UseOperation = (selector, loadOperation) => {
-  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
     getOperation(state, selector)
   );
-  const statusData = getOperationDetailedStatus(operation, selector.scopeID);
+  const statusData = getOperationDetailedStatus(operation, selector.scopeId);
 
   React.useEffect(() => {
     if (isFunction(loadOperation)) {

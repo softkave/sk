@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { INetError } from "../../net/query";
+import { INetError } from "../../net/types";
 import { pushOperation } from "./actions";
 
 const operationStarted = "started";
@@ -16,31 +16,30 @@ export const operationStatusTypes = {
   consumed: operationConsumed,
 };
 
-export type DefaultOperationStatusType =
-  | typeof operationStarted
-  | typeof operationPending
-  | typeof operationError
-  | typeof operationComplete
-  | typeof operationConsumed;
+export enum OperationStatus {
+  Started = "started",
+  Pending = "pending",
+  Error = "error",
+  Complete = "complete",
+  Consumed = "consumed",
+}
 
-export type OperationStatusScopeID = string | number;
+export type OperationStatusScopeId = string | number;
 export interface IOperationStatus<StatusType extends string = string> {
   status: StatusType;
   timestamp: number;
-  scopeID?: string | number;
+  scopeId?: string | number;
   data?: any;
   error?: INetError | Error;
 }
 
 export default interface IOperation<
   StatusType extends string = string,
-  OperationStatus extends IOperationStatus<StatusType> = IOperationStatus<
-    StatusType
-  >
+  OpStatus extends IOperationStatus<StatusType> = IOperationStatus<StatusType>
 > {
-  operationID: string;
-  statusHistory: OperationStatus[];
-  resourceID?: string | null;
+  operationId: string;
+  statusHistory: OpStatus[];
+  resourceId?: string | null;
 }
 
 export function sortStatusesByTimestamp(statuses: IOperationStatus[]) {
@@ -55,84 +54,13 @@ export function sortStatusesByTimestamp(statuses: IOperationStatus[]) {
   });
 }
 
-export function areOperationsSame(
-  operation1?: IOperation,
-  operation2?: IOperation
-) {
-  return (
-    operation1 &&
-    operation2 &&
-    operation1.operationID !== operation2.operationID &&
-    operation1.resourceID !== operation2.resourceID
-  );
-}
-
-export function areStatusTypeSame(
-  status1?: IOperationStatus,
-  status2?: IOperationStatus
-) {
-  return status1 && status2 && status1.status === status2.status;
-}
-
-export function areStatusContentSame(
-  status1?: IOperationStatus,
-  status2?: IOperationStatus
-) {
-  return (
-    areStatusTypeSame(status1, status2) &&
-    status1!.timestamp === status2!.timestamp &&
-    status1!.scopeID === status2!.scopeID
-  );
-}
-
-function areStatusesSame(
-  statuses1: IOperationStatus[],
-  statuses2: IOperationStatus[]
-) {
-  const sortedStatuses1 = sortStatusesByTimestamp(statuses1);
-  const sortedStatuses2 = sortStatusesByTimestamp(statuses2);
-  const areLengthsSame = sortedStatuses1.length === sortedStatuses2.length;
-
-  if (areLengthsSame) {
-    const mismatchIndex = sortedStatuses1.findIndex((status, index) => {
-      return areStatusContentSame(status, sortedStatuses2[index]);
-    });
-
-    if (mismatchIndex === -1) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-export function areOperationsSameCheckStatus(
-  operation1?: IOperation,
-  operation2?: IOperation,
-  scopeID?: OperationStatusScopeID
-) {
-  return (
-    areOperationsSame(operation1, operation2) &&
-    Array.isArray(operation1!.statusHistory) &&
-    Array.isArray(operation2!.statusHistory) &&
-    areStatusesSame(
-      scopeID
-        ? getStatusesWithScope(operation1!, scopeID)
-        : operation1!.statusHistory,
-      scopeID
-        ? getStatusesWithScope(operation2!, scopeID)
-        : operation2!.statusHistory
-    )
-  );
-}
-
 export function getOperationLastStatus(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
   if (operation && Array.isArray(operation.statusHistory)) {
-    if (scopeID) {
-      const scopeStatuses = getStatusesWithScope(operation, scopeID);
+    if (scopeId) {
+      const scopeStatuses = getStatusesWithScope(operation, scopeId);
 
       return scopeStatuses[scopeStatuses.length - 1];
     } else {
@@ -143,10 +71,10 @@ export function getOperationLastStatus(
 
 export function getOperationLastError(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
   if (operation && isOperationError(operation)) {
-    const status = getOperationLastStatus(operation, scopeID);
+    const status = getOperationLastStatus(operation, scopeId);
 
     if (status) {
       return status.error;
@@ -154,29 +82,11 @@ export function getOperationLastError(
   }
 }
 
-export function getOperationStatusesWithType(
-  operation: IOperation,
-  statusType: string,
-  scopeID?: OperationStatusScopeID
-) {
-  return operation.statusHistory.filter((status) => {
-    const isTypeSame = status.status === statusType;
-
-    if (isTypeSame) {
-      if (scopeID) {
-        return status.scopeID === scopeID;
-      }
-    }
-
-    return isTypeSame;
-  });
-}
-
 export function getOperationLastStatusType(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
-  const lastStatus = getOperationLastStatus(operation, scopeID);
+  const lastStatus = getOperationLastStatus(operation, scopeId);
   return lastStatus && lastStatus.status;
 }
 
@@ -198,143 +108,143 @@ export function isStatusTypeError(status: IOperationStatus) {
 
 export function isOperationStarted(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
-  return getOperationLastStatusType(operation, scopeID) === operationStarted;
+  return getOperationLastStatusType(operation, scopeId) === operationStarted;
 }
 
 export function isOperationPending(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
-  return getOperationLastStatusType(operation, scopeID) === operationPending;
+  return getOperationLastStatusType(operation, scopeId) === operationPending;
 }
 
 export function isOperationStartedOrPending(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
   return (
-    isOperationStarted(operation, scopeID) ||
-    isOperationPending(operation, scopeID)
+    isOperationStarted(operation, scopeId) ||
+    isOperationPending(operation, scopeId)
   );
 }
 
 export function isOperationCompleted(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
-  return getOperationLastStatusType(operation, scopeID) === operationComplete;
+  return getOperationLastStatusType(operation, scopeId) === operationComplete;
 }
 
 export function isOperationError(
   operation?: IOperation,
-  scopeID?: OperationStatusScopeID
+  scopeId?: OperationStatusScopeId
 ) {
-  return getOperationLastStatusType(operation, scopeID) === operationError;
+  return getOperationLastStatusType(operation, scopeId) === operationError;
 }
 
 export function getStatusesWithScope(
   operation: IOperation,
-  scopeID: string | number
+  scopeId: string | number
 ) {
   return operation.statusHistory.filter((status) => {
-    return status.scopeID === scopeID;
+    return status.scopeId === scopeId;
   });
 }
 
 export interface IOperationFuncOptions {
-  resourceID?: string | null;
-  scopeID?: string | number;
+  resourceId?: string | null;
+  scopeId?: string | number;
 }
 
 export interface IDispatchOperationFuncProps {
   dispatch: Dispatch;
-  operationID: string;
-  resourceID?: string | null;
+  operationId: string;
+  resourceId?: string | null;
   data?: any;
-  scopeID?: string | number;
+  scopeId?: string | number;
   error?: INetError | Error;
 }
 
 function dispatchOperationStatus(
   dispatch: Dispatch,
-  operationID: string,
+  operationId: string,
   status: IOperationStatus,
-  resourceID?: string | null
+  resourceId?: string | null
 ) {
-  dispatch(pushOperation(operationID, status, resourceID));
+  dispatch(pushOperation(operationId, status, resourceId));
 }
 
 export function dispatchOperationStarted(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationID, resourceID, data, scopeID } = props;
+  const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
-    operationID,
+    operationId,
     {
       data,
-      scopeID,
+      scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
     },
-    resourceID
+    resourceId
   );
 }
 
 export function dispatchOperationPending(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationID, resourceID, data, scopeID } = props;
+  const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
-    operationID,
+    operationId,
     {
       data,
-      scopeID,
+      scopeId,
       status: operationStatusTypes.operationPending,
       timestamp: Date.now(),
     },
-    resourceID
+    resourceId
   );
 }
 
 export function dispatchOperationError(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationID, resourceID, data, scopeID, error } = props;
+  const { dispatch, operationId, resourceId, data, scopeId, error } = props;
   dispatchOperationStatus(
     dispatch,
-    operationID,
+    operationId,
     {
       data,
-      scopeID,
+      scopeId,
       error,
       status: operationStatusTypes.operationError,
       timestamp: Date.now(),
     },
-    resourceID
+    resourceId
   );
 }
 
 export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationID, resourceID, data, scopeID } = props;
+  const { dispatch, operationId, resourceId, data, scopeId } = props;
   dispatchOperationStatus(
     dispatch,
-    operationID,
+    operationId,
     {
       data,
-      scopeID,
+      scopeId,
       status: operationStatusTypes.operationComplete,
       timestamp: Date.now(),
     },
-    resourceID
+    resourceId
   );
 }
 
-export const operationHasStatusWithScopeID = (
+export const operationHasStatusWithScopeId = (
   operation?: IOperation,
-  scopeID?: string
+  scopeId?: string
 ) => {
-  if (!operation || !scopeID) {
+  if (!operation || !scopeId) {
     return false;
   }
 
   const statusHistory = operation.statusHistory;
-  return statusHistory.findIndex((status) => status.scopeID === scopeID) !== -1;
+  return statusHistory.findIndex((status) => status.scopeId === scopeId) !== -1;
 };

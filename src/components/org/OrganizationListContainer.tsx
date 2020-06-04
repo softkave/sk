@@ -6,10 +6,9 @@ import { Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import { loadRootBlocksOperationID } from "../../redux/operations/operationIDs";
+import { loadRootBlocksOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
-import { getDefaultBoardViewType } from "../board/utils";
+import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -25,14 +24,16 @@ import OrganizationList from "./OrganizationList";
 const OrganizationListContainer: React.FC<{}> = () => {
   const history = useHistory();
   const user = useSelector(getSignedInUserRequired);
-  const organizations = useSelector<IReduxState, IBlock[]>((state) =>
-    getBlocksAsArray(state, user.orgs)
+  const organizations = useSelector<IAppState, IBlock[]>((state) =>
+    getBlocksAsArray(
+      state,
+      user.orgs.map((org) => org.customId)
+    )
   );
 
   const onClickOrganization = (organization: IBlock) => {
-    const bt = getDefaultBoardViewType(organization);
     const routePath = path.normalize(
-      window.location.pathname + "/" + organization.customId + `/tasks?bt=${bt}`
+      window.location.pathname + "/" + organization.customId + `/boards`
     );
 
     history.push(routePath);
@@ -73,7 +74,7 @@ const OrganizationListContainer: React.FC<{}> = () => {
       <Switch>
         <Route exact path="/app/organizations" render={renderOrganizations} />
         <Route
-          path="/app/organizations/:organizationID"
+          path="/app/organizations/:organizationId"
           component={OrganizationContainer}
         />
       </Switch>
@@ -82,7 +83,7 @@ const OrganizationListContainer: React.FC<{}> = () => {
 
   return (
     <SingleOperationHelper
-      operationID={loadRootBlocksOperationID}
+      operationId={loadRootBlocksOperationId}
       render={render}
       loadFunc={loadOrganizations}
     />

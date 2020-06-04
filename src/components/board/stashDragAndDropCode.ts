@@ -10,8 +10,8 @@ import React from "react";
 //       return;
 //     }
 
-//     const draggedBlockID = result.draggableId;
-//     const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+//     const draggedBlockId = result.draggableId;
+//     const draggedBlock = getBlock(store.getState(), draggedBlockId)!;
 
 //     // did not move out of group - can bail early
 //     if (result.source.droppableId === result.destination.droppableId) {
@@ -29,12 +29,12 @@ import React from "react";
 //     }
 
 //     let dropPosition: number = result.destination?.index;
-//     const sourceBlockID = result.source.droppableId;
+//     const sourceBlockId = result.source.droppableId;
 
 //     // TODO: volatile, blocks are possibly null OR undefined
-//     const sourceBlock = getBlock(store.getState(), sourceBlockID)!;
+//     const sourceBlock = getBlock(store.getState(), sourceBlockId)!;
 
-//     if (draggedBlock.type === "org" || draggedBlock.type === "project") {
+//     if (draggedBlock.type === "org" || draggedBlock.type === "board") {
 //       return;
 //     }
 
@@ -45,7 +45,7 @@ import React from "react";
 
 //     if (groupContext) {
 //       const containerName =
-//         groupContext === "groupTaskContext" ? "tasks" : "projects";
+//         groupContext === "groupTaskContext" ? "tasks" : "boards";
 //       const container: string[] = sourceBlock[containerName] || [];
 
 //       if (container.length > 0) {
@@ -59,11 +59,11 @@ import React from "react";
 
 //     transferBlockOperationFn({
 //       data: {
-//         sourceBlockID,
-//         draggedBlockID,
+//         sourceBlockId,
+//         draggedBlockId,
 //         dropPosition,
 //         groupContext,
-//         destinationBlockID: result.destination?.droppableId,
+//         destinationBlockId: result.destination?.droppableId,
 //       },
 //     });
 //   },
@@ -86,10 +86,10 @@ import React from "react";
 //     }
 
 //     const destinationStatus = result.destination.droppableId;
-//     const draggedBlockID = result.draggableId;
+//     const draggedBlockId = result.draggableId;
 
 //     // TODO: volatile, blocks are possibly null OR undefined
-//     const draggedBlock = getBlock(store.getState(), draggedBlockID)!;
+//     const draggedBlock = getBlock(store.getState(), draggedBlockId)!;
 
 //     console.warn("not implemented yet");
 //     return;

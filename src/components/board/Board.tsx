@@ -1,34 +1,26 @@
-import { Modal } from "antd";
 import path from "path";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
-import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
-import loadBlockCollaboratorsOperationFunc from "../../redux/operations/block/loadBlockCollaborators";
-import {
-  getBlockChildrenOperationID,
-  getBlockCollaborationRequestsOperationID,
-  getBlockCollaboratorsOperationID,
-} from "../../redux/operations/operationIDs";
 import { pluralize } from "../../utils/utils";
+import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
-import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
-import BoardBlockChildren from "./LoadBlockChildren";
+import { useBoardData } from "./data-loaders/loadBoardData";
+import LoadBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
 import { getDefaultBoardViewType } from "./utils";
 
 interface IBlockFormState {
   formType: BlockFormType;
-  orgID: string;
+  orgId: string;
   blockType?: BlockType;
   parentBlock?: IBlock;
   block?: IBlock;
@@ -58,65 +50,11 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
 
   // TODO: we need to rebuild the path when the user transfers the block
   const blockPath = `${parentPath}${getPath(block)}`;
-
-  const childProjectMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/projects/:blockID`
+  const boardMatch = useRouteMatch<IBlockPathMatch>(
+    `${blockPath}/boards/:blockId`
   );
 
-  const loadOrgCollaborators = (loadProps: IUseOperationStatus) => {
-    if (!!!loadProps.operation) {
-      loadBlockCollaboratorsOperationFunc({ block });
-    }
-  };
-
-  const loadOrgCollaborationRequests = (loadProps: IUseOperationStatus) => {
-    if (!!!loadProps.operation) {
-      loadBlockCollaborationRequestsOperationFunc({ block });
-    }
-  };
-
-  const hasCollaborators = block.type === "org";
-  const loadCollaboratorsStatus = useOperation(
-    {
-      operationID: getBlockCollaboratorsOperationID,
-      resourceID: block.customId,
-    },
-    hasCollaborators && loadOrgCollaborators
-  );
-
-  const isLoadingCollaborators =
-    hasCollaborators &&
-    (loadCollaboratorsStatus.isLoading || !!!loadCollaboratorsStatus.operation);
-
-  const hasRequests = block.type === "org";
-  const loadRequestsStatus = useOperation(
-    {
-      operationID: getBlockCollaborationRequestsOperationID,
-      resourceID: block.customId,
-    },
-    hasRequests && loadOrgCollaborationRequests
-  );
-
-  const isLoadingRequests =
-    hasRequests &&
-    (loadRequestsStatus.isLoading || !!!loadRequestsStatus.operation);
-
-  const loadBlockChildren = (loadProps: IUseOperationStatus) => {
-    if (!!!loadProps.operation) {
-      loadBlockChildrenOperationFunc({ block, updateParentInStore: true });
-    }
-  };
-
-  const loadChildrenStatus = useOperation(
-    {
-      operationID: getBlockChildrenOperationID,
-      resourceID: block.customId,
-    },
-    loadBlockChildren
-  );
-
-  const isLoadingChildren =
-    loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
+  const lop = useBoardData(block);
 
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
@@ -161,32 +99,11 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     setBlockForm(null);
   };
 
-  const promptConfirmDelete = (blockToDelete: IBlock) => {
-    const blockToDeleteFullType = getBlockTypeFullName(blockToDelete.type);
-    const onDeletePromptMessage = (
-      <div>Are you sure you want to delete this {blockToDeleteFullType}?</div>
-    );
-
-    Modal.confirm({
-      title: onDeletePromptMessage,
-      okText: "Yes",
-      cancelText: "No",
-      okType: "primary",
-      okButtonProps: { danger: true },
-      onOk() {
-        onDeleteBlock(blockToDelete);
-      },
-      onCancel() {
-        // do nothing
-      },
-    });
-  };
-
   const renderForms = () => {
     if (blockForm) {
       return (
         <BlockForms
-          orgID={block.rootBlockID || block.customId}
+          orgId={block.rootBlockId || block.customId}
           blockType={blockForm.blockType}
           block={blockForm.block}
           formType={blockForm.formType}
@@ -199,123 +116,98 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     return null;
   };
 
-  const shouldRenderLoading = () => {
-    return isLoadingCollaborators || isLoadingRequests || isLoadingChildren;
-  };
-
-  const getLoadErrors = () => {
-    const loadErrors: any[] = [];
-
-    if (loadCollaboratorsStatus && loadCollaboratorsStatus.error) {
-      loadErrors.push(loadCollaboratorsStatus.error);
-    }
-
-    if (loadRequestsStatus && loadRequestsStatus.error) {
-      loadErrors.push(loadRequestsStatus.error);
-    }
-
-    if (loadChildrenStatus && loadChildrenStatus.error) {
-      loadErrors.push(loadChildrenStatus.error);
-    }
-
-    return loadErrors;
-  };
-
   const renderChild = () => {
-    let childID: string | null = null;
-    let message: string = "";
-    let getChildrenIDsFunc: () => string[] = () => [];
+    let boardId: string | null = null;
 
-    if (childProjectMatch) {
-      childID = childProjectMatch.params.blockID;
-      message = "Project not found.";
-      getChildrenIDsFunc = () => block.projects || [];
+    if (boardMatch) {
+      boardId = boardMatch.params.blockId;
     }
 
-    if (childID === null) {
+    if (boardId === null) {
       return null;
     }
 
+    // TODO: this is an hack, find a better way to load
     return (
-      <BoardBlockChildren
+      <LoadBlockChildren
         parent={block}
-        getChildrenIDs={getChildrenIDsFunc}
+        type={BlockType.Board}
         render={() => (
-          <BlockContainer blockID={childID!} notFoundMessage={message} />
+          <BlockContainer
+            blockId={boardId!}
+            notFoundMessage="Board not found"
+          />
         )}
       />
     );
   };
 
-  const render = () => {
-    const showLoading = shouldRenderLoading();
-    const loadErrors = getLoadErrors();
+  const renderBoardMain = (isMobile: boolean) => {
+    return (
+      <BoardMain
+        isMobile={isMobile}
+        block={block}
+        blockPath={blockPath}
+        onClickBlock={onClickBlock}
+        onClickDeleteBlock={(blk) => confirmBlockDelete(blk, onDeleteBlock)}
+        onClickAddBlock={(parentBlock, blockType) => {
+          setBlockForm({
+            blockType,
+            parentBlock,
+            formType: "block-form",
+            orgId: block.rootBlockId!,
+          });
+        }}
+        onClickUpdateBlock={(blockToUpdate) =>
+          setBlockForm({
+            block: blockToUpdate,
+            formType: "block-form",
+            orgId: block.rootBlockId!,
+            blockType: blockToUpdate.type,
+          })
+        }
+        onClickAddCollaborator={() =>
+          setBlockForm({
+            block,
+            formType: "collaborator-form",
+            orgId: block.rootBlockId!,
+          })
+        }
+        onClickAddOrEditLabel={() =>
+          setBlockForm({
+            block,
+            formType: "label-list-form",
+            orgId: block.rootBlockId!,
+          })
+        }
+        onClickAddOrEditStatus={() =>
+          setBlockForm({
+            block,
+            formType: "status-list-form",
+            orgId: block.rootBlockId!,
+          })
+        }
+      />
+    );
+  };
 
-    if (showLoading) {
+  const render = () => {
+    if (lop.loading) {
       return <LoadingEllipsis />;
-    } else if (loadErrors.length > 0) {
-      return <GeneralErrorList fill errors={loadErrors} />;
+    } else if (lop.errors) {
+      return <GeneralErrorList fill errors={lop.errors} />;
     }
 
-    if (childProjectMatch) {
+    if (boardMatch) {
       return renderChild();
     }
-
-    const renderBoardForBlock = (isMobile: boolean) => {
-      return (
-        <BoardMain
-          isMobile={isMobile}
-          block={block}
-          blockPath={blockPath}
-          onClickBlock={onClickBlock}
-          onClickDeleteBlock={promptConfirmDelete}
-          onClickAddBlock={(parentBlock, blockType) => {
-            setBlockForm({
-              blockType,
-              parentBlock,
-              formType: "block-form",
-              orgID: block.rootBlockID!,
-            });
-          }}
-          onClickUpdateBlock={(blockToUpdate) =>
-            setBlockForm({
-              block: blockToUpdate,
-              formType: "block-form",
-              orgID: block.rootBlockID!,
-              blockType: blockToUpdate.type,
-            })
-          }
-          onClickAddCollaborator={() =>
-            setBlockForm({
-              block,
-              formType: "collaborator-form",
-              orgID: block.rootBlockID!,
-            })
-          }
-          onClickAddOrEditLabel={() =>
-            setBlockForm({
-              block,
-              formType: "label-list-form",
-              orgID: block.rootBlockID!,
-            })
-          }
-          onClickAddOrEditStatus={() =>
-            setBlockForm({
-              block,
-              formType: "status-list-form",
-              orgID: block.rootBlockID!,
-            })
-          }
-        />
-      );
-    };
 
     return (
       <React.Fragment>
         {renderForms()}
         <RenderForDevice
-          renderForDesktop={() => renderBoardForBlock(false)}
-          renderForMobile={() => renderBoardForBlock(true)}
+          renderForDesktop={() => renderBoardMain(false)}
+          renderForMobile={() => renderBoardMain(true)}
         />
       </React.Fragment>
     );

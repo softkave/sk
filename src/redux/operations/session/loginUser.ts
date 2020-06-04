@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import * as userNet from "../../../net/user";
 import { saveUserTokenToStorage } from "../../../storage/userSession";
 import { loginUserRedux } from "../../session/actions";
-import { IReduxState } from "../../store";
+import { IAppState } from "../../store";
 import { addUserRedux } from "../../users/actions";
 import {
   dispatchOperationComplete,
@@ -12,8 +12,8 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { loginUserOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { loginUserOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export interface ILoginUserData {
   email: string;
@@ -28,22 +28,22 @@ export interface ILoginUserOperationFuncDataProps {
 }
 
 export default async function loginUserOperationFunc(
-  state: IReduxState,
+  state: IAppState,
   dispatch: Dispatch,
   dataProps: ILoginUserOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
-  const operation = getFirstOperationWithID(state, loginUserOperationID);
+  const operation = getFirstOperationWithId(state, loginUserOperationId);
 
-  if (isOperationStarted(operation, options.scopeID)) {
+  if (isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationID: loginUserOperationID,
+    operationId: loginUserOperationId,
   };
 
   dispatchOperationStarted(dispatchOptions);

@@ -98,14 +98,3 @@ export default async function query(
     throw errors;
   }
 }
-
-export interface INetError {
-  field?: string;
-  message?: string;
-  action?: string;
-  name: string;
-}
-
-export interface INetResult extends IAnyObject {
-  errors?: INetError[];
-}

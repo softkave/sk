@@ -12,8 +12,7 @@ import { BoardResourceType, BoardViewType, CreateMenuKey } from "./types";
 
 const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
   switch (type) {
-    case "groups":
-    case "projects":
+    case "boards":
     case "tasks":
       return true;
 
@@ -63,8 +62,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
     switch (key) {
-      case "group":
-      case "project":
+      case "board":
       case "task":
       case "org":
         onClickCreateNewBlock(key as BlockType);

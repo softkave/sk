@@ -7,11 +7,10 @@ import {
   changePasswordMutation,
   changePasswordWithTokenMutation,
   forgotPasswordMutation,
-  getCollaborationRequestsQuery,
-  getSessionDetailsQuery,
   getUserDataQuery,
+  getUserNotificationsQuery,
+  markNotificationReadMutation,
   respondToCollaborationRequestMutation,
-  updateCollaborationRequestMutation,
   updateUserMutation,
   userExistsQuery,
   userLoginMutation,
@@ -29,7 +28,6 @@ export interface ISignupEnpointProps {
 
 export async function signup(user: ISignupEnpointProps) {
   const userFields = ["name", "password", "email", "color"];
-
   const result = await query(
     null,
     userSignupMutation,
@@ -52,8 +50,7 @@ export async function login(email: string, password: string) {
 }
 
 export function updateUser(user: IUser) {
-  const updateUserFields = ["name", "lastNotificationCheckTime"];
-
+  const updateUserFields = ["name", "notificationsLastCheckedAt", "color"];
   return auth(
     null,
     updateUserMutation,
@@ -87,18 +84,18 @@ export function userExists(email: string) {
   return query(null, userExistsQuery, { email }, "data.user.userExists");
 }
 
-// TODO: define data's type
-export function updateCollaborationRequest(request: INotification, data: any) {
-  const updateRequestFields = ["readAt"];
-
+export function markNotificationRead(
+  notification: INotification,
+  readAt: string
+) {
   return auth(
     null,
-    updateCollaborationRequestMutation,
+    markNotificationReadMutation,
     {
-      customId: request.customId,
-      data: getDataFromObject(data, updateRequestFields),
+      notificationId: notification.customId,
+      readAt,
     },
-    "data.user.updateCollaborationRequest"
+    "data.user.markNotificationRead"
   );
 }
 
@@ -120,27 +117,17 @@ export function respondToCollaborationRequest(
   return auth(
     null,
     respondToCollaborationRequestMutation,
-    { response, customId: request.customId },
+    { response, requestId: request.customId },
     "data.user.respondToCollaborationRequest"
   );
 }
 
-export function getCollaborationRequests() {
+export function getUserNotifications() {
   return auth(
     null,
-    getCollaborationRequestsQuery,
+    getUserNotificationsQuery,
     {},
-    "data.user.getCollaborationRequests"
-  );
-}
-
-export function getSessionDetails(token: string) {
-  return auth(
-    null,
-    getSessionDetailsQuery,
-    {},
-    "data.user.getSessionDetails",
-    token
+    "data.user.getUserNotifications"
   );
 }
 

@@ -6,8 +6,6 @@ import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
-import BoardGroupList from "./BoardGroupList";
-import BoardTypeKanban from "./BoardTypeKanban";
 import BoardTypeList from "./BoardTypeList";
 import {
   BoardResourceType,
@@ -81,16 +79,11 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!boardType && resourceType) {
-    if (
-      resourceType === "groups" ||
-      resourceType === "projects" ||
-      resourceType === "tasks"
-    ) {
+    if (resourceType === "boards" || resourceType === "tasks") {
       const destPath = `${blockPath}/${resourceType}`;
       const boardTypesForResourceType = getBoardViewTypesForResourceType(
         block,
-        resourceType,
-        isMobile
+        resourceType
       );
       const newBoardType: BoardViewType = boardTypesForResourceType[0];
 
@@ -120,24 +113,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   }
 
   const renderBoardType = () => {
-    if (resourceType === "groups" && isMobile) {
-      return (
-        <BoardGroupList
-          block={block}
-          blockPath={blockPath}
-          onClickBlock={onClickBlock}
-          onClickCreateNewBlock={onClickAddBlock}
-          onClickDeleteBlock={onClickDeleteBlock}
-          onClickUpdateBlock={onClickUpdateBlock}
-          style={{ marginTop: "8px" }}
-        />
-      );
-    }
-
     if (
       resourceType === "collaboration-requests" ||
-      resourceType === "collaborators" ||
-      resourceType === "groups"
+      resourceType === "collaborators"
     ) {
       return (
         <BoardTypeList
@@ -146,29 +124,13 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
             onClickBlock(blocks, boardTypeSearchParamKey)
           }
           onClickCreateNewBlock={onClickAddBlock}
-          onClickUpdateBlock={onClickUpdateBlock}
           selectedResourceType={resourceType}
-          style={{ marginTop: "8px" }}
+          style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
         />
       );
     }
 
     switch (boardType) {
-      case "group-kanban":
-        return (
-          <BoardTypeKanban
-            block={block}
-            onClickUpdateBlock={onClickUpdateBlock}
-            onClickBlock={(blocks) =>
-              onClickBlock(blocks, boardTypeSearchParamKey)
-            }
-            selectedResourceType={resourceType!}
-            onClickCreateNewBlock={onClickAddBlock}
-            onClickDeleteBlock={onClickDeleteBlock}
-            style={{ marginTop: "8px", flex: 1 }}
-          />
-        );
-
       case "status-kanban":
         return (
           <ViewByStatusContainer
@@ -181,13 +143,12 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
         return (
           <BoardTypeList
             block={block}
-            onClickUpdateBlock={onClickUpdateBlock}
             onClickBlock={(blocks) =>
               onClickBlock(blocks, boardTypeSearchParamKey)
             }
             selectedResourceType={resourceType!}
             onClickCreateNewBlock={onClickAddBlock}
-            style={{ marginTop: "8px" }}
+            style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
           />
         );
     }
@@ -231,8 +192,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     const search = new URLSearchParams(window.location.search);
 
     switch (key) {
-      case "groups":
-      case "projects":
+      case "boards":
       case "tasks":
         if (viewTypes && viewTypes.length > 0) {
           search.set(boardTypeSearchParamKey!, viewTypes[0]);
@@ -249,15 +209,12 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     }
   };
 
-  return (
-    <StyledContainer
-      s={{
-        flexDirection: "column",
-        flex: 1,
-        maxWidth: "100%",
-      }}
-    >
-      {renderHeader()}
+  const renderTabs = () => {
+    if (resourceTypes.length < 2) {
+      return null;
+    }
+
+    return (
       <StyledContainer
         s={{
           flexWrap: "nowrap",
@@ -284,6 +241,19 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
           );
         })}
       </StyledContainer>
+    );
+  };
+
+  return (
+    <StyledContainer
+      s={{
+        flexDirection: "column",
+        flex: 1,
+        maxWidth: "100%",
+      }}
+    >
+      {renderHeader()}
+      {renderTabs()}
       {renderBoardType()}
     </StyledContainer>
   );

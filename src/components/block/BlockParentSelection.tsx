@@ -11,7 +11,7 @@ export interface IBlockParentSelectionProps {
 
   disabled?: boolean;
   value?: string;
-  onChange?: (parentID: string) => void;
+  onChange?: (parentId: string) => void;
 }
 
 const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
@@ -55,8 +55,8 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
 
   const renderSelectedParent = () => {
     if (value) {
-      const immediateParentID = value;
-      const immediateParent = findBlock(possibleParents, immediateParentID);
+      const immediateParentId = value;
+      const immediateParent = findBlock(possibleParents, immediateParentId);
 
       if (immediateParent) {
         return <BlockThumbnail block={immediateParent} />;

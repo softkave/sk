@@ -1,10 +1,9 @@
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
+import ProjectFormInDrawer from "../boardBlock/BoardFormInDrawer";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
-import GroupFormInDrawer from "../group/GroupFormInDrawer";
 import LabelListWithDrawer from "../label/LabelListWithDrawer";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
-import ProjectFormInDrawer from "../project/ProjectFormInDrawer";
 import StatusListWithDrawer from "../status/StatusListWithDrawer";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 
@@ -15,7 +14,7 @@ export type BlockFormType =
   | "label-list-form";
 
 export interface IBlockFormsProps {
-  orgID: string;
+  orgId: string;
   formType: BlockFormType;
   onClose: () => void;
 
@@ -25,7 +24,7 @@ export interface IBlockFormsProps {
 }
 
 const BlockForms: React.FC<IBlockFormsProps> = (props) => {
-  const { block, formType, onClose, orgID, blockType, parentBlock } = props;
+  const { block, formType, onClose, orgId, blockType, parentBlock } = props;
 
   const noBlockWarning = () => {
     console.warn("Block is required for form type, but was not provided");
@@ -49,24 +48,13 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
     }
 
     switch (blockType) {
-      case "group":
-        return (
-          <GroupFormInDrawer
-            visible
-            onClose={onClose}
-            orgID={orgID}
-            block={block}
-            parentBlock={parentBlock}
-          />
-        );
-
       case "task":
         return (
           <TaskFormInDrawer
             visible
             block={block}
             onClose={onClose}
-            orgID={orgID}
+            orgId={orgId}
             parentBlock={parentBlock}
           />
         );
@@ -74,11 +62,11 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
       case "org":
         return <EditOrgFormInDrawer visible block={block} onClose={onClose} />;
 
-      case "project":
+      case "board":
         return (
           <ProjectFormInDrawer
             visible
-            orgID={orgID}
+            orgId={orgId}
             block={block}
             onClose={onClose}
             parentBlock={parentBlock}
@@ -93,7 +81,7 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
   const renderCollaboratorForm = () => {
     if (block) {
       return (
-        <AddCollaboratorFormInDrawer visible orgID={orgID} onClose={onClose} />
+        <AddCollaboratorFormInDrawer visible orgId={orgId} onClose={onClose} />
       );
     }
 

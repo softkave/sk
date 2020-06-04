@@ -1,10 +1,10 @@
 import { getCollectionItem, getCollectionItemsAsArray } from "../collection";
-import { IReduxState } from "../store";
+import { IAppState } from "../store";
 
-export function getUser(state: IReduxState, userID: string) {
-  return getCollectionItem(state.users, userID);
+export function getUser(state: IAppState, userId: string) {
+  return getCollectionItem(state.users, userId);
 }
 
-export function getUsersAsArray(state: IReduxState, ids: string[]) {
+export function getUsersAsArray(state: IAppState, ids: string[]) {
   return getCollectionItemsAsArray(state.users, ids);
 }

@@ -7,21 +7,21 @@ import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import loadBlockCollaborationRequestsOperationFunc from "../../redux/operations/block/loadBlockCollaborationRequests";
 import { operationStatusTypes } from "../../redux/operations/operation";
-import { addCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { addCollaboratorsOperationId } from "../../redux/operations/operationIds";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import loadBoardData from "../board/data-loaders/loadBoardData";
 import useOperation from "../hooks/useOperation";
 import AddCollaboratorForm, {
   IAddCollaboratorFormValues,
 } from "./AddCollaboratorForm";
 
-const scopeID = "AddCollaboratorFormContainer";
+const scopeId = "AddCollaboratorFormContainer";
 
 export interface IAddCollaboratorFormContainerProps {
-  orgID: string;
+  orgId: string;
 
   onClose: () => void;
 }
@@ -29,29 +29,29 @@ export interface IAddCollaboratorFormContainerProps {
 const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps> = (
   props
 ) => {
-  const { onClose, orgID } = props;
+  const { onClose, orgId } = props;
   const dispatch = useDispatch();
 
-  const organizationID = orgID;
+  const organizationId = orgId;
 
-  const organization = useSelector<IReduxState, IBlock>(
-    (state) => getBlock(state, organizationID)!
+  const organization = useSelector<IAppState, IBlock>(
+    (state) => getBlock(state, organizationId)!
   );
 
-  const collaboratorIDs = Array.isArray(organization.collaborators)
+  const collaboratorIds = Array.isArray(organization.collaborators)
     ? organization.collaborators
     : [];
 
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIDs)
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
+    getUsersAsArray(state, collaboratorIds)
   );
 
-  const requestIDs = Array.isArray(organization.collaborationRequests)
-    ? organization.collaborationRequests
+  const requestIds = Array.isArray(organization.notifications)
+    ? organization.notifications
     : [];
 
-  const requests = useSelector<IReduxState, INotification[]>((state) =>
-    getNotificationsAsArray(state, requestIDs)
+  const requests = useSelector<IAppState, INotification[]>((state) =>
+    getNotificationsAsArray(state, requestIds)
   );
 
   const [data, setData] = React.useState<IAddCollaboratorFormValues>({
@@ -59,8 +59,8 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
   });
 
   const operationStatus = useOperation({
-    scopeID,
-    operationID: addCollaboratorsOperationID,
+    scopeId,
+    operationId: addCollaboratorsOperationId,
   });
 
   const errors = operationStatus.error
@@ -71,14 +71,15 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     if (operationStatus.isCompleted) {
       onClose();
       dispatch(
-        pushOperation(addCollaboratorsOperationID, {
-          scopeID,
+        pushOperation(addCollaboratorsOperationId, {
+          scopeId,
           status: operationStatusTypes.consumed,
           timestamp: Date.now(),
         })
       );
 
-      loadBlockCollaborationRequestsOperationFunc({ block: organization });
+      // TODO: we need a loadBlockNotifications func
+      loadBoardData(organization);
     }
   });
 
@@ -86,7 +87,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     setData(data);
     addCollaboratorsOperationFunc(
       { block: organization, ...values },
-      { scopeID }
+      { scopeId }
     );
   };
 

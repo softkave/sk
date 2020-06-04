@@ -1,5 +1,5 @@
 import React from "react";
-import { INetError } from "../../net/query";
+import { INetError } from "../../net/types";
 import FormMessage from "./FormMessage";
 
 export interface IFormErrorProps {

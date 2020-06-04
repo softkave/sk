@@ -7,9 +7,9 @@ import { useHistory, useRouteMatch } from "react-router";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
-import { loadUserNotificationsOperationID } from "../../redux/operations/operationIDs";
+import { loadUserNotificationsOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
   ISingleOperationHelperDerivedProps,
 } from "../OperationHelper";
@@ -23,16 +23,16 @@ const Notifications: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch()!;
   const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(
-    "/app/notifications/:notificationID"
+    "/app/notifications/:notificationId"
   );
   const user = useSelector(getSignedInUserRequired);
-  const notifications = useSelector<IReduxState, INotification[]>((state) =>
+  const notifications = useSelector<IAppState, INotification[]>((state) =>
     getNotificationsAsArray(state, user.notifications || [])
   );
   const userHasNoNotifications = notifications.length === 0;
-  const currentNotificationID =
+  const currentNotificationId =
     currentNotificationRouteMatch && currentNotificationRouteMatch.params
-      ? currentNotificationRouteMatch.params.notificationID
+      ? currentNotificationRouteMatch.params.notificationId
       : undefined;
 
   const onClickNotification = (notification: INotification) => {
@@ -69,7 +69,7 @@ const Notifications: React.FC<{}> = (props) => {
   const renderNotificationList = () => {
     return (
       <NotificationList
-        currentNotificationID={currentNotificationID}
+        currentNotificationId={currentNotificationId}
         notifications={notifications}
         onClickNotification={onClickNotification}
       />
@@ -81,7 +81,7 @@ const Notifications: React.FC<{}> = (props) => {
   };
 
   const renderCurrentNotificationForDesktop = () => {
-    if (currentNotificationID) {
+    if (currentNotificationId) {
       return renderCurrentNotification();
     }
 
@@ -91,7 +91,7 @@ const Notifications: React.FC<{}> = (props) => {
   const renderNotificationsForMobile = () => {
     let content: React.ReactNode = null;
 
-    if (currentNotificationID) {
+    if (currentNotificationId) {
       content = renderCurrentNotification();
     } else {
       content = renderNotificationList();
@@ -135,7 +135,7 @@ const Notifications: React.FC<{}> = (props) => {
 
   return (
     <SingleOperationHelper
-      operationID={loadUserNotificationsOperationID}
+      operationId={loadUserNotificationsOperationId}
       render={render}
       loadFunc={loadNotifications}
     />

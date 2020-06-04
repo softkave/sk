@@ -9,42 +9,44 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { loadUserNotificationsOperationID } from "../operationIDs";
-import { getFirstOperationWithID } from "../selectors";
+import { loadUserNotificationsOperationId } from "../operationIds";
+import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadUserNotificationsOperationFunc(
   dataProps: {} = {},
   options: IOperationFuncOptions = {}
 ) {
   const user = getSignedInUserRequired(store.getState());
-  const operation = getFirstOperationWithID(
+  const operation = getFirstOperationWithId(
     store.getState(),
-    loadUserNotificationsOperationID
+    loadUserNotificationsOperationId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
-    pushOperation(loadUserNotificationsOperationID, {
-      scopeID: options.scopeID,
+    pushOperation(loadUserNotificationsOperationId, {
+      scopeId: options.scopeId,
       status: operationStatusTypes.operationStarted,
       timestamp: Date.now(),
     })
   );
 
   try {
-    const result = await userNet.getCollaborationRequests();
+    const result = await userNet.getUserNotifications();
 
     if (result && result.errors) {
       throw result.errors;
     }
 
-    const { requests } = result;
-    const ids = requests.map((request) => request.customId);
+    const { notifications } = result;
+    const ids = notifications.map((request) => request.customId);
 
-    store.dispatch(notificationActions.bulkAddNotificationsRedux(requests));
+    store.dispatch(
+      notificationActions.bulkAddNotificationsRedux(notifications)
+    );
     store.dispatch(
       userActions.updateUserRedux(
         user.customId,
@@ -56,17 +58,17 @@ export default async function loadUserNotificationsOperationFunc(
     );
 
     store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
-        scopeID: options.scopeID,
+      pushOperation(loadUserNotificationsOperationId, {
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationComplete,
         timestamp: Date.now(),
       })
     );
   } catch (error) {
     store.dispatch(
-      pushOperation(loadUserNotificationsOperationID, {
+      pushOperation(loadUserNotificationsOperationId, {
         error,
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationError,
         timestamp: Date.now(),
       })

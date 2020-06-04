@@ -1,42 +1,36 @@
-import { IReduxState } from "../store";
+import { IAppState } from "../store";
 
-export function getOperationsWithID(state: IReduxState, operationID: string) {
+export function getOperationsWithId(state: IAppState, operationId: string) {
   return state.operations.operations.filter((operation) => {
-    return operation.operationID === operationID;
+    return operation.operationId === operationId;
   });
 }
 
-export function getFirstOperationWithID(
-  state: IReduxState,
-  operationID: string
-) {
+export function getFirstOperationWithId(state: IAppState, operationId: string) {
   return state.operations.operations.find((operation) => {
-    return operation.operationID === operationID;
+    return operation.operationId === operationId;
   });
 }
 
-export function getOperationsForResource(
-  state: IReduxState,
-  resourceID: string
-) {
+export function getOperationsForResource(state: IAppState, resourceId: string) {
   return state.operations.operations.filter((operation) => {
-    return operation.resourceID === resourceID;
+    return operation.resourceId === resourceId;
   });
 }
 
-export function getOperationWithIDForResource(
-  state: IReduxState,
-  operationID: string,
-  resourceID?: string
+export function getOperationWithIdForResource(
+  state: IAppState,
+  operationId: string,
+  resourceId?: string
 ) {
   return state.operations.operations.find((operation) => {
     return (
-      operation.operationID === operationID &&
-      operation.resourceID === resourceID
+      operation.operationId === operationId &&
+      operation.resourceId === resourceId
     );
   });
 }
 
-export function operationExists(state: IReduxState, operationID: string) {
-  return !!getOperationsWithID(state, operationID);
+export function operationExists(state: IAppState, operationId: string) {
+  return !!getOperationsWithId(state, operationId);
 }

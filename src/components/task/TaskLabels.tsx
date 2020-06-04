@@ -3,45 +3,61 @@ import { Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { X as CloseIcon } from "react-feather";
 import { useSelector } from "react-redux";
-import { IBlock, IBlockLabel } from "../../models/block/block";
+import {
+  IBlock,
+  IBlockAssignedLabel,
+  IBlockLabel,
+} from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { indexArray } from "../../utils/object";
+import { getDateString } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 import RoundEdgeTags from "../utilities/RoundEdgeTags";
 
 export interface ITaskLabelsProps {
-  orgID: string;
-  onChange: (ids: string[]) => void;
+  orgId: string;
+  user: IUser;
+  onChange: (ids: IBlockAssignedLabel[]) => void;
 
   disabled?: boolean;
-  labelIDs?: string[];
+  labels?: IBlockAssignedLabel[];
 }
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-  const { orgID, onChange, disabled } = props;
-  const org = useSelector<IReduxState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
+  const { orgId, onChange, disabled, user } = props;
+  const org = useSelector<IAppState, IBlock>((state) => {
+    return getBlock(state, orgId)!;
   });
 
-  const labelList = org.availableLabels || [];
-  const labelIDs = props.labelIDs || [];
+  const labelList = org.boardLabels || [];
+  const labels = props.labels || [];
   const idToLabelMap = React.useMemo(
     () => indexArray(labelList || [], { path: "customId" }),
     [labelList]
   );
 
   const onAdd = (id: string) => {
-    if (labelIDs.indexOf(id) === -1) {
-      onChange([...labelIDs, id]);
+    const i = labels.findIndex((label) => label.customId === id);
+
+    if (i === -1) {
+      onChange([
+        ...labels,
+        {
+          customId: id,
+          assignedAt: getDateString(),
+          assignedBy: user.customId,
+        },
+      ]);
     }
   };
 
   const onRemove = (id: string) => {
-    const index = labelIDs.indexOf(id);
-    const newIDs = [...labelIDs];
-    newIDs.splice(index, 1);
-    onChange(newIDs);
+    const index = labels.findIndex((label) => label.customId === id);
+    const newLabels = [...labels];
+    newLabels.splice(index, 1);
+    onChange(newLabels);
   };
 
   const renderLabelTag = (label: IBlockLabel, canRemove) => {
@@ -69,12 +85,14 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   };
 
   const renderSelectedLabels = () => {
-    return labelIDs.map((id) => {
-      const label: IBlockLabel = idToLabelMap[id];
+    return labels.map((assignedLabel) => {
+      const label: IBlockLabel = idToLabelMap[assignedLabel.customId];
 
       if (label) {
         return renderLabelTag(label, true);
       }
+
+      console.log("missing label", assignedLabel);
 
       return null;
     });
@@ -94,7 +112,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         onClick={(evt) => {
           onAdd(evt.key);
         }}
-        selectedKeys={labelIDs}
+        selectedKeys={labels.map((label) => label.customId)}
       >
         {renderedLabelMenuItems}
         {renderedLabelMenuItems.length === 0 && (
@@ -102,11 +120,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             No Labels
           </StyledContainer>
         )}
-        {/* <Menu.Divider />
-        <Menu.Item>
-          <PlusOutlined />
-          Add or Edit Tags
-        </Menu.Item> */}
       </Menu>
     );
 
@@ -117,29 +130,9 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     );
   };
 
-  // const renderSelectLabel = () => {
-  //   return (
-  //     <Select
-  //       placeholder="Select label"
-  //       value={undefined}
-  //       onChange={(labelID) => onAdd(labelID as string)}
-  //     >
-  //       {labelIDs.map((id) => {
-  //         const label = idToLabelMap[id];
-  //         return (
-  //           <Select.Option value={id} key={label.customId}>
-  //             {renderLabelTag(label, false)}
-  //           </Select.Option>
-  //         );
-  //       })}
-  //     </Select>
-  //   );
-  // };
-
   return (
     <StyledContainer>
       <Space direction="vertical">
-        {/* {renderSelectLabel()} */}
         <Space>
           {renderSelectedLabels()}
           {!disabled && renderAddNewLabel()}

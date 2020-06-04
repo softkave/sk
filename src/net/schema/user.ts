@@ -1,5 +1,9 @@
+import {
+  errorFragment,
+  notificationFragment,
+  userFragment,
+} from "../../models/fragments";
 import { blockFragment } from "./block";
-import { errorFragment } from "./error";
 
 export const userExistsQuery = `
   ${errorFragment}
@@ -30,18 +34,13 @@ export const updateUserMutation = `
 
 export const userLoginFragement = `
   ${errorFragment}
+  ${userFragment}
   fragment userQueryResult on UserQueryResult {
     errors {
       ...errorFragment
     }
     user {
-      name
-      email
-      customId
-      createdAt
-      lastNotificationCheckTime
-      color
-      orgs
+      ...userFragment
     }
     token
   }
@@ -106,39 +105,17 @@ export const changePasswordWithTokenMutation = `
   }
 `;
 
-export const getCollaborationRequestsQuery = `
+export const getUserNotificationsQuery = `
   ${errorFragment}
-  query GetCollaborationRequestsQuery {
+  ${notificationFragment}
+  query GetUserNotificationsQuery {
     user {
-      getCollaborationRequests {
+      getUserNotifications {
         errors {
           ...errorFragment
         }
-        requests {
-          customId
-          from {
-            userId
-            name
-            blockId
-            blockName
-            blockType
-          }
-          createdAt
-          body
-          readAt
-          to {
-            email
-            userId
-          }
-          statusHistory {
-            status
-            date
-          }
-          sentEmailHistory {
-            date
-          }
-          type
-          root
+        notifications {
+          ...notificationFragment
         }
       }
     }
@@ -156,13 +133,13 @@ export const getUserDataQuery = `
   }
 `;
 
-export const updateCollaborationRequestMutation = `
+export const markNotificationReadMutation = `
   ${errorFragment}
-  mutation UpdateCollaborationRequestMutation (
-    $customId: String!, $data: UpdateCollaborationRequestInput!
+  mutation MarkNotificationReadMutation (
+    $notificationId: String!, $readAt: String!
   ) {
     user {
-      updateCollaborationRequest (customId: $customId, data: $data) {
+      markNotificationRead (notificationId: $notificationId, readAt: $readAt) {
         errors {
           ...errorFragment
         }
@@ -175,32 +152,16 @@ export const respondToCollaborationRequestMutation = `
   ${blockFragment}
   ${errorFragment}
   mutation RespondToCollaborationRequestMutation (
-    $customId: String!, $response: String!
+    $requestId: String!, $response: String!
   ) {
     user {
-      respondToCollaborationRequest (customId: $customId, response: $response) {
+      respondToCollaborationRequest (requestId: $requestId, response: $response) {
         errors {
           ...errorFragment
         }
         block {
           ...blockFragment
         }
-      }
-    }
-  }
-`;
-
-export const getSessionDetailsQuery = `
-  ${errorFragment}
-  query GetSessionDetailsQuery {
-    user {
-      getSessionDetails {
-        errors {
-          ...errorFragment
-        }
-        notificationsCount
-        organizationsCount
-        assignedTasksCount
       }
     }
   }

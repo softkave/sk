@@ -2,12 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlockCollaboratorsOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import EmptyMessage from "../EmptyMessage";
-import GeneralError from "../GeneralError";
-import useOperation from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
@@ -18,28 +15,11 @@ export interface ICProps {
 
 const CollaboratorList: React.FC<ICProps> = (props) => {
   const { organization } = props;
-  const collaborators = useSelector<IReduxState, IUser[]>((state) =>
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
     getUsersAsArray(state, organization.collaborators!)
   );
-  const collaboratorsStatus = useOperation({
-    operationID: getBlockCollaboratorsOperationID,
-    resourceID: organization.customId,
-  });
 
-  if (collaboratorsStatus.error) {
-    return (
-      <StyledContainer
-        s={{
-          width: "100%",
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <GeneralError error={collaboratorsStatus.error} />
-      </StyledContainer>
-    );
-  } else if (collaborators.length === 0) {
+  if (collaborators.length === 0) {
     return <EmptyMessage>No collaborators yet.</EmptyMessage>;
   }
 

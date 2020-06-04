@@ -1,16 +1,15 @@
 import { BlockType, IBlock } from "../../models/block/block";
 
 export type BoardResourceType =
-  | "groups"
   | "tasks"
-  | "projects"
+  | "boards"
   | "collaborators"
   | "collaboration-requests";
 
-export type BoardViewType = "group-kanban" | "status-kanban" | "list";
+export type BoardViewType = "status-kanban" | "list";
 
 export interface IBlockPathMatch {
-  blockID: string;
+  blockId: string;
 }
 
 export interface IBoardResourceTypePathMatch {

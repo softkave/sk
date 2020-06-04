@@ -8,26 +8,22 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { getBlockChildrenOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
-import updateBlockOperationFunc from "./updateBlock";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface ILoadBlockChildrenOperationFuncDataProps {
   block: IBlock;
+  operationId: string;
   typeList?: BlockType[];
-  useBoardId?: boolean;
-  updateParentInStore?: boolean;
-  updateParentInBackend?: boolean;
 }
 
 export default async function loadBlockChildrenOperationFunc(
   dataProps: ILoadBlockChildrenOperationFuncDataProps,
   options: IOperationFuncOptions = {}
 ) {
-  const { block, typeList } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const { block, typeList, operationId } = dataProps;
+  const operation = getOperationWithIdForResource(
     store.getState(),
-    getBlockChildrenOperationID,
+    operationId,
     block.customId
   );
 
@@ -37,9 +33,9 @@ export default async function loadBlockChildrenOperationFunc(
 
   store.dispatch(
     pushOperation(
-      getBlockChildrenOperationID,
+      operationId,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -48,11 +44,7 @@ export default async function loadBlockChildrenOperationFunc(
   );
 
   try {
-    const result = await blockNet.getBlockChildren(
-      block,
-      typeList,
-      dataProps.useBoardId
-    );
+    const result = await blockNet.getBlockChildren(block, typeList);
 
     if (result && result.errors) {
       throw result.errors;
@@ -61,57 +53,31 @@ export default async function loadBlockChildrenOperationFunc(
     const { blocks } = result;
     store.dispatch(blockActions.bulkAddBlocksRedux(blocks));
 
-    if (dataProps.updateParentInStore) {
-      // TODO: this list should be based on the valid chidren types
-      const parentUpdate: Partial<IBlock> = {
-        tasks: [],
-        groups: [],
-        projects: [],
-        groupTaskContext: [],
-        groupProjectContext: [],
-      };
+    const boards: string[] = [];
 
-      blocks.forEach((nextBlock) => {
-        const container = parentUpdate[`${nextBlock.type}s`];
-        container.push(nextBlock.customId);
-
-        if (nextBlock.type === "group") {
-          parentUpdate.groupTaskContext!.push(nextBlock.customId);
-          parentUpdate.groupProjectContext!.push(nextBlock.customId);
-        }
-      });
-
-      // tslint:disable-next-line: forin
-      for (const key in parentUpdate) {
-        const typeContainer = parentUpdate[key];
-
-        // To update children customIds if not present or some are missing
-        // { tasks: [], ... }
-        if (
-          !Array.isArray(block[key]) ||
-          block[key].length !== typeContainer.length
-        ) {
-          if (dataProps.updateParentInBackend) {
-            // TODO: Think on, this is currently fire and forget, should we wait for it?
-            updateBlockOperationFunc({ block, data: parentUpdate }, options);
-          }
-
-          store.dispatch(
-            blockActions.updateBlockRedux(block.customId, parentUpdate, {
-              arrayUpdateStrategy: "replace",
-            })
-          );
-
-          break;
-        }
+    blocks.forEach((nextBlock) => {
+      if (nextBlock.type === BlockType.Board) {
+        boards.push(nextBlock.customId);
       }
+    });
+
+    if (boards.length > 0) {
+      store.dispatch(
+        blockActions.updateBlockRedux(
+          block.customId,
+          { boards },
+          {
+            arrayUpdateStrategy: "replace",
+          }
+        )
+      );
     }
 
     store.dispatch(
       pushOperation(
-        getBlockChildrenOperationID,
+        operationId,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -121,10 +87,10 @@ export default async function loadBlockChildrenOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        getBlockChildrenOperationID,
+        operationId,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

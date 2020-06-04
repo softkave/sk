@@ -3,14 +3,17 @@ import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationID } from "../../redux/operations/operationIDs";
+import { updateBlockOperationId } from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IReduxState } from "../../redux/store";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import { IAppState } from "../../redux/store";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
-const scopeID = "StatusListContainer";
+const scopeId = "StatusListContainer";
 
 export interface IStatusListContainerProps {
   block: IBlock;
@@ -19,27 +22,27 @@ export interface IStatusListContainerProps {
 const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   const { block } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IReduxState, IBlock>((state) => {
+  const org = useSelector<IAppState, IBlock>((state) => {
     if (block.type === "org") {
       return getBlock(state, block.customId)!;
     } else {
-      return getBlock(state, block.rootBlockID)!;
+      return getBlock(state, block.rootBlockId)!;
     }
   });
 
-  const statusList = org.availableStatus || [];
+  const statusList = org.boardStatuses || [];
   const operationStatus = useOperation({
-    scopeID,
-    operationID: updateBlockOperationID,
-    resourceID: org.customId,
+    scopeId,
+    operationId: updateBlockOperationId,
+    resourceId: org.customId,
   });
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  if (errors && errors.data && errors.data.availableStatus) {
-    errors.statusList = errors.data.availableStatus;
+  if (errors && errors.data && errors.data.boardStatuses) {
+    errors.statusList = errors.data.boardStatuses;
     delete errors.data;
   }
 
@@ -49,16 +52,16 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
         block: org,
         data: {
           // TODO: find a better way to only update the ones that changed
-          availableStatus: values.map((value) => ({
+          boardStatuses: values.map((value) => ({
             ...value,
-            updatedAt: Date.now(),
+            updatedAt: getDateString(),
             updatedBy: user.customId,
           })),
         },
       },
       {
-        scopeID,
-        resourceID: org.customId,
+        scopeId,
+        resourceId: org.customId,
       }
     );
   };

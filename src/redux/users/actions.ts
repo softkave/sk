@@ -3,7 +3,7 @@ import {
   ICollectionAddItemPayload,
   ICollectionDeleteItemPayload,
   ICollectionUpdateItemPayload,
-  IUpdateResourceMeta
+  IUpdateResourceMeta,
 } from "../collection";
 import {
   ADD_USER,
@@ -11,7 +11,7 @@ import {
   BULK_DELETE_USERS,
   BULK_UPDATE_USERS,
   DELETE_USER,
-  UPDATE_USER
+  UPDATE_USER,
 } from "./constants";
 
 export interface IAddUserAction {
@@ -24,8 +24,8 @@ export function addUserRedux(user: IUser): IAddUserAction {
     type: ADD_USER,
     payload: {
       id: user.customId,
-      data: user
-    }
+      data: user,
+    },
   };
 }
 
@@ -45,22 +45,22 @@ export function updateUserRedux(
     type: UPDATE_USER,
     payload: {
       id,
-      data: user
-    }
+      data: user,
+    },
   };
 }
 
-export interface IDeleteUserAction {
+export interface IdeleteUserAction {
   type: DELETE_USER;
   payload: ICollectionDeleteItemPayload;
 }
 
-export function deleteUserRedux(id: string): IDeleteUserAction {
+export function deleteUserRedux(id: string): IdeleteUserAction {
   return {
     type: DELETE_USER,
     payload: {
-      id
-    }
+      id,
+    },
   };
 }
 
@@ -72,10 +72,10 @@ export interface IBulkAddUsersAction {
 export function bulkAddUsersRedux(users: IUser[]): IBulkAddUsersAction {
   return {
     type: BULK_ADD_USERS,
-    payload: users.map(user => ({
+    payload: users.map((user) => ({
       id: user.customId,
-      data: user
-    }))
+      data: user,
+    })),
   };
 }
 
@@ -92,7 +92,7 @@ export function bulkUpdateUsersRedux(
   return {
     meta,
     type: BULK_UPDATE_USERS,
-    payload: users
+    payload: users,
   };
 }
 
@@ -104,14 +104,14 @@ export interface IBulkDeleteUsersAction {
 export function bulkDeleteUsersRedux(users: string[]): IBulkDeleteUsersAction {
   return {
     type: BULK_DELETE_USERS,
-    payload: users.map(id => ({ id }))
+    payload: users.map((id) => ({ id })),
   };
 }
 
 export type IUsersAction =
   | IAddUserAction
   | IUpdateUserAction
-  | IDeleteUserAction
+  | IdeleteUserAction
   | IBulkAddUsersAction
   | IBulkUpdateUsersAction
   | IBulkDeleteUsersAction;

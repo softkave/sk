@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { newId } from "../../utils/utils";
+import { getDateString, newId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormikExtended from "../hooks/useFormikExtended";
@@ -39,6 +39,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     saveChanges(values.labelList);
   };
 
+  // TODO: form still shows error that come from server when submitting
+  // should it even be allowed to submit, considering there is an error?
   const {
     formik,
     deleteIndexInArrayField,
@@ -63,8 +65,11 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
         (errors.labelList as any).forEach((e, i) => {
           if (e) {
-            const status = formik.values.labelList[i];
-            newEditingList.push(status.customId);
+            const label = formik.values.labelList[i];
+
+            if (!editingLabelList.exists(label.customId)) {
+              newEditingList.push(label.customId);
+            }
           }
         });
 
@@ -228,7 +233,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       name: "",
       description: "",
       color: randomColor(),
-      createdAt: Date.now(),
+      createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
     };

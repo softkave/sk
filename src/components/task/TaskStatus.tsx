@@ -4,26 +4,26 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
-import { IReduxState } from "../../redux/store";
+import { IAppState } from "../../redux/store";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskStatusProps {
-  orgID: string;
+  orgId: string;
   onChange: (value: string) => void;
 
   disabled?: boolean;
-  statusID?: string;
+  statusId?: string;
 }
 
 // TODO: should we show a loading screen or no when the status is changed?
 
 const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
-  const { orgID, statusID: value, onChange, disabled } = props;
-  const org = useSelector<IReduxState, IBlock>((state) => {
-    return getBlock(state, orgID)!;
+  const { orgId, statusId: value, onChange, disabled } = props;
+  const org = useSelector<IAppState, IBlock>((state) => {
+    return getBlock(state, orgId)!;
   });
 
-  const statusList = org.availableStatus || [];
+  const statusList = org.boardStatuses || [];
 
   const selectedStatus = value
     ? statusList.find((status) => {

@@ -1,8 +1,6 @@
-export interface IUserRole {
-  roleName: string;
-  orgId: string;
-  assignedAt: number;
-  assignedBy: string;
+export const userSchemaVersion = 2; // increment when you make changes that are not backward compatible
+
+export interface IUserOrg {
   customId: string;
 }
 
@@ -10,24 +8,13 @@ export interface IUser {
   customId: string;
   name: string;
   email: string;
-  hash: string;
-  createdAt: number;
-  forgotPasswordHistory: number[];
-  changePasswordHistory: number[];
-  lastNotificationCheckTime: number;
+  createdAt: string;
+  forgotPasswordHistory: string[];
+  passwordLastChangedAt: string;
   rootBlockId: string;
-  orgs: string[];
+  orgs: IUserOrg[];
   color: string;
-  roles: IUserRole[];
-  notifications?: string[];
-  assignedTasks?: string[];
-}
+  notificationsLastCheckedAt?: string;
 
-export interface IUserSessionDetails {
-  notificationsCount: number;
-  unseenNotificationsCount: number;
-  organizationsCount: number;
-  unseenOrganizationsCount: number;
-  assignedTasksCount: number;
-  unseenAssignedTasksCount: number;
+  notifications?: string[];
 }

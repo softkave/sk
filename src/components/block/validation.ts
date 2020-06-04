@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
-import { textPattern } from "../../models/user/descriptor";
+import { textPattern } from "../../models/user/validation";
 
 // TODO: add error messages and help to form items, like the max strings, and if they are required
 

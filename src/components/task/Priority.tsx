@@ -4,15 +4,10 @@ import { BlockPriority } from "../../models/block/block";
 
 export type TaskPriority = BlockPriority;
 
-const notImportantKey = "not important";
-const veryImportantKey = "very important";
 export const priorityToColorMap = {
-  [notImportantKey]: "#EACA2C",
-  important: "#7ED321",
-  [veryImportantKey]: "rgb(255, 77, 79)",
-  // [notImportantKey]: "yellow",
-  // important: "green",
-  // [veryImportantKey]: "red",
+  [BlockPriority.NotImportant]: "#EACA2C",
+  [BlockPriority.Important]: "#7ED321",
+  [BlockPriority.VeryImportant]: "rgb(255, 77, 79)",
 };
 
 interface IPriorityProps {

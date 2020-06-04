@@ -1,50 +1,50 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  addBlockOperationID,
-  updateBlockOperationID,
-} from "../../redux/operations/operationIDs";
+  addBlockOperationId,
+  updateBlockOperationId,
+} from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
-import GroupForm, { IGroupFormValues } from "./GroupForm";
+import BoardForm, { IBoardFormValues } from "./BoardForm";
 
-const scopeID = "GroupFormContainer";
+const scopeId = "BoardFormContainer";
 
-export interface IGroupFormContainerProps {
-  orgID: string;
+export interface IBoardFormContainerProps {
+  orgId: string;
   onClose: () => void;
 
   parentBlock?: IBlock;
   block?: IBlock;
 }
 
-const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
+const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
   const { onClose, parentBlock } = props;
   const user = useSelector(getSignedInUserRequired);
 
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "group", parentBlock)
+    props.block || getNewBlock(user, BlockType.Board, parentBlock)
   );
 
   const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
-    scopeID,
-    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
-    resourceID: block.customId,
+    scopeId,
+    operationId: props.block ? updateBlockOperationId : addBlockOperationId,
+    resourceId: block.customId,
   });
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  const onSubmit = async (values: IGroupFormValues) => {
+  const onSubmit = async (values: IBoardFormValues) => {
     const data = { ...block, ...values };
     setBlock(data);
 
@@ -55,8 +55,8 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -66,19 +66,19 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     }
   };
 
   return (
-    <GroupForm
-      value={block}
+    <BoardForm
+      value={block as any}
       onClose={onClose}
       formOnly={!props.block}
-      group={props.block}
+      board={props.block}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}
@@ -87,4 +87,4 @@ const GroupFormContainer: React.FC<IGroupFormContainerProps> = (props) => {
   );
 };
 
-export default React.memo(GroupFormContainer);
+export default React.memo(BoardFormContainer);

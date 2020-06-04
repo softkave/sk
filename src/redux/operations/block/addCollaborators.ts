@@ -3,7 +3,6 @@ import { IBlock } from "../../../models/block/block";
 import { IAddCollaboratorFormItemValues } from "../../../models/types";
 import * as blockNet from "../../../net/block";
 import { newId } from "../../../utils/utils";
-import * as blockActions from "../../blocks/actions";
 import store from "../../store";
 import { pushOperation } from "../actions";
 import {
@@ -11,8 +10,8 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addCollaboratorsOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { addCollaboratorsOperationId } from "../operationIds";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddCollaboratorOperationFuncDataProps {
   block: IBlock;
@@ -28,21 +27,21 @@ export default async function addCollaboratorsOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { block, collaborators, message, expiresAt } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
-    addCollaboratorsOperationID,
+    addCollaboratorsOperationId,
     block.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
     pushOperation(
-      addCollaboratorsOperationID,
+      addCollaboratorsOperationId,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -79,7 +78,7 @@ export default async function addCollaboratorsOperationFunc(
     // );
 
     /**
-     * Currently, the only the request IDs are stored, which will trigger a refetch of all the block's notifications
+     * Currently, the only the request Ids are stored, which will trigger a refetch of all the block's notifications
      * including the ones already fetched. The advantage to this, is that out-of-date notifications will be updated.
      *
      * TODO: When real-time data update is eventually implemented,
@@ -99,9 +98,9 @@ export default async function addCollaboratorsOperationFunc(
 
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationID,
+        addCollaboratorsOperationId,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -111,10 +110,10 @@ export default async function addCollaboratorsOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationID,
+        addCollaboratorsOperationId,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },

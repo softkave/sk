@@ -1,17 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { operationHasStatusWithScopeID } from "../../redux/operations/operation";
-import { getBlockChildrenOperationID } from "../../redux/operations/operationIDs";
-import { IReduxState } from "../../redux/store";
+import { operationHasStatusWithScopeId } from "../../redux/operations/operation";
+import { IAppState } from "../../redux/store";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import ViewByStatus from "./ViewByStatus";
 
-const scopeID = "status-container";
+const scopeId = "status-container";
+const opId = "view-by-status";
 
 export interface IViewByStatusContainerProps {
   block: IBlock;
@@ -24,38 +24,38 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
-  const org = useSelector<IReduxState, IBlock>(
-    (state) => getBlock(state, block.rootBlockID || block.customId)!
+  const org = useSelector<IAppState, IBlock>(
+    (state) => getBlock(state, block.rootBlockId || block.customId)!
   );
-  const statuses = org.availableStatus || [];
+  const statuses = org.boardStatuses || [];
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;
-    const shouldLoad = !operationHasStatusWithScopeID(operation, scopeID);
+    const shouldLoad = !operationHasStatusWithScopeId(operation, scopeId);
 
     if (shouldLoad) {
       loadBlockChildrenOperationFunc(
         {
           block,
-          useBoardId: true,
-          typeList: ["task"],
+          typeList: [BlockType.Task],
+          operationId: opId,
         },
-        { scopeID, resourceID: block.customId }
+        { scopeId, resourceId: block.customId }
       );
     }
   };
 
   const loadChildrenStatus = useOperation(
     {
-      scopeID,
-      operationID: getBlockChildrenOperationID,
-      resourceID: block.customId,
+      scopeId,
+      operationId: opId,
+      resourceId: block.customId,
     },
     loadBlockChildren
   );
 
   // TODO: how can we memoize previous filters to make search faster
-  const blocks = useSelector<IReduxState, IBlock[]>((state) => {
+  const blocks = useSelector<IAppState, IBlock[]>((state) => {
     if (!loadChildrenStatus.isCompleted) {
       return [];
     }
@@ -66,7 +66,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
       if (
         resource.resource.type === "task" &&
-        resource.resource.boardId === block.customId
+        resource.resource.parent === block.customId
       ) {
         blockList.push(resource.resource);
       }

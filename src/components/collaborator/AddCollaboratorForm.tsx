@@ -6,7 +6,7 @@ import moment from "moment";
 import React from "react";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
-import ErrorMessages from "../../models/errorMessages";
+import ErrorMessages from "../../models/ErrorMessages";
 import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";

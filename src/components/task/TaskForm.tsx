@@ -7,7 +7,6 @@ import {
   Input,
   List,
   Select,
-  Switch,
   Typography,
 } from "antd";
 import { FormikProps } from "formik";
@@ -16,14 +15,15 @@ import React from "react";
 import {
   BlockPriority,
   BlockType,
+  IAssignee,
   IBlock,
+  IBlockAssignedLabel,
   ISubTask,
-  ITaskCollaborationData,
-  ITaskCollaborator,
 } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/object";
+import { getDateString } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
@@ -49,15 +49,14 @@ export interface ITaskFormValues {
   // name: string;
   customId: string;
   type: BlockType;
-  taskCollaborationData: ITaskCollaborationData;
-  taskCollaborators: ITaskCollaborator[];
+  assignees: IAssignee[];
   expectedEndAt: number;
   description?: string;
   parent?: string;
   subTasks?: ISubTask[];
   priority?: BlockPriority;
   status?: string;
-  labels?: string[];
+  labels?: IBlockAssignedLabel[];
 }
 
 type TaskFormFormikProps = FormikProps<ITaskFormValues>;
@@ -66,7 +65,7 @@ export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
 export interface ITaskFormProps {
   user: IUser;
   collaborators: IUser[];
-  orgID: string;
+  orgId: string;
   possibleParents: IBlock[];
   value: ITaskFormValues;
   onClose: () => void;
@@ -90,7 +89,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     value,
     onSubmit,
     collaborators,
-    orgID,
+    orgId,
     user,
     errors: externalErrors,
   } = props;
@@ -174,52 +173,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
-  const onChangeToggleSwitch = (formikProps: TaskFormFormikProps) => {
-    const { values, setValues } = formikProps;
-    const isCompleted = !!values.taskCollaborationData.completedAt;
-    const now = Date.now();
-    const update: ITaskFormValues = {
-      ...values,
-      taskCollaborationData: {
-        ...values.taskCollaborationData,
-        completedAt: isCompleted ? null : now,
-        completedBy: isCompleted ? null : user.customId,
-      },
-    };
-    const subTasks = update.subTasks;
-
-    if (Array.isArray(subTasks) && subTasks.length > 0) {
-      const newSubTasks = subTasks.map((subTask) => ({
-        ...subTask,
-        completedAt: isCompleted ? null : now,
-        completedBy: isCompleted ? null : user.customId,
-      }));
-
-      update.subTasks = newSubTasks;
-    }
-
-    setValues(update);
-  };
-
-  const renderToggleSwitch = (formikProps: TaskFormFormikProps) => {
-    const { values } = formikProps;
-
-    return (
-      <Form.Item
-        label="Completed"
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
-        labelAlign="left"
-      >
-        <Switch
-          checked={!!values.taskCollaborationData.completedAt}
-          onChange={() => onChangeToggleSwitch(formikProps)}
-          disabled={isSubmitting}
-        />
-      </Form.Item>
-    );
-  };
-
   const renderPriority = (formikProps: TaskFormFormikProps) => {
     const { setFieldValue, values } = formikProps;
 
@@ -250,9 +203,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskStatus
-          orgID={orgID}
+          orgId={orgId}
           onChange={(val: string) => setFieldValue("status", val)}
-          statusID={values.status}
+          statusId={values.status}
           disabled={isSubmitting}
         />
       </Form.Item>
@@ -271,9 +224,12 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskLabels
-          orgID={orgID}
-          onChange={(val: string[]) => setFieldValue("labels", val)}
-          labelIDs={values.labels}
+          orgId={orgId}
+          user={user}
+          onChange={(val: IBlockAssignedLabel[]) =>
+            setFieldValue("labels", val)
+          }
+          labels={values.labels}
           disabled={isSubmitting}
         />
       </Form.Item>
@@ -311,8 +267,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const unassignCollaborator = (
-    collaboratorData: ITaskCollaborator,
-    taskCollaborators: ITaskCollaborator[]
+    collaboratorData: IAssignee,
+    taskCollaborators: IAssignee[]
   ) => {
     const index = taskCollaborators.findIndex((next) => {
       return next.userId === collaboratorData.userId;
@@ -329,8 +285,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const assignCollaborator = (
     collaborator: IUser,
-    taskCollaborators: ITaskCollaborator[]
-  ): ITaskCollaborator[] => {
+    taskCollaborators: IAssignee[]
+  ): IAssignee[] => {
     const collaboratorExists = !!taskCollaborators.find((next) => {
       return collaborator.customId === next.userId;
     });
@@ -340,7 +296,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         ...taskCollaborators,
         {
           userId: collaborator.customId,
-          assignedAt: Date.now(),
+          assignedAt: getDateString(),
           assignedBy: user.customId,
         },
       ];
@@ -352,28 +308,24 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   const renderTaskCollaborators = (formikProps: TaskFormFormikProps) => {
     const { values, setFieldValue } = formikProps;
 
-    if (Array.isArray(values.taskCollaborators)) {
-      if (values.taskCollaborators.length === 0) {
+    if (Array.isArray(values.assignees)) {
+      if (values.assignees.length === 0) {
         return "Not assigned to anybody yet";
       }
 
       return (
         <List
-          dataSource={values.taskCollaborators}
+          dataSource={values.assignees}
           renderItem={(item) => {
             return (
               <List.Item>
                 <TaskCollaboratorThumbnail
                   key={item.userId}
-                  collaborationType={
-                    values.taskCollaborationData.collaborationType
-                  }
                   collaborator={indexedCollaborators[item.userId]}
-                  taskCollaborator={item}
                   onUnassign={() =>
                     setFieldValue(
                       "taskCollaborators",
-                      unassignCollaborator(item, values.taskCollaborators)
+                      unassignCollaborator(item, values.assignees)
                     )
                   }
                   disabled={isSubmitting}
@@ -403,10 +355,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           onChange={(index) =>
             setFieldValue(
               "taskCollaborators",
-              assignCollaborator(
-                collaborators[Number(index)],
-                values.taskCollaborators
-              )
+              assignCollaborator(collaborators[Number(index)], values.assignees)
             )
           }
           disabled={isSubmitting}
@@ -425,7 +374,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             if (!isSubmitting) {
               setFieldValue(
                 "taskCollaborators",
-                assignCollaborator(user, values.taskCollaborators)
+                assignCollaborator(user, values.assignees)
               );
             }
           }}
@@ -467,7 +416,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const renderSubTasks = (formikProps: TaskFormFormikProps) => {
     const { values, touched, errors } = formikProps;
-    console.log({ errors, touched });
 
     return (
       <StyledContainer
@@ -542,12 +490,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             )}
             {renderDescriptionInput(formikProps)}
             {renderParentInput(formikProps)}
-            {/* {renderToggleSwitch(formikProps)} */}
             {renderPriority(formikProps)}
             {renderStatus(formikProps)}
             {renderLabels(formikProps)}
             {renderDueDateInput(formikProps)}
-            {/* {renderCollaborationTypeInput(formikProps)} */}
             {renderAssignedToInput(formikProps)}
             {/* TODO: work on sub-tasks, there is a bug preventing adding tasks, and add disabled */}
             {renderSubTasks(formikProps)}

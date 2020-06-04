@@ -61,8 +61,7 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
     renderMenuProps: IMenuWithTriggerRenderMenuProps
   ) => {
     const availableBoardTypes =
-      (resourceType &&
-        getBoardViewTypesForResourceType(block, resourceType, isMobile)) ||
+      (resourceType && getBoardViewTypesForResourceType(block, resourceType)) ||
       [];
 
     return (

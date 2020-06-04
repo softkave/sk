@@ -5,9 +5,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
+  CollaborationRequestStatusType,
   INotification,
-  notificationStatus,
-  NotificationStatusText,
 } from "../../models/notification/notification";
 import { getNotification } from "../../redux/notifications/selectors";
 import respondToNotificationOperationFunc from "../../redux/operations/notification/respondToNotification";
@@ -15,9 +14,9 @@ import IOperation, {
   getOperationLastError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import { respondToNotificationOperationID } from "../../redux/operations/operationIDs";
-import { getOperationWithIDForResource } from "../../redux/operations/selectors";
-import { IReduxState } from "../../redux/store";
+import { respondToNotificationOperationId } from "../../redux/operations/operationIds";
+import { getOperationWithIdForResource } from "../../redux/operations/selectors";
+import { IAppState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
@@ -30,24 +29,24 @@ import {
 const Notification: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch<INotificationsPathParams>(
-    "/app/notifications/:notificationID"
+    "/app/notifications/:notificationId"
   );
-  const currentNotificationID =
+  const currentNotificationId =
     routeMatch && routeMatch.params
-      ? routeMatch.params.notificationID
+      ? routeMatch.params.notificationId
       : undefined;
-  const notification = useSelector<IReduxState, INotification | undefined>(
-    (state) => getNotification(state, currentNotificationID!)
+  const notification = useSelector<IAppState, INotification | undefined>(
+    (state) => getNotification(state, currentNotificationId!)
   );
-  const operation = useSelector<IReduxState, IOperation | undefined>((state) =>
-    getOperationWithIDForResource(
+  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
+    getOperationWithIdForResource(
       state,
-      respondToNotificationOperationID,
-      currentNotificationID
+      respondToNotificationOperationId,
+      currentNotificationId
     )
   );
 
-  if (!currentNotificationID) {
+  if (!currentNotificationId) {
     history.push(getFullBaseNavPath());
     return null;
   }
@@ -62,7 +61,7 @@ const Notification: React.FC<{}> = (props) => {
     );
   }
 
-  const onRespond = (selectedResponse: NotificationStatusText) => {
+  const onRespond = (selectedResponse: CollaborationRequestStatusType) => {
     respondToNotificationOperationFunc({
       response: selectedResponse,
       request: notification!,
@@ -75,11 +74,11 @@ const Notification: React.FC<{}> = (props) => {
 
     if (response) {
       const hasRespondedToNotification =
-        response.status === notificationStatus.accepted ||
-        response.status === notificationStatus.declined;
+        response.status === CollaborationRequestStatusType.Accepted ||
+        response.status === CollaborationRequestStatusType.Declined;
 
       const isNotificationRevoked =
-        response.status === notificationStatus.revoked;
+        response.status === CollaborationRequestStatusType.Revoked;
 
       return (
         <React.Fragment>
@@ -109,10 +108,18 @@ const Notification: React.FC<{}> = (props) => {
           {responseError && <FormError error={responseError} />}
           {!isResponseLoading && (
             <Button.Group>
-              <Button onClick={() => onRespond(notificationStatus.accepted)}>
+              <Button
+                onClick={() =>
+                  onRespond(CollaborationRequestStatusType.Accepted)
+                }
+              >
                 Accept Request
               </Button>
-              <Button onClick={() => onRespond(notificationStatus.declined)}>
+              <Button
+                onClick={() =>
+                  onRespond(CollaborationRequestStatusType.Declined)
+                }
+              >
                 Decline Request
               </Button>
             </Button.Group>
@@ -126,7 +133,7 @@ const Notification: React.FC<{}> = (props) => {
     <StyledNotificationBody>
       <StyledNotificationBodyHead>
         <Typography.Title level={4}>
-          Collaboration Request From {notification!.from.blockName}
+          Collaboration Request From {notification!.from!.blockName}
         </Typography.Title>
         <Typography.Text>
           {new Date(notification!.createdAt).toDateString()}

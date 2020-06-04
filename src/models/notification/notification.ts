@@ -1,59 +1,50 @@
-const accepted = "accepted";
-const declined = "declined";
-const revoked = "revoked";
+import { BlockType } from "../block/block";
 
-const collabReq = "collab-req";
-const removeCollaborator = "remove-collaborator";
+export const notificationSchemaVersion = 1; // increment when you make changes that are not backward compatible
 
-export const notificationType = {
-  collabReq: collabReq as NotificationType,
-  removeCollaborator: removeCollaborator as NotificationType
-};
-
-export const notificationStatus = {
-  accepted: accepted as NotificationStatusText,
-  declined: declined as NotificationStatusText,
-  revoked: revoked as NotificationStatusText
-};
-
-export type NotificationType = typeof collabReq | typeof removeCollaborator;
-export type NotificationStatusText =
-  | typeof accepted
-  | typeof declined
-  | typeof revoked;
-
-export interface INotificationFrom {
+export interface ICollaborationRequestFrom {
   userId: string;
   name: string;
   blockId: string;
   blockName: string;
-  blockType: string;
+  blockType: BlockType;
 }
 
 export interface INotificationTo {
   email: string;
-  userId?: string;
 }
 
-export interface INotificationStatusHistory {
-  status: NotificationStatusText;
-  date: number;
+export enum CollaborationRequestStatusType {
+  Accepted = "accepted",
+  Declined = "declined",
+  Revoked = "revoked",
+  Pending = "pending",
 }
 
-export interface INotificationSentEmailHistory {
-  date: number;
+export interface ICollaborationRequestStatus {
+  status: CollaborationRequestStatusType;
+  date: string;
+}
+
+export interface INotificationSentEmailHistoryItem {
+  date: string;
+}
+
+export enum NotificationType {
+  CollaborationRequest = "collab-req",
+  RemoveCollaborator = "remove-collaborator",
+  OrgDeleted = "org-deleted",
 }
 
 export interface INotification {
   customId: string;
-  from: INotificationFrom;
-  createdAt: number;
-  body: string;
   to: INotificationTo;
-  expiresAt: number;
+  body: string;
+  from?: ICollaborationRequestFrom;
+  createdAt: string;
   type: NotificationType;
-  statusHistory: INotificationStatusHistory[];
-  sentEmailHistory: INotificationSentEmailHistory[];
-  root?: string;
-  readAt?: number;
+  readAt?: string;
+  expiresAt?: string;
+  statusHistory?: ICollaborationRequestStatus[];
+  sentEmailHistory?: INotificationSentEmailHistoryItem[];
 }

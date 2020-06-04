@@ -2,7 +2,7 @@ import { CloseCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import isString from "lodash/isString";
 import React from "react";
-import { INetError } from "../net/query";
+import { INetError } from "../net/types";
 import StyledContainer from "./styled/Container";
 
 // TODO: make GeneralError centered

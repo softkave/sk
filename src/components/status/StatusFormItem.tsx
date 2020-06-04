@@ -127,14 +127,14 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
             icon={<Check style={{ width: "18px" }} />}
             onClick={onCommitChanges}
             htmlType="button"
-            disabled={disabled}
+            disabled={disabled || value.name.length === 0}
           />
         )}
         {isEditing && (
           <Button
             onClick={onDiscardChanges}
             icon={<X style={{ width: "18px" }} />}
-            disabled={isNew}
+            disabled={isNew || value.name.length === 0}
             htmlType="button"
           />
         )}
@@ -157,6 +157,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
     );
   };
 
+  // TODO: add color, or use LabelFormItem
   const renderStatus = () => {
     return (
       <StyledContainer

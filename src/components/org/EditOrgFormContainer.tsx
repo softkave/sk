@@ -1,19 +1,19 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { BlockType, IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  addBlockOperationID,
-  updateBlockOperationID,
-} from "../../redux/operations/operationIDs";
+  addBlockOperationId,
+  updateBlockOperationId,
+} from "../../redux/operations/operationIds";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useOperation from "../hooks/useOperation";
 import EditOrgForm, { IEditOrgFormValues } from "./EditOrgForm";
 
-const scopeID = "EditOrgFormContainer";
+const scopeId = "EditOrgFormContainer";
 
 export interface IEditOrgFormContainerProps {
   onClose: () => void;
@@ -25,13 +25,13 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   const { onClose } = props;
   const user = useSelector(getSignedInUserRequired);
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, "org")
+    props.block || getNewBlock(user, BlockType.Org)
   );
 
   const operationStatus = useOperation({
-    scopeID,
-    operationID: props.block ? updateBlockOperationID : addBlockOperationID,
-    resourceID: block.customId,
+    scopeId,
+    operationId: props.block ? updateBlockOperationId : addBlockOperationId,
+    resourceId: block.customId,
   });
 
   const errors = operationStatus.error
@@ -55,8 +55,8 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     } else {
@@ -66,8 +66,8 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
           block: data,
         },
         {
-          scopeID,
-          resourceID: block.customId,
+          scopeId,
+          resourceId: block.customId,
         }
       );
     }

@@ -1,103 +1,89 @@
-export interface ITaskCollaborator {
-  userId: string;
-  completedAt?: number;
-  assignedAt: number;
-  assignedBy: string;
+export const blockSchemaVersion = 3; // increment when you make changes that are not backward compatible
+
+export enum BlockPriority {
+  Important = "important",
+  NotImportant = "not important",
+  VeryImportant = "very important",
 }
 
-const notImportantkey = "not important";
-const veryImportantKey = "very important";
-export const taskPriority = {
-  important: "important",
-  [notImportantkey]: "not important",
-  [veryImportantKey]: "very important",
-};
+export enum BlockType {
+  Root = "root",
+  Org = "org",
+  Board = "board",
+  Task = "task",
+}
 
-export const blockType = {
-  org: "org",
-  project: "project",
-  group: "group",
-  task: "task",
-  root: "root",
-};
-
-export type BlockPriority = keyof typeof taskPriority;
-export type BlockType = keyof typeof blockType;
+export interface IAssignee {
+  userId: string;
+  assignedAt: string;
+  assignedBy: string;
+}
 
 export interface ISubTask {
   customId: string;
   description: string;
-  completedBy?: string | null;
-  completedAt?: number | null;
-}
-
-export const blockTaskCollaborationTypes = {
-  individual: "individual",
-  collective: "collective",
-};
-
-export type TaskCollaborationType = "individual" | "collective";
-export interface ITaskCollaborationData {
-  collaborationType: TaskCollaborationType;
-  completedAt?: number | null;
-  completedBy?: string | null;
-}
-
-export type BlockLandingPage = "tasks" | "projects" | "self";
-export type BlockGroupContext = "groupTaskContext" | "groupProjectContext";
-
-export interface IBlockStatus {
-  customId: string;
-  name: string;
-  createdAt: number;
+  createdAt: string;
   createdBy: string;
-  // color: string;
-  description?: string;
-  updatedAt?: number;
+  completedBy?: string;
+  completedAt?: string;
+  updatedAt?: string;
   updatedBy?: string;
 }
 
 export interface IBlockLabel {
   customId: string;
   name: string;
-  createdAt: number;
-  createdBy: string;
   color: string;
+  createdBy: string;
+  createdAt: string;
   description?: string;
-  updatedAt?: number;
   updatedBy?: string;
+  updatedAt?: string;
+}
+
+export interface IBlockStatus {
+  customId: string;
+  name: string;
+  color: string;
+  createdBy: string;
+  createdAt: string;
+  description?: string;
+  updatedBy?: string;
+  updatedAt?: string;
+}
+
+export interface IBlockAssignedLabel {
+  customId: string;
+  assignedBy: string;
+  assignedAt: string;
 }
 
 export interface IBlock {
   customId: string;
-  name: string;
-  description?: string;
-  expectedEndAt?: number;
-  createdAt: number;
-  color: string;
-  updatedAt?: number;
-  type: BlockType;
-  parent?: string;
-  rootBlockID?: string;
-  boardId?: string;
   createdBy: string;
-  taskCollaborationData?: ITaskCollaborationData;
-  taskCollaborators?: ITaskCollaborator[];
-  priority?: BlockPriority;
-  tasks?: string[];
-  groups?: string[];
-  projects?: string[];
-  groupTaskContext?: string[];
-  groupProjectContext?: string[];
-  collaborators?: string[];
-  collaborationRequests?: string[];
-  subTasks?: ISubTask[];
-  landingPage?: BlockLandingPage;
-
-  availableStatus?: IBlockStatus[];
-  availableLabels?: IBlockLabel[];
-  labels?: string[];
+  createdAt: string;
+  type: BlockType;
+  name?: string;
+  description?: string;
+  dueAt?: string;
+  color?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+  parent?: string;
+  rootBlockId?: string;
+  assignees?: IAssignee[];
+  priority?: string;
+  subTasks?: ISubTask[]; // should sub-tasks be their own blocks?
+  boardStatuses?: IBlockStatus[];
+  boardLabels?: IBlockLabel[];
   status?: string;
+  statusAssignedBy?: string;
+  statusAssignedAt?: string;
+  labels?: IBlockAssignedLabel[];
+
+  boards?: string[];
+  collaborators?: string[];
+  notifications?: string[];
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

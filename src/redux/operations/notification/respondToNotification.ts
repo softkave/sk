@@ -1,10 +1,11 @@
 import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
 import {
+  CollaborationRequestStatusType,
   INotification,
-  NotificationStatusText,
 } from "../../../models/notification/notification";
 import * as userNet from "../../../net/user";
+import { getDateString } from "../../../utils/utils";
 import * as blockActions from "../../blocks/actions";
 import * as notificationActions from "../../notifications/actions";
 import { getSignedInUserRequired } from "../../session/selectors";
@@ -16,12 +17,12 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { respondToNotificationOperationID } from "../operationIDs";
-import { getOperationWithIDForResource } from "../selectors";
+import { respondToNotificationOperationId } from "../operationIds";
+import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
   request: INotification;
-  response: NotificationStatusText;
+  response: CollaborationRequestStatusType;
 }
 
 export default async function respondToNotificationOperationFunc(
@@ -30,21 +31,21 @@ export default async function respondToNotificationOperationFunc(
 ) {
   const user = getSignedInUserRequired(store.getState());
   const { request, response } = dataProps;
-  const operation = getOperationWithIDForResource(
+  const operation = getOperationWithIdForResource(
     store.getState(),
-    respondToNotificationOperationID,
+    respondToNotificationOperationId,
     request.customId
   );
 
-  if (operation && isOperationStarted(operation, options.scopeID)) {
+  if (operation && isOperationStarted(operation, options.scopeId)) {
     return;
   }
 
   store.dispatch(
     pushOperation(
-      respondToNotificationOperationID,
+      respondToNotificationOperationId,
       {
-        scopeID: options.scopeID,
+        scopeId: options.scopeId,
         status: operationStatusTypes.operationStarted,
         timestamp: Date.now(),
       },
@@ -66,10 +67,11 @@ export default async function respondToNotificationOperationFunc(
       throw result.errors;
     }
 
-    const statusHistory = request.statusHistory.concat({
-      status: response,
-      date: Date.now(),
-    });
+    const statusHistory =
+      request.statusHistory?.concat({
+        status: response,
+        date: getDateString(),
+      }) || [];
 
     const update = { statusHistory };
 
@@ -86,7 +88,7 @@ export default async function respondToNotificationOperationFunc(
       store.dispatch(
         userActions.updateUserRedux(
           user.customId,
-          { orgs: [request.from.blockId] },
+          { orgs: [{ customId: request!.from!.blockId }] },
           { arrayUpdateStrategy: "concat" }
         )
       );
@@ -94,9 +96,9 @@ export default async function respondToNotificationOperationFunc(
 
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationID,
+        respondToNotificationOperationId,
         {
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationComplete,
           timestamp: Date.now(),
         },
@@ -106,10 +108,10 @@ export default async function respondToNotificationOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationID,
+        respondToNotificationOperationId,
         {
           error,
-          scopeID: options.scopeID,
+          scopeId: options.scopeId,
           status: operationStatusTypes.operationError,
           timestamp: Date.now(),
         },
