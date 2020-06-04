@@ -51,6 +51,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
       {
         block: org,
         data: {
+          // TODO: find a better way to only update the ones that changed
           boardLabels: values.map((value) => ({
             ...value,
             updatedAt: getDateString(),

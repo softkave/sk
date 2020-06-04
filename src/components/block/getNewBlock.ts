@@ -36,7 +36,6 @@ export default function getNewBlock(
         : parent.rootBlockId
       : undefined,
     assignees: type === BlockType.Task ? ([] as IAssignee[]) : undefined,
-    tasks: childrenTypes.indexOf(BlockType.Task) ? [] : undefined,
     boards: childrenTypes.indexOf(BlockType.Board) ? [] : undefined,
 
     // @ts-ignore

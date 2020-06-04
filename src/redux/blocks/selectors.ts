@@ -1,5 +1,4 @@
 import { BlockType, IBlock } from "../../models/block/block";
-import { isBlockParentOf } from "../../models/block/utils";
 import {
   filterCollectionItemsWith,
   getCollectionItemsAsArray,
@@ -17,6 +16,16 @@ export function getBlocksAsArray(state: IAppState, ids: string[]) {
   return getCollectionItemsAsArray(state.blocks, ids);
 }
 
+export function getOrgTasks(state: IAppState, block: IBlock) {
+  return filterCollectionItemsWith(state.blocks, (next) => {
+    if (BlockType.Task === next.type && block.customId === next.rootBlockId) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
 export function getBlockChildren(
   state: IAppState,
   block: IBlock,
@@ -27,7 +36,11 @@ export function getBlockChildren(
       return false;
     }
 
-    return isBlockParentOf(block, next);
+    if (block.customId === next.parent) {
+      return true;
+    }
+
+    return false;
   });
 }
 

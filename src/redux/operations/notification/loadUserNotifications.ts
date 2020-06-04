@@ -41,10 +41,12 @@ export default async function loadUserNotificationsOperationFunc(
       throw result.errors;
     }
 
-    const { requests } = result;
-    const ids = requests.map((request) => request.customId);
+    const { notifications } = result;
+    const ids = notifications.map((request) => request.customId);
 
-    store.dispatch(notificationActions.bulkAddNotificationsRedux(requests));
+    store.dispatch(
+      notificationActions.bulkAddNotificationsRedux(notifications)
+    );
     store.dispatch(
       userActions.updateUserRedux(
         user.customId,

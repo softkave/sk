@@ -1,6 +1,6 @@
-import mapValues from "lodash/mapValues";
 import { useStore } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
+import { filterValidParentsForBlockType } from "../../models/block/utils";
 import { getBlockChildren } from "../../redux/blocks/selectors";
 import useBlockParents from "./useBlockParents";
 
@@ -15,6 +15,7 @@ const useBlockPossibleParents = (block: IBlock) => {
     let extra: IBlock[] = [];
 
     if (org && block.type !== BlockType.Board) {
+      // TODO: improve, cause it loops through all blocks parents.length number of times
       extra = getBlockChildren(store.getState(), org, BlockType.Board);
     }
 
@@ -31,7 +32,7 @@ const useBlockPossibleParents = (block: IBlock) => {
 
   pp = Object.keys(cache).map((id) => cache[id]);
 
-  return pp;
+  return filterValidParentsForBlockType(pp, block.type);
 };
 
 export default useBlockPossibleParents;

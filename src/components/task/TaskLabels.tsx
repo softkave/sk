@@ -92,6 +92,8 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         return renderLabelTag(label, true);
       }
 
+      console.log("missing label", assignedLabel);
+
       return null;
     });
   };

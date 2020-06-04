@@ -12,6 +12,7 @@ import { addCollaboratorsOperationId } from "../../redux/operations/operationIds
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import loadBoardData from "../board/data-loaders/loadBoardData";
 import useOperation from "../hooks/useOperation";
 import AddCollaboratorForm, {
   IAddCollaboratorFormValues,
@@ -78,6 +79,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
       );
 
       // TODO: we need a loadBlockNotifications func
+      loadBoardData(organization);
     }
   });
 

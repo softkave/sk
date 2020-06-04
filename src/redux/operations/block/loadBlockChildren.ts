@@ -53,33 +53,24 @@ export default async function loadBlockChildrenOperationFunc(
     const { blocks } = result;
     store.dispatch(blockActions.bulkAddBlocksRedux(blocks));
 
-    // TODO: this list should be based on the valid chidren types
-    const parentUpdate: Partial<IBlock> = {
-      tasks: [],
-      boards: [],
-    };
+    const boards: string[] = [];
 
     blocks.forEach((nextBlock) => {
-      const container = parentUpdate[`${nextBlock.type}s`];
-      container.push(nextBlock.customId);
+      if (nextBlock.type === BlockType.Board) {
+        boards.push(nextBlock.customId);
+      }
     });
 
-    // tslint:disable-next-line: forin
-    for (const key in parentUpdate) {
-      const typeContainer = parentUpdate[key];
-
-      if (
-        !Array.isArray(block[key]) ||
-        block[key].length !== typeContainer.length
-      ) {
-        store.dispatch(
-          blockActions.updateBlockRedux(block.customId, parentUpdate, {
+    if (boards.length > 0) {
+      store.dispatch(
+        blockActions.updateBlockRedux(
+          block.customId,
+          { boards },
+          {
             arrayUpdateStrategy: "replace",
-          })
-        );
-
-        break;
-      }
+          }
+        )
+      );
     }
 
     store.dispatch(

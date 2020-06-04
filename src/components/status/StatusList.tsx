@@ -76,7 +76,10 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         (errors.statusList as any).forEach((e, i) => {
           if (e) {
             const status = formik.values.statusList[i];
-            newEditingList.push(status.customId);
+
+            if (!editingStatusList.exists(status.customId)) {
+              newEditingList.push(status.customId);
+            }
           }
         });
 

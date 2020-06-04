@@ -86,9 +86,10 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
   const internalOnCommitSubTaskChanges = (index: number) => {
     const subTask = subTasks[index];
     editingSubTasksList.remove(subTask.customId);
-
-    // TODO: disable the commit/save button if no description is not present or has error
-    // TODO: do this for status and label too
+    internalOnEditSubTask(index, {
+      updatedAt: getDateString(),
+      updatedBy: user.customId,
+    });
   };
 
   const renderSubTask = (

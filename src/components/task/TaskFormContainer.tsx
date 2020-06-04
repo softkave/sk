@@ -12,7 +12,10 @@ import {
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
+import {
+  flattenErrorListWithDepthInfinite,
+  getDateString,
+} from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
@@ -51,6 +54,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
       if (org.boardStatuses && org.boardStatuses.length > 0) {
         newBlock.status = org.boardStatuses[0].customId;
+        newBlock.statusAssignedAt = getDateString();
+        newBlock.statusAssignedBy = user.customId;
       }
 
       return newBlock;

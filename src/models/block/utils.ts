@@ -42,7 +42,7 @@ export function getBlockValidParentTypes(type: BlockType): BlockType[] {
     root: [],
     org: [],
     board: [BlockType.Root, BlockType.Org],
-    task: [BlockType.Root, BlockType.Org, BlockType.Board],
+    task: [BlockType.Board],
   };
 
   const types = validParentsMap[type] || [];
@@ -59,10 +59,6 @@ export function filterValidParentsForBlockType(
 ) {
   const validParentTypes = getBlockValidParentTypes(type);
   return filterBlocksWithTypes(parents, validParentTypes);
-}
-
-export function isBlockParentOf(parent: IBlock, block: IBlock) {
-  return parent.customId === block.parent;
 }
 
 export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {

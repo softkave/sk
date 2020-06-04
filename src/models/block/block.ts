@@ -45,9 +45,9 @@ export interface IBlockStatus {
   customId: string;
   name: string;
   color: string;
+  createdBy: string;
+  createdAt: string;
   description?: string;
-  createdBy?: string;
-  createdAt?: string;
   updatedBy?: string;
   updatedAt?: string;
 }
@@ -81,7 +81,6 @@ export interface IBlock {
   statusAssignedAt?: string;
   labels?: IBlockAssignedLabel[];
 
-  tasks?: string[];
   boards?: string[];
   collaborators?: string[];
   notifications?: string[];
