@@ -9,7 +9,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { loadUserNotificationsOperationId } from "../operationIds";
+import { loadUserNotificationsOperationId } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadUserNotificationsOperationFunc(

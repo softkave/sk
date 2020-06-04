@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import { Formik } from "formik";
 import React from "react";
 import * as yup from "yup";
-import ErrorMessages from "../../models/ErrorMessages";
+import ErrorMessages from "../../models/errorMessages";
 import { userConstants } from "../../models/user/constants";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { passwordPattern, textPattern } from "../../models/user/validation";

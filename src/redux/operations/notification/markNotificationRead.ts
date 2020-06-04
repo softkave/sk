@@ -12,7 +12,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { updateNotificationOperationId } from "../operationIds";
+import { updateNotificationOperationId } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IMarkNotificationReadOperationFuncDataProps {

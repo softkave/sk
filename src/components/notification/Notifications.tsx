@@ -7,7 +7,7 @@ import { useHistory, useRouteMatch } from "react-router";
 import { INotification } from "../../models/notification/notification";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
-import { loadUserNotificationsOperationId } from "../../redux/operations/operationIds";
+import { loadUserNotificationsOperationId } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {

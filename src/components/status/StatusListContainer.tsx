@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { updateBlockOperationId } from "../../redux/operations/operationIds";
+import { updateBlockOperationId } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import {

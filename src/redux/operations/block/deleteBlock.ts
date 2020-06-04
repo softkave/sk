@@ -15,7 +15,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { deleteBlockOperationId } from "../operationIds";
+import { deleteBlockOperationId } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IDeleteBlockOperationFuncDataProps {

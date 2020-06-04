@@ -6,7 +6,7 @@ import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
   addBlockOperationId,
   updateBlockOperationId,
-} from "../../redux/operations/operationIds";
+} from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";

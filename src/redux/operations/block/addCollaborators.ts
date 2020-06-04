@@ -10,7 +10,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addCollaboratorsOperationId } from "../operationIds";
+import { addCollaboratorsOperationId } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddCollaboratorOperationFuncDataProps {

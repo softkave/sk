@@ -12,7 +12,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { addBlockOperationId } from "../operationIds";
+import { addBlockOperationId } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddBlockOperationFuncDataProps {

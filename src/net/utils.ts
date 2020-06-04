@@ -1,7 +1,7 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
-import ErrorMessages from "../models/ErrorMessages";
+import ErrorMessages from "../models/errorMessages";
 import { getUserToken } from "../redux/session/selectors";
 import store from "../redux/store";
 import { getServerAddr } from "./addr";

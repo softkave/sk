@@ -6,7 +6,7 @@ import { IBlock } from "../../models/block/block";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { operationStatusTypes } from "../../redux/operations/operation";
-import { updateBlockOperationId } from "../../redux/operations/operationIds";
+import { updateBlockOperationId } from "../../redux/operations/operationIDs";
 import useOperation from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 

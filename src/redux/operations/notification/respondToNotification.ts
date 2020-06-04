@@ -17,7 +17,7 @@ import {
   isOperationStarted,
   operationStatusTypes,
 } from "../operation";
-import { respondToNotificationOperationId } from "../operationIds";
+import { respondToNotificationOperationId } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
