@@ -44,20 +44,7 @@ import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import TaskLabels from "./TaskLabels";
 import TaskStatus from "./TaskStatus";
 
-export interface ITaskFormValues {
-  // TODO: Should tasks have names and descriptions?
-  // name: string;
-  customId: string;
-  type: BlockType;
-  assignees: IAssignee[];
-  expectedEndAt: number;
-  description?: string;
-  parent?: string;
-  subTasks?: ISubTask[];
-  priority?: BlockPriority;
-  status?: string;
-  labels?: IBlockAssignedLabel[];
-}
+export interface ITaskFormValues extends Partial<IBlock> {}
 
 type TaskFormFormikProps = FormikProps<ITaskFormValues>;
 export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
@@ -193,7 +180,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const renderStatus = (formikProps: TaskFormFormikProps) => {
-    const { values, setFieldValue } = formikProps;
+    const { values, setFieldValue, setValues } = formikProps;
 
     return (
       <Form.Item
@@ -204,7 +191,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       >
         <TaskStatus
           orgId={orgId}
-          onChange={(val: string) => setFieldValue("status", val)}
+          onChange={(val: string) => {
+            setValues({
+              status: val,
+              statusAssignedAt: getDateString(),
+              statusAssignedBy: user.customId,
+            });
+          }}
           statusId={values.status}
           disabled={isSubmitting}
         />
@@ -256,9 +249,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
               val ? val.hour(23).minute(59).second(0).valueOf() : null
             );
           }}
-          value={
-            values.expectedEndAt ? moment(values.expectedEndAt) : undefined
-          }
+          value={values.dueAt ? moment(values.dueAt) : undefined}
           style={{ width: "100%" }}
           disabled={isSubmitting}
         />
@@ -268,7 +259,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const unassignCollaborator = (
     collaboratorData: IAssignee,
-    taskCollaborators: IAssignee[]
+    taskCollaborators: IAssignee[] = []
   ) => {
     const index = taskCollaborators.findIndex((next) => {
       return next.userId === collaboratorData.userId;
@@ -285,7 +276,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const assignCollaborator = (
     collaborator: IUser,
-    taskCollaborators: IAssignee[]
+    taskCollaborators: IAssignee[] = []
   ): IAssignee[] => {
     const collaboratorExists = !!taskCollaborators.find((next) => {
       return collaborator.customId === next.userId;

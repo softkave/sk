@@ -1,12 +1,14 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { operationStatusTypes } from "../../redux/operations/operation";
 import { updateBlockOperationId } from "../../redux/operations/operationIDs";
+import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { getDateString } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
@@ -28,6 +30,8 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
     resourceId: task.customId,
   });
 
+  const user = useSelector(getSignedInUserRequired);
+
   React.useEffect(() => {
     if (operation.error) {
       message.error("Error updating task status");
@@ -36,7 +40,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
           updateBlockOperationId,
           {
             scopeId,
-            status: operationStatusTypes.operationComplete,
+            status: operationStatusTypes.consumed,
             timestamp: Date.now(),
           },
           task.customId
@@ -55,7 +59,14 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       statusId={task.status}
       onChange={(value) => {
         updateBlockOperationFunc(
-          { block: task, data: { status: value } },
+          {
+            block: task,
+            data: {
+              status: value,
+              statusAssignedAt: getDateString(),
+              statusAssignedBy: user.customId,
+            },
+          },
           { scopeId, resourceId: task.customId }
         );
       }}
