@@ -96,7 +96,6 @@ const Task: React.FC<ITaskProps> = (props) => {
         ellipsis={{
           rows: 2,
           expandable: true,
-          symbol: "more",
         }}
         style={{ marginBottom: "0" }}
       >

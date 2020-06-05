@@ -44,6 +44,12 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
+  React.useEffect(() => {
+    if (operationStatus.isCompleted && !props.block) {
+      onClose();
+    }
+  });
+
   const onSubmit = async (values: IBoardFormValues) => {
     const data = { ...block, ...values };
     setBlock(data);

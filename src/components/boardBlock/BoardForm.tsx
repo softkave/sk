@@ -6,7 +6,6 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/store";
-import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
@@ -82,26 +81,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         return boardExistsErrorMessage;
       }
     }
-  };
-
-  const renderParentInput = (formikProps: BoardFormFormikProps) => {
-    const { touched, errors, values, setFieldValue } = formikProps;
-
-    return (
-      <Form.Item
-        label="Parent"
-        help={touched.parent && <FormError error={errors.parent} />}
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
-      >
-        <BlockParentSelection
-          value={values.parent}
-          possibleParents={possibleParents}
-          onChange={(val) => setFieldValue("parent", val)}
-          disabled={isSubmitting}
-        />
-      </Form.Item>
-    );
   };
 
   const renderNameInput = (formikProps: BoardFormFormikProps) => {
@@ -248,7 +227,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             )}
             {renderNameInput(formikProps)}
             {renderDescriptionInput(formikProps)}
-            {renderParentInput(formikProps)}
           </StyledContainer>
           {renderControls()}
         </StyledContainer>

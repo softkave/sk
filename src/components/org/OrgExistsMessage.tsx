@@ -8,7 +8,7 @@ export interface IOrgExistsMessageProps {
   message?: string;
 }
 
-const OrgExistsMessage: React.SFC<IOrgExistsMessageProps> = props => {
+const OrgExistsMessage: React.SFC<IOrgExistsMessageProps> = (props) => {
   const { message } = props;
 
   return (
@@ -16,14 +16,14 @@ const OrgExistsMessage: React.SFC<IOrgExistsMessageProps> = props => {
       <FormError error={message} />
       <StyledComplaintMessage>
         If this organization legally belongs to you, you can send a complaint to{" "}
-        <a href={`mailto://${complaintEmailAddress}`}>ywordk@gmail.com</a>
+        <a href={`mailto://${complaintEmailAddress}`}>abayomi@softkave.com</a>
       </StyledComplaintMessage>
     </div>
   );
 };
 
 OrgExistsMessage.defaultProps = {
-  message: "Organization name is not available."
+  message: "Organization name is not available.",
 };
 
 export default OrgExistsMessage;

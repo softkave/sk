@@ -52,7 +52,13 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
     return (
       <StyledContainer s={{ cursor: disabled ? "not-allowed" : "pointer" }}>
         <Space>
-          {selectedStatus?.name || "No status"}
+          {selectedStatus ? (
+            <span style={{ borderBottom: `2px solid ${selectedStatus.color}` }}>
+              {selectedStatus.name}
+            </span>
+          ) : (
+            "No status"
+          )}
           <CaretDownOutlined style={{ fontSize: "10px" }} />
         </Space>
       </StyledContainer>

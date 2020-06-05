@@ -74,6 +74,12 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
+  React.useEffect(() => {
+    if (operationStatus.isCompleted && !props.block) {
+      onClose();
+    }
+  });
+
   const onSubmit = async (values: ITaskFormValues) => {
     const data = { ...block, ...values };
     setBlock(data);
