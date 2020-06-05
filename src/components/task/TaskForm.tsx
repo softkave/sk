@@ -13,8 +13,6 @@ import { FormikProps } from "formik";
 import moment from "moment";
 import React from "react";
 import {
-  BlockPriority,
-  BlockType,
   IAssignee,
   IBlock,
   IBlockAssignedLabel,
@@ -180,7 +178,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const renderStatus = (formikProps: TaskFormFormikProps) => {
-    const { values, setFieldValue, setValues } = formikProps;
+    const { values, setValues } = formikProps;
 
     return (
       <Form.Item
@@ -193,6 +191,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           orgId={orgId}
           onChange={(val: string) => {
             setValues({
+              ...values,
               status: val,
               statusAssignedAt: getDateString(),
               statusAssignedBy: user.customId,

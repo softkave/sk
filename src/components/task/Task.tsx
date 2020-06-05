@@ -4,12 +4,11 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu, Modal, Space } from "antd";
+import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import StyledContainer from "../styled/Container";
-import Text from "../Text";
 import { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
 
@@ -86,34 +85,27 @@ const Task: React.FC<ITaskProps> = (props) => {
   return (
     <StyledTask direction="vertical">
       <StyledContainer>
-        {/* <StyledContainer s={{ flex: 1 }}>
-          <ToggleSwitchContainer task={task} />
-        </StyledContainer> */}
         <StyledContainer s={{ flex: 1 }}>
           <span style={{ color: priorityToColorMap[task.priority!] }}>
             {task.priority}
           </span>
-          {/* <Priority level={task.priority!} /> */}
         </StyledContainer>
         {options}
       </StyledContainer>
-      <Text text={task.description!} rows={3} />
+      <Typography.Paragraph
+        ellipsis={{
+          rows: 2,
+          expandable: true,
+          symbol: "more",
+        }}
+        style={{ marginBottom: "0" }}
+      >
+        {task.description}
+      </Typography.Paragraph>
       <StyledControlsContainer>
         <StyledContainer s={{ flex: 1 }}>
           <TaskStatusContainer task={task} />
         </StyledContainer>
-        {/* <Space size="large">
-          {onEdit && (
-            <StyledFlatButton onClick={() => onEdit(task)}>
-              <EditOutlined />
-            </StyledFlatButton>
-          )}
-          <DeleteButtonWithPrompt onDelete={onDeleteTask}>
-            <StyledFlatButton>
-              <DeleteOutlined />
-            </StyledFlatButton>
-          </DeleteButtonWithPrompt>
-        </Space> */}
       </StyledControlsContainer>
     </StyledTask>
   );

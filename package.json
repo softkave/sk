@@ -12,12 +12,12 @@
     "@simonwep/pickr": "^1.5.1",
     "@types/react-beautiful-dnd": "^12.1.2",
     "@types/ua-parser-js": "^0.7.33",
-    "antd": "^4.2.0",
+    "antd": "^4.3.1",
     "dot-prop-immutable": "^1.5.0",
     "express": "^4.17.1",
     "formik": "^2.1.4",
     "lodash": "^4.17.15",
-    "moment": "^2.24.0",
+    "moment": "^2.26.0",
     "randomcolor": "^0.5.4",
     "react": "^16.12.0",
     "react-beautiful-dnd": "^13.0.0",
@@ -35,7 +35,6 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
-    "@types/antd": "^1.0.0",
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.141",
     "@types/node": "^12.7.8",
