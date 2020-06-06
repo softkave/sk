@@ -1,6 +1,6 @@
+import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
 import { Dropdown, Menu } from "antd";
 import React from "react";
-
 import { BlockPriority } from "../../models/block/block";
 import Priority, { TaskPriority } from "./Priority";
 
@@ -31,8 +31,15 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
 
     const renderDropdownContent = () => {
       return (
-        <div style={{ cursor: disabled ? "not-allowed" : "pointer" }}>
+        <div
+          style={{
+            cursor: disabled ? "not-allowed" : "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+        >
           <Priority level={value} />
+          <CaretDownOutlined style={{ marginLeft: "2px" }} />
         </div>
       );
     };

@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Input, Space } from "antd";
+import { Button, Input, Space, Tag } from "antd";
 import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
@@ -9,7 +9,6 @@ import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../form/ColorPicker";
 import FormError from "../form/FormError";
 import StyledContainer from "../styled/Container";
-import RoundEdgeTags from "../utilities/RoundEdgeTags";
 
 export interface ILabelFormItemProps {
   value: IBlockLabel;
@@ -56,7 +55,8 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
       <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
         {value.name && (
           <Form.Item style={{ marginBottom: 8 }}>
-            <RoundEdgeTags color={value.color} children={value.name} />
+            {/* <RoundEdgeTags color={value.color} children={value.name} /> */}
+            <Tag color={value.color}>{value.name}</Tag>
           </Form.Item>
         )}
         <Form.Item
@@ -112,7 +112,8 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
         s={{ flexDirection: "column", width: "100%", marginBottom: "8px" }}
       >
         <StyledContainer>
-          <RoundEdgeTags color={value.color} children={value.name} />
+          {/* <RoundEdgeTags color={value.color} children={value.name} /> */}
+          <Tag color={value.color}>{value.name}</Tag>
         </StyledContainer>
         <StyledContainer s={{ marginTop: "4px" }}>
           {value.description}

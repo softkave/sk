@@ -1,7 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Space } from "antd";
+import { Dropdown, Menu, Space, Tag } from "antd";
 import React from "react";
-import { X as CloseIcon } from "react-feather";
 import { useSelector } from "react-redux";
 import {
   IBlock,
@@ -14,7 +13,6 @@ import { IAppState } from "../../redux/store";
 import { indexArray } from "../../utils/object";
 import { getDateString } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
-import RoundEdgeTags from "../utilities/RoundEdgeTags";
 
 export interface ITaskLabelsProps {
   orgId: string;
@@ -62,25 +60,18 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
 
   const renderLabelTag = (label: IBlockLabel, canRemove) => {
     return (
-      <RoundEdgeTags key={label.customId} color={label.color}>
-        <StyledContainer s={{ alignItems: "center" }}>
-          {label.name}
-          {canRemove && (
-            <CloseIcon
-              onClick={() => {
-                if (!disabled) {
-                  onRemove(label.customId);
-                }
-              }}
-              style={{
-                width: "14px",
-                marginLeft: "8px",
-                color: disabled ? "grey" : undefined,
-              }}
-            />
-          )}
-        </StyledContainer>
-      </RoundEdgeTags>
+      <Tag
+        closable={canRemove}
+        key={label.customId}
+        color={label.color}
+        onClose={() => {
+          if (!disabled) {
+            onRemove(label.customId);
+          }
+        }}
+      >
+        {label.name}
+      </Tag>
     );
   };
 

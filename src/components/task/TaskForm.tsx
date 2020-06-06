@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { FormikProps } from "formik";
 import moment from "moment";
-import React from "react";
+import React, { useRef } from "react";
 import {
   IAssignee,
   IBlock,
@@ -79,11 +79,19 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     errors: externalErrors,
   } = props;
 
+  const descriptionTextAreaRef = useRef<typeof Input.TextArea | null>();
   const [indexedCollaborators] = React.useState(
     indexArray(props.collaborators, {
       path: "customId",
     })
   );
+
+  React.useEffect(() => {
+    if (descriptionTextAreaRef.current) {
+      // @ts-ignore
+      descriptionTextAreaRef.current.focus();
+    }
+  }, []);
 
   const {
     formik,
@@ -133,6 +141,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       >
         {formOnly ? (
           <Input.TextArea
+            ref={descriptionTextAreaRef as any}
             autoSize={{ minRows: 2, maxRows: 6 }}
             autoComplete="off"
             name="description"

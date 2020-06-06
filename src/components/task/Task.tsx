@@ -3,7 +3,6 @@ import {
   EditOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import styled from "@emotion/styled";
 import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -11,6 +10,8 @@ import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import StyledContainer from "../styled/Container";
 import { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
+
+const ignoreClassNames = ["ant-typography-expand", "task-menu-dropdown"];
 
 export interface ITaskProps {
   task: IBlock;
@@ -67,7 +68,12 @@ const Task: React.FC<ITaskProps> = (props) => {
   );
 
   const options = (
-    <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
+    <Dropdown
+      overlay={menu}
+      trigger={["click"]}
+      placement="bottomRight"
+      className="task-menu-dropdown"
+    >
       <Button
         icon={<EllipsisOutlined style={{ fontSize: "27px" }} />}
         style={{
@@ -82,42 +88,67 @@ const Task: React.FC<ITaskProps> = (props) => {
     </Dropdown>
   );
 
+  const onClick = (evt: React.MouseEvent<HTMLDivElement>) => {
+    const target = evt.target as HTMLElement;
+    const shouldIgnore =
+      ignoreClassNames.findIndex((className) => {
+        if (target.classList.contains(className)) {
+          return true;
+        }
+
+        return false;
+      }) !== -1;
+
+    if (shouldIgnore) {
+      return;
+    }
+
+    if (onEdit) {
+      onEdit(task);
+    }
+  };
+
+  const stopPropagation = (evt: React.MouseEvent<HTMLDivElement>) => {
+    evt.stopPropagation();
+  };
+
   return (
-    <StyledTask direction="vertical">
-      <StyledContainer>
-        <StyledContainer s={{ flex: 1 }}>
-          <span style={{ color: priorityToColorMap[task.priority!] }}>
-            {task.priority}
-          </span>
+    <StyledContainer
+      onClick={onClick}
+      s={{ minWidth: "280px", width: "100%", cursor: "pointer" }}
+    >
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <StyledContainer>
+          <StyledContainer s={{ flex: 1 }}>
+            <span style={{ color: priorityToColorMap[task.priority!] }}>
+              {task.priority}
+            </span>
+          </StyledContainer>
+          <StyledContainer
+            onClick={(evt) => {
+              evt.stopPropagation();
+            }}
+          >
+            {options}
+          </StyledContainer>
         </StyledContainer>
-        {options}
-      </StyledContainer>
-      <Typography.Paragraph
-        ellipsis={{
-          rows: 2,
-          expandable: true,
-        }}
-        style={{ marginBottom: "0" }}
-      >
-        {task.description}
-      </Typography.Paragraph>
-      <StyledControlsContainer>
-        <StyledContainer s={{ flex: 1 }}>
-          <TaskStatusContainer task={task} />
+        <Typography.Paragraph
+          ellipsis={{
+            rows: 2,
+            expandable: true,
+          }}
+          style={{ marginBottom: "0" }}
+        >
+          {task.description}
+        </Typography.Paragraph>
+        <StyledContainer>
+          <StyledContainer onClick={stopPropagation}>
+            <TaskStatusContainer task={task} className="task-status" />
+          </StyledContainer>
         </StyledContainer>
-      </StyledControlsContainer>
-    </StyledTask>
+      </Space>
+    </StyledContainer>
   );
 };
-
-const StyledTask = styled(Space)({
-  minWidth: "280px",
-  width: "100%",
-});
-
-const StyledControlsContainer = styled("div")({
-  display: "flex",
-  width: "100%",
-});
 
 export default React.memo(Task);

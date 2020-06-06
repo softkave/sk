@@ -16,13 +16,15 @@ const scopeId = "TaskStatusContainer";
 
 export interface ITaskStatusContainerProps {
   task: IBlock;
+
+  className?: string;
 }
 
 // TODO: should we make updates locally first before persisting it in the server for better UX?
 // and for client-side only work
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-  const { task } = props;
+  const { task, className } = props;
   const dispatch = useDispatch();
   const operation = useOperation({
     scopeId,
@@ -55,6 +57,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
   return (
     <TaskStatus
+      className={className}
       orgId={task.rootBlockId!}
       statusId={task.status}
       onChange={(value) => {

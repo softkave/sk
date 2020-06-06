@@ -2,7 +2,7 @@ import { CaretDownOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { IBlock, IBlockStatus } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/store";
 import StyledContainer from "../styled/Container";
@@ -13,12 +13,13 @@ export interface ITaskStatusProps {
 
   disabled?: boolean;
   statusId?: string;
+  className?: string;
 }
 
 // TODO: should we show a loading screen or no when the status is changed?
 
 const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
-  const { orgId, statusId: value, onChange, disabled } = props;
+  const { orgId, statusId: value, onChange, disabled, className } = props;
   const org = useSelector<IAppState, IBlock>((state) => {
     return getBlock(state, orgId)!;
   });
@@ -33,6 +34,12 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
 
   const getSelectedKeys = () => (value ? [value] : []);
 
+  const statusWithColor = (status: IBlockStatus) => (
+    <span style={{ borderBottom: `2px solid ${status.color}` }}>
+      {status.name}
+    </span>
+  );
+
   const statusListMenu = (
     <Menu
       onClick={(evt) => {
@@ -43,22 +50,23 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
       selectedKeys={getSelectedKeys()}
     >
       {statusList.map((status) => {
-        return <Menu.Item key={status.customId}>{status.name}</Menu.Item>;
+        return (
+          <Menu.Item key={status.customId}>{statusWithColor(status)}</Menu.Item>
+        );
       })}
     </Menu>
   );
 
   const renderSelectedStatus = () => {
     return (
-      <StyledContainer s={{ cursor: disabled ? "not-allowed" : "pointer" }}>
+      <StyledContainer
+        s={{
+          cursor: disabled ? "not-allowed" : "pointer",
+          display: "inline-flex",
+        }}
+      >
         <Space>
-          {selectedStatus ? (
-            <span style={{ borderBottom: `2px solid ${selectedStatus.color}` }}>
-              {selectedStatus.name}
-            </span>
-          ) : (
-            "No status"
-          )}
+          {selectedStatus ? statusWithColor(selectedStatus) : "No status"}
           <CaretDownOutlined style={{ fontSize: "10px" }} />
         </Space>
       </StyledContainer>
@@ -70,7 +78,11 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   }
 
   return (
-    <Dropdown overlay={statusListMenu} trigger={["click"]}>
+    <Dropdown
+      overlay={statusListMenu}
+      trigger={["click"]}
+      className={className}
+    >
       {renderSelectedStatus()}
     </Dropdown>
   );

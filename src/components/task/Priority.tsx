@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import { Tag } from "antd";
 import React from "react";
 import { BlockPriority } from "../../models/block/block";
 
@@ -12,32 +12,38 @@ export const priorityToColorMap = {
 
 interface IPriorityProps {
   level: TaskPriority;
-  cover?: "background-color" | "color";
+  // cover?: "background-color" | "color";
   className?: string;
 }
 
 const Priority: React.FC<IPriorityProps> = (props) => {
-  const { level, cover, className } = props;
+  const { level, className } = props;
 
   return (
-    <StyledPriority level={level} cover={cover} className={className}>
+    <Tag color={priorityToColorMap[props.level]} className={className}>
       {level}
-    </StyledPriority>
+    </Tag>
   );
+
+  // return (
+  //   <StyledPriority level={level} cover={cover} className={className}>
+  //     {level}
+  //   </StyledPriority>
+  // );
 };
 
-const StyledPriority = styled("span")<IPriorityProps>((props) => {
-  const coverProp = props.cover === "color" ? "color" : "backgroundColor";
-  const color = priorityToColorMap[props.level];
+// const StyledPriority = styled("span")<IPriorityProps>((props) => {
+//   const coverProp = props.cover === "color" ? "color" : "backgroundColor";
+//   const color = priorityToColorMap[props.level];
 
-  return {
-    padding: "1px 8px 0px 8px",
-    borderRadius: "4em",
-    color: "white",
-    fontSize: "13.33px",
-    [coverProp]: color,
-    display: "inline-block",
-  };
-});
+//   return {
+//     padding: "1px 8px 0px 8px",
+//     borderRadius: "4em",
+//     color: "white",
+//     fontSize: "13.33px",
+//     [coverProp]: color,
+//     display: "inline-block",
+//   };
+// });
 
 export default Priority;
