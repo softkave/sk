@@ -1,11 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { updateBlockOperationId } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
 import {
   flattenErrorListWithDepthInfinite,
   getDateString,
@@ -22,19 +20,11 @@ export interface IStatusListContainerProps {
 const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   const { block } = props;
   const user = useSelector(getSignedInUserRequired);
-  const org = useSelector<IAppState, IBlock>((state) => {
-    if (block.type === "org") {
-      return getBlock(state, block.customId)!;
-    } else {
-      return getBlock(state, block.rootBlockId)!;
-    }
-  });
-
-  const statusList = org.boardStatuses || [];
+  const statusList = block.boardStatuses || [];
   const operationStatus = useOperation({
     scopeId,
     operationId: updateBlockOperationId,
-    resourceId: org.customId,
+    resourceId: block.customId,
   });
 
   const errors = operationStatus.error
@@ -49,7 +39,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   const onSaveChanges = async (values: IBlockStatus[]) => {
     updateBlockOperationFunc(
       {
-        block: org,
+        block,
         data: {
           // TODO: find a better way to only update the ones that changed
           boardStatuses: values.map((value) => ({
@@ -61,7 +51,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
       },
       {
         scopeId,
-        resourceId: org.customId,
+        resourceId: block.customId,
       }
     );
   };

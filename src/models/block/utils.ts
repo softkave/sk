@@ -1,4 +1,3 @@
-import randomColor from "randomcolor";
 import { getDateString, newId } from "../../utils/utils";
 import { IUser } from "../user/user";
 import { BlockType, IAssignee, IBlock, IBlockStatus } from "./block";
@@ -91,7 +90,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
+      color: "#f28b79",
     },
     {
       name: "In progress",
@@ -99,7 +98,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
+      color: "#aa2244",
     },
     {
       name: "Pending review",
@@ -107,7 +106,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
+      color: "#ffd3c6",
     },
     {
       name: "Done",
@@ -115,7 +114,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
       createdAt: getDateString(),
       createdBy: user.customId,
       customId: newId(),
-      color: randomColor(),
+      color: "#25b71b",
     },
   ];
 };

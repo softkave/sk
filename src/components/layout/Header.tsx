@@ -19,11 +19,11 @@ import StyledContainer from "../styled/Container";
 import StyledFlatButton from "../styled/FlatButton";
 import theme from "../theme";
 
-export interface IHeaderProps {
-  onNavigateBack?: () => void;
-}
+// TODO: there is a lag is style responsiveness when 'notifications' or 'organizations' is selected
 
-const Header: React.FC<IHeaderProps> = (props) => {
+export interface IHeaderProps {}
+
+const Header: React.FC<IHeaderProps> = () => {
   const user = useSelector(getSignedInUserRequired);
 
   const onLogout = () => {
@@ -52,44 +52,45 @@ const Header: React.FC<IHeaderProps> = (props) => {
   );
 
   const render = (isMobile: boolean) => {
-    // TODO: disabledback button for now
+    const isNotificationSelected = window.location.pathname.includes(
+      "notification"
+    );
+    const isOrgsSelected = window.location.pathname.includes("organizations");
+
     return (
       <StyledHeaderContainer>
         <StyledContainer s={{ alignItems: "center" }}>
-          {/* <Tooltip title="Home">
-            <StyledFlatButton style={{ marginRight: "16px" }}>
-              <Link to="/app">
-                {window.location.pathname === "/app" ? (
-                  <HomeFilled />
-                ) : (
-                  <HomeOutlined />
-                )}
-                {!isMobile && <span style={{ paddingLeft: "12px" }}>Home</span>}
-              </Link>
-            </StyledFlatButton>
-          </Tooltip> */}
           <Tooltip title="Messages">
-            <StyledFlatButton style={{ marginRight: "16px" }}>
+            <StyledFlatButton
+              style={{
+                borderRadius: 0,
+                marginRight: "16px",
+                color: isNotificationSelected ? "rgb(66,133,244)" : "inherit",
+                borderBottom: isNotificationSelected
+                  ? "2px solid rgb(66,133,244)"
+                  : undefined,
+              }}
+            >
               <Link to="/app/notifications">
-                {window.location.pathname.includes("notification") ? (
-                  <MailFilled />
-                ) : (
-                  <MailOutlined />
-                )}
+                {isNotificationSelected ? <MailFilled /> : <MailOutlined />}
                 {!isMobile && (
-                  <span style={{ paddingLeft: "12px" }}>Messages</span>
+                  <span style={{ paddingLeft: "12px" }}>Notifications</span>
                 )}
               </Link>
             </StyledFlatButton>
           </Tooltip>
           <Tooltip title="Organizations">
-            <StyledFlatButton>
+            <StyledFlatButton
+              style={{
+                borderRadius: 0,
+                color: isOrgsSelected ? "rgb(66,133,244)" : "inherit",
+                borderBottom: isOrgsSelected
+                  ? "2px solid rgb(66,133,244)"
+                  : undefined,
+              }}
+            >
               <Link to="/app/organizations">
-                {window.location.pathname.includes("organizations") ? (
-                  <AppstoreFilled />
-                ) : (
-                  <BorderOutlined />
-                )}
+                {isOrgsSelected ? <AppstoreFilled /> : <BorderOutlined />}
                 {!isMobile && (
                   <span style={{ paddingLeft: "12px" }}>Organizations</span>
                 )}
@@ -132,7 +133,6 @@ const StyledHeaderContainer = styled.div({
   width: "100%",
   padding: "16px 16px",
   paddingBottom: "24px",
-  // borderBottom: "1px solid #b0b0b0"
 });
 
 const StyledAvatarButton = styled(Button)({

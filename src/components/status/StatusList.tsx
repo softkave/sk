@@ -46,7 +46,6 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     // TODO: should we alert the user before saving if they have editing statuses?
 
     editingStatusList.reset();
-    // newStatusList.reset();
     saveChanges(values.statusList);
   };
 
@@ -114,15 +113,10 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       );
 
       formik.setFieldError(`statusList.[${index}]`, err);
-
-      // formik.validateField(`statusList.[${index}]`);
-      // formik.setFieldTouched(`statusList.[${index}].name`, true);
-      // formik.setFieldTouched(`statusList.[${index}].description`, true);
       return;
     }
 
     editingStatusList.remove(status.customId);
-    // newStatusList.remove(status.customId);
   };
 
   const onDiscardChanges = (index: number, initialValue?: IBlockStatus) => {
@@ -140,6 +134,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   const onChange = (index: number, data: Partial<IBlockStatus>) => {
     const nameField = `statusList.[${index}].name`;
     const descField = `statusList.[${index}].description`;
+    const colorField = `statusList.[${index}].color`;
     const changedFields = Object.keys(data);
 
     if (changedFields.includes("name")) {
@@ -148,6 +143,10 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
 
     if (changedFields.includes("description")) {
       formik.setFieldValue(descField, data.description, true);
+    }
+
+    if (changedFields.includes("color")) {
+      formik.setFieldValue(colorField, data.color, true);
     }
   };
 
@@ -162,6 +161,19 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     );
   };
 
+  const onChangePosition = React.useCallback(
+    (index: number, up: boolean, max: number) => {
+      const newIndex = up ? index - 1 : index + 1;
+
+      if (newIndex < 0 || newIndex >= max) {
+        return;
+      }
+
+      moveIndexInArrayField("statusList", index, newIndex);
+    },
+    [moveIndexInArrayField]
+  );
+
   const renderStatusItem = (
     status: IBlockStatus,
     index: number,
@@ -171,12 +183,16 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const isEditing = editingStatusList.exists(status.customId);
     const touched = (formik.touched.statusList || [])[index];
     const statusErrors: any = (formik.errors.statusList || [])[index];
-    const values = formik.values.statusList[index];
+    const statuses = formik.values.statusList;
+    const values = statuses[index];
     const initialValue = getInitialValue(status.customId);
 
     return (
       <StatusFormItem
+        canMoveUp={index > 0}
+        canMoveDown={index < statusList.length - 1}
         onChange={(data) => onChange(index, data)}
+        onChangePosition={(up) => onChangePosition(index, up, statuses.length)}
         onCommitChanges={() => onCommitChanges(status, index)}
         onDelete={() => onDelete(index)}
         onDiscardChanges={() => onDiscardChanges(index, initialValue)}

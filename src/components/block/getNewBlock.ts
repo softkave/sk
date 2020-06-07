@@ -46,7 +46,11 @@ export default function getNewBlock(
     priority: type === BlockType.Task ? BlockPriority.Important : undefined,
     boardLabels: [],
     boardStatuses:
-      type === BlockType.Org ? getDefaultStatuses(user) : undefined,
+      type === BlockType.Org
+        ? getDefaultStatuses(user)
+        : type === BlockType.Board
+        ? parent?.boardStatuses
+        : [],
     updatedBy: undefined,
     subTasks: [],
     status: undefined, // TODO: where is task initial status set?
