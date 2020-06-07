@@ -1,16 +1,19 @@
-import { EditOutlined } from "@ant-design/icons";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 import { Button, Form, Input, Space } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-import { Check, Trash, X } from "react-feather";
+import { Check, ChevronDown, ChevronUp, Trash, X } from "react-feather";
 import { IBlockStatus } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
+import ColorPicker from "../form/ColorPicker";
 import FormError from "../form/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface IStatusFormItemProps {
   value: IBlockStatus;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   onEdit: () => void;
@@ -18,6 +21,7 @@ export interface IStatusFormItemProps {
   onChange: (data: Partial<IBlockStatus>) => void;
   onDiscardChanges: () => void;
   onCommitChanges: () => void;
+  onChangePosition: (up: boolean) => void;
 
   isNew?: boolean;
   isEditing?: boolean;
@@ -48,6 +52,9 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
     isNew,
     onEdit,
     style,
+    onChangePosition,
+    canMoveUp,
+    canMoveDown,
   } = props;
 
   const renderEditingStatus = () => {
@@ -110,7 +117,9 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
             color: "rgba(0,0,0,0.85)",
           }}
         >
-          {value.name}
+          <span style={{ borderBottom: `2px solid ${value.color}` }}>
+            {value.name}
+          </span>
         </StyledContainer>
         <StyledContainer s={{ marginTop: "4px" }}>
           {value.description}
@@ -141,9 +150,24 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
         {!isEditing && (
           <Button
             disabled={disabled}
-            // icon={<Edit3 style={{ width: "16px" }} />}
             icon={<EditOutlined style={{ fontSize: "14px" }} />}
             onClick={onEdit}
+            htmlType="button"
+          />
+        )}
+        {canMoveUp && (
+          <Button
+            disabled={disabled}
+            icon={<ChevronUp style={{ width: "16px" }} />}
+            onClick={() => onChangePosition(true)}
+            htmlType="button"
+          />
+        )}
+        {canMoveDown && (
+          <Button
+            disabled={disabled}
+            icon={<ChevronDown style={{ width: "16px" }} />}
+            onClick={() => onChangePosition(false)}
             htmlType="button"
           />
         )}
@@ -176,8 +200,21 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
           ...provided.draggableProps.style,
         }}
       >
-        <StyledContainer s={{ flexDirection: "column" }}>
-          {isEditing ? renderEditingStatus() : renderRegularStatus()}
+        <StyledContainer s={{ alignItems: "flex-start" }}>
+          <StyledContainer
+            s={{ flexDirection: "column", flex: 1, marginRight: "8px" }}
+          >
+            {isEditing ? renderEditingStatus() : renderRegularStatus()}
+          </StyledContainer>
+          <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+            <ColorPicker
+              value={value.color}
+              disabled={disabled ? true : !isEditing}
+              onChange={(val) => {
+                onChange({ color: val });
+              }}
+            />
+          </StyledContainer>
         </StyledContainer>
         <StyledContainer>{renderStatusButtons()}</StyledContainer>
       </StyledContainer>

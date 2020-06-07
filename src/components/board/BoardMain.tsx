@@ -222,15 +222,20 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
         }}
       >
         {resourceTypes.map((type, i) => {
+          const isSelected = type === resourceType;
           return (
             <StyledContainer
               key={type}
               s={{
                 marginRight: "24px",
                 marginLeft: i === 0 ? "16px" : undefined,
-                color: type === resourceType ? "rgb(66,133,244)" : "inherit",
+                color: isSelected ? "rgb(66,133,244)" : "inherit",
+                borderBottom: isSelected
+                  ? "2px solid rgb(66,133,244)"
+                  : undefined,
                 cursor: "pointer",
                 whiteSpace: "nowrap",
+                textTransform: "capitalize",
               }}
               onClick={() => {
                 onSelectResourceType(type);
