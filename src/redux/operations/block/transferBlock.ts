@@ -26,8 +26,6 @@ export function transferBlockStateHelper(props: ITransferBlockProps) {
     props.data.destinationBlockId
   )!;
 
-  console.log({ draggedBlock, destinationBlock });
-
   const draggedBlockUpdates: Partial<IBlock> = {
     updatedAt: getDateString(),
     parent: destinationBlock.customId,

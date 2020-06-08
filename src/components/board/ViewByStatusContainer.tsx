@@ -24,10 +24,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
-  const org = useSelector<IAppState, IBlock>(
-    (state) => getBlock(state, block.rootBlockId || block.customId)!
-  );
-  const statuses = org.boardStatuses || [];
+  const statuses = block.boardStatuses || [];
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;

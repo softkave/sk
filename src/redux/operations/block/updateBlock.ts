@@ -157,20 +157,11 @@ function updateTasksIfHasDeletedStatusesOrLabels(
   const hasDeletedStatus = Object.keys(deletedStatuses).length > 0;
   const hasDeletedLabel = Object.keys(deletedLabels).length > 0;
 
-  console.log({
-    deletedStatuses,
-    deletedLabels,
-    hasDeletedLabel,
-    hasDeletedStatus,
-  });
-
   if (!hasDeletedStatus && !hasDeletedLabel) {
     return;
   }
 
   const tasks = getOrgTasks(store.getState(), block);
-
-  console.log({ tasks });
 
   if (tasks.length === 0) {
     return;
@@ -209,8 +200,6 @@ function updateTasksIfHasDeletedStatusesOrLabels(
       updates.push({ id: task.customId, data: taskUpdates });
     }
   });
-
-  console.log({ updates, deletedStatuses, deletedLabels });
 
   if (updates.length === 0) {
     return;
