@@ -8,8 +8,7 @@ import WebItem from "./Item";
 const CollaborationRequestWebItem: React.FC<{}> = () => {
   const label = (
     <Typography.Paragraph>
-      Send <Typography.Text strong>collaboration requests</Typography.Text> to
-      user email addresses.
+      Send <Typography.Text strong>collaboration requests</Typography.Text>.
     </Typography.Paragraph>
   );
 
