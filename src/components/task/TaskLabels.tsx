@@ -1,22 +1,15 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space, Tag } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
-import {
-  IBlock,
-  IBlockAssignedLabel,
-  IBlockLabel,
-} from "../../models/block/block";
+import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import { IAppState } from "../../redux/store";
 import { indexArray } from "../../utils/object";
 import { getDateString } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskLabelsProps {
-  orgId: string;
   user: IUser;
+  labelList: IBlockLabel[];
   onChange: (ids: IBlockAssignedLabel[]) => void;
 
   disabled?: boolean;
@@ -24,12 +17,7 @@ export interface ITaskLabelsProps {
 }
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-  const { orgId, onChange, disabled, user } = props;
-  const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, orgId)!;
-  });
-
-  const labelList = org.boardLabels || [];
+  const { onChange, disabled, user, labelList } = props;
   const labels = props.labels || [];
   const idToLabelMap = React.useMemo(
     () => indexArray(labelList || [], { path: "customId" }),

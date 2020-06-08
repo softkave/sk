@@ -6,6 +6,7 @@ import StyledContainer from "../styled/Container";
 export interface IColumnProps {
   header?: React.ReactNode;
   body?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 const Column: React.FC<IColumnProps> = (props) => {
@@ -28,6 +29,7 @@ const Column: React.FC<IColumnProps> = (props) => {
         maxWidth: "350px",
         flex: 1,
         height: "100%",
+        ...(props.style || {}),
       };
     }
 
@@ -37,7 +39,6 @@ const Column: React.FC<IColumnProps> = (props) => {
           <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
         )}
         {body}
-        {/* <StyledColumnBodyContainer>{body}</StyledColumnBodyContainer> */}
       </StyledContainer>
     );
   };

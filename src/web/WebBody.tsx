@@ -1,48 +1,27 @@
-import { AppstoreAddOutlined } from "@ant-design/icons";
 import React from "react";
-import RenderForDevice from "../components/RenderForDevice";
-import StyledContainer, {
-  IStyledContainerProps,
-} from "../components/styled/Container";
-import WebCard from "./WebCard";
+import StyledContainer from "../components/styled/Container";
+import wrapWithMargin from "../components/utilities/wrapWithMargin";
+import CollaborationRequestWebItem from "./items/CollaborationRequestWebItem";
+import ContainerBlocksWebItem from "./items/ContainerBlocksWebItem";
+import LabelAndStatusWebItem from "./items/LabelAndStatusWebItem";
+import TasksWebItem from "./items/TaskWebItem";
 
 const WebBody: React.SFC<{}> = () => {
-  const mobileStyle: IStyledContainerProps["s"] = {
-    flexDirection: "column",
-  };
-
-  const desktopStyle: IStyledContainerProps["s"] = {
-    justifyContent: "center",
-  };
-
-  // const renderItem = () => {
-  //   return (
-  //     <StyledContainer>
-  //       <StyledContainer></StyledContainer>
-  //       <StyledContainer></StyledContainer>
-  //     </StyledContainer>
-  //   );
-  // };
-
-  const render = (style: any) => {
-    return (
-      <StyledContainer s={{ ...style, flex: 1 }}>
-        <WebCard icon={<AppstoreAddOutlined />} text="Manage Tasks" />
-        <WebCard icon={<AppstoreAddOutlined />} text="Manage Projects" />
-        <WebCard icon={<AppstoreAddOutlined />} text="Manage Groups" />
-        <WebCard
-          icon={<AppstoreAddOutlined />}
-          text="Manage Organizations and Collaborators"
-        />
-      </StyledContainer>
-    );
-  };
-
   return (
-    <RenderForDevice
-      renderForDesktop={() => render(desktopStyle)}
-      renderForMobile={() => render(mobileStyle)}
-    />
+    <StyledContainer
+      s={{
+        flexDirection: "column",
+        width: "100%",
+        flex: 1,
+        maxWidth: "750px",
+        margin: "auto",
+      }}
+    >
+      {wrapWithMargin(<ContainerBlocksWebItem />, 0, 0, 48, 48)}
+      {wrapWithMargin(<TasksWebItem />, 0, 0, 0, 48)}
+      {wrapWithMargin(<LabelAndStatusWebItem />, 0, 0, 0, 48)}
+      {wrapWithMargin(<CollaborationRequestWebItem />, 0, 0, 0, 48)}
+    </StyledContainer>
   );
 };
 

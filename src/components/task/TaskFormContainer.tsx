@@ -38,6 +38,9 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     return getBlock(state, orgId)!;
   });
 
+  const statusList = parentBlock?.boardStatuses || [];
+  const labelList = parentBlock?.boardLabels || [];
+
   const collaboratorIds = Array.isArray(org.collaborators)
     ? org.collaborators
     : [];
@@ -52,8 +55,12 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     } else {
       const newBlock = getNewBlock(user, BlockType.Task, parentBlock);
 
-      if (org.boardStatuses && org.boardStatuses.length > 0) {
-        newBlock.status = org.boardStatuses[0].customId;
+      if (
+        parentBlock &&
+        parentBlock.boardStatuses &&
+        parentBlock.boardStatuses.length > 0
+      ) {
+        newBlock.status = parentBlock.boardStatuses[0].customId;
         newBlock.statusAssignedAt = getDateString();
         newBlock.statusAssignedBy = user.customId;
       }
@@ -111,10 +118,10 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
   return (
     <TaskForm
-      // isSubmitting
       value={block as any}
       collaborators={collaborators}
-      orgId={orgId}
+      labelList={labelList}
+      statusList={statusList}
       user={user}
       onClose={onClose}
       formOnly={!props.block}

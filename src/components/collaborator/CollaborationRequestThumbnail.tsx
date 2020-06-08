@@ -19,6 +19,7 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
   const { request, style, onClick, className } = props;
   const statusHistory = request.statusHistory || [];
   const latestStatus = statusHistory[statusHistory.length - 1];
+  console.log(request);
 
   return (
     <StyledFlexContainer style={style} onClick={onClick} className={className}>
@@ -29,11 +30,11 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
           </Typography.Text>
           {request.expiresAt && (
             <Typography.Text>
-              {moment(request.expiresAt).fromNow()}
+              Expires in {moment(request.expiresAt).fromNow()}
             </Typography.Text>
           )}
           {latestStatus && (
-            <Typography.Text>{latestStatus.status}</Typography.Text>
+            <Typography.Text>Status - {latestStatus.status}</Typography.Text>
           )}
         </StyledRequestDataContainer>,
         { marginLeft: 16 }

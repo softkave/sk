@@ -1,5 +1,6 @@
 import get from "lodash/get";
 import set from "lodash/set";
+import { isMoment, Moment } from "moment";
 import { indexArray } from "./object";
 
 const uuid = require("uuid/v4");
@@ -9,7 +10,13 @@ export function newId() {
   return uuid();
 }
 
-export function getDateString() {
+export function getDateString(initial?: Date | string | number | Moment) {
+  if (initial) {
+    return new Date(
+      isMoment(initial) ? initial.valueOf() : initial
+    ).toISOString();
+  }
+
   return new Date().toISOString();
 }
 

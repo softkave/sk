@@ -5,7 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { IBlock, IBlockStatus } from "../../models/block/block";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import StyledContainer from "../styled/Container";
 import { priorityToColorMap } from "./Priority";
@@ -15,16 +15,23 @@ const ignoreClassNames = ["ant-typography-expand", "task-menu-dropdown"];
 
 export interface ITaskProps {
   task: IBlock;
+
+  demo?: boolean;
+  statusList?: IBlockStatus[];
   onEdit?: (task: IBlock) => void;
-  onDelete?: (task: IBlock) => void;
+  onDelete?: (task: IBlock) => void; // TODO: we don't use it
 }
 
 // TODO: how do we show thelabels?
 
 const Task: React.FC<ITaskProps> = (props) => {
-  const { task, onEdit } = props;
+  const { task, onEdit, demo, statusList } = props;
 
   const onDeleteTask = () => {
+    if (demo) {
+      return;
+    }
+
     // TODO: should we show loading when deleting or cover the task with a mask?
     Modal.confirm({
       title: "Are you sure you want to delete this task?",
@@ -143,7 +150,12 @@ const Task: React.FC<ITaskProps> = (props) => {
         </Typography.Paragraph>
         <StyledContainer>
           <StyledContainer onClick={stopPropagation}>
-            <TaskStatusContainer task={task} className="task-status" />
+            <TaskStatusContainer
+              task={task}
+              className="task-status"
+              demo={demo}
+              statusList={statusList}
+            />
           </StyledContainer>
         </StyledContainer>
       </Space>

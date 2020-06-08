@@ -16,6 +16,8 @@ import {
   IAssignee,
   IBlock,
   IBlockAssignedLabel,
+  IBlockLabel,
+  IBlockStatus,
   ISubTask,
 } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
@@ -50,7 +52,8 @@ export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
 export interface ITaskFormProps {
   user: IUser;
   collaborators: IUser[];
-  orgId: string;
+  statusList: IBlockStatus[];
+  labelList: IBlockLabel[];
   possibleParents: IBlock[];
   value: ITaskFormValues;
   onClose: () => void;
@@ -74,7 +77,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     value,
     onSubmit,
     collaborators,
-    orgId,
+    statusList,
+    labelList,
     user,
     errors: externalErrors,
   } = props;
@@ -197,7 +201,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskStatus
-          orgId={orgId}
+          statusList={statusList}
           onChange={(val: string) => {
             setValues({
               ...values,
@@ -225,7 +229,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskLabels
-          orgId={orgId}
+          labelList={labelList}
           user={user}
           onChange={(val: IBlockAssignedLabel[]) =>
             setFieldValue("labels", val)

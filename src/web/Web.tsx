@@ -27,5 +27,5 @@ const StyledWeb = styled.div`
 const StyledWebBody = styled.div`
   flex: 1;
   display: flex;
-  margin: 100px 0;
+  background-color: #f0f0f0;
 `;

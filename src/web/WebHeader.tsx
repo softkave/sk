@@ -4,6 +4,7 @@ import { Button } from "antd";
 import React from "react";
 import { X } from "react-feather";
 import { Link } from "react-router-dom";
+import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer from "../components/styled/Container";
 
 const StyledContainerAsH1 = StyledContainer.withComponent("h1");
@@ -31,7 +32,6 @@ const WebHeader: React.SFC<{}> = () => {
         s={{
           flexDirection: "column",
           width: "100%",
-          borderBottom: "1px solid #d9d9d9",
           padding: "16px 0",
           paddingTop: "8px",
         }}
@@ -45,9 +45,9 @@ const WebHeader: React.SFC<{}> = () => {
     );
   };
 
-  const renderOne = () => {
+  const renderOne = (isMobile: boolean) => {
     return (
-      <StyledContainer>
+      <StyledContainer s={{ flex: 1 }}>
         <StyledContainer
           s={{ flex: 1, marginRight: "16px", flexDirection: "column" }}
         >
@@ -62,17 +62,17 @@ const WebHeader: React.SFC<{}> = () => {
               Softkave
             </StyledContainerAsH1>
           </Link>
-          <StyledContainer>Softkave is for task management</StyledContainer>
+          <StyledContainer>Task management application</StyledContainer>
         </StyledContainer>
         <StyledContainer s={{ alignItems: "center" }}>
-          {!showMenu && (
+          {!showMenu && !isMobile && (
             <Link to="/signup">
               <Button type="primary" style={{ marginRight: "24px" }}>
                 Signup
               </Button>
             </Link>
           )}
-          {!showMenu && (
+          {!showMenu && !isMobile && (
             <Link to="/login">
               <Button type="link" style={{ padding: 0, marginRight: "24px" }}>
                 Login
@@ -98,8 +98,20 @@ const WebHeader: React.SFC<{}> = () => {
 
   return (
     <StyledWebHeader>
-      {renderOne()}
-      {showMenu && renderMenu()}
+      <StyledContainer
+        s={{
+          width: "100%",
+          maxWidth: "750px",
+          margin: "auto",
+          flexDirection: "column",
+        }}
+      >
+        <RenderForDevice
+          renderForDesktop={() => renderOne(false)}
+          renderForMobile={() => renderOne(true)}
+        />
+        {showMenu && renderMenu()}
+      </StyledContainer>
     </StyledWebHeader>
   );
 };

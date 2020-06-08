@@ -1,14 +1,11 @@
 import { CaretDownOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
-import { IBlock, IBlockStatus } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
-import { IAppState } from "../../redux/store";
+import { IBlockStatus } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskStatusProps {
-  orgId: string;
+  statusList: IBlockStatus[];
   onChange: (value: string) => void;
 
   disabled?: boolean;
@@ -19,12 +16,7 @@ export interface ITaskStatusProps {
 // TODO: should we show a loading screen or no when the status is changed?
 
 const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
-  const { orgId, statusId: value, onChange, disabled, className } = props;
-  const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, orgId)!;
-  });
-
-  const statusList = org.boardStatuses || [];
+  const { statusId: value, onChange, disabled, className, statusList } = props;
 
   const selectedStatus = value
     ? statusList.find((status) => {

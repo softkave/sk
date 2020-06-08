@@ -2,12 +2,15 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { IBlock, IBlockStatus } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
+import { getBlock } from "../../redux/blocks/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { operationStatusTypes } from "../../redux/operations/operation";
 import { updateBlockOperationId } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { IAppState } from "../../redux/store";
 import { getDateString } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
@@ -17,6 +20,8 @@ const scopeId = "TaskStatusContainer";
 export interface ITaskStatusContainerProps {
   task: IBlock;
 
+  demo?: boolean;
+  statusList?: IBlockStatus[];
   className?: string;
 }
 
@@ -24,7 +29,7 @@ export interface ITaskStatusContainerProps {
 // and for client-side only work
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-  const { task, className } = props;
+  const { task, className, demo } = props;
   const dispatch = useDispatch();
   const operation = useOperation({
     scopeId,
@@ -32,7 +37,19 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
     resourceId: task.customId,
   });
 
-  const user = useSelector(getSignedInUserRequired);
+  const user = useSelector<IAppState, IUser>((state) => {
+    if (demo) {
+      return ({} as unknown) as IUser;
+    }
+
+    return getSignedInUserRequired(state);
+  });
+
+  const statusList = useSelector<IAppState, IBlockStatus[]>((state) => {
+    return (
+      props.statusList || getBlock(state, task.parent)!.boardStatuses || []
+    );
+  });
 
   React.useEffect(() => {
     if (operation.error) {
@@ -58,9 +75,13 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
   return (
     <TaskStatus
       className={className}
-      orgId={task.rootBlockId!}
+      statusList={statusList}
       statusId={task.status}
       onChange={(value) => {
+        if (demo) {
+          return;
+        }
+
         updateBlockOperationFunc(
           {
             block: task,
