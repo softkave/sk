@@ -357,7 +357,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           value={undefined}
           onChange={(index) =>
             setFieldValue(
-              "taskCollaborators",
+              "assignees",
               assignCollaborator(collaborators[Number(index)], values.assignees)
             )
           }
@@ -376,7 +376,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           onClick={() => {
             if (!isSubmitting) {
               setFieldValue(
-                "taskCollaborators",
+                "assignees",
                 assignCollaborator(user, values.assignees)
               );
             }
