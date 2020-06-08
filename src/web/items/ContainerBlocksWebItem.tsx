@@ -1,4 +1,4 @@
-import { Divider, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
 import BlockThumbnail from "../../components/block/BlockThumnail";
 import StyledContainer from "../../components/styled/Container";

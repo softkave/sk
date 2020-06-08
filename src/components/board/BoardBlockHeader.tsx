@@ -134,7 +134,11 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
         alignItems: "center",
       }}
     >
-      <BlockThumbnail block={block} showFields={["name", "type"]} />
+      <BlockThumbnail
+        block={block}
+        showFields={["name", "type"]}
+        style={{ flex: 1 }}
+      />
       <StyledContainer s={{ alignItems: "center" }}>
         {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
         {isBlockRelatedResourceType(resourceType) &&
