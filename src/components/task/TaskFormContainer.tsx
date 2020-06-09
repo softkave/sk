@@ -39,8 +39,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   });
 
   const parentBlock = useSelector<IAppState, IBlock | undefined>((state) => {
-    if (parentBlock) {
-      return parentBlock;
+    if (props.parentBlock) {
+      return props.parentBlock;
     } else if (props.block) {
       return getBlock(state, props.block.parent);
     }
