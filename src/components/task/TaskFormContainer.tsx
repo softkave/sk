@@ -32,14 +32,21 @@ export interface ITaskFormContainerProps {
 }
 
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
-  const { onClose, orgId, parentBlock } = props;
+  const { onClose, orgId } = props;
   const user = useSelector(getSignedInUserRequired);
   const org = useSelector<IAppState, IBlock>((state) => {
     return getBlock(state, orgId)!;
   });
 
+  const parentBlock = useSelector<IAppState, IBlock | undefined>((state) => {
+    if (parentBlock) {
+      return parentBlock;
+    } else if (props.block) {
+      return getBlock(state, props.block.parent);
+    }
+  });
   const statusList = parentBlock?.boardStatuses || [];
-  const labelList = parentBlock?.boardLabels || [];
+  const labelList = org.boardLabels || [];
 
   const collaboratorIds = Array.isArray(org.collaborators)
     ? org.collaborators
