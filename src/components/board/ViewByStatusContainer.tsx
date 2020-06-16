@@ -1,10 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
 import { operationHasStatusWithScopeId } from "../../redux/operations/operation";
 import { IAppState } from "../../redux/store";
+import { getUsersAsArray } from "../../redux/users/selectors";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -25,6 +27,14 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 ) => {
   const { block, onClickUpdateBlock, style } = props;
   const statuses = block.boardStatuses || [];
+  const org = useSelector<IAppState, IBlock>((state) => {
+    return getBlock(state, block.rootBlockId || block.customId)!;
+  });
+
+  const collaboratorIds = org.collaborators || [];
+  const collaborators = useSelector<IAppState, IUser[]>((state) =>
+    getUsersAsArray(state, collaboratorIds)
+  );
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const operation = loadProps.operation;
@@ -101,6 +111,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
     return (
       <ViewByStatus
+        orgUsers={collaborators}
         statuses={statuses}
         onClickUpdateBlock={onClickUpdateBlock}
         blocks={blocks}

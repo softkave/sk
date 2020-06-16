@@ -55,7 +55,12 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
   };
 
   const internalOnEditSubTask = (index: number, data: Partial<ISubTask>) => {
-    const subTask = { ...subTasks[index], ...data };
+    const subTask: ISubTask = {
+      ...subTasks[index],
+      ...data,
+      updatedAt: getDateString(),
+      updatedBy: user.customId,
+    };
     const newSubTasks = [...subTasks];
     newSubTasks[index] = subTask;
     onChange(newSubTasks);
