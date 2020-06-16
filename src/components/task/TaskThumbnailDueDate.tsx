@@ -15,7 +15,7 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
   }
 
   return (
-    <Typography.Text type="secondary">
+    <Typography.Text underline type="secondary">
       Due {moment(task.dueAt).fromNow()}
     </Typography.Text>
   );
