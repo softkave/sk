@@ -4,7 +4,7 @@ import Column from "../../components/board/Column";
 import StyledContainer from "../../components/styled/Container";
 import TaskList from "../../components/task/TaskList";
 import { noop } from "../../utils/utils";
-import { demoStatuses, demoTasks } from "./data";
+import { demoStatuses, demoTasks, demoUsers } from "./data";
 import WebItem from "./Item";
 
 const TasksWebItem: React.FC<{}> = () => {
@@ -36,6 +36,7 @@ const TasksWebItem: React.FC<{}> = () => {
   const columnBody = (
     <TaskList
       demo
+      orgUsers={[demoUsers.abayomi, demoUsers.solomon]}
       tasks={demoTasks.reverse()}
       statusList={statuses}
       toggleForm={noop}

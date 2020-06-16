@@ -50,6 +50,7 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
           style={{ marginBottom: 8 }}
         >
           <Input.TextArea
+            disabled={disabled}
             autoSize={{ minRows: 2, maxRows: 6 }}
             autoComplete="off"
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -89,7 +90,10 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
             onClick={onCancelEdit}
             icon={<X style={{ width: "18px" }} />}
             disabled={
-              isNew || !onCancelEdit || subTask.description.length === 0
+              disabled ||
+              isNew ||
+              !onCancelEdit ||
+              subTask.description.length === 0
             }
             htmlType="button"
           />

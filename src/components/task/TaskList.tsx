@@ -1,5 +1,6 @@
 import React from "react";
 import { IBlock, IBlockStatus } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
@@ -7,6 +8,7 @@ import Task from "./Task";
 
 export interface ITaskListProps {
   tasks: IBlock[];
+  orgUsers: IUser[];
 
   demo?: boolean;
   statusList?: IBlockStatus[];
@@ -14,7 +16,7 @@ export interface ITaskListProps {
 }
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
-  const { toggleForm, tasks, demo, statusList } = props;
+  const { toggleForm, tasks, demo, statusList, orgUsers } = props;
   const tasksToRender = sortBlocksByPriority(tasks);
   const renderTask = (task: IBlock, i: number) => {
     const isNotLastTask = i < tasksToRender.length - 1;
@@ -30,6 +32,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
       >
         <Task
           task={task}
+          orgUsers={orgUsers}
           demo={demo}
           statusList={statusList}
           onEdit={

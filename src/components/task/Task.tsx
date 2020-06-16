@@ -6,15 +6,20 @@ import {
 import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
 import React from "react";
 import { IBlock, IBlockStatus } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
 import StyledContainer from "../styled/Container";
 import { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
+import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
+import TaskThumbnailDueDate from "./TaskThumbnailDueDate";
+import TaskThumbnailSubTasks from "./TaskThumbnailSubTasks";
 
 const ignoreClassNames = ["ant-typography-expand", "task-menu-dropdown"];
 
 export interface ITaskProps {
   task: IBlock;
+  orgUsers: IUser[];
 
   demo?: boolean;
   statusList?: IBlockStatus[];
@@ -25,7 +30,7 @@ export interface ITaskProps {
 // TODO: how do we show thelabels?
 
 const Task: React.FC<ITaskProps> = (props) => {
-  const { task, onEdit, demo, statusList } = props;
+  const { task, onEdit, demo, statusList, orgUsers } = props;
 
   const onDeleteTask = () => {
     if (demo) {
@@ -120,10 +125,7 @@ const Task: React.FC<ITaskProps> = (props) => {
   };
 
   return (
-    <StyledContainer
-      onClick={onClick}
-      s={{ minWidth: "280px", width: "100%", cursor: "pointer" }}
-    >
+    <StyledContainer s={{ minWidth: "280px", width: "100%" }}>
       <Space direction="vertical" style={{ width: "100%" }}>
         <StyledContainer>
           <StyledContainer s={{ flex: 1 }}>
@@ -139,15 +141,17 @@ const Task: React.FC<ITaskProps> = (props) => {
             {options}
           </StyledContainer>
         </StyledContainer>
-        <Typography.Paragraph
-          ellipsis={{
-            rows: 2,
-            expandable: true,
-          }}
-          style={{ marginBottom: "0" }}
-        >
-          {task.description}
-        </Typography.Paragraph>
+        <StyledContainer onClick={onClick} s={{ cursor: "pointer" }}>
+          <Typography.Paragraph
+            ellipsis={{
+              rows: 2,
+              expandable: true,
+            }}
+            style={{ marginBottom: "0" }}
+          >
+            {task.description}
+          </Typography.Paragraph>
+        </StyledContainer>
         <StyledContainer>
           <StyledContainer onClick={stopPropagation}>
             <TaskStatusContainer
@@ -158,6 +162,13 @@ const Task: React.FC<ITaskProps> = (props) => {
             />
           </StyledContainer>
         </StyledContainer>
+        {task.assignees && task.assignees.length > 0 && (
+          <TaskThumbnailAssignees task={task} users={orgUsers} />
+        )}
+        {task.dueAt && <TaskThumbnailDueDate task={task} />}
+        {task.subTasks && task.subTasks.length > 0 && (
+          <TaskThumbnailSubTasks task={task} />
+        )}
       </Space>
     </StyledContainer>
   );

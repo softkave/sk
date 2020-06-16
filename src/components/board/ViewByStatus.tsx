@@ -1,6 +1,7 @@
 import { Badge, Typography } from "antd";
 import React from "react";
 import { IBlock, IBlockStatus } from "../../models/block/block";
+import { IUser } from "../../models/user/user";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import BoardBaskets, { IBoardBasket } from "./BoardBaskets";
@@ -9,6 +10,7 @@ import Column from "./Column";
 export interface IViewByStatusProps {
   statuses: IBlockStatus[];
   blocks: IBlock[];
+  orgUsers: IUser[];
   onClickUpdateBlock: (block: IBlock) => void;
 
   style?: React.CSSProperties;
@@ -16,7 +18,7 @@ export interface IViewByStatusProps {
 
 // TODO: implement drag and drop in this board view
 const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
-  const { statuses, onClickUpdateBlock, blocks, style } = props;
+  const { statuses, onClickUpdateBlock, blocks, style, orgUsers } = props;
 
   const statusMap = statuses.reduce((accumulator, status) => {
     accumulator[status.customId] = status;
@@ -96,7 +98,13 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
     return (
       <Column
         header={renderColumnHeader(statusName, statusBlocks.length)}
-        body={<TaskList tasks={statusBlocks} toggleForm={onClickUpdateBlock} />}
+        body={
+          <TaskList
+            orgUsers={orgUsers}
+            tasks={statusBlocks}
+            toggleForm={onClickUpdateBlock}
+          />
+        }
       />
     );
   };

@@ -257,7 +257,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           placeholder="Due date"
           onChange={(val) => {
             setFieldValue(
-              "expectedEndAt",
+              "dueAt",
               val ? val.hour(23).minute(59).second(0).valueOf() : null
             );
           }}
