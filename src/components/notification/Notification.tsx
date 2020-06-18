@@ -2,6 +2,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Empty, Typography } from "antd";
 import React from "react";
+import { ArrowLeft } from "react-feather";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
@@ -20,6 +21,7 @@ import { IAppState } from "../../redux/store";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledCenterContainer from "../styled/CenterContainer";
+import StyledContainer from "../styled/Container";
 import {
   getNotificationLatestStatus,
   INotificationsPathParams,
@@ -129,15 +131,27 @@ const Notification: React.FC<{}> = (props) => {
     }
   };
 
+  const onBack = () => {
+    history.push("/app/notifications");
+  };
+
   return (
     <StyledNotificationBody>
       <StyledNotificationBodyHead>
-        <Typography.Title level={4}>
-          Collaboration Request From {notification!.from!.blockName}
-        </Typography.Title>
-        <Typography.Text>
-          {new Date(notification!.createdAt).toDateString()}
-        </Typography.Text>
+        <StyledContainer
+          s={{ marginRight: "16px", cursor: "pointer", alignItems: "center" }}
+          onClick={onBack}
+        >
+          <ArrowLeft />
+        </StyledContainer>
+        <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
+          <Typography.Title level={4}>
+            Collaboration Request From {notification!.from!.blockName}
+          </Typography.Title>
+          <Typography.Text>
+            {new Date(notification!.createdAt).toDateString()}
+          </Typography.Text>
+        </StyledContainer>
       </StyledNotificationBodyHead>
       <StyledMessage>{notification!.body}</StyledMessage>
       {renderNotificationResponse()}
@@ -155,6 +169,7 @@ const StyledNotificationBody = styled.div({
 
 const StyledNotificationBodyHead = styled.div({
   marginBottom: "32px",
+  display: "flex",
 });
 
 const StyledMessage = styled.p({

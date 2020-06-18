@@ -1,5 +1,8 @@
+import DownOutlined from "@ant-design/icons/DownOutlined";
+import UpOutlined from "@ant-design/icons/UpOutlined";
 import { Checkbox, Space, Typography } from "antd";
 import React from "react";
+import { ChevronDown, ChevronUp } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 
@@ -32,9 +35,12 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
           "&:hover": { "& *": { color: "rgb(66,133,244) !important" } },
         }}
       >
-        <Typography.Text type="secondary">
-          Show subtasks ( {completedSubTasksCount} of {count} completed )
-        </Typography.Text>
+        <Space>
+          <Typography.Text type="secondary">
+            Show subtasks ( {completedSubTasksCount} of {count} completed )
+          </Typography.Text>
+          <ChevronDown style={{ width: "18px", marginTop: "6px" }} />
+        </Space>
       </StyledContainer>
     );
   }
@@ -48,7 +54,10 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
           "&:hover": { "& *": { color: "rgb(66,133,244) !important" } },
         }}
       >
-        <Typography.Text type="secondary">Hide subtasks</Typography.Text>
+        <Space>
+          <Typography.Text type="secondary">Hide subtasks</Typography.Text>
+          <ChevronUp style={{ width: "18px", marginTop: "6px" }} />
+        </Space>
       </StyledContainer>
       {subTasks.map((subTask, i) => (
         <StyledContainer key={subTask.customId}>

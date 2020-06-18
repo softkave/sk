@@ -1,4 +1,6 @@
 import React from "react";
+import { ArrowLeft } from "react-feather";
+import { useHistory } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
@@ -59,6 +61,8 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     style,
     noExtraCreateMenuItems,
   } = props;
+
+  const history = useHistory();
 
   const onSelectCreateMenuItem = (key: CreateMenuKey) => {
     switch (key) {
@@ -126,6 +130,14 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     <SelectBlockOptionsMenu block={block} onSelect={onSelectSettingsMenuItem} />
   );
 
+  const onBack = () => {
+    if (block.type === BlockType.Board) {
+      history.push(`/app/organizations/${block.rootBlockId}/boards`);
+    } else {
+      history.push(`/app/organizations`);
+    }
+  };
+
   return (
     <StyledContainer
       s={{
@@ -134,6 +146,12 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
         alignItems: "center",
       }}
     >
+      <StyledContainer
+        s={{ marginRight: "16px", cursor: "pointer" }}
+        onClick={onBack}
+      >
+        <ArrowLeft />
+      </StyledContainer>
       <BlockThumbnail
         block={block}
         showFields={["name", "type"]}
