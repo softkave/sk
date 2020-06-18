@@ -88,8 +88,21 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
   const renderDesc = () => {
     if (fieldsToShow.description) {
       return (
-        <StyledContainer s={{ marginTop: "4px" }}>
-          {block.description}
+        <StyledContainer
+          s={{ marginTop: "4px", cursor: "initial" }}
+          onClick={(evt) => {
+            if (evt) {
+              evt.stopPropagation();
+            }
+          }}
+        >
+          <Typography.Paragraph
+            type="secondary"
+            ellipsis={{ rows: 1, expandable: true }}
+            style={{ marginBottom: "0px" }}
+          >
+            {block.description}
+          </Typography.Paragraph>
         </StyledContainer>
       );
     }
@@ -101,7 +114,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
     <StyledContainer
-      s={{ ...style, cursor: onClick ? "pointer" : undefined }}
+      s={{ ...style, width: "100%", cursor: onClick ? "pointer" : undefined }}
       className={className}
       onClick={onClick}
     >

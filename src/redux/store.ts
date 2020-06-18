@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { blocksReducer, IBlocksState } from "./blocks/reducer";
+import { IKeyValueState, keyValueReducer } from "./key-value/reducer";
 import {
   INotificationsState,
   notificationsReducer,
@@ -15,6 +16,7 @@ export interface IAppState {
   notifications: INotificationsState;
   session: ISessionState;
   operations: IOperationState;
+  keyValue: IKeyValueState;
 }
 
 const reducer = combineReducers({
@@ -23,6 +25,7 @@ const reducer = combineReducers({
   notifications: notificationsReducer,
   session: sessionReducer,
   operations: operationsReducer,
+  keyValue: keyValueReducer,
 });
 
 const store = configureStore({

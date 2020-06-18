@@ -24,6 +24,7 @@ export const requestForgotPasswordOperationId =
   "requestForgotPasswordOperationId";
 export const changePasswordOperationId = "changePasswordOperationId";
 
+// TODO: convert to enum
 export default class OperationIds {
   // block
   public static loadRootBlocks = loadRootBlocksOperationId;

@@ -1,8 +1,10 @@
 import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
-import { Space, Typography } from "antd";
+import { Space, Tag, Typography } from "antd";
 import moment from "moment";
 import React from "react";
+import { Clock } from "react-feather";
 import { IBlock } from "../../models/block/block";
+import StyledContainer from "../styled/Container";
 
 export interface ITaskThumbnailDueDateProps {
   task: IBlock;
@@ -17,10 +19,18 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
 
   return (
     <Space>
-      <ScheduleOutlined style={{ fontSize: "16px" }} />
-      <Typography.Text underline type="secondary">
-        Due {moment(task.dueAt).fromNow()}
-      </Typography.Text>
+      <StyledContainer>
+        <Clock
+          style={{
+            width: "16px",
+            height: "16px",
+            color: "rgba(0, 0, 0, 0.65)",
+          }}
+        />
+      </StyledContainer>
+      <Tag>
+        <Typography.Text>Due {moment(task.dueAt).fromNow()}</Typography.Text>
+      </Tag>
     </Space>
   );
 };

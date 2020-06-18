@@ -124,6 +124,9 @@ const Task: React.FC<ITaskProps> = (props) => {
     evt.stopPropagation();
   };
 
+  const hasAssignees = task.assignees && task.assignees.length > 0;
+  const hasSubTasks = task.subTasks && task.subTasks.length > 0;
+
   return (
     <StyledContainer s={{ minWidth: "280px", width: "100%" }}>
       <Space direction="vertical" style={{ width: "100%" }}>
@@ -162,13 +165,19 @@ const Task: React.FC<ITaskProps> = (props) => {
             />
           </StyledContainer>
         </StyledContainer>
-        {task.assignees && task.assignees.length > 0 && (
-          <TaskThumbnailAssignees task={task} users={orgUsers} />
+        {(hasAssignees || task.dueAt) && (
+          <StyledContainer>
+            {task.dueAt && <TaskThumbnailDueDate task={task} />}
+            {hasAssignees && (
+              <StyledContainer
+                s={{ justifyContent: "flex-end", flex: 1, paddingLeft: "16px" }}
+              >
+                <TaskThumbnailAssignees task={task} users={orgUsers} />
+              </StyledContainer>
+            )}
+          </StyledContainer>
         )}
-        {task.dueAt && <TaskThumbnailDueDate task={task} />}
-        {task.subTasks && task.subTasks.length > 0 && (
-          <TaskThumbnailSubTasks task={task} />
-        )}
+        {hasSubTasks && <TaskThumbnailSubTasks task={task} />}
       </Space>
     </StyledContainer>
   );

@@ -12,6 +12,7 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
 
   return (
     <BlockList
+      padWidth
       blocks={boards}
       onClick={onClick}
       showFields={["name"]}

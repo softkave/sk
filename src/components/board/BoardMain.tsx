@@ -227,21 +227,26 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
             <StyledContainer
               key={type}
               s={{
-                marginRight: "24px",
+                paddingRight: "24px",
                 marginLeft: i === 0 ? "16px" : undefined,
-                color: isSelected ? "rgb(66,133,244)" : "inherit",
-                borderBottom: isSelected
-                  ? "2px solid rgb(66,133,244)"
-                  : undefined,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                textTransform: "capitalize",
-              }}
-              onClick={() => {
-                onSelectResourceType(type);
               }}
             >
-              {getBoardResourceTypeFullName(type)}
+              <StyledContainer
+                s={{
+                  color: isSelected ? "rgb(66,133,244)" : "inherit",
+                  borderBottom: isSelected
+                    ? "2px solid rgb(66,133,244)"
+                    : undefined,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                  textTransform: "capitalize",
+                }}
+                onClick={() => {
+                  onSelectResourceType(type);
+                }}
+              >
+                {getBoardResourceTypeFullName(type)}
+              </StyledContainer>
             </StyledContainer>
           );
         })}

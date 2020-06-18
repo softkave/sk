@@ -24,8 +24,10 @@ const TaskThumbnailAssignees: React.FC<ITaskThumbnailAssigneesProps> = (
   }, {} as { [key: string]: IUser });
 
   const rendered: React.ReactNode[] = [];
+  const maxCount = 2;
 
-  for (const assignee of assignees) {
+  for (let i = 0; i < assignees.length && i < maxCount; i++) {
+    const assignee = assignees[i];
     const user = usersMap[assignee.userId];
 
     if (!user) {
@@ -46,6 +48,23 @@ const TaskThumbnailAssignees: React.FC<ITaskThumbnailAssigneesProps> = (
 
   if (rendered.length === 0) {
     return null;
+  }
+
+  const remCount = assignees.length - rendered.length;
+
+  if (remCount > 0) {
+    rendered.push(
+      <Avatar
+        key="remainder"
+        size="small"
+        shape="square"
+        style={{
+          backgroundColor: "#999",
+        }}
+      >
+        +{remCount}
+      </Avatar>
+    );
   }
 
   return <Space>{rendered}</Space>;

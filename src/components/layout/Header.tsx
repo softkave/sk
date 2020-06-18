@@ -5,14 +5,20 @@ import {
   LogoutOutlined,
   MailFilled,
   MailOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Dropdown, Menu, Tooltip } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import { setKeyValue } from "../../redux/key-value/actions";
+import { KeyValueProperties } from "../../redux/key-value/reducer";
+import { getKeyValue } from "../../redux/key-value/selectors";
 import logoutUserOperationFunc from "../../redux/operations/session/logoutUser";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { IAppState } from "../../redux/store";
 import ItemAvatar from "../ItemAvatar";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
@@ -21,10 +27,19 @@ import theme from "../theme";
 
 // TODO: there is a lag is style responsiveness when 'notifications' or 'organizations' is selected
 
-export interface IHeaderProps {}
+export interface IHeaderProps {
+  showMenuIcon: boolean;
+  onToggleMenu: () => void;
+}
 
-const Header: React.FC<IHeaderProps> = () => {
+const Header: React.FC<IHeaderProps> = (props) => {
+  const { showMenuIcon, onToggleMenu } = props;
+  const history = useHistory();
+  const dispatch = useDispatch();
   const user = useSelector(getSignedInUserRequired);
+  const cachedOrgPath = useSelector((state) =>
+    getKeyValue(state as IAppState, KeyValueProperties.CachedOrgPath)
+  );
 
   const onLogout = () => {
     logoutUserOperationFunc();
@@ -60,7 +75,13 @@ const Header: React.FC<IHeaderProps> = () => {
     return (
       <StyledHeaderContainer>
         <StyledContainer s={{ alignItems: "center" }}>
-          <Tooltip title="Messages">
+          {showMenuIcon && (
+            <MenuUnfoldOutlined
+              onClick={onToggleMenu}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+          {/* <Tooltip title="Notifications">
             <StyledFlatButton
               style={{
                 borderRadius: 0,
@@ -71,15 +92,25 @@ const Header: React.FC<IHeaderProps> = () => {
                   : undefined,
               }}
             >
-              <Link to="/app/notifications">
+              <StyledContainer
+                onClick={() => {
+                  dispatch(
+                    setKeyValue([
+                      KeyValueProperties.CachedOrgPath,
+                      window.location.pathname,
+                    ])
+                  );
+                  history.push("/app/notifications");
+                }}
+              >
                 {isNotificationSelected ? <MailFilled /> : <MailOutlined />}
                 {!isMobile && (
                   <span style={{ paddingLeft: "12px" }}>Notifications</span>
                 )}
-              </Link>
+              </StyledContainer>
             </StyledFlatButton>
-          </Tooltip>
-          <Tooltip title="Organizations">
+          </Tooltip> */}
+          {/* <Tooltip title="Organizations">
             <StyledFlatButton
               style={{
                 borderRadius: 0,
@@ -89,14 +120,22 @@ const Header: React.FC<IHeaderProps> = () => {
                   : undefined,
               }}
             >
-              <Link to="/app/organizations">
+              <StyledContainer
+                onClick={() => {
+                  if (cachedOrgPath) {
+                    history.push(cachedOrgPath as string);
+                  } else {
+                    history.push("/app/organizations");
+                  }
+                }}
+              >
                 {isOrgsSelected ? <AppstoreFilled /> : <BorderOutlined />}
                 {!isMobile && (
                   <span style={{ paddingLeft: "12px" }}>Organizations</span>
                 )}
-              </Link>
+              </StyledContainer>
             </StyledFlatButton>
-          </Tooltip>
+          </Tooltip> */}
         </StyledContainer>
         <StyledContainer s={{ flex: 1 }} />
         <StyledContainer s={{ marginLeft: "12px" }}>

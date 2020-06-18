@@ -23,9 +23,15 @@ const CollaborationRequests: React.FC<ICRProps> = (props) => {
     return <EmptyMessage>No collaboration requests yet.</EmptyMessage>;
   }
 
-  const renderItem = (request: INotification) => {
+  const renderItem = (request: INotification, i: number) => {
     return (
-      <StyledContainer key={request.customId} s={{ padding: "16px 0" }}>
+      <StyledContainer
+        key={request.customId}
+        s={{
+          padding: "16px 0",
+          borderTop: i === 0 ? undefined : "1px solid #d9d9d9",
+        }}
+      >
         <CollaborationRequestThumbnail request={request} />
       </StyledContainer>
     );

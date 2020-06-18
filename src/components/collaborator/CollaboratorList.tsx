@@ -23,9 +23,15 @@ const CollaboratorList: React.FC<ICProps> = (props) => {
     return <EmptyMessage>No collaborators yet.</EmptyMessage>;
   }
 
-  const renderItem = (collaborator: IUser) => {
+  const renderItem = (collaborator: IUser, i: number) => {
     return (
-      <StyledContainer key={collaborator.customId} s={{ padding: "16px 0" }}>
+      <StyledContainer
+        key={collaborator.customId}
+        s={{
+          padding: "16px 0",
+          borderTop: i === 0 ? undefined : "1px solid #d9d9d9",
+        }}
+      >
         <CollaboratorThumbnail collaborator={collaborator} />
       </StyledContainer>
     );

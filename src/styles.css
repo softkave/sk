@@ -3,45 +3,25 @@ body,
 #root {
   height: 100%;
   /* font-family: "Karla", sans-serif; */
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 500;
+  /* font-family: 'Work Sans', sans-serif; */
+  /* font-weight: 500;
   font-size: 14px;
-  /* color: rgb(0,0,0); */
-  /* font-weight: 400; */
+  font-weight: 400; */
 }
 
-.ant-btn {
+/* .ant-btn {
   font-weight: 500;
-}
+} */
 
-.color-1 {
-  color: #56667D;
-}
-
-.color-2 {
-  color: #006deb
-}
-
-.color-3 {
-  color: #3F3F44;
-}
-
-.color-4 {
-  color: #475366;
-}
-
-/* body, */
-.ant-input,
-/* .ant-list, */
+/* .ant-input,
 .ant-dropdown-menu-item {
   color: rgba(0, 0, 0, 0.85) !important;
-}
+} */
 
-*,
+/* *,
 .ant-form-item-children {
-  /* font-family: "Karla", sans-serif !important; */
   font-family: 'Work Sans', sans-serif;
-}
+} */
 
 .ant-drawer-body {
   flex: 1;
@@ -58,6 +38,6 @@ body,
   font-size: 16px;
 }
 
-.ant-form-item label {
+/* .ant-form-item label {
   font-weight: 500;
-}
+} */

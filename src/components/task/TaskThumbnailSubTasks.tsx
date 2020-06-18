@@ -39,7 +39,15 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
           <Typography.Text type="secondary">
             Show subtasks ( {completedSubTasksCount} of {count} completed )
           </Typography.Text>
-          <ChevronDown style={{ width: "18px", marginTop: "6px" }} />
+          <StyledContainer>
+            <ChevronDown
+              style={{
+                width: "18px",
+                height: "18px",
+                color: "rgba(0, 0, 0, 0.65)",
+              }}
+            />
+          </StyledContainer>
         </Space>
       </StyledContainer>
     );
@@ -56,7 +64,15 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
       >
         <Space>
           <Typography.Text type="secondary">Hide subtasks</Typography.Text>
-          <ChevronUp style={{ width: "18px", marginTop: "6px" }} />
+          <StyledContainer>
+            <ChevronUp
+              style={{
+                width: "18px",
+                height: "18px",
+                color: "rgba(0, 0, 0, 0.65)",
+              }}
+            />
+          </StyledContainer>
         </Space>
       </StyledContainer>
       {subTasks.map((subTask, i) => (
