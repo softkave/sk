@@ -15,7 +15,7 @@ import IOperation, {
   getOperationLastError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import { OperationIds.respondToNotification } from "../../redux/operations/operationIDs";
+import { OperationIds.respondToNotification } from "../../redux/operations/opc";
 import { getOperationWithIdForResource } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";

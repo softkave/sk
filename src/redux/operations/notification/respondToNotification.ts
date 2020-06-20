@@ -12,12 +12,12 @@ import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
 import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
+import { OperationIds.respondToNotification } from "../opc";
 import {
   IOperationFuncOptions,
   isOperationStarted,
   OperationStatus,
 } from "../operation";
-import { OperationIds.respondToNotification } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {

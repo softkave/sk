@@ -4,12 +4,12 @@ import { getSignedInUserRequired } from "../../session/selectors";
 import store from "../../store";
 import * as userActions from "../../users/actions";
 import { pushOperation } from "../actions";
+import { loadUserNotifications.OperationIds } from "../opc";
 import {
   IOperationFuncOptions,
   isOperationStarted,
   OperationStatus,
 } from "../operation";
-import { OperationIds.loadUserNotifications } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadUserNotificationsOperationFunc(

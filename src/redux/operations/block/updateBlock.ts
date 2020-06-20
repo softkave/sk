@@ -14,7 +14,7 @@ import {
   isOperationStarted,
   OperationStatus,
 } from "../operation";
-import { OperationIds.updateBlock } from "../operationIDs";
+import { OperationIds.updateBlock } from "../opc";
 import { getOperationWithIdForResource } from "../selectors";
 import {
   hasBlockParentChanged,

@@ -9,7 +9,7 @@ import {
   isOperationStarted,
   OperationStatus,
 } from "../operation";
-import { OperationIds.initializeAppSession } from "../operationIDs";
+import { OperationIds.initializeAppSession } from "../opc";
 import { getFirstOperationWithId } from "../selectors";
 
 export default async function initializeAppSessionOperationFunc(

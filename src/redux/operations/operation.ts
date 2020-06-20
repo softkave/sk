@@ -15,7 +15,7 @@ export interface IOperationStatus {
   status: OperationStatus;
   timestamp: number;
   data?: any;
-  error?: INetError | Error;
+  error?: any;
 }
 
 export default interface IOperation {

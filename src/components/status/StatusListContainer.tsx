@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { OperationIds.updateBlock } from "../../redux/operations/operationIDs";
+import { OperationIds.updateBlock } from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import {
   flattenErrorListWithDepthInfinite,

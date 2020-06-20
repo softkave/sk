@@ -8,7 +8,7 @@ import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
   OperationIds.addBlock,
   OperationIds.updateBlock,
-} from "../../redux/operations/operationIDs";
+} from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";

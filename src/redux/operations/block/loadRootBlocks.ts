@@ -7,7 +7,7 @@ import {
   isOperationStarted,
   OperationStatus,
 } from "../operation";
-import { OperationIds.loadRootBlocks } from "../operationIDs";
+import { OperationIds.loadRootBlocks } from "../opc";
 import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadRootBlocksOperationFunc(

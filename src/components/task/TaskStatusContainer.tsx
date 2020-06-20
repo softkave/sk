@@ -8,7 +8,7 @@ import { getBlock } from "../../redux/blocks/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import { OperationStatus } from "../../redux/operations/operation";
-import { OperationIds.updateBlock } from "../../redux/operations/operationIDs";
+import { OperationIds.updateBlock } from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getDateString } from "../../utils/utils";

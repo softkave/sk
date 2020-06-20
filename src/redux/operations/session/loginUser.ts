@@ -12,7 +12,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.loginUser } from "../operationIDs";
+import { OperationIds.loginUser } from "../opc";
 import { getFirstOperationWithId } from "../selectors";
 
 export interface ILoginUserData {

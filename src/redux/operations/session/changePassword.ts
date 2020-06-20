@@ -12,7 +12,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.changePassword } from "../operationIDs";
+import { OperationIds.changePassword } from "../opc";
 import { getFirstOperationWithId } from "../selectors";
 import { saveUserTokenIfAlreadySaved } from "./utils";
 

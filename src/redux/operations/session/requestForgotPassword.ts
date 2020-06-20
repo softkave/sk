@@ -9,7 +9,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.requestForgotPassword } from "../operationIDs";
+import { OperationIds.requestForgotPassword } from "../opc";
 import { getFirstOperationWithId } from "../selectors";
 
 export interface IRequestForgotPasswordOperationFuncDataProps {

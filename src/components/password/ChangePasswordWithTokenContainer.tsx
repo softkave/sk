@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useStore } from "react-redux";
 import { pushOperation } from "../../redux/operations/actions";
 import { OperationStatus } from "../../redux/operations/operation";
-import { OperationIds.changePassword } from "../../redux/operations/operationIDs";
+import { OperationIds.changePassword } from "../../redux/operations/opc";
 import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";

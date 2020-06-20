@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
-import { OperationIds.signupUser } from "../../redux/operations/operationIDs";
+import { OperationIds.signupUser } from "../../redux/operations/opc";
 import signupUserOperationFunc from "../../redux/operations/session/sigupUser";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";

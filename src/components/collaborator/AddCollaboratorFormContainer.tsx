@@ -8,7 +8,7 @@ import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import { OperationStatus } from "../../redux/operations/operation";
-import { OperationIds.addCollaborators } from "../../redux/operations/operationIDs";
+import { OperationIds.addCollaborators } from "../../redux/operations/opc";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";

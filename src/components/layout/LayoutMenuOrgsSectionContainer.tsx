@@ -6,7 +6,7 @@ import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import { setKeyValue } from "../../redux/key-value/actions";
 import { KeyValueProperties } from "../../redux/key-value/reducer";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import OperationIds from "../../redux/operations/operationIDs";
+import OperationIds from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";

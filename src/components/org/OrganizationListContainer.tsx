@@ -6,7 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import { OperationIds.loadRootBlocks } from "../../redux/operations/operationIDs";
+import { OperationIds.loadRootBlocks } from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
