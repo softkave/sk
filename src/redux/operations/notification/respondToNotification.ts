@@ -15,9 +15,9 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
-import { respondToNotificationOperationId } from "../operationIDs";
+import { OperationIds.respondToNotification } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IRespondToNotificationOperationFuncDataProps {
@@ -33,7 +33,7 @@ export default async function respondToNotificationOperationFunc(
   const { request, response } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    respondToNotificationOperationId,
+    OperationIds.respondToNotification,
     request.customId
   );
 
@@ -43,10 +43,10 @@ export default async function respondToNotificationOperationFunc(
 
   store.dispatch(
     pushOperation(
-      respondToNotificationOperationId,
+      OperationIds.respondToNotification,
       {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       request.customId
@@ -96,10 +96,10 @@ export default async function respondToNotificationOperationFunc(
 
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationId,
+        OperationIds.respondToNotification,
         {
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         request.customId
@@ -108,11 +108,11 @@ export default async function respondToNotificationOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        respondToNotificationOperationId,
+        OperationIds.respondToNotification,
         {
           error,
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         request.customId

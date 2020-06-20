@@ -8,7 +8,6 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import StyledContainer from "../styled/Container";
-import StyledMenuItem from "../styled/StyledMenuItem";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
   IMenuWithTriggerRenderTriggerProps,
@@ -53,14 +52,14 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
           renderMenuProps.closeMenu();
         }}
       >
-        <StyledMenuItem key="view">
+        <Menu.Item style={{ textTransform: "capitalize" }} key="view">
           <PlayCircleOutlined />
           View or Edit {blockTypeFullName}
-        </StyledMenuItem>
-        <StyledMenuItem key="delete">
+        </Menu.Item>
+        <Menu.Item style={{ textTransform: "capitalize" }} key="delete">
           <DeleteOutlined />
           Delete {blockTypeFullName}
-        </StyledMenuItem>
+        </Menu.Item>
       </Menu>
     );
   };

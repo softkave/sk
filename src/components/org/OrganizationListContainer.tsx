@@ -6,7 +6,7 @@ import { Route, Switch } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import { loadRootBlocksOperationId } from "../../redux/operations/operationIDs";
+import { OperationIds.loadRootBlocks } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
@@ -83,7 +83,7 @@ const OrganizationListContainer: React.FC<{}> = () => {
 
   return (
     <SingleOperationHelper
-      operationId={loadRootBlocksOperationId}
+      operationId={OperationIds.loadRootBlocks}
       render={render}
       loadFunc={loadOrganizations}
     />

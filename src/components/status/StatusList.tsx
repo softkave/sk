@@ -83,7 +83,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         });
 
         if (newEditingList.length > 0) {
-          editingStatusList.set(newEditingList);
+          editingStatusList.setList(newEditingList);
         }
       }
     };

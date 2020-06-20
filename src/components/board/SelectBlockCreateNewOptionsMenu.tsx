@@ -10,7 +10,6 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
-import StyledMenuItem from "../styled/StyledMenuItem";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
   IMenuWithTriggerRenderTriggerProps,
@@ -52,20 +51,20 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
   ) => {
     let addedDivider = false;
     const createMenuItems = childrenTypes.map((type) => (
-      <StyledMenuItem key={type}>
+      <Menu.Item style={{ textTransform: "capitalize" }} key={type}>
         <BorderOutlined />
         New {type}
-      </StyledMenuItem>
+      </Menu.Item>
     ));
 
     if (hasCollaborators) {
       addedDivider = true;
       createMenuItems.push(<Menu.Divider key="menu-divider-1" />);
       createMenuItems.push(
-        <StyledMenuItem key="collaborator">
+        <Menu.Item style={{ textTransform: "capitalize" }} key="collaborator">
           <UserAddOutlined />
           Add Collaborator
-        </StyledMenuItem>
+        </Menu.Item>
       );
     }
 
@@ -75,14 +74,14 @@ const SelectBlockCreateNewOptionsMenu: React.FC<ISelectBlockCreateNewOptionsMenu
       }
 
       createMenuItems.push(
-        <StyledMenuItem key="status">
+        <Menu.Item style={{ textTransform: "capitalize" }} key="status">
           <ReconciliationOutlined />
           Add or Edit Status
-        </StyledMenuItem>,
-        <StyledMenuItem key="label">
+        </Menu.Item>,
+        <Menu.Item style={{ textTransform: "capitalize" }} key="label">
           <TagOutlined />
           Add or Edit Labels
-        </StyledMenuItem>
+        </Menu.Item>
       );
     }
 

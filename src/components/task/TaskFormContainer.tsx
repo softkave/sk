@@ -6,8 +6,8 @@ import { getBlock } from "../../redux/blocks/selectors";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  addBlockOperationId,
-  updateBlockOperationId,
+  OperationIds.addBlock,
+  OperationIds.updateBlock,
 } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
@@ -80,7 +80,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
   const operationStatus = useOperation({
     scopeId,
-    operationId: props.block ? updateBlockOperationId : addBlockOperationId,
+    operationId: props.block ? OperationIds.updateBlock : OperationIds.addBlock,
     resourceId: block.customId,
   });
 

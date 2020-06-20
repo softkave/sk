@@ -8,7 +8,6 @@ import React from "react";
 import { Columns } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
-import StyledMenuItem from "../styled/StyledMenuItem";
 import wrapWithMargin from "../utilities/wrapWithMargin";
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
@@ -74,12 +73,12 @@ const SelectBoardTypeMenu: React.FC<ISelectBoardTypeMenuProps> = (props) => {
       >
         {availableBoardTypes.map((type) => {
           return (
-            <StyledMenuItem key={type}>
+            <Menu.Item style={{ textTransform: "capitalize" }} key={type}>
               <StyledContainer s={{ alignItems: "center" }}>
                 {boartTypesToIconMap[type]}
                 {wrapWithMargin(getBoardViewTypeFullName(type), 8, 0)}
               </StyledContainer>
-            </StyledMenuItem>
+            </Menu.Item>
           );
         })}
       </Menu>

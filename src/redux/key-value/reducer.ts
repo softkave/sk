@@ -20,4 +20,6 @@ export const keyValueReducer = createReducer({}, (builder) => {
 
 export enum KeyValueProperties {
   CachedOrgPath = "cachedOrgPath",
+  AppMenu = "appMenu",
+  ShowNewOrgForm = "showNewOrgForm",
 }

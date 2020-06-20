@@ -13,9 +13,9 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
-import { deleteBlockOperationId } from "../operationIDs";
+import { OperationIds.deleteBlock } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IDeleteBlockOperationFuncDataProps {
@@ -29,7 +29,7 @@ export default async function deleteBlockOperationFunc(
   const { block } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    deleteBlockOperationId,
+    OperationIds.deleteBlock,
     block.customId
   );
 
@@ -39,10 +39,10 @@ export default async function deleteBlockOperationFunc(
 
   store.dispatch(
     pushOperation(
-      deleteBlockOperationId,
+      OperationIds.deleteBlock,
       {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       block.customId
@@ -107,10 +107,10 @@ export default async function deleteBlockOperationFunc(
 
     store.dispatch(
       pushOperation(
-        deleteBlockOperationId,
+        OperationIds.deleteBlock,
         {
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         block.customId
@@ -119,11 +119,11 @@ export default async function deleteBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        deleteBlockOperationId,
+        OperationIds.deleteBlock,
         {
           error,
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         block.customId

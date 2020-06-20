@@ -13,7 +13,7 @@ export enum BlockType {
   Task = "task",
 }
 
-export interface IAssignee {
+export interface ITaskAssignee {
   userId: string;
   assignedAt: string;
   assignedBy: string;
@@ -71,7 +71,7 @@ export interface IBlock {
   updatedBy?: string;
   parent?: string;
   rootBlockId?: string;
-  assignees?: IAssignee[];
+  assignees?: ITaskAssignee[];
   priority?: string;
   subTasks?: ISubTask[]; // should sub-tasks be their own blocks?
   boardStatuses?: IBlockStatus[];

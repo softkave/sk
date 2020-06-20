@@ -6,7 +6,7 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
 import { getOperationWithIdForResource } from "../selectors";
 
@@ -36,7 +36,7 @@ export default async function loadBlockChildrenOperationFunc(
       operationId,
       {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       block.customId
@@ -78,7 +78,7 @@ export default async function loadBlockChildrenOperationFunc(
         operationId,
         {
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         block.customId
@@ -91,7 +91,7 @@ export default async function loadBlockChildrenOperationFunc(
         {
           error,
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         block.customId

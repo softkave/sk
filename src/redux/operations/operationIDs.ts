@@ -1,51 +1,25 @@
-// block
-export const loadRootBlocksOperationId = "loadRootBlocksOperationId";
-export const addBlockOperationId = "addBlockOperationId";
-export const updateBlockOperationId = "updateBlockOperationId";
-export const deleteBlockOperationId = "deleteBlockOperationId";
-export const addCollaboratorsOperationId = "addCollaboratorsOperationId";
-
-// notification
-export const loadUserNotificationsOperationId =
-  "loadUserNotificationsOperationId";
-export const updateNotificationOperationId = "updateNotificationOperationId";
-export const respondToNotificationOperationId =
-  "respondToNotificationOperationId";
-
-// user
-export const updateUserOperationId = "updateUserOperationId";
-
-// session
-export const initializeAppSessionOperationId =
-  "initializeAppSessionOperationId";
-export const signupUserOperationId = "signupUserOperationId";
-export const loginUserOperationId = "loginUserOperationId";
-export const requestForgotPasswordOperationId =
-  "requestForgotPasswordOperationId";
-export const changePasswordOperationId = "changePasswordOperationId";
-
-// TODO: convert to enum
-export default class OperationIds {
+enum OperationIds {
   // block
-  public static loadRootBlocks = loadRootBlocksOperationId;
-  public static addBlock = addBlockOperationId;
-  public static updateBlock = updateBlockOperationId;
-  public static deleteBlock = deleteBlockOperationId;
-  public static addCollaborators = addCollaboratorsOperationId;
+  LoadRootBlocks = "loadRootBlocks",
+  AddBlock = "addBlock",
+  UpdateBlock = "updateBlock",
+  DeleteBlock = "deleteBlock",
+  AddCollaborators = "addCollaborators",
 
   // notification
-  public static loadUserNotifications = loadUserNotificationsOperationId;
-  public static updateNotification = updateNotificationOperationId;
-  public static respondToNotification = respondToNotificationOperationId;
+  LoadUserNotifications = "loadUserNotifications",
+  UpdateNotification = "updateNotification",
+  RespondToNotification = "respondToNotification",
 
   // user
-  public static updateUser = updateUserOperationId;
+  UpdateUser = "updateUser",
 
   // session
-  public static initializeAppSession = initializeAppSessionOperationId;
-  public static signupUser = signupUserOperationId;
-  public static loginUser = loginUserOperationId;
-  public static requestForgotPassword = requestForgotPasswordOperationId;
-  public static changePassword = changePasswordOperationId;
-  public static getSessionDetails = "getSessionDetails";
+  InitializeAppSession = "initializeAppSession",
+  SignupUser = "signupUser",
+  LoginUser = "loginUser",
+  RequestForgotPassword = "requestForgotPassword",
+  ChangePassword = "changePassword",
 }
+
+export default OperationIds;

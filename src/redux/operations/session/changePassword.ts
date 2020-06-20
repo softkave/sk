@@ -12,7 +12,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { changePasswordOperationId } from "../operationIDs";
+import { OperationIds.changePassword } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 import { saveUserTokenIfAlreadySaved } from "./utils";
 
@@ -32,7 +32,7 @@ export default async function changePasswordOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: changePasswordOperationId,
+    operationId: OperationIds.changePassword,
   };
 
   if (!token) {
@@ -44,7 +44,7 @@ export default async function changePasswordOperationFunc(
     return;
   }
 
-  const operation = getFirstOperationWithId(state, changePasswordOperationId);
+  const operation = getFirstOperationWithId(state, OperationIds.changePassword);
 
   if (isOperationStarted(operation, options.scopeId)) {
     return;

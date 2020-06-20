@@ -12,9 +12,9 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
-import { updateBlockOperationId } from "../operationIDs";
+import { OperationIds.updateBlock } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 import {
   hasBlockParentChanged,
@@ -33,7 +33,7 @@ export default async function updateBlockOperationFunc(
   const { block, data } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    updateBlockOperationId,
+    OperationIds.updateBlock,
     block.customId
   );
 
@@ -49,10 +49,10 @@ export default async function updateBlockOperationFunc(
 
   store.dispatch(
     pushOperation(
-      updateBlockOperationId,
+      OperationIds.updateBlock,
       {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       block.customId
@@ -87,10 +87,10 @@ export default async function updateBlockOperationFunc(
 
     store.dispatch(
       pushOperation(
-        updateBlockOperationId,
+        OperationIds.updateBlock,
         {
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         block.customId
@@ -99,11 +99,11 @@ export default async function updateBlockOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        updateBlockOperationId,
+        OperationIds.updateBlock,
         {
           error,
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         block.customId

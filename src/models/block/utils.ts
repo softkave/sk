@@ -1,8 +1,8 @@
 import { getDateString, newId } from "../../utils/utils";
 import { IUser } from "../user/user";
-import { BlockType, IAssignee, IBlock, IBlockStatus } from "./block";
+import { BlockType, IBlock, IBlockStatus, ITaskAssignee } from "./block";
 
-export function assignTask(collaborator: IUser, by?: IUser): IAssignee {
+export function assignTask(collaborator: IUser, by?: IUser): ITaskAssignee {
   return {
     userId: collaborator.customId,
     assignedAt: getDateString(),

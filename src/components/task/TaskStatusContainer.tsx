@@ -7,8 +7,8 @@ import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { operationStatusTypes } from "../../redux/operations/operation";
-import { updateBlockOperationId } from "../../redux/operations/operationIDs";
+import { OperationStatus } from "../../redux/operations/operation";
+import { OperationIds.updateBlock } from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import { getDateString } from "../../utils/utils";
@@ -33,7 +33,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
   const dispatch = useDispatch();
   const operation = useOperation({
     scopeId,
-    operationId: updateBlockOperationId,
+    operationId: OperationIds.updateBlock,
     resourceId: task.customId,
   });
 
@@ -56,10 +56,10 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       message.error("Error updating task status");
       dispatch(
         pushOperation(
-          updateBlockOperationId,
+          OperationIds.updateBlock,
           {
             scopeId,
-            status: operationStatusTypes.consumed,
+            status: OperationStatus.consumed,
             timestamp: Date.now(),
           },
           task.customId

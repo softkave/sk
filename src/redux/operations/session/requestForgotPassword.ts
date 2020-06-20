@@ -9,7 +9,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { requestForgotPasswordOperationId } from "../operationIDs";
+import { OperationIds.requestForgotPassword } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 
 export interface IRequestForgotPasswordOperationFuncDataProps {
@@ -25,7 +25,7 @@ export default async function requestForgotPasswordOperationFunc(
   const { email } = dataProps;
   const operation = getFirstOperationWithId(
     state,
-    requestForgotPasswordOperationId
+    OperationIds.requestForgotPassword
   );
 
   if (isOperationStarted(operation, options.scopeId)) {
@@ -35,7 +35,7 @@ export default async function requestForgotPasswordOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: requestForgotPasswordOperationId,
+    operationId: OperationIds.requestForgotPassword,
   };
 
   dispatchOperationStarted(dispatchOptions);

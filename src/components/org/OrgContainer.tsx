@@ -10,29 +10,23 @@ import {
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
-import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation from "../hooks/useOperation";
-import BoardForm, { IBoardFormValues } from "./BoardForm";
+import Org, { IOrgValues } from "./Org";
 
-const scopeId = "BoardFormContainer";
+const scopeId = "OrgContainer";
 
-export interface IBoardFormContainerProps {
-  orgId: string;
+export interface IOrgContainerProps {
   onClose: () => void;
 
-  parentBlock?: IBlock;
   block?: IBlock;
 }
 
-const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
-  const { onClose, parentBlock } = props;
+const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
+  const { onClose } = props;
   const user = useSelector(getSignedInUserRequired);
-
   const [block, setBlock] = React.useState<IBlock>(
-    props.block || getNewBlock(user, BlockType.Board, parentBlock)
+    props.block || getNewBlock(user, BlockType.Org)
   );
-
-  const possibleParents = useBlockPossibleParents(block);
 
   const operationStatus = useOperation({
     scopeId,
@@ -50,7 +44,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
     }
   });
 
-  const onSubmit = async (values: IBoardFormValues) => {
+  const onSubmit = async (values: IOrgValues) => {
     const data = { ...block, ...values };
     setBlock(data);
 
@@ -80,17 +74,16 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
   };
 
   return (
-    <BoardForm
+    <Org
+      formOnly={!props.block}
+      org={props.block} // props.block not block, because it's used to determine if it's a new block or not
       value={block as any}
       onClose={onClose}
-      formOnly={!props.block}
-      board={props.block}
       onSubmit={onSubmit}
       isSubmitting={operationStatus.isLoading}
       errors={errors}
-      possibleParents={possibleParents}
     />
   );
 };
 
-export default React.memo(BoardFormContainer);
+export default React.memo(OrgContainer);

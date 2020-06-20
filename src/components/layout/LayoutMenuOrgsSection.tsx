@@ -2,6 +2,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Empty, Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import NewBlockList from "../block/NewBlockList";
 import StyledContainer from "../styled/Container";
 import LayoutMenuOrgsList from "./LayoutMenuOrgsList";
 import LayoutMenuOrgsSectionHeader from "./LayoutMenuOrgsSectionHeader";
@@ -44,16 +45,15 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
       return <Empty>No orgs</Empty>;
     }
 
-    return <LayoutMenuOrgsList orgs={filterOrgs()} onClick={onSelectOrg} />;
+    return <NewBlockList blocks={filterOrgs()} onClick={onSelectOrg} />;
   }, [isLoading, errorMessage, orgs]);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       <LayoutMenuOrgsSectionHeader
-        disableSearch
         onAddOrg={onAddOrg}
         onChangeSearchInput={(value) => setSearchQuery(value)}
-        // disableSearch={orgs.length === 0}
+        disableSearch={orgs.length === 0}
         isLoading={isLoading}
       />
       {renderContent()}

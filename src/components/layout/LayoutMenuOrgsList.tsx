@@ -12,16 +12,16 @@ const LayoutMenuOrgsList: React.FC<ILayoutMenuOrgsListProps> = (props) => {
   const { orgs, onClick } = props;
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
+    <Space direction="vertical" style={{ width: "100%" }} size={0}>
       {orgs.map((org) => (
         <StyledContainer
           key={org.customId}
           onClick={() => onClick(org)}
           s={{
             cursor: "pointer",
-            padding: "4px 16px",
+            padding: "8px 16px",
             "&:hover": {
-              backgroundColor: "#f0f0f0",
+              backgroundColor: "#eee",
             },
           }}
         >

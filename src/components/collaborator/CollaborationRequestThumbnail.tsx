@@ -4,6 +4,7 @@ import moment from "moment";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 import cloneWithWidth from "../styled/cloneWithWidth";
+import StyledContainer from "../styled/Container";
 import StyledFlexContainer from "../styled/FlexContainer";
 
 export interface ICollaborationRequestThumbnailProps {
@@ -23,7 +24,12 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
   const expired = request.expiresAt && moment().isAfter(expiresAt);
 
   return (
-    <StyledFlexContainer style={style} onClick={onClick} className={className}>
+    <StyledContainer
+      s={{ width: "100%" }}
+      style={style}
+      onClick={onClick}
+      className={className}
+    >
       {cloneWithWidth(
         <StyledRequestDataContainer>
           <Typography.Text strong ellipsis>
@@ -43,7 +49,7 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
         </StyledRequestDataContainer>,
         { marginLeft: 16 }
       )}
-    </StyledFlexContainer>
+    </StyledContainer>
   );
 };
 

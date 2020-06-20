@@ -11,7 +11,7 @@ import * as notificationActions from "../../../redux/notifications/actions";
 import { pushOperation } from "../../../redux/operations/actions";
 import {
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../../../redux/operations/operation";
 import { getOperationWithIdForResource } from "../../../redux/operations/selectors";
 import store from "../../../redux/store";
@@ -72,7 +72,7 @@ export default async function loadBoardData(block: IBlock) {
     pushOperation(
       opId,
       {
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       block.customId
@@ -115,7 +115,7 @@ export default async function loadBoardData(block: IBlock) {
       pushOperation(
         opId,
         {
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         block.customId
@@ -127,7 +127,7 @@ export default async function loadBoardData(block: IBlock) {
         opId,
         {
           error,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         block.customId

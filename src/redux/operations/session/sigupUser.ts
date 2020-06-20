@@ -13,7 +13,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { signupUserOperationId } from "../operationIDs";
+import { OperationIds.signupUser } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 
 export interface ISignupUserData {
@@ -33,7 +33,7 @@ export default async function signupUserOperationFunc(
   options: IOperationFuncOptions = {}
 ) {
   const { user } = dataProps;
-  const operation = getFirstOperationWithId(state, signupUserOperationId);
+  const operation = getFirstOperationWithId(state, OperationIds.signupUser);
 
   if (isOperationStarted(operation, options.scopeId)) {
     return;
@@ -44,7 +44,7 @@ export default async function signupUserOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: signupUserOperationId,
+    operationId: OperationIds.signupUser,
   };
 
   dispatchOperationStarted(dispatchOptions);

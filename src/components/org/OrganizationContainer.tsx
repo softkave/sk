@@ -6,7 +6,7 @@ import { IBlock } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/store";
 import Board from "../board/Board";
-import StyledCenterContainer from "../styled/CenterContainer";
+import StyledContainer from "../styled/Container";
 
 interface IRouteMatchParams {
   organizationId?: string;
@@ -26,9 +26,9 @@ const OrganizationContainer: React.FC<{}> = () => {
 
   if (!organization) {
     return (
-      <StyledCenterContainer>
+      <StyledContainer s={{ alignItems: "center", justifyContent: "center" }}>
         <Empty description="Organization not found." />
-      </StyledCenterContainer>
+      </StyledContainer>
     );
   }
 

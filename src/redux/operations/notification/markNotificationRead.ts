@@ -12,7 +12,7 @@ import {
   IOperationFuncOptions,
   isOperationStarted,
 } from "../operation";
-import { updateNotificationOperationId } from "../operationIDs";
+import { OperationIds.updateNotification } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IMarkNotificationReadOperationFuncDataProps {
@@ -28,7 +28,7 @@ export default async function markNotificationReadOperationFunc(
   const { notification } = dataProps;
   const operation = getOperationWithIdForResource(
     state,
-    updateNotificationOperationId,
+    OperationIds.updateNotification,
     notification.customId
   );
 
@@ -39,7 +39,7 @@ export default async function markNotificationReadOperationFunc(
   const dispatchOptions: IDispatchOperationFuncProps = {
     ...options,
     dispatch,
-    operationId: updateNotificationOperationId,
+    operationId: OperationIds.updateNotification,
     resourceId: notification.customId,
   };
 

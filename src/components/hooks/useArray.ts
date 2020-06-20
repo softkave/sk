@@ -11,8 +11,9 @@ export interface IUseArrayHookResult<T> {
   removeIndex: (i: number) => boolean;
   exists: (item: T) => boolean;
   reset: () => void;
-  set: (list: T[]) => void;
+  setList: (list: T[]) => void;
   get: (index: number) => T;
+  getList: () => T[];
 }
 
 const useArray = <T>(
@@ -48,6 +49,8 @@ const useArray = <T>(
 
   const get = (i: number) => list[i];
 
+  const getList = () => list;
+
   return {
     remove,
     removeIndex,
@@ -55,7 +58,8 @@ const useArray = <T>(
     add,
     exists,
     get,
-    set: setList,
+    getList,
+    setList,
   };
 };
 

@@ -8,9 +8,9 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
-import { addCollaboratorsOperationId } from "../operationIDs";
+import { OperationIds.addCollaborators } from "../operationIDs";
 import { getOperationWithIdForResource } from "../selectors";
 
 export interface IAddCollaboratorOperationFuncDataProps {
@@ -29,7 +29,7 @@ export default async function addCollaboratorsOperationFunc(
   const { block, collaborators, message, expiresAt } = dataProps;
   const operation = getOperationWithIdForResource(
     store.getState(),
-    addCollaboratorsOperationId,
+    OperationIds.addCollaborators,
     block.customId
   );
 
@@ -39,10 +39,10 @@ export default async function addCollaboratorsOperationFunc(
 
   store.dispatch(
     pushOperation(
-      addCollaboratorsOperationId,
+      OperationIds.addCollaborators,
       {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationStarted,
+        status: OperationStatus.Started,
         timestamp: Date.now(),
       },
       block.customId
@@ -98,10 +98,10 @@ export default async function addCollaboratorsOperationFunc(
 
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationId,
+        OperationIds.addCollaborators,
         {
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationComplete,
+          status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
         block.customId
@@ -110,11 +110,11 @@ export default async function addCollaboratorsOperationFunc(
   } catch (error) {
     store.dispatch(
       pushOperation(
-        addCollaboratorsOperationId,
+        OperationIds.addCollaborators,
         {
           error,
           scopeId: options.scopeId,
-          status: operationStatusTypes.operationError,
+          status: OperationStatus.Error,
           timestamp: Date.now(),
         },
         block.customId

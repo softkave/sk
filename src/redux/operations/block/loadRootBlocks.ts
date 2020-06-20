@@ -5,9 +5,9 @@ import { pushOperation } from "../actions";
 import {
   IOperationFuncOptions,
   isOperationStarted,
-  operationStatusTypes,
+  OperationStatus,
 } from "../operation";
-import { loadRootBlocksOperationId } from "../operationIDs";
+import { OperationIds.loadRootBlocks } from "../operationIDs";
 import { getFirstOperationWithId } from "../selectors";
 
 export default async function loadRootBlocksOperationFunc(
@@ -16,7 +16,7 @@ export default async function loadRootBlocksOperationFunc(
 ) {
   const operation = getFirstOperationWithId(
     store.getState(),
-    loadRootBlocksOperationId
+    OperationIds.loadRootBlocks
   );
 
   if (operation && isOperationStarted(operation, options.scopeId)) {
@@ -24,9 +24,9 @@ export default async function loadRootBlocksOperationFunc(
   }
 
   store.dispatch(
-    pushOperation(loadRootBlocksOperationId, {
+    pushOperation(OperationIds.loadRootBlocks, {
       scopeId: options.scopeId,
-      status: operationStatusTypes.operationStarted,
+      status: OperationStatus.Started,
       timestamp: Date.now(),
     })
   );
@@ -42,18 +42,18 @@ export default async function loadRootBlocksOperationFunc(
 
     store.dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
     store.dispatch(
-      pushOperation(loadRootBlocksOperationId, {
+      pushOperation(OperationIds.loadRootBlocks, {
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationComplete,
+        status: OperationStatus.Completed,
         timestamp: Date.now(),
       })
     );
   } catch (error) {
     store.dispatch(
-      pushOperation(loadRootBlocksOperationId, {
+      pushOperation(OperationIds.loadRootBlocks, {
         error,
         scopeId: options.scopeId,
-        status: operationStatusTypes.operationError,
+        status: OperationStatus.Error,
         timestamp: Date.now(),
       })
     );

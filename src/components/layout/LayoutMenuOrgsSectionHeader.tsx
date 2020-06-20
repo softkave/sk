@@ -5,7 +5,16 @@ import React from "react";
 import { Plus, Search, X } from "react-feather";
 import StyledContainer from "../styled/Container";
 
+// export interface ILayoutHeaderContent {
+//   node: React.ReactNode;
+//   type?: "icon";
+//   flex?: number;
+//   showIfLoading?: boolean;
+//   disabled?: boolean;
+// }
+
 export interface ILayoutMenuOrgsSectionHeaderProps {
+  // content: ILayoutHeaderContent[];
   onChangeSearchInput: (value: string) => void;
   onAddOrg: () => void;
 
@@ -41,6 +50,12 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
             {!isLoading && (
               <Space>
                 <StyledContainer>
+                  <Plus
+                    onClick={onAddOrg}
+                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                  />
+                </StyledContainer>
+                <StyledContainer>
                   <Search
                     onClick={disableSearch ? undefined : toggleSearchBar}
                     style={{
@@ -49,12 +64,6 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
                       cursor: disableSearch ? "not-allowed" : "pointer",
                       color: disableSearch ? "#999" : undefined,
                     }}
-                  />
-                </StyledContainer>
-                <StyledContainer>
-                  <Plus
-                    onClick={onAddOrg}
-                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
                   />
                 </StyledContainer>
               </Space>
@@ -70,7 +79,7 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
               allowClear
               size="small"
               placeholder="Search orgs..."
-              suffix={
+              prefix={
                 <Search
                   style={{ width: "16px", height: "16px", color: "#999" }}
                 />

@@ -1,38 +1,39 @@
+import { noop } from "lodash";
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Notifications from "../notification/Notifications";
 import OrganizationListContainer from "../org/OrganizationListContainer";
+import OrgContainer from "../org/OrgContainer";
 import StyledContainer from "../styled/Container";
-import Header from "./Header";
 import LayoutMenu from "./LayoutMenu";
 
-const MainLayout: React.FC<{}> = () => {
-  const [showMenu, setShowMenu] = React.useState(true);
+export interface IMainLayoutProps {
+  showAppMenu: boolean;
+  showOrgForm: boolean;
+  toggleMenu: () => void;
+}
 
-  const toggleShowMenu = React.useCallback(() => setShowMenu(!showMenu), [
-    showMenu,
-  ]);
+const MainLayout: React.FC<IMainLayoutProps> = (props) => {
+  const { showAppMenu, showOrgForm, toggleMenu } = props;
 
   return (
     <StyledContainer s={{ height: "100%" }}>
-      {showMenu && <LayoutMenu onToggleMenu={toggleShowMenu} />}
+      {showAppMenu && <LayoutMenu onToggleMenu={toggleMenu} />}
       <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
-        <Header showMenuIcon={!showMenu} onToggleMenu={toggleShowMenu} />
-        <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
-          <Switch>
+        {showOrgForm && <OrgContainer onClose={noop} />}
+        {/* <Switch>
             <Route path="/app/notifications" component={Notifications} />
             <Route
               path="/app/organizations"
               component={OrganizationListContainer}
             />
-            {/* <Route exact path="/app" component={HomeMenu} /> */}
+            <Route exact path="/app" component={HomeMenu} />
             <Route
               exact
               path="*"
               render={() => <Redirect to="/app/organizations" />}
             />
-          </Switch>
-        </StyledContainer>
+          </Switch> */}
       </StyledContainer>
     </StyledContainer>
   );

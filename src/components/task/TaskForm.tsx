@@ -13,12 +13,12 @@ import { FormikProps } from "formik";
 import moment from "moment";
 import React, { useRef } from "react";
 import {
-  IAssignee,
   IBlock,
   IBlockAssignedLabel,
   IBlockLabel,
   IBlockStatus,
   ISubTask,
+  ITaskAssignee,
 } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
@@ -270,8 +270,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const unassignCollaborator = (
-    collaboratorData: IAssignee,
-    taskCollaborators: IAssignee[] = []
+    collaboratorData: ITaskAssignee,
+    taskCollaborators: ITaskAssignee[] = []
   ) => {
     const index = taskCollaborators.findIndex((next) => {
       return next.userId === collaboratorData.userId;
@@ -288,8 +288,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const assignCollaborator = (
     collaborator: IUser,
-    taskCollaborators: IAssignee[] = []
-  ): IAssignee[] => {
+    taskCollaborators: ITaskAssignee[] = []
+  ): ITaskAssignee[] => {
     const collaboratorExists = !!taskCollaborators.find((next) => {
       return collaborator.customId === next.userId;
     });

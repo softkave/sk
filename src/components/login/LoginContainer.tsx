@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
-import { loginUserOperationId } from "../../redux/operations/operationIDs";
+import { OperationIds.loginUser } from "../../redux/operations/operationIDs";
 import loginUserOperationFunc from "../../redux/operations/session/loginUser";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
@@ -10,7 +10,7 @@ const LoginContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
   const operationStatus = useOperation({
-    operationId: loginUserOperationId,
+    operationId: OperationIds.loginUser,
   });
 
   const errors = operationStatus.error

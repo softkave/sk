@@ -74,7 +74,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         });
 
         if (newEditingList.length > 0) {
-          editingLabelList.set(newEditingList);
+          editingLabelList.setList(newEditingList);
         }
       }
     };

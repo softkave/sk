@@ -19,7 +19,12 @@ const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = (
   const { collaborator, style, onClick, className } = props;
 
   return (
-    <StyledFlexContainer style={style} onClick={onClick} className={className}>
+    <StyledContainer
+      s={{ width: "100%" }}
+      style={style}
+      onClick={onClick}
+      className={className}
+    >
       <ItemAvatar color={collaborator.color} />
       {cloneWithWidth(
         <StyledContainer
@@ -37,7 +42,7 @@ const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = (
         </StyledContainer>,
         { marginLeft: 16 }
       )}
-    </StyledFlexContainer>
+    </StyledContainer>
   );
 };
 

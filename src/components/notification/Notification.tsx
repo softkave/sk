@@ -1,6 +1,6 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Empty, Typography } from "antd";
+import { Button, Typography } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useSelector } from "react-redux";
@@ -15,12 +15,12 @@ import IOperation, {
   getOperationLastError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import { respondToNotificationOperationId } from "../../redux/operations/operationIDs";
+import { OperationIds.respondToNotification } from "../../redux/operations/operationIDs";
 import { getOperationWithIdForResource } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/store";
+import EmptyMessage from "../EmptyMessage";
 import FormError from "../form/FormError";
 import { getFullBaseNavPath } from "../layout/path";
-import StyledCenterContainer from "../styled/CenterContainer";
 import StyledContainer from "../styled/Container";
 import {
   getNotificationLatestStatus,
@@ -43,7 +43,7 @@ const Notification: React.FC<{}> = (props) => {
   const operation = useSelector<IAppState, IOperation | undefined>((state) =>
     getOperationWithIdForResource(
       state,
-      respondToNotificationOperationId,
+      OperationIds.respondToNotification,
       currentNotificationId
     )
   );
@@ -56,11 +56,7 @@ const Notification: React.FC<{}> = (props) => {
   const isNotificationLoaded = !!notification;
 
   if (!isNotificationLoaded) {
-    return (
-      <StyledCenterContainer>
-        <Empty description="Notification not found." />
-      </StyledCenterContainer>
-    );
+    return <EmptyMessage>Notification not found</EmptyMessage>;
   }
 
   const onRespond = (selectedResponse: CollaborationRequestStatusType) => {

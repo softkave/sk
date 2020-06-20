@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import MainLayout from "../components/layout/MainLayout";
+import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
 import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
@@ -37,7 +37,7 @@ const Main: React.FC<{}> = () => {
         height: "100%",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: "32px"
+        fontSize: "32px",
       }}
     >
       ...
@@ -46,7 +46,7 @@ const Main: React.FC<{}> = () => {
 
   switch (sessionType) {
     case "app":
-      return <MainLayout />;
+      return <MainLayoutContainer />;
 
     case "web":
       return <Routes />;

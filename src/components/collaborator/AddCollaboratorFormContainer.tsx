@@ -7,8 +7,8 @@ import { getBlock } from "../../redux/blocks/selectors";
 import { getNotificationsAsArray } from "../../redux/notifications/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import { operationStatusTypes } from "../../redux/operations/operation";
-import { addCollaboratorsOperationId } from "../../redux/operations/operationIDs";
+import { OperationStatus } from "../../redux/operations/operation";
+import { OperationIds.addCollaborators } from "../../redux/operations/operationIDs";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
@@ -60,7 +60,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
 
   const operationStatus = useOperation({
     scopeId,
-    operationId: addCollaboratorsOperationId,
+    operationId: OperationIds.addCollaborators,
   });
 
   const errors = operationStatus.error
@@ -71,9 +71,9 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     if (operationStatus.isCompleted) {
       onClose();
       dispatch(
-        pushOperation(addCollaboratorsOperationId, {
+        pushOperation(OperationIds.addCollaborators, {
           scopeId,
-          status: operationStatusTypes.consumed,
+          status: OperationStatus.consumed,
           timestamp: Date.now(),
         })
       );

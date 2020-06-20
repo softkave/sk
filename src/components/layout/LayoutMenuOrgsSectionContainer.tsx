@@ -1,7 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { getBlocksAsArray } from "../../redux/blocks/selectors";
+import { setKeyValue } from "../../redux/key-value/actions";
+import { KeyValueProperties } from "../../redux/key-value/reducer";
 import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
 import OperationIds from "../../redux/operations/operationIDs";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
@@ -10,6 +13,9 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LayoutMenuOrgsSection from "./LayoutMenuOrgsSection";
 
 const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const user = useSelector(getSignedInUserRequired);
   const orgs = useSelector<IAppState, IBlock[]>((state) =>
     getBlocksAsArray(
@@ -27,13 +33,17 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
     }
   }, []);
 
-  const onAddOrg = React.useCallback(() => {}, []);
+  const onAddOrg = React.useCallback(() => {
+    dispatch(setKeyValue([KeyValueProperties.ShowNewOrgForm, true]));
+  }, []);
 
-  const onSelectOrg = React.useCallback((org: IBlock) => {}, []);
+  const onSelectOrg = React.useCallback((org: IBlock) => {
+    history.push(`/app/organizations/${org.customId}`);
+  }, []);
 
   const op = useOperation(
     {
-      operationId: OperationIds.loadRootBlocks,
+      operationId: OperationIds.LoadRootBlocks,
     },
     loadOrgs
   );
