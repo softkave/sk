@@ -1,60 +1,43 @@
-import { IBlock } from "../../models/block/block";
-import {
-  bulkAddCollectionItems,
-  bulkDeleteCollectionItems,
-  bulkUpdateCollectionItems,
-  ICollectionMap
-} from "../collection";
-import { ILogoutUserAction } from "../session/actions";
-import { LOGOUT_USER } from "../session/constants";
-import { IBlocksAction } from "./actions";
-import {
-  ADD_BLOCK,
-  BULK_ADD_BLOCKS,
-  BULK_DELETE_BLOCKS,
-  BULK_UPDATE_BLOCKS,
-  DELETE_BLOCK,
-  UPDATE_BLOCK
-} from "./constants";
+import { createReducer } from "@reduxjs/toolkit";
+import { mergeData } from "../../utils/utils";
+import SessionActions from "../session/actions";
+import BlockActions from "./actions";
+import { IBlocksState } from "./types";
 
-// TODO: Remove unused node modules
+const blocksReducer = createReducer<IBlocksState>({}, (builder) => {
+  builder.addCase(BlockActions.addBlock, (state, action) => {
+    state[action.payload.customId] = action.payload;
+  });
 
-export type IBlocksState = ICollectionMap<IBlock>;
+  builder.addCase(BlockActions.updateBlock, (state, action) => {
+    state[action.payload.id] = mergeData(
+      state[action.payload.id],
+      action.payload.data,
+      action.payload.meta
+    );
+  });
 
-export function blocksReducer(
-  state: IBlocksState = {},
-  action: IBlocksAction | ILogoutUserAction
-): IBlocksState {
-  switch (action.type) {
-    case ADD_BLOCK: {
-      return bulkAddCollectionItems(state, [action.payload]);
-    }
+  builder.addCase(BlockActions.deleteBlock, (state, action) => {
+    delete state[action.payload];
+  });
 
-    case UPDATE_BLOCK: {
-      return bulkUpdateCollectionItems(state, [action.payload], action.meta);
-    }
+  builder.addCase(BlockActions.bulkAddBlocks, (state, action) => {
+    action.payload.forEach((block) => (state[block.customId] = block));
+  });
 
-    case DELETE_BLOCK: {
-      return bulkDeleteCollectionItems(state, [action.payload]);
-    }
+  builder.addCase(BlockActions.bulkUpdateBlocks, (state, action) => {
+    action.payload.forEach((param) => {
+      state[param.id] = mergeData(state[param.id], param.data, param.meta);
+    });
+  });
 
-    case BULK_ADD_BLOCKS: {
-      return bulkAddCollectionItems(state, action.payload);
-    }
+  builder.addCase(BlockActions.bulkDeleteBlocks, (state, action) => {
+    action.payload.forEach((id) => delete state[id]);
+  });
 
-    case BULK_UPDATE_BLOCKS: {
-      return bulkUpdateCollectionItems(state, action.payload, action.meta);
-    }
+  builder.addCase(SessionActions.logoutUser, (state) => {
+    state = {};
+  });
+});
 
-    case BULK_DELETE_BLOCKS: {
-      return bulkDeleteCollectionItems(state, action.payload);
-    }
-
-    case LOGOUT_USER: {
-      return {};
-    }
-
-    default:
-      return state;
-  }
-}
+export default blocksReducer;

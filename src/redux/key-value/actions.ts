@@ -1,11 +1,13 @@
 import { createAction } from "@reduxjs/toolkit";
 
-const keyValue = "keyValue";
-const setKeyValueType = `${keyValue}/setKeyValue`;
-const deleteKeyValueType = `${keyValue}/deleteKeyValue`;
+const setKeyValue = createAction<{
+  key: string;
+  value: boolean | number | string | object;
+}>("keyValue/set");
 
-export const setKeyValue = createAction<
-  [string, boolean | number | string | object]
->(setKeyValueType);
+const deleteKeyValue = createAction<string>("keyValue/deleteKey");
 
-export const deleteKeyValue = createAction<string>(deleteKeyValueType);
+export default class KeyValueActions {
+  public static setKey = setKeyValue;
+  public static deleteKey = deleteKeyValue;
+}

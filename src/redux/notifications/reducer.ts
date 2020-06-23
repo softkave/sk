@@ -1,60 +1,57 @@
-import { INotification } from "../../models/notification/notification";
-import {
-  bulkAddCollectionItems,
-  bulkDeleteCollectionItems,
-  bulkUpdateCollectionItems,
-  ICollectionMap
-} from "../collection";
-import { ILogoutUserAction } from "../session/actions";
-import { LOGOUT_USER } from "../session/constants";
-import { INotificationsAction } from "./actions";
-import {
-  ADD_NOTIFICATION,
-  BULK_ADD_NOTIFICATIONS,
-  BULK_DELETE_NOTIFICATIONS,
-  BULK_UPDATE_NOTIFICATIONS,
-  DELETE_NOTIFICATION,
-  UPDATE_NOTIFICATION
-} from "./constants";
+import { createReducer } from "@reduxjs/toolkit";
+import { mergeData } from "../../utils/utils";
+import SessionActions from "../session/actions";
+import NotificationActions from "./actions";
+import { INotificationsState } from "./types";
 
-// TODO: Remove unused node modules
+const notificationsReducer = createReducer<INotificationsState>(
+  {},
+  (builder) => {
+    builder.addCase(NotificationActions.addNotification, (state, action) => {
+      state[action.payload.customId] = action.payload;
+    });
 
-export type INotificationsState = ICollectionMap<INotification>;
+    builder.addCase(NotificationActions.updateNotification, (state, action) => {
+      state[action.payload.id] = mergeData(
+        state[action.payload.id],
+        action.payload.data,
+        action.payload.meta
+      );
+    });
 
-export function notificationsReducer(
-  state: INotificationsState = {},
-  action: INotificationsAction | ILogoutUserAction
-): INotificationsState {
-  switch (action.type) {
-    case ADD_NOTIFICATION: {
-      return bulkAddCollectionItems(state, [action.payload]);
-    }
+    builder.addCase(NotificationActions.deleteNotification, (state, action) => {
+      delete state[action.payload];
+    });
 
-    case UPDATE_NOTIFICATION: {
-      return bulkUpdateCollectionItems(state, [action.payload], action.meta);
-    }
+    builder.addCase(
+      NotificationActions.bulkAddNotifications,
+      (state, action) => {
+        action.payload.forEach(
+          (notification) => (state[notification.customId] = notification)
+        );
+      }
+    );
 
-    case DELETE_NOTIFICATION: {
-      return bulkDeleteCollectionItems(state, [action.payload]);
-    }
+    builder.addCase(
+      NotificationActions.bulkUpdateNotifications,
+      (state, action) => {
+        action.payload.forEach((param) => {
+          state[param.id] = mergeData(state[param.id], param.data, param.meta);
+        });
+      }
+    );
 
-    case BULK_ADD_NOTIFICATIONS: {
-      return bulkAddCollectionItems(state, action.payload);
-    }
+    builder.addCase(
+      NotificationActions.bulkDeleteNotifications,
+      (state, action) => {
+        action.payload.forEach((id) => delete state[id]);
+      }
+    );
 
-    case BULK_UPDATE_NOTIFICATIONS: {
-      return bulkUpdateCollectionItems(state, action.payload, action.meta);
-    }
-
-    case BULK_DELETE_NOTIFICATIONS: {
-      return bulkDeleteCollectionItems(state, action.payload);
-    }
-
-    case LOGOUT_USER: {
-      return {};
-    }
-
-    default:
-      return state;
+    builder.addCase(SessionActions.logoutUser, (state) => {
+      state = {};
+    });
   }
-}
+);
+
+export default notificationsReducer;

@@ -1,66 +1,67 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
 import {
   CollaborationRequestStatusType,
   INotification,
 } from "../../../models/notification/notification";
-import * as userNet from "../../../net/user";
-import { getDateString } from "../../../utils/utils";
-import * as blockActions from "../../blocks/actions";
-import * as notificationActions from "../../notifications/actions";
-import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
-import * as userActions from "../../users/actions";
-import { pushOperation } from "../actions";
-import { OperationIds.respondToNotification } from "../opc";
+import UserAPI from "../../../net/user";
+import { getDateString, newId } from "../../../utils/utils";
+import BlockActions from "../../blocks/actions";
+import NotificationActions from "../../notifications/actions";
+import SessionSelectors from "../../session/selectors";
+import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { getOperationWithIdForResource } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface IRespondToNotificationOperationFuncDataProps {
+export interface IRespondToNotificationOperationActionArgs {
   request: INotification;
   response: CollaborationRequestStatusType;
 }
 
-export default async function respondToNotificationOperationFunc(
-  dataProps: IRespondToNotificationOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const user = getSignedInUserRequired(store.getState());
-  const { request, response } = dataProps;
-  const operation = getOperationWithIdForResource(
-    store.getState(),
-    OperationIds.respondToNotification,
-    request.customId
+export const respondToNotificationOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IRespondToNotificationOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("notification/respondToNotification", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      OperationIds.respondToNotification,
-      {
-        scopeId: options.scopeId,
-        status: OperationStatus.Started,
-        timestamp: Date.now(),
-      },
-      request.customId
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(
+      id,
+      OperationType.RespondToNotification,
+      arg.request.customId
     )
   );
 
   try {
-    if (canRespondToNotification(request)) {
+    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+
+    if (canRespondToNotification(arg.request)) {
       throw new Error("Request not valid");
     }
 
-    const result = await userNet.respondToCollaborationRequest(
-      request,
-      response
+    const result = await UserAPI.respondToCollaborationRequest(
+      arg.request,
+      arg.response
     );
 
     if (result && result.errors) {
@@ -68,55 +69,53 @@ export default async function respondToNotificationOperationFunc(
     }
 
     const statusHistory =
-      request.statusHistory?.concat({
-        status: response,
+      arg.request.statusHistory?.concat({
+        status: arg.response,
         date: getDateString(),
       }) || [];
 
     const update = { statusHistory };
 
-    store.dispatch(
-      notificationActions.updateNotificationRedux(request.customId, update, {
-        arrayUpdateStrategy: "replace",
+    await thunkAPI.dispatch(
+      NotificationActions.updateNotification({
+        id: arg.request.customId,
+        data: update,
+        meta: {
+          arrayUpdateStrategy: "replace",
+        },
       })
     );
 
-    if (response === "accepted" && result) {
+    if (arg.response === CollaborationRequestStatusType.Accepted && result) {
       const { block } = result as { block: IBlock };
 
-      store.dispatch(blockActions.addBlockRedux(block));
-      store.dispatch(
-        userActions.updateUserRedux(
-          user.customId,
-          { orgs: [{ customId: request!.from!.blockId }] },
-          { arrayUpdateStrategy: "concat" }
-        )
+      await thunkAPI.dispatch(BlockActions.addBlock(block));
+      await thunkAPI.dispatch(
+        UserActions.updateUser({
+          id: user.customId,
+          data: { orgs: [{ customId: arg.request.from!.blockId }] },
+          meta: { arrayUpdateStrategy: "concat" },
+        })
       );
     }
 
-    store.dispatch(
-      pushOperation(
-        OperationIds.respondToNotification,
-        {
-          scopeId: options.scopeId,
-          status: OperationStatus.Completed,
-          timestamp: Date.now(),
-        },
-        request.customId
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(
+        id,
+        OperationType.RespondToNotification,
+        arg.request.customId
       )
     );
   } catch (error) {
-    store.dispatch(
-      pushOperation(
-        OperationIds.respondToNotification,
-        {
-          error,
-          scopeId: options.scopeId,
-          status: OperationStatus.Error,
-          timestamp: Date.now(),
-        },
-        request.customId
+    await thunkAPI.dispatch(
+      dispatchOperationError(
+        id,
+        OperationType.RespondToNotification,
+        error,
+        arg.request.customId
       )
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

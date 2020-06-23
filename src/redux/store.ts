@@ -1,23 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { blocksReducer, IBlocksState } from "./blocks/reducer";
-import { IKeyValueState, keyValueReducer } from "./key-value/reducer";
-import {
-  INotificationsState,
-  notificationsReducer,
-} from "./notifications/reducer";
-import operationsReducer, { IOperationState } from "./operations/reducer";
-import { ISessionState, sessionReducer } from "./session/reducer";
-import { IUsersState, usersReducer } from "./users/reducer";
-
-export interface IAppState {
-  blocks: IBlocksState;
-  users: IUsersState;
-  notifications: INotificationsState;
-  session: ISessionState;
-  operations: IOperationState;
-  keyValue: IKeyValueState;
-}
+import blocksReducer from "./blocks/reducer";
+import keyValueReducer from "./key-value/reducer";
+import notificationsReducer from "./notifications/reducer";
+import operationsReducer from "./operations/reducer";
+import sessionReducer from "./session/reducer";
+import usersReducer from "./users/reducer";
 
 const reducer = combineReducers({
   blocks: blocksReducer,

@@ -1,72 +1,77 @@
-import { Dispatch } from "redux";
-import * as userNet from "../../../net/user";
-import { saveUserTokenToStorage } from "../../../storage/userSession";
-import { loginUserRedux } from "../../session/actions";
-import { IAppState } from "../../store";
-import { addUserRedux } from "../../users/actions";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import UserAPI from "../../../net/user";
+import UserSessionStorageFuncs from "../../../storage/userSession";
+import { newId } from "../../../utils/utils";
+import SessionActions from "../../session/actions";
+import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
 import {
-  dispatchOperationComplete,
+  dispatchOperationCompleted,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
-  IOperationFuncOptions,
+  IOperation,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.loginUser } from "../opc";
-import { getFirstOperationWithId } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface ILoginUserData {
+export interface ILoginUserOperationActionArgs {
   email: string;
   password: string;
-
-  // TODO: Move remember from userNet to here
   remember: boolean;
 }
 
-export interface ILoginUserOperationFuncDataProps {
-  user: ILoginUserData;
-}
+export const loginUserOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<ILoginUserOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("session/logoutUser", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
 
-export default async function loginUserOperationFunc(
-  state: IAppState,
-  dispatch: Dispatch,
-  dataProps: ILoginUserOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { user } = dataProps;
-  const operation = getFirstOperationWithId(state, OperationIds.loginUser);
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
+  );
 
-  if (isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationId: OperationIds.loginUser,
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.LoginUser)
+  );
 
   try {
     // TODO: define types for the result
-    const result = await userNet.login(user.email, user.password);
+    const result = await UserAPI.login(arg.email, arg.password);
 
     if (result && result.errors) {
       throw result.errors;
     } else if (result && result.token && result.user) {
-      dispatch(addUserRedux(result.user));
-      dispatch(loginUserRedux(result.token, result.user.customId));
+      await thunkAPI.dispatch(UserActions.addUser(result.user));
+      await thunkAPI.dispatch(
+        SessionActions.loginUser({
+          token: result.token,
+          userId: result.user.customId,
+        })
+      );
 
-      if (user.remember) {
-        saveUserTokenToStorage(result.token);
+      if (arg.remember) {
+        UserSessionStorageFuncs.saveUserToken(result.token);
       }
     } else {
       throw new Error("An error occurred");
     }
 
-    dispatchOperationComplete(dispatchOptions);
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.LoginUser)
+    );
   } catch (error) {
-    dispatchOperationError({ ...dispatchOptions, error });
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.LoginUser, error)
+    );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

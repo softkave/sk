@@ -1,41 +1,44 @@
-import * as userNet from "../../../net/user";
-import * as notificationActions from "../../notifications/actions";
-import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
-import * as userActions from "../../users/actions";
-import { pushOperation } from "../actions";
-import { loadUserNotifications.OperationIds } from "../opc";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import UserAPI from "../../../net/user";
+import { newId } from "../../../utils/utils";
+import NotificationActions from "../../notifications/actions";
+import SessionSelectors from "../../session/selectors";
+import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { getFirstOperationWithId } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { IOperationActionBaseArgs } from "../types";
 
-export default async function loadUserNotificationsOperationFunc(
-  dataProps: {} = {},
-  options: IOperationFuncOptions = {}
-) {
-  const user = getSignedInUserRequired(store.getState());
-  const operation = getFirstOperationWithId(
-    store.getState(),
-    OperationIds.loadUserNotifications
+export const loadUserNotificationsOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  IOperationActionBaseArgs,
+  IAppAsyncThunkConfig
+>("notification/loadUserNotifications", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(OperationIds.loadUserNotifications, {
-      scopeId: options.scopeId,
-      status: OperationStatus.Started,
-      timestamp: Date.now(),
-    })
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.LoadUserNotifications)
   );
 
   try {
-    const result = await userNet.getUserNotifications();
+    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+    const result = await UserAPI.getUserNotifications();
 
     if (result && result.errors) {
       throw result.errors;
@@ -44,34 +47,28 @@ export default async function loadUserNotificationsOperationFunc(
     const { notifications } = result;
     const ids = notifications.map((request) => request.customId);
 
-    store.dispatch(
-      notificationActions.bulkAddNotificationsRedux(notifications)
-    );
-    store.dispatch(
-      userActions.updateUserRedux(
-        user.customId,
-        {
-          notifications: ids,
-        },
-        { arrayUpdateStrategy: "replace" }
-      )
+    await thunkAPI.dispatch(
+      NotificationActions.bulkAddNotifications(notifications)
     );
 
-    store.dispatch(
-      pushOperation(OperationIds.loadUserNotifications, {
-        scopeId: options.scopeId,
-        status: OperationStatus.Completed,
-        timestamp: Date.now(),
+    await thunkAPI.dispatch(
+      UserActions.updateUser({
+        id: user.customId,
+        data: {
+          notifications: ids,
+        },
+        meta: { arrayUpdateStrategy: "replace" },
       })
+    );
+
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.LoadUserNotifications)
     );
   } catch (error) {
-    store.dispatch(
-      pushOperation(OperationIds.loadUserNotifications, {
-        error,
-        scopeId: options.scopeId,
-        status: OperationStatus.Error,
-        timestamp: Date.now(),
-      })
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.LoadUserNotifications, error)
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

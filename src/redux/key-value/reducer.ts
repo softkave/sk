@@ -1,25 +1,23 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { deleteKeyValue, setKeyValue } from "./actions";
+import SessionActions from "../session/actions";
+import KeyValueActions from "./actions";
+import { IKeyValueState } from "./types";
 
-export interface IKeyValueState {
-  [key: string]: boolean | number | string | object;
-}
-
-export const keyValueReducer = createReducer({}, (builder) => {
-  builder.addCase(setKeyValue, (state, action) => {
-    const key = action.payload[0];
-    const value = action.payload[1];
+const keyValueReducer = createReducer<IKeyValueState>({}, (builder) => {
+  builder.addCase(KeyValueActions.setKey, (state, action) => {
+    const key = action.payload.key;
+    const value = action.payload.value;
     state[key] = value;
   });
 
-  builder.addCase(deleteKeyValue, (state, action) => {
+  builder.addCase(KeyValueActions.deleteKey, (state, action) => {
     const key = action.payload;
     delete state[key];
   });
+
+  builder.addCase(SessionActions.logoutUser, (state) => {
+    state = {};
+  });
 });
 
-export enum KeyValueProperties {
-  CachedOrgPath = "cachedOrgPath",
-  AppMenu = "appMenu",
-  ShowNewOrgForm = "showNewOrgForm",
-}
+export default keyValueReducer;

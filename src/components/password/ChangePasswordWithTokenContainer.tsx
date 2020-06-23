@@ -2,12 +2,13 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
 import { pushOperation } from "../../redux/operations/actions";
+import { changePassword.OperationIds } from "../../redux/operations/opc";
 import { OperationStatus } from "../../redux/operations/operation";
-import { OperationIds.changePassword } from "../../redux/operations/opc";
 import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
+sword";
 
 // TODO: Implement an endpoint to get user email from token ( forgot password and session token )
 // TODO: Implement a way to supply token to a net call
@@ -19,7 +20,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
   const operationStatus = useOperation({
-    operationId: OperationIds.changePassword,
+    operationType: OperationIds.changePassword,
   });
 
   const errors = operationStatus.error

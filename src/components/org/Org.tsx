@@ -241,8 +241,12 @@ const Org: React.FC<IEditOrgProps> = (props) => {
 
   const cancelHandler = React.useCallback(() => {
     if (org) {
+      resetForm();
+      formikChangedFieldsHelpers.clearAll();
+    } else {
+      onClose();
     }
-  }, []);
+  }, [resetForm, formikChangedFieldsHelpers, onClose]);
 
   const renderedControls = React.useMemo(() => {
     if (!formikChangedFieldsHelpers.hasChanges()) {
@@ -255,7 +259,12 @@ const Org: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <StyledContainer>
-        <Button danger type="text" disabled={isSubmitting} onClick={onClose}>
+        <Button
+          danger
+          type="text"
+          disabled={isSubmitting}
+          onClick={cancelHandler}
+        >
           {org ? "Discard Changes" : "Cancel"}
         </Button>
         <Button type="primary" htmlType="submit" loading={isSubmitting}>
@@ -263,7 +272,7 @@ const Org: React.FC<IEditOrgProps> = (props) => {
         </Button>
       </StyledContainer>
     );
-  }, [org, isSubmitting, onClose]);
+  }, [org, isSubmitting, cancelHandler]);
 
   const renderedForm = React.useMemo(() => {
     return (

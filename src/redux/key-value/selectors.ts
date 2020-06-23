@@ -1,10 +1,9 @@
-import { IAppState } from "../store";
-import { getUser } from "../users/selectors";
-
-export function getUserToken(state: IAppState) {
-  return state.session.token;
-}
+import { IAppState } from "../types";
 
 export function getKeyValue(state: IAppState, key: string) {
   return state.keyValue[key];
+}
+
+export default class KeyValueSelectors {
+  public static getKey = getKeyValue;
 }

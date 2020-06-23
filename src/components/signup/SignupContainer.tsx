@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
-import { OperationIds.signupUser } from "../../redux/operations/opc";
 import signupUserOperationFunc from "../../redux/operations/session/sigupUser";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
@@ -9,12 +8,10 @@ import Signup, { ISignupFormData } from "./Signup";
 const SignupContainer: React.FC<{}> = () => {
   const dispatch = useDispatch();
   const store = useStore();
-  const operationStatus = useOperation({
-    operationId: OperationIds.signupUser,
-  });
+  const op = useOperation();
 
-  const errors = operationStatus.error
-    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+  const errors = op.error
+    ? flattenErrorListWithDepthInfinite(op.error)
     : undefined;
 
   if (errors) {
@@ -38,15 +35,16 @@ const SignupContainer: React.FC<{}> = () => {
   }
 
   const onSubmit = async (user: ISignupFormData) => {
-    return signupUserOperationFunc(store.getState(), dispatch, { user });
+    return signupUserOperationFunc(
+      store.getState(),
+      dispatch,
+      { user },
+      { id: op.id }
+    );
   };
 
   return (
-    <Signup
-      onSubmit={onSubmit}
-      isSubmitting={operationStatus.isLoading}
-      errors={errors}
-    />
+    <Signup onSubmit={onSubmit} isSubmitting={op.isLoading} errors={errors} />
   );
 };
 

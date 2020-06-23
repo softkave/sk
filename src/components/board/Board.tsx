@@ -86,7 +86,10 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const onDeleteBlock = (blockToDelete: IBlock) => {
-    deleteBlockOperationFunc({ block: blockToDelete });
+    deleteBlockOperationFunc(
+      { block: blockToDelete },
+      { id: blockToDelete.customId }
+    );
 
     // TODO: wait for block to complete deleting before pushing
     if (blockToDelete.customId === block.customId) {

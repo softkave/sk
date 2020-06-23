@@ -1,25 +1,21 @@
-import { getCollectionItemsAsArray } from "../collection";
-import { IAppState } from "../store";
+import { INotification } from "../../models/notification/notification";
+import { IAppState } from "../types";
 
-export function getNotification(state: IAppState, id?: string) {
-  if (id) {
-    const notifications = getCollectionItemsAsArray(state.notifications, [id]);
-    return notifications[0];
-  }
+export function getNotification(state: IAppState, id: string) {
+  return state.notifications[id];
 }
 
-export function getNotificationRequired(state: IAppState, id: string) {
-  const notification = getNotification(state, id);
+export function getNotifications(state: IAppState, ids: string[]) {
+  return ids.reduce((notifications, id) => {
+    if (state.notifications[id]) {
+      notifications.push(state.notifications[id]);
+    }
 
-  if (!notification) {
-    // TODO: Change all errors to either operation errors, or create error types from Error
-    // with name changed to error type, that provides a standard customizable ( ${id} does not... ) error message
-    throw new Error("Notification does not exist");
-  }
-
-  return notification;
+    return notifications;
+  }, [] as INotification[]);
 }
 
-export function getNotificationsAsArray(state: IAppState, ids: string[]) {
-  return getCollectionItemsAsArray(state.notifications, ids);
+export default class NotificationSelectors {
+  public static getNotification = getNotification;
+  public static getNotifications = getNotifications;
 }

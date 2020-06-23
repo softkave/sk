@@ -16,7 +16,7 @@ import {
   updateBlockMutation,
 } from "./schema/block";
 
-export function addBlock(block: IBlock) {
+function addBlock(block: IBlock) {
   // TODO: Find a way to define central structures that'll be used by server and client, including
   // mongo schemas, graphql schemas, extract functions, and other places.
   // TODO: define the type of the arguments, so that we can avoid using fields
@@ -48,7 +48,7 @@ export function addBlock(block: IBlock) {
   );
 }
 
-export function updateBlock(block: IBlock, data: Partial<IBlock>) {
+function updateBlock(block: IBlock, data: Partial<IBlock>) {
   const dataFields = [
     "name",
     "description",
@@ -79,7 +79,7 @@ export function updateBlock(block: IBlock, data: Partial<IBlock>) {
   );
 }
 
-export function deleteBlock(block: IBlock) {
+function deleteBlock(block: IBlock) {
   return auth(
     null,
     deleteBlockMutation,
@@ -88,7 +88,7 @@ export function deleteBlock(block: IBlock) {
   );
 }
 
-export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
+function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
   return auth(
     null,
     getBlockChildrenQuery,
@@ -97,7 +97,7 @@ export function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
   );
 }
 
-export function addCollaborators(
+function addCollaborators(
   block: IBlock,
   collaborators: IAddCollaboratorFormItemValues[]
 ) {
@@ -115,7 +115,7 @@ export function addCollaborators(
   );
 }
 
-export function removeCollaborator(block: IBlock, collaborator: IUser) {
+function removeCollaborator(block: IBlock, collaborator: IUser) {
   return auth(
     null,
     removeCollaboratorMutation,
@@ -127,11 +127,11 @@ export function removeCollaborator(block: IBlock, collaborator: IUser) {
   );
 }
 
-export function getUserRootBlocks() {
+function getUserRootBlocks() {
   return auth(null, getRootBlocksQuery, {}, "data.block.getUserRootBlocks");
 }
 
-export function revokeRequest(block: IBlock, request: INotification) {
+function revokeRequest(block: IBlock, request: INotification) {
   return auth(
     null,
     revokeRequestMutation,
@@ -143,7 +143,7 @@ export function revokeRequest(block: IBlock, request: INotification) {
   );
 }
 
-export function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
+function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
   return auth(
     null,
     transferBlockMutation,
@@ -153,4 +153,16 @@ export function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
     },
     "data.block.transferBlock"
   );
+}
+
+export default class BlockAPI {
+  public static addBlock = addBlock;
+  public static updateBlock = updateBlock;
+  public static deleteBlock = deleteBlock;
+  public static getBlockChildren = getBlockChildren;
+  public static addCollaborators = addCollaborators;
+  public static removeCollaborator = removeCollaborator;
+  public static getUserRootBlocks = getUserRootBlocks;
+  public static revokeRequest = revokeRequest;
+  public static transferBlock = transferBlock;
 }

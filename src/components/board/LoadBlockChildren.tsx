@@ -14,38 +14,34 @@ export interface ILoadBlockChildrenProps {
   render: (blocks: IBlock[]) => React.ReactNode;
 }
 
-const baseOpId = "load-block-children";
-
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, type } = props;
   const blocks = useSelector<IAppState, IBlock[]>((state) =>
     getBlockChildren(state, parent, type)
   );
 
-  const opId = baseOpId + "-" + type;
   const loadChildren = (loadProps: IUseOperationStatus) => {
     if (!loadProps.operation) {
-      loadBlockChildrenOperationFunc({
-        block: parent,
-        typeList: [type],
-        operationId: opId,
-      });
+      loadBlockChildrenOperationFunc(
+        {
+          block: parent,
+          typeList: [type],
+        },
+        { id: loadProps.id }
+      );
     }
   };
 
-  const loadStatus = useOperation(
-    { operationId: opId, resourceId: parent.customId },
-    loadChildren
-  );
+  const op = useOperation({ id: parent.customId }, loadChildren);
 
-  if (loadStatus.isCompleted) {
+  if (op.isCompleted) {
     return <React.Fragment>{render(blocks)}</React.Fragment>;
   }
 
-  if (loadStatus.isLoading || !!!loadStatus.operation) {
+  if (op.isLoading || !!!op.operation) {
     return <LoadingEllipsis />;
-  } else if (loadStatus.error) {
-    return <GeneralErrorList errors={loadStatus.error} />;
+  } else if (op.error) {
+    return <GeneralErrorList errors={op.error} />;
   }
 
   return <React.Fragment>{render(blocks)}</React.Fragment>;

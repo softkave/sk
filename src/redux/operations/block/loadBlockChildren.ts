@@ -1,57 +1,58 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
-import * as blockNet from "../../../net/block";
-import * as blockActions from "../../blocks/actions";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import BlockAPI from "../../../net/block";
+import { newId } from "../../../utils/utils";
+import BlockActions from "../../blocks/actions";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { getOperationWithIdForResource } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface ILoadBlockChildrenOperationFuncDataProps {
+export interface ILoadBlockChildrenOperationActionArgs {
   block: IBlock;
-  operationId: string;
   typeList?: BlockType[];
 }
 
-export default async function loadBlockChildrenOperationFunc(
-  dataProps: ILoadBlockChildrenOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { block, typeList, operationId } = dataProps;
-  const operation = getOperationWithIdForResource(
-    store.getState(),
-    operationId,
-    block.customId
+export const loadBlockChildrenOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<ILoadBlockChildrenOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("block/loadBlockChildren", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      operationId,
-      {
-        scopeId: options.scopeId,
-        status: OperationStatus.Started,
-        timestamp: Date.now(),
-      },
-      block.customId
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(
+      id,
+      OperationType.LoadBlockChildren,
+      arg.block.customId
     )
   );
 
   try {
-    const result = await blockNet.getBlockChildren(block, typeList);
+    const result = await BlockAPI.getBlockChildren(arg.block, arg.typeList);
 
     if (result && result.errors) {
       throw result.errors;
     }
 
     const { blocks } = result;
-    store.dispatch(blockActions.bulkAddBlocksRedux(blocks));
+    await thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));
 
     const boards: string[] = [];
 
@@ -62,40 +63,34 @@ export default async function loadBlockChildrenOperationFunc(
     });
 
     if (boards.length > 0) {
-      store.dispatch(
-        blockActions.updateBlockRedux(
-          block.customId,
-          { boards },
-          {
+      await thunkAPI.dispatch(
+        BlockActions.updateBlock({
+          id: arg.block.customId,
+          data: { boards },
+          meta: {
             arrayUpdateStrategy: "replace",
-          }
-        )
+          },
+        })
       );
     }
 
-    store.dispatch(
-      pushOperation(
-        operationId,
-        {
-          scopeId: options.scopeId,
-          status: OperationStatus.Completed,
-          timestamp: Date.now(),
-        },
-        block.customId
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(
+        id,
+        OperationType.LoadBlockChildren,
+        arg.block.customId
       )
     );
   } catch (error) {
-    store.dispatch(
-      pushOperation(
-        operationId,
-        {
-          error,
-          scopeId: options.scopeId,
-          status: OperationStatus.Error,
-          timestamp: Date.now(),
-        },
-        block.customId
+    await thunkAPI.dispatch(
+      dispatchOperationError(
+        id,
+        OperationType.LoadBlockChildren,
+        error,
+        arg.block.customId
       )
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

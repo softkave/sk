@@ -1,8 +1,13 @@
-import { deleteUserTokenInStorage } from "../../../storage/userSession";
-import { logoutUserRedux } from "../../session/actions";
-import store from "../../store";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import UserSessionStorageFuncs from "../../../storage/userSession";
+import SessionActions from "../../session/actions";
+import { IAppAsyncThunkConfig } from "../../types";
 
-export default async function logoutUserOperationFunc() {
-  deleteUserTokenInStorage();
-  store.dispatch(logoutUserRedux());
-}
+export const logoutUserOperationAction = createAsyncThunk<
+  void,
+  void,
+  IAppAsyncThunkConfig
+>("session/logoutUser", (arg, thunkAPI) => {
+  UserSessionStorageFuncs.deleteUserToken();
+  thunkAPI.dispatch(SessionActions.logoutUser());
+});

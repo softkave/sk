@@ -1,42 +1,24 @@
-import { ISessionAction } from "./actions";
-import { LOGIN_USER, LOGOUT_USER, SET_SESSION_TO_WEB } from "./constants";
+import { createReducer } from "@reduxjs/toolkit";
+import SessionActions from "./actions";
+import { ISessionState, SessionType } from "./types";
 
-export const sessionInitializing = "initializing";
-export const sessionWeb = "web";
-export const sessionApp = "app";
-export const sessionUninitialized = "uninitialized";
+const sessionReducer = createReducer<ISessionState>(
+  { sessionType: SessionType.Uninitialized },
+  (builder) => {
+    builder.addCase(SessionActions.loginUser, (state, action) => {
+      state.sessionType = SessionType.App;
+      state.token = action.payload.token;
+      state.userId = action.payload.userId;
+    });
 
-export type SessionType =
-  | typeof sessionInitializing
-  | typeof sessionWeb
-  | typeof sessionApp
-  | typeof sessionUninitialized;
+    builder.addCase(SessionActions.setSessionToWeb, (state) => {
+      state = { sessionType: SessionType.Web };
+    });
 
-export interface ISessionState {
-  sessionType: SessionType;
-  token?: string;
-  userId?: string;
-}
-
-export function sessionReducer(
-  state: ISessionState = { sessionType: sessionUninitialized },
-  action: ISessionAction
-): ISessionState {
-  switch (action.type) {
-    case LOGIN_USER: {
-      return {
-        sessionType: sessionApp,
-        token: action.payload.token,
-        userId: action.payload.userId,
-      };
-    }
-
-    case LOGOUT_USER:
-    case SET_SESSION_TO_WEB: {
-      return { sessionType: sessionWeb };
-    }
-
-    default:
-      return state;
+    builder.addCase(SessionActions.logoutUser, (state) => {
+      state = { sessionType: SessionType.Web };
+    });
   }
-}
+);
+
+export default sessionReducer;

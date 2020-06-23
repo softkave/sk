@@ -1,71 +1,84 @@
-import { Dispatch } from "redux";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { INotification } from "../../../models/notification/notification";
-import * as userNet from "../../../net/user";
-import { getDateString } from "../../../utils/utils";
-import * as notificationActions from "../../notifications/actions";
-import { IAppState } from "../../store";
+import UserAPI from "../../../net/user";
+import { getDateString, newId } from "../../../utils/utils";
+import NotificationActions from "../../notifications/actions";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  dispatchOperationComplete,
+  dispatchOperationCompleted,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
-  IOperationFuncOptions,
+  IOperation,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.updateNotification } from "../opc";
-import { getOperationWithIdForResource } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface IMarkNotificationReadOperationFuncDataProps {
+export interface IMarkNotificationReadOperationActionArgs {
   notification: INotification;
 }
 
-export default async function markNotificationReadOperationFunc(
-  state: IAppState,
-  dispatch: Dispatch,
-  dataProps: IMarkNotificationReadOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { notification } = dataProps;
-  const operation = getOperationWithIdForResource(
-    state,
-    OperationIds.updateNotification,
-    notification.customId
+export const markNotificationReadOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("notification/markNotificationRead", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationId: OperationIds.updateNotification,
-    resourceId: notification.customId,
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(
+      id,
+      OperationType.MarkNotificationRead,
+      arg.notification.customId
+    )
+  );
 
   try {
     const readAt = getDateString();
-    const result = await userNet.markNotificationRead(notification, readAt);
+    const result = await UserAPI.markNotificationRead(arg.notification, readAt);
 
     if (result && result.errors) {
       throw result.errors;
     }
 
     // TODO: Should control wait for net call, or should it happen before net call?
-    dispatch(
-      notificationActions.updateNotificationRedux(
-        notification.customId,
-        { readAt },
-        {
+    await thunkAPI.dispatch(
+      NotificationActions.updateNotification({
+        id: arg.notification.customId,
+        data: { readAt },
+        meta: {
           arrayUpdateStrategy: "replace",
-        }
-      )
+        },
+      })
     );
 
-    dispatchOperationComplete(dispatchOptions);
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(
+        id,
+        OperationType.MarkNotificationRead,
+        arg.notification.customId
+      )
+    );
   } catch (error) {
-    dispatchOperationError({ ...dispatchOptions, error });
+    await thunkAPI.dispatch(
+      dispatchOperationError(
+        id,
+        OperationType.MarkNotificationRead,
+        error,
+        arg.notification.customId
+      )
+    );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

@@ -1,38 +1,41 @@
-import * as blockNet from "../../../net/block";
-import * as blockActions from "../../blocks/actions";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import BlockAPI from "../../../net/block";
+import { newId } from "../../../utils/utils";
+import BlockActions from "../../blocks/actions";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { OperationIds.loadRootBlocks } from "../opc";
-import { getFirstOperationWithId } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { IOperationActionBaseArgs } from "../types";
 
-export default async function loadRootBlocksOperationFunc(
-  dataProps: {} = {},
-  options: IOperationFuncOptions = {}
-) {
-  const operation = getFirstOperationWithId(
-    store.getState(),
-    OperationIds.loadRootBlocks
+export const loadRootBlocksOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  IOperationActionBaseArgs,
+  IAppAsyncThunkConfig
+>("session/loadRootBlocks", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(OperationIds.loadRootBlocks, {
-      scopeId: options.scopeId,
-      status: OperationStatus.Started,
-      timestamp: Date.now(),
-    })
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.LoadRootBlocks)
   );
 
   try {
-    const result = await blockNet.getUserRootBlocks();
+    const result = await BlockAPI.getUserRootBlocks();
 
     if (result && result.errors) {
       throw result.errors;
@@ -40,22 +43,16 @@ export default async function loadRootBlocksOperationFunc(
 
     const { blocks: rootBlocks } = result;
 
-    store.dispatch(blockActions.bulkAddBlocksRedux(rootBlocks));
-    store.dispatch(
-      pushOperation(OperationIds.loadRootBlocks, {
-        scopeId: options.scopeId,
-        status: OperationStatus.Completed,
-        timestamp: Date.now(),
-      })
+    await thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
+
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.LoadRootBlocks)
     );
   } catch (error) {
-    store.dispatch(
-      pushOperation(OperationIds.loadRootBlocks, {
-        error,
-        scopeId: options.scopeId,
-        status: OperationStatus.Error,
-        timestamp: Date.now(),
-      })
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.LoadRootBlocks, error)
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

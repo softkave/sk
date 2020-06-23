@@ -26,7 +26,7 @@ export interface ISignupEnpointProps {
   color: string;
 }
 
-export async function signup(user: ISignupEnpointProps) {
+async function signup(user: ISignupEnpointProps) {
   const userFields = ["name", "password", "email", "color"];
   const result = await query(
     null,
@@ -38,7 +38,7 @@ export async function signup(user: ISignupEnpointProps) {
   return result;
 }
 
-export async function login(email: string, password: string) {
+async function login(email: string, password: string) {
   const result = await query(
     null,
     userLoginMutation,
@@ -49,7 +49,7 @@ export async function login(email: string, password: string) {
   return result;
 }
 
-export function updateUser(user: IUser) {
+function updateUser(user: IUser) {
   const updateUserFields = ["name", "notificationsLastCheckedAt", "color"];
   return auth(
     null,
@@ -59,7 +59,7 @@ export function updateUser(user: IUser) {
   );
 }
 
-export async function changePassword(password: string, token: string) {
+async function changePassword(password: string, token: string) {
   const result = await auth(
     null,
     changePasswordMutation,
@@ -71,7 +71,7 @@ export async function changePassword(password: string, token: string) {
   return result;
 }
 
-export function forgotPassword(email: string) {
+function forgotPassword(email: string) {
   return query(
     null,
     forgotPasswordMutation,
@@ -80,14 +80,11 @@ export function forgotPassword(email: string) {
   );
 }
 
-export function userExists(email: string) {
+function userExists(email: string) {
   return query(null, userExistsQuery, { email }, "data.user.userExists");
 }
 
-export function markNotificationRead(
-  notification: INotification,
-  readAt: string
-) {
+function markNotificationRead(notification: INotification, readAt: string) {
   return auth(
     null,
     markNotificationReadMutation,
@@ -99,7 +96,7 @@ export function markNotificationRead(
   );
 }
 
-export function changePasswordWithToken(password: string, token: string) {
+function changePasswordWithToken(password: string, token: string) {
   return auth(
     null,
     changePasswordWithTokenMutation,
@@ -110,10 +107,7 @@ export function changePasswordWithToken(password: string, token: string) {
 }
 
 // TODO: define response's type
-export function respondToCollaborationRequest(
-  request: INotification,
-  response: any
-) {
+function respondToCollaborationRequest(request: INotification, response: any) {
   return auth(
     null,
     respondToCollaborationRequestMutation,
@@ -122,7 +116,7 @@ export function respondToCollaborationRequest(
   );
 }
 
-export function getUserNotifications() {
+function getUserNotifications() {
   return auth(
     null,
     getUserNotificationsQuery,
@@ -131,6 +125,20 @@ export function getUserNotifications() {
   );
 }
 
-export function getUserData(token: string) {
+function getUserData(token: string) {
   return auth(null, getUserDataQuery, {}, "data.user.getUserData", token);
+}
+
+export default class UserAPI {
+  public static signup = signup;
+  public static login = login;
+  public static updateUser = updateUser;
+  public static changePassword = changePassword;
+  public static forgotPassword = forgotPassword;
+  public static userExists = userExists;
+  public static markNotificationRead = markNotificationRead;
+  public static changePasswordWithToken = changePasswordWithToken;
+  public static respondToCollaborationRequest = respondToCollaborationRequest;
+  public static getUserNotifications = getUserNotifications;
+  public static getUserData = getUserData;
 }

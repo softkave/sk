@@ -1,68 +1,15 @@
-import {
-  LOGIN_USER,
-  LOGOUT_USER,
-  SET_SESSION_TO_WEB,
-  UPDATE_TOKEN,
-} from "./constants";
+import { createAction } from "@reduxjs/toolkit";
 
-export interface ILoginUserAction {
-  type: LOGIN_USER;
-  payload: {
-    token: string;
-    userId: string;
-  };
+const loginUser = createAction<{ token: string; userId: string }>(
+  "user/loginUser"
+);
+
+const logoutUser = createAction("user/logoutUser");
+
+const setSessionToWeb = createAction("user/setSessionToWeb");
+
+export default class SessionActions {
+  public static loginUser = loginUser;
+  public static logoutUser = logoutUser;
+  public static setSessionToWeb = setSessionToWeb;
 }
-
-export function loginUserRedux(
-  token: string,
-  userId: string
-): ILoginUserAction {
-  return {
-    type: LOGIN_USER,
-    payload: {
-      token,
-      userId,
-    },
-  };
-}
-
-export interface ILogoutUserAction {
-  type: LOGOUT_USER;
-}
-
-export function logoutUserRedux(): ILogoutUserAction {
-  return {
-    type: LOGOUT_USER,
-  };
-}
-
-export interface IUpdateTokenAction {
-  type: UPDATE_TOKEN;
-  payload: {
-    token: string;
-  };
-}
-
-export function updateTokenRedux(token: string): IUpdateTokenAction {
-  return {
-    type: UPDATE_TOKEN,
-    payload: {
-      token,
-    },
-  };
-}
-
-export interface ISetSessionToWebAction {
-  type: SET_SESSION_TO_WEB;
-}
-
-export function setSessionToWeb(): ISetSessionToWebAction {
-  return {
-    type: SET_SESSION_TO_WEB,
-  };
-}
-
-export type ISessionAction =
-  | ILoginUserAction
-  | ILogoutUserAction
-  | ISetSessionToWebAction;

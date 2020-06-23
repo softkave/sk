@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { IBlock, IBlockLabel } from "../../models/block/block";
 import { getBlock } from "../../redux/blocks/selectors";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { OperationIds.updateBlock } from "../../redux/operations/opc";
+import { OperationType.updateBlock } from "../../redux/operations/OperationType";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import {
@@ -33,7 +33,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const labelList = org.boardLabels || [];
   const operationStatus = useOperation({
     scopeId,
-    operationId: OperationIds.updateBlock,
+    operationType: OperationType.updateBlock,
     resourceId: org.customId,
   });
 

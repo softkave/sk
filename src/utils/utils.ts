@@ -1,4 +1,5 @@
 import get from "lodash/get";
+import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
 import { isMoment, Moment } from "moment";
 import { indexArray } from "./object";
@@ -108,3 +109,25 @@ export const flattenErrorListWithDepthInfinite = (
 
 // tslint:disable-next-line: no-empty
 export const noop = () => {};
+
+export interface IMergeDataMeta {
+  arrayUpdateStrategy?: "merge" | "concat" | "replace";
+}
+
+export const mergeData = (
+  resource,
+  data,
+  meta: IMergeDataMeta = { arrayUpdateStrategy: "concat" }
+) => {
+  return mergeWith(resource, data, (objValue, srcValue) => {
+    if (Array.isArray(objValue) && srcValue) {
+      if (meta.arrayUpdateStrategy === "concat") {
+        return objValue.concat(srcValue);
+      } else if (meta.arrayUpdateStrategy === "replace") {
+        return srcValue;
+      }
+
+      // "merge" arrayUpdateStrategy happens by default
+    }
+  });
+};

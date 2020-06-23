@@ -1,54 +1,57 @@
-import { Dispatch } from "redux";
-import * as userNet from "../../../net/user";
-import { IAppState } from "../../store";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import UserAPI from "../../../net/user";
+import { newId } from "../../../utils/utils";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  dispatchOperationComplete,
+  dispatchOperationCompleted,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
-  IOperationFuncOptions,
+  IOperation,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.requestForgotPassword } from "../opc";
-import { getFirstOperationWithId } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface IRequestForgotPasswordOperationFuncDataProps {
+export interface IRequestForgotPasswordOperationActionArgs {
   email: string;
 }
 
-export default async function requestForgotPasswordOperationFunc(
-  state: IAppState,
-  dispatch: Dispatch,
-  dataProps: IRequestForgotPasswordOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { email } = dataProps;
-  const operation = getFirstOperationWithId(
-    state,
-    OperationIds.requestForgotPassword
+export const requestForgotPasswordOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IRequestForgotPasswordOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("session/requestForgotPassword", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationId: OperationIds.requestForgotPassword,
-  };
-
-  dispatchOperationStarted(dispatchOptions);
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.RequestForgotPassword)
+  );
 
   try {
-    const result = await userNet.forgotPassword(email);
+    const result = await UserAPI.forgotPassword(arg.email);
 
     if (result && result.errors) {
       throw result.errors;
     }
 
-    dispatchOperationComplete(dispatchOptions);
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.RequestForgotPassword)
+    );
   } catch (error) {
-    dispatchOperationError({ ...dispatchOptions, error });
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.RequestForgotPassword, error)
+    );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

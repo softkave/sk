@@ -5,9 +5,9 @@ import Media from "react-media";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { INotification } from "../../models/notification/notification";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import { getNotifications } from "../../redux/notifications/selectors";
 import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
-import { OperationIds.loadUserNotifications } from "../../redux/operations/opc";
+import { loadUserNotifications.OperationType } from "../../redux/operations/OperationType";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { IAppState } from "../../redux/store";
 import SingleOperationHelper, {
@@ -27,7 +27,7 @@ const Notifications: React.FC<{}> = (props) => {
   );
   const user = useSelector(getSignedInUserRequired);
   const notifications = useSelector<IAppState, INotification[]>((state) =>
-    getNotificationsAsArray(state, user.notifications || [])
+    getNotifications(state, user.notifications || [])
   );
   const userHasNoNotifications = notifications.length === 0;
   const currentNotificationId =
@@ -135,7 +135,7 @@ const Notifications: React.FC<{}> = (props) => {
 
   return (
     <SingleOperationHelper
-      operationId={OperationIds.loadUserNotifications}
+      operationId={OperationType.loadUserNotifications}
       render={render}
       loadFunc={loadNotifications}
     />

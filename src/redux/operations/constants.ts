@@ -1,2 +1,0 @@
-export const PUSH_OPERATION = "PUSH_OPERATION";
-export type PUSH_OPERATION = typeof PUSH_OPERATION;

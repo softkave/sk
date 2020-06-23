@@ -15,8 +15,8 @@ import IOperation, {
   getOperationLastError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import { OperationIds.respondToNotification } from "../../redux/operations/opc";
-import { getOperationWithIdForResource } from "../../redux/operations/selectors";
+import { OperationType.respondToNotification } from "../../redux/operations/OperationType";
+import { getOperationWithTypeForResource } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
 import FormError from "../form/FormError";
@@ -41,9 +41,9 @@ const Notification: React.FC<{}> = (props) => {
     (state) => getNotification(state, currentNotificationId!)
   );
   const operation = useSelector<IAppState, IOperation | undefined>((state) =>
-    getOperationWithIdForResource(
+    getOperationWithTypeForResource(
       state,
-      OperationIds.respondToNotification,
+      OperationType.respondToNotification,
       currentNotificationId
     )
   );

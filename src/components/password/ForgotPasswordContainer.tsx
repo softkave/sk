@@ -2,12 +2,13 @@ import { notification } from "antd";
 import React from "react";
 import { useDispatch, useStore } from "react-redux";
 import { pushOperation } from "../../redux/operations/actions";
-import { OperationStatus } from "../../redux/operations/operation";
 import { OperationIds.requestForgotPassword } from "../../redux/operations/opc";
+import { OperationStatus } from "../../redux/operations/operation";
 import requestForgotPasswordOperationFunc from "../../redux/operations/session/requestForgotPassword";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation from "../hooks/useOperation";
 import ForgotPassword, { IForgotPasswordFormData } from "./ForgotPassword";
+sword";
 
 const successMessage = `
   Request successful,
@@ -18,7 +19,7 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
   const [key, setKey] = React.useState(Math.random().toString());
   const store = useStore();
   const operationStatus = useOperation({
-    operationId: OperationIds.requestForgotPassword,
+    operationType: OperationIds.requestForgotPassword,
   });
 
   const errors = operationStatus.error

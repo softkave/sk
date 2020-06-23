@@ -8,7 +8,7 @@
     "@ant-design/icons": "^4.0.2",
     "@emotion/core": "^10.0.17",
     "@emotion/styled": "^10.0.17",
-    "@reduxjs/toolkit": "^1.0.4",
+    "@reduxjs/toolkit": "^1.3.6",
     "@simonwep/pickr": "^1.5.1",
     "@types/react-beautiful-dnd": "^12.1.2",
     "@types/ua-parser-js": "^0.7.33",

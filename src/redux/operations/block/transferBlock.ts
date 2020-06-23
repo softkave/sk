@@ -1,8 +1,10 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBlock } from "../../../models/block/block";
 import { getDateString } from "../../../utils/utils";
-import * as blockActions from "../../blocks/actions";
-import { getBlock } from "../../blocks/selectors";
-import store from "../../store";
+import BlockActions from "../../blocks/actions";
+import BlockSelectors from "../../blocks/selectors";
+import { IAppAsyncThunkConfig } from "../../types";
+import { GetOperationActionArgs } from "../types";
 
 export interface ITransferBlockProps {
   data: {
@@ -11,19 +13,22 @@ export interface ITransferBlockProps {
   };
 }
 
-function updateBlockInStore(block: IBlock, updates: Partial<IBlock>) {
-  store.dispatch(
-    blockActions.updateBlockRedux(block.customId, updates, {
-      arrayUpdateStrategy: "replace",
-    })
-  );
+export function hasBlockParentChanged(block: IBlock, update: IBlock) {
+  return block.parent !== update.parent;
 }
 
-export function transferBlockStateHelper(props: ITransferBlockProps) {
-  const draggedBlock = getBlock(store.getState(), props.data.draggedBlockId)!;
-  const destinationBlock = getBlock(
-    store.getState(),
-    props.data.destinationBlockId
+export const transferBlockHelperAction = createAsyncThunk<
+  void,
+  GetOperationActionArgs<ITransferBlockProps>,
+  IAppAsyncThunkConfig
+>("session/transferBlockHelperAction", async (arg, thunkAPI) => {
+  const draggedBlock = BlockSelectors.getBlock(
+    thunkAPI.getState(),
+    arg.data.draggedBlockId
+  )!;
+  const destinationBlock = BlockSelectors.getBlock(
+    thunkAPI.getState(),
+    arg.data.destinationBlockId
   )!;
 
   const draggedBlockUpdates: Partial<IBlock> = {
@@ -31,9 +36,13 @@ export function transferBlockStateHelper(props: ITransferBlockProps) {
     parent: destinationBlock.customId,
   };
 
-  updateBlockInStore(draggedBlock, draggedBlockUpdates);
-}
-
-export function hasBlockParentChanged(block: IBlock, update: IBlock) {
-  return block.parent !== update.parent;
-}
+  await thunkAPI.dispatch(
+    BlockActions.updateBlock({
+      id: draggedBlock.customId,
+      data: draggedBlockUpdates,
+      meta: {
+        arrayUpdateStrategy: "replace",
+      },
+    })
+  );
+});

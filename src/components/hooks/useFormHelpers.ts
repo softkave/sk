@@ -69,97 +69,109 @@ const useFormHelpers = <T>(
     }
   }, [changedFields, formik]);
 
-  function getArrayFieldItems(field: string) {
-    const currentValue = get(formik.values, field);
-    const currentTouched = get(formik.touched, field);
-    const currentErrors = get(formik.errors, field);
+  const getArrayFieldItems = React.useCallback(
+    (field: string) => {
+      const currentValue = get(formik.values, field);
+      const currentTouched = get(formik.touched, field);
+      const currentErrors = get(formik.errors, field);
 
-    const touched = Array.from(defaultTo(currentTouched, []));
-    const errors = Array.from(defaultTo(currentErrors, []));
-    const value = Array.from(defaultTo(currentValue, []));
+      const touched = Array.from(defaultTo(currentTouched, []));
+      const errors = Array.from(defaultTo(currentErrors, []));
+      const value = Array.from(defaultTo(currentValue, []));
 
-    return { value, touched, errors };
-  }
+      return { value, touched, errors };
+    },
+    [formik.values, formik.touched, formik.errors]
+  );
 
-  function setArrayFieldItems(
+  const setArrayFieldItems = (
     field: string,
     touched: any[],
     errors: any[],
     value: any[]
-  ) {
-    formik.setFieldTouched(field, touched as any);
-    formik.setFieldError(field, errors as any);
-    formik.setFieldValue(field, value as any);
-  }
+  ) =>
+    React.useCallback(() => {
+      formik.setFieldTouched(field, touched as any);
+      formik.setFieldError(field, errors as any);
+      formik.setFieldValue(field, value as any);
+    }, [formik.setFieldError, formik.setFieldTouched, formik.setFieldValue]);
 
-  const addToArrayField = (
-    field: string,
-    initialValue: any,
-    initialError?: any,
-    initialTouched?: any,
-    index: number = 0
-  ) => {
-    const {
-      value: value,
-      touched: touched,
-      errors: errors,
-    } = getArrayFieldItems(field);
+  const addToArrayField = React.useCallback(
+    (
+      field: string,
+      initialValue: any,
+      initialError?: any,
+      initialTouched?: any,
+      index: number = 0
+    ) => {
+      const {
+        value: value,
+        touched: touched,
+        errors: errors,
+      } = getArrayFieldItems(field);
 
-    value.splice(index, 0, initialValue);
-    touched.splice(index, 0, initialTouched);
-    errors.splice(index, 0, initialError);
+      value.splice(index, 0, initialValue);
+      touched.splice(index, 0, initialTouched);
+      errors.splice(index, 0, initialError);
 
-    setArrayFieldItems(field, touched, errors, value);
-  };
+      setArrayFieldItems(field, touched, errors, value);
+    },
+    [setArrayFieldItems, getArrayFieldItems]
+  );
 
-  const deleteInArrayField = (field: string, index: number) => {
-    const {
-      value: value,
-      touched: touched,
-      errors: errors,
-    } = getArrayFieldItems(field);
+  const deleteInArrayField = React.useCallback(
+    (field: string, index: number) => {
+      const {
+        value: value,
+        touched: touched,
+        errors: errors,
+      } = getArrayFieldItems(field);
 
-    value.splice(index, 1);
-    touched.splice(index, 1);
-    errors.splice(index, 1);
+      value.splice(index, 1);
+      touched.splice(index, 1);
+      errors.splice(index, 1);
 
-    setArrayFieldItems(field, touched, errors, value);
-  };
+      setArrayFieldItems(field, touched, errors, value);
+    },
+    [setArrayFieldItems, getArrayFieldItems]
+  );
 
-  const moveInArrayField = (
-    field: string,
-    srcIndex: number,
-    destIndex: number
-  ) => {
-    const {
-      value: value,
-      touched: touched,
-      errors: errors,
-    } = getArrayFieldItems(field);
+  const moveInArrayField = React.useCallback(
+    (field: string, srcIndex: number, destIndex: number) => {
+      const {
+        value: value,
+        touched: touched,
+        errors: errors,
+      } = getArrayFieldItems(field);
 
-    const status = value[srcIndex];
-    const statusTouched = touched[srcIndex];
-    const statusErrors = errors[srcIndex];
+      const status = value[srcIndex];
+      const statusTouched = touched[srcIndex];
+      const statusErrors = errors[srcIndex];
 
-    value.splice(srcIndex, 1);
-    value.splice(destIndex, 0, status);
-    touched.splice(srcIndex, 1);
-    touched.splice(destIndex, 0, statusTouched);
-    errors.splice(srcIndex, 1);
-    errors.splice(destIndex, 0, statusErrors);
+      value.splice(srcIndex, 1);
+      value.splice(destIndex, 0, status);
+      touched.splice(srcIndex, 1);
+      touched.splice(destIndex, 0, statusTouched);
+      errors.splice(srcIndex, 1);
+      errors.splice(destIndex, 0, statusErrors);
 
-    setArrayFieldItems(field, touched, errors, value);
-  };
+      setArrayFieldItems(field, touched, errors, value);
+    },
+    [setArrayFieldItems, getArrayFieldItems]
+  );
 
-  const addChangedField = (field: string) => {
-    if (!changedFields.exists(field)) {
-      changedFields.add(field);
-    }
-  };
+  const addChangedField = React.useCallback(
+    (field: string) => {
+      if (!changedFields.exists(field)) {
+        changedFields.add(field);
+      }
+    },
+    [changedFields]
+  );
 
-  const hasChanges = () => {
+  const hasChanges = React.useCallback(() => {
     return changedFields.getList().length > 0;
-  };
+  }, [changedFields]);
 
   const diffChanges = React.useCallback(() => {
     const data: any = {};
@@ -185,19 +197,29 @@ const useFormHelpers = <T>(
     changedFields.reset();
   }, [changedFields]);
 
-  return {
-    formik,
-    formikHelpers: {
+  const formikHelpers: IUseFormHelpersFormikHelpers = React.useMemo(
+    () => ({
       addToArrayField,
       deleteInArrayField,
       moveInArrayField,
-    },
-    formikChangedFieldsHelpers: {
+    }),
+    [addToArrayField, deleteInArrayField, moveInArrayField]
+  );
+
+  const formikChangedFieldsHelpers = React.useMemo(
+    () => ({
       diffChanges,
       hasChanges,
       clearAll,
       addField: addChangedField,
-    },
+    }),
+    [diffChanges, hasChanges, clearAll, addChangedField]
+  );
+
+  return {
+    formik,
+    formikHelpers,
+    formikChangedFieldsHelpers,
   };
 };
 

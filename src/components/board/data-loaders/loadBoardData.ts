@@ -1,3 +1,4 @@
+import React from "react";
 import { BlockType, IBlock } from "../../../models/block/block";
 import {
   collaboratorFragment,
@@ -8,14 +9,16 @@ import { INetError } from "../../../net/types";
 import { netCallWithAuth } from "../../../net/utils";
 import * as blockActions from "../../../redux/blocks/actions";
 import * as notificationActions from "../../../redux/notifications/actions";
-import { pushOperation } from "../../../redux/operations/actions";
+import OperationActions from "../../../redux/operations/actions";
 import {
   isOperationStarted,
   OperationStatus,
 } from "../../../redux/operations/operation";
-import { getOperationWithIdForResource } from "../../../redux/operations/selectors";
+import OperationType from "../../../redux/operations/OperationType";
+import OperationSelectors from "../../../redux/operations/selectors";
 import store from "../../../redux/store";
 import * as userActions from "../../../redux/users/actions";
+import { newId } from "../../../utils/utils";
 import useOperation, { IUseOperationStatus } from "../../hooks/useOperation";
 
 const query = `
@@ -44,7 +47,6 @@ query LoadBoardDataQuery ($blockId: String!) {
 }
 `;
 
-const opId = "load-board-data";
 const collaboratorsPath = "block.getBlockCollaborators";
 const notificationsPath = "block.getBlockNotifications";
 const paths = [collaboratorsPath, notificationsPath];
@@ -57,26 +59,23 @@ async function getData(block: IBlock) {
   });
 }
 
-export default async function loadBoardData(block: IBlock) {
-  const operation = getOperationWithIdForResource(
-    store.getState(),
-    opId,
-    block.customId
-  );
+export default async function loadBoardData(block: IBlock, id: string) {
+  const operation = OperationSelectors.getOperationWithId(store.getState(), id);
 
   if (operation && isOperationStarted(operation)) {
     return;
   }
 
   store.dispatch(
-    pushOperation(
-      opId,
-      {
+    OperationActions.pushOperation({
+      id,
+      operationType: OperationType.LoadBoardData,
+      status: {
         status: OperationStatus.Started,
         timestamp: Date.now(),
       },
-      block.customId
-    )
+      resourceId: block.customId,
+    })
   );
 
   try {
@@ -112,26 +111,28 @@ export default async function loadBoardData(block: IBlock) {
     );
 
     store.dispatch(
-      pushOperation(
-        opId,
-        {
+      OperationActions.pushOperation({
+        id,
+        operationType: OperationType.LoadBoardData,
+        status: {
           status: OperationStatus.Completed,
           timestamp: Date.now(),
         },
-        block.customId
-      )
+        resourceId: block.customId,
+      })
     );
   } catch (error) {
     store.dispatch(
-      pushOperation(
-        opId,
-        {
+      OperationActions.pushOperation({
+        id,
+        operationType: OperationType.LoadBoardData,
+        status: {
           error,
           status: OperationStatus.Error,
           timestamp: Date.now(),
         },
-        block.customId
-      )
+        resourceId: block.customId,
+      })
     );
   }
 }
@@ -143,13 +144,10 @@ export interface IUseBoardDataResult {
 
 export function useBoardData(block: IBlock): IUseBoardDataResult {
   const loadStatus = useOperation(
-    {
-      operationId: opId,
-      resourceId: block.customId,
-    },
+    { id: block.customId },
     (loadProps: IUseOperationStatus) => {
       if (block.type === BlockType.Org && !loadProps.operation) {
-        loadBoardData(block);
+        loadBoardData(block, loadProps.id);
       }
     }
   );

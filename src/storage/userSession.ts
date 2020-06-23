@@ -1,14 +1,27 @@
 import { getItem, removeItem, setItem } from "../utils/storage";
-import { userTokenKey } from "./itemKeys";
+import { StorageKeys } from "./types";
 
-export function getUserTokenFromStorage() {
-  return getItem(userTokenKey);
+function getUserToken() {
+  return getItem(StorageKeys.Token);
 }
 
-export function saveUserTokenToStorage(token) {
-  setItem(userTokenKey, token);
+function saveUserToken(token) {
+  setItem(StorageKeys.Token, token);
 }
 
-export function deleteUserTokenInStorage() {
-  removeItem(userTokenKey);
+function deleteUserToken() {
+  removeItem(StorageKeys.Token);
+}
+
+function saveTokenIfExists(token) {
+  if (getUserToken()) {
+    saveUserToken(token);
+  }
+}
+
+export default class UserSessionStorageFuncs {
+  public static getUserToken = getUserToken;
+  public static saveUserToken = saveUserToken;
+  public static deleteUserToken = deleteUserToken;
+  public static saveTokenIfExists = saveTokenIfExists;
 }

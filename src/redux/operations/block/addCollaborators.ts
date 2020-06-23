@@ -1,19 +1,22 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
 import { IBlock } from "../../../models/block/block";
 import { IAddCollaboratorFormItemValues } from "../../../models/types";
-import * as blockNet from "../../../net/block";
+import BlockAPI from "../../../net/block";
 import { newId } from "../../../utils/utils";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { OperationIds.addCollaborators } from "../opc";
-import { getOperationWithIdForResource } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface IAddCollaboratorOperationFuncDataProps {
+export interface IAddCollaboratorsOperationActionArgs {
   block: IBlock;
 
   // TODO: better declare type, don't rely on form values
@@ -22,40 +25,37 @@ export interface IAddCollaboratorOperationFuncDataProps {
   expiresAt?: number | Date;
 }
 
-export default async function addCollaboratorsOperationFunc(
-  dataProps: IAddCollaboratorOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { block, collaborators, message, expiresAt } = dataProps;
-  const operation = getOperationWithIdForResource(
-    store.getState(),
-    OperationIds.addCollaborators,
-    block.customId
+export const addCollaboratorsOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IAddCollaboratorsOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("block/addCollaborators", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(
-      OperationIds.addCollaborators,
-      {
-        scopeId: options.scopeId,
-        status: OperationStatus.Started,
-        timestamp: Date.now(),
-      },
-      block.customId
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(
+      id,
+      OperationType.AddCollaborators,
+      arg.block.customId
     )
   );
 
   try {
-    const proccessedCollaborators = collaborators.map((request) => {
-      const requestExpiresAt = request.expiresAt || expiresAt;
+    const proccessedCollaborators = arg.collaborators.map((request) => {
+      const requestExpiresAt = request.expiresAt || arg.expiresAt;
 
       return {
         ...request,
-        body: request.body || message!,
+        body: request.body || arg.message!,
         expiresAt: requestExpiresAt
           ? moment(requestExpiresAt).valueOf()
           : undefined,
@@ -63,8 +63,8 @@ export default async function addCollaboratorsOperationFunc(
       };
     });
 
-    const result = await blockNet.addCollaborators(
-      block,
+    const result = await BlockAPI.addCollaborators(
+      arg.block,
       proccessedCollaborators
     );
 
@@ -72,53 +72,23 @@ export default async function addCollaboratorsOperationFunc(
       throw result.errors;
     }
 
-    // TODO
-    // const requestIds = proccessedCollaborators.map(
-    //   (request) => request.customId
-    // );
-
-    /**
-     * Currently, the only the request Ids are stored, which will trigger a refetch of all the block's notifications
-     * including the ones already fetched. The advantage to this, is that out-of-date notifications will be updated.
-     *
-     * TODO: When real-time data update is eventually implemented,
-     * create the notifications from the request and store it here, and not rely on reloading all the data,
-     * as updates will be pushed as they occur
-     */
-    // TODO: Block data loader is not reloading, look into why
-    // store.dispatch(
-    //   blockActions.updateBlockRedux(
-    //     block.customId,
-    //     {
-    //       collaborationRequests: requestIds,
-    //     },
-    //     { arrayUpdateStrategy: "concat" }
-    //   )
-    // );
-
-    store.dispatch(
-      pushOperation(
-        OperationIds.addCollaborators,
-        {
-          scopeId: options.scopeId,
-          status: OperationStatus.Completed,
-          timestamp: Date.now(),
-        },
-        block.customId
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(
+        id,
+        OperationType.AddCollaborators,
+        arg.block.customId
       )
     );
   } catch (error) {
-    store.dispatch(
-      pushOperation(
-        OperationIds.addCollaborators,
-        {
-          error,
-          scopeId: options.scopeId,
-          status: OperationStatus.Error,
-          timestamp: Date.now(),
-        },
-        block.customId
+    await thunkAPI.dispatch(
+      dispatchOperationError(
+        id,
+        OperationType.AddCollaborators,
+        error,
+        arg.block.customId
       )
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

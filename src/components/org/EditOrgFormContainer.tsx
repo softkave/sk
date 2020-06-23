@@ -4,9 +4,9 @@ import { BlockType, IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
 import {
-  OperationIds.addBlock,
-  OperationIds.updateBlock,
-} from "../../redux/operations/opc";
+  addBlock.OperationType,
+  OperationType.updateBlock,
+} from "../../redux/operations/OperationType";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
@@ -30,7 +30,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
 
   const operationStatus = useOperation({
     scopeId,
-    operationId: props.block ? OperationIds.updateBlock : OperationIds.addBlock,
+    operationType: props.block ? OperationType.updateBlock : OperationType.addBlock,
     resourceId: block.customId,
   });
 

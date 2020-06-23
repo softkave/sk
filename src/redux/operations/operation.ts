@@ -1,6 +1,5 @@
-import { Dispatch } from "redux";
-import { INetError } from "../../net/types";
-import { pushOperation } from "./actions";
+import OperationActions from "./actions";
+import OperationType from "./OperationType";
 
 export enum OperationStatus {
   Started = "started",
@@ -18,8 +17,9 @@ export interface IOperationStatus {
   error?: any;
 }
 
-export default interface IOperation {
-  operationId: string;
+export interface IOperation {
+  id: string;
+  operationType: OperationType;
   status: IOperationStatus;
   resourceId?: string | null;
 }
@@ -60,80 +60,58 @@ export function isOperationConsumed(operation?: IOperation) {
   return operation?.status.status === OperationStatus.Consumed;
 }
 
-export interface IOperationFuncOptions {
-  resourceId?: string | null;
-}
-
-export interface IDispatchOperationFuncProps {
-  dispatch: Dispatch;
-  operationId: string;
-  resourceId?: string | null;
-  data?: any;
-  error?: INetError | Error;
-}
-
-function dispatchOperationStatus(
-  dispatch: Dispatch,
-  operationId: string,
-  status: IOperationStatus,
-  resourceId?: string | null
+export function dispatchOperationStarted(
+  id,
+  type,
+  resourceId?: string | null,
+  data?: any
 ) {
-  dispatch(pushOperation(operationId, status, resourceId));
-}
-
-export function dispatchOperationStarted(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationId, resourceId, data } = props;
-  dispatchOperationStatus(
-    dispatch,
-    operationId,
-    {
+  return OperationActions.pushOperation({
+    id,
+    resourceId,
+    operationType: type,
+    status: {
       data,
       status: OperationStatus.Started,
       timestamp: Date.now(),
     },
-    resourceId
-  );
+  });
 }
 
-export function dispatchOperationPending(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationId, resourceId, data } = props;
-  dispatchOperationStatus(
-    dispatch,
-    operationId,
-    {
-      data,
-      status: OperationStatus.Pending,
-      timestamp: Date.now(),
-    },
-    resourceId
-  );
-}
-
-export function dispatchOperationError(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationId, resourceId, data, error } = props;
-  dispatchOperationStatus(
-    dispatch,
-    operationId,
-    {
-      data,
-      error,
-      status: OperationStatus.Error,
-      timestamp: Date.now(),
-    },
-    resourceId
-  );
-}
-
-export function dispatchOperationComplete(props: IDispatchOperationFuncProps) {
-  const { dispatch, operationId, resourceId, data } = props;
-  dispatchOperationStatus(
-    dispatch,
-    operationId,
-    {
+export function dispatchOperationCompleted(
+  id,
+  type,
+  resourceId?: string | null,
+  data?: any
+) {
+  return OperationActions.pushOperation({
+    id,
+    resourceId,
+    operationType: type,
+    status: {
       data,
       status: OperationStatus.Completed,
       timestamp: Date.now(),
     },
-    resourceId
-  );
+  });
+}
+
+export function dispatchOperationError(
+  id,
+  type,
+  error?: any,
+  resourceId?: string | null,
+  data?: any
+) {
+  return OperationActions.pushOperation({
+    id,
+    resourceId,
+    operationType: type,
+    status: {
+      data,
+      error,
+      status: OperationStatus.Started,
+      timestamp: Date.now(),
+    },
+  });
 }

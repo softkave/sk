@@ -1,80 +1,79 @@
-import { Dispatch } from "redux";
-import { userErrorMessages } from "../../../models/user/userErrorMessages";
-import * as userNet from "../../../net/user";
-import { loginUserRedux } from "../../session/actions";
-import { IAppState } from "../../store";
-import { addUserRedux } from "../../users/actions";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import ErrorMessages from "../../../models/errorMessages";
+import UserAPI from "../../../net/user";
+import UserSessionStorageFuncs from "../../../storage/userSession";
+import { newId } from "../../../utils/utils";
+import SessionActions from "../../session/actions";
+import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
 import {
-  dispatchOperationComplete,
+  dispatchOperationCompleted,
   dispatchOperationError,
   dispatchOperationStarted,
-  IDispatchOperationFuncProps,
-  IOperationFuncOptions,
+  IOperation,
   isOperationStarted,
 } from "../operation";
-import { OperationIds.changePassword } from "../opc";
-import { getFirstOperationWithId } from "../selectors";
-import { saveUserTokenIfAlreadySaved } from "./utils";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 
-export interface IChangePasswordOperationFuncDataProps {
-  // email: string;
+export interface IChangePasswordOperationActionArgs {
   password: string;
-  token?: string;
+  token: string;
+  opId?: string;
 }
 
-export default async function changePasswordOperationFunc(
-  state: IAppState,
-  dispatch: Dispatch,
-  dataProps: IChangePasswordOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { password, token } = dataProps;
-  const dispatchOptions: IDispatchOperationFuncProps = {
-    ...options,
-    dispatch,
-    operationId: OperationIds.changePassword,
-  };
+export const changePasswordOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IChangePasswordOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("session/changePassword", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
 
-  if (!token) {
-    dispatchOperationError({
-      ...dispatchOptions,
-      error: new Error(userErrorMessages.invalidCredentials),
-    });
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
+  );
 
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  const operation = getFirstOperationWithId(state, OperationIds.changePassword);
-
-  if (isOperationStarted(operation, options.scopeId)) {
-    return;
-  }
-
-  dispatchOperationStarted(dispatchOptions);
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.ChangePassword)
+  );
 
   try {
     // TODO: define type
-    let result: any = null;
-
-    if (token) {
-      result = await userNet.changePasswordWithToken(password, token);
-    } else {
-      result = await userNet.changePassword(password, token);
-    }
+    const result: any = await UserAPI.changePasswordWithToken(
+      arg.password,
+      arg.token
+    );
 
     if (result && result.errors) {
       throw result.errors;
     } else if (result && result.token && result.user) {
-      dispatch(addUserRedux(result.user));
-      dispatch(loginUserRedux(result.token, result.user.customId));
+      await thunkAPI.dispatch(UserActions.addUser(result.user));
+      await thunkAPI.dispatch(
+        SessionActions.loginUser({
+          token: result.token,
+          userId: result.user.customId,
+        })
+      );
 
-      saveUserTokenIfAlreadySaved(result.token);
+      UserSessionStorageFuncs.saveTokenIfExists(result.token);
     } else {
-      throw new Error("An error occurred");
+      throw new Error(ErrorMessages.anErrorOccurred);
     }
 
-    dispatchOperationComplete(dispatchOptions);
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.ChangePassword)
+    );
   } catch (error) {
-    dispatchOperationError({ ...dispatchOptions, error });
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.ChangePassword, error)
+    );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

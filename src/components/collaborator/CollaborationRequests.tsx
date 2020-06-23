@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import { getNotifications } from "../../redux/notifications/selectors";
 import { IAppState } from "../../redux/store";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
@@ -16,7 +16,7 @@ export interface ICRProps {
 const CollaborationRequests: React.FC<ICRProps> = (props) => {
   const { organization } = props;
   const requests = useSelector<IAppState, INotification[]>((state) =>
-    getNotificationsAsArray(state, organization.notifications!)
+    getNotifications(state, organization.notifications!)
   );
 
   if (requests.length === 0) {

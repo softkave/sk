@@ -4,16 +4,12 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
 import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { operationHasStatusWithScopeId } from "../../redux/operations/operation";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import ViewByStatus from "./ViewByStatus";
-
-const scopeId = "status-container";
-const opId = "view-by-status";
 
 export interface IViewByStatusContainerProps {
   block: IBlock;
@@ -37,26 +33,22 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   );
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
-    const operation = loadProps.operation;
-    const shouldLoad = !operationHasStatusWithScopeId(operation, scopeId);
+    const shouldLoad = !loadProps.operation;
 
     if (shouldLoad) {
       loadBlockChildrenOperationFunc(
         {
           block,
           typeList: [BlockType.Task],
-          operationId: opId,
         },
-        { scopeId, resourceId: block.customId }
+        { id: loadProps.id }
       );
     }
   };
 
   const loadChildrenStatus = useOperation(
     {
-      scopeId,
-      operationId: opId,
-      resourceId: block.customId,
+      id: block.customId,
     },
     loadBlockChildren
   );

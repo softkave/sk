@@ -4,11 +4,11 @@ import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getBlock } from "../../redux/blocks/selectors";
-import { getNotificationsAsArray } from "../../redux/notifications/selectors";
+import { getNotifications } from "../../redux/notifications/selectors";
 import { pushOperation } from "../../redux/operations/actions";
 import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
 import { OperationStatus } from "../../redux/operations/operation";
-import { OperationIds.addCollaborators } from "../../redux/operations/opc";
+import { addCollaborators.OperationType } from "../../redux/operations/OperationType";
 import { IAppState } from "../../redux/store";
 import { getUsersAsArray } from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
@@ -51,7 +51,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     : [];
 
   const requests = useSelector<IAppState, INotification[]>((state) =>
-    getNotificationsAsArray(state, requestIds)
+    getNotifications(state, requestIds)
   );
 
   const [data, setData] = React.useState<IAddCollaboratorFormValues>({
@@ -60,7 +60,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
 
   const operationStatus = useOperation({
     scopeId,
-    operationId: OperationIds.addCollaborators,
+    operationType: OperationType.addCollaborators,
   });
 
   const errors = operationStatus.error
@@ -71,7 +71,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     if (operationStatus.isCompleted) {
       onClose();
       dispatch(
-        pushOperation(OperationIds.addCollaborators, {
+        pushOperation(OperationType.addCollaborators, {
           scopeId,
           status: OperationStatus.consumed,
           timestamp: Date.now(),

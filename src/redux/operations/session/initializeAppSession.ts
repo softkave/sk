@@ -1,43 +1,46 @@
-import { getUserData } from "../../../net/user";
-import { getUserTokenFromStorage } from "../../../storage/userSession";
-import { loginUserRedux, setSessionToWeb } from "../../session/actions";
-import store from "../../store";
-import { addUserRedux } from "../../users/actions";
-import { pushOperation } from "../actions";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import UserAPI from "../../../net/user";
+import UserSessionStorageFuncs from "../../../storage/userSession";
+import { newId } from "../../../utils/utils";
+import SessionActions from "../../session/actions";
+import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { OperationIds.initializeAppSession } from "../opc";
-import { getFirstOperationWithId } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { IOperationActionBaseArgs } from "../types";
 
-export default async function initializeAppSessionOperationFunc(
-  options: IOperationFuncOptions = {}
-) {
-  const state = store.getState();
-  const operation = getFirstOperationWithId(
-    state,
-    OperationIds.initializeAppSession
+export const initializeAppSessionOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  IOperationActionBaseArgs,
+  IAppAsyncThunkConfig
+>("session/initializeAppSession", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
 
-  if (operation && isOperationStarted(operation, options.scopeId)) {
+  if (isOperationStarted(operation)) {
     return;
   }
 
-  store.dispatch(
-    pushOperation(OperationIds.initializeAppSession, {
-      scopeId: options.scopeId,
-      status: OperationStatus.Started,
-      timestamp: Date.now(),
-    })
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.InitializeAppSession)
   );
 
   try {
-    const token = getUserTokenFromStorage();
+    const token = UserSessionStorageFuncs.getUserToken();
 
     if (token) {
-      const result = await getUserData(token);
+      const result = await UserAPI.getUserData(token);
 
       if (result && result.errors) {
         throw result.errors;
@@ -45,29 +48,23 @@ export default async function initializeAppSessionOperationFunc(
 
       const { user } = result;
 
-      store.dispatch(addUserRedux(user));
-      store.dispatch(loginUserRedux(token, user.customId));
+      await thunkAPI.dispatch(UserActions.addUser(user));
+      await thunkAPI.dispatch(
+        SessionActions.loginUser({ token, userId: user.customId })
+      );
     } else {
-      store.dispatch(setSessionToWeb());
+      await thunkAPI.dispatch(SessionActions.setSessionToWeb());
     }
 
-    store.dispatch(
-      pushOperation(OperationIds.initializeAppSession, {
-        scopeId: options.scopeId,
-        status: OperationStatus.Completed,
-        timestamp: Date.now(),
-      })
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(id, OperationType.InitializeAppSession)
     );
   } catch (error) {
-    store.dispatch(setSessionToWeb());
-
-    store.dispatch(
-      pushOperation(OperationIds.initializeAppSession, {
-        error,
-        scopeId: options.scopeId,
-        status: OperationStatus.Error,
-        timestamp: Date.now(),
-      })
+    await thunkAPI.dispatch(SessionActions.setSessionToWeb());
+    await thunkAPI.dispatch(
+      dispatchOperationError(id, OperationType.InitializeAppSession, error)
     );
   }
-}
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

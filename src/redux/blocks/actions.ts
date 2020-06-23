@@ -1,119 +1,34 @@
+import { createAction } from "@reduxjs/toolkit";
 import { IBlock } from "../../models/block/block";
-import {
-  ICollectionAddItemPayload,
-  ICollectionDeleteItemPayload,
-  ICollectionUpdateItemPayload,
-  IUpdateResourceMeta,
-} from "../collection";
-import {
-  ADD_BLOCK,
-  BULK_ADD_BLOCKS,
-  BULK_DELETE_BLOCKS,
-  BULK_UPDATE_BLOCKS,
-  DELETE_BLOCK,
-  UPDATE_BLOCK,
-} from "./constants";
+import { IMergeDataMeta } from "../../utils/utils";
 
-export interface IAddBlockAction {
-  type: ADD_BLOCK;
-  payload: ICollectionAddItemPayload<IBlock>;
+const addBlock = createAction<IBlock>("blocks/addBlock");
+
+export interface IUpdateBlockActionArgs {
+  id: string;
+  data: Partial<IBlock>;
+  meta?: IMergeDataMeta;
 }
 
-export function addBlockRedux(block: IBlock): IAddBlockAction {
-  return {
-    type: ADD_BLOCK,
-    payload: {
-      id: block.customId,
-      data: block,
-    },
-  };
+const updateBlock = createAction<IUpdateBlockActionArgs>("blocks/updateBlock");
+
+const deleteBlock = createAction<string>("blocks/deleteBlock");
+
+const bulkAddBlocks = createAction<IBlock[]>("blocks/bulkAddBlocks");
+
+const bulkUpdateBlocks = createAction<IUpdateBlockActionArgs[]>(
+  "blocks/bulkUpdateBlocks"
+);
+
+const bulkDeleteBlocks = createAction<string[]>("blocks/bulkDeleteBlocks");
+
+class BlockActions {
+  public static addBlock = addBlock;
+  public static updateBlock = updateBlock;
+  public static deleteBlock = deleteBlock;
+  public static bulkAddBlocks = bulkAddBlocks;
+  public static bulkUpdateBlocks = bulkUpdateBlocks;
+  public static bulkDeleteBlocks = bulkDeleteBlocks;
 }
 
-export interface IUpdateBlockAction {
-  type: UPDATE_BLOCK;
-  payload: ICollectionUpdateItemPayload<IBlock>;
-  meta: IUpdateResourceMeta;
-}
-
-export function updateBlockRedux(
-  id: string,
-  block: Partial<IBlock>,
-  meta: IUpdateResourceMeta
-): IUpdateBlockAction {
-  return {
-    meta,
-    type: UPDATE_BLOCK,
-    payload: {
-      id,
-      data: block,
-    },
-  };
-}
-
-export interface IdeleteBlockAction {
-  type: DELETE_BLOCK;
-  payload: ICollectionDeleteItemPayload;
-}
-
-export function deleteBlockRedux(id: string): IdeleteBlockAction {
-  return {
-    type: DELETE_BLOCK,
-    payload: {
-      id,
-    },
-  };
-}
-
-export interface IBulkAddBlocksAction {
-  type: BULK_ADD_BLOCKS;
-  payload: Array<ICollectionAddItemPayload<IBlock>>;
-}
-
-export function bulkAddBlocksRedux(blocks: IBlock[]): IBulkAddBlocksAction {
-  return {
-    type: BULK_ADD_BLOCKS,
-    payload: blocks.map((block) => ({
-      id: block.customId,
-      data: block,
-    })),
-  };
-}
-
-export interface IBulkUpdateBlocksAction {
-  type: BULK_UPDATE_BLOCKS;
-  payload: Array<ICollectionUpdateItemPayload<IBlock>>;
-  meta: IUpdateResourceMeta;
-}
-
-export function bulkUpdateBlocksRedux(
-  blocks: Array<{ id: string; data: Partial<IBlock> }>,
-  meta: IUpdateResourceMeta
-): IBulkUpdateBlocksAction {
-  return {
-    meta,
-    type: BULK_UPDATE_BLOCKS,
-    payload: blocks,
-  };
-}
-
-export interface IBulkDeleteBlocksAction {
-  type: BULK_DELETE_BLOCKS;
-  payload: ICollectionDeleteItemPayload[];
-}
-
-export function bulkDeleteBlocksRedux(
-  blocks: string[]
-): IBulkDeleteBlocksAction {
-  return {
-    type: BULK_DELETE_BLOCKS,
-    payload: blocks.map((id) => ({ id })),
-  };
-}
-
-export type IBlocksAction =
-  | IAddBlockAction
-  | IUpdateBlockAction
-  | IdeleteBlockAction
-  | IBulkAddBlocksAction
-  | IBulkUpdateBlocksAction
-  | IBulkDeleteBlocksAction;
+export default BlockActions;

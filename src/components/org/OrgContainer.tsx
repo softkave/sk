@@ -3,17 +3,11 @@ import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import addBlockOperationFunc from "../../redux/operations/block/addBlock";
 import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import {
-  OperationIds.addBlock,
-  OperationIds.updateBlock,
-} from "../../redux/operations/opc";
 import { getSignedInUserRequired } from "../../redux/session/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useOperation from "../hooks/useOperation";
 import Org, { IOrgValues } from "./Org";
-
-const scopeId = "OrgContainer";
 
 export interface IOrgContainerProps {
   onClose: () => void;
@@ -28,18 +22,14 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
     props.block || getNewBlock(user, BlockType.Org)
   );
 
-  const operationStatus = useOperation({
-    scopeId,
-    operationId: props.block ? OperationIds.updateBlock : OperationIds.addBlock,
-    resourceId: block.customId,
-  });
+  const opStat = useOperation();
 
-  const errors = operationStatus.error
-    ? flattenErrorListWithDepthInfinite(operationStatus.error)
+  const errors = opStat.error
+    ? flattenErrorListWithDepthInfinite(opStat.error)
     : undefined;
 
   React.useEffect(() => {
-    if (operationStatus.isCompleted && !props.block) {
+    if (opStat.isCompleted && !props.block) {
       onClose();
     }
   });
@@ -55,8 +45,7 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
           data,
         },
         {
-          scopeId,
-          resourceId: block.customId,
+          id: opStat.id,
         }
       );
     } else {
@@ -65,10 +54,7 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
           user,
           block: data,
         },
-        {
-          scopeId,
-          resourceId: block.customId,
-        }
+        { id: opStat.id }
       );
     }
   };
@@ -80,7 +66,7 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
       value={block as any}
       onClose={onClose}
       onSubmit={onSubmit}
-      isSubmitting={operationStatus.isLoading}
+      isSubmitting={opStat.isLoading}
       errors={errors}
     />
   );

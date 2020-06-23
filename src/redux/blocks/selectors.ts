@@ -1,50 +1,53 @@
 import { BlockType, IBlock } from "../../models/block/block";
-import {
-  filterCollectionItemsWith,
-  getCollectionItemsAsArray,
-} from "../collection";
-import { IAppState } from "../store";
+import { IAppState } from "../types";
 
-export function getBlock(state: IAppState, blockId?: string | null) {
-  if (blockId) {
-    const blocks = getCollectionItemsAsArray(state.blocks, [blockId]);
-    return blocks[0];
-  }
+function getBlock(state: IAppState, blockId: string) {
+  return state.blocks[blockId];
 }
 
-export function getBlocksAsArray(state: IAppState, ids: string[]) {
-  return getCollectionItemsAsArray(state.blocks, ids);
-}
-
-export function getOrgTasks(state: IAppState, block: IBlock) {
-  return filterCollectionItemsWith(state.blocks, (next) => {
-    if (BlockType.Task === next.type && block.customId === next.rootBlockId) {
-      return true;
+function getBlocksAsArray(state: IAppState, ids: string[]) {
+  return ids.reduce((blocks, id) => {
+    if (state.blocks[id]) {
+      blocks.push(state.blocks[id]);
     }
 
-    return false;
+    return blocks;
+  }, [] as IBlock[]);
+}
+
+function getOrgTasks(state: IAppState, org: IBlock) {
+  const blocks: IBlock[] = [];
+
+  Object.keys(state).forEach((id) => {
+    const block = state.blocks[id];
+
+    if (BlockType.Task === block.type && org.customId === block.rootBlockId) {
+      blocks.push(block);
+    }
   });
+
+  return blocks;
 }
 
-export function getBlockChildren(
-  state: IAppState,
-  block: IBlock,
-  type?: BlockType
-) {
-  return filterCollectionItemsWith(state.blocks, (next) => {
-    if (type && type !== next.type) {
-      return false;
+function getBlockChildren(state: IAppState, parent: IBlock, type?: BlockType) {
+  const blocks: IBlock[] = [];
+
+  Object.keys(state).forEach((id) => {
+    const block = state.blocks[id];
+
+    if (type && type !== block.type) {
+      return;
     }
 
-    if (block.customId === next.parent) {
-      return true;
+    if (parent.customId === block.parent) {
+      blocks.push(block);
     }
-
-    return false;
   });
+
+  return blocks;
 }
 
-export function getBlockParents(state: IAppState, block: IBlock) {
+function getBlockParents(state: IAppState, block: IBlock) {
   let b: IBlock = block;
   const parents: IBlock[] = [];
 
@@ -56,4 +59,12 @@ export function getBlockParents(state: IAppState, block: IBlock) {
   }
 
   return parents;
+}
+
+export default class BlockSelectors {
+  public static getBlock = getBlock;
+  public static getBlocks = getBlocksAsArray;
+  public static getOrgTasks = getOrgTasks;
+  public static getBlockChildren = getBlockChildren;
+  public static getBlockParents = getBlockParents;
 }

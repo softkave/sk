@@ -1,115 +1,31 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
 import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
-import { IBlock, IBlockStatus } from "../../../models/block/block";
-import * as blockNet from "../../../net/block";
-import { getDateString } from "../../../utils/utils";
-import * as blockActions from "../../blocks/actions";
-import { getOrgTasks } from "../../blocks/selectors";
-import { ICollectionUpdateItemPayload } from "../../collection";
-import { getSignedInUserRequired } from "../../session/selectors";
-import store from "../../store";
-import { pushOperation } from "../actions";
+import { BlockType, IBlock, IBlockStatus } from "../../../models/block/block";
+import BlockAPI from "../../../net/block";
+import { getDateString, newId } from "../../../utils/utils";
+import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
+import BlockSelectors from "../../blocks/selectors";
+import SessionSelectors from "../../session/selectors";
+import { IAppAsyncThunkConfig } from "../../types";
 import {
-  IOperationFuncOptions,
+  dispatchOperationCompleted,
+  dispatchOperationError,
+  dispatchOperationStarted,
+  IOperation,
   isOperationStarted,
-  OperationStatus,
 } from "../operation";
-import { OperationIds.updateBlock } from "../opc";
-import { getOperationWithIdForResource } from "../selectors";
+import OperationType from "../OperationType";
+import OperationSelectors from "../selectors";
+import { GetOperationActionArgs } from "../types";
 import {
   hasBlockParentChanged,
-  transferBlockStateHelper,
+  transferBlockHelperAction,
 } from "./transferBlock";
 
-export interface IUpdateBlockOperationFuncDataProps {
+export interface IUpdateBlockOperationActionArgs {
   block: IBlock;
   data: Partial<IBlock>;
-}
-
-export default async function updateBlockOperationFunc(
-  dataProps: IUpdateBlockOperationFuncDataProps,
-  options: IOperationFuncOptions = {}
-) {
-  const { block, data } = dataProps;
-  const operation = getOperationWithIdForResource(
-    store.getState(),
-    OperationIds.updateBlock,
-    block.customId
-  );
-
-  if (operation && isOperationStarted(operation, options.scopeId)) {
-    return;
-  }
-
-  if (data.dueAt) {
-    data.dueAt = moment(data.dueAt).toString();
-  } else if (data.type === "task") {
-    data.subTasks = addCustomIdToSubTasks(data.subTasks);
-  }
-
-  store.dispatch(
-    pushOperation(
-      OperationIds.updateBlock,
-      {
-        scopeId: options.scopeId,
-        status: OperationStatus.Started,
-        timestamp: Date.now(),
-      },
-      block.customId
-    )
-  );
-
-  try {
-    const result = await blockNet.updateBlock(block, data);
-
-    if (result && result.errors) {
-      throw result.errors;
-    }
-
-    const forTransferBlockOnly = { ...block, ...data };
-
-    if (hasBlockParentChanged(block, forTransferBlockOnly)) {
-      transferBlockStateHelper({
-        data: {
-          draggedBlockId: forTransferBlockOnly.customId,
-          destinationBlockId: data.parent!,
-        },
-      });
-    }
-
-    store.dispatch(
-      blockActions.updateBlockRedux(block.customId, data, {
-        arrayUpdateStrategy: "replace",
-      })
-    );
-
-    updateTasksIfHasDeletedStatusesOrLabels(block, data);
-
-    store.dispatch(
-      pushOperation(
-        OperationIds.updateBlock,
-        {
-          scopeId: options.scopeId,
-          status: OperationStatus.Completed,
-          timestamp: Date.now(),
-        },
-        block.customId
-      )
-    );
-  } catch (error) {
-    store.dispatch(
-      pushOperation(
-        OperationIds.updateBlock,
-        {
-          error,
-          scopeId: options.scopeId,
-          status: OperationStatus.Error,
-          timestamp: Date.now(),
-        },
-        block.customId
-      )
-    );
-  }
 }
 
 function indexStatuses(statuses: IBlockStatus[]) {
@@ -137,23 +53,27 @@ function getDeletedStatuses(
   existingStatuses.forEach((status, i) => {
     if (!cachedStatuses[status.customId]) {
       const newIdIndex = i >= statuses.length ? i - 1 : i;
-      const newId = statuses[newIdIndex]?.customId;
-      deletedStatuses[status.customId] = { newId };
+      const id = statuses[newIdIndex]?.customId;
+      deletedStatuses[status.customId] = { newId: id };
     }
   });
 
   return deletedStatuses;
 }
 
-function updateTasksIfHasDeletedStatusesOrLabels(
-  block: IBlock,
-  data: Partial<IBlock>
-) {
+const updateTasksIfHasDeletedStatusesOrLabels = createAsyncThunk<
+  void,
+  GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("block/updateTasksIfHasDeletedStatusesOrLabels", async (args, thunkAPI) => {
   const deletedStatuses = getDeletedStatuses(
-    block.boardStatuses,
-    data.boardStatuses
+    args.block.boardStatuses,
+    args.data.boardStatuses
   );
-  const deletedLabels = getDeletedStatuses(block.boardLabels, data.boardLabels);
+  const deletedLabels = getDeletedStatuses(
+    args.block.boardLabels,
+    args.data.boardLabels
+  );
   const hasDeletedStatus = Object.keys(deletedStatuses).length > 0;
   const hasDeletedLabel = Object.keys(deletedLabels).length > 0;
 
@@ -161,14 +81,14 @@ function updateTasksIfHasDeletedStatusesOrLabels(
     return;
   }
 
-  const tasks = getOrgTasks(store.getState(), block);
+  const tasks = BlockSelectors.getOrgTasks(thunkAPI.getState(), args.block);
 
   if (tasks.length === 0) {
     return;
   }
 
-  const updates: Array<ICollectionUpdateItemPayload<IBlock>> = [];
-  const user = getSignedInUserRequired(store.getState());
+  const updates: IUpdateBlockActionArgs[] = [];
+  const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
 
   tasks.forEach((task) => {
     const taskUpdates: Partial<IBlock> = {};
@@ -197,7 +117,11 @@ function updateTasksIfHasDeletedStatusesOrLabels(
     }
 
     if (updated) {
-      updates.push({ id: task.customId, data: taskUpdates });
+      updates.push({
+        id: task.customId,
+        data: taskUpdates,
+        meta: { arrayUpdateStrategy: "replace" },
+      });
     }
   });
 
@@ -205,9 +129,86 @@ function updateTasksIfHasDeletedStatusesOrLabels(
     return;
   }
 
-  store.dispatch(
-    blockActions.bulkUpdateBlocksRedux(updates, {
-      arrayUpdateStrategy: "replace",
-    })
+  await thunkAPI.dispatch(BlockActions.bulkUpdateBlocks(updates));
+});
+
+export const updateBlockOperationAction = createAsyncThunk<
+  IOperation | undefined,
+  GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
+  IAppAsyncThunkConfig
+>("block/updateBlock", async (arg, thunkAPI) => {
+  const id = arg.opId || newId();
+
+  const operation = OperationSelectors.getOperationWithId(
+    thunkAPI.getState(),
+    id
   );
-}
+
+  if (isOperationStarted(operation)) {
+    return;
+  }
+
+  await thunkAPI.dispatch(
+    dispatchOperationStarted(id, OperationType.UpdateBlock, arg.block.customId)
+  );
+
+  try {
+    if (arg.data.dueAt) {
+      arg.data.dueAt = moment(arg.data.dueAt).toString();
+    } else if (arg.data.type === BlockType.Task) {
+      arg.data.subTasks = addCustomIdToSubTasks(arg.data.subTasks);
+    }
+
+    const result = await BlockAPI.updateBlock(arg.block, arg.data);
+
+    if (result && result.errors) {
+      throw result.errors;
+    }
+
+    const forTransferBlockOnly = { ...arg.block, ...arg.data };
+
+    if (hasBlockParentChanged(arg.block, forTransferBlockOnly)) {
+      await thunkAPI.dispatch(
+        transferBlockHelperAction({
+          data: {
+            draggedBlockId: forTransferBlockOnly.customId,
+            destinationBlockId: arg.data.parent!,
+          },
+        }) as any
+      );
+    }
+
+    await thunkAPI.dispatch(
+      BlockActions.updateBlock({
+        id: arg.block.customId,
+        data: arg.data,
+        meta: {
+          arrayUpdateStrategy: "replace",
+        },
+      })
+    );
+
+    await thunkAPI.dispatch(
+      updateTasksIfHasDeletedStatusesOrLabels(arg) as any
+    );
+
+    await thunkAPI.dispatch(
+      dispatchOperationCompleted(
+        id,
+        OperationType.UpdateBlock,
+        arg.block.customId
+      )
+    );
+  } catch (error) {
+    await thunkAPI.dispatch(
+      dispatchOperationError(
+        id,
+        OperationType.UpdateBlock,
+        error,
+        arg.block.customId
+      )
+    );
+  }
+
+  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});

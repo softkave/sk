@@ -1,10 +1,21 @@
-import { getCollectionItem, getCollectionItemsAsArray } from "../collection";
-import { IAppState } from "../store";
+import { IUser } from "../../models/user/user";
+import { IAppState } from "../types";
 
-export function getUser(state: IAppState, userId: string) {
-  return getCollectionItem(state.users, userId);
+export function getUser(state: IAppState, id: string) {
+  return state.users[id];
 }
 
-export function getUsersAsArray(state: IAppState, ids: string[]) {
-  return getCollectionItemsAsArray(state.users, ids);
+export function getUsers(state: IAppState, ids: string[]) {
+  return ids.reduce((users, id) => {
+    if (state.users[id]) {
+      users.push(state.users[id]);
+    }
+
+    return users;
+  }, [] as IUser[]);
+}
+
+export default class UserSelectors {
+  public static getUser = getUser;
+  public static getUsers = getUsers;
 }
