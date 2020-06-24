@@ -1,7 +1,7 @@
 import { useStore } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { filterValidParentsForBlockType } from "../../models/block/utils";
-import { getBlockChildren } from "../../redux/blocks/selectors";
+import BlockSelectors from "../../redux/blocks/selectors";
 import useBlockParents from "./useBlockParents";
 
 const useBlockPossibleParents = (block: IBlock) => {
@@ -16,7 +16,11 @@ const useBlockPossibleParents = (block: IBlock) => {
 
     if (org && block.type !== BlockType.Board) {
       // TODO: improve, cause it loops through all blocks parents.length number of times
-      extra = getBlockChildren(store.getState(), org, BlockType.Board);
+      extra = BlockSelectors.getBlockChildren(
+        store.getState(),
+        org,
+        BlockType.Board
+      );
     }
 
     pp = pp.concat(p, extra);

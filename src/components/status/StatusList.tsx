@@ -23,7 +23,7 @@ import {
 } from "../form/FormStyledComponents";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
-import useFormikExtended from "../hooks/useFormikExtended";
+import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
 import StatusFormItem from "./StatusFormItem";
@@ -49,12 +49,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     saveChanges(values.statusList);
   };
 
-  const {
-    formik,
-    deleteIndexInArrayField,
-    addNewValueToArrayField,
-    moveIndexInArrayField,
-  } = useFormikExtended({
+  const { formik, formikHelpers } = useFormHelpers({
     errors,
     formikProps: {
       initialValues: { statusList },
@@ -94,7 +89,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   const onDelete = (index: number) => {
     const status = formik.values.statusList[index];
 
-    deleteIndexInArrayField("statusList", index);
+    formikHelpers.deleteInArrayField("statusList", index);
     editingStatusList.remove(status.customId);
     newStatusList.remove(status.customId);
   };
@@ -169,9 +164,9 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         return;
       }
 
-      moveIndexInArrayField("statusList", index, newIndex);
+      formikHelpers.moveInArrayField("statusList", index, newIndex);
     },
-    [moveIndexInArrayField]
+    [formikHelpers]
   );
 
   const renderStatusItem = (
@@ -232,7 +227,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const srcIndex = result.source.index;
     const destIndex = result.destination?.index;
 
-    moveIndexInArrayField("statusList", srcIndex, destIndex);
+    formikHelpers.moveInArrayField("statusList", srcIndex, destIndex);
   };
 
   const renderList = () => {
@@ -314,7 +309,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       customId: newId(),
     };
 
-    addNewValueToArrayField("statusList", status, { name: "" }, {});
+    formikHelpers.addToArrayField("statusList", status, { name: "" }, {});
     editingStatusList.add(status.customId);
     newStatusList.add(status.customId);
   };

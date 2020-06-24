@@ -1,6 +1,6 @@
 import { IAppState } from "../types";
 
-export function getKeyValue(state: IAppState, key: string) {
+function getKeyValue(state: IAppState, key: string) {
   return state.keyValue[key];
 }
 

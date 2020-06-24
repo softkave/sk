@@ -1,11 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { IAppState } from "../../redux/store";
-import { getUsersAsArray } from "../../redux/users/selectors";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
+import { AppDispatch, IAppState } from "../../redux/types";
+import UserSelectors from "../../redux/users/selectors";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -22,31 +22,32 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
+  const dispatch: AppDispatch = useDispatch();
   const statuses = block.boardStatuses || [];
   const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, block.rootBlockId || block.customId)!;
+    return BlockSelectors.getBlock(state, block.rootBlockId || block.customId)!;
   });
 
   const collaboratorIds = org.collaborators || [];
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIds)
+    UserSelectors.getUsers(state, collaboratorIds)
   );
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const shouldLoad = !loadProps.operation;
 
     if (shouldLoad) {
-      loadBlockChildrenOperationFunc(
-        {
+      dispatch(
+        loadBlockChildrenOperationAction({
           block,
           typeList: [BlockType.Task],
-        },
-        { id: loadProps.id }
+          opId: block.customId,
+        })
       );
     }
   };
 
-  const loadChildrenStatus = useOperation(
+  const opStat = useOperation(
     {
       id: block.customId,
     },
@@ -55,7 +56,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
   // TODO: how can we memoize previous filters to make search faster
   const blocks = useSelector<IAppState, IBlock[]>((state) => {
-    if (!loadChildrenStatus.isCompleted) {
+    if (!opStat.isCompleted) {
       return [];
     }
 
@@ -64,18 +65,17 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
       const resource = state.blocks[id];
 
       if (
-        resource.resource.type === "task" &&
-        resource.resource.parent === block.customId
+        resource.type === BlockType.Task &&
+        resource.parent === block.customId
       ) {
-        blockList.push(resource.resource);
+        blockList.push(resource);
       }
     });
 
     return blockList;
   });
 
-  const isLoadingChildren =
-    loadChildrenStatus.isLoading || !!!loadChildrenStatus.operation;
+  const isLoadingChildren = opStat.isLoading || !!!opStat.operation;
 
   const shouldRenderLoading = () => {
     return isLoadingChildren;
@@ -84,8 +84,8 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   const getLoadErrors = () => {
     const loadErrors: any[] = [];
 
-    if (loadChildrenStatus && loadChildrenStatus.error) {
-      loadErrors.push(loadChildrenStatus.error);
+    if (opStat && opStat.error) {
+      loadErrors.push(opStat.error);
     }
 
     return loadErrors;

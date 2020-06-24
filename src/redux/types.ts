@@ -1,10 +1,4 @@
-import {
-  Action,
-  AnyAction,
-  AsyncThunkAction,
-  Dispatch,
-  ThunkDispatch,
-} from "@reduxjs/toolkit";
+import { AnyAction, Dispatch, ThunkDispatch } from "@reduxjs/toolkit";
 import { IBlocksState } from "./blocks/types";
 import { IKeyValueState } from "./key-value/types";
 import { INotificationsState } from "./notifications/types";
@@ -27,3 +21,5 @@ export interface IAppAsyncThunkConfig {
   extra?: unknown;
   rejectValue?: unknown;
 }
+
+export type AppDispatch = ThunkDispatch<IAppState, void, AnyAction>;

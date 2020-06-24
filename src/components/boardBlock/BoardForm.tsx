@@ -1,11 +1,10 @@
 import { Button, Form, Input, Typography } from "antd";
-import { Formik, FormikProps } from "formik";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { getBlock, getBlocksAsArray } from "../../redux/blocks/selectors";
-import { IAppState } from "../../redux/store";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { IAppState } from "../../redux/types";
 import blockValidationSchemas from "../block/validation";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
@@ -14,7 +13,7 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../form/FormStyledComponents";
-import useInsertFormikErrors from "../hooks/useInsertFormikErrors";
+import useFormHelpers from "../hooks/useFormHelpers";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
 
@@ -29,7 +28,6 @@ export interface IBoardFormValues {
   parent?: string;
 }
 
-type BoardFormFormikProps = FormikProps<IBoardFormValues>;
 export type BoardFormErrors = IFormikFormErrors<IBoardFormValues>;
 
 export interface IBoardFormProps {
@@ -62,13 +60,20 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
   );
   const boardIds = (immediateParent && immediateParent!.boards) || [];
   const boards = useSelector<IAppState, IBlock[]>((state) =>
-    getBlocksAsArray(state, boardIds)
+    BlockSelectors.getBlocks(state, boardIds)
   );
   const blockToUpdate = useSelector<IAppState, IBlock | undefined>((state) =>
-    getBlock(state, value.customId)
+    BlockSelectors.getBlock(state, value.customId)
   );
 
-  const formikRef = useInsertFormikErrors(externalErrors);
+  const { formik } = useFormHelpers({
+    errors: externalErrors,
+    formikProps: {
+      onSubmit,
+      initialValues: value,
+      validationSchema: blockValidationSchemas.org,
+    },
+  });
 
   const getBoardExistsError = (name: string) => {
     if (name && name.length > 0) {
@@ -83,8 +88,8 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     }
   };
 
-  const renderNameInput = (formikProps: BoardFormFormikProps) => {
-    const { touched, values, errors } = formikProps;
+  const renderNameInput = () => {
+    const { touched, values, errors } = formik;
 
     // TODO: can this be more efficient?
     const boardNameError = errors.name || getBoardExistsError(values.name);
@@ -101,8 +106,8 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
           <Input
             autoComplete="off"
             name="name"
-            onBlur={formikProps.handleBlur}
-            onChange={formikProps.handleChange}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
             value={values.name}
             placeholder="Enter board name"
             disabled={isSubmitting}
@@ -112,7 +117,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
           <Typography.Paragraph
             editable={{
               onChange: (val) => {
-                formikProps.setFieldValue("name", val);
+                formik.setFieldValue("name", val);
               },
             }}
           >
@@ -123,8 +128,8 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     );
   };
 
-  const renderDescriptionInput = (formikProps: BoardFormFormikProps) => {
-    const { touched, handleBlur, values, errors, handleChange } = formikProps;
+  const renderDescriptionInput = () => {
+    const { touched, handleBlur, values, errors, handleChange } = formik;
 
     return (
       <Form.Item
@@ -149,7 +154,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
           <Typography.Paragraph
             editable={{
               onChange: (val) => {
-                formikProps.setFieldValue("description", val);
+                formik.setFieldValue("description", val);
               },
             }}
           >
@@ -160,13 +165,10 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     );
   };
 
-  const preSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
-    formikProps: BoardFormFormikProps
-  ) => {
+  const preSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const { errors, values, handleSubmit } = formikProps;
+    const { errors, values, handleSubmit } = formik;
 
     // TODO: can this be more efficient?
     const boardNameError = errors.name || getBoardExistsError(values.name);
@@ -211,13 +213,12 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     );
   };
 
-  const renderForm = (formikProps: BoardFormFormikProps) => {
-    const { errors } = formikProps;
+  const renderForm = () => {
+    const { errors } = formik;
     const globalError = getGlobalError(errors);
-    formikRef.current = formikProps;
 
     return (
-      <StyledForm onSubmit={(evt) => preSubmit(evt, formikProps)}>
+      <StyledForm onSubmit={(evt) => preSubmit(evt)}>
         <StyledContainer s={formContentWrapperStyle}>
           <StyledContainer s={formInputContentWrapperStyle}>
             {globalError && (
@@ -225,8 +226,8 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                 <FormError error={globalError} />
               </Form.Item>
             )}
-            {renderNameInput(formikProps)}
-            {renderDescriptionInput(formikProps)}
+            {renderNameInput()}
+            {renderDescriptionInput()}
           </StyledContainer>
           {renderControls()}
         </StyledContainer>
@@ -234,15 +235,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     );
   };
 
-  return (
-    <Formik
-      initialValues={value}
-      validationSchema={blockValidationSchemas.org}
-      onSubmit={onSubmit}
-    >
-      {(formikProps) => renderForm(formikProps)}
-    </Formik>
-  );
+  return renderForm();
 };
 
 export default React.memo(BoardForm);

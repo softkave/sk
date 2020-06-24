@@ -1,17 +1,17 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { OperationType.updateBlock } from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
+import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch } from "../../redux/types";
 import {
   flattenErrorListWithDepthInfinite,
   getDateString,
 } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import StatusList from "./StatusList";
-
-const scopeId = "StatusListContainer";
 
 export interface IStatusListContainerProps {
   block: IBlock;
@@ -19,13 +19,10 @@ export interface IStatusListContainerProps {
 
 const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   const { block } = props;
-  const user = useSelector(getSignedInUserRequired);
+  const dispatch: AppDispatch = useDispatch();
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const statusList = block.boardStatuses || [];
-  const operationStatus = useOperation({
-    scopeId,
-    operationType: OperationType.updateBlock,
-    resourceId: block.customId,
-  });
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
@@ -37,8 +34,9 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   }
 
   const onSaveChanges = async (values: IBlockStatus[]) => {
-    updateBlockOperationFunc(
-      {
+    const result = await dispatch(
+      updateBlockOperationAction({
+        opId: operationStatus.opId,
         block,
         data: {
           // TODO: find a better way to only update the ones that changed
@@ -48,17 +46,26 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
             updatedBy: user.customId,
           })),
         },
-      },
-      {
-        scopeId,
-        resourceId: block.customId,
-      }
+      })
     );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isError) {
+      message.error("Error saving changes");
+    } else if (opStat.isCompleted) {
+      message.success("Changes saved successfully");
+    }
   };
 
   return (
     <StatusList
-      // isSubmitting
       user={user}
       statusList={statusList}
       saveChanges={onSaveChanges}

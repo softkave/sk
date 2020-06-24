@@ -1,14 +1,13 @@
-import { message } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message, notification } from "antd";
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
-import { pushOperation } from "../../redux/operations/actions";
-import { changePassword.OperationIds } from "../../redux/operations/opc";
-import { OperationStatus } from "../../redux/operations/operation";
-import changePasswordOperationFunc from "../../redux/operations/session/changePassword";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
+import { changePasswordOperationAction } from "../../redux/operations/session/changePassword";
+import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
-sword";
 
 // TODO: Implement an endpoint to get user email from token ( forgot password and session token )
 // TODO: Implement a way to supply token to a net call
@@ -17,40 +16,51 @@ sword";
 const changePasswordSuccessMessage = "Password changed successfully";
 
 const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const store = useStore();
-  const operationStatus = useOperation({
-    operationType: OperationIds.changePassword,
-  });
+  const dispatch: AppDispatch = useDispatch();
+  const history = useHistory();
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  React.useEffect(() => {
-    if (operationStatus.isCompleted) {
-      message.success(changePasswordSuccessMessage);
-
-      dispatch(
-        pushOperation(OperationIds.changePassword, {
-          status: OperationStatus.consumed,
-          timestamp: Date.now(),
-        })
-      );
-    }
-  }, [operationStatus, dispatch]);
-
   const onSubmit = async (data: IChangePasswordFormData) => {
     const query = new URLSearchParams(window.location.search);
     const token = query.get("t");
 
-    return changePasswordOperationFunc(store.getState(), dispatch, {
-      password: data.password,
+    if (!token) {
+      message.error("Invalid credentials");
+      notification.error({
+        message: "Invalid credentials",
+        description:
+          "Please try again from the change password email sent to you.",
+      });
 
-      // TODO: Fetch email using the token
-      // email: "",
-      token: token!,
-    });
+      history.push("/");
+      return;
+    }
+
+    const result = await dispatch(
+      changePasswordOperationAction({
+        token,
+        password: data.password,
+        opId: operationStatus.opId,
+      })
+    );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isCompleted) {
+      message.success(changePasswordSuccessMessage);
+    } else if (opStat.isError) {
+      message.error("Error changing password");
+    }
   };
 
   return (

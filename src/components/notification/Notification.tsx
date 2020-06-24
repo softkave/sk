@@ -1,25 +1,21 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Typography } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Button, message, Typography } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
   CollaborationRequestStatusType,
   INotification,
 } from "../../models/notification/notification";
 import { getNotification } from "../../redux/notifications/selectors";
-import respondToNotificationOperationFunc from "../../redux/operations/notification/respondToNotification";
-import IOperation, {
-  getOperationLastError,
-  isOperationStartedOrPending,
-} from "../../redux/operations/operation";
-import { OperationType.respondToNotification } from "../../redux/operations/OperationType";
-import { getOperationWithTypeForResource } from "../../redux/operations/selectors";
-import { IAppState } from "../../redux/store";
+import { respondToNotificationOperationAction } from "../../redux/operations/notification/respondToNotification";
+import { AppDispatch, IAppState } from "../../redux/types";
 import EmptyMessage from "../EmptyMessage";
 import FormError from "../form/FormError";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import {
@@ -30,6 +26,7 @@ import {
 
 const Notification: React.FC<{}> = (props) => {
   const history = useHistory();
+  const dispatch: AppDispatch = useDispatch();
   const routeMatch = useRouteMatch<INotificationsPathParams>(
     "/app/notifications/:notificationId"
   );
@@ -40,13 +37,8 @@ const Notification: React.FC<{}> = (props) => {
   const notification = useSelector<IAppState, INotification | undefined>(
     (state) => getNotification(state, currentNotificationId!)
   );
-  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
-    getOperationWithTypeForResource(
-      state,
-      OperationType.respondToNotification,
-      currentNotificationId
-    )
-  );
+
+  const opStatus = useOperation();
 
   if (!currentNotificationId) {
     history.push(getFullBaseNavPath());
@@ -59,11 +51,30 @@ const Notification: React.FC<{}> = (props) => {
     return <EmptyMessage>Notification not found</EmptyMessage>;
   }
 
-  const onRespond = (selectedResponse: CollaborationRequestStatusType) => {
-    respondToNotificationOperationFunc({
-      response: selectedResponse,
-      request: notification!,
-    });
+  const onRespond = async (
+    selectedResponse: CollaborationRequestStatusType
+  ) => {
+    const result = await dispatch(
+      respondToNotificationOperationAction({
+        response: selectedResponse,
+        request: notification!,
+        opId: opStatus.opId,
+      })
+    );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const currentOpStat = getOperationStats(op);
+
+    if (currentOpStat.isCompleted) {
+      message.success("Response sent successfully");
+    } else if (currentOpStat.isError) {
+      message.error("Error sending response");
+    }
   };
 
   const renderNotificationResponse = () => {
@@ -97,8 +108,8 @@ const Notification: React.FC<{}> = (props) => {
         <Typography.Paragraph>This request has expired</Typography.Paragraph>
       );
     } else {
-      const isResponseLoading = isOperationStartedOrPending(operation);
-      const responseError = getOperationLastError(operation);
+      const isResponseLoading = opStatus.isLoading;
+      const responseError = opStatus.error;
 
       return (
         <React.Fragment>

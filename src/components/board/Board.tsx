@@ -1,21 +1,27 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import path from "path";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
+import OperationActions from "../../redux/operations/actions";
+import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
+import { AppDispatch } from "../../redux/types";
 import { pluralize } from "../../utils/utils";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
+import { getOperationStats } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import BoardMain from "./BoardMain";
-import { useBoardData } from "./data-loaders/loadBoardData";
 import LoadBlockChildren from "./LoadBlockChildren";
 import { IBlockPathMatch } from "./types";
+import { useBoardData } from "./useBoardData";
 import { getDefaultBoardViewType } from "./utils";
 
 interface IBlockFormState {
@@ -36,6 +42,7 @@ export interface IBoardForBlockProps {
 const Board: React.FC<IBoardForBlockProps> = (props) => {
   const { block } = props;
   const history = useHistory();
+  const dispatch: AppDispatch = useDispatch();
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
     null
   );
@@ -54,7 +61,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     `${blockPath}/boards/:blockId`
   );
 
-  const lop = useBoardData(block);
+  const boardDataOpStat = useBoardData(block);
 
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
@@ -85,15 +92,29 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     pushRoute(nextPath);
   };
 
-  const onDeleteBlock = (blockToDelete: IBlock) => {
-    deleteBlockOperationFunc(
-      { block: blockToDelete },
-      { id: blockToDelete.customId }
+  const onDeleteBlock = async (blockToDelete: IBlock) => {
+    const result = await dispatch(
+      deleteBlockOperationAction({ block: blockToDelete })
     );
 
-    // TODO: wait for block to complete deleting before pushing
-    if (blockToDelete.customId === block.customId) {
-      pushRoute(parentPath);
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isCompleted) {
+      message.success(`${blockToDelete.type} deleted successfully`);
+
+      if (blockToDelete.customId === block.customId) {
+        pushRoute(parentPath);
+      }
+
+      dispatch(OperationActions.deleteOperation(op.id));
+    } else if (opStat.isError) {
+      message.error(`Error deleting ${blockToDelete.type}`);
     }
   };
 
@@ -195,10 +216,10 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const render = () => {
-    if (lop.loading) {
+    if (boardDataOpStat.loading) {
       return <LoadingEllipsis />;
-    } else if (lop.errors) {
-      return <GeneralErrorList fill errors={lop.errors} />;
+    } else if (boardDataOpStat.errors) {
+      return <GeneralErrorList fill errors={boardDataOpStat.errors} />;
     }
 
     if (boardMatch) {

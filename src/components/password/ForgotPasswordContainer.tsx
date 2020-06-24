@@ -1,52 +1,53 @@
-import { notification } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message, notification } from "antd";
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
-import { pushOperation } from "../../redux/operations/actions";
-import { OperationIds.requestForgotPassword } from "../../redux/operations/opc";
-import { OperationStatus } from "../../redux/operations/operation";
-import requestForgotPasswordOperationFunc from "../../redux/operations/session/requestForgotPassword";
+import { useDispatch } from "react-redux";
+import { requestForgotPasswordOperationAction } from "../../redux/operations/session/requestForgotPassword";
+import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import ForgotPassword, { IForgotPasswordFormData } from "./ForgotPassword";
-sword";
 
 const successMessage = `
   Request successful,
   a change password link will been sent to your email address shortly`;
 
 const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [key, setKey] = React.useState(Math.random().toString());
-  const store = useStore();
-  const operationStatus = useOperation({
-    operationType: OperationIds.requestForgotPassword,
-  });
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  React.useEffect(() => {
-    if (operationStatus.isCompleted) {
+  const onSubmit = async (data: IForgotPasswordFormData) => {
+    const result = await dispatch(
+      requestForgotPasswordOperationAction({
+        email: data.email,
+        opId: operationStatus.opId,
+      })
+    );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isCompleted) {
       notification.success({
-        message: "Forgot Password",
+        message: "Request successful",
         description: successMessage,
         duration: 0,
       });
 
-      dispatch(
-        pushOperation(OperationIds.requestForgotPassword, {
-          status: OperationStatus.consumed,
-          timestamp: Date.now(),
-        })
-      );
-
       setKey(Math.random().toString());
+    } else if (opStat.isError) {
+      message.error("Error requesting change of password");
     }
-  }, [operationStatus, dispatch]);
-
-  const onSubmit = async (data: IForgotPasswordFormData) => {
-    return requestForgotPasswordOperationFunc(store.getState(), dispatch, data);
   };
 
   return (

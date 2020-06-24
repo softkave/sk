@@ -22,7 +22,7 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../form/FormStyledComponents";
-import useFormikExtended from "../hooks/useFormikExtended";
+import useFormHelpers from "../hooks/useFormHelpers";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
 import AddCollaboratorFormItem from "./AddCollaboratorFormItem";
@@ -159,11 +159,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     });
   };
 
-  const {
-    formik,
-    deleteIndexInArrayField,
-    addNewValueToArrayField,
-  } = useFormikExtended({
+  const { formik, formikHelpers } = useFormHelpers({
     errors: externalErrors,
     formikProps: {
       initialValues: value,
@@ -221,7 +217,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
   };
 
   const onDelete = (index: number) => {
-    deleteIndexInArrayField("collaborators", index);
+    formikHelpers.deleteInArrayField("collaborators", index);
   };
 
   const onChange = (
@@ -253,7 +249,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
       customId: newId(),
     };
 
-    addNewValueToArrayField("collaborators", status, {}, {});
+    formikHelpers.addToArrayField("collaborators", status, {}, {});
   };
 
   const renderAddControls = () => {

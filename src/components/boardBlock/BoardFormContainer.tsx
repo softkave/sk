@@ -1,17 +1,18 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import addBlockOperationFunc from "../../redux/operations/block/addBlock";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import {
-  addBlock.OperationType,
-  OperationType.updateBlock,
-} from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
+import OperationActions from "../../redux/operations/actions";
+import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
+import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import BoardForm, { IBoardFormValues } from "./BoardForm";
 
 const scopeId = "BoardFormContainer";
@@ -26,56 +27,57 @@ export interface IBoardFormContainerProps {
 
 const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
   const { onClose, parentBlock } = props;
-  const user = useSelector(getSignedInUserRequired);
+  const dispatch: AppDispatch = useDispatch();
+  const history = useHistory();
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
 
   const [block, setBlock] = React.useState<IBlock>(
     props.block || getNewBlock(user, BlockType.Board, parentBlock)
   );
 
   const possibleParents = useBlockPossibleParents(block);
-
-  const operationStatus = useOperation({
-    scopeId,
-    operationType: props.block ? OperationType.updateBlock : OperationType.addBlock,
-    resourceId: block.customId,
-  });
-
+  const operationStatus = useOperation();
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
-
-  React.useEffect(() => {
-    if (operationStatus.isCompleted && !props.block) {
-      onClose();
-    }
-  });
 
   const onSubmit = async (values: IBoardFormValues) => {
     const data = { ...block, ...values };
     setBlock(data);
 
-    if (props.block) {
-      updateBlockOperationFunc(
-        {
-          block,
-          data,
-        },
-        {
-          scopeId,
-          resourceId: block.customId,
-        }
-      );
+    const result = props.block
+      ? await dispatch(
+          updateBlockOperationAction({
+            block,
+            data,
+            opId: operationStatus.opId,
+          })
+        )
+      : await dispatch(
+          addBlockOperationAction({ block, opId: operationStatus.opId })
+        );
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (!props.block) {
+      if (opStat.isCompleted) {
+        message.success("Board created successfully");
+        history.push(`/app/organizations/${data.parent}/${data.customId}`);
+      } else if (opStat.isError) {
+        message.error("Error creating board");
+      }
     } else {
-      addBlockOperationFunc(
-        {
-          user,
-          block: data,
-        },
-        {
-          scopeId,
-          resourceId: block.customId,
-        }
-      );
+      if (opStat.isCompleted) {
+        message.success("Board updated successfully");
+        onClose();
+      } else if (opStat.isError) {
+        message.error("Error updating board");
+      }
     }
   };
 

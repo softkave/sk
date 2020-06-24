@@ -1,25 +1,41 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
-import { loginUser.OperationIds } from "../../redux/operations/opc";
-import loginUserOperationFunc from "../../redux/operations/session/loginUser";
+import { useDispatch } from "react-redux";
+import { loginUserOperationAction } from "../../redux/operations/session/loginUser";
+import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import Login, { ILoginFormValues } from "./Login";
-Login";
 
 const LoginContainer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const store = useStore();
-  const operationStatus = useOperation({
-    operationType: OperationIds.loginUser,
-  });
+  const dispatch: AppDispatch = useDispatch();
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
   const onSubmit = async (user: ILoginFormValues) => {
-    return loginUserOperationFunc(store.getState(), dispatch, { user });
+    const result = await dispatch(
+      loginUserOperationAction({
+        opId: operationStatus.opId,
+        email: user.email,
+        password: user.password,
+        remember: user.remember,
+      })
+    );
+    const loginOp = unwrapResult(result);
+
+    if (!loginOp) {
+      return;
+    }
+
+    const loginOpStat = getOperationStats(loginOp);
+
+    if (loginOpStat.isError) {
+      message.error("Error login you in");
+    }
   };
 
   return (

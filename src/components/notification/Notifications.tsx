@@ -2,19 +2,19 @@ import styled from "@emotion/styled";
 import { Empty } from "antd";
 import React from "react";
 import Media from "react-media";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { INotification } from "../../models/notification/notification";
 import { getNotifications } from "../../redux/notifications/selectors";
-import loadUserNotificationsOperationFunc from "../../redux/operations/notification/loadUserNotifications";
-import { loadUserNotifications.OperationType } from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
-import SingleOperationHelper, {
-  ISingleOperationHelperDerivedProps,
-} from "../OperationHelper";
+import { loadUserNotificationsOperationAction } from "../../redux/operations/notification/loadUserNotifications";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
+import { newId } from "../../utils/utils";
+import GeneralErrorList from "../GeneralErrorList";
+import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import theme from "../theme";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Notification from "./Notification";
 import NotificationList from "./NotificationList";
 import { INotificationsPathParams } from "./utils";
@@ -22,10 +22,12 @@ import { INotificationsPathParams } from "./utils";
 const Notifications: React.FC<{}> = (props) => {
   const history = useHistory();
   const routeMatch = useRouteMatch()!;
+  const dispatch: AppDispatch = useDispatch();
+  const [opId] = React.useState(() => newId());
   const currentNotificationRouteMatch = useRouteMatch<INotificationsPathParams>(
     "/app/notifications/:notificationId"
   );
-  const user = useSelector(getSignedInUserRequired);
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const notifications = useSelector<IAppState, INotification[]>((state) =>
     getNotifications(state, user.notifications || [])
   );
@@ -39,17 +41,18 @@ const Notifications: React.FC<{}> = (props) => {
     history.push(`${routeMatch.url}/${notification.customId}`);
   };
 
-  const loadNotifications = (
-    helperProps: ISingleOperationHelperDerivedProps
-  ) => {
-    const shouldLoadNotifications = () => {
-      return !!!helperProps.operation;
-    };
-
-    if (shouldLoadNotifications()) {
-      loadUserNotificationsOperationFunc();
+  const loadNotifications = (helperProps: IUseOperationStatus) => {
+    if (!helperProps.operation) {
+      dispatch(loadUserNotificationsOperationAction({ opId }));
     }
   };
+
+  const loadStatus = useOperation(
+    {
+      id: opId,
+    },
+    loadNotifications
+  );
 
   const renderEmptyList = () => {
     return (
@@ -133,13 +136,13 @@ const Notifications: React.FC<{}> = (props) => {
     );
   };
 
-  return (
-    <SingleOperationHelper
-      operationId={OperationType.loadUserNotifications}
-      render={render}
-      loadFunc={loadNotifications}
-    />
-  );
+  if (loadStatus.isLoading || !loadStatus.operation) {
+    return <LoadingEllipsis />;
+  } else if (loadStatus.isError) {
+    return <GeneralErrorList fill errors={loadStatus.error} />;
+  }
+
+  return render();
 };
 
 export default Notifications;

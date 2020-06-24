@@ -1,9 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlockChildren } from "../../redux/blocks/selectors";
-import loadBlockChildrenOperationFunc from "../../redux/operations/block/loadBlockChildren";
-import { IAppState } from "../../redux/store";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
+import { AppDispatch, IAppState } from "../../redux/types";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -16,18 +16,19 @@ export interface ILoadBlockChildrenProps {
 
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, type } = props;
+  const dispatch: AppDispatch = useDispatch();
   const blocks = useSelector<IAppState, IBlock[]>((state) =>
-    getBlockChildren(state, parent, type)
+    BlockSelectors.getBlockChildren(state, parent, type)
   );
 
   const loadChildren = (loadProps: IUseOperationStatus) => {
     if (!loadProps.operation) {
-      loadBlockChildrenOperationFunc(
-        {
+      dispatch(
+        loadBlockChildrenOperationAction({
           block: parent,
           typeList: [type],
-        },
-        { id: loadProps.id }
+          opId: parent.customId,
+        })
       );
     }
   };

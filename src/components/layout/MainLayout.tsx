@@ -1,8 +1,5 @@
 import { noop } from "lodash";
 import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
-import Notifications from "../notification/Notifications";
-import OrganizationListContainer from "../org/OrganizationListContainer";
 import OrgContainer from "../org/OrgContainer";
 import StyledContainer from "../styled/Container";
 import LayoutMenu from "./LayoutMenu";

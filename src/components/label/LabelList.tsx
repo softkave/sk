@@ -10,7 +10,7 @@ import { IUser } from "../../models/user/user";
 import { getDateString, newId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
-import useFormikExtended from "../hooks/useFormikExtended";
+import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
 import LabelFormItem from "./LabelFormItem";
@@ -41,11 +41,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
   // TODO: form still shows error that come from server when submitting
   // should it even be allowed to submit, considering there is an error?
-  const {
-    formik,
-    deleteIndexInArrayField,
-    addNewValueToArrayField,
-  } = useFormikExtended({
+  const { formik, formikHelpers } = useFormHelpers({
     errors,
     formikProps: {
       initialValues: { labelList },
@@ -153,11 +149,11 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     (index: number) => {
       const label = formik.values.labelList[index];
 
-      deleteIndexInArrayField("labelList", index);
+      formikHelpers.deleteInArrayField("labelList", index);
       editingLabelList.remove(label.customId);
       // newLabelList.remove(label.customId);
     },
-    [editingLabelList, formik.values.labelList, deleteIndexInArrayField]
+    [editingLabelList, formik.values.labelList, formikHelpers]
   );
 
   const renderLabelItem = (label: IBlockLabel, index: number) => {
@@ -238,11 +234,11 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
       customId: newId(),
     };
 
-    addNewValueToArrayField("labelList", label, {}, {});
+    formikHelpers.addToArrayField("labelList", label, {}, {});
 
     editingLabelList.add(label.customId);
     newLabelList.add(label.customId);
-  }, [editingLabelList, newLabelList, user, addNewValueToArrayField]);
+  }, [editingLabelList, newLabelList, user, formikHelpers]);
 
   const renderAddControls = () => {
     return (

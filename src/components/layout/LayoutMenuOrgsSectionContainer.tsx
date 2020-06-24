@@ -2,23 +2,23 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
-import { getBlocksAsArray } from "../../redux/blocks/selectors";
-import { setKeyValue } from "../../redux/key-value/actions";
-import { KeyValueProperties } from "../../redux/key-value/reducer";
-import loadRootBlocksOperationFunc from "../../redux/operations/block/loadRootBlocks";
-import OperationType from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
+import BlockSelectors from "../../redux/blocks/selectors";
+import KeyValueActions from "../../redux/key-value/actions";
+import { KeyValueKeys } from "../../redux/key-value/types";
+import { loadRootBlocksOperationAction } from "../../redux/operations/block/loadRootBlocks";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
+import { newId } from "../../utils/utils";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LayoutMenuOrgsSection from "./LayoutMenuOrgsSection";
 
 const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
-
-  const user = useSelector(getSignedInUserRequired);
+  const [opId] = React.useState(() => newId());
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const orgs = useSelector<IAppState, IBlock[]>((state) =>
-    getBlocksAsArray(
+    BlockSelectors.getBlocks(
       state,
       user.orgs.map((org) => org.customId)
     )
@@ -29,24 +29,21 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
     const shouldLoad = !operation;
 
     if (shouldLoad) {
-      loadRootBlocksOperationFunc();
+      dispatch(loadRootBlocksOperationAction({ opId: loadOrgsProps.opId }));
     }
   }, []);
 
   const onAddOrg = React.useCallback(() => {
-    dispatch(setKeyValue([KeyValueProperties.ShowNewOrgForm, true]));
+    dispatch(
+      KeyValueActions.setKey({ key: KeyValueKeys.ShowNewOrgForm, value: true })
+    );
   }, []);
 
   const onSelectOrg = React.useCallback((org: IBlock) => {
     history.push(`/app/organizations/${org.customId}`);
   }, []);
 
-  const op = useOperation(
-    {
-      operationType: OperationType.LoadRootBlocks,
-    },
-    loadOrgs
-  );
+  const op = useOperation({ id: opId }, loadOrgs);
 
   return (
     <LayoutMenuOrgsSection

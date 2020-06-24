@@ -1,13 +1,15 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useDispatch, useStore } from "react-redux";
-import signupUserOperationFunc from "../../redux/operations/session/sigupUser";
+import { useDispatch } from "react-redux";
+import { signupUserOperationAction } from "../../redux/operations/session/sigupUser";
+import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import Signup, { ISignupFormData } from "./Signup";
 
 const SignupContainer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
-  const store = useStore();
+  const dispatch: AppDispatch = useDispatch();
   const op = useOperation();
 
   const errors = op.error
@@ -35,12 +37,26 @@ const SignupContainer: React.FC<{}> = () => {
   }
 
   const onSubmit = async (user: ISignupFormData) => {
-    return signupUserOperationFunc(
-      store.getState(),
-      dispatch,
-      { user },
-      { id: op.id }
+    const result = await dispatch(
+      signupUserOperationAction({
+        email: user.email,
+        name: user.name,
+        password: user.password,
+        opId: op.opId,
+      })
     );
+
+    const signupOp = unwrapResult(result);
+
+    if (!signupOp) {
+      return;
+    }
+
+    const singupOpStat = getOperationStats(signupOp);
+
+    if (singupOpStat.isError) {
+      message.error("Error creating user");
+    }
   };
 
   return (

@@ -1,28 +1,25 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import { getNotifications } from "../../redux/notifications/selectors";
-import { pushOperation } from "../../redux/operations/actions";
-import addCollaboratorsOperationFunc from "../../redux/operations/block/addCollaborators";
-import { OperationStatus } from "../../redux/operations/operation";
-import { addCollaborators.OperationType } from "../../redux/operations/OperationType";
-import { IAppState } from "../../redux/store";
-import { getUsersAsArray } from "../../redux/users/selectors";
+import BlockSelectors from "../../redux/blocks/selectors";
+import NotificationSelectors from "../../redux/notifications/selectors";
+import OperationActions from "../../redux/operations/actions";
+import { addCollaboratorsOperationAction } from "../../redux/operations/block/addCollaborators";
+import { loadBoardDataOperationAction } from "../../redux/operations/block/loadBoardData";
+import { AppDispatch, IAppState } from "../../redux/types";
+import UserSelectors from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import loadBoardData from "../board/data-loaders/loadBoardData";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import AddCollaboratorForm, {
   IAddCollaboratorFormValues,
 } from "./AddCollaboratorForm";
 
-const scopeId = "AddCollaboratorFormContainer";
-
 export interface IAddCollaboratorFormContainerProps {
   orgId: string;
-
   onClose: () => void;
 }
 
@@ -30,12 +27,12 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
   props
 ) => {
   const { onClose, orgId } = props;
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const organizationId = orgId;
 
   const organization = useSelector<IAppState, IBlock>(
-    (state) => getBlock(state, organizationId)!
+    (state) => BlockSelectors.getBlock(state, organizationId)!
   );
 
   const collaboratorIds = Array.isArray(organization.collaborators)
@@ -43,7 +40,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     : [];
 
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIds)
+    UserSelectors.getUsers(state, collaboratorIds)
   );
 
   const requestIds = Array.isArray(organization.notifications)
@@ -51,44 +48,51 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     : [];
 
   const requests = useSelector<IAppState, INotification[]>((state) =>
-    getNotifications(state, requestIds)
+    NotificationSelectors.getNotifications(state, requestIds)
   );
 
   const [data, setData] = React.useState<IAddCollaboratorFormValues>({
     collaborators: [],
   });
 
-  const operationStatus = useOperation({
-    scopeId,
-    operationType: OperationType.addCollaborators,
-  });
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
     : undefined;
 
-  React.useEffect(() => {
-    if (operationStatus.isCompleted) {
+  const onSubmit = async (values: IAddCollaboratorFormValues) => {
+    setData(data);
+
+    const result = await dispatch(
+      addCollaboratorsOperationAction({
+        block: organization,
+        ...values,
+        opId: operationStatus.opId,
+      })
+    );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isCompleted) {
       onClose();
-      dispatch(
-        pushOperation(OperationType.addCollaborators, {
-          scopeId,
-          status: OperationStatus.consumed,
-          timestamp: Date.now(),
-        })
+      message.success(
+        `Request${values.collaborators.length > 1 ? "s" : ""} sent successfully`
       );
 
       // TODO: we need a loadBlockNotifications func
-      loadBoardData(organization);
+      dispatch(loadBoardDataOperationAction({ block: organization }));
+    } else if (opStat.isError) {
+      message.error(
+        `Error sending request${values.collaborators.length > 1 ? "s" : ""}`
+      );
     }
-  });
-
-  const onSubmit = async (values: IAddCollaboratorFormValues) => {
-    setData(data);
-    addCollaboratorsOperationFunc(
-      { block: organization, ...values },
-      { scopeId }
-    );
   };
 
   return (

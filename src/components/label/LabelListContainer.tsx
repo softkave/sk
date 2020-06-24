@@ -1,19 +1,18 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
-import { IBlock, IBlockLabel } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { OperationType.updateBlock } from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { BlockType, IBlock, IBlockLabel } from "../../models/block/block";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
 import {
   flattenErrorListWithDepthInfinite,
   getDateString,
 } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import LabelList from "./LabelList";
-
-const scopeId = "LabelListContainer";
 
 export interface ILabelListContainerProps {
   block: IBlock;
@@ -21,21 +20,18 @@ export interface ILabelListContainerProps {
 
 const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const { block } = props;
-  const user = useSelector(getSignedInUserRequired);
+  const dispatch: AppDispatch = useDispatch();
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const org = useSelector<IAppState, IBlock>((state) => {
-    if (block.type === "org") {
-      return getBlock(state, block.customId)!;
+    if (block.type === BlockType.Org) {
+      return BlockSelectors.getBlock(state, block.customId)!;
     } else {
-      return getBlock(state, block.rootBlockId)!;
+      return BlockSelectors.getBlock(state, block.rootBlockId!)!;
     }
   });
 
   const labelList = org.boardLabels || [];
-  const operationStatus = useOperation({
-    scopeId,
-    operationType: OperationType.updateBlock,
-    resourceId: org.customId,
-  });
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
@@ -47,8 +43,9 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   }
 
   const onSaveChanges = async (values: IBlockLabel[]) => {
-    updateBlockOperationFunc(
-      {
+    const result = await dispatch(
+      updateBlockOperationAction({
+        opId: operationStatus.opId,
         block: org,
         data: {
           // TODO: find a better way to only update the ones that changed
@@ -58,12 +55,22 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
             updatedBy: user.customId,
           })),
         },
-      },
-      {
-        scopeId,
-        resourceId: org.customId,
-      }
+      })
     );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (opStat.isError) {
+      message.error("Error saving changes");
+    } else if (opStat.isCompleted) {
+      message.success("Changes saved successfully");
+    }
   };
 
   return (

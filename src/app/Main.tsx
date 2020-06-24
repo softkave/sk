@@ -4,26 +4,23 @@ import { useHistory } from "react-router";
 import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
-import OperationActions from "../redux/operations/actions";
-import initializeAppSessionOperationFunc from "../redux/operations/session/initializeAppSession";
-import { getSessionType } from "../redux/session/selectors";
+import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
+import SessionSelectors from "../redux/session/selectors";
+import { SessionType } from "../redux/session/types";
+import { AppDispatch } from "../redux/types";
 import { newId } from "../utils/utils";
 import Routes from "./Routes";
 
 const Main: React.FC<{}> = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [opId] = React.useState(() => newId());
-  const sessionType = useSelector(getSessionType);
+  const sessionType = useSelector(SessionSelectors.getSessionType);
 
   React.useEffect(() => {
-    if (sessionType === "uninitialized") {
-      initializeAppSessionOperationFunc({ id: opId });
+    if (sessionType === SessionType.Uninitialized) {
+      dispatch(initializeAppSessionOperationAction({ opId }));
     }
-
-    return () => {
-      dispatch(OperationActions.deleteOperation(opId));
-    };
   }, [sessionType, opId]);
 
   React.useEffect(() => {

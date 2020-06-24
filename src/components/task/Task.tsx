@@ -3,11 +3,24 @@ import {
   EditOutlined,
   EllipsisOutlined,
 } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Modal, Space, Typography } from "antd";
+import { unwrapResult } from "@reduxjs/toolkit";
+import {
+  Button,
+  Dropdown,
+  Menu,
+  message,
+  Modal,
+  Space,
+  Typography,
+} from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import deleteBlockOperationFunc from "../../redux/operations/block/deleteBlock";
+import OperationActions from "../../redux/operations/actions";
+import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
+import { AppDispatch } from "../../redux/types";
+import { getOperationStats } from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
@@ -30,6 +43,7 @@ export interface ITaskProps {
 // TODO: how do we show thelabels?
 
 const Task: React.FC<ITaskProps> = (props) => {
+  const dispatch: AppDispatch = useDispatch();
   const { task, onEdit, demo, statusList, orgUsers } = props;
 
   const onDeleteTask = () => {
@@ -44,8 +58,24 @@ const Task: React.FC<ITaskProps> = (props) => {
       cancelText: "No",
       okType: "primary",
       okButtonProps: { danger: true },
-      onOk() {
-        deleteBlockOperationFunc({ block: task });
+      onOk: async () => {
+        const result = await dispatch(
+          deleteBlockOperationAction({ block: task })
+        );
+        const op = unwrapResult(result);
+
+        if (!op) {
+          return;
+        }
+
+        const opStat = getOperationStats(op);
+
+        if (opStat.isCompleted) {
+          message.success("Task deleted successfully");
+          dispatch(OperationActions.deleteOperation(op.id));
+        } else if (opStat.isError) {
+          message.error("Error deleting task");
+        }
       },
       onCancel() {
         // do nothing

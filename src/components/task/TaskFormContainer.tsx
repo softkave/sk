@@ -1,27 +1,23 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import addBlockOperationFunc from "../../redux/operations/block/addBlock";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import {
-  addBlock.OperationType,
-  OperationType.updateBlock,
-} from "../../redux/operations/OperationType";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
-import { getUsersAsArray } from "../../redux/users/selectors";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
+import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
+import UserSelectors from "../../redux/users/selectors";
 import {
   flattenErrorListWithDepthInfinite,
   getDateString,
 } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import TaskForm, { ITaskFormValues } from "./TaskForm";
-
-const scopeId = "TaskFormContainer";
 
 export interface ITaskFormContainerProps {
   orgId: string;
@@ -33,18 +29,20 @@ export interface ITaskFormContainerProps {
 
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   const { onClose, orgId } = props;
-  const user = useSelector(getSignedInUserRequired);
+  const dispatch: AppDispatch = useDispatch();
+  const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const org = useSelector<IAppState, IBlock>((state) => {
-    return getBlock(state, orgId)!;
+    return BlockSelectors.getBlock(state, orgId)!;
   });
 
   const parentBlock = useSelector<IAppState, IBlock | undefined>((state) => {
     if (props.parentBlock) {
       return props.parentBlock;
     } else if (props.block) {
-      return getBlock(state, props.block.parent);
+      return BlockSelectors.getBlock(state, props.block.parent!);
     }
   });
+
   const statusList = parentBlock?.boardStatuses || [];
   const labelList = org.boardLabels || [];
 
@@ -53,7 +51,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     : [];
 
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
-    getUsersAsArray(state, collaboratorIds)
+    UserSelectors.getUsers(state, collaboratorIds)
   );
 
   const [block, setBlock] = React.useState<IBlock>(() => {
@@ -78,11 +76,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
   const possibleParents = useBlockPossibleParents(block);
 
-  const operationStatus = useOperation({
-    scopeId,
-    operationType: props.block ? OperationType.updateBlock : OperationType.addBlock,
-    resourceId: block.customId,
-  });
+  const operationStatus = useOperation();
 
   const errors = operationStatus.error
     ? flattenErrorListWithDepthInfinite(operationStatus.error)
@@ -98,28 +92,37 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     const data = { ...block, ...values };
     setBlock(data);
 
-    if (props.block) {
-      updateBlockOperationFunc(
-        {
-          block,
-          data,
-        },
-        {
-          scopeId,
-          resourceId: block.customId,
-        }
-      );
+    const result = props.block
+      ? await dispatch(
+          updateBlockOperationAction({
+            block,
+            data,
+            opId: operationStatus.opId,
+          })
+        )
+      : await dispatch(
+          addBlockOperationAction({ block, opId: operationStatus.opId })
+        );
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOperationStats(op);
+
+    if (!props.block) {
+      if (opStat.isCompleted) {
+        message.success("Task created successfully");
+      } else if (opStat.isError) {
+        message.error("Error creating task");
+      }
     } else {
-      addBlockOperationFunc(
-        {
-          user,
-          block: data,
-        },
-        {
-          scopeId,
-          resourceId: block.customId,
-        }
-      );
+      if (opStat.isCompleted) {
+        message.success("Task updated successfully");
+      } else if (opStat.isError) {
+        message.error("Error updating task");
+      }
     }
   };
 

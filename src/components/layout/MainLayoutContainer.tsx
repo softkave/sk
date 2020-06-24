@@ -1,26 +1,43 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setKeyValue } from "../../redux/key-value/actions";
-import { KeyValueProperties } from "../../redux/key-value/reducer";
-import { getKeyValue } from "../../redux/key-value/selectors";
+import KeyValueActions from "../../redux/key-value/actions";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import { KeyValueKeys } from "../../redux/key-value/types";
 import MainLayout from "./MainLayout";
 
 const MainLayoutContainer: React.FC<{}> = (props) => {
   const dispatch = useDispatch();
   const showAppMenu = useSelector((state) =>
-    getKeyValue(state as any, KeyValueProperties.AppMenu)
+    KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
   ) as boolean;
+
+  const showNewOrgForm = useSelector((state) =>
+    KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowNewOrgForm)
+  );
 
   const toggleAppMenu = React.useCallback(() => {
     const newAppMenuState = !showAppMenu;
-    dispatch(setKeyValue([KeyValueProperties.AppMenu, newAppMenuState]));
+    dispatch(
+      KeyValueActions.setKey({
+        key: KeyValueKeys.AppMenu,
+        value: newAppMenuState,
+      })
+    );
   }, [showAppMenu]);
 
   React.useEffect(() => {
-    dispatch(setKeyValue([KeyValueProperties.AppMenu, true]));
+    dispatch(
+      KeyValueActions.setKey({ key: KeyValueKeys.AppMenu, value: true })
+    );
   }, []);
 
-  return <MainLayout showAppMenu={showAppMenu} toggleMenu={toggleAppMenu} />;
+  return (
+    <MainLayout
+      showOrgForm={!!showNewOrgForm}
+      showAppMenu={showAppMenu}
+      toggleMenu={toggleAppMenu}
+    />
+  );
 };
 
 export default MainLayoutContainer;

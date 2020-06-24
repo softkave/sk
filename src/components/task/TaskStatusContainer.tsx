@@ -1,22 +1,17 @@
 import { LoadingOutlined } from "@ant-design/icons";
+import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getBlock } from "../../redux/blocks/selectors";
-import { pushOperation } from "../../redux/operations/actions";
-import updateBlockOperationFunc from "../../redux/operations/block/updateBlock";
-import { OperationIds.updateBlock } from "../../redux/operations/opc";
-import { OperationStatus } from "../../redux/operations/operation";
-import { getSignedInUserRequired } from "../../redux/session/selectors";
-import { IAppState } from "../../redux/store";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import SessionSelectors from "../../redux/session/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
-import useOperation from "../hooks/useOperation";
+import useOperation, { getOperationStats } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
-tatus";
-
-const scopeId = "TaskStatusContainer";
 
 export interface ITaskStatusContainerProps {
   task: IBlock;
@@ -31,42 +26,23 @@ export interface ITaskStatusContainerProps {
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
   const { task, className, demo } = props;
-  const dispatch = useDispatch();
-  const operation = useOperation({
-    scopeId,
-    operationType: OperationIds.updateBlock,
-    resourceId: task.customId,
-  });
+  const dispatch: AppDispatch = useDispatch();
+  const operation = useOperation();
 
   const user = useSelector<IAppState, IUser>((state) => {
     if (demo) {
       return ({} as unknown) as IUser;
     }
 
-    return getSignedInUserRequired(state);
+    return SessionSelectors.getSignedInUserRequired(state);
   });
 
   const statusList = useSelector<IAppState, IBlockStatus[]>((state) => {
     return (
-      props.statusList || getBlock(state, task.parent)!.boardStatuses || []
+      props.statusList ||
+      BlockSelectors.getBlock(state, task.parent!)?.boardStatuses ||
+      []
     );
-  });
-
-  React.useEffect(() => {
-    if (operation.error) {
-      message.error("Error updating task status");
-      dispatch(
-        pushOperation(
-          OperationIds.updateBlock,
-          {
-            scopeId,
-            status: OperationStatus.consumed,
-            timestamp: Date.now(),
-          },
-          task.customId
-        )
-      );
-    }
   });
 
   if (operation.isLoading) {
@@ -78,22 +54,34 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       className={className}
       statusList={statusList}
       statusId={task.status}
-      onChange={(value) => {
+      onChange={async (value) => {
         if (demo) {
           return;
         }
 
-        updateBlockOperationFunc(
-          {
+        const result = await dispatch(
+          updateBlockOperationAction({
+            opId: operation.opId,
             block: task,
             data: {
               status: value,
               statusAssignedAt: getDateString(),
               statusAssignedBy: user.customId,
             },
-          },
-          { scopeId, resourceId: task.customId }
+          })
         );
+
+        const op = unwrapResult(result);
+
+        if (!op) {
+          return;
+        }
+
+        const opStat = getOperationStats(op);
+
+        if (opStat.isError) {
+          message.error("Error changing task status");
+        }
       }}
     />
   );

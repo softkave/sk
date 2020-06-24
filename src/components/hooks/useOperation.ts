@@ -2,20 +2,21 @@ import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import OperationActions from "../../redux/operations/actions";
-import IOperation, {
+import {
+  IOperation,
   IOperationStatus,
   isOperationCompleted,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import OperationSelectors from "../../redux/operations/selectors";
-import { IAppState } from "../../redux/store";
+import { IAppState } from "../../redux/types";
 import { newId } from "../../utils/utils";
 
 export interface IUseOperationStatus {
   isLoading: boolean;
   isError: boolean;
   isCompleted: boolean;
-  id: string;
+  opId: string;
   error?: any;
   operation?: IOperation;
   status?: IOperationStatus;
@@ -32,19 +33,18 @@ type UseOperation = (
 ) => IUseOperationStatus;
 
 export const getOperationStats = (
-  operation: IOperation | undefined,
-  id: string
+  operation: IOperation
 ): IUseOperationStatus => {
   const isLoading = isOperationStartedOrPending(operation);
   const isCompleted = isOperationCompleted(operation);
-  const error = operation?.status.error;
+  const error = operation.status.error;
 
   return {
     isLoading,
     isCompleted,
     error,
     operation,
-    id,
+    opId: operation.id,
     isError: !!error,
     status: operation?.status,
   };
@@ -64,7 +64,14 @@ const useOperation: UseOperation = (selector = {}, loadOperation) => {
     OperationSelectors.getOperationWithId(state, selector.id || managedOpId)
   );
 
-  const statusData = getOperationStats(operation, selector.id || managedOpId);
+  const statusData: IUseOperationStatus = operation
+    ? getOperationStats(operation)
+    : {
+        isCompleted: false,
+        isError: false,
+        isLoading: false,
+        opId: managedOpId,
+      };
 
   React.useEffect(() => {
     if (isFunction(loadOperation)) {
