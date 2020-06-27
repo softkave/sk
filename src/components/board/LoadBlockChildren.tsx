@@ -4,6 +4,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
 import { AppDispatch, IAppState } from "../../redux/types";
+import { newId } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -16,6 +17,7 @@ export interface ILoadBlockChildrenProps {
 
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, type } = props;
+  const [opId] = React.useState(() => newId());
   const dispatch: AppDispatch = useDispatch();
   const blocks = useSelector<IAppState, IBlock[]>((state) =>
     BlockSelectors.getBlockChildren(state, parent, type)
@@ -27,13 +29,13 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
         loadBlockChildrenOperationAction({
           block: parent,
           typeList: [type],
-          opId: parent.customId,
+          opId: loadProps.opId,
         })
       );
     }
   };
 
-  const op = useOperation({ id: parent.customId }, loadChildren);
+  const op = useOperation({ id: opId }, loadChildren);
 
   if (op.isCompleted) {
     return <React.Fragment>{render(blocks)}</React.Fragment>;

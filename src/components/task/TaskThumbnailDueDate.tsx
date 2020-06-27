@@ -1,4 +1,3 @@
-import ScheduleOutlined from "@ant-design/icons/ScheduleOutlined";
 import { Space, Tag, Typography } from "antd";
 import moment from "moment";
 import React from "react";

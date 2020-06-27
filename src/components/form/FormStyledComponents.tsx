@@ -13,8 +13,8 @@ export const FormBody = styled("div")({
 export const StyledForm = styled("form")`
   display: flex;
   flex: 1;
-  height: 100%;
   width: 100%;
+  height: 100%;
 
   & .ant-typography {
     margin-bottom: 0;
@@ -26,7 +26,6 @@ export const StyledForm = styled("form")`
 `;
 
 export const formContentWrapperStyle: ComponentStyle = {
-  height: "100%",
   width: "100%",
   padding: "16px 24px 24px 24px",
   overflowY: "auto",
@@ -35,6 +34,5 @@ export const formContentWrapperStyle: ComponentStyle = {
 
 export const formInputContentWrapperStyle: ComponentStyle = {
   width: "100%",
-  flex: 1,
   flexDirection: "column",
 };

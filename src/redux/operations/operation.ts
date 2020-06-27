@@ -110,7 +110,7 @@ export function dispatchOperationError(
     status: {
       data,
       error,
-      status: OperationStatus.Started,
+      status: OperationStatus.Error,
       timestamp: Date.now(),
     },
   });

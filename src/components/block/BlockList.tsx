@@ -47,9 +47,9 @@ class BlockList extends React.PureComponent<IBlockListProps> {
             s={{
               padding,
               borderTop: getBorderTop(i),
-              "&:hover": {
-                backgroundColor: "#fafafa",
-              },
+              // "&:hover": {
+              //   backgroundColor: "#fafafa",
+              // },
             }}
           >
             <BlockThumbnail

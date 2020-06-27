@@ -89,7 +89,10 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
           </StyledContainer>
           <StyledContainer s={{ alignItems: "center" }}>
             <X
-              onClick={toggleSearchBar}
+              onClick={() => {
+                onChangeSearchInput("");
+                toggleSearchBar();
+              }}
               style={{ width: "16px", height: "16px", cursor: "pointer" }}
             />
           </StyledContainer>

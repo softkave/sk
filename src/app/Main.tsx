@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import MainLayoutContainer from "../components/layout/MainLayoutContainer";
+import MainLayoutOld from "../components/layout/MainLayoutOld";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
@@ -21,7 +22,7 @@ const Main: React.FC<{}> = () => {
     if (sessionType === SessionType.Uninitialized) {
       dispatch(initializeAppSessionOperationAction({ opId }));
     }
-  }, [sessionType, opId]);
+  }, [sessionType, opId, dispatch]);
 
   React.useEffect(() => {
     if (sessionType === "app") {
@@ -51,7 +52,8 @@ const Main: React.FC<{}> = () => {
 
   switch (sessionType) {
     case "app":
-      return <MainLayoutContainer />;
+      // return <MainLayoutContainer />;
+      return <MainLayoutOld />;
 
     case "web":
       return <Routes />;

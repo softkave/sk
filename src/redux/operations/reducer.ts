@@ -1,7 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import SessionActions from "../session/actions";
 import OperationActions from "./actions";
-import IOperation from "./operation";
+import { IOperation } from "./operation";
 
 export interface IOperationState {
   [key: string]: IOperation;

@@ -23,19 +23,29 @@ const MainLayoutContainer: React.FC<{}> = (props) => {
         value: newAppMenuState,
       })
     );
-  }, [showAppMenu]);
+  }, [showAppMenu, dispatch]);
+
+  const closeNewOrgForm = React.useCallback(() => {
+    dispatch(
+      KeyValueActions.setKey({
+        key: KeyValueKeys.ShowNewOrgForm,
+        value: false,
+      })
+    );
+  }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(
       KeyValueActions.setKey({ key: KeyValueKeys.AppMenu, value: true })
     );
-  }, []);
+  }, [dispatch]);
 
   return (
     <MainLayout
       showOrgForm={!!showNewOrgForm}
       showAppMenu={showAppMenu}
       toggleMenu={toggleAppMenu}
+      closeNewOrgForm={closeNewOrgForm}
     />
   );
 };

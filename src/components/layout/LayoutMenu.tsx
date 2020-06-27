@@ -15,7 +15,7 @@ const LayoutMenu: React.FC<ILayoutMenuProps> = (props) => {
     <StyledContainer
       s={{
         height: "100%",
-        width: "420px",
+        width: "360px",
         maxWidth: "100%",
         borderRight: "1px solid #d9d9d9",
         backgroundColor: "#fafafa",

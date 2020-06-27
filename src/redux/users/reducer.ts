@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
+import merge from "lodash/merge";
 import { mergeData } from "../../utils/utils";
 import SessionActions from "../session/actions";
 import UserActions from "./actions";
@@ -6,7 +7,14 @@ import { IUsersState } from "./types";
 
 const usersReducer = createReducer<IUsersState>({}, (builder) => {
   builder.addCase(UserActions.addUser, (state, action) => {
-    state[action.payload.customId] = action.payload;
+    if (state[action.payload.customId]) {
+      state[action.payload.customId] = merge(
+        state[action.payload.customId],
+        action.payload
+      );
+    } else {
+      state[action.payload.customId] = action.payload;
+    }
   });
 
   builder.addCase(UserActions.updateUser, (state, action) => {
@@ -22,7 +30,13 @@ const usersReducer = createReducer<IUsersState>({}, (builder) => {
   });
 
   builder.addCase(UserActions.bulkAddUsers, (state, action) => {
-    action.payload.forEach((user) => (state[user.customId] = user));
+    action.payload.forEach((user) => {
+      if (state[user.customId]) {
+        state[user.customId] = merge(state[user.customId], user);
+      } else {
+        state[user.customId] = user;
+      }
+    });
   });
 
   builder.addCase(UserActions.bulkUpdateUsers, (state, action) => {

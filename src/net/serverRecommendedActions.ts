@@ -1,4 +1,5 @@
-import logoutUserOperationFunc from "../redux/operations/session/logoutUser";
+import { logoutUserOperationAction } from "../redux/operations/session/logoutUser";
+import store from "../redux/store";
 import { INetError } from "./types";
 
 export enum ServerRecommendedActions {
@@ -30,7 +31,7 @@ export function processServerRecommendedActions(errors: INetError[]) {
 
   errorsWithActions.forEach((error) => {
     if (shouldLoginAgain(error)) {
-      logoutUserOperationFunc();
+      store.dispatch(logoutUserOperationAction());
       result = false;
     }
   });

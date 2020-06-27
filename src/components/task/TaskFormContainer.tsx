@@ -101,7 +101,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
           })
         )
       : await dispatch(
-          addBlockOperationAction({ block, opId: operationStatus.opId })
+          addBlockOperationAction({ block: data, opId: operationStatus.opId })
         );
     const op = unwrapResult(result);
 

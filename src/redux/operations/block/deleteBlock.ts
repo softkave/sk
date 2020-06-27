@@ -5,7 +5,6 @@ import { newId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
-import store from "../../store";
 import { IAppAsyncThunkConfig } from "../../types";
 import UserActions from "../../users/actions";
 import {

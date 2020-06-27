@@ -37,11 +37,14 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
   const onSubmit = async (values: IOrgValues) => {
     const data = { ...block, ...values };
     setBlock(data);
+
     const result = props.block
       ? await dispatch(
           updateBlockOperationAction({ block, data, opId: opStat.opId })
         )
-      : await dispatch(addBlockOperationAction({ block, opId: opStat.opId }));
+      : await dispatch(
+          addBlockOperationAction({ block: data, opId: opStat.opId })
+        );
     const op = unwrapResult(result);
 
     if (!op) {
@@ -66,6 +69,8 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
       }
     }
   };
+
+  console.log({ opStat });
 
   return (
     <Org

@@ -1,10 +1,10 @@
-import { getUserToken } from "../redux/session/selectors";
+import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { IAnyObject } from "../utils/types";
 import query, { NetResultProcessor } from "./query";
 
 function getToken() {
-  return getUserToken(store.getState());
+  return SessionSelectors.getUserToken(store.getState());
 }
 
 export default async function queryWithAuth(

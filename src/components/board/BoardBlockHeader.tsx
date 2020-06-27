@@ -103,8 +103,12 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
   };
 
   const renderBoardTypeMenu = () => {
+    if (resourceType === "boards") {
+      return null;
+    }
+
     if (resourceType) {
-      return (
+      return wrapWithMargin(
         <SelectBoardTypeMenu
           block={block}
           boardType={selectedBoardType}
@@ -159,8 +163,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       />
       <StyledContainer s={{ alignItems: "center" }}>
         {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
-        {isBlockRelatedResourceType(resourceType) &&
-          wrapWithMargin(renderBoardTypeMenu())}
+        {isBlockRelatedResourceType(resourceType) && renderBoardTypeMenu()}
         {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
       </StyledContainer>
     </StyledContainer>

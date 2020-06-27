@@ -35,16 +35,19 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
 
     if (errorMessage) {
       return (
-        <Empty image={<ExclamationCircleOutlined />}>{errorMessage}</Empty>
+        <Empty
+          image={<ExclamationCircleOutlined />}
+          description={errorMessage}
+        ></Empty>
       );
     }
 
     if (orgs.length === 0) {
-      return <Empty>No orgs</Empty>;
+      return <Empty description="No Orgs"></Empty>;
     }
 
     return <NewBlockList blocks={filterOrgs()} onClick={onSelectOrg} />;
-  }, [isLoading, errorMessage, orgs]);
+  }, [isLoading, errorMessage, orgs, filterOrgs, onSelectOrg]);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>

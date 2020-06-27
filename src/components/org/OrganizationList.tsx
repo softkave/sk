@@ -1,10 +1,11 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockGrid from "../block/BlockGrid";
 import BlockList from "../block/BlockList";
-import BoardBlockTypeHeader from "../board/BoardBlockTypeHeader";
+import BlockThumbnail from "../block/BlockThumnail";
+import EmptyMessage from "../EmptyMessage";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import EditOrgFormWithDrawer from "./EditOrgFormInDrawer";
@@ -71,41 +72,52 @@ const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
           flexDirection: "column",
           margin: "0 auto",
           flex: 1,
+          // maxWidth: "600px",
         }}
       >
-        {/* <StyledContainer s={{ marginBottom: "16px" }}>
-          <BoardBlockTypeHeader title="organizations" count={orgs.length} />
-        </StyledContainer> */}
-        <StyledContainer s={{ marginBottom: "24px" }}>
-          <Button type="primary" onClick={() => setShowOrgForm(true)}>
-            <PlusOutlined />
-            New Organization
-          </Button>
+        <StyledContainer s={{ marginBottom: "24px", padding: "0 16px" }}>
+          <StyledContainer s={{ flex: 1, justifyContent: "flex-end" }}>
+            <Button onClick={() => setShowOrgForm(true)}>
+              <PlusOutlined />
+              New Org
+            </Button>
+          </StyledContainer>
         </StyledContainer>
-        <BlockList
-          blocks={orgs}
-          emptyDescription="Create an organization to get started."
-          onClick={onClick}
-          showFields={["name", "description"]}
-        />
-        {/* <Row>
-          <Col xs={24} sm={{ span: 12, offset: 6 }} md={{ span: 8, offset: 8 }}>
-            <StyledContainer s={{ marginBottom: "16px" }}>
-              <BoardBlockTypeHeader title="organizations" count={orgs.length} />
+        {/* {renderOrgs()} */}
+        <StyledContainer
+          s={{
+            width: "100%",
+            flexDirection: "column",
+            margin: "0 auto",
+            flex: 1,
+          }}
+        >
+          {orgs.length === 0 && (
+            <EmptyMessage>Create an org to get started</EmptyMessage>
+          )}
+          {orgs.map((org, i) => (
+            <StyledContainer
+              s={{
+                padding: "16px",
+                borderTop: i === 0 ? undefined : "1px solid #d9d9d9",
+              }}
+            >
+              <BlockThumbnail
+                block={org}
+                showFields={["name", "description"]}
+                style={{ maxWidth: "550px", margin: "auto" }}
+                onClick={() => onClick(org)}
+              />
             </StyledContainer>
-            <StyledContainer s={{ marginBottom: "8px" }}>
-              <Button onClick={() => setShowOrgForm(true)}>
-                New Organization
-              </Button>
-            </StyledContainer>
-            <BlockList
-              blocks={orgs}
-              emptyDescription="Create an organization to get started."
-              onClick={onClick}
-              showFields={["name", "description"]}
-            />
-          </Col>
-        </Row> */}
+          ))}
+          {/* <BlockList
+            border
+            blocks={orgs}
+            emptyDescription="Create an organization to get started."
+            onClick={onClick}
+            showFields={["name", "description"]}
+          /> */}
+        </StyledContainer>
       </StyledContainer>
     </StyledContainer>
   );

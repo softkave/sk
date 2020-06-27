@@ -9,6 +9,8 @@ import EmptyMessage from "../EmptyMessage";
 
 export interface IBlockGridProps {
   blocks: IBlock[];
+
+  style?: React.CSSProperties;
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
   onClick?: (block: IBlock) => void;
@@ -16,14 +18,14 @@ export interface IBlockGridProps {
 
 class BlockGrid extends React.PureComponent<IBlockGridProps> {
   public render() {
-    const { blocks, onClick, showFields, emptyDescription } = this.props;
+    const { blocks, onClick, showFields, emptyDescription, style } = this.props;
 
     if (blocks.length === 0) {
       return <EmptyMessage>{emptyDescription}</EmptyMessage>;
     }
 
     return (
-      <Row gutter={[32, 32]}>
+      <Row gutter={[32, 32]} style={style}>
         {blocks.map((block) => (
           <Col
             key={block.customId}

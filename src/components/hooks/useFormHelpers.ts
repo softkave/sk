@@ -84,17 +84,14 @@ const useFormHelpers = <T>(
     [formik.values, formik.touched, formik.errors]
   );
 
-  const setArrayFieldItems = (
-    field: string,
-    touched: any[],
-    errors: any[],
-    value: any[]
-  ) =>
-    React.useCallback(() => {
+  const setArrayFieldItems = React.useCallback(
+    (field: string, touched: any[], errors: any[], value: any[]) => {
       formik.setFieldTouched(field, touched as any);
       formik.setFieldError(field, errors as any);
       formik.setFieldValue(field, value as any);
-    }, [formik.setFieldError, formik.setFieldTouched, formik.setFieldValue]);
+    },
+    [formik]
+  );
 
   const addToArrayField = React.useCallback(
     (
@@ -104,11 +101,7 @@ const useFormHelpers = <T>(
       initialTouched?: any,
       index: number = 0
     ) => {
-      const {
-        value: value,
-        touched: touched,
-        errors: errors,
-      } = getArrayFieldItems(field);
+      const { value, touched, errors } = getArrayFieldItems(field);
 
       value.splice(index, 0, initialValue);
       touched.splice(index, 0, initialTouched);
@@ -121,11 +114,7 @@ const useFormHelpers = <T>(
 
   const deleteInArrayField = React.useCallback(
     (field: string, index: number) => {
-      const {
-        value: value,
-        touched: touched,
-        errors: errors,
-      } = getArrayFieldItems(field);
+      const { value, touched, errors } = getArrayFieldItems(field);
 
       value.splice(index, 1);
       touched.splice(index, 1);
@@ -138,11 +127,7 @@ const useFormHelpers = <T>(
 
   const moveInArrayField = React.useCallback(
     (field: string, srcIndex: number, destIndex: number) => {
-      const {
-        value: value,
-        touched: touched,
-        errors: errors,
-      } = getArrayFieldItems(field);
+      const { value, touched, errors } = getArrayFieldItems(field);
 
       const status = value[srcIndex];
       const statusTouched = touched[srcIndex];
@@ -191,7 +176,7 @@ const useFormHelpers = <T>(
     }
 
     return null;
-  }, [changedFields]);
+  }, [changedFields, formik.values]);
 
   const clearAll = React.useCallback(() => {
     changedFields.reset();

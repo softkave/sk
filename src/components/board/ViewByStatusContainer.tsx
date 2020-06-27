@@ -6,6 +6,7 @@ import BlockSelectors from "../../redux/blocks/selectors";
 import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
+import { newId } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -22,6 +23,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
+  const [opId] = React.useState(() => newId());
   const dispatch: AppDispatch = useDispatch();
   const statuses = block.boardStatuses || [];
   const org = useSelector<IAppState, IBlock>((state) => {
@@ -41,7 +43,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
         loadBlockChildrenOperationAction({
           block,
           typeList: [BlockType.Task],
-          opId: block.customId,
+          opId: loadProps.opId,
         })
       );
     }
@@ -49,7 +51,7 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
   const opStat = useOperation(
     {
-      id: block.customId,
+      id: opId,
     },
     loadBlockChildren
   );

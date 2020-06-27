@@ -89,16 +89,19 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
     if (fieldsToShow.description) {
       return (
         <StyledContainer
-          s={{ marginTop: "4px", cursor: "initial" }}
-          onClick={(evt) => {
-            if (evt) {
-              evt.stopPropagation();
-            }
+          s={{
+            marginTop: "4px",
+            // cursor: "initial"
           }}
+          // onClick={(evt) => {
+          //   if (evt) {
+          //     evt.stopPropagation();
+          //   }
+          // }}
         >
           <Typography.Paragraph
             type="secondary"
-            ellipsis={{ rows: 1, expandable: true }}
+            ellipsis={{ rows: 2 }}
             style={{ marginBottom: "0px" }}
           >
             {block.description}

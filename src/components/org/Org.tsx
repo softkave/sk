@@ -1,5 +1,5 @@
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Form, Input, Space, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
@@ -91,15 +91,14 @@ const Org: React.FC<IEditOrgProps> = (props) => {
   );
 
   const orgExistsMessage = React.useMemo(() => {
-    if (formOnly) {
+    if (!formOnly) {
       return;
     }
 
     return doesOrgExist(errors as any);
-  }, [errors, formOnly]);
+  }, [errors, formOnly, doesOrgExist]);
 
   const renderedNameInput = React.useMemo(() => {
-    console.log("name");
     const input = (
       <Input
         autoComplete="off"
@@ -137,6 +136,8 @@ const Org: React.FC<IEditOrgProps> = (props) => {
       );
     }
 
+    console.log({ orgExistsMessage });
+
     return (
       <Form.Item
         help={
@@ -147,11 +148,13 @@ const Org: React.FC<IEditOrgProps> = (props) => {
             <FormError error={errors.name} />
           ))
         }
+        style={{ width: "100%" }}
       >
         {formOnly ? input : editable}
       </Form.Item>
     );
   }, [
+    isSubmitting,
     errors.name,
     values.name,
     touched.name,
@@ -180,7 +183,7 @@ const Org: React.FC<IEditOrgProps> = (props) => {
   const renderedDescriptionInput = React.useMemo(() => {
     const input = (
       <Input.TextArea
-        autoSize={{ minRows: 2, maxRows: 8 }}
+        autoSize={{ minRows: 4, maxRows: 8 }}
         autoComplete="off"
         name="description"
         onBlur={handleBlur}
@@ -228,6 +231,8 @@ const Org: React.FC<IEditOrgProps> = (props) => {
       </Form.Item>
     );
   }, [
+    formikChangedFieldsHelpers,
+    isSubmitting,
     errors.description,
     values.description,
     touched.description,
@@ -246,41 +251,57 @@ const Org: React.FC<IEditOrgProps> = (props) => {
     } else {
       onClose();
     }
-  }, [resetForm, formikChangedFieldsHelpers, onClose]);
+  }, [resetForm, formikChangedFieldsHelpers, onClose, org]);
 
   const renderedControls = React.useMemo(() => {
-    if (!formikChangedFieldsHelpers.hasChanges()) {
+    if (!formOnly && !formikChangedFieldsHelpers.hasChanges()) {
       return null;
     }
 
     if (isSubmitting) {
-      return <LoadingOutlined />;
+      return (
+        <LoadingOutlined
+          style={{ fontSize: "24px", textAlign: "left", color: "#ccc" }}
+        />
+      );
     }
 
     return (
       <StyledContainer>
-        <Button
-          danger
-          type="text"
-          disabled={isSubmitting}
-          onClick={cancelHandler}
-        >
-          {org ? "Discard Changes" : "Cancel"}
-        </Button>
-        <Button type="primary" htmlType="submit" loading={isSubmitting}>
-          {org ? "Save Changes" : "Create Org"}
-        </Button>
+        <Space>
+          <Button
+            danger
+            type="text"
+            disabled={isSubmitting}
+            onClick={cancelHandler}
+          >
+            {org ? "Discard Changes" : "Cancel"}
+          </Button>
+          <Button type="primary" htmlType="submit" loading={isSubmitting}>
+            {org ? "Save Changes" : "Create Org"}
+          </Button>
+        </Space>
       </StyledContainer>
     );
-  }, [org, isSubmitting, cancelHandler]);
+  }, [org, isSubmitting, cancelHandler, formikChangedFieldsHelpers, formOnly]);
 
   const renderedForm = React.useMemo(() => {
     return (
-      <StyledForm onSubmit={handleSubmit}>
+      <StyledForm
+        onSubmit={handleSubmit}
+        style={{ maxWidth: "100%", minWidth: "450px" }}
+      >
         <StyledContainer s={formContentWrapperStyle}>
+          {formOnly && (
+            <Form.Item>
+              <Typography.Title level={4}>Create Org</Typography.Title>
+            </Form.Item>
+          )}
           <StyledContainer s={formInputContentWrapperStyle}>
             {(errors as any).error && (
-              <FormError error={(errors as any).error} />
+              <Form.Item>
+                <FormError error={(errors as any).error} />
+              </Form.Item>
             )}
             <StyledContainer>
               <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
@@ -295,6 +316,8 @@ const Org: React.FC<IEditOrgProps> = (props) => {
       </StyledForm>
     );
   }, [
+    formOnly,
+    renderedColorInput,
     renderedNameInput,
     renderedDescriptionInput,
     renderedControls,

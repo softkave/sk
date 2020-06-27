@@ -4,7 +4,6 @@ import { IUser } from "../../models/user/user";
 import ItemAvatar from "../ItemAvatar";
 import cloneWithWidth from "../styled/cloneWithWidth";
 import StyledContainer from "../styled/Container";
-import StyledFlexContainer from "../styled/FlexContainer";
 
 export interface ICollaboratorThumbnailProps {
   collaborator: IUser;

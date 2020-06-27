@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { getNotifications } from "../../redux/notifications/selectors";
-import { IAppState } from "../../redux/store";
+import { IAppState } from "../../redux/types";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";

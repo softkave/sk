@@ -5,7 +5,6 @@ import React from "react";
 import { INotification } from "../../models/notification/notification";
 import cloneWithWidth from "../styled/cloneWithWidth";
 import StyledContainer from "../styled/Container";
-import StyledFlexContainer from "../styled/FlexContainer";
 
 export interface ICollaborationRequestThumbnailProps {
   request: INotification;

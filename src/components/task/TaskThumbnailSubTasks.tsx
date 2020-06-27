@@ -1,5 +1,3 @@
-import DownOutlined from "@ant-design/icons/DownOutlined";
-import UpOutlined from "@ant-design/icons/UpOutlined";
 import { Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { ChevronDown, ChevronUp } from "react-feather";

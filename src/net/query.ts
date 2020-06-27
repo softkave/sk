@@ -1,6 +1,7 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
-import logoutUserOperationFunc from "../redux/operations/session/logoutUser";
+import { logoutUserOperationAction } from "../redux/operations/session/logoutUser";
+import store from "../redux/store";
 import { normalizeErrors } from "../redux/utils";
 import { devLog } from "../utils/log";
 import { IAnyObject } from "../utils/types";
@@ -70,7 +71,7 @@ export default async function query(
 
     if (result.ok) {
       if (resultBody && shouldLoginAgain(resultBody.errors)) {
-        logoutUserOperationFunc();
+        store.dispatch(logoutUserOperationAction());
       }
 
       return resultBody;
@@ -79,7 +80,7 @@ export default async function query(
         if (rawResultBody && rawResultBody.errors) {
           if (isExpectedErrorType(rawResultBody.errors)) {
             if (shouldLoginAgain(rawResultBody.errors)) {
-              logoutUserOperationFunc();
+              store.dispatch(logoutUserOperationAction());
             } else {
               throw rawResultBody.errors;
             }

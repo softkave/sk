@@ -115,7 +115,7 @@ const Editable: React.FC<IEditableProps> = (props) => {
         )}
       </Space>
     );
-  }, [withControls, isEditing, controlsEventHandlerWrapper]);
+  }, [withControls, isEditing, controlsEventHandlerWrapper, disabled]);
 
   return (
     <StyledContainer

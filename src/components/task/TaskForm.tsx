@@ -34,7 +34,7 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../form/FormStyledComponents";
-import useFormikExtended from "../hooks/useFormikExtended";
+import useFormHelpers from "../hooks/useFormHelpers";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
 import EditPriority from "./EditPriority";
@@ -97,11 +97,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     }
   }, []);
 
-  const {
-    formik,
-    addNewValueToArrayField,
-    deleteIndexInArrayField,
-  } = useFormikExtended({
+  const { formik, formikHelpers } = useFormHelpers({
     errors: externalErrors,
     formikProps: {
       // TODO: show a message on form submit or close the form
@@ -432,10 +428,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           onChange={(subTasks) => onChangeSubTasks(subTasks, formikProps)}
           disabled={isSubmitting}
           onAddSubTask={(subTask) => {
-            addNewValueToArrayField("subTasks", subTask, {}, {});
+            formikHelpers.addToArrayField("subTasks", subTask, {}, {});
           }}
           onDeleteSubTask={(index) => {
-            deleteIndexInArrayField("subTasks", index);
+            formikHelpers.deleteInArrayField("subTasks", index);
           }}
           onDiscardSubTaskChanges={onDiscardSubTaskChanges}
         />

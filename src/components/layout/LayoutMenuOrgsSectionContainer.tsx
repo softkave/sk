@@ -24,26 +24,33 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
     )
   );
 
-  const loadOrgs = React.useCallback((loadOrgsProps: IUseOperationStatus) => {
-    const operation = loadOrgsProps.operation;
-    const shouldLoad = !operation;
+  const loadOrgs = React.useCallback(
+    (loadOrgsProps: IUseOperationStatus) => {
+      const operation = loadOrgsProps.operation;
+      const shouldLoad = !operation;
+      console.log({ shouldLoad, opId, id: loadOrgsProps.opId, loadOrgsProps });
 
-    if (shouldLoad) {
-      dispatch(loadRootBlocksOperationAction({ opId: loadOrgsProps.opId }));
-    }
-  }, []);
+      if (shouldLoad) {
+        dispatch(loadRootBlocksOperationAction({ opId: loadOrgsProps.opId }));
+      }
+    },
+    [dispatch]
+  );
+
+  const op = useOperation({ id: opId }, loadOrgs);
 
   const onAddOrg = React.useCallback(() => {
     dispatch(
       KeyValueActions.setKey({ key: KeyValueKeys.ShowNewOrgForm, value: true })
     );
-  }, []);
+  }, [dispatch]);
 
-  const onSelectOrg = React.useCallback((org: IBlock) => {
-    history.push(`/app/organizations/${org.customId}`);
-  }, []);
-
-  const op = useOperation({ id: opId }, loadOrgs);
+  const onSelectOrg = React.useCallback(
+    (org: IBlock) => {
+      history.push(`/app/organizations/${org.customId}`);
+    },
+    [history]
+  );
 
   return (
     <LayoutMenuOrgsSection

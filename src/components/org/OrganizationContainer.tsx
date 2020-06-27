@@ -3,8 +3,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
-import { getBlock } from "../../redux/blocks/selectors";
-import { IAppState } from "../../redux/store";
+import BlockSelectors from "../../redux/blocks/selectors";
+import { IAppState } from "../../redux/types";
 import Board from "../board/Board";
 import StyledContainer from "../styled/Container";
 
@@ -20,9 +20,11 @@ const OrganizationContainer: React.FC<{}> = () => {
   const organizationId =
     selectedOrganizationRouteMatch &&
     selectedOrganizationRouteMatch.params.organizationId;
-  const organization = useSelector<IAppState, IBlock | undefined>((state) =>
-    getBlock(state, organizationId)
-  );
+  const organization = useSelector<IAppState, IBlock | undefined>((state) => {
+    if (organizationId) {
+      return BlockSelectors.getBlock(state, organizationId);
+    }
+  });
 
   if (!organization) {
     return (

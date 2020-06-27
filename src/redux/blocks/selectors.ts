@@ -18,7 +18,7 @@ function getBlocksAsArray(state: IAppState, ids: string[]) {
 function getOrgTasks(state: IAppState, org: IBlock) {
   const blocks: IBlock[] = [];
 
-  Object.keys(state).forEach((id) => {
+  Object.keys(state.blocks).forEach((id) => {
     const block = state.blocks[id];
 
     if (BlockType.Task === block.type && org.customId === block.rootBlockId) {
@@ -32,7 +32,7 @@ function getOrgTasks(state: IAppState, org: IBlock) {
 function getBlockChildren(state: IAppState, parent: IBlock, type?: BlockType) {
   const blocks: IBlock[] = [];
 
-  Object.keys(state).forEach((id) => {
+  Object.keys(state.blocks).forEach((id) => {
     const block = state.blocks[id];
 
     if (type && type !== block.type) {

@@ -70,7 +70,7 @@ const useOperation: UseOperation = (selector = {}, loadOperation) => {
         isCompleted: false,
         isError: false,
         isLoading: false,
-        opId: managedOpId,
+        opId: selector.id || managedOpId,
       };
 
   React.useEffect(() => {
@@ -85,7 +85,7 @@ const useOperation: UseOperation = (selector = {}, loadOperation) => {
         dispatch(OperationActions.deleteOperation(managedOpId));
       }
     };
-  }, [managedOpId]);
+  }, [managedOpId, dispatch]);
 
   return statusData;
 };

@@ -2,7 +2,7 @@ import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
 import ErrorMessages from "../models/errorMessages";
-import { getUserToken } from "../redux/session/selectors";
+import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
@@ -123,7 +123,7 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
 }
 
 function getToken() {
-  return getUserToken(store.getState());
+  return SessionSelectors.getUserToken(store.getState());
 }
 
 export interface INetCallWithAuthProps extends INetCallProps {
