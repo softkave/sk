@@ -156,33 +156,35 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   const renderHeader = () => {
     return (
-      <BoardBlockHeader
-        noExtraCreateMenuItems={noExtraCreateMenuItems}
-        isMobile={isMobile}
-        block={block}
-        selectedBoardType={boardType}
-        resourceType={resourceType}
-        onClickAddCollaborator={onClickAddCollaborator}
-        onClickAddOrEditLabel={onClickAddOrEditLabel}
-        onClickAddOrEditStatus={onClickAddOrEditStatus}
-        onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
-        onClickDeleteBlock={() => onClickDeleteBlock(block)}
-        onClickEditBlock={() => onClickUpdateBlock(block)}
-        onNavigate={(navResourceType, navBoardType) => {
-          let nextPath = `${blockPath}`;
+      <React.Fragment>
+        <BoardBlockHeader
+          noExtraCreateMenuItems={noExtraCreateMenuItems}
+          isMobile={isMobile}
+          block={block}
+          selectedBoardType={boardType}
+          resourceType={resourceType}
+          onClickAddCollaborator={onClickAddCollaborator}
+          onClickAddOrEditLabel={onClickAddOrEditLabel}
+          onClickAddOrEditStatus={onClickAddOrEditStatus}
+          onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
+          onClickDeleteBlock={() => onClickDeleteBlock(block)}
+          onClickEditBlock={() => onClickUpdateBlock(block)}
+          onNavigate={(navResourceType, navBoardType) => {
+            let nextPath = `${blockPath}`;
 
-          if (navResourceType) {
-            nextPath = `${nextPath}/${navResourceType}`;
-          }
+            if (navResourceType) {
+              nextPath = `${nextPath}/${navResourceType}`;
+            }
 
-          if (navBoardType) {
-            nextPath = `${nextPath}?${boardTypeSearchParamKey}=${navBoardType}`;
-          }
+            if (navBoardType) {
+              nextPath = `${nextPath}?${boardTypeSearchParamKey}=${navBoardType}`;
+            }
 
-          history.push(nextPath);
-        }}
-        style={{ marginBottom: "24px", padding: "0 16px" }}
-      />
+            history.push(nextPath);
+          }}
+          style={{ padding: "16px" }}
+        />
+      </React.Fragment>
     );
   };
 

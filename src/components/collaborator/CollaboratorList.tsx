@@ -2,12 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import { IAppState } from "../../redux/types";
+import UserSelectors from "../../redux/users/selectors";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
-import UserSelectors from "../../redux/users/selectors";
-import { IAppState } from "../../redux/types";
 
 export interface ICProps {
   organization: IBlock;
@@ -15,6 +15,7 @@ export interface ICProps {
 
 const CollaboratorList: React.FC<ICProps> = (props) => {
   const { organization } = props;
+  console.log({ organization });
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
     UserSelectors.getUsers(state, organization.collaborators!)
   );

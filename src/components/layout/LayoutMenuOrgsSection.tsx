@@ -2,7 +2,9 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Empty, Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
+import BlockList from "../block/BlockList";
 import NewBlockList from "../block/NewBlockList";
+import StyledContainer from "../styled/Container";
 import LayoutMenuOrgsSectionHeader from "./LayoutMenuOrgsSectionHeader";
 
 export interface ILayoutMenuOrgsSectionProps {
@@ -12,12 +14,13 @@ export interface ILayoutMenuOrgsSectionProps {
 
   isLoading?: boolean;
   errorMessage?: string;
+  orgId?: string;
 }
 
 const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
   props
 ) => {
-  const { orgs, isLoading, errorMessage, onAddOrg, onSelectOrg } = props;
+  const { orgs, isLoading, errorMessage, orgId, onAddOrg, onSelectOrg } = props;
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const filterOrgs = React.useCallback(() => {
@@ -46,7 +49,31 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
       return <Empty description="No Orgs"></Empty>;
     }
 
-    return <NewBlockList blocks={filterOrgs()} onClick={onSelectOrg} />;
+    return (
+      <BlockList
+        blocks={filterOrgs()}
+        onClick={onSelectOrg}
+        showFields={["name"]}
+        getBlockStyle={(block, i) => {
+          return {
+            padding: "8px 16px",
+            backgroundColor: block.customId === orgId ? "#eee" : undefined,
+
+            "&:hover": {
+              backgroundColor: "#eee",
+            },
+          };
+        }}
+      />
+    );
+
+    return (
+      <NewBlockList
+        blocks={filterOrgs()}
+        onClick={onSelectOrg}
+        avatarShape="circle"
+      />
+    );
   }, [isLoading, errorMessage, orgs, filterOrgs, onSelectOrg]);
 
   return (

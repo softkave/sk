@@ -4,6 +4,7 @@ import { useHistory } from "react-router";
 import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import MainLayoutOld from "../components/layout/MainLayoutOld";
 import { isPath0App, makePath, paths } from "../components/layout/path";
+import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer from "../components/styled/Container";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
 import SessionSelectors from "../redux/session/selectors";
@@ -52,8 +53,12 @@ const Main: React.FC<{}> = () => {
 
   switch (sessionType) {
     case "app":
-      // return <MainLayoutContainer />;
-      return <MainLayoutOld />;
+      return (
+        <RenderForDevice
+          renderForDesktop={() => <MainLayoutContainer />}
+          renderForMobile={() => <MainLayoutOld />}
+        />
+      );
 
     case "web":
       return <Routes />;

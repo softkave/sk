@@ -23,7 +23,8 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
         flexDirection: "column",
         flex: 1,
         width: "100%",
-        padding: "0 16px",
+        height: "100%",
+        // padding: "0 16px",
         overflowY: "auto",
       }}
     >

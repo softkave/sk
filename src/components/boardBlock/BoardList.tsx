@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import BlockGrid from "../block/BlockGrid";
 import BlockList from "../block/BlockList";
@@ -7,46 +8,36 @@ import StyledContainer from "../styled/Container";
 
 export interface IBoardListProps {
   boards: IBlock[];
+
   onClick?: (board: IBlock) => void;
 }
 
 const BoardList: React.FC<IBoardListProps> = (props) => {
   const { onClick, boards } = props;
 
-  const renderBoards = () => (
-    <RenderForDevice
-      renderForMobile={() => (
-        <BlockList
-          blocks={boards}
-          emptyDescription="Create a board to get started."
-          onClick={onClick}
-          showFields={["name", "description"]}
-        />
-      )}
-      renderForDesktop={() => (
-        <StyledContainer s={{ marginTop: "16px" }}>
-          <BlockGrid
-            blocks={boards}
-            emptyDescription="Create an organization to get started."
-            onClick={onClick}
-            showFields={["name", "description"]}
-            style={{ width: "100%" }}
-          />
-        </StyledContainer>
-      )}
-    />
+  const boardRouteMatch = useRouteMatch<{ boardId: string }>(
+    "/app/organizations/:orgId/boards/:boardId"
   );
-
-  // return renderBoards();
 
   return (
     <BlockList
-      // padWidth
-      border
       blocks={boards}
       onClick={onClick}
       showFields={["name"]}
-      emptyDescription="No boards available."
+      emptyDescription="No boards available"
+      getBlockStyle={(block, i) => {
+        return {
+          padding: "8px 16px",
+          backgroundColor:
+            block.customId === boardRouteMatch?.params.boardId
+              ? "#eee"
+              : undefined,
+
+          "&:hover": {
+            backgroundColor: "#eee",
+          },
+        };
+      }}
     />
   );
 };

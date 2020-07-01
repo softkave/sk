@@ -4,6 +4,7 @@ import { IBlock, IBlockLabel, IBlockStatus } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import { blockConstants } from "../../models/block/constants";
 import blockValidationSchemas from "../block/validation";
+import ColorPicker from "../form/ColorPicker";
 import FormError from "../form/FormError";
 import { IFormikFormErrors } from "../form/formik-utils";
 import {
@@ -14,6 +15,7 @@ import {
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledButton from "../styled/Button";
 import StyledContainer from "../styled/Container";
+import Editable from "../utilities/Editable";
 import OrgExistsMessage from "./OrgExistsMessage";
 
 export interface IEditOrgFormValues {
@@ -48,7 +50,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     errors: externalErrors,
   } = props;
 
-  const { formik } = useFormHelpers({
+  const { formik, formikChangedFieldsHelpers } = useFormHelpers({
     errors: externalErrors,
     formikProps: {
       onSubmit,
@@ -79,49 +81,77 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     }
   };
 
-  const renderNameInput = () => {
-    const { touched, values, errors } = formik;
+  const roi = () => {
     const orgExistsMessage = doesOrgExist(formik.errors as any);
 
-    // TODO: make your own Editable using Paragraph and Textarea
+    const input = (
+      <Input
+        autoComplete="off"
+        name="name"
+        onBlur={formik.handleBlur}
+        onChange={(evt) => {
+          formik.handleChange(evt);
+          formikChangedFieldsHelpers.addField("name");
+        }}
+        value={formik.values.name}
+        placeholder="Org name"
+        disabled={isSubmitting}
+        maxLength={blockConstants.maxNameLength}
+      />
+    );
+
+    let editable: React.ReactNode = null;
+
+    if (!formOnly) {
+      editable = (
+        <Editable
+          // withControls
+          disabled={isSubmitting}
+          render={(isEditing) => {
+            if (isEditing) {
+              return input;
+            }
+
+            return (
+              <Typography.Paragraph strong>
+                {formik.values.name}
+              </Typography.Paragraph>
+            );
+          }}
+          // controlsEventHandler={}
+        />
+      );
+    }
+
     return (
       <Form.Item
-        required
-        label="Name"
         help={
-          touched.name &&
+          formik.touched.name &&
           (!!orgExistsMessage ? (
             <OrgExistsMessage message={orgExistsMessage} />
           ) : (
-            <FormError error={errors.name} />
+            <FormError error={formik.errors.name} />
           ))
         }
-        labelCol={{ span: 24 }}
-        wrapperCol={{ span: 24 }}
+        style={{ width: "100%" }}
       >
-        {formOnly ? (
-          <Input
-            autoComplete="off"
-            name="name"
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            value={values.name}
-            placeholder="Enter organization name"
-            disabled={isSubmitting}
-            maxLength={blockConstants.maxNameLength}
-          />
-        ) : (
-          <Typography.Paragraph
-            editable={{
-              onChange: (val) => {
-                formik.setFieldValue("name", val);
-              },
-            }}
-          >
-            {values.name}
-          </Typography.Paragraph>
-        )}
+        {formOnly ? input : editable}
       </Form.Item>
+    );
+  };
+
+  const renderColorInput = () => {
+    return (
+      <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+        <ColorPicker
+          value={value.color}
+          disabled={isSubmitting}
+          onChange={(val) => {
+            formik.setFieldValue("color", val);
+            formikChangedFieldsHelpers.addField("color");
+          }}
+        />
+      </StyledContainer>
     );
   };
 
@@ -130,7 +160,6 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <Form.Item
-        label="Description"
         help={
           touched.description && <FormError>{errors.description}</FormError>
         }
@@ -164,18 +193,72 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     );
   };
 
+  const renderDesc = () => {
+    const input = (
+      <Input.TextArea
+        autoSize={{ minRows: 4, maxRows: 8 }}
+        autoComplete="off"
+        name="description"
+        onBlur={formik.handleBlur}
+        onChange={(evt) => {
+          formik.handleChange(evt);
+          formikChangedFieldsHelpers.addField("description");
+        }}
+        value={formik.values.description}
+        placeholder="Org description"
+        disabled={isSubmitting}
+        maxLength={blockConstants.maxDescriptionLength}
+      />
+    );
+
+    let editable: React.ReactNode = null;
+
+    if (!formOnly) {
+      editable = (
+        <Editable
+          // withControls
+          disabled={isSubmitting}
+          render={(isEditing) => {
+            if (isEditing) {
+              return input;
+            }
+
+            return (
+              <Typography.Paragraph strong>
+                {formik.values.description || ""}
+              </Typography.Paragraph>
+            );
+          }}
+          // controlsEventHandler={}
+        />
+      );
+    }
+
+    return (
+      <Form.Item
+        help={
+          formik.touched.description && (
+            <FormError>{formik.errors.description}</FormError>
+          )
+        }
+      >
+        {formOnly ? input : editable}
+      </Form.Item>
+    );
+  };
+
   const getSubmitLabel = () => {
     if (isSubmitting) {
       if (org) {
         return "Saving Changes";
       } else {
-        return "Creating Organization";
+        return "Creating Org";
       }
     } else {
       if (org) {
         return "Save Changes";
       } else {
-        return "Create Organization";
+        return "Create Org";
       }
     }
   };
@@ -207,9 +290,17 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
       <StyledForm onSubmit={handleSubmit}>
         <StyledContainer s={formContentWrapperStyle}>
           <StyledContainer s={formInputContentWrapperStyle}>
+            <Form.Item>
+              <Typography.Title level={4}>Organization</Typography.Title>
+            </Form.Item>
             {errors.error && <FormError error={errors.error} />}
-            {renderNameInput()}
-            {renderDescriptionInput()}
+            <StyledContainer>
+              <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
+                {roi()}
+              </StyledContainer>
+              {renderColorInput()}
+            </StyledContainer>
+            {renderDesc()}
           </StyledContainer>
           {renderControls()}
         </StyledContainer>

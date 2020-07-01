@@ -23,7 +23,7 @@ export type OnClickBlockWithSearchParamKey = (
   searchParamKey?: string
 ) => void;
 export type OnClickUpdateBlock = (block: IBlock) => void;
-export type OnClickAddBlock = (block: IBlock, type: BlockType) => void;
+export type OnClickAddBlock = (parent: IBlock, type: BlockType) => void;
 export type OnClickAddCollaborator = () => void;
 export type OnClickAddOrEditLabel = () => void;
 export type OnClickAddOrEditStatus = () => void;

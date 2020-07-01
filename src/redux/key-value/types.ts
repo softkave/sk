@@ -6,4 +6,5 @@ export enum KeyValueKeys {
   CachedOrgPath = "cachedOrgPath",
   AppMenu = "appMenu",
   ShowNewOrgForm = "showNewOrgForm",
+  RootBlocksLoaded = "rootBlocksLoaded",
 }

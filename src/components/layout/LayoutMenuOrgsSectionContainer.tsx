@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
@@ -24,14 +24,25 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
     )
   );
 
+  const orgRouteMatch = useRouteMatch<{ orgId: string }>(
+    "/app/organizations/:orgId"
+  );
+
   const loadOrgs = React.useCallback(
-    (loadOrgsProps: IUseOperationStatus) => {
+    async (loadOrgsProps: IUseOperationStatus) => {
       const operation = loadOrgsProps.operation;
       const shouldLoad = !operation;
-      console.log({ shouldLoad, opId, id: loadOrgsProps.opId, loadOrgsProps });
 
       if (shouldLoad) {
-        dispatch(loadRootBlocksOperationAction({ opId: loadOrgsProps.opId }));
+        await dispatch(
+          loadRootBlocksOperationAction({ opId: loadOrgsProps.opId })
+        );
+        dispatch(
+          KeyValueActions.setKey({
+            key: KeyValueKeys.RootBlocksLoaded,
+            value: true,
+          })
+        );
       }
     },
     [dispatch]
@@ -55,10 +66,11 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
   return (
     <LayoutMenuOrgsSection
       isLoading={op.isLoading}
-      // errorMessage={op.error}
+      errorMessage={op.error ? "Error loading orgs" : undefined}
       orgs={orgs}
       onAddOrg={onAddOrg}
       onSelectOrg={onSelectOrg}
+      orgId={orgRouteMatch?.params.orgId}
     />
   );
 };

@@ -51,7 +51,7 @@ function getBlockParents(state: IAppState, block: IBlock) {
   let b: IBlock = block;
   const parents: IBlock[] = [];
 
-  while (b.type !== "org") {
+  while (b && b.type !== "org") {
     // TODO: currently assumes that the parent exists
     const parent = getBlock(state, b.parent!)!;
     parents.unshift(parent);

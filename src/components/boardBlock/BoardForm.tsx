@@ -97,7 +97,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     return (
       <Form.Item
         required
-        label="Board Name"
         help={touched.name && <FormError error={boardNameError} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
@@ -109,7 +108,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             value={values.name}
-            placeholder="Enter board name"
+            placeholder="Board name"
             disabled={isSubmitting}
             maxLength={blockConstants.maxNameLength}
           />
@@ -133,7 +132,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
 
     return (
       <Form.Item
-        label="Description"
         help={touched.description && <FormError error={errors.description} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
@@ -146,7 +144,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             onBlur={handleBlur}
             onChange={handleChange}
             value={values.description}
-            placeholder="Enter board description"
+            placeholder="Board description"
             disabled={isSubmitting}
             maxLength={blockConstants.maxDescriptionLength}
           />

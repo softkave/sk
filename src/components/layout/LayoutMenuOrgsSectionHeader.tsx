@@ -34,70 +34,31 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
   );
 
   return (
-    <StyledContainer s={{ padding: "0 16px" }}>
-      {!showSearchBar && (
-        <StyledContainer s={{ width: "100%" }}>
-          <Typography.Text strong>Orgs</Typography.Text>
-          <StyledContainer
-            s={{
-              flex: 1,
-              justifyContent: "flex-end",
-              marginLeft: "8px",
-              cursor: "pointer",
-            }}
-          >
-            {isLoading && <LoadingOutlined />}
-            {!isLoading && (
-              <Space>
-                <StyledContainer>
-                  <Plus
-                    onClick={onAddOrg}
-                    style={{ width: "16px", height: "16px", cursor: "pointer" }}
-                  />
-                </StyledContainer>
-                <StyledContainer>
-                  <Search
-                    onClick={disableSearch ? undefined : toggleSearchBar}
-                    style={{
-                      width: "16px",
-                      height: "16px",
-                      cursor: disableSearch ? "not-allowed" : "pointer",
-                      color: disableSearch ? "#999" : undefined,
-                    }}
-                  />
-                </StyledContainer>
-              </Space>
-            )}
-          </StyledContainer>
+    <StyledContainer
+      s={{ padding: "0 16px", flexDirection: "column", width: "100%" }}
+    >
+      <StyledContainer s={{ paddingBottom: "8px" }}>
+        <Typography.Text strong style={{ flex: 1, marginRight: "8px" }}>
+          Orgs
+        </Typography.Text>
+        <StyledContainer s={{ alignItems: "center" }}>
+          <Plus
+            onClick={onAddOrg}
+            style={{ width: "18px", height: "18px", cursor: "pointer" }}
+          />
         </StyledContainer>
-      )}
-      {showSearchBar && (
-        <StyledContainer s={{ width: "100%" }}>
-          <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
-            <Input
-              autoFocus
-              allowClear
-              size="small"
-              placeholder="Search orgs..."
-              prefix={
-                <Search
-                  style={{ width: "16px", height: "16px", color: "#999" }}
-                />
-              }
-              onChange={(evt) => onChangeSearchInput(evt.target.value)}
-            />
-          </StyledContainer>
-          <StyledContainer s={{ alignItems: "center" }}>
-            <X
-              onClick={() => {
-                onChangeSearchInput("");
-                toggleSearchBar();
-              }}
-              style={{ width: "16px", height: "16px", cursor: "pointer" }}
-            />
-          </StyledContainer>
-        </StyledContainer>
-      )}
+      </StyledContainer>
+      <StyledContainer s={{ flex: 1 }}>
+        <Input
+          allowClear
+          size="small"
+          placeholder="Search orgs..."
+          prefix={
+            <Search style={{ width: "16px", height: "16px", color: "#999" }} />
+          }
+          onChange={(evt) => onChangeSearchInput(evt.target.value)}
+        />
+      </StyledContainer>
     </StyledContainer>
   );
 };

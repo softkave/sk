@@ -2,6 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
@@ -21,6 +22,7 @@ export interface IEditOrgFormContainerProps {
 const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   const { onClose } = props;
   const dispatch: AppDispatch = useDispatch();
+  const history = useHistory();
   const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const [block, setBlock] = React.useState<IBlock>(
     props.block || getNewBlock(user, BlockType.Org)
@@ -64,12 +66,12 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     if (!props.block) {
       if (createOrgOpStat.isCompleted) {
         message.success("Org created successfully");
-        // history.push(`/app/organizations/${data.customId}`);
+        history.push(`/app/organizations/${data.customId}`);
+        onClose();
       }
     } else {
       if (createOrgOpStat.isCompleted) {
         message.success("Org updated successfully");
-        onClose();
       } else if (createOrgOpStat.isError) {
         message.error("Error updating org");
       }

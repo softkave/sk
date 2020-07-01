@@ -28,7 +28,7 @@ const LayoutMenuOrgsList: React.FC<ILayoutMenuOrgsListProps> = (props) => {
           <Space>
             <Avatar
               size="small"
-              shape="square"
+              shape="circle"
               style={{
                 backgroundColor: org.color,
               }}

@@ -164,5 +164,6 @@ const StyledDesktopNotificationBodyContainer = styled.div({
 });
 
 const StyledDesktopNotificationListContainer = styled.div({
-  minWidth: "400px",
+  minWidth: "320px",
+  borderRight: "1px solid #d9d9d9",
 });

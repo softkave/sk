@@ -4,14 +4,19 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail, {
   BlockThumbnailShowField,
+  IBlockThumbnailProps,
 } from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 
 export interface IBlockListProps {
   blocks: IBlock[];
+  getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
+
+  blockThumbnailProps?: Partial<IBlockThumbnailProps>;
   borderTop?: boolean;
   padWidth?: boolean;
+  paddingNum?: number;
   border?: boolean;
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
@@ -28,14 +33,10 @@ class BlockList extends React.PureComponent<IBlockListProps> {
       borderTop,
       padWidth,
       border,
+      blockThumbnailProps,
+      paddingNum,
+      getBlockStyle,
     } = this.props;
-
-    const getBorderTop = !border
-      ? () => undefined
-      : borderTop
-      ? (i: number) => "1px solid #d9d9d9"
-      : (i: number) => (i === 0 ? undefined : "1px solid #d9d9d9");
-    const padding = padWidth ? "16px" : "16px 0";
 
     return (
       <List
@@ -44,13 +45,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
         renderItem={(block, i) => (
           <StyledContainer
             key={block.customId}
-            s={{
-              padding,
-              borderTop: getBorderTop(i),
-              // "&:hover": {
-              //   backgroundColor: "#fafafa",
-              // },
-            }}
+            s={getBlockStyle ? getBlockStyle(block, i) : undefined}
           >
             <BlockThumbnail
               block={block}
