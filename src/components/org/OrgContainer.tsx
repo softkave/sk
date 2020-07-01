@@ -70,8 +70,6 @@ const OrgContainer: React.FC<IOrgContainerProps> = (props) => {
     }
   };
 
-  console.log({ opStat });
-
   return (
     <Org
       formOnly={!props.block}

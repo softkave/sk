@@ -136,8 +136,6 @@ const Org: React.FC<IEditOrgProps> = (props) => {
       );
     }
 
-    console.log({ orgExistsMessage });
-
     return (
       <Form.Item
         help={

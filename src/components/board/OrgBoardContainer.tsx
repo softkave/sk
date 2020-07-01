@@ -76,7 +76,6 @@ const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
   };
 
   const parents = useBlockParents(block);
-  console.log({ parents, block });
   const parentPath = `/app${parents.map(getPath).join("")}`;
 
   // TODO: we need to rebuild the path when the user transfers the block
