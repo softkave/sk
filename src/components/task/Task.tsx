@@ -197,13 +197,13 @@ const Task: React.FC<ITaskProps> = (props) => {
         </StyledContainer>
         {(hasAssignees || task.dueAt) && (
           <StyledContainer>
-            {task.dueAt && <TaskThumbnailDueDate task={task} />}
-            {hasAssignees && (
-              <StyledContainer
-                s={{ justifyContent: "flex-end", flex: 1, paddingLeft: "16px" }}
-              >
-                <TaskThumbnailAssignees task={task} users={orgUsers} />
+            {task.dueAt && (
+              <StyledContainer s={{ flex: 1, paddingRight: "16px" }}>
+                <TaskThumbnailDueDate task={task} />
               </StyledContainer>
+            )}
+            {hasAssignees && (
+              <TaskThumbnailAssignees task={task} users={orgUsers} />
             )}
           </StyledContainer>
         )}
