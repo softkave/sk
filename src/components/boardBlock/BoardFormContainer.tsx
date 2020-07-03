@@ -70,13 +70,13 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
         history.push(
           `/app/organizations/${data.parent}/boards/${data.customId}`
         );
+        onClose();
       } else if (opStat.isError) {
         message.error("Error creating board");
       }
     } else {
       if (opStat.isCompleted) {
         message.success("Board updated successfully");
-        onClose();
       } else if (opStat.isError) {
         message.error("Error updating board");
       }
