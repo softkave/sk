@@ -128,12 +128,50 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
+  const renderNameInput = () => {
+    const { touched, values, errors } = formik;
+
+    return (
+      <Form.Item
+        required
+        label="Title"
+        help={touched.name && <FormError error={errors.name} />}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        {formOnly ? (
+          <Input
+            autoComplete="off"
+            name="name"
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={values.name}
+            placeholder="Task"
+            disabled={isSubmitting}
+            maxLength={blockConstants.maxNameLength}
+          />
+        ) : (
+          <Typography.Paragraph
+            editable={{
+              onChange: (val) => {
+                formik.setFieldValue("name", val);
+              },
+            }}
+          >
+            {values.name}
+          </Typography.Paragraph>
+        )}
+      </Form.Item>
+    );
+  };
+
   const renderDescriptionInput = (formikProps: TaskFormFormikProps) => {
     const { touched, handleBlur, values, errors, handleChange } = formikProps;
 
     return (
       <Form.Item
         required
+        label="Description"
         help={touched.description && <FormError error={errors.description} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
@@ -147,7 +185,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             onBlur={handleBlur}
             onChange={handleChange}
             value={values.description}
-            placeholder="Enter task description"
+            placeholder="Description"
             disabled={isSubmitting}
             maxLength={blockConstants.maxDescriptionLength}
           />
@@ -486,6 +524,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <FormError error={globalError} />
               </Form.Item>
             )}
+            {renderNameInput()}
             {renderDescriptionInput(formikProps)}
             {renderParentInput(formikProps)}
             {renderPriority(formikProps)}

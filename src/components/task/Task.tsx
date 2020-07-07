@@ -174,16 +174,26 @@ const Task: React.FC<ITaskProps> = (props) => {
             {options}
           </StyledContainer>
         </StyledContainer>
-        <StyledContainer onClick={onClick} s={{ cursor: "pointer" }}>
-          <Typography.Paragraph
-            ellipsis={{
-              rows: 2,
-              expandable: true,
-            }}
-            style={{ marginBottom: "0" }}
-          >
-            {task.description}
-          </Typography.Paragraph>
+        <StyledContainer
+          onClick={onClick}
+          s={{ cursor: "pointer", flexDirection: "column", width: "100%" }}
+        >
+          {task.name && (
+            <Typography.Paragraph strong style={{ marginBottom: "0" }}>
+              {task.name}
+            </Typography.Paragraph>
+          )}
+          {task.description && (
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 2,
+                expandable: true,
+              }}
+              style={{ marginBottom: "0" }}
+            >
+              {task.description}
+            </Typography.Paragraph>
+          )}
         </StyledContainer>
         <StyledContainer>
           <StyledContainer onClick={stopPropagation}>

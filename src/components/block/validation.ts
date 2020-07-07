@@ -27,7 +27,8 @@ const subTaskSchema = yup.object().shape({
 });
 
 const task = yup.object().shape({
-  description: descriptionOptional.required(),
+  name,
+  description: descriptionOptional,
   parent: yup.string().required(),
 
   // TODO: what should be the max?
