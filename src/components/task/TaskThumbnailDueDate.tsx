@@ -16,6 +16,8 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
     return null;
   }
 
+  const dueAt = moment(task.dueAt);
+
   return (
     <Space>
       <StyledContainer>
@@ -27,8 +29,10 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
           }}
         />
       </StyledContainer>
-      <Tag>
-        <Typography.Text>Due {moment(task.dueAt).fromNow()}</Typography.Text>
+      <Tag
+        color={task.dueAt && Date.now() > dueAt.valueOf() ? "red" : undefined}
+      >
+        <Typography.Text>Due {dueAt.fromNow()}</Typography.Text>
       </Tag>
     </Space>
   );

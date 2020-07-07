@@ -1,7 +1,7 @@
 import {
   DeleteOutlined,
   EllipsisOutlined,
-  PlayCircleOutlined,
+  PicLeftOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
@@ -53,8 +53,8 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
         }}
       >
         <Menu.Item style={{ textTransform: "capitalize" }} key="view">
-          <PlayCircleOutlined />
-          View or Edit {blockTypeFullName}
+          <PicLeftOutlined />
+          View {blockTypeFullName}
         </Menu.Item>
         <Menu.Item style={{ textTransform: "capitalize" }} key="delete">
           <DeleteOutlined />
