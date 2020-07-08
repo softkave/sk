@@ -1,6 +1,6 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -35,8 +35,13 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     return BlockSelectors.getBlock(state, orgId)!;
   });
 
+  const [parentId, setParentId] = React.useState(
+    props.parentBlock?.customId || props.block?.parent
+  );
   const parentBlock = useSelector<IAppState, IBlock | undefined>((state) => {
-    if (props.parentBlock) {
+    if (parentId) {
+      return BlockSelectors.getBlock(state, parentId);
+    } else if (props.parentBlock) {
       return props.parentBlock;
     } else if (props.block) {
       return BlockSelectors.getBlock(state, props.block.parent!);
@@ -75,7 +80,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   });
 
   const possibleParents = useBlockPossibleParents(block);
-
   const operationStatus = useOperation();
 
   const errors = operationStatus.error
@@ -140,6 +144,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
       isSubmitting={operationStatus.isLoading}
       errors={errors}
       possibleParents={possibleParents}
+      onChangeParent={setParentId}
     />
   );
 };

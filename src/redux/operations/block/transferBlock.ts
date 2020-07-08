@@ -1,8 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IBlock } from "../../../models/block/block";
+import { BlockType, IBlock } from "../../../models/block/block";
 import { getDateString } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
+import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import { GetOperationActionArgs } from "../types";
 
@@ -35,6 +36,20 @@ export const transferBlockHelperAction = createAsyncThunk<
     updatedAt: getDateString(),
     parent: destinationBlock.customId,
   };
+
+  // Already done in task form, will conflict
+  // if (draggedBlock.type === BlockType.Task) {
+  //   const statuses = destinationBlock.boardStatuses || [];
+
+  //   if (statuses.length > 0) {
+  //     const user = SessionSelectors.getSignedInUserRequired(
+  //       thunkAPI.getState()
+  //     );
+  //     draggedBlockUpdates.status = statuses[0]?.customId;
+  //     draggedBlockUpdates.statusAssignedAt = getDateString();
+  //     draggedBlockUpdates.statusAssignedBy = user.customId;
+  //   }
+  // }
 
   await thunkAPI.dispatch(
     BlockActions.updateBlock({
