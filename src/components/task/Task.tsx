@@ -179,12 +179,13 @@ const Task: React.FC<ITaskProps> = (props) => {
           s={{ cursor: "pointer", flexDirection: "column", width: "100%" }}
         >
           {task.name && (
-            <Typography.Paragraph strong style={{ marginBottom: "0" }}>
+            <Typography.Paragraph style={{ marginBottom: "0" }}>
               {task.name}
             </Typography.Paragraph>
           )}
           {task.description && (
             <Typography.Paragraph
+              type={task.name ? "secondary" : undefined}
               ellipsis={{
                 rows: 2,
                 expandable: true,
