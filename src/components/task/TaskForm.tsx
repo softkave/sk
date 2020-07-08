@@ -58,6 +58,7 @@ export interface ITaskFormProps {
   value: ITaskFormValues;
   onClose: () => void;
   onSubmit: (values: ITaskFormValues) => void;
+  onChangeParent: (parentId: string) => void;
 
   formOnly?: boolean;
   task?: IBlock;
@@ -107,6 +108,46 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     },
   });
 
+  const status = formik.values.status;
+
+  React.useEffect(() => {
+    if (!status && statusList.length > 0) {
+      formik.setValues({
+        ...formik.values,
+        status: statusList[0].customId,
+        statusAssignedAt: getDateString(),
+        statusAssignedBy: user.customId,
+      });
+    }
+  }, [statusList, status]);
+
+  const onChangeParent = (parentId: string) => {
+    if (parentId === formik.values.parent) {
+      return;
+    }
+
+    if (parentId === task?.parent) {
+      formik.setValues({
+        ...formik.values,
+        parent: parentId,
+        labels: task.labels,
+        status: task.status,
+        statusAssignedAt: task.statusAssignedAt,
+        statusAssignedBy: task.statusAssignedBy,
+      });
+      return;
+    }
+
+    formik.setValues({
+      ...formik.values,
+      parent: parentId,
+      labels: [],
+      status: undefined,
+      statusAssignedAt: undefined,
+      statusAssignedBy: undefined,
+    });
+  };
+
   const renderParentInput = (formikProps: TaskFormFormikProps) => {
     const { touched, errors, values, setFieldValue } = formikProps;
 
@@ -121,7 +162,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         <BlockParentSelection
           value={values.parent}
           possibleParents={possibleParents}
-          onChange={(val) => setFieldValue("parent", val)}
+          onChange={(val) => onChangeParent(val)}
           disabled={isSubmitting}
         />
       </Form.Item>
