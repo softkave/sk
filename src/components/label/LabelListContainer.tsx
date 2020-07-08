@@ -2,11 +2,10 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BlockType, IBlock, IBlockLabel } from "../../models/block/block";
-import BlockSelectors from "../../redux/blocks/selectors";
+import { IBlock, IBlockLabel } from "../../models/block/block";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
-import { AppDispatch, IAppState } from "../../redux/types";
+import { AppDispatch } from "../../redux/types";
 import {
   flattenErrorListWithDepthInfinite,
   getDateString,
@@ -22,15 +21,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
   const { block } = props;
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector(SessionSelectors.getSignedInUserRequired);
-  const org = useSelector<IAppState, IBlock>((state) => {
-    if (block.type === BlockType.Org) {
-      return BlockSelectors.getBlock(state, block.customId)!;
-    } else {
-      return BlockSelectors.getBlock(state, block.rootBlockId!)!;
-    }
-  });
-
-  const labelList = org.boardLabels || [];
+  const labelList = block.boardLabels || [];
   const operationStatus = useOperation();
 
   const errors = operationStatus.error
@@ -46,7 +37,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
     const result = await dispatch(
       updateBlockOperationAction({
         opId: operationStatus.opId,
-        block: org,
+        block,
         data: {
           // TODO: find a better way to only update the ones that changed
           boardLabels: values.map((value) => ({
