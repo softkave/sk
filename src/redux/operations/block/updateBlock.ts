@@ -81,7 +81,11 @@ const updateTasksIfHasDeletedStatusesOrLabels = createAsyncThunk<
     return;
   }
 
-  const tasks = BlockSelectors.getOrgTasks(thunkAPI.getState(), args.block);
+  const tasks = BlockSelectors.getBlockChildren(
+    thunkAPI.getState(),
+    args.block,
+    BlockType.Task
+  );
 
   if (tasks.length === 0) {
     return;
