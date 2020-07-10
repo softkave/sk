@@ -211,7 +211,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     return (
       <Form.Item
-        required
         label="Description"
         help={touched.description && <FormError error={errors.description} />}
         labelCol={{ span: 24 }}

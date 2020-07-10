@@ -49,7 +49,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
   });
 
   const statusList = parentBlock?.boardStatuses || [];
-  const labelList = org.boardLabels || [];
+  const labelList = parentBlock?.boardLabels || [];
 
   const collaboratorIds = Array.isArray(org.collaborators)
     ? org.collaborators
