@@ -11,6 +11,7 @@ export interface IBoardTypeListProps {
   onClickCreateNewBlock: OnClickAddBlock;
 
   style?: React.CSSProperties;
+  searchQuery?: string;
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
@@ -24,7 +25,6 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
         flex: 1,
         width: "100%",
         height: "100%",
-        // padding: "0 16px",
         overflowY: "auto",
       }}
     >

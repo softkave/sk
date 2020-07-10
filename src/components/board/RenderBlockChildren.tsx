@@ -10,6 +10,8 @@ export interface IRenderBlockChildrenProps {
   block: IBlock;
   selectedResourceType: BoardResourceType;
   onClickBlock: (blocks: IBlock[]) => void;
+
+  searchQuery?: string;
 }
 
 const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {

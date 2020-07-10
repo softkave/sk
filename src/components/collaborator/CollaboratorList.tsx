@@ -15,6 +15,7 @@ export interface ICProps {
 
 const CollaboratorList: React.FC<ICProps> = (props) => {
   const { organization } = props;
+  console.log({ props });
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
     UserSelectors.getUsers(state, organization.collaborators!)
   );

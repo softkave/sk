@@ -1,7 +1,7 @@
-import { Tabs } from "antd";
+import { Input, Tabs } from "antd";
 import path from "path";
 import React from "react";
-import { Plus } from "react-feather";
+import { Plus, Search } from "react-feather";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -63,6 +63,9 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
   } = props;
 
   const childrenTypes = useBlockChildrenTypes(block);
+  const [searchQuery, setSearchQueries] = React.useState<{
+    [key: string]: string;
+  }>({});
   const resourceTypes = getBlockResourceTypes(block, childrenTypes);
 
   const history = useHistory();
@@ -108,10 +111,46 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
   // TODO: should we show error if block type is task?
   if (!resourceType) {
-    const newBoardType = getDefaultBoardViewType(block);
     const nextPath = path.normalize(blockPath + `/boards`);
     return <Redirect to={nextPath} />;
   }
+
+  const renderSearch = () => {
+    let placeholder = "";
+
+    switch (resourceType) {
+      case "boards":
+        placeholder = "Search boards...";
+        break;
+
+      case "collaboration-requests":
+        placeholder = "Search requests...";
+        break;
+
+      case "collaborators":
+        placeholder = "Search collaborators...";
+        break;
+    }
+
+    return (
+      <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
+        <Input
+          allowClear
+          size="small"
+          placeholder={placeholder}
+          prefix={
+            <Search style={{ width: "8px", height: "16px", color: "#999" }} />
+          }
+          onChange={(evt) =>
+            setSearchQueries({
+              ...searchQuery,
+              [resourceType]: evt.target.value,
+            })
+          }
+        />
+      </StyledContainer>
+    );
+  };
 
   const renderBoardType = () => {
     return (
@@ -121,11 +160,12 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         <StyledContainer
           s={{
             alignItems: "center",
-            justifyContent: "flex-end",
             padding: "0 16px",
             marginBottom: "8px",
+            marginTop: "8px",
           }}
         >
+          {renderSearch()}
           <Plus
             onClick={() => {
               switch (resourceType) {
