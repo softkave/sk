@@ -26,13 +26,28 @@ const subTaskSchema = yup.object().shape({
   description: descriptionOptional.required("Field is required"),
 });
 
-const task = yup.object().shape({
+const subTasks = yup
+  .array()
+  .of(subTaskSchema)
+  .max(blockConstants.maxSubTasksLength);
+const parent = yup.string().required();
+
+const newTask = yup.object().shape({
   name,
   description: descriptionOptional,
-  parent: yup.string().required(),
+  parent,
 
   // TODO: what should be the max?
-  subTasks: yup.array().of(subTaskSchema).max(blockConstants.maxSubTasksLength),
+  subTasks,
+});
+
+const updateTask = yup.object().shape({
+  name: nameOptional.nullable(),
+  description: descriptionOptional,
+  parent,
+
+  // TODO: what should be the max?
+  subTasks,
 });
 
 const blockValidationSchemas = {
@@ -40,7 +55,8 @@ const blockValidationSchemas = {
   nameOptional,
   descriptionOptional,
   org,
-  task,
+  newTask,
+  updateTask,
 };
 
 export default blockValidationSchemas;

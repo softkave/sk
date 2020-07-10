@@ -15,14 +15,14 @@ import {
 } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IBlock, IBlockStatus } from "../../models/block/block";
+import { BlockPriority, IBlock, IBlockStatus } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch } from "../../redux/types";
 import { getOperationStats } from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
-import { priorityToColorMap } from "./Priority";
+import Priority, { priorityToColorMap } from "./Priority";
 import TaskStatusContainer from "./TaskStatusContainer";
 import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
 import TaskThumbnailDueDate from "./TaskThumbnailDueDate";
@@ -162,9 +162,7 @@ const Task: React.FC<ITaskProps> = (props) => {
       <Space direction="vertical" style={{ width: "100%" }}>
         <StyledContainer>
           <StyledContainer s={{ flex: 1 }}>
-            <span style={{ color: priorityToColorMap[task.priority!] }}>
-              {task.priority}
-            </span>
+            <Priority level={task.priority as BlockPriority} />
           </StyledContainer>
           <StyledContainer
             onClick={(evt) => {
@@ -178,12 +176,11 @@ const Task: React.FC<ITaskProps> = (props) => {
           onClick={onClick}
           s={{ cursor: "pointer", flexDirection: "column", width: "100%" }}
         >
-          {task.name && (
+          {task.name ? (
             <Typography.Paragraph style={{ marginBottom: "0" }}>
               {task.name}
             </Typography.Paragraph>
-          )}
-          {task.description && (
+          ) : (
             <Typography.Paragraph
               type={task.name ? "secondary" : undefined}
               ellipsis={{

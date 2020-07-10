@@ -38,7 +38,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
 
       const lowerCasedSearchQuery = searchQuery.toLowerCase();
       return blocks.filter((block) =>
-        block.name.toLowerCase().includes(lowerCasedSearchQuery)
+        block.name?.toLowerCase().includes(lowerCasedSearchQuery)
       );
     };
 

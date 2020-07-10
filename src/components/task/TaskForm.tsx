@@ -104,7 +104,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       // TODO: show a message on form submit or close the form
       onSubmit,
       initialValues: value,
-      validationSchema: blockValidationSchemas.task,
+      validationSchema: formOnly
+        ? blockValidationSchemas.newTask
+        : blockValidationSchemas.updateTask,
     },
   });
 
