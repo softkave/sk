@@ -11,33 +11,54 @@ import CollaboratorThumbnail from "./CollaboratorThumbnail";
 
 export interface ICProps {
   organization: IBlock;
+
+  searchQuery?: string;
+  getCollaboratorStyle?: (user: IUser, index: number) => React.CSSProperties;
 }
 
 const CollaboratorList: React.FC<ICProps> = (props) => {
-  const { organization } = props;
+  const { organization, getCollaboratorStyle, searchQuery } = props;
   const collaborators = useSelector<IAppState, IUser[]>((state) =>
     UserSelectors.getUsers(state, organization.collaborators!)
   );
 
   if (collaborators.length === 0) {
-    return <EmptyMessage>No collaborators yet.</EmptyMessage>;
+    return <EmptyMessage>No collaborators yet</EmptyMessage>;
+  }
+
+  const filterCollaborators = () => {
+    if (!searchQuery) {
+      return collaborators;
+    }
+
+    const lowerCasedSearchQuery = searchQuery.toLowerCase();
+    return collaborators.filter((user) =>
+      user.name.toLowerCase().includes(lowerCasedSearchQuery)
+    );
+  };
+
+  const filteredCollaborators = filterCollaborators();
+
+  if (filteredCollaborators.length === 0) {
+    return <EmptyMessage>Collaborators not found</EmptyMessage>;
   }
 
   const renderItem = (collaborator: IUser, i: number) => {
     return (
       <StyledContainer
         key={collaborator.customId}
-        s={{
-          padding: "16px 0",
-          borderTop: i === 0 ? undefined : "1px solid #d9d9d9",
-        }}
+        s={
+          getCollaboratorStyle
+            ? getCollaboratorStyle(collaborator, i)
+            : undefined
+        }
       >
         <CollaboratorThumbnail collaborator={collaborator} />
       </StyledContainer>
     );
   };
 
-  return <List dataSource={collaborators} renderItem={renderItem} />;
+  return <List dataSource={filteredCollaborators} renderItem={renderItem} />;
 };
 
 export default CollaboratorList;

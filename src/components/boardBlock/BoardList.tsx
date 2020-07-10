@@ -9,11 +9,12 @@ import StyledContainer from "../styled/Container";
 export interface IBoardListProps {
   boards: IBlock[];
 
+  searchQuery?: string;
   onClick?: (board: IBlock) => void;
 }
 
 const BoardList: React.FC<IBoardListProps> = (props) => {
-  const { onClick, boards } = props;
+  const { onClick, boards, searchQuery } = props;
 
   const boardRouteMatch = useRouteMatch<{ boardId: string }>(
     "/app/organizations/:orgId/boards/:boardId"
@@ -21,6 +22,7 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
 
   return (
     <BlockList
+      searchQuery={searchQuery}
       blocks={boards}
       onClick={onClick}
       showFields={["name"]}

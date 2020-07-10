@@ -10,17 +10,31 @@ export interface IRenderBlockChildrenProps {
   block: IBlock;
   selectedResourceType: BoardResourceType;
   onClickBlock: (blocks: IBlock[]) => void;
+
+  searchQuery?: string;
 }
 
 const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
-  const { block, onClickBlock, selectedResourceType } = props;
+  const { block, onClickBlock, selectedResourceType, searchQuery } = props;
 
   const renderCollaborators = () => {
-    return <CollaboratorList organization={block} />;
+    return (
+      <CollaboratorList
+        searchQuery={searchQuery}
+        organization={block}
+        getCollaboratorStyle={() => ({ padding: "8px 16px" })}
+      />
+    );
   };
 
   const renderCollaborationRequests = () => {
-    return <CollaborationRequests organization={block} />;
+    return (
+      <CollaborationRequests
+        searchQuery={searchQuery}
+        organization={block}
+        getRequestStyle={() => ({ padding: "8px 16px" })}
+      />
+    );
   };
 
   switch (selectedResourceType) {
@@ -37,6 +51,7 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
           type={BlockType.Board}
           render={(blocks) => (
             <BoardList
+              searchQuery={searchQuery}
               boards={blocks}
               onClick={(board) => onClickBlock([board])}
             />

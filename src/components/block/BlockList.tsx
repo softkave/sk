@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { isFunction } from "lodash";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -6,21 +5,19 @@ import BlockThumbnail, {
   BlockThumbnailShowField,
   IBlockThumbnailProps,
 } from "../block/BlockThumnail";
+import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 
 export interface IBlockListProps {
   blocks: IBlock[];
-  getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 
+  searchQuery?: string;
   blockThumbnailProps?: Partial<IBlockThumbnailProps>;
-  borderTop?: boolean;
-  padWidth?: boolean;
-  paddingNum?: number;
-  border?: boolean;
   showFields?: BlockThumbnailShowField[];
   emptyDescription?: string | React.ReactNode;
   onClick?: (block: IBlock) => void;
+  getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
 
 class BlockList extends React.PureComponent<IBlockListProps> {
@@ -30,17 +27,30 @@ class BlockList extends React.PureComponent<IBlockListProps> {
       onClick,
       showFields,
       emptyDescription,
-      borderTop,
-      padWidth,
-      border,
-      blockThumbnailProps,
-      paddingNum,
       getBlockStyle,
+      searchQuery,
     } = this.props;
+
+    const filterBlocks = () => {
+      if (!searchQuery) {
+        return blocks;
+      }
+
+      const lowerCasedSearchQuery = searchQuery.toLowerCase();
+      return blocks.filter((block) =>
+        block.name.toLowerCase().includes(lowerCasedSearchQuery)
+      );
+    };
+
+    const filteredBlocks = filterBlocks();
+
+    if (filteredBlocks.length === 0) {
+      return <EmptyMessage>Blocks not found</EmptyMessage>;
+    }
 
     return (
       <List
-        dataSource={blocks}
+        dataSource={filteredBlocks}
         emptyDescription={emptyDescription}
         renderItem={(block, i) => (
           <StyledContainer

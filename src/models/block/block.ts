@@ -63,7 +63,7 @@ export interface IBlock {
   createdBy: string;
   createdAt: string;
   type: BlockType;
-  name?: string;
+  name: string;
   description?: string;
   dueAt?: string;
   color?: string;
