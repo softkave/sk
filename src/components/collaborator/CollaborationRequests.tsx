@@ -11,33 +11,53 @@ import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
 
 export interface ICRProps {
   organization: IBlock;
+
+  searchQuery?: string;
+  getRequestStyle?: (
+    request: INotification,
+    index: number
+  ) => React.CSSProperties;
 }
 
 const CollaborationRequests: React.FC<ICRProps> = (props) => {
-  const { organization } = props;
+  const { organization, getRequestStyle, searchQuery } = props;
   const requests = useSelector<IAppState, INotification[]>((state) =>
     getNotifications(state, organization.notifications!)
   );
 
   if (requests.length === 0) {
-    return <EmptyMessage>No collaboration requests yet.</EmptyMessage>;
+    return <EmptyMessage>No collaboration requests yet</EmptyMessage>;
+  }
+
+  const filterRequests = () => {
+    if (!searchQuery) {
+      return requests;
+    }
+
+    const lowerCasedSearchQuery = searchQuery.toLowerCase();
+    return requests.filter((request) =>
+      request.to.email.toLowerCase().includes(lowerCasedSearchQuery)
+    );
+  };
+
+  const filteredRequests = filterRequests();
+
+  if (filteredRequests.length === 0) {
+    return <EmptyMessage>Requests not found</EmptyMessage>;
   }
 
   const renderItem = (request: INotification, i: number) => {
     return (
       <StyledContainer
         key={request.customId}
-        s={{
-          padding: "16px 0",
-          borderTop: i === 0 ? undefined : "1px solid #d9d9d9",
-        }}
+        s={getRequestStyle ? getRequestStyle(request, i) : undefined}
       >
         <CollaborationRequestThumbnail request={request} />
       </StyledContainer>
     );
   };
 
-  return <List dataSource={requests} renderItem={renderItem} />;
+  return <List dataSource={filteredRequests} renderItem={renderItem} />;
 };
 
 export default CollaborationRequests;

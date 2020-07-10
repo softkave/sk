@@ -68,7 +68,7 @@ const task1: IBlock = {
   createdBy: "",
   customId: "task-1",
   type: BlockType.Task,
-  description: "Build Softkave, an easy-to-use task management application.",
+  name: "Build Softkave, an easy-to-use task management application.",
   status: demoStatuses[0].customId,
   priority: BlockPriority.VeryImportant,
 };
@@ -78,7 +78,7 @@ const task2: IBlock = {
   createdBy: "",
   customId: "task-2",
   type: BlockType.Task,
-  description:
+  name:
     "Softkave is a work in progress, and will ever be. " +
     "We are ever adding new features, trimming the line, and putting users first. " +
     "There's a lot of work to do, and we'll love to have you on the journey.",

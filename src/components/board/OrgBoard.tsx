@@ -63,7 +63,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
   } = props;
 
   const childrenTypes = useBlockChildrenTypes(block);
-  const [searchQuery, setSearchQueries] = React.useState<{
+  const [searchQueries, setSearchQueries] = React.useState<{
     [key: string]: string;
   }>({});
   const resourceTypes = getBlockResourceTypes(block, childrenTypes);
@@ -133,17 +133,17 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     }
 
     return (
-      <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
+      <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
         <Input
           allowClear
           size="small"
           placeholder={placeholder}
           prefix={
-            <Search style={{ width: "8px", height: "16px", color: "#999" }} />
+            <Search style={{ width: "16px", height: "16px", color: "#999" }} />
           }
           onChange={(evt) =>
             setSearchQueries({
-              ...searchQuery,
+              ...searchQueries,
               [resourceType]: evt.target.value,
             })
           }
@@ -184,6 +184,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         </StyledContainer>
         <BoardTypeList
           block={block}
+          searchQuery={searchQueries[resourceType]}
           onClickBlock={(blocks) =>
             onClickBlock(blocks, boardTypeSearchParamKey)
           }

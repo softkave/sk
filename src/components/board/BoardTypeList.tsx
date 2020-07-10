@@ -15,7 +15,13 @@ export interface IBoardTypeListProps {
 }
 
 const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
-  const { block, onClickBlock, selectedResourceType, style } = props;
+  const {
+    block,
+    onClickBlock,
+    selectedResourceType,
+    style,
+    searchQuery,
+  } = props;
 
   return (
     <StyledContainer
@@ -29,6 +35,7 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
       }}
     >
       <RenderBlockChildren
+        searchQuery={searchQuery}
         block={block}
         onClickBlock={onClickBlock}
         selectedResourceType={selectedResourceType}

@@ -122,7 +122,11 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
       onClick={onClick}
     >
       <StyledContainer>
-        <ItemAvatar size={avatarSize} color={color} shape="circle" />
+        <ItemAvatar
+          size={avatarSize}
+          color={color}
+          // shape="circle"
+        />
       </StyledContainer>
       <StyledContainer
         s={{

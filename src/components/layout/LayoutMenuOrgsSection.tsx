@@ -23,14 +23,6 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
   const { orgs, isLoading, errorMessage, orgId, onAddOrg, onSelectOrg } = props;
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const filterOrgs = React.useCallback(() => {
-    if (!searchQuery) {
-      return orgs;
-    }
-
-    return orgs.filter((org) => org.name?.includes(searchQuery));
-  }, [searchQuery, orgs]);
-
   const renderContent = React.useCallback(() => {
     if (isLoading) {
       return null;
@@ -51,7 +43,8 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
 
     return (
       <BlockList
-        blocks={filterOrgs()}
+        blocks={orgs}
+        searchQuery={searchQuery}
         onClick={onSelectOrg}
         showFields={["name"]}
         getBlockStyle={(block, i) => {
@@ -66,15 +59,7 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
         }}
       />
     );
-
-    return (
-      <NewBlockList
-        blocks={filterOrgs()}
-        onClick={onSelectOrg}
-        avatarShape="circle"
-      />
-    );
-  }, [isLoading, errorMessage, orgs, filterOrgs, onSelectOrg]);
+  }, [isLoading, errorMessage, orgs, onSelectOrg, searchQuery]);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
