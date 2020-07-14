@@ -12,11 +12,11 @@ const sessionReducer = createReducer<ISessionState>(
     });
 
     builder.addCase(SessionActions.setSessionToWeb, (state) => {
-      state = { sessionType: SessionType.Web };
+      return { sessionType: SessionType.Web };
     });
 
     builder.addCase(SessionActions.logoutUser, (state) => {
-      state = { sessionType: SessionType.Web };
+      return { sessionType: SessionType.Web };
     });
   }
 );

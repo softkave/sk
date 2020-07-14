@@ -138,6 +138,7 @@ const Org: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <Form.Item
+        label="Name"
         help={
           touched.name &&
           (!!orgExistsMessage ? (
@@ -221,6 +222,7 @@ const Org: React.FC<IEditOrgProps> = (props) => {
 
     return (
       <Form.Item
+        label="Description"
         help={
           touched.description && <FormError>{errors.description}</FormError>
         }

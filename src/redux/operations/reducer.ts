@@ -17,7 +17,7 @@ const operationsReducer = createReducer({}, (builder) => {
   });
 
   builder.addCase(SessionActions.logoutUser, (state) => {
-    state = {};
+    return {};
   });
 });
 

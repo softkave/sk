@@ -16,7 +16,7 @@ const keyValueReducer = createReducer<IKeyValueState>({}, (builder) => {
   });
 
   builder.addCase(SessionActions.logoutUser, (state) => {
-    state = {};
+    return {};
   });
 });
 

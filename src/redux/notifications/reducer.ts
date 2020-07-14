@@ -49,7 +49,7 @@ const notificationsReducer = createReducer<INotificationsState>(
     );
 
     builder.addCase(SessionActions.logoutUser, (state) => {
-      state = {};
+      return {};
     });
   }
 );

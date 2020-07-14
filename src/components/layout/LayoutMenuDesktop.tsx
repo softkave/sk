@@ -1,5 +1,7 @@
 import { Space, Typography } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
 import StyledContainer from "../styled/Container";
 import LayoutMenuOrgsSectionContainer from "./LayoutMenuOrgsSectionContainer";
 
@@ -9,6 +11,11 @@ export interface ILayoutMenuDesktopProps {
 
 const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
   const { onSelectNotifications } = props;
+  const dispatch = useDispatch();
+
+  const onLogout = () => {
+    dispatch(logoutUserOperationAction());
+  };
 
   const notificationsSelected = window.location.pathname.includes(
     "notification"
@@ -50,9 +57,23 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
       <StyledContainer
         s={{
           padding: "8px 0",
+          flex: 1,
         }}
       >
         <LayoutMenuOrgsSectionContainer />
+      </StyledContainer>
+      <StyledContainer
+        s={{
+          padding: "16px",
+          cursor: "pointer",
+
+          "&:hover": {
+            backgroundColor: "#eee",
+          },
+        }}
+        onClick={onLogout}
+      >
+        Logout
       </StyledContainer>
     </StyledContainer>
   );

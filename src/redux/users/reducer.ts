@@ -50,7 +50,7 @@ const usersReducer = createReducer<IUsersState>({}, (builder) => {
   });
 
   builder.addCase(SessionActions.logoutUser, (state) => {
-    state = {};
+    return {};
   });
 });
 

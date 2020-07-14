@@ -36,7 +36,7 @@ const blocksReducer = createReducer<IBlocksState>({}, (builder) => {
   });
 
   builder.addCase(SessionActions.logoutUser, (state) => {
-    state = {};
+    return {};
   });
 });
 

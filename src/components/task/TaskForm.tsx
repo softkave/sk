@@ -155,7 +155,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     return (
       <Form.Item
-        required
         label="Parent"
         help={touched.parent && <FormError error={errors.parent} />}
         labelCol={{ span: 24 }}
@@ -176,8 +175,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     return (
       <Form.Item
-        required
-        label="Title"
+        label="Task"
         help={touched.name && <FormError error={errors.name} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}

@@ -97,6 +97,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     return (
       <Form.Item
         required
+        label="Name"
         help={touched.name && <FormError error={boardNameError} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
@@ -132,6 +133,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
 
     return (
       <Form.Item
+        label="Description"
         help={touched.description && <FormError error={errors.description} />}
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}

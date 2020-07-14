@@ -26,11 +26,11 @@ const Main: React.FC<{}> = () => {
   }, [sessionType, opId, dispatch]);
 
   React.useEffect(() => {
-    if (sessionType === "app") {
+    if (sessionType === SessionType.App) {
       if (!isPath0App()) {
         history.push(makePath(paths.appPath));
       }
-    } else if (sessionType === "web") {
+    } else if (sessionType === SessionType.Web) {
       if (isPath0App()) {
         history.push("/");
       }
@@ -52,7 +52,7 @@ const Main: React.FC<{}> = () => {
   );
 
   switch (sessionType) {
-    case "app":
+    case SessionType.App:
       return (
         <RenderForDevice
           renderForDesktop={() => <MainLayoutContainer />}
@@ -60,11 +60,11 @@ const Main: React.FC<{}> = () => {
         />
       );
 
-    case "web":
+    case SessionType.Web:
       return <Routes />;
 
-    case "uninitialized":
-    case "initializing":
+    case SessionType.Uninitialized:
+    case SessionType.Initializing:
     default:
       return renderInitializing();
   }
