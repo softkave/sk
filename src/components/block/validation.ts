@@ -26,10 +26,7 @@ const subTaskSchema = yup.object().shape({
   description: descriptionOptional.required("Field is required"),
 });
 
-const subTasks = yup
-  .array()
-  .of(subTaskSchema)
-  .max(blockConstants.maxSubTasksLength);
+const subTasks = yup.array().of(subTaskSchema).max(blockConstants.maxSubTasks);
 const parent = yup.string().required();
 
 const newTask = yup.object().shape({

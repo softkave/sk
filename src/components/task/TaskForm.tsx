@@ -344,32 +344,32 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const unassignCollaborator = (
     collaboratorData: ITaskAssignee,
-    taskCollaborators: ITaskAssignee[] = []
+    assignees: ITaskAssignee[] = []
   ) => {
-    const index = taskCollaborators.findIndex((next) => {
+    const index = assignees.findIndex((next) => {
       return next.userId === collaboratorData.userId;
     });
 
     if (index !== -1) {
-      const updated = [...taskCollaborators];
+      const updated = [...assignees];
       updated.splice(index, 1);
       return updated;
     }
 
-    return taskCollaborators;
+    return assignees;
   };
 
   const assignCollaborator = (
     collaborator: IUser,
-    taskCollaborators: ITaskAssignee[] = []
+    assignees: ITaskAssignee[] = []
   ): ITaskAssignee[] => {
-    const collaboratorExists = !!taskCollaborators.find((next) => {
+    const collaboratorExists = !!assignees.find((next) => {
       return collaborator.customId === next.userId;
     });
 
     if (!collaboratorExists) {
       return [
-        ...taskCollaborators,
+        ...assignees,
         {
           userId: collaborator.customId,
           assignedAt: getDateString(),
@@ -378,10 +378,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       ];
     }
 
-    return taskCollaborators;
+    return assignees;
   };
 
-  const renderTaskCollaborators = (formikProps: TaskFormFormikProps) => {
+  const renderAssignees = (formikProps: TaskFormFormikProps) => {
     const { values, setFieldValue } = formikProps;
 
     if (Array.isArray(values.assignees)) {
@@ -400,7 +400,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                   collaborator={indexedCollaborators[item.userId]}
                   onUnassign={() =>
                     setFieldValue(
-                      "taskCollaborators",
+                      "assignees",
                       unassignCollaborator(item, values.assignees)
                     )
                   }
@@ -464,7 +464,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           <RightCircleTwoTone /> Assign To Me
         </StyledContainerAsLink>
         <StyledTaskCollaboaratorsContainer>
-          {renderTaskCollaborators(formikProps)}
+          {renderAssignees(formikProps)}
         </StyledTaskCollaboaratorsContainer>
       </Form.Item>
     );

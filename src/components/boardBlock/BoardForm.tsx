@@ -96,7 +96,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
 
     return (
       <Form.Item
-        required
         label="Name"
         help={touched.name && <FormError error={boardNameError} />}
         labelCol={{ span: 24 }}

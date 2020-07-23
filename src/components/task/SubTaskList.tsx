@@ -144,12 +144,10 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
         s={{ width: "100%", lineHeight: "40px", fontWeight: 600 }}
       >
         <StyledContainer s={{ flex: 1 }}>
-          Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasksLength})
+          Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasks})
         </StyledContainer>
         <StyledFlatButton
-          disabled={
-            disabled || subTasks.length >= blockConstants.maxSubTasksLength
-          }
+          disabled={disabled || subTasks.length >= blockConstants.maxSubTasks}
           onClick={internalOnAdd}
         >
           <PlusOutlined />
