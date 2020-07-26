@@ -7,6 +7,7 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
+import LayoutContainer from "../utilities/LayoutContainer";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeList from "./BoardTypeList";
@@ -153,6 +154,63 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
   };
 
   const renderBoardType = () => {
+    // console.log("I am the one");
+    // const a = (
+    //   <LayoutContainer
+    //     elements={[
+    //       {
+    //         render: () => (
+    //           <StyledContainer
+    //             s={{
+    //               alignItems: "center",
+    //               padding: "0 16px",
+    //               marginBottom: "8px",
+    //               marginTop: "8px",
+    //             }}
+    //           >
+    //             {renderSearch()}
+    //             <Plus
+    //               onClick={() => {
+    //                 switch (resourceType) {
+    //                   case "boards":
+    //                     onClickAddBlock(block, BlockType.Board);
+    //                     return;
+
+    //                   case "collaboration-requests":
+    //                   case "collaborators":
+    //                     onClickAddCollaborator();
+    //                     return;
+    //                 }
+    //               }}
+    //               style={{ width: "18px", height: "18px", cursor: "pointer" }}
+    //             />
+    //           </StyledContainer>
+    //         ),
+    //       },
+    //       {
+    //         flex: 1,
+    //         render: (size) => {
+    //           console.log(size);
+    //           return (
+    //             <BoardTypeList
+    //               block={block}
+    //               searchQuery={searchQueries[resourceType]}
+    //               onClickBlock={(blocks) =>
+    //                 onClickBlock(blocks, boardTypeSearchParamKey)
+    //               }
+    //               onClickCreateNewBlock={onClickAddBlock}
+    //               selectedResourceType={resourceType}
+    //               style={{ height: size?.height!, maxHeight: size?.height! }}
+    //             />
+    //           );
+    //         },
+    //       },
+    //     ]}
+    //   />
+    // );
+
+    // return a;
+
     return (
       <StyledContainer
         s={{ height: "100%", width: "100%", flexDirection: "column" }}
@@ -305,6 +363,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
           ["& .ant-tabs-content"]: {
             height: "100%",
+          },
+
+          ["& .ant-tabs-content-holder"]: {
+            overflow: "hidden",
           },
 
           ["& .ant-tabs-nav"]: {

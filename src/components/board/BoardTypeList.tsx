@@ -27,10 +27,9 @@ const BoardTypeList: React.FC<IBoardTypeListProps> = (props) => {
     <StyledContainer
       style={style}
       s={{
-        flexDirection: "column",
         flex: 1,
+        flexDirection: "column",
         width: "100%",
-        height: "100%",
         overflowY: "auto",
       }}
     >
