@@ -31,7 +31,10 @@ class NotificationList extends React.Component<INotificationListProps> {
 
     return (
       <StyledNotificationList>
-        <Typography.Title level={4} style={{ margin: "0 16px" }}>
+        <Typography.Title
+          level={4}
+          style={{ margin: "0 16px", marginTop: "16px" }}
+        >
           Notifications
         </Typography.Title>
         <StyledList>

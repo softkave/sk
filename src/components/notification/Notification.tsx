@@ -152,7 +152,10 @@ const Notification: React.FC<{}> = (props) => {
           <ArrowLeft />
         </StyledContainer>
         <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
-          <Typography.Title level={4}>
+          <Typography.Title
+            level={1}
+            style={{ fontSize: "16px", marginBottom: "4px" }}
+          >
             Collaboration Request From {notification!.from!.blockName}
           </Typography.Title>
           <Typography.Text>
@@ -177,6 +180,7 @@ const StyledNotificationBody = styled.div({
 const StyledNotificationBodyHead = styled.div({
   marginBottom: "32px",
   display: "flex",
+  marginTop: "16px",
 });
 
 const StyledMessage = styled.p({
