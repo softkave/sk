@@ -7,4 +7,5 @@ export enum KeyValueKeys {
   AppMenu = "appMenu",
   ShowNewOrgForm = "showNewOrgForm",
   RootBlocksLoaded = "rootBlocksLoaded",
+  ReloadBoard = "reloadBoard",
 }

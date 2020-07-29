@@ -2,13 +2,17 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import path from "path";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
+import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
+import KeyValueActions from "../../redux/key-value/actions";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import { KeyValueKeys } from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
-import { AppDispatch } from "../../redux/types";
+import { AppDispatch, IAppState } from "../../redux/types";
 import { pluralize } from "../../utils/utils";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
@@ -214,6 +218,27 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
       />
     );
   };
+
+  const reloadBoard = useSelector<IAppState, boolean>(
+    (state) => !!KeyValueSelectors.getKey(state, KeyValueKeys.ReloadBoard)
+  );
+
+  React.useEffect(() => {
+    subscribeToBlock(block.customId);
+
+    return () => {
+      unsubcribeFromBlock(block.customId);
+    };
+  }, [block]);
+
+  React.useEffect(() => {
+    if (reloadBoard) {
+      // TODO: show reload board notification
+      dispatch(
+        KeyValueActions.setKey({ key: KeyValueKeys.ReloadBoard, value: false })
+      );
+    }
+  }, [reloadBoard]);
 
   const render = () => {
     if (boardDataOpStat.loading) {

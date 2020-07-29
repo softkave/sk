@@ -87,7 +87,8 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
       );
 
       // TODO: we need a loadBlockNotifications func
-      dispatch(loadBoardDataOperationAction({ block: organization }));
+      // TODO: most likely not needed anymore with new sockets implementation
+      // dispatch(loadBoardDataOperationAction({ block: organization }));
     } else if (opStat.isError) {
       message.error(
         `Error sending request${values.collaborators.length > 1 ? "s" : ""}`
