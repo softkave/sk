@@ -5,9 +5,8 @@ import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { KeyValueKeys } from "../../redux/key-value/types";
 import MainDesktop from "./MainDesktop";
-import MainLayout from "./MainLayout";
 
-const MainLayoutContainer: React.FC<{}> = (props) => {
+const MainDesktopContainer: React.FC<{}> = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const showAppMenu = useSelector((state) =>
@@ -61,15 +60,6 @@ const MainLayoutContainer: React.FC<{}> = (props) => {
       onSelectNotifications={onSelectNotifications}
     />
   );
-
-  // return (
-  //   <MainLayout
-  //     showOrgForm={!!showNewOrgForm}
-  //     showAppMenu={showAppMenu}
-  //     toggleMenu={toggleAppMenu}
-  //     closeNewOrgForm={closeNewOrgForm}
-  //   />
-  // );
 };
 
-export default MainLayoutContainer;
+export default MainDesktopContainer;

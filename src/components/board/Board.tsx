@@ -1,5 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { message } from "antd";
+import { Button, message, notification, Space } from "antd";
 import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,7 @@ import { KeyValueKeys } from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
-import { pluralize } from "../../utils/utils";
+import { newId, pluralize } from "../../utils/utils";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
@@ -65,7 +65,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     `${blockPath}/boards/:blockId`
   );
 
-  const boardDataOpStat = useBoardData(block);
+  const loadStateAndControls = useBoardData(block);
 
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
@@ -224,6 +224,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   );
 
   React.useEffect(() => {
+    console.log("initiating subscription");
     subscribeToBlock(block.customId);
 
     return () => {
@@ -234,6 +235,24 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   React.useEffect(() => {
     if (reloadBoard) {
       // TODO: show reload board notification
+      const key = newId();
+      notification.open({
+        key,
+        message: "Board updated",
+        description: (
+          <Space direction="vertical">
+            <div>Reload to see latest changes</div>
+            <Button
+              onClick={() => {
+                notification.close(key);
+                loadStateAndControls.reload();
+              }}
+            >
+              Reload
+            </Button>
+          </Space>
+        ),
+      });
       dispatch(
         KeyValueActions.setKey({ key: KeyValueKeys.ReloadBoard, value: false })
       );
@@ -241,10 +260,10 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   }, [reloadBoard]);
 
   const render = () => {
-    if (boardDataOpStat.loading) {
+    if (loadStateAndControls.loading) {
       return <LoadingEllipsis />;
-    } else if (boardDataOpStat.errors) {
-      return <GeneralErrorList fill errors={boardDataOpStat.errors} />;
+    } else if (loadStateAndControls.errors) {
+      return <GeneralErrorList fill errors={loadStateAndControls.errors} />;
     }
 
     if (boardMatch) {

@@ -3,12 +3,12 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import Notifications from "../notification/Notifications";
 import OrganizationListContainer from "../org/OrganizationListContainer";
 import StyledContainer from "../styled/Container";
-import HeaderOld from "./HeaderOld";
+import HeaderMobile from "./HeaderMobile";
 
-const MainLayoutOld: React.FC<{}> = () => {
+const MainMobile: React.FC<{}> = () => {
   return (
     <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
-      <HeaderOld />
+      <HeaderMobile />
       <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
         <Switch>
           <Route path="/app/notifications" component={Notifications} />
@@ -27,4 +27,4 @@ const MainLayoutOld: React.FC<{}> = () => {
   );
 };
 
-export default MainLayoutOld;
+export default MainMobile;

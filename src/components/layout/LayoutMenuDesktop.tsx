@@ -1,4 +1,4 @@
-import { Space, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";

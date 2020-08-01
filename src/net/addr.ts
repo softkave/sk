@@ -3,15 +3,18 @@ const serverAddr =
     ? `http://localhost:5000/graphql`
     : "https://api.softkave.com/graphql";
 
-const sockAddr =
+const rootAddr =
   process.env.NODE_ENV === "development"
-    ? `http://localhost:5000/socket`
-    : "https://api.softkave.com/socket";
+    ? `http://localhost:5000`
+    : "https://api.softkave.com";
 
 export function getServerAddr() {
   return serverAddr;
 }
 
 export function getSockAddr() {
-  return sockAddr;
+  return {
+    url: rootAddr,
+    path: "/socket",
+  };
 }

@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import MainLayoutContainer from "../components/layout/MainLayoutContainer";
-import MainLayoutOld from "../components/layout/MainLayoutOld";
+import MainDesktopContainer from "../components/layout/MainDesktopContainer";
+import MainMobile from "../components/layout/MainMobile";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer from "../components/styled/Container";
+import { connectSocket } from "../net/socket";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
 import SessionSelectors from "../redux/session/selectors";
 import { SessionType } from "../redux/session/types";
@@ -18,6 +19,7 @@ const Main: React.FC<{}> = () => {
   const dispatch: AppDispatch = useDispatch();
   const [opId] = React.useState(() => newId());
   const sessionType = useSelector(SessionSelectors.getSessionType);
+  const token = useSelector(SessionSelectors.getUserToken);
 
   React.useEffect(() => {
     if (sessionType === SessionType.Uninitialized) {
@@ -27,6 +29,10 @@ const Main: React.FC<{}> = () => {
 
   React.useEffect(() => {
     if (sessionType === SessionType.App) {
+      connectSocket({
+        token: token!,
+      });
+
       if (!isPath0App()) {
         history.push(makePath(paths.appPath));
       }
@@ -35,7 +41,7 @@ const Main: React.FC<{}> = () => {
         history.push("/");
       }
     }
-  }, [sessionType, history]);
+  }, [sessionType]);
 
   const renderInitializing = () => (
     <StyledContainer
@@ -55,8 +61,8 @@ const Main: React.FC<{}> = () => {
     case SessionType.App:
       return (
         <RenderForDevice
-          renderForDesktop={() => <MainLayoutContainer />}
-          renderForMobile={() => <MainLayoutOld />}
+          renderForDesktop={() => <MainDesktopContainer />}
+          renderForMobile={() => <MainMobile />}
         />
       );
 

@@ -22,13 +22,28 @@ import store from "../redux/store";
 import { getSockAddr } from "./addr";
 
 let socket: typeof Socket | null = null;
+let connectionFailedBefore = false;
 
 export interface ISocketConnectionProps {
   token: string;
 }
 
-export function connect(props: ISocketConnectionProps) {
-  socket = io(getSockAddr());
+export function connectSocket(props: ISocketConnectionProps) {
+  console.log("connectSocket");
+
+  if (socket || connectionFailedBefore) {
+    return;
+  }
+
+  const addr = getSockAddr();
+
+  // TODO: is there a way to change the XMLHTTPRequest object credential's property
+  //   used in the polling transport?
+  socket = io(addr.url, {
+    path: addr.path,
+  });
+
+  console.log({ socket });
 
   socket.on(IncomingSocketEvents.Connect, () => {
     const authData: IOutgoingAuthPacket = { token: props.token };
@@ -37,6 +52,8 @@ export function connect(props: ISocketConnectionProps) {
       authData,
       (data: IIncomingAuthPacket) => {
         if (!data.valid) {
+          connectionFailedBefore = true;
+
           // TODO
           // maybe show notification
           const tenSecsInMs = 10000;
@@ -228,6 +245,7 @@ export function disconnectSocket() {
 }
 
 export function subscribeToBlock(blockId: string) {
+  console.log({ socket });
   if (socket) {
     const data: IOutgoingSubscribePacket = { customId: blockId, type: "board" };
     socket.emit(OutgoingSocketEvents.Subscribe, data);

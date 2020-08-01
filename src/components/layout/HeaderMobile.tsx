@@ -1,11 +1,4 @@
-import {
-  AppstoreFilled,
-  BorderOutlined,
-  CaretDownFilled,
-  LogoutOutlined,
-  MailFilled,
-  MailOutlined,
-} from "@ant-design/icons";
+import { CaretDownFilled, LogoutOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Dropdown, Menu, Tooltip, Typography } from "antd";
 import React from "react";
@@ -25,7 +18,7 @@ export interface IHeaderOldProps {
   onNavigateBack?: () => void;
 }
 
-const HeaderOld: React.FC<IHeaderOldProps> = (props) => {
+const HeaderMobile: React.FC<IHeaderOldProps> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector(SessionSelectors.getSignedInUserRequired);
 
@@ -137,7 +130,7 @@ const HeaderOld: React.FC<IHeaderOldProps> = (props) => {
   );
 };
 
-export default HeaderOld;
+export default HeaderMobile;
 
 const StyledHeaderContainer = styled.div({
   display: "flex",
