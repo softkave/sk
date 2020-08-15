@@ -117,7 +117,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
     <StyledContainer
-      s={{ ...style, width: "100%", cursor: onClick ? "pointer" : undefined }}
+      s={{ ...style, flex: 1, cursor: onClick ? "pointer" : undefined }}
       className={className}
       onClick={onClick}
     >

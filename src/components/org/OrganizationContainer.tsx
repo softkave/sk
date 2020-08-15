@@ -5,7 +5,7 @@ import { useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/types";
-import Board from "../board/Board";
+import OrgBoardContainer from "../board/OrgBoardContainer";
 import StyledContainer from "../styled/Container";
 
 interface IRouteMatchParams {
@@ -34,7 +34,7 @@ const OrganizationContainer: React.FC<{}> = () => {
     );
   }
 
-  return <Board block={organization} />;
+  return <OrgBoardContainer />;
 };
 
 export default OrganizationContainer;

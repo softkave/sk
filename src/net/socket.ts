@@ -58,6 +58,7 @@ export function connectSocket(props: ISocketConnectionProps) {
           // maybe show notification
           const tenSecsInMs = 10000;
           delay(() => {
+            console.log("disconnecting");
             socket?.disconnect();
           }, tenSecsInMs);
         }
@@ -83,6 +84,7 @@ export function connectSocket(props: ISocketConnectionProps) {
   });
 
   socket.on(IncomingSocketEvents.BoardUpdate, (data: IBoardUpdatePacket) => {
+    console.log("board updated");
     store.dispatch(
       KeyValueActions.setKey({
         key: KeyValueKeys.ReloadBoard,

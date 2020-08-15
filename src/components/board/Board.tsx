@@ -171,52 +171,53 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   };
 
   const renderBoardMain = (isMobile: boolean) => {
-    return (
-      <BoardMain
-        isMobile={isMobile}
-        block={block}
-        blockPath={blockPath}
-        onClickBlock={onClickBlock}
-        onClickDeleteBlock={(blk) => confirmBlockDelete(blk, onDeleteBlock)}
-        onClickAddBlock={(parentBlock, blockType) => {
-          setBlockForm({
-            blockType,
-            parentBlock,
-            formType: "block-form",
-            orgId: block.rootBlockId!,
-          });
-        }}
-        onClickUpdateBlock={(blockToUpdate) =>
-          setBlockForm({
-            block: blockToUpdate,
-            formType: "block-form",
-            orgId: block.rootBlockId!,
-            blockType: blockToUpdate.type,
-          })
-        }
-        onClickAddCollaborator={() =>
-          setBlockForm({
-            block,
-            formType: "collaborator-form",
-            orgId: block.rootBlockId!,
-          })
-        }
-        onClickAddOrEditLabel={() =>
-          setBlockForm({
-            block,
-            formType: "label-list-form",
-            orgId: block.rootBlockId!,
-          })
-        }
-        onClickAddOrEditStatus={() =>
-          setBlockForm({
-            block,
-            formType: "status-list-form",
-            orgId: block.rootBlockId!,
-          })
-        }
-      />
-    );
+    return null;
+    // return (
+    //   <BoardMain
+    //     isMobile={isMobile}
+    //     block={block}
+    //     blockPath={blockPath}
+    //     onClickBlock={onClickBlock}
+    //     onClickDeleteBlock={(blk) => confirmBlockDelete(blk, onDeleteBlock)}
+    //     onClickAddBlock={(parentBlock, blockType) => {
+    //       setBlockForm({
+    //         blockType,
+    //         parentBlock,
+    //         formType: "block-form",
+    //         orgId: block.rootBlockId!,
+    //       });
+    //     }}
+    //     onClickUpdateBlock={(blockToUpdate) =>
+    //       setBlockForm({
+    //         block: blockToUpdate,
+    //         formType: "block-form",
+    //         orgId: block.rootBlockId!,
+    //         blockType: blockToUpdate.type,
+    //       })
+    //     }
+    //     onClickAddCollaborator={() =>
+    //       setBlockForm({
+    //         block,
+    //         formType: "collaborator-form",
+    //         orgId: block.rootBlockId!,
+    //       })
+    //     }
+    //     onClickAddOrEditLabel={() =>
+    //       setBlockForm({
+    //         block,
+    //         formType: "label-list-form",
+    //         orgId: block.rootBlockId!,
+    //       })
+    //     }
+    //     onClickAddOrEditStatus={() =>
+    //       setBlockForm({
+    //         block,
+    //         formType: "status-list-form",
+    //         orgId: block.rootBlockId!,
+    //       })
+    //     }
+    //   />
+    // );
   };
 
   const reloadBoard = useSelector<IAppState, boolean>(
@@ -226,6 +227,25 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
   React.useEffect(() => {
     console.log("initiating subscription");
     subscribeToBlock(block.customId);
+    const key = newId();
+    notification.open({
+      key,
+      duration: 0,
+      message: "Board updated",
+      description: (
+        <Space direction="vertical">
+          <div>Reload to see latest changes</div>
+          <Button
+            onClick={() => {
+              notification.close(key);
+              loadStateAndControls.reload();
+            }}
+          >
+            Reload
+          </Button>
+        </Space>
+      ),
+    });
 
     return () => {
       unsubcribeFromBlock(block.customId);
@@ -238,6 +258,7 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
       const key = newId();
       notification.open({
         key,
+        duration: 0,
         message: "Board updated",
         description: (
           <Space direction="vertical">

@@ -47,7 +47,6 @@ const LayoutContainer: React.FC<ILayoutContainerProps & SizeMeProps> = (
 
   const onInlineElementsSizeChange = React.useCallback(
     (inlineSizeProps: SizeMeProps["size"]) => {
-      console.log("inline size changed");
       setInlineElemsSize(inlineSizeProps);
     },
     []

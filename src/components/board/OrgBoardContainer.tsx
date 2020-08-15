@@ -1,29 +1,29 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { message } from "antd";
+import { Button, message, notification, Space } from "antd";
 import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
+import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
 import BlockSelectors from "../../redux/blocks/selectors";
+import KeyValueActions from "../../redux/key-value/actions";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import { KeyValueKeys } from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
-import { pluralize } from "../../utils/utils";
+import { newId } from "../../utils/utils";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
 import { getOperationStats } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BlockContainer from "./BlockContainer";
 import BlockForms, { BlockFormType } from "./BoardForms";
-import LoadBlockChildren from "./LoadBlockChildren";
 import OrgBoard from "./OrgBoard";
-import { IBlockPathMatch } from "./types";
 import { useBoardData } from "./useBoardData";
-import { getDefaultBoardViewType } from "./utils";
+import { getBlockPath, getBlocksPath, getDefaultBoardViewType } from "./utils";
 
 interface IBlockFormState {
   formType: BlockFormType;
@@ -33,16 +33,16 @@ interface IBlockFormState {
   block?: IBlock;
 }
 
-export interface IOrgBoardContainerProps {}
-
 interface IRouteMatchParams {
   organizationId?: string;
 }
 
+function useReloadBoard() {}
+
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
+const OrgBoardContainer: React.FC<{}> = (props) => {
   const history = useHistory();
   const dispatch: AppDispatch = useDispatch();
   const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
@@ -56,35 +56,49 @@ const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
   const organizationId =
     selectedOrganizationRouteMatch &&
     selectedOrganizationRouteMatch.params.organizationId;
+
   const block = useSelector<IAppState, IBlock | undefined>((state) => {
     if (organizationId) {
       return BlockSelectors.getBlock(state, organizationId);
     }
   })!;
 
-  // if (!organization) {
-  //   return (
-  //     <StyledContainer s={{ alignItems: "center", justifyContent: "center" }}>
-  //       <Empty description="Organization not found." />
-  //     </StyledContainer>
-  //   );
-  // }
-
-  const getPath = (b: IBlock) => {
-    const bTypeFullName = getBlockTypeFullName(b.type);
-    return `/${pluralize(bTypeFullName)}/${b.customId}`;
-  };
-
-  const parents = useBlockParents(block);
-  const parentPath = `/app${parents.map(getPath).join("")}`;
-
-  // TODO: we need to rebuild the path when the user transfers the block
-  const blockPath = `${parentPath}${getPath(block)}`;
-  const boardMatch = useRouteMatch<IBlockPathMatch>(
-    `${blockPath}/boards/:blockId`
+  const reloadBoard = useSelector<IAppState, boolean>(
+    (state) => !!KeyValueSelectors.getKey(state, KeyValueKeys.ReloadBoard)
   );
 
-  const boardDataOpStat = useBoardData(block);
+  const showAppMenu = useSelector((state) =>
+    KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
+  ) as boolean;
+
+  const showOrgMenu = useSelector((state) =>
+    KeyValueSelectors.getKey(state as any, KeyValueKeys.OrgMenu)
+  ) as boolean;
+
+  const toggleAppMenu = React.useCallback(() => {
+    dispatch(
+      KeyValueActions.setValues({
+        [KeyValueKeys.AppMenu]: !showAppMenu,
+      })
+    );
+  }, [showAppMenu, dispatch]);
+
+  const toggleOrgMenu = React.useCallback(() => {
+    dispatch(
+      KeyValueActions.setValues({
+        [KeyValueKeys.AppMenu]: !showOrgMenu,
+        [KeyValueKeys.OrgMenu]: !showOrgMenu,
+      })
+    );
+  }, [showOrgMenu, dispatch]);
+
+  const parents = useBlockParents(block);
+  const parentPath = getBlocksPath(parents);
+
+  // TODO: we need to rebuild the path when the user transfers the block
+  const blockPath = getBlockPath(block, parentPath);
+
+  const loadBoardDataStatusAndControls = useBoardData(block);
 
   const pushRoute = (route) => {
     const search = new URLSearchParams(window.location.search);
@@ -108,7 +122,7 @@ const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
     const nextPath = path.normalize(
       blockPath +
         "/" +
-        blocks.map((b) => getPath(b)).join("") +
+        blocks.map((b) => getBlockPath(b)).join("") +
         `/tasks?${searchParamKey}=${boardType}`
     );
 
@@ -163,36 +177,15 @@ const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
     return null;
   };
 
-  const renderChild = () => {
-    let boardId: string | null = null;
-
-    if (boardMatch) {
-      boardId = boardMatch.params.blockId;
-    }
-
-    if (boardId === null) {
-      return null;
-    }
-
-    // TODO: this is an hack, find a better way to load
-    return (
-      <LoadBlockChildren
-        parent={block}
-        type={BlockType.Board}
-        render={() => (
-          <BlockContainer
-            blockId={boardId!}
-            notFoundMessage="Board not found"
-          />
-        )}
-      />
-    );
-  };
-
   const renderBoardMain = (isMobile: boolean) => {
+    // return null;
     return (
       <OrgBoard
         isMobile={isMobile}
+        isAppMenuFolded={!showAppMenu}
+        isOrgMenuFolded={!showOrgMenu}
+        onToggleFoldAppMenu={toggleAppMenu}
+        onToggleFoldOrgMenu={toggleOrgMenu}
         block={block}
         blockPath={blockPath}
         onClickBlock={onClickBlock}
@@ -238,16 +231,69 @@ const OrgBoardContainer: React.FC<IOrgBoardContainerProps> = (props) => {
     );
   };
 
-  const render = () => {
-    if (boardDataOpStat.loading) {
-      return <LoadingEllipsis />;
-    } else if (boardDataOpStat.errors) {
-      return <GeneralErrorList fill errors={boardDataOpStat.errors} />;
-    }
+  React.useEffect(() => {
+    subscribeToBlock(block.customId);
+    // const key = newId();
+    // notification.open({
+    //   key,
+    //   duration: 0,
+    //   message: "Board updated",
+    //   description: (
+    //     <Space direction="vertical">
+    //       <div>Reload to see latest changes</div>
+    //       <Button
+    //         onClick={() => {
+    //           notification.close(key);
+    //           loadBoardDataStatusAndControls.reload();
+    //         }}
+    //       >
+    //         Reload
+    //       </Button>
+    //     </Space>
+    //   ),
+    // });
 
-    // if (boardMatch) {
-    //   return renderChild();
-    // }
+    return () => {
+      unsubcribeFromBlock(block.customId);
+    };
+  }, [block.customId]);
+
+  React.useEffect(() => {
+    if (reloadBoard) {
+      // TODO: show reload board notification
+      const key = newId();
+      notification.open({
+        key,
+        duration: 0,
+        message: "Board updated",
+        description: (
+          <Space direction="vertical">
+            <div>Reload to see latest changes</div>
+            <Button
+              onClick={() => {
+                notification.close(key);
+                loadBoardDataStatusAndControls.reload();
+              }}
+            >
+              Reload
+            </Button>
+          </Space>
+        ),
+      });
+      dispatch(
+        KeyValueActions.setKey({ key: KeyValueKeys.ReloadBoard, value: false })
+      );
+    }
+  }, [reloadBoard]);
+
+  const render = () => {
+    if (loadBoardDataStatusAndControls.loading) {
+      return <LoadingEllipsis />;
+    } else if (loadBoardDataStatusAndControls.errors) {
+      return (
+        <GeneralErrorList fill errors={loadBoardDataStatusAndControls.errors} />
+      );
+    }
 
     return (
       <React.Fragment>

@@ -8,7 +8,9 @@ import {
   isOperationCompleted,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import OperationSelectors from "../../redux/operations/selectors";
+import OperationSelectors, {
+  IQueryFilterOperationSelector,
+} from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/types";
 import { newId } from "../../utils/utils";
 
@@ -22,14 +24,16 @@ export interface IUseOperationStatus {
   status?: IOperationStatus;
 }
 
-export interface IOperationSelector {
-  id?: string;
+type LoadOperation = (statusData: IUseOperationStatus) => void;
+
+interface IUseOperationOptions {
+  deleteManagedOperationOnUnmount?: boolean;
 }
 
-type LoadOperation = (statusData: IUseOperationStatus) => void;
 type UseOperation = (
-  selector?: IOperationSelector,
-  loadOperation?: LoadOperation | false | null
+  selector?: IQueryFilterOperationSelector,
+  loadOperation?: LoadOperation | false | null,
+  options?: IUseOperationOptions
 ) => IUseOperationStatus;
 
 export const getOperationStats = (
@@ -50,19 +54,21 @@ export const getOperationStats = (
   };
 };
 
-const useOperation: UseOperation = (selector = {}, loadOperation) => {
+const useOperation: UseOperation = (
+  selector = {},
+  loadOperation = null,
+  options = { deleteManagedOperationOnUnmount: true }
+) => {
   const dispatch = useDispatch();
-  const [managedOpId] = React.useState(() => {
-    if (selector.id) {
-      return null;
-    }
-
-    return newId();
+  const operation = useSelector<IAppState, IOperation | undefined>((state) => {
+    // TODO: how can we cache previous filters
+    return OperationSelectors.queryFilterOperation(state, selector);
   });
-
-  const operation = useSelector<IAppState, IOperation | undefined>((state) =>
-    OperationSelectors.getOperationWithId(state, selector.id || managedOpId)
-  );
+  const [managedOpId] = React.useState(() => {
+    if (!operation && !selector.id) {
+      return newId();
+    }
+  });
 
   const statusData: IUseOperationStatus = operation
     ? getOperationStats(operation)
@@ -81,11 +87,13 @@ const useOperation: UseOperation = (selector = {}, loadOperation) => {
 
   React.useEffect(() => {
     return () => {
-      if (managedOpId) {
+      if (managedOpId && options.deleteManagedOperationOnUnmount) {
+        console.log("deleting here - useOperation");
+        console.trace("lol");
         dispatch(OperationActions.deleteOperation(managedOpId));
       }
     };
-  }, [managedOpId, dispatch]);
+  }, [managedOpId, dispatch, options.deleteManagedOperationOnUnmount]);
 
   return statusData;
 };

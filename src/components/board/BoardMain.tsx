@@ -8,7 +8,6 @@ import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardTypeList from "./BoardTypeList";
 import {
-  BoardResourceType,
   BoardViewType,
   IBoardResourceTypePathMatch,
   OnClickAddBlock,
@@ -21,7 +20,6 @@ import {
 } from "./types";
 import {
   getBlockResourceTypes,
-  getBoardResourceTypeFullName,
   getBoardViewTypesForResourceType,
   getDefaultBoardViewType,
 } from "./utils";
@@ -31,6 +29,8 @@ export interface IBoardHomeForBlockProps {
   blockPath: string;
   block: IBlock;
   isMobile: boolean;
+  isMenuFolded: boolean;
+  onToggleFoldMenu: () => void;
   onClickUpdateBlock: OnClickUpdateBlock;
   onClickAddBlock: OnClickAddBlock;
   onClickBlock: OnClickBlockWithSearchParamKey;
@@ -48,15 +48,10 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     blockPath,
     block,
     onClickAddBlock,
-    onClickAddCollaborator,
     onClickDeleteBlock,
     onClickUpdateBlock,
     onClickBlock,
-    isMobile,
-    onClickAddOrEditLabel,
-    onClickAddOrEditStatus,
     boardTypeSearchParamKey,
-    noExtraCreateMenuItems,
   } = props;
 
   const childrenTypes = useBlockChildrenTypes(block);
@@ -113,23 +108,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   }
 
   const renderBoardType = () => {
-    if (
-      resourceType === "collaboration-requests" ||
-      resourceType === "collaborators"
-    ) {
-      return (
-        <BoardTypeList
-          block={block}
-          onClickBlock={(blocks) =>
-            onClickBlock(blocks, boardTypeSearchParamKey)
-          }
-          onClickCreateNewBlock={onClickAddBlock}
-          selectedResourceType={resourceType}
-          style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
-        />
-      );
-    }
-
     switch (boardType) {
       case "status-kanban":
         return (
@@ -158,14 +136,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     return (
       <React.Fragment>
         <BoardBlockHeader
-          noExtraCreateMenuItems={noExtraCreateMenuItems}
-          isMobile={isMobile}
-          block={block}
+          {...props}
           selectedBoardType={boardType}
           resourceType={resourceType}
-          onClickAddCollaborator={onClickAddCollaborator}
-          onClickAddOrEditLabel={onClickAddOrEditLabel}
-          onClickAddOrEditStatus={onClickAddOrEditStatus}
           onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
           onClickDeleteBlock={() => onClickDeleteBlock(block)}
           onClickEditBlock={() => onClickUpdateBlock(block)}
@@ -188,74 +161,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     );
   };
 
-  const onSelectResourceType = (key: BoardResourceType) => {
-    let nextPath = `${blockPath}/${key}`;
-    const viewTypes = getBoardViewTypesForResourceType(block, key);
-    const search = new URLSearchParams(window.location.search);
-
-    switch (key) {
-      case "boards":
-      case "tasks":
-        if (viewTypes && viewTypes.length > 0) {
-          search.set(boardTypeSearchParamKey!, viewTypes[0]);
-          nextPath = `${nextPath}?${search.toString()}`;
-        }
-
-        history.push(nextPath);
-        break;
-
-      case "collaboration-requests":
-      case "collaborators":
-        history.push(nextPath);
-        break;
-    }
-  };
-
-  const renderTabs = () => {
-    if (resourceTypes.length < 2) {
-      return null;
-    }
-
-    return (
-      <StyledContainer
-        s={{
-          flexWrap: "nowrap",
-          overflowX: "auto",
-        }}
-      >
-        {resourceTypes.map((type, i) => {
-          const isSelected = type === resourceType;
-          return (
-            <StyledContainer
-              key={type}
-              s={{
-                paddingRight: "24px",
-                marginLeft: i === 0 ? "16px" : undefined,
-              }}
-            >
-              <StyledContainer
-                s={{
-                  color: isSelected ? "rgb(66,133,244)" : "inherit",
-                  borderBottom: isSelected
-                    ? "2px solid rgb(66,133,244)"
-                    : undefined,
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                  textTransform: "capitalize",
-                }}
-                onClick={() => {
-                  onSelectResourceType(type);
-                }}
-              >
-                {getBoardResourceTypeFullName(type)}
-              </StyledContainer>
-            </StyledContainer>
-          );
-        })}
-      </StyledContainer>
-    );
-  };
-
   return (
     <StyledContainer
       s={{
@@ -265,7 +170,6 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
       }}
     >
       {renderHeader()}
-      {renderTabs()}
       {renderBoardType()}
     </StyledContainer>
   );

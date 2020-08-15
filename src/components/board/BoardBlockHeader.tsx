@@ -1,3 +1,5 @@
+import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
+import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useHistory } from "react-router";
@@ -27,8 +29,8 @@ const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
 
 export interface IBoardBlockHeaderProps {
   block: IBlock;
-  selectedBoardType: BoardViewType;
   isMobile: boolean;
+  isMenuFolded: boolean;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
   onClickAddOrEditLabel: () => void;
@@ -39,7 +41,9 @@ export interface IBoardBlockHeaderProps {
     resourceType: BoardResourceType | null,
     boardType: BoardViewType | null
   ) => void;
+  onToggleFoldMenu: () => void;
 
+  selectedBoardType?: BoardViewType;
   noExtraCreateMenuItems?: boolean;
   resourceType?: BoardResourceType | null;
   style?: React.CSSProperties;
@@ -60,6 +64,8 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     onClickAddOrEditStatus,
     style,
     noExtraCreateMenuItems,
+    isMenuFolded,
+    onToggleFoldMenu,
   } = props;
 
   const history = useHistory();
@@ -107,7 +113,7 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
       return null;
     }
 
-    if (resourceType) {
+    if (resourceType && selectedBoardType) {
       return wrapWithMargin(
         <SelectBoardTypeMenu
           block={block}
@@ -142,32 +148,79 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     }
   };
 
-  return (
-    <StyledContainer
-      s={{
-        ...style,
-        width: "100%",
-        alignItems: "center",
-      }}
-    >
+  const renderHeaderPrefixButton = () => {
+    if (isMobile) {
+      return (
+        <StyledContainer
+          s={{ marginRight: "16px", cursor: "pointer" }}
+          onClick={onBack}
+        >
+          <ArrowLeft />
+        </StyledContainer>
+      );
+    } else {
+      return (
+        <StyledContainer
+          s={{ marginRight: "16px", cursor: "pointer" }}
+          onClick={onToggleFoldMenu}
+        >
+          {isMenuFolded ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </StyledContainer>
+      );
+    }
+  };
+
+  const renderOrgHeader = () => {
+    return (
       <StyledContainer
-        s={{ marginRight: "16px", cursor: "pointer" }}
-        onClick={onBack}
+        s={{
+          ...style,
+          flex: 1,
+          alignItems: "center",
+        }}
       >
-        <ArrowLeft />
+        {renderHeaderPrefixButton()}
+        <BlockThumbnail
+          block={block}
+          showFields={["name", "type"]}
+          style={{ flex: 1 }}
+        />
+        <StyledContainer s={{ alignItems: "center" }}>
+          {renderBlockOptionsMenu()}
+        </StyledContainer>
       </StyledContainer>
-      <BlockThumbnail
-        block={block}
-        showFields={["name", "type"]}
-        style={{ flex: 1 }}
-      />
-      <StyledContainer s={{ alignItems: "center" }}>
-        {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
-        {isBlockRelatedResourceType(resourceType) && renderBoardTypeMenu()}
-        {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
+    );
+  };
+
+  const renderBoardHeader = () => {
+    return (
+      <StyledContainer
+        s={{
+          ...style,
+          width: "100%",
+          alignItems: "center",
+        }}
+      >
+        {renderHeaderPrefixButton()}
+        <BlockThumbnail
+          block={block}
+          showFields={["name", "type"]}
+          style={{ flex: 1 }}
+        />
+        <StyledContainer s={{ alignItems: "center" }}>
+          {wrapWithMargin(renderCreateNewMenu(), 0, 8)}
+          {isBlockRelatedResourceType(resourceType) && renderBoardTypeMenu()}
+          {wrapWithMargin(renderBlockOptionsMenu(), 8, 0)}
+        </StyledContainer>
       </StyledContainer>
-    </StyledContainer>
-  );
+    );
+  };
+
+  if (block.type === BlockType.Org) {
+    return renderOrgHeader();
+  } else {
+    return renderBoardHeader();
+  }
 };
 
 export default BoardBlockHeader;

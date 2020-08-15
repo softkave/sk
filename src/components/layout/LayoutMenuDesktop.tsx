@@ -27,7 +27,7 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
         height: "100%",
         width: "320px",
         borderRight: "1px solid #d9d9d9",
-        backgroundColor: "#fafafa",
+        // backgroundColor: "#fafafa",
         flexDirection: "column",
         overflowY: "auto",
       }}
@@ -41,11 +41,11 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
       <StyledContainer
         onClick={onSelectNotifications}
         s={{
-          padding: "8px 16px",
-          borderTop: "1px solid #d9d9d9",
-          borderBottom: "1px solid #d9d9d9",
-          cursor: "pointer",
-          backgroundColor: notificationsSelected ? "#eee" : undefined,
+          "padding": "8px 16px",
+          // borderTop: "1px solid #d9d9d9",
+          // borderBottom: "1px solid #d9d9d9",
+          "cursor": "pointer",
+          "backgroundColor": notificationsSelected ? "#eee" : undefined,
 
           "&:hover": {
             backgroundColor: "#eee",
@@ -64,8 +64,8 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
       </StyledContainer>
       <StyledContainer
         s={{
-          padding: "16px",
-          cursor: "pointer",
+          "padding": "16px",
+          "cursor": "pointer",
 
           "&:hover": {
             backgroundColor: "#eee",

@@ -45,6 +45,7 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
       return renderCollaborators();
 
     case "boards":
+      // return null;
       return (
         <LoadBlockChildren
           parent={block}

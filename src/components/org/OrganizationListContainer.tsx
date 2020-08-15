@@ -11,6 +11,7 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import { newId } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import LayoutMenuOrgsSectionContainer from "../layout/LayoutMenuOrgsSectionContainer";
 import StyledContainer from "../styled/Container";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import OrganizationContainer from "./OrganizationContainer";
@@ -22,24 +23,8 @@ import OrganizationList from "./OrganizationList";
 // TODO: find a way or config to only import the ant icons you use, all of them are getting pulled in into the bundle
 
 const OrganizationListContainer: React.FC<{}> = () => {
-  const history = useHistory();
   const dispatch: AppDispatch = useDispatch();
   const [opId] = React.useState(() => newId());
-  const user = useSelector(SessionSelectors.getSignedInUserRequired);
-  const organizations = useSelector<IAppState, IBlock[]>((state) =>
-    BlockSelectors.getBlocks(
-      state,
-      user.orgs.map((org) => org.customId)
-    )
-  );
-
-  const onClickOrganization = (organization: IBlock) => {
-    const routePath = path.normalize(
-      window.location.pathname + "/" + organization.customId + `/boards`
-    );
-
-    history.push(routePath);
-  };
 
   const loadOrganizations = (helperProps: IUseOperationStatus) => {
     if (!helperProps.operation) {
@@ -52,18 +37,8 @@ const OrganizationListContainer: React.FC<{}> = () => {
   const render = () => {
     const renderOrganizations = () => {
       return (
-        <StyledContainer
-          s={{
-            justifyContent: "center",
-            width: "100%",
-            padding: "32px 0",
-            paddingTop: 0,
-          }}
-        >
-          <OrganizationList
-            orgs={organizations}
-            onClick={onClickOrganization}
-          />
+        <StyledContainer s={{ paddingTop: "16px", flex: 1 }}>
+          <LayoutMenuOrgsSectionContainer />
         </StyledContainer>
       );
     };

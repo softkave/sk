@@ -4,9 +4,9 @@ const loginUser = createAction<{ token: string; userId: string }>(
   "session/loginUser"
 );
 
-const logoutUser = createAction("session/logoutUser");
-
 const setSessionToWeb = createAction("session/setSessionToWeb");
+
+const logoutUser = createAction("session/logoutUser");
 
 export default class SessionActions {
   public static loginUser = loginUser;

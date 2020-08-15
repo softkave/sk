@@ -44,12 +44,6 @@ const MainDesktopContainer: React.FC<{}> = (props) => {
     history.push("/app/notifications");
   };
 
-  React.useEffect(() => {
-    dispatch(
-      KeyValueActions.setKey({ key: KeyValueKeys.AppMenu, value: true })
-    );
-  }, [dispatch]);
-
   return (
     <MainDesktop
       showOrgForm={!!showNewOrgForm}

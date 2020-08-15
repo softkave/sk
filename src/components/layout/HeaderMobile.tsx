@@ -56,54 +56,42 @@ const HeaderMobile: React.FC<IHeaderOldProps> = (props) => {
     // TODO: disabledback button for now
     return (
       <StyledHeaderContainer>
+        <StyledContainer s={{ flex: 1 }}>
+          <Typography.Title level={4} style={{ marginBottom: 0 }}>
+            softkave
+          </Typography.Title>
+        </StyledContainer>
         <StyledContainer s={{ alignItems: "center" }}>
-          <Tooltip title="Messages">
+          <Tooltip title="Organizations">
             <StyledFlatButton style={{ marginRight: "16px" }}>
+              <Link to="/app/organizations">
+                <Grid
+                  style={{
+                    width: "16px",
+                    verticalAlign: "middle",
+                    color: orgsSelected ? "rgb(66,133,244)" : undefined,
+                  }}
+                />
+              </Link>
+            </StyledFlatButton>
+          </Tooltip>
+          <Tooltip title="Messages">
+            <StyledFlatButton>
               <Link to="/app/notifications">
                 <Bell
                   style={{
                     width: "16px",
+                    verticalAlign: "middle",
                     color: notificationsSelected
                       ? "rgb(66,133,244)"
                       : undefined,
                   }}
                 />
-                {/* {window.location.pathname.includes("notification") ? (
-                  <MailFilled />
-                ) : (
-                  <MailOutlined />
-                )} */}
-                {/* {!isMobile && (
-                  <span style={{ paddingLeft: "12px" }}>Messages</span>
-                )} */}
-              </Link>
-            </StyledFlatButton>
-          </Tooltip>
-          <Tooltip title="Organizations">
-            <StyledFlatButton>
-              <Link to="/app/organizations">
-                <Grid
-                  style={{
-                    width: "16px",
-                    color: orgsSelected ? "rgb(66,133,244)" : undefined,
-                  }}
-                />
-                {/* {window.location.pathname.includes("organizations") ? (
-                  <AppstoreFilled />
-                ) : (
-                  <BorderOutlined />
-                )} */}
-                {/* {!isMobile && (
-                  <span style={{ paddingLeft: "12px" }}>Organizations</span>
-                )} */}
               </Link>
             </StyledFlatButton>
           </Tooltip>
         </StyledContainer>
-        <StyledContainer s={{ flex: 1, justifyContent: "center" }}>
-          <Typography.Title level={4}>softkave</Typography.Title>
-        </StyledContainer>
-        <StyledContainer s={{ marginLeft: "12px" }}>
+        <StyledContainer s={{ marginLeft: "16px" }}>
           <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
             <StyledAvatarButton>
               <ItemAvatar
@@ -136,7 +124,6 @@ const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
   padding: "16px 16px",
-  paddingBottom: "24px",
 });
 
 const StyledAvatarButton = styled(Button)({
