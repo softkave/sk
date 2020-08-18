@@ -38,7 +38,7 @@ const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
 
   const parentsMenu = (
     <Menu
-      onClick={(event) => selectParent(event.key)}
+      onClick={(event) => selectParent(event.key as string)}
       style={{ maxHeight: "300px", overflowY: "auto" }}
     >
       {possibleParents.map((parent) => (

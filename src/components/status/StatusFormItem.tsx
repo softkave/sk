@@ -191,7 +191,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
           flexDirection: "column",
           ...(style || {}),
         }}
-        ref={provided.innerRef}
+        ref={provided.innerRef ? provided.innerRef : undefined}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         style={{

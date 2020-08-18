@@ -3,10 +3,14 @@ import SessionActions from "../session/actions";
 import KeyValueActions from "./actions";
 import { IKeyValueState, KeyValueKeys } from "./types";
 
+const def = {
+  [KeyValueKeys.AppMenu]: true,
+  [KeyValueKeys.OrgMenu]: true,
+};
+
 const keyValueReducer = createReducer<IKeyValueState>(
   {
-    [KeyValueKeys.AppMenu]: true,
-    [KeyValueKeys.OrgMenu]: true,
+    ...def,
   },
   (builder) => {
     builder.addCase(KeyValueActions.setKey, (state, action) => {
@@ -29,6 +33,12 @@ const keyValueReducer = createReducer<IKeyValueState>(
 
     builder.addCase(SessionActions.logoutUser, (state) => {
       return {};
+    });
+
+    builder.addCase(SessionActions.loginUser, (state) => {
+      Object.keys(def).forEach((key) => {
+        state[key] = def[key];
+      });
     });
   }
 );

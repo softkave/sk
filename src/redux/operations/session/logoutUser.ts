@@ -3,11 +3,17 @@ import UserSessionStorageFuncs from "../../../storage/userSession";
 import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 
-export const logoutUserOperationAction = createAsyncThunk<
-  void,
-  void,
-  IAppAsyncThunkConfig
->("session/logoutUser", (arg, thunkAPI) => {
+// export const logoutUserOperationAction = createAsyncThunk<
+//   void,
+//   void,
+//   IAppAsyncThunkConfig
+// >("sessionOperation/logoutUser", (arg, thunkAPI) => {
+//   console.error("PPP");
+//   UserSessionStorageFuncs.deleteUserToken();
+//   thunkAPI.dispatch(SessionActions.logoutUser());
+// });
+
+export const logoutUserOperationAction = () => {
   UserSessionStorageFuncs.deleteUserToken();
-  thunkAPI.dispatch(SessionActions.logoutUser());
-});
+  return SessionActions.logoutUser();
+};

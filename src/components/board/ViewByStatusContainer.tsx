@@ -37,7 +37,6 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
   const loadBlockChildren = (loadProps: IUseOperationStatus) => {
     const shouldLoad = !loadProps.operation;
-    console.log({ loadProps, block });
 
     if (shouldLoad) {
       dispatch(

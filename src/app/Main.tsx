@@ -7,10 +7,12 @@ import { isPath0App, makePath, paths } from "../components/layout/path";
 import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer from "../components/styled/Container";
 import { connectSocket, disconnectSocket, getSocket } from "../net/socket";
+import KeyValueSelectors from "../redux/key-value/selectors";
+import { KeyValueKeys } from "../redux/key-value/types";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
 import SessionSelectors from "../redux/session/selectors";
 import { SessionType } from "../redux/session/types";
-import { AppDispatch } from "../redux/types";
+import { AppDispatch, IAppState } from "../redux/types";
 import { newId } from "../utils/utils";
 import Routes from "./Routes";
 
@@ -21,6 +23,13 @@ const Main: React.FC<{}> = () => {
   const [timeoutHandle, setTimeoutHandle] = React.useState<number>();
   const sessionType = useSelector(SessionSelectors.getSessionType);
   const token = useSelector(SessionSelectors.getUserToken);
+  const isFetchingMissingBroadcasts = useSelector<IAppState, boolean>(
+    (state) =>
+      KeyValueSelectors.getKey(
+        state,
+        KeyValueKeys.FetchingMissingBroadcasts
+      ) as boolean
+  );
 
   const handleHidden = React.useCallback(() => {
     let hidden = "hidden";
@@ -140,6 +149,10 @@ const Main: React.FC<{}> = () => {
 
   switch (sessionType) {
     case SessionType.App:
+      if (isFetchingMissingBroadcasts) {
+        return renderInitializing();
+      }
+
       return (
         <RenderForDevice
           renderForDesktop={() => <MainDesktopContainer />}

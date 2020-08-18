@@ -5,18 +5,18 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@ant-design/icons": "^4.0.2",
-    "@emotion/core": "^10.0.17",
-    "@emotion/styled": "^10.0.17",
+    "@ant-design/icons": "^4.2.2",
+    "@emotion/core": "^10.0.34",
+    "@emotion/styled": "^10.0.27",
     "@reduxjs/toolkit": "^1.3.6",
-    "@simonwep/pickr": "^1.5.1",
+    "@simonwep/pickr": "^1.7.2",
     "@types/react-beautiful-dnd": "^12.1.2",
     "@types/ua-parser-js": "^0.7.33",
-    "antd": "^4.3.1",
+    "antd": "^4.5.4",
     "dot-prop-immutable": "^1.5.0",
     "express": "^4.17.1",
     "formik": "^2.1.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "moment": "^2.26.0",
     "randomcolor": "^0.5.4",
     "react": "^16.12.0",
@@ -26,7 +26,7 @@
     "react-media": "^1.10.0",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^3.4.3",
     "react-sizeme": "^2.6.12",
     "react-use": "^15.3.3",
     "redux": "^4.0.4",
@@ -49,7 +49,7 @@
     "@types/yup": "^0.26.24",
     "craco-less": "^1.17.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.3"
+    "typescript": "^3.9.7"
   },
   "scripts": {
     "start": "craco start",
@@ -64,6 +64,6 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   }
 }

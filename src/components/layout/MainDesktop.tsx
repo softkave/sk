@@ -34,7 +34,13 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
         <Route path="/app/notifications" render={() => <Notifications />} />
         <Route
           path="/app/organizations/*"
-          render={() => (rootBlocksLoaded ? <OrgBoardContainer /> : null)}
+          render={() => {
+            if (rootBlocksLoaded) {
+              return <OrgBoardContainer />;
+            }
+
+            return null;
+          }}
         />
         <Route
           exact

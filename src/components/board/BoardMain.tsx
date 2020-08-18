@@ -3,6 +3,7 @@ import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
+import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
@@ -67,6 +68,14 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
   const boardType: BoardViewType = searchParams.get(
     boardTypeSearchParamKey!
   ) as BoardViewType;
+
+  React.useEffect(() => {
+    console.log(block.type);
+    subscribeToBlock(block.customId);
+    return () => {
+      unsubcribeFromBlock(block.customId);
+    };
+  }, [block.customId]);
 
   // TODO: show selected child route, like by adding background color or something
   // TODO: show count and use badges only for new unseen entries

@@ -8,5 +8,7 @@ export enum KeyValueKeys {
   OrgMenu = "orgMenu",
   ShowNewOrgForm = "showNewOrgForm",
   RootBlocksLoaded = "rootBlocksLoaded",
-  ReloadBoard = "reloadBoard",
+  Rooms = "rooms",
+  SocketDisconnectTimestamp = "socketDisconnectTimestamp",
+  FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
 }

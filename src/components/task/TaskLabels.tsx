@@ -87,7 +87,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     const labelListMenu = (
       <Menu
         onClick={(evt) => {
-          onAdd(evt.key);
+          onAdd(evt.key as string);
         }}
         selectedKeys={labels.map((label) => label.customId)}
       >

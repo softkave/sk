@@ -37,8 +37,6 @@ interface IRouteMatchParams {
   organizationId?: string;
 }
 
-function useReloadBoard() {}
-
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
@@ -97,7 +95,6 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
 
   // TODO: we need to rebuild the path when the user transfers the block
   const blockPath = getBlockPath(block, parentPath);
-
   const loadBoardDataStatusAndControls = useBoardData(block);
 
   const pushRoute = (route) => {
@@ -232,6 +229,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
   };
 
   React.useEffect(() => {
+    console.log(block.type);
     subscribeToBlock(block.customId);
     // const key = newId();
     // notification.open({

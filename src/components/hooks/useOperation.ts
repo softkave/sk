@@ -87,9 +87,13 @@ const useOperation: UseOperation = (
 
   React.useEffect(() => {
     return () => {
-      if (managedOpId && options.deleteManagedOperationOnUnmount) {
-        console.log("deleting here - useOperation");
-        console.trace("lol");
+      if (operation && managedOpId && options.deleteManagedOperationOnUnmount) {
+        console.log("deleting here - useOperation", {
+          managedOpId,
+          selector,
+          operation,
+        });
+        // throw new Error("P");
         dispatch(OperationActions.deleteOperation(managedOpId));
       }
     };
