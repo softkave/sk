@@ -19,10 +19,8 @@ const solomon: IUser = {
   createdAt: getDateString(),
   customId: "demo-user-1",
   email: "demo-user-1@softkave.com",
-  forgotPasswordHistory: [],
   name: "Ajayi Solomon",
   orgs: [],
-  passwordLastChangedAt: getDateString(),
   rootBlockId: "",
 };
 
@@ -31,10 +29,8 @@ const abayomi: IUser = {
   createdAt: getDateString(),
   customId: "demo-user-2",
   email: "demo-user-2@softkave.com",
-  forgotPasswordHistory: [],
   name: "Abayomi Akintomide",
   orgs: [],
-  passwordLastChangedAt: getDateString(),
   rootBlockId: "",
 };
 

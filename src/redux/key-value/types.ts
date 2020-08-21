@@ -1,5 +1,5 @@
 export interface IKeyValueState {
-  [key: string]: boolean | number | string | object;
+  [key: string]: any;
 }
 
 export enum KeyValueKeys {

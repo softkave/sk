@@ -6,10 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
-import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
-import KeyValueActions from "../../redux/key-value/actions";
-import KeyValueSelectors from "../../redux/key-value/selectors";
-import { KeyValueKeys } from "../../redux/key-value/types";
+import { subscribe, unsubcribe } from "../../net/socket";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -220,65 +217,14 @@ const Board: React.FC<IBoardForBlockProps> = (props) => {
     // );
   };
 
-  const reloadBoard = useSelector<IAppState, boolean>(
-    (state) => !!KeyValueSelectors.getKey(state, KeyValueKeys.ReloadBoard)
-  );
-
   React.useEffect(() => {
     console.log("initiating subscription");
-    subscribeToBlock(block.customId);
-    const key = newId();
-    notification.open({
-      key,
-      duration: 0,
-      message: "Board updated",
-      description: (
-        <Space direction="vertical">
-          <div>Reload to see latest changes</div>
-          <Button
-            onClick={() => {
-              notification.close(key);
-              loadStateAndControls.reload();
-            }}
-          >
-            Reload
-          </Button>
-        </Space>
-      ),
-    });
+    subscribe(block.type as any, block.customId);
 
     return () => {
-      unsubcribeFromBlock(block.customId);
+      unsubcribe(block.type as any, block.customId);
     };
   }, [block]);
-
-  React.useEffect(() => {
-    if (reloadBoard) {
-      // TODO: show reload board notification
-      const key = newId();
-      notification.open({
-        key,
-        duration: 0,
-        message: "Board updated",
-        description: (
-          <Space direction="vertical">
-            <div>Reload to see latest changes</div>
-            <Button
-              onClick={() => {
-                notification.close(key);
-                loadStateAndControls.reload();
-              }}
-            >
-              Reload
-            </Button>
-          </Space>
-        ),
-      });
-      dispatch(
-        KeyValueActions.setKey({ key: KeyValueKeys.ReloadBoard, value: false })
-      );
-    }
-  }, [reloadBoard]);
 
   const render = () => {
     if (loadStateAndControls.loading) {

@@ -6,6 +6,7 @@ import MainMobile from "../components/layout/MainMobile";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import RenderForDevice from "../components/RenderForDevice";
 import StyledContainer from "../components/styled/Container";
+import { getClientId } from "../net/clientId";
 import { connectSocket, disconnectSocket, getSocket } from "../net/socket";
 import KeyValueSelectors from "../redux/key-value/selectors";
 import { KeyValueKeys } from "../redux/key-value/types";
@@ -23,6 +24,7 @@ const Main: React.FC<{}> = () => {
   const [timeoutHandle, setTimeoutHandle] = React.useState<number>();
   const sessionType = useSelector(SessionSelectors.getSessionType);
   const token = useSelector(SessionSelectors.getUserToken);
+  const clientId = useSelector(SessionSelectors.getClientId);
   const isFetchingMissingBroadcasts = useSelector<IAppState, boolean>(
     (state) =>
       KeyValueSelectors.getKey(
@@ -116,6 +118,7 @@ const Main: React.FC<{}> = () => {
   React.useEffect(() => {
     if (sessionType === SessionType.App) {
       connectSocket({
+        clientId: clientId!,
         token: token!,
       });
 

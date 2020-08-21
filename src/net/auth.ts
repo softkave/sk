@@ -1,10 +1,15 @@
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { IAnyObject } from "../utils/types";
+import { getClientId } from "./clientId";
 import query, { NetResultProcessor } from "./query";
 
 function getToken() {
   return SessionSelectors.getUserToken(store.getState());
+}
+
+function getUserClientId() {
+  return SessionSelectors.getClientId(store.getState());
 }
 
 export default async function queryWithAuth(
@@ -20,9 +25,12 @@ export default async function queryWithAuth(
     throw new Error("Invalid credentials");
   }
 
+  const clientId = getUserClientId();
+  console.log({ clientId });
   return await query(
     {
       Authorization: `Bearer ${requestToken}`,
+      "x-client-id": clientId,
       ...headers,
     },
     netQuery,

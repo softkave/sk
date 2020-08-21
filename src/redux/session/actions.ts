@@ -1,8 +1,10 @@
 import { createAction } from "@reduxjs/toolkit";
 
-const loginUser = createAction<{ token: string; userId: string }>(
-  "session/loginUser"
-);
+const loginUser = createAction<{
+  token: string;
+  userId: string;
+  clientId: string;
+}>("session/loginUser");
 
 const setSessionToWeb = createAction("session/setSessionToWeb");
 

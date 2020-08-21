@@ -5,7 +5,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
+import { subscribe, unsubcribe } from "../../net/socket";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
@@ -13,7 +13,6 @@ import { KeyValueKeys } from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
-import { newId } from "../../utils/utils";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
@@ -60,10 +59,6 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
       return BlockSelectors.getBlock(state, organizationId);
     }
   })!;
-
-  const reloadBoard = useSelector<IAppState, boolean>(
-    (state) => !!KeyValueSelectors.getKey(state, KeyValueKeys.ReloadBoard)
-  );
 
   const showAppMenu = useSelector((state) =>
     KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
@@ -175,7 +170,6 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
   };
 
   const renderBoardMain = (isMobile: boolean) => {
-    // return null;
     return (
       <OrgBoard
         isMobile={isMobile}
@@ -230,59 +224,12 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
 
   React.useEffect(() => {
     console.log(block.type);
-    subscribeToBlock(block.customId);
-    // const key = newId();
-    // notification.open({
-    //   key,
-    //   duration: 0,
-    //   message: "Board updated",
-    //   description: (
-    //     <Space direction="vertical">
-    //       <div>Reload to see latest changes</div>
-    //       <Button
-    //         onClick={() => {
-    //           notification.close(key);
-    //           loadBoardDataStatusAndControls.reload();
-    //         }}
-    //       >
-    //         Reload
-    //       </Button>
-    //     </Space>
-    //   ),
-    // });
+    subscribe(block.type as any, block.customId);
 
     return () => {
-      unsubcribeFromBlock(block.customId);
+      unsubcribe(block.type as any, block.customId);
     };
   }, [block.customId]);
-
-  React.useEffect(() => {
-    if (reloadBoard) {
-      // TODO: show reload board notification
-      const key = newId();
-      notification.open({
-        key,
-        duration: 0,
-        message: "Board updated",
-        description: (
-          <Space direction="vertical">
-            <div>Reload to see latest changes</div>
-            <Button
-              onClick={() => {
-                notification.close(key);
-                loadBoardDataStatusAndControls.reload();
-              }}
-            >
-              Reload
-            </Button>
-          </Space>
-        ),
-      });
-      dispatch(
-        KeyValueActions.setKey({ key: KeyValueKeys.ReloadBoard, value: false })
-      );
-    }
-  }, [reloadBoard]);
 
   const render = () => {
     if (loadBoardDataStatusAndControls.loading) {

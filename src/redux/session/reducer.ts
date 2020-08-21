@@ -6,6 +6,7 @@ const sessionReducer = createReducer<ISessionState>(
   { sessionType: SessionType.Uninitialized },
   (builder) => {
     builder.addCase(SessionActions.loginUser, (state, action) => {
+      console.log("login user");
       state.sessionType = SessionType.App;
       state.token = action.payload.token;
       state.userId = action.payload.userId;

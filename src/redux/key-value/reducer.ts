@@ -31,6 +31,18 @@ const keyValueReducer = createReducer<IKeyValueState>(
       delete state[key];
     });
 
+    builder.addCase(KeyValueActions.pushRoom, (state, action) => {
+      const rooms = state[KeyValueKeys.Rooms] || {};
+      rooms[action.payload] = true;
+      state[KeyValueKeys.Rooms] = rooms;
+    });
+
+    builder.addCase(KeyValueActions.removeRoom, (state, action) => {
+      const rooms = state[KeyValueKeys.Rooms] || {};
+      delete rooms[action.payload];
+      state[KeyValueKeys.Rooms] = rooms;
+    });
+
     builder.addCase(SessionActions.logoutUser, (state) => {
       return {};
     });

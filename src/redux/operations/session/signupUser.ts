@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import randomColor from "randomcolor";
+import { setClientId } from "../../../net/clientId";
 import UserAPI from "../../../net/user";
 import UserSessionStorageFuncs from "../../../storage/userSession";
 import { newId } from "../../../utils/utils";
@@ -50,11 +51,13 @@ export const signupUserOperationAction = createAsyncThunk<
     if (result && result.errors) {
       throw result.errors;
     } else if (result && result.token && result.user) {
+      // setClientId(result.clientId);
       await thunkAPI.dispatch(UserActions.addUser(result.user));
       await thunkAPI.dispatch(
         SessionActions.loginUser({
           token: result.token,
           userId: result.user.customId,
+          clientId: result.clientId,
         })
       );
 

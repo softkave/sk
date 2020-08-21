@@ -3,7 +3,7 @@ import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
-import { subscribeToBlock, unsubcribeFromBlock } from "../../net/socket";
+import { subscribe, unsubcribe } from "../../net/socket";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
 import BoardBlockHeader from "./BoardBlockHeader";
@@ -71,9 +71,9 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
   React.useEffect(() => {
     console.log(block.type);
-    subscribeToBlock(block.customId);
+    subscribe(block.type as any, block.customId);
     return () => {
-      unsubcribeFromBlock(block.customId);
+      unsubcribe(block.type as any, block.customId);
     };
   }, [block.customId]);
 

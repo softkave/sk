@@ -54,6 +54,7 @@ export const loginUserOperationAction = createAsyncThunk<
         SessionActions.loginUser({
           token: result.token,
           userId: result.user.customId,
+          clientId: result.clientId,
         })
       );
 

@@ -28,10 +28,11 @@ let connectionFailedBefore = false;
 
 export interface ISocketConnectionProps {
   token: string;
+  clientId: string;
 }
 
 export function connectSocket(props: ISocketConnectionProps) {
-  console.log("connectSocket");
+  console.log("connectSocket", props);
 
   if (socket || connectionFailedBefore) {
     return;
@@ -45,7 +46,9 @@ export function connectSocket(props: ISocketConnectionProps) {
     path: addr.path,
   });
 
-  socket.on(IncomingSocketEvents.Connect, () => handleConnect(props.token));
+  socket.on(IncomingSocketEvents.Connect, () =>
+    handleConnect(props.token, props.clientId)
+  );
   socket.on(IncomingSocketEvents.Disconnect, handleDisconnect);
   socket.on(IncomingSocketEvents.BlockUpdate, handleBlockUpdate);
   socket.on(IncomingSocketEvents.NewNotifications, handleNewNotifications);
@@ -87,6 +90,7 @@ export enum IncomingSocketEvents {
 
 export interface IOutgoingAuthPacket {
   token: string;
+  clientId: string;
 }
 
 export interface IOutgoingSubscribePacket {
@@ -106,7 +110,8 @@ interface IIncomingAuthPacket {
 }
 
 interface IIncomingBroadcastHistoryPacket {
-  [key: string]: Array<{ event: IncomingSocketEvents; data: any }>;
+  rooms: { [key: string]: Array<{ event: IncomingSocketEvents; data: any }> };
+  reload?: boolean;
 }
 
 export interface IBlockUpdatePacket {
@@ -151,8 +156,9 @@ export function disconnectSocket() {
   }
 }
 
-function handleConnect(token: string) {
-  const authData: IOutgoingAuthPacket = { token };
+function handleConnect(token: string, clientId: string) {
+  console.log("socket connected", socket?.id);
+  const authData: IOutgoingAuthPacket = { token, clientId };
   socket?.emit(OutgoingSocketEvents.Auth, authData, handleAuthResponse);
 }
 
@@ -180,6 +186,7 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
     const split = roomId.split("-");
     const type = split.shift();
     const resourceId = split.join("-"); // we use uuids, and they ( uuid ) use '-'
+    console.log({ type, resourceId });
     subscribe(type as any, resourceId);
   });
 
@@ -200,7 +207,12 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
 }
 
 function handleDisconnect() {
+  console.log("socket disconnected");
   socket = null;
+
+  if (connectionFailedBefore) {
+    return;
+  }
 
   const socketDisconnectedAt = Date.now();
   const isUserLoggedIn = SessionSelectors.isUserSignedIn(store.getState());
@@ -218,10 +230,17 @@ function handleDisconnect() {
 function handleFetchMissingBroadcastsResponse(
   data: IIncomingBroadcastHistoryPacket
 ) {
-  const roomIds = Object.keys(data);
+  console.log({ data });
+
+  if (data.reload) {
+    window.location.reload();
+    return;
+  }
+
+  const roomIds = Object.keys(data.rooms);
 
   roomIds.forEach((roomId) => {
-    const packets = data[roomId];
+    const packets = data.rooms[roomId];
 
     packets.forEach((packet) => {
       switch (packet.event) {
@@ -330,6 +349,7 @@ export function subscribe(
   type: IOutgoingSubscribePacket["type"],
   resourceId: string
 ) {
+  console.log("subscribing to ", type, " ", resourceId);
   if (socket) {
     const data: IOutgoingSubscribePacket = { type, customId: resourceId };
     socket.emit(OutgoingSocketEvents.Subscribe, data);
@@ -342,10 +362,7 @@ export function subscribe(
       return;
     }
 
-    rooms[roomId] = true;
-    store.dispatch(
-      KeyValueActions.setKey({ key: KeyValueKeys.Rooms, value: rooms })
-    );
+    store.dispatch(KeyValueActions.pushRoom(roomId));
   }
 }
 
@@ -353,6 +370,7 @@ export function unsubcribe(
   type: IOutgoingSubscribePacket["type"],
   resourceId: string
 ) {
+  console.log("leaving ", type, " ", resourceId);
   if (socket) {
     const data: IOutgoingSubscribePacket = { type, customId: resourceId };
     socket.emit(OutgoingSocketEvents.Unsubscribe, data);
@@ -365,10 +383,7 @@ export function unsubcribe(
       return;
     }
 
-    delete rooms[roomId];
-    store.dispatch(
-      KeyValueActions.setKey({ key: KeyValueKeys.Rooms, value: rooms })
-    );
+    store.dispatch(KeyValueActions.removeRoom(roomId));
   }
 }
 
