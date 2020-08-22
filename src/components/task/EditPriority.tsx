@@ -16,7 +16,7 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
     const { value, onChange, disabled } = this.props;
 
     const menu = (
-      <Menu onClick={({ key }) => onChange(key)}>
+      <Menu onClick={({ key }) => onChange(key as string)}>
         <Menu.Item key="very important">
           <Priority level={BlockPriority.VeryImportant} />
         </Menu.Item>

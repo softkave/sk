@@ -5,8 +5,13 @@ import ErrorMessages from "../models/errorMessages";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { getServerAddr } from "./addr";
+import { getClientId } from "./clientId";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { INetError } from "./types";
+
+function getUserClientId() {
+  return SessionSelectors.getClientId(store.getState());
+}
 
 const isExpectedErrorType = (errors) => {
   return Array.isArray(errors) && !!errors.find((e) => !!e.name);
@@ -141,6 +146,7 @@ export async function netCallWithAuth(props: INetCallWithAuthProps) {
     ...props,
     headers: {
       Authorization: `Bearer ${requestToken}`,
+      "x-client-id": getUserClientId(),
       ...props.headers,
     },
   });

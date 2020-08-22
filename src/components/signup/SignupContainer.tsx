@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { signupUserOperationAction } from "../../redux/operations/session/sigupUser";
+import { signupUserOperationAction } from "../../redux/operations/session/signupUser";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation, { getOperationStats } from "../hooks/useOperation";

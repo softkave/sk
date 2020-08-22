@@ -1,4 +1,6 @@
+import path from "path";
 import { BlockType, IBlock } from "../../models/block/block";
+import { getBlockTypeFullName } from "../../models/block/utils";
 import { pluralize } from "../../utils/utils";
 import { BoardResourceType, BoardViewType } from "./types";
 
@@ -113,4 +115,30 @@ export const getBlockTypeFromResourceType = (
 
 export const getResourceTypeFieldName = (resourceType: BoardResourceType) => {
   return blockResourceTypeToBlockKeyMap[resourceType];
+};
+
+export const getBlockPath = (b: IBlock, parentPath?: string) => {
+  const type = getBlockTypeFullName(b.type);
+  const blockPath = `/${pluralize(type)}/${b.customId}`;
+  return path.normalize(`${parentPath ? parentPath : ""}${blockPath}`);
+};
+
+export const getBlocksPath = (blocks: IBlock[]) => {
+  const blocksPath = `/app${blocks
+    .map((block) => getBlockPath(block))
+    .join("")}`;
+  return path.normalize(blocksPath);
+};
+
+export const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
+  switch (type) {
+    case "boards":
+    case "tasks":
+      return true;
+
+    case "collaborators":
+    case "collaboration-requests":
+    default:
+      return false;
+  }
 };

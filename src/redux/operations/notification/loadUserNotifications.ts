@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { INotification } from "../../../models/notification/notification";
 import UserAPI from "../../../net/user";
 import { newId } from "../../../utils/utils";
 import NotificationActions from "../../notifications/actions";
@@ -37,28 +38,17 @@ export const loadUserNotificationsOperationAction = createAsyncThunk<
   );
 
   try {
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
     const result = await UserAPI.getUserNotifications();
 
     if (result && result.errors) {
       throw result.errors;
     }
 
-    const { notifications } = result;
-    const ids = notifications.map((request) => request.customId);
-
+    // dispatch-type-error
     await thunkAPI.dispatch(
-      NotificationActions.bulkAddNotifications(notifications)
-    );
-
-    await thunkAPI.dispatch(
-      UserActions.updateUser({
-        id: user.customId,
-        data: {
-          notifications: ids,
-        },
-        meta: { arrayUpdateStrategy: "replace" },
-      })
+      completeLoadUserNotifications({
+        notifications: result.notifications,
+      }) as any
     );
 
     await thunkAPI.dispatch(
@@ -71,4 +61,28 @@ export const loadUserNotificationsOperationAction = createAsyncThunk<
   }
 
   return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});
+
+export const completeLoadUserNotifications = createAsyncThunk<
+  void,
+  { notifications: INotification[] },
+  IAppAsyncThunkConfig
+>("notification/completeLoadUserNotifications", async (arg, thunkAPI) => {
+  const { notifications } = arg;
+  const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+  const ids = notifications.map((request) => request.customId);
+
+  await thunkAPI.dispatch(
+    NotificationActions.bulkAddNotifications(notifications)
+  );
+
+  await thunkAPI.dispatch(
+    UserActions.updateUser({
+      id: user.customId,
+      data: {
+        notifications: ids,
+      },
+      meta: { arrayUpdateStrategy: "replace" },
+    })
+  );
 });

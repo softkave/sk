@@ -68,36 +68,13 @@ export const respondToNotificationOperationAction = createAsyncThunk<
       throw result.errors;
     }
 
-    const statusHistory =
-      arg.request.statusHistory?.concat({
-        status: arg.response,
-        date: getDateString(),
-      }) || [];
-
-    const update = { statusHistory };
-
+    // dte
     await thunkAPI.dispatch(
-      NotificationActions.updateNotification({
-        id: arg.request.customId,
-        data: update,
-        meta: {
-          arrayUpdateStrategy: "replace",
-        },
-      })
+      completeUserNotificationResponse({
+        ...arg,
+        block: result.block,
+      }) as any
     );
-
-    if (arg.response === CollaborationRequestStatusType.Accepted && result) {
-      const { block } = result as { block: IBlock };
-
-      await thunkAPI.dispatch(BlockActions.addBlock(block));
-      await thunkAPI.dispatch(
-        UserActions.updateUser({
-          id: user.customId,
-          data: { orgs: [{ customId: arg.request.from!.blockId }] },
-          meta: { arrayUpdateStrategy: "concat" },
-        })
-      );
-    }
 
     await thunkAPI.dispatch(
       dispatchOperationCompleted(
@@ -118,4 +95,51 @@ export const respondToNotificationOperationAction = createAsyncThunk<
   }
 
   return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});
+
+export const completePartialNotificationResponse = createAsyncThunk<
+  void,
+  IRespondToNotificationOperationActionArgs,
+  IAppAsyncThunkConfig
+>("notification/completePartialNotificationResponse", async (arg, thunkAPI) => {
+  const statusHistory =
+    arg.request.statusHistory?.concat({
+      status: arg.response,
+      date: getDateString(),
+    }) || [];
+
+  const update = { statusHistory };
+
+  await thunkAPI.dispatch(
+    NotificationActions.updateNotification({
+      id: arg.request.customId,
+      data: update,
+      meta: {
+        arrayUpdateStrategy: "replace",
+      },
+    })
+  );
+});
+
+export const completeUserNotificationResponse = createAsyncThunk<
+  void,
+  IRespondToNotificationOperationActionArgs & { block?: IBlock },
+  IAppAsyncThunkConfig
+>("notification/completeUserNotificationResponse", async (arg, thunkAPI) => {
+  const { block } = arg;
+  const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+
+  // dte
+  thunkAPI.dispatch(completePartialNotificationResponse(arg) as any);
+
+  if (arg.response === CollaborationRequestStatusType.Accepted && block) {
+    await thunkAPI.dispatch(BlockActions.addBlock(block));
+    await thunkAPI.dispatch(
+      UserActions.updateUser({
+        id: user.customId,
+        data: { orgs: [{ customId: arg.request.from!.blockId }] },
+        meta: { arrayUpdateStrategy: "concat" },
+      })
+    );
+  }
 });

@@ -1,28 +1,24 @@
-import {
-  CaretDownFilled,
-  LogoutOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
+import { CaretDownFilled, LogoutOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Tooltip, Typography } from "antd";
 import React from "react";
+import { Bell, Grid } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import ItemAvatar from "../ItemAvatar";
+import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import StyledFlatButton from "../styled/FlatButton";
 import theme from "../theme";
 
-// TODO: there is a lag is style responsiveness when 'notifications' or 'organizations' is selected
-
-export interface IHeaderProps {
-  showMenuIcon: boolean;
-  onToggleMenu: () => void;
+export interface IHeaderOldProps {
+  onNavigateBack?: () => void;
 }
 
-const Header: React.FC<IHeaderProps> = (props) => {
-  const { showMenuIcon, onToggleMenu } = props;
+const HeaderMobile: React.FC<IHeaderOldProps> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector(SessionSelectors.getSignedInUserRequired);
 
@@ -51,19 +47,51 @@ const Header: React.FC<IHeaderProps> = (props) => {
     </Menu>
   );
 
-  const render = () => {
+  const notificationsSelected = window.location.pathname.includes(
+    "notification"
+  );
+  const orgsSelected = window.location.pathname.includes("organizations");
+
+  const render = (isMobile: boolean) => {
+    // TODO: disabledback button for now
     return (
       <StyledHeaderContainer>
-        <StyledContainer s={{ alignItems: "center" }}>
-          {showMenuIcon && (
-            <MenuUnfoldOutlined
-              onClick={onToggleMenu}
-              style={{ cursor: "pointer" }}
-            />
-          )}
+        <StyledContainer s={{ flex: 1 }}>
+          <Typography.Title level={4} style={{ marginBottom: 0 }}>
+            softkave
+          </Typography.Title>
         </StyledContainer>
-        <StyledContainer s={{ flex: 1 }} />
-        <StyledContainer s={{ marginLeft: "12px" }}>
+        <StyledContainer s={{ alignItems: "center" }}>
+          <Tooltip title="Organizations">
+            <StyledFlatButton style={{ marginRight: "16px" }}>
+              <Link to="/app/organizations">
+                <Grid
+                  style={{
+                    width: "16px",
+                    verticalAlign: "middle",
+                    color: orgsSelected ? "rgb(66,133,244)" : undefined,
+                  }}
+                />
+              </Link>
+            </StyledFlatButton>
+          </Tooltip>
+          <Tooltip title="Messages">
+            <StyledFlatButton>
+              <Link to="/app/notifications">
+                <Bell
+                  style={{
+                    width: "16px",
+                    verticalAlign: "middle",
+                    color: notificationsSelected
+                      ? "rgb(66,133,244)"
+                      : undefined,
+                  }}
+                />
+              </Link>
+            </StyledFlatButton>
+          </Tooltip>
+        </StyledContainer>
+        <StyledContainer s={{ marginLeft: "16px" }}>
           <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
             <StyledAvatarButton>
               <ItemAvatar
@@ -82,16 +110,20 @@ const Header: React.FC<IHeaderProps> = (props) => {
     );
   };
 
-  return render();
+  return (
+    <RenderForDevice
+      renderForDesktop={() => render(false)}
+      renderForMobile={() => render(true)}
+    />
+  );
 };
 
-export default Header;
+export default HeaderMobile;
 
 const StyledHeaderContainer = styled.div({
   display: "flex",
   width: "100%",
   padding: "16px 16px",
-  paddingBottom: "24px",
 });
 
 const StyledAvatarButton = styled(Button)({

@@ -3,8 +3,6 @@ import { Empty, Space } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import BlockList from "../block/BlockList";
-import NewBlockList from "../block/NewBlockList";
-import StyledContainer from "../styled/Container";
 import LayoutMenuOrgsSectionHeader from "./LayoutMenuOrgsSectionHeader";
 
 export interface ILayoutMenuOrgsSectionProps {

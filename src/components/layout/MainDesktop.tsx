@@ -1,14 +1,9 @@
-import { noop } from "lodash";
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import OrgBoardContainer from "../board/OrgBoardContainer";
 import Notifications from "../notification/Notifications";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
-import OrganizationListContainer from "../org/OrganizationListContainer";
-import OrgContainer from "../org/OrgContainer";
-import OrgModal from "../org/OrgModal";
 import StyledContainer from "../styled/Container";
-import LayoutMenu from "./LayoutMenu";
 import LayoutMenuDesktop from "./LayoutMenuDesktop";
 
 export interface IMainDesktopProps {
@@ -24,7 +19,6 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
   const {
     showAppMenu,
     showOrgForm,
-    toggleMenu,
     closeNewOrgForm,
     rootBlocksLoaded,
     onSelectNotifications,
@@ -40,7 +34,13 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
         <Route path="/app/notifications" render={() => <Notifications />} />
         <Route
           path="/app/organizations/*"
-          render={() => (rootBlocksLoaded ? <OrgBoardContainer /> : null)}
+          render={() => {
+            if (rootBlocksLoaded) {
+              return <OrgBoardContainer />;
+            }
+
+            return null;
+          }}
         />
         <Route
           exact

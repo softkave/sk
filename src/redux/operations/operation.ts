@@ -17,10 +17,11 @@ export interface IOperationStatus {
   error?: any;
 }
 
-export interface IOperation {
+export interface IOperation<Meta = any> {
   id: string;
   operationType: OperationType;
   status: IOperationStatus;
+  meta?: Meta;
   resourceId?: string | null;
 }
 
@@ -64,11 +65,13 @@ export function dispatchOperationStarted(
   id,
   type,
   resourceId?: string | null,
-  data?: any
+  data?: any,
+  meta?: any
 ) {
   return OperationActions.pushOperation({
     id,
     resourceId,
+    meta,
     operationType: type,
     status: {
       data,
@@ -82,11 +85,13 @@ export function dispatchOperationCompleted(
   id,
   type,
   resourceId?: string | null,
-  data?: any
+  data?: any,
+  meta?: any
 ) {
   return OperationActions.pushOperation({
     id,
     resourceId,
+    meta,
     operationType: type,
     status: {
       data,
@@ -101,11 +106,13 @@ export function dispatchOperationError(
   type,
   error?: any,
   resourceId?: string | null,
-  data?: any
+  data?: any,
+  meta?: any
 ) {
   return OperationActions.pushOperation({
     id,
     resourceId,
+    meta,
     operationType: type,
     status: {
       data,

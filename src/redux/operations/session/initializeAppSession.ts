@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { setClientId } from "../../../net/clientId";
 import UserAPI from "../../../net/user";
 import UserSessionStorageFuncs from "../../../storage/userSession";
 import { newId } from "../../../utils/utils";
@@ -48,9 +49,14 @@ export const initializeAppSessionOperationAction = createAsyncThunk<
 
       const { user } = result;
 
+      // setClientId(result.clientId);
       await thunkAPI.dispatch(UserActions.addUser(user));
       await thunkAPI.dispatch(
-        SessionActions.loginUser({ token, userId: user.customId })
+        SessionActions.loginUser({
+          token,
+          userId: user.customId,
+          clientId: result.clientId,
+        })
       );
     } else {
       await thunkAPI.dispatch(SessionActions.setSessionToWeb());

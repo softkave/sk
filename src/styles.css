@@ -25,3 +25,26 @@ body,
   padding: 0 !important;
   font-weight: bold;
 }
+
+.sk-menu {
+  flex: 1;
+  height: "100%";
+  overflow: "hidden";
+  flex-direction: "column";
+}
+
+.sk-menu .ant-tabs {
+  height: "100%";
+}
+
+.sk-menu .ant-tabs-content {
+  height: "100%";
+}
+
+.sk-menu .ant-tabs-content-holder {
+  overflow: "hidden";
+}
+
+.sk-menu .ant-tabs-nav {
+  margin-bottom: "8px";
+}

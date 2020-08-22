@@ -4,6 +4,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
+import OperationType from "../../redux/operations/OperationType";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import { newId } from "../../utils/utils";
@@ -23,7 +24,6 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
   props
 ) => {
   const { block, onClickUpdateBlock, style } = props;
-  const [opId] = React.useState(() => newId());
   const dispatch: AppDispatch = useDispatch();
   const statuses = block.boardStatuses || [];
   const org = useSelector<IAppState, IBlock>((state) => {
@@ -51,9 +51,11 @@ const ViewByStatusContainer: React.FC<IViewByStatusContainerProps> = (
 
   const opStat = useOperation(
     {
-      id: opId,
+      resourceId: block.customId,
+      type: OperationType.LoadBlockChildren,
     },
-    loadBlockChildren
+    loadBlockChildren,
+    { deleteManagedOperationOnUnmount: false }
   );
 
   // TODO: how can we memoize previous filters to make search faster

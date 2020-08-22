@@ -26,7 +26,7 @@ export const loginUserOperationAction = createAsyncThunk<
   IOperation | undefined,
   GetOperationActionArgs<ILoginUserOperationActionArgs>,
   IAppAsyncThunkConfig
->("session/logoutUser", async (arg, thunkAPI) => {
+>("session/loginUser", async (arg, thunkAPI) => {
   const id = arg.opId || newId();
 
   const operation = OperationSelectors.getOperationWithId(
@@ -54,6 +54,7 @@ export const loginUserOperationAction = createAsyncThunk<
         SessionActions.loginUser({
           token: result.token,
           userId: result.user.customId,
+          clientId: result.clientId,
         })
       );
 

@@ -20,6 +20,10 @@ export interface ILoadBlockChildrenOperationActionArgs {
   typeList?: BlockType[];
 }
 
+export interface ILoadBlockChildrenOperationMeta {
+  typeList?: BlockType[];
+}
+
 export const loadBlockChildrenOperationAction = createAsyncThunk<
   IOperation | undefined,
   GetOperationActionArgs<ILoadBlockChildrenOperationActionArgs>,
@@ -40,7 +44,9 @@ export const loadBlockChildrenOperationAction = createAsyncThunk<
     dispatchOperationStarted(
       id,
       OperationType.LoadBlockChildren,
-      arg.block.customId
+      arg.block.customId,
+      null,
+      { typeList: arg.typeList }
     )
   );
 

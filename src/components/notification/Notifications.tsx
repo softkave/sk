@@ -92,17 +92,11 @@ const Notifications: React.FC<{}> = (props) => {
   };
 
   const renderNotificationsForMobile = () => {
-    let content: React.ReactNode = null;
-
     if (currentNotificationId) {
-      content = renderCurrentNotification();
+      return renderCurrentNotification();
     } else {
-      content = renderNotificationList();
+      return renderNotificationList();
     }
-
-    return (
-      <StyledContainer s={{ marginTop: "16px" }}>{content}</StyledContainer>
-    );
   };
 
   const renderNotificationsForDesktop = () => {

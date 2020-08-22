@@ -1,4 +1,5 @@
 import { Input, Tabs } from "antd";
+import { noop } from "lodash";
 import path from "path";
 import React from "react";
 import { Plus, Search } from "react-feather";
@@ -7,14 +8,13 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
-import LayoutContainer from "../utilities/LayoutContainer";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
+import BoardMain from "./BoardMain";
 import BoardTypeList from "./BoardTypeList";
 import LoadBlockChildren from "./LoadBlockChildren";
 import {
   BoardResourceType,
-  BoardViewType,
   IBoardResourceTypePathMatch,
   OnClickAddBlock,
   OnClickAddCollaborator,
@@ -25,16 +25,20 @@ import {
   OnClickUpdateBlock,
 } from "./types";
 import {
+  getBlockPath,
   getBlockResourceTypes,
   getBoardResourceTypeFullName,
   getBoardViewTypesForResourceType,
-  getDefaultBoardViewType,
 } from "./utils";
 
 export interface IOrgBoardProps {
   blockPath: string;
   block: IBlock;
   isMobile: boolean;
+  isAppMenuFolded: boolean;
+  isOrgMenuFolded: boolean;
+  onToggleFoldAppMenu: () => void;
+  onToggleFoldOrgMenu: () => void;
   onClickUpdateBlock: OnClickUpdateBlock;
   onClickAddBlock: OnClickAddBlock;
   onClickBlock: OnClickBlockWithSearchParamKey;
@@ -57,60 +61,25 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     onClickUpdateBlock,
     onClickBlock,
     isMobile,
-    onClickAddOrEditLabel,
-    onClickAddOrEditStatus,
     boardTypeSearchParamKey,
-    noExtraCreateMenuItems,
+    isAppMenuFolded,
+    isOrgMenuFolded,
+    onToggleFoldAppMenu,
+    onToggleFoldOrgMenu,
   } = props;
 
+  const history = useHistory();
   const childrenTypes = useBlockChildrenTypes(block);
   const [searchQueries, setSearchQueries] = React.useState<{
     [key: string]: string;
   }>({});
   const resourceTypes = getBlockResourceTypes(block, childrenTypes);
-
-  const history = useHistory();
   const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
     `${blockPath}/:resourceType`
   );
   const resourceType =
     resourceTypeMatch && resourceTypeMatch.params.resourceType;
-  const searchParams = new URLSearchParams(window.location.search);
-  const boardType: BoardViewType = searchParams.get(
-    boardTypeSearchParamKey!
-  ) as BoardViewType;
 
-  // TODO: show selected child route, like by adding background color or something
-  // TODO: show count and use badges only for new unseen entries
-  // TODO: sort the entries by count?
-
-  // TODO: should we show error if block type is task?
-  // if (!boardType && resourceType) {
-  //   if (resourceType === "boards") {
-  //     const destPath = `${blockPath}/${resourceType}`;
-  //     const boardTypesForResourceType = getBoardViewTypesForResourceType(
-  //       block,
-  //       resourceType
-  //     );
-  //     const newBoardType: BoardViewType = boardTypesForResourceType[0];
-
-  //     return (
-  //       <Redirect
-  //         to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`}
-  //       />
-  //     );
-  //   }
-  // }
-
-  // TODO: should we show error if block type is task?
-  // if (boardType && !resourceType) {
-  //   const nextPath = path.normalize(
-  //     blockPath + `/tasks?${boardTypeSearchParamKey}=${boardType}`
-  //   );
-  //   return <Redirect to={nextPath} />;
-  // }
-
-  // TODO: should we show error if block type is task?
   if (!resourceType) {
     const nextPath = path.normalize(blockPath + `/boards`);
     return <Redirect to={nextPath} />;
@@ -134,10 +103,9 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     }
 
     return (
-      <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
+      <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
         <Input
           allowClear
-          size="small"
           placeholder={placeholder}
           prefix={
             <Search style={{ width: "16px", height: "16px", color: "#999" }} />
@@ -153,64 +121,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     );
   };
 
-  const renderBoardType = () => {
-    // console.log("I am the one");
-    // const a = (
-    //   <LayoutContainer
-    //     elements={[
-    //       {
-    //         render: () => (
-    //           <StyledContainer
-    //             s={{
-    //               alignItems: "center",
-    //               padding: "0 16px",
-    //               marginBottom: "8px",
-    //               marginTop: "8px",
-    //             }}
-    //           >
-    //             {renderSearch()}
-    //             <Plus
-    //               onClick={() => {
-    //                 switch (resourceType) {
-    //                   case "boards":
-    //                     onClickAddBlock(block, BlockType.Board);
-    //                     return;
-
-    //                   case "collaboration-requests":
-    //                   case "collaborators":
-    //                     onClickAddCollaborator();
-    //                     return;
-    //                 }
-    //               }}
-    //               style={{ width: "18px", height: "18px", cursor: "pointer" }}
-    //             />
-    //           </StyledContainer>
-    //         ),
-    //       },
-    //       {
-    //         flex: 1,
-    //         render: (size) => {
-    //           console.log(size);
-    //           return (
-    //             <BoardTypeList
-    //               block={block}
-    //               searchQuery={searchQueries[resourceType]}
-    //               onClickBlock={(blocks) =>
-    //                 onClickBlock(blocks, boardTypeSearchParamKey)
-    //               }
-    //               onClickCreateNewBlock={onClickAddBlock}
-    //               selectedResourceType={resourceType}
-    //               style={{ height: size?.height!, maxHeight: size?.height! }}
-    //             />
-    //           );
-    //         },
-    //       },
-    //     ]}
-    //   />
-    // );
-
-    // return a;
-
+  const renderResourceType = () => {
     return (
       <StyledContainer
         s={{ height: "100%", width: "100%", flexDirection: "column" }}
@@ -251,40 +162,6 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
           style={{ flex: 1 }}
         />
       </StyledContainer>
-    );
-  };
-
-  // Hello World!
-
-  const renderHeader = () => {
-    return (
-      <BoardBlockHeader
-        noExtraCreateMenuItems={noExtraCreateMenuItems}
-        isMobile={isMobile}
-        block={block}
-        selectedBoardType={boardType}
-        resourceType={resourceType}
-        onClickAddCollaborator={onClickAddCollaborator}
-        onClickAddOrEditLabel={onClickAddOrEditLabel}
-        onClickAddOrEditStatus={onClickAddOrEditStatus}
-        onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
-        onClickDeleteBlock={() => onClickDeleteBlock(block)}
-        onClickEditBlock={() => onClickUpdateBlock(block)}
-        onNavigate={(navResourceType, navBoardType) => {
-          let nextPath = `${blockPath}`;
-
-          if (navResourceType) {
-            nextPath = `${nextPath}/${navResourceType}`;
-          }
-
-          if (navBoardType) {
-            nextPath = `${nextPath}?${boardTypeSearchParamKey}=${navBoardType}`;
-          }
-
-          history.push(nextPath);
-        }}
-        style={{ marginBottom: "24px", padding: "0 16px" }}
-      />
     );
   };
 
@@ -333,7 +210,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
               }
               key={type}
             >
-              {renderBoardType()}
+              {renderResourceType()}
             </Tabs.TabPane>
           );
         })}
@@ -341,24 +218,21 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     );
   };
 
-  return (
-    <StyledContainer
-      s={{
-        flex: 1,
-        height: "100%",
-        overflow: "hidden",
-      }}
-    >
+  const renderSelectedOrgView = () => {
+    return (
       <StyledContainer
         s={{
-          flexDirection: "column",
+          flex: 1,
           height: "100%",
-          width: "320px",
+          overflow: "hidden",
+          flexDirection: "column",
+          maxWidth: isMobile ? "100%" : "320px",
           borderRight: "1px solid #d9d9d9",
           backgroundColor: "#fefefe",
 
           ["& .ant-tabs"]: {
             height: "100%",
+            width: isMobile ? "100%" : "320px",
           },
 
           ["& .ant-tabs-content"]: {
@@ -374,36 +248,106 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
           },
         }}
       >
+        <BoardBlockHeader
+          {...props}
+          onClickAddCollaborator={noop}
+          onClickAddOrEditLabel={noop}
+          onClickAddOrEditStatus={noop}
+          onClickCreateNewBlock={noop}
+          onClickDeleteBlock={() => onClickDeleteBlock(block)}
+          onClickEditBlock={() => onClickUpdateBlock(block)}
+          onNavigate={noop}
+          isAppMenuFolded={isAppMenuFolded}
+          onToggleFoldAppMenu={onToggleFoldAppMenu}
+          style={{
+            padding: "16px",
+            boxSizing: "border-box",
+            borderBottom: "1px solid #d9d9d9",
+            width: isMobile ? "100%" : "320px",
+          }}
+        />
         {renderTabs()}
       </StyledContainer>
+    );
+  };
+
+  const ensureBoardsLoaded = (boardId: string) => {
+    return (
+      <LoadBlockChildren
+        parent={block}
+        type={BlockType.Board}
+        render={() => (
+          <BlockContainer
+            blockId={boardId}
+            notFoundMessage="Board not found"
+            render={(board) => (
+              <BoardMain
+                {...props}
+                block={board}
+                blockPath={getBlockPath(board, blockPath)}
+                isAppMenuFolded={isOrgMenuFolded}
+                onClickDeleteBlock={(b) => onClickDeleteBlock(b)}
+                onClickUpdateBlock={(b) => onClickUpdateBlock(b)}
+                onToggleFoldAppMenu={onToggleFoldOrgMenu}
+              />
+            )}
+          />
+        )}
+      />
+    );
+  };
+
+  const renderMobileView = () => {
+    return (
+      <Switch>
+        <Route
+          path={`/app/organizations/${block.customId}/boards/:boardId`}
+          render={(routeProps) => {
+            return ensureBoardsLoaded(routeProps.match.params.boardId);
+          }}
+        />
+        <Route
+          path={`/app/organizations/${block.customId}`}
+          render={renderSelectedOrgView}
+        />
+      </Switch>
+    );
+  };
+
+  const renderDesktopView = () => {
+    return (
       <StyledContainer
         s={{
           flex: 1,
+          height: "100%",
           overflow: "hidden",
         }}
       >
-        <Switch>
-          <Route
-            path={`/app/organizations/${block.customId}/boards/:boardId`}
-            render={(routeProps) => {
-              return (
-                <LoadBlockChildren
-                  parent={block}
-                  type={BlockType.Board}
-                  render={() => (
-                    <BlockContainer
-                      blockId={routeProps.match.params.boardId}
-                      notFoundMessage="Board not found"
-                    />
-                  )}
-                />
-              );
-            }}
-          />
-        </Switch>
+        {!isOrgMenuFolded && renderSelectedOrgView()}
+        <StyledContainer
+          s={{
+            flex: 1,
+            overflow: "hidden",
+          }}
+        >
+          <Switch>
+            <Route
+              path={`/app/organizations/${block.customId}/boards/:boardId`}
+              render={(routeProps) => {
+                return ensureBoardsLoaded(routeProps.match.params.boardId);
+              }}
+            />
+          </Switch>
+        </StyledContainer>
       </StyledContainer>
-    </StyledContainer>
-  );
+    );
+  };
+
+  if (isMobile) {
+    return renderMobileView();
+  } else {
+    return renderDesktopView();
+  }
 };
 
 OrgBoard.defaultProps = {

@@ -1,4 +1,4 @@
-import { Space, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
@@ -27,7 +27,7 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
         height: "100%",
         width: "320px",
         borderRight: "1px solid #d9d9d9",
-        backgroundColor: "#fafafa",
+        // backgroundColor: "#fafafa",
         flexDirection: "column",
         overflowY: "auto",
       }}
@@ -42,8 +42,8 @@ const LayoutMenuDesktop: React.FC<ILayoutMenuDesktopProps> = (props) => {
         onClick={onSelectNotifications}
         s={{
           padding: "8px 16px",
-          borderTop: "1px solid #d9d9d9",
-          borderBottom: "1px solid #d9d9d9",
+          // borderTop: "1px solid #d9d9d9",
+          // borderBottom: "1px solid #d9d9d9",
           cursor: "pointer",
           backgroundColor: notificationsSelected ? "#eee" : undefined,
 

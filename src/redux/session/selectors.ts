@@ -39,10 +39,15 @@ function getSessionType(state: IAppState) {
   return state.session.sessionType;
 }
 
+function getClientId(state: IAppState) {
+  return state.session.clientId;
+}
+
 export default class SessionSelectors {
   public static getUserToken = getUserToken;
   public static getSignedInUser = getSignedInUser;
   public static isUserSignedIn = isUserSignedIn;
   public static getSignedInUserRequired = getSignedInUserRequired;
   public static getSessionType = getSessionType;
+  public static getClientId = getClientId;
 }

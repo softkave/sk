@@ -1,12 +1,14 @@
 import { createAction } from "@reduxjs/toolkit";
 
-const loginUser = createAction<{ token: string; userId: string }>(
-  "session/loginUser"
-);
-
-const logoutUser = createAction("session/logoutUser");
+const loginUser = createAction<{
+  token: string;
+  userId: string;
+  clientId: string;
+}>("session/loginUser");
 
 const setSessionToWeb = createAction("session/setSessionToWeb");
+
+const logoutUser = createAction("session/logoutUser");
 
 export default class SessionActions {
   public static loginUser = loginUser;

@@ -36,7 +36,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
     <Menu
       onClick={(evt) => {
         if (evt.key !== value) {
-          onChange(evt.key);
+          onChange(evt.key as string);
         }
       }}
       selectedKeys={getSelectedKeys()}

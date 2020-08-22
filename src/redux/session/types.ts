@@ -9,4 +9,5 @@ export interface ISessionState {
   sessionType: SessionType;
   token?: string;
   userId?: string;
+  clientId?: string;
 }

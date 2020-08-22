@@ -16,7 +16,7 @@ const confirmBlockDelete = (block: IBlock, onDelete: any) => {
     okType: "primary",
     okButtonProps: { danger: true },
     onOk() {
-      onDelete(block);
+      return onDelete(block);
     },
     onCancel() {
       // do nothing

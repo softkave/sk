@@ -6,6 +6,7 @@ import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import { KeyValueKeys } from "../../redux/key-value/types";
 import { loadRootBlocksOperationAction } from "../../redux/operations/block/loadRootBlocks";
+import OperationType from "../../redux/operations/OperationType";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import { newId } from "../../utils/utils";
@@ -15,7 +16,6 @@ import LayoutMenuOrgsSection from "./LayoutMenuOrgsSection";
 const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
-  const [opId] = React.useState(() => newId());
   const user = useSelector(SessionSelectors.getSignedInUserRequired);
   const orgs = useSelector<IAppState, IBlock[]>((state) =>
     BlockSelectors.getBlocks(
@@ -48,7 +48,9 @@ const LayoutMenuOrgsSectionContainer: React.FC<{}> = (props) => {
     [dispatch]
   );
 
-  const op = useOperation({ id: opId }, loadOrgs);
+  const op = useOperation({ type: OperationType.LoadRootBlocks }, loadOrgs, {
+    deleteManagedOperationOnUnmount: false,
+  });
 
   const onAddOrg = React.useCallback(() => {
     dispatch(

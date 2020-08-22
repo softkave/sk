@@ -6,6 +6,7 @@ export interface IPushOperationProps {
   operationType: OperationType;
   status: IOperationStatus;
   id: string;
+  meta?: any;
   resourceId?: string | null;
 }
 

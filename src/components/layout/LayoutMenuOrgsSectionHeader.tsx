@@ -41,24 +41,19 @@ const LayoutMenuOrgsSectionHeader: React.FC<ILayoutMenuOrgsSectionHeaderProps> =
         <Typography.Text strong style={{ flex: 1, marginRight: "8px" }}>
           Orgs
         </Typography.Text>
-      </StyledContainer>
-      <StyledContainer s={{ flex: 1, alignItems: "center" }}>
-        <StyledContainer s={{ flex: 1, marginRight: "8px" }}>
-          <Input
-            allowClear
-            size="small"
-            placeholder="Search orgs..."
-            prefix={
-              <Search
-                style={{ width: "16px", height: "16px", color: "#999" }}
-              />
-            }
-            onChange={(evt) => onChangeSearchInput(evt.target.value)}
-          />
-        </StyledContainer>
         <Plus
           onClick={onAddOrg}
           style={{ width: "18px", height: "18px", cursor: "pointer" }}
+        />
+      </StyledContainer>
+      <StyledContainer s={{ flex: 1, alignItems: "center" }}>
+        <Input
+          allowClear
+          placeholder="Search orgs..."
+          prefix={
+            <Search style={{ width: "16px", height: "16px", color: "#999" }} />
+          }
+          onChange={(evt) => onChangeSearchInput(evt.target.value)}
         />
       </StyledContainer>
     </StyledContainer>

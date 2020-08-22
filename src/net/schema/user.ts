@@ -36,6 +36,7 @@ export const userLoginFragement = `
   ${errorFragment}
   ${userFragment}
   fragment userQueryResult on UserQueryResult {
+    clientId
     errors {
       ...errorFragment
     }

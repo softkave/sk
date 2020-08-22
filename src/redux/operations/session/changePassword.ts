@@ -58,6 +58,7 @@ export const changePasswordOperationAction = createAsyncThunk<
         SessionActions.loginUser({
           token: result.token,
           userId: result.user.customId,
+          clientId: result.clientId,
         })
       );
 

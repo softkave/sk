@@ -23,6 +23,46 @@ export interface IAddBlockOperationActionArgs {
   block: IBlock;
 }
 
+export const completeAddBlock = createAsyncThunk<
+  void,
+  IAddBlockOperationActionArgs,
+  IAppAsyncThunkConfig
+>("blockOperation/completeAddBlock", async (arg, thunkAPI) => {
+  await thunkAPI.dispatch(BlockActions.addBlock(arg.block));
+
+  let parent: IBlock | undefined;
+  const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+
+  if (arg.block.parent) {
+    parent = BlockSelectors.getBlock(thunkAPI.getState(), arg.block.parent);
+  }
+
+  if (parent && arg.block.type === BlockType.Board) {
+    const pluralType = `${arg.block.type}s`;
+    const parentUpdate = { [pluralType]: [arg.block.customId] };
+
+    await thunkAPI.dispatch(
+      BlockActions.updateBlock({
+        id: parent.customId,
+        data: parentUpdate,
+        meta: {
+          arrayUpdateStrategy: "concat",
+        },
+      })
+    );
+  }
+
+  if (arg.block.type === BlockType.Org) {
+    await thunkAPI.dispatch(
+      UserActions.updateUser({
+        id: user.customId,
+        data: { orgs: [{ customId: arg.block.customId }] },
+        meta: { arrayUpdateStrategy: "concat" },
+      })
+    );
+  }
+});
+
 export const addBlockOperationAction = createAsyncThunk<
   IOperation | undefined,
   GetOperationActionArgs<IAddBlockOperationActionArgs>,
@@ -44,8 +84,6 @@ export const addBlockOperationAction = createAsyncThunk<
   );
 
   try {
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
-
     if (arg.block.type === BlockType.Task) {
       arg.block.subTasks = addCustomIdToSubTasks(arg.block.subTasks);
     }
@@ -56,39 +94,9 @@ export const addBlockOperationAction = createAsyncThunk<
       throw result.errors;
     }
 
-    await thunkAPI.dispatch(BlockActions.addBlock(arg.block));
-
-    let parent: IBlock | undefined;
-
-    if (arg.block.parent) {
-      parent = BlockSelectors.getBlock(thunkAPI.getState(), arg.block.parent);
-    }
-
-    if (parent && arg.block.type === BlockType.Board) {
-      const pluralType = `${arg.block.type}s`;
-      const parentUpdate = { [pluralType]: [arg.block.customId] };
-
-      await thunkAPI.dispatch(
-        BlockActions.updateBlock({
-          id: parent.customId,
-          data: parentUpdate,
-          meta: {
-            arrayUpdateStrategy: "concat",
-          },
-        })
-      );
-    }
-
-    if (arg.block.type === BlockType.Org) {
-      await thunkAPI.dispatch(
-        UserActions.updateUser({
-          id: user.customId,
-          data: { orgs: [{ customId: arg.block.customId }] },
-          meta: { arrayUpdateStrategy: "concat" },
-        })
-      );
-    }
-
+    // TODO: find a fix for the type error occurring here
+    // dispatch-type-error
+    await thunkAPI.dispatch(completeAddBlock({ block: arg.block }) as any);
     await thunkAPI.dispatch(
       dispatchOperationCompleted(id, OperationType.AddBlock, arg.block.customId)
     );

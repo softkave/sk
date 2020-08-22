@@ -32,7 +32,7 @@ const LabelAndStatusWebItem: React.FC<{}> = () => {
         provided={
           {
             draggableProps: {},
-            innerRef: {},
+            innerRef: noop,
             dragHandleProps: {},
           } as DraggableProvided
         }

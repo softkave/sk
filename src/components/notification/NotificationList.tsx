@@ -8,6 +8,7 @@ export interface INotificationListProps {
   notifications: INotification[];
   onClickNotification: (notification: INotification) => void;
   currentNotificationId?: string;
+  style?: React.CSSProperties;
 }
 
 class NotificationList extends React.Component<INotificationListProps> {
@@ -27,10 +28,10 @@ class NotificationList extends React.Component<INotificationListProps> {
   };
 
   public render() {
-    const { notifications, currentNotificationId } = this.props;
+    const { notifications, currentNotificationId, style } = this.props;
 
     return (
-      <StyledNotificationList>
+      <StyledNotificationList style={style}>
         <Typography.Title
           level={4}
           style={{ margin: "0 16px", marginTop: "16px" }}

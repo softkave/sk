@@ -2,9 +2,12 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
-import { loadBlockChildrenOperationAction } from "../../redux/operations/block/loadBlockChildren";
+import {
+  ILoadBlockChildrenOperationMeta,
+  loadBlockChildrenOperationAction,
+} from "../../redux/operations/block/loadBlockChildren";
+import OperationType from "../../redux/operations/OperationType";
 import { AppDispatch, IAppState } from "../../redux/types";
-import { newId } from "../../utils/utils";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -17,7 +20,6 @@ export interface ILoadBlockChildrenProps {
 
 const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
   const { parent, render, type } = props;
-  const [opId] = React.useState(() => newId());
   const dispatch: AppDispatch = useDispatch();
   const blocks = useSelector<IAppState, IBlock[]>((state) =>
     BlockSelectors.getBlockChildren(state, parent, type)
@@ -35,7 +37,22 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
     }
   };
 
-  const op = useOperation({ id: opId }, loadChildren);
+  const op = useOperation(
+    {
+      filter: (operation) => {
+        return (
+          operation.resourceId === parent.customId &&
+          operation.operationType === OperationType.LoadBlockChildren &&
+          operation.meta &&
+          (
+            (operation.meta as ILoadBlockChildrenOperationMeta).typeList || []
+          ).includes(type)
+        );
+      },
+    },
+    loadChildren,
+    { deleteManagedOperationOnUnmount: false }
+  );
 
   if (op.isCompleted) {
     return <React.Fragment>{render(blocks)}</React.Fragment>;

@@ -169,33 +169,8 @@ export const updateBlockOperationAction = createAsyncThunk<
       throw result.errors;
     }
 
-    const forTransferBlockOnly = { ...arg.block, ...arg.data };
-
-    if (hasBlockParentChanged(arg.block, forTransferBlockOnly)) {
-      await thunkAPI.dispatch(
-        transferBlockHelperAction({
-          data: {
-            draggedBlockId: forTransferBlockOnly.customId,
-            destinationBlockId: arg.data.parent!,
-          },
-        }) as any
-      );
-    }
-
-    await thunkAPI.dispatch(
-      BlockActions.updateBlock({
-        id: arg.block.customId,
-        data: arg.data,
-        meta: {
-          arrayUpdateStrategy: "replace",
-        },
-      })
-    );
-
-    await thunkAPI.dispatch(
-      updateTasksIfHasDeletedStatusesOrLabels(arg) as any
-    );
-
+    // dispatch-type-error
+    await thunkAPI.dispatch(completeUpdateBlock(arg) as any);
     await thunkAPI.dispatch(
       dispatchOperationCompleted(
         id,
@@ -215,4 +190,35 @@ export const updateBlockOperationAction = createAsyncThunk<
   }
 
   return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+});
+
+export const completeUpdateBlock = createAsyncThunk<
+  void,
+  IUpdateBlockOperationActionArgs,
+  IAppAsyncThunkConfig
+>("block/completeUpdateBlock", async (arg, thunkAPI) => {
+  const forTransferBlockOnly = { ...arg.block, ...arg.data };
+
+  if (hasBlockParentChanged(arg.block, forTransferBlockOnly)) {
+    await thunkAPI.dispatch(
+      transferBlockHelperAction({
+        data: {
+          draggedBlockId: forTransferBlockOnly.customId,
+          destinationBlockId: arg.data.parent!,
+        },
+      }) as any
+    );
+  }
+
+  await thunkAPI.dispatch(
+    BlockActions.updateBlock({
+      id: arg.block.customId,
+      data: arg.data,
+      meta: {
+        arrayUpdateStrategy: "replace",
+      },
+    })
+  );
+
+  await thunkAPI.dispatch(updateTasksIfHasDeletedStatusesOrLabels(arg) as any);
 });
