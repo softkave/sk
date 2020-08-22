@@ -257,8 +257,8 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
           onClickDeleteBlock={() => onClickDeleteBlock(block)}
           onClickEditBlock={() => onClickUpdateBlock(block)}
           onNavigate={noop}
-          isMenuFolded={isAppMenuFolded}
-          onToggleFoldMenu={onToggleFoldAppMenu}
+          isAppMenuFolded={isAppMenuFolded}
+          onToggleFoldAppMenu={onToggleFoldAppMenu}
           style={{
             padding: "16px",
             boxSizing: "border-box",
@@ -285,10 +285,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 {...props}
                 block={board}
                 blockPath={getBlockPath(board, blockPath)}
-                isMenuFolded={isOrgMenuFolded}
+                isAppMenuFolded={isOrgMenuFolded}
                 onClickDeleteBlock={(b) => onClickDeleteBlock(b)}
                 onClickUpdateBlock={(b) => onClickUpdateBlock(b)}
-                onToggleFoldMenu={onToggleFoldOrgMenu}
+                onToggleFoldAppMenu={onToggleFoldOrgMenu}
               />
             )}
           />

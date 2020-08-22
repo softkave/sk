@@ -30,7 +30,7 @@ const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
 export interface IBoardBlockHeaderProps {
   block: IBlock;
   isMobile: boolean;
-  isMenuFolded: boolean;
+  isAppMenuFolded: boolean;
   onClickCreateNewBlock: (type: BlockType) => void;
   onClickAddCollaborator: () => void;
   onClickAddOrEditLabel: () => void;
@@ -41,7 +41,7 @@ export interface IBoardBlockHeaderProps {
     resourceType: BoardResourceType | null,
     boardType: BoardViewType | null
   ) => void;
-  onToggleFoldMenu: () => void;
+  onToggleFoldAppMenu: () => void;
 
   selectedBoardType?: BoardViewType;
   noExtraCreateMenuItems?: boolean;
@@ -64,8 +64,8 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
     onClickAddOrEditStatus,
     style,
     noExtraCreateMenuItems,
-    isMenuFolded,
-    onToggleFoldMenu,
+    isAppMenuFolded: isMenuFolded,
+    onToggleFoldAppMenu: onToggleFoldMenu,
   } = props;
 
   const history = useHistory();
@@ -185,9 +185,9 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
           showFields={["name", "type"]}
           style={{ flex: 1 }}
         />
-        <StyledContainer s={{ alignItems: "center" }}>
+        {/* <StyledContainer s={{ alignItems: "center" }}>
           {renderBlockOptionsMenu()}
-        </StyledContainer>
+        </StyledContainer> */}
       </StyledContainer>
     );
   };

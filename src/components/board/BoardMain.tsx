@@ -30,8 +30,8 @@ export interface IBoardHomeForBlockProps {
   blockPath: string;
   block: IBlock;
   isMobile: boolean;
-  isMenuFolded: boolean;
-  onToggleFoldMenu: () => void;
+  isAppMenuFolded: boolean;
+  onToggleFoldAppMenu: () => void;
   onClickUpdateBlock: OnClickUpdateBlock;
   onClickAddBlock: OnClickAddBlock;
   onClickBlock: OnClickBlockWithSearchParamKey;

@@ -129,3 +129,16 @@ export const getBlocksPath = (blocks: IBlock[]) => {
     .join("")}`;
   return path.normalize(blocksPath);
 };
+
+export const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
+  switch (type) {
+    case "boards":
+    case "tasks":
+      return true;
+
+    case "collaborators":
+    case "collaboration-requests":
+    default:
+      return false;
+  }
+};
