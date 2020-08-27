@@ -1,76 +1,133 @@
-import {
-  DeleteOutlined,
-  EllipsisOutlined,
-  PicLeftOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, Space } from "antd";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { Edit3, MoreHorizontal, Plus, Trash2 } from "react-feather";
+import { BlockType, IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
-  IMenuWithTriggerRenderMenuProps,
-  IMenuWithTriggerRenderTriggerProps,
+    IMenuWithTriggerRenderMenuProps,
+    IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 
-export type SettingsMenuKey = "view" | "delete";
+export type SettingsMenuKey = "view" | "delete" | "status" | "labels";
 
 export interface ISelectBlockOptionsMenuProps {
-  block: IBlock;
-  onSelect: (key: SettingsMenuKey) => void;
+    block: IBlock;
+    onSelect: (key: SettingsMenuKey) => void;
 }
 
 const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
-  props
+    props
 ) => {
-  const { block, onSelect } = props;
-  const blockTypeFullName = getBlockTypeFullName(block.type);
+    const { block, onSelect } = props;
 
-  const renderTrigger = (
-    renderTriggerProps: IMenuWithTriggerRenderTriggerProps
-  ) => {
-    return (
-      <StyledContainer
-        s={{
-          cursor: "pointer",
-          textTransform: "capitalize",
-        }}
-        onClick={renderTriggerProps.openMenu}
-      >
-        <EllipsisOutlined style={{ fontSize: "27px" }} />
-      </StyledContainer>
+    const renderTrigger = React.useCallback(
+        (renderTriggerProps: IMenuWithTriggerRenderTriggerProps) => {
+            return (
+                <StyledContainer
+                    s={{
+                        cursor: "pointer",
+                        textTransform: "capitalize",
+                    }}
+                    onClick={renderTriggerProps.openMenu}
+                >
+                    <MoreHorizontal />
+                </StyledContainer>
+            );
+        },
+        []
     );
-  };
 
-  const renderBlockOptions = (
-    renderMenuProps: IMenuWithTriggerRenderMenuProps
-  ) => {
-    return (
-      <Menu
-        onClick={(event) => {
-          onSelect(event.key as SettingsMenuKey);
-          renderMenuProps.closeMenu();
-        }}
-      >
-        <Menu.Item style={{ textTransform: "capitalize" }} key="view">
-          <PicLeftOutlined />
-          View {blockTypeFullName}
-        </Menu.Item>
-        <Menu.Item style={{ textTransform: "capitalize" }} key="delete">
-          <DeleteOutlined />
-          Delete {blockTypeFullName}
-        </Menu.Item>
-      </Menu>
+    const renderBlockOptions = React.useCallback(
+        (renderMenuProps: IMenuWithTriggerRenderMenuProps) => {
+            const blockTypeFullName = getBlockTypeFullName(block.type);
+            const extraOptions: React.ReactNode[] = [];
+
+            if (block.type === BlockType.Board) {
+                extraOptions.push(
+                    <Menu.Item key="status">
+                        <Space align="center" size={12}>
+                            <Plus
+                                style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    verticalAlign: "middle",
+                                    marginTop: "-3px",
+                                }}
+                            />
+                            Status
+                        </Space>
+                    </Menu.Item>,
+                    <Menu.Item key="labels">
+                        <Space align="center" size={12}>
+                            <Plus
+                                style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    verticalAlign: "middle",
+                                    marginTop: "-3px",
+                                }}
+                            />
+                            Labels
+                        </Space>
+                    </Menu.Item>,
+                    <Menu.Divider />
+                );
+            }
+
+            return (
+                <Menu
+                    onClick={(event) => {
+                        onSelect(event.key as SettingsMenuKey);
+                        renderMenuProps.closeMenu();
+                    }}
+                >
+                    {extraOptions}
+                    <Menu.Item
+                        style={{ textTransform: "capitalize" }}
+                        key="view"
+                    >
+                        <Space align="center" size={12}>
+                            <Edit3
+                                style={{
+                                    width: "14px",
+                                    height: "14px",
+                                    verticalAlign: "middle",
+                                    marginTop: "-3px",
+                                }}
+                            />
+                            <span>Edit {blockTypeFullName}</span>
+                        </Space>
+                    </Menu.Item>
+                    <Menu.Item
+                        style={{ textTransform: "capitalize" }}
+                        key="delete"
+                    >
+                        <Space align="center" size={12}>
+                            <Trash2
+                                style={{
+                                    width: "14px",
+                                    height: "14px",
+                                    verticalAlign: "middle",
+                                    marginTop: "-4px",
+                                }}
+                            />
+                            <span>Delete {blockTypeFullName}</span>
+                        </Space>
+                    </Menu.Item>
+                </Menu>
+            );
+        },
+        [block, onSelect]
     );
-  };
 
-  return (
-    <MenuWithTrigger
-      menuType="dropdown"
-      renderTrigger={renderTrigger}
-      renderMenu={renderBlockOptions}
-    />
-  );
+    return (
+        <MenuWithTrigger
+            menuType="dropdown"
+            renderTrigger={renderTrigger}
+            renderMenu={renderBlockOptions}
+        />
+    );
 };
 
 export default SelectBlockOptionsMenu;

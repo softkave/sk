@@ -28,3 +28,11 @@ export type OnClickAddCollaborator = () => void;
 export type OnClickAddOrEditLabel = () => void;
 export type OnClickAddOrEditStatus = () => void;
 export type OnClickDeleteBlock = (block: IBlock) => void;
+
+export type TaskGroup = "status" | "labels";
+
+export interface IBGroupedTasksGroup {
+  name: string;
+  tasks: IBlock[];
+  color?: string;
+}

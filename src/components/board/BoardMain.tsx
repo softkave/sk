@@ -1,191 +1,73 @@
 import path from "path";
 import React from "react";
-import { useHistory, useRouteMatch } from "react-router";
+import { useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { subscribe, unsubcribe } from "../../net/socket";
-import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
-import StyledContainer from "../styled/Container";
-import BoardBlockHeader from "./BoardBlockHeader";
-import BoardTypeList from "./BoardTypeList";
+import B from "./B";
 import {
-  BoardViewType,
-  IBoardResourceTypePathMatch,
-  OnClickAddBlock,
-  OnClickAddCollaborator,
-  OnClickAddOrEditLabel,
-  OnClickAddOrEditStatus,
-  OnClickBlockWithSearchParamKey,
-  OnClickDeleteBlock,
-  OnClickUpdateBlock,
+    IBoardResourceTypePathMatch,
+    OnClickAddCollaborator,
+    OnClickAddOrEditLabel,
+    OnClickAddOrEditStatus,
+    OnClickDeleteBlock,
+    OnClickUpdateBlock,
 } from "./types";
-import {
-  getBlockResourceTypes,
-  getBoardViewTypesForResourceType,
-  getDefaultBoardViewType,
-} from "./utils";
-import ViewByStatusContainer from "./ViewByStatusContainer";
 
 export interface IBoardHomeForBlockProps {
-  blockPath: string;
-  block: IBlock;
-  isMobile: boolean;
-  isAppMenuFolded: boolean;
-  onToggleFoldAppMenu: () => void;
-  onClickUpdateBlock: OnClickUpdateBlock;
-  onClickAddBlock: OnClickAddBlock;
-  onClickBlock: OnClickBlockWithSearchParamKey;
-  onClickAddCollaborator: OnClickAddCollaborator;
-  onClickAddOrEditLabel: OnClickAddOrEditLabel;
-  onClickAddOrEditStatus: OnClickAddOrEditStatus;
-  onClickDeleteBlock: OnClickDeleteBlock;
-
-  noExtraCreateMenuItems?: boolean;
-  boardTypeSearchParamKey?: string;
+    blockPath: string;
+    block: IBlock;
+    isMobile: boolean;
+    isAppMenuFolded: boolean;
+    onToggleFoldAppMenu: () => void;
+    onClickUpdateBlock: OnClickUpdateBlock;
+    onClickAddCollaborator: OnClickAddCollaborator;
+    onClickAddOrEditLabel: OnClickAddOrEditLabel;
+    onClickAddOrEditStatus: OnClickAddOrEditStatus;
+    onClickDeleteBlock: OnClickDeleteBlock;
 }
 
 const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
-  const {
-    blockPath,
-    block,
-    onClickAddBlock,
-    onClickDeleteBlock,
-    onClickUpdateBlock,
-    onClickBlock,
-    boardTypeSearchParamKey,
-  } = props;
-
-  const childrenTypes = useBlockChildrenTypes(block);
-  const resourceTypes = getBlockResourceTypes(block, childrenTypes);
-
-  const history = useHistory();
-  const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
-    `${blockPath}/:resourceType`
-  );
-  const resourceType =
-    resourceTypeMatch && resourceTypeMatch.params.resourceType;
-  const searchParams = new URLSearchParams(window.location.search);
-  const boardType: BoardViewType = searchParams.get(
-    boardTypeSearchParamKey!
-  ) as BoardViewType;
-
-  React.useEffect(() => {
-    console.log(block.type);
-    subscribe(block.type as any, block.customId);
-    return () => {
-      unsubcribe(block.type as any, block.customId);
-    };
-  }, [block.customId]);
-
-  // TODO: show selected child route, like by adding background color or something
-  // TODO: show count and use badges only for new unseen entries
-  // TODO: sort the entries by count?
-
-  // TODO: should we show error if block type is task?
-  if (!boardType && resourceType) {
-    if (resourceType === "boards" || resourceType === "tasks") {
-      const destPath = `${blockPath}/${resourceType}`;
-      const boardTypesForResourceType = getBoardViewTypesForResourceType(
+    const {
+        blockPath,
         block,
-        resourceType
-      );
-      const newBoardType: BoardViewType = boardTypesForResourceType[0];
+        onClickDeleteBlock,
+        onClickUpdateBlock,
+        isAppMenuFolded,
+        onToggleFoldAppMenu,
+        isMobile,
+    } = props;
 
-      return (
-        <Redirect
-          to={`${destPath}?${boardTypeSearchParamKey}=${newBoardType}`}
-        />
-      );
-    }
-  }
-
-  // TODO: should we show error if block type is task?
-  if (boardType && !resourceType) {
-    const nextPath = path.normalize(
-      blockPath + `/tasks?${boardTypeSearchParamKey}=${boardType}`
+    const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
+        `${blockPath}/:resourceType`
     );
-    return <Redirect to={nextPath} />;
-  }
+    const resourceType =
+        resourceTypeMatch && resourceTypeMatch.params.resourceType;
 
-  // TODO: should we show error if block type is task?
-  if (!boardType && !resourceType) {
-    const newBoardType = getDefaultBoardViewType(block);
-    const nextPath = path.normalize(
-      blockPath + `/tasks?${boardTypeSearchParamKey}=${newBoardType}`
-    );
-    return <Redirect to={nextPath} />;
-  }
+    React.useEffect(() => {
+        subscribe(block.type as any, block.customId);
+        return () => {
+            unsubcribe(block.type as any, block.customId);
+        };
+    }, [block.customId]);
 
-  const renderBoardType = () => {
-    switch (boardType) {
-      case "status-kanban":
-        return (
-          <ViewByStatusContainer
-            block={block}
-            onClickUpdateBlock={onClickUpdateBlock}
-          />
-        );
-
-      case "list":
-        return (
-          <BoardTypeList
-            block={block}
-            onClickBlock={(blocks) =>
-              onClickBlock(blocks, boardTypeSearchParamKey)
-            }
-            selectedResourceType={resourceType!}
-            onClickCreateNewBlock={onClickAddBlock}
-            style={{ marginTop: resourceTypes.length >= 2 ? "8px" : undefined }}
-          />
-        );
+    // TODO: should we show error if block type is task?
+    if (!resourceType) {
+        const nextPath = path.normalize(blockPath + `/tasks`);
+        return <Redirect to={nextPath} />;
     }
-  };
 
-  const renderHeader = () => {
     return (
-      <React.Fragment>
-        <BoardBlockHeader
-          {...props}
-          selectedBoardType={boardType}
-          resourceType={resourceType}
-          onClickCreateNewBlock={(...args) => onClickAddBlock(block, ...args)}
-          onClickDeleteBlock={() => onClickDeleteBlock(block)}
-          onClickEditBlock={() => onClickUpdateBlock(block)}
-          onNavigate={(navResourceType, navBoardType) => {
-            let nextPath = `${blockPath}`;
-
-            if (navResourceType) {
-              nextPath = `${nextPath}/${navResourceType}`;
-            }
-
-            if (navBoardType) {
-              nextPath = `${nextPath}?${boardTypeSearchParamKey}=${navBoardType}`;
-            }
-
-            history.push(nextPath);
-          }}
-          style={{ padding: "16px" }}
+        <B
+            block={block}
+            blockPath={blockPath}
+            isAppMenuFolded={isAppMenuFolded}
+            isMobile={isMobile}
+            onClickDeleteBlock={onClickDeleteBlock}
+            onClickEditBlock={onClickUpdateBlock}
+            onToggleFoldAppMenu={onToggleFoldAppMenu}
         />
-      </React.Fragment>
     );
-  };
-
-  return (
-    <StyledContainer
-      s={{
-        flexDirection: "column",
-        flex: 1,
-        maxWidth: "100%",
-      }}
-    >
-      {renderHeader()}
-      {renderBoardType()}
-    </StyledContainer>
-  );
-};
-
-BoardMain.defaultProps = {
-  boardTypeSearchParamKey: "bt",
 };
 
 export default BoardMain;

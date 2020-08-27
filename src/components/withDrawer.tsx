@@ -7,7 +7,7 @@ import { getWindowWidth } from "../utils/window";
 export interface IDrawerWrapperProps {
   visible: boolean;
   onClose: () => void;
-  title?: string;
+  title?: React.ReactNode;
 }
 
 interface IDrawerWrapperState {

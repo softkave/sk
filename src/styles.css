@@ -1,50 +1,44 @@
 html,
 body,
 #root {
-  height: 100%;
-  /* font-family: "Karla", sans-serif; */
-  /* font-family: 'Work Sans', sans-serif; */
+    height: 100%;
+    background-color: #fafafa;
 }
 
 .ant-drawer-body {
-  flex: 1;
-  overflow: hidden !important;
-  padding: 0 !important;
+    flex: 1;
+    overflow: hidden !important;
+    padding: 0 !important;
 }
 
 .ant-drawer-wrapper-body {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .ant-btn .anticon {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 .ant-form-item-label {
-  padding: 0 !important;
-  font-weight: bold;
+    padding: 0 !important;
+    font-weight: bold;
 }
 
-.sk-menu {
-  flex: 1;
-  height: "100%";
-  overflow: "hidden";
-  flex-direction: "column";
+.icon-btn.ant-btn {
+    line-height: 16px;
+    background-color: #f1f1f3;
+    height: auto;
+    padding: 0px 4px;
+    color: #3f3f44;
 }
 
-.sk-menu .ant-tabs {
-  height: "100%";
+.icon-btn svg {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
 }
 
-.sk-menu .ant-tabs-content {
-  height: "100%";
-}
-
-.sk-menu .ant-tabs-content-holder {
-  overflow: "hidden";
-}
-
-.sk-menu .ant-tabs-nav {
-  margin-bottom: "8px";
+.ant-tabs .anticon-ellipsis {
+    font-size: 20px;
 }

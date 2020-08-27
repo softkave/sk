@@ -142,3 +142,6 @@ export const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
       return false;
   }
 };
+
+export const TASK_GROUPS = ["status", "labels"];
+export const NO_STATUS = "no status";
