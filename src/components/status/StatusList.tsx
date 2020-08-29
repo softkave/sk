@@ -10,7 +10,6 @@ import {
     DropResult,
     ResponderProvided,
 } from "react-beautiful-dnd";
-import Scrollbars from "react-custom-scrollbars";
 import { Plus } from "react-feather";
 import * as yup from "yup";
 import { IBlockStatus } from "../../models/block/block";
@@ -24,6 +23,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
+import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -354,7 +354,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
                             flex: 1,
                         }}
                     >
-                        <Scrollbars>{renderList()}</Scrollbars>
+                        <DeviceScrollbar>{renderList()}</DeviceScrollbar>
                     </StyledContainer>
                     {renderSubmitControls()}
                 </StyledContainer>

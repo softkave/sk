@@ -74,13 +74,11 @@ const Main: React.FC<{}> = () => {
 
             function hiddenTimeout() {
                 setTimeoutHandle(0);
-                console.log("hidden time elapsed");
+
                 // disconnectSocket();
             }
 
             if (state === v) {
-                console.log("tab visible");
-
                 if (timeoutHandle) {
                     window.clearTimeout(timeoutHandle);
                 }
@@ -91,7 +89,6 @@ const Main: React.FC<{}> = () => {
                 //   connectSocket({token: token!});
                 // }
             } else {
-                console.log("tab hidden");
                 const timeout = 5 * 60 * 1000;
                 const handle = window.setTimeout(hiddenTimeout, timeout);
                 setTimeoutHandle(handle);

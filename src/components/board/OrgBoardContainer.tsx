@@ -1,5 +1,5 @@
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, message, notification, Space } from "antd";
+import { message } from "antd";
 import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +22,7 @@ import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import OrgBoard from "./OrgBoard";
 import { useBoardData } from "./useBoardData";
-import { getBlockPath, getBlocksPath, getDefaultBoardViewType } from "./utils";
+import { getBlockPath, getBlocksPath } from "./utils";
 
 interface IBlockFormState {
     formType: BlockFormType;
@@ -223,13 +223,12 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     };
 
     React.useEffect(() => {
-        console.log(block.type);
         subscribe(block.type as any, block.customId);
 
         return () => {
             unsubcribe(block.type as any, block.customId);
         };
-    }, [block.customId]);
+    }, [block.customId, block.type]);
 
     const render = () => {
         if (loadBoardDataStatusAndControls.loading) {

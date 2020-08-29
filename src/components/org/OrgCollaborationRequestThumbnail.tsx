@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Space, Typography } from "antd";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
@@ -25,22 +25,12 @@ const OrgCollaborationRequestThumbnail: React.SFC<IOrgCollaborationRequestThumbn
             <StyledContainer>
                 <ItemAvatar size="default" />
             </StyledContainer>
-            <StyledContainer
-                s={{
-                    lineHeight: "16px",
-                    flex: 1,
-                    marginLeft: 16,
-                    flexDirection: "column",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
+            <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
                 <Typography.Text strong>
                     {collabRequest.from?.blockName}
                 </Typography.Text>
                 <CollaborationRequestStatus request={collabRequest} />
-            </StyledContainer>
+            </Space>
         </StyledContainer>
     );
 };

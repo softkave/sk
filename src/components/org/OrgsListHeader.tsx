@@ -26,9 +26,7 @@ const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
 
     const renderSearchMode = () => {
         return (
-            <StyledContainer
-                s={{ justifyContent: "flex-end", flex: 1, ...style }}
-            >
+            <StyledContainer s={{ justifyContent: "flex-end", flex: 1 }}>
                 <Space>
                     <Input
                         allowClear
@@ -46,19 +44,21 @@ const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
 
     const renderControls = () => {
         return (
-            <Space>
-                <Button onClick={onClickCreate} className="icon-btn">
-                    <Plus />
-                </Button>
-                <Button onClick={toggleSearchMode} className="icon-btn">
-                    <Search />
-                </Button>
-            </Space>
+            <StyledContainer s={{ justifyContent: "flex-end", flex: 1 }}>
+                <Space>
+                    <Button onClick={onClickCreate} className="icon-btn">
+                        <Plus />
+                    </Button>
+                    <Button onClick={toggleSearchMode} className="icon-btn">
+                        <Search />
+                    </Button>
+                </Space>
+            </StyledContainer>
         );
     };
 
     return (
-        <StyledContainer s={{ padding: "0 16px" }}>
+        <StyledContainer s={{ padding: "0 16px", ...style }}>
             {!inSearchMode && renderControls()}
             {inSearchMode && renderSearchMode()}
         </StyledContainer>

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { INotification } from "../../models/notification/notification";

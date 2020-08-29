@@ -15,7 +15,7 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import OrgsMain from "./OrgsMain";
 
-const OrgsListContainer: React.FC<{}> = () => {
+const OrgsListContainer: React.FC<{}> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const user = useSelector(SessionSelectors.getSignedInUserRequired);

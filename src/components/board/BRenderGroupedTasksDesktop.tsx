@@ -1,12 +1,12 @@
 import { Badge, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
-import { Scrollbars } from "react-custom-scrollbars";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
+import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import Column from "./Column";
 import { IBGroupedTasksGroup } from "./types";
 
@@ -50,16 +50,17 @@ const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
     const renderColumn = (group: IBGroupedTasksGroup, i: number) => {
         return (
             <Column
+                key={group.id}
                 header={renderColumnHeader(group)}
                 body={
-                    <Scrollbars style={{ flex: 1 }}>
+                    <DeviceScrollbar style={{ flex: 1 }}>
                         <TaskList
                             users={users}
                             tasks={group.tasks}
                             toggleForm={onClickUpdateBlock}
                             style={{ height: "100%" }}
                         />
-                    </Scrollbars>
+                    </DeviceScrollbar>
                 }
                 style={{
                     marginLeft: "16px",

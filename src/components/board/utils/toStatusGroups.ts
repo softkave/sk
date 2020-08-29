@@ -8,7 +8,6 @@ const toStatusGroups = (
 ): IBGroupedTasksGroup[] => {
     const map: { [key: string]: IBlock[] } = {};
     const noStatus: IBlock[] = [];
-    console.log({ status, tasks });
 
     tasks.forEach((task) => {
         if (!task.status) {
@@ -21,20 +20,17 @@ const toStatusGroups = (
         map[task.status] = statusTasks;
     });
 
-    console.log({ map });
-
     const groups: IBGroupedTasksGroup[] = status.map((s) => {
         return {
+            id: s.customId,
             name: s.name,
             color: s.color,
             tasks: map[s.customId] || [],
         };
     });
 
-    console.log({ groups });
-
     if (noStatus.length > 0) {
-        groups.unshift({ name: NO_STATUS, tasks: noStatus });
+        groups.unshift({ name: NO_STATUS, tasks: noStatus, id: NO_STATUS });
     }
 
     return groups;

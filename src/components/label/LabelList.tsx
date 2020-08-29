@@ -2,7 +2,6 @@ import { Button, Space } from "antd";
 import { FormikErrors } from "formik";
 import randomColor from "randomcolor";
 import React from "react";
-import Scrollbars from "react-custom-scrollbars";
 import { Plus } from "react-feather";
 import * as yup from "yup";
 import { IBlockLabel } from "../../models/block/block";
@@ -14,6 +13,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
+import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import LabelFormItem from "./LabelFormItem";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
@@ -204,7 +204,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
                     overflowY: "auto",
                 }}
             >
-                <Scrollbars>{labels}</Scrollbars>
+                <DeviceScrollbar>{labels}</DeviceScrollbar>
             </StyledContainer>
         );
     };

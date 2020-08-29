@@ -25,6 +25,10 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
         rootBlocksLoaded,
     } = props;
 
+    const renderNotification = (isMobile: boolean) => (
+        <Notification isMobile={isMobile} />
+    );
+
     const mobile = () => (
         <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
             <HeaderMobile />
@@ -32,7 +36,7 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
                 <Switch>
                     <Route
                         path="/app/notifications/*"
-                        component={Notification}
+                        render={() => renderNotification(true)}
                     />
                     <Route
                         exact
@@ -67,7 +71,10 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
                 <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
             )}
             <Switch>
-                <Route path="/app/notifications/*" component={Notification} />
+                <Route
+                    path="/app/notifications/*"
+                    render={() => renderNotification(false)}
+                />
                 <Route
                     path="/app/organizations/*"
                     render={() => {

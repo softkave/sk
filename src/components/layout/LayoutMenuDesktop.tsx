@@ -16,7 +16,7 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
         <StyledContainer
             s={{
                 height: "100%",
-                width: "320px",
+                minWidth: "320px",
                 borderRight: "1px solid #d9d9d9",
                 flexDirection: "column",
                 overflowY: "auto",

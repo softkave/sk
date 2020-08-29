@@ -2,13 +2,13 @@ import { Input, Tabs } from "antd";
 import { noop } from "lodash";
 import path from "path";
 import React from "react";
-import Scrollbars from "react-custom-scrollbars";
 import { MoreHorizontal, Plus, Search } from "react-feather";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import StyledContainer from "../styled/Container";
+import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardMain from "./BoardMain";
@@ -157,7 +157,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         }}
                     />
                 </StyledContainer>
-                <Scrollbars>
+                <DeviceScrollbar>
                     <BoardTypeList
                         block={block}
                         searchQuery={searchQueries[resourceType]}
@@ -166,7 +166,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         selectedResourceType={resourceType}
                         style={{ height: "100%" }}
                     />
-                </Scrollbars>
+                </DeviceScrollbar>
             </StyledContainer>
         );
     };

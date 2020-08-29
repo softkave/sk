@@ -58,7 +58,7 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
                     break;
             }
         },
-        []
+        [block, onClickDeleteBlock, onClickEditBlock]
     );
 
     const renderBlockOptionsMenu = () => (
@@ -72,7 +72,7 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
 
     const onBack = React.useCallback(() => {
         history.push(`/app/organizations/${block.rootBlockId}/boards`);
-    }, [block]);
+    }, [block, history]);
 
     const renderHeaderPrefixButton = () => {
         if (isMobile) {

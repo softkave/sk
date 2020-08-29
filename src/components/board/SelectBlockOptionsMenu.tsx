@@ -71,7 +71,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
                             Labels
                         </Space>
                     </Menu.Item>,
-                    <Menu.Divider />
+                    <Menu.Divider key="divider" />
                 );
             }
 

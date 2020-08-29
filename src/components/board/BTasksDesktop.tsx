@@ -34,7 +34,7 @@ const BTasksDesktop: React.FC<IBTasksProps> = (props) => {
                 </React.Fragment>
             );
         },
-        [users]
+        [users, onClickCreate, onClickUpdateBlock, onSearchTextChange]
     );
 
     return <BGroupedTasks block={block} tasks={tasks} render={render} />;

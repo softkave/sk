@@ -31,7 +31,7 @@ const BTasksControls: React.FC<IBTasksControlsProps> = (props) => {
     const leaveSearchMode = React.useCallback(() => {
         toggleSearchMode();
         onSearchTextChange("");
-    }, [toggleSearchMode]);
+    }, [toggleSearchMode, onSearchTextChange]);
 
     const renderSelectorDropdown = () => {
         const menuOptions: React.ReactNode[] = [];
@@ -40,7 +40,7 @@ const BTasksControls: React.FC<IBTasksControlsProps> = (props) => {
             menuOptions.push(<Menu.Item key={option}>{option}</Menu.Item>);
 
             if (i < options.length - 1) {
-                menuOptions.push(<Menu.Divider />);
+                menuOptions.push(<Menu.Divider key={`divider-${i}`} />);
             }
         });
 

@@ -1,14 +1,14 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Empty } from "antd";
 import React from "react";
-import { Scrollbars } from "react-custom-scrollbars";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import StyledContainer from "../styled/Container";
+import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
-export interface ILayoutMenuOrgsSectionProps {
+export interface IOrgsMainProps {
     orgs: IBlock[];
     requests: INotification[];
     onAddOrg: () => void;
@@ -20,9 +20,7 @@ export interface ILayoutMenuOrgsSectionProps {
     selectedId?: string;
 }
 
-const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
-    props
-) => {
+const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
     const {
         orgs,
         isLoading,
@@ -35,7 +33,7 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
     } = props;
     const [searchQuery, setSearchQuery] = React.useState("");
 
-    const renderContent = React.useCallback(() => {
+    const renderContent = () => {
         if (isLoading) {
             return null;
         }
@@ -75,15 +73,7 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
                 onClickRequest={onSelectRequest}
             />
         );
-    }, [
-        isLoading,
-        errorMessage,
-        orgs,
-        requests,
-        onSelectRequest,
-        onSelectOrg,
-        searchQuery,
-    ]);
+    };
 
     return (
         <StyledContainer
@@ -94,9 +84,9 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
                 onSearchTextChange={setSearchQuery}
                 style={{ paddingBottom: "8px" }}
             />
-            <Scrollbars>{renderContent()}</Scrollbars>
+            <DeviceScrollbar>{renderContent()}</DeviceScrollbar>
         </StyledContainer>
     );
 };
 
-export default React.memo(LayoutMenuOrgsSection);
+export default React.memo(OrgsMain);

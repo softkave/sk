@@ -56,12 +56,18 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         const selected = selectedId === key;
         return (
             <StyledContainer
+                key={key}
                 s={{
                     padding: "8px 16px",
                     backgroundColor: selected ? "#bae7ff" : undefined,
+                    cursor: "pointer",
 
                     "&:hover": {
                         backgroundColor: selected ? undefined : "#fafafa",
+                    },
+
+                    "& .ant-tag": {
+                        cursor: "pointer",
                     },
                 }}
                 onClick={onClick}
@@ -73,7 +79,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
 
     return (
         <React.Fragment>
-            {pendingRequests.length &&
+            {pendingRequests.length > 0 &&
                 pendingRequests.map((request) =>
                     wrap(
                         request.customId,
@@ -83,7 +89,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         () => onClickRequest(request)
                     )
                 )}
-            {orgs.length && (
+            {orgs.length > 0 && (
                 <React.Fragment>
                     <Divider />
                     {orgs.map((org) =>
@@ -98,7 +104,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     )}
                 </React.Fragment>
             )}
-            {expiredRequests.length && (
+            {expiredRequests.length > 0 && (
                 <React.Fragment>
                     <Divider />
                     {expiredRequests.map((request) =>
@@ -112,9 +118,8 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     )}
                 </React.Fragment>
             )}
-            {declinedRequests.length && (
+            {declinedRequests.length > 0 && (
                 <React.Fragment>
-                    <Divider />
                     {declinedRequests.map((request) =>
                         wrap(
                             request.customId,
@@ -126,9 +131,8 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     )}
                 </React.Fragment>
             )}
-            {revokedRequests.length && (
+            {revokedRequests.length > 0 && (
                 <React.Fragment>
-                    <Divider />
                     {revokedRequests.map((request) =>
                         wrap(
                             request.customId,

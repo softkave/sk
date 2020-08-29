@@ -49,7 +49,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
         return () => {
             unsubcribe(block.type as any, block.customId);
         };
-    }, [block.customId]);
+    }, [block.customId, block.type]);
 
     // TODO: should we show error if block type is task?
     if (!resourceType) {

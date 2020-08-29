@@ -3,9 +3,7 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import LabelListContainer from "../label/LabelListContainer";
-import LabelListWithDrawer from "../label/LabelListWithDrawer";
 import StatusListContainer from "../status/StatusListContainer";
-import StatusListWithDrawer from "../status/StatusListWithDrawer";
 import StyledContainer from "../styled/Container";
 import withDrawer from "../withDrawer";
 
