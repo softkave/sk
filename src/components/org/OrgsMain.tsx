@@ -1,20 +1,23 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Empty, Space } from "antd";
+import { Empty } from "antd";
 import React from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { IBlock } from "../../models/block/block";
-import BlockList from "../block/BlockList";
+import { INotification } from "../../models/notification/notification";
 import StyledContainer from "../styled/Container";
-import LayoutMenuOrgsSectionHeader from "./LayoutMenuOrgsSectionHeader";
+import OrgsList from "./OrgsList";
+import OrgsListHeader from "./OrgsListHeader";
 
 export interface ILayoutMenuOrgsSectionProps {
     orgs: IBlock[];
+    requests: INotification[];
     onAddOrg: () => void;
     onSelectOrg: (org: IBlock) => void;
+    onSelectRequest: (request: INotification) => void;
 
     isLoading?: boolean;
     errorMessage?: string;
-    orgId?: string;
+    selectedId?: string;
 }
 
 const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
@@ -24,9 +27,11 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
         orgs,
         isLoading,
         errorMessage,
-        orgId,
+        selectedId,
         onAddOrg,
         onSelectOrg,
+        requests,
+        onSelectRequest,
     } = props;
     const [searchQuery, setSearchQuery] = React.useState("");
 
@@ -44,40 +49,49 @@ const LayoutMenuOrgsSection: React.FC<ILayoutMenuOrgsSectionProps> = (
             );
         }
 
-        if (orgs.length === 0) {
-            return <Empty description="No Orgs"></Empty>;
+        let o = orgs;
+        let r = requests;
+
+        if (searchQuery) {
+            const searchTextLower = searchQuery.toLowerCase();
+
+            o = orgs.filter((org) => {
+                return org.name?.toLowerCase().includes(searchTextLower);
+            });
+
+            r = requests.filter((request) => {
+                return request.from?.blockName
+                    .toLowerCase()
+                    .includes(searchTextLower);
+            });
         }
 
         return (
-            <BlockList
-                blocks={orgs}
-                searchQuery={searchQuery}
-                onClick={onSelectOrg}
-                showFields={["name"]}
-                getBlockStyle={(block) => {
-                    const selected = block.customId === orgId;
-                    return {
-                        padding: "8px 16px",
-                        backgroundColor: selected ? "#bae7ff" : undefined,
-
-                        "&:hover": {
-                            backgroundColor: selected ? undefined : "#fafafa",
-                        },
-                    };
-                }}
+            <OrgsList
+                orgs={o}
+                requests={r}
+                selectedId={selectedId}
+                onClickBlock={onSelectOrg}
+                onClickRequest={onSelectRequest}
             />
         );
-    }, [isLoading, errorMessage, orgs, onSelectOrg, searchQuery]);
+    }, [
+        isLoading,
+        errorMessage,
+        orgs,
+        requests,
+        onSelectRequest,
+        onSelectOrg,
+        searchQuery,
+    ]);
 
     return (
         <StyledContainer
             s={{ height: "100%", width: "100%", flexDirection: "column" }}
         >
-            <LayoutMenuOrgsSectionHeader
-                onAddOrg={onAddOrg}
-                onChangeSearchInput={(value) => setSearchQuery(value)}
-                disableSearch={orgs.length === 0}
-                isLoading={isLoading}
+            <OrgsListHeader
+                onClickCreate={onAddOrg}
+                onSearchTextChange={setSearchQuery}
                 style={{ paddingBottom: "8px" }}
             />
             <Scrollbars>{renderContent()}</Scrollbars>

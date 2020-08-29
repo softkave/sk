@@ -1,59 +1,53 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { KeyValueKeys } from "../../redux/key-value/types";
 import MainDesktop from "./MainDesktop";
 
-const MainDesktopContainer: React.FC<{}> = (props) => {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const showAppMenu = useSelector((state) =>
-    KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
-  ) as boolean;
+const MainDesktopContainer: React.FC<{}> = () => {
+    const dispatch = useDispatch();
 
-  const showNewOrgForm = useSelector((state) =>
-    KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowNewOrgForm)
-  );
+    const showAppMenu = useSelector((state) =>
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
+    ) as boolean;
 
-  const rootBlocksLoaded = useSelector((state) =>
-    KeyValueSelectors.getKey(state as any, KeyValueKeys.RootBlocksLoaded)
-  );
-
-  const toggleAppMenu = React.useCallback(() => {
-    const newAppMenuState = !showAppMenu;
-    dispatch(
-      KeyValueActions.setKey({
-        key: KeyValueKeys.AppMenu,
-        value: newAppMenuState,
-      })
+    const showNewOrgForm = useSelector((state) =>
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowNewOrgForm)
     );
-  }, [showAppMenu, dispatch]);
 
-  const closeNewOrgForm = React.useCallback(() => {
-    dispatch(
-      KeyValueActions.setKey({
-        key: KeyValueKeys.ShowNewOrgForm,
-        value: false,
-      })
+    const rootBlocksLoaded = useSelector((state) =>
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.RootBlocksLoaded)
     );
-  }, [dispatch]);
 
-  const onSelectNotifications = () => {
-    history.push("/app/notifications");
-  };
+    const toggleAppMenu = React.useCallback(() => {
+        const newAppMenuState = !showAppMenu;
+        dispatch(
+            KeyValueActions.setKey({
+                key: KeyValueKeys.AppMenu,
+                value: newAppMenuState,
+            })
+        );
+    }, [showAppMenu, dispatch]);
 
-  return (
-    <MainDesktop
-      showOrgForm={!!showNewOrgForm}
-      showAppMenu={showAppMenu}
-      rootBlocksLoaded={!!rootBlocksLoaded}
-      toggleMenu={toggleAppMenu}
-      closeNewOrgForm={closeNewOrgForm}
-      onSelectNotifications={onSelectNotifications}
-    />
-  );
+    const closeNewOrgForm = React.useCallback(() => {
+        dispatch(
+            KeyValueActions.setKey({
+                key: KeyValueKeys.ShowNewOrgForm,
+                value: false,
+            })
+        );
+    }, [dispatch]);
+
+    return (
+        <MainDesktop
+            showOrgForm={!!showNewOrgForm}
+            showAppMenu={showAppMenu}
+            rootBlocksLoaded={!!rootBlocksLoaded}
+            toggleMenu={toggleAppMenu}
+            closeNewOrgForm={closeNewOrgForm}
+        />
+    );
 };
 
 export default MainDesktopContainer;
