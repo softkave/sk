@@ -15,10 +15,9 @@ import useOperation, { getOperationStats } from "../hooks/useOperation";
 import BoardForm, { IBoardFormValues } from "./BoardForm";
 
 export interface IBoardFormContainerProps {
-    orgId: string;
+    parentBlock: IBlock;
     onClose: () => void;
 
-    parentBlock?: IBlock;
     block?: IBlock;
 }
 
@@ -85,14 +84,13 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
 
     return (
         <BoardForm
+            parent={parentBlock}
             value={block as any}
             onClose={onClose}
-            formOnly={!props.block}
             board={props.block}
             onSubmit={onSubmit}
             isSubmitting={operationStatus.isLoading}
             errors={errors}
-            possibleParents={possibleParents}
         />
     );
 };

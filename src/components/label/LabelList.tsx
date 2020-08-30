@@ -36,7 +36,6 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         // TODO: should we alert the user before saving if they have editing labels?
 
         editingLabelList.reset();
-        // newLabelList.reset();
         saveChanges(values.labelList);
     };
 
@@ -93,21 +92,16 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
             );
 
             formik.setFieldError(`labelList.[${index}]`, err);
-
-            // formik.setFieldTouched(`labelList.[${index}].name`, true);
-            // formik.setFieldTouched(`labelList.[${index}].description`, true);
             return;
         }
 
         editingLabelList.remove(label.customId);
-        // newLabelList.remove(label.customId);
     };
 
     const onDiscardChanges = (index: number, initialValue?: IBlockLabel) => {
         if (initialValue) {
             formik.setFieldValue(`labelList.[${index}]`, initialValue);
             editingLabelList.remove(initialValue.customId);
-            // newLabelList.remove(initialValue.customId);
         }
     };
 
@@ -149,10 +143,8 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const onDelete = React.useCallback(
         (index: number) => {
             const label = formik.values.labelList[index];
-
             formikHelpers.deleteInArrayField("labelList", index);
             editingLabelList.remove(label.customId);
-            // newLabelList.remove(label.customId);
         },
         [editingLabelList, formik.values.labelList, formikHelpers]
     );

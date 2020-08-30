@@ -159,7 +159,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
                     block={blockForm.block}
                     formType={blockForm.formType}
                     onClose={resetBlockForm}
-                    parentBlock={blockForm.parentBlock}
+                    parentBlock={blockForm.parentBlock!}
                 />
             );
         }

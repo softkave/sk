@@ -141,7 +141,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             statusList={statusList}
             user={user}
             onClose={onClose}
-            formOnly={!props.block}
             task={props.block}
             onSubmit={onSubmit}
             isSubmitting={operationStatus.isLoading}

@@ -116,7 +116,6 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         if (initialValue) {
             formik.setFieldValue(`statusList.[${index}]`, initialValue);
             editingStatusList.remove(initialValue.customId);
-            // newStatusList.remove(initialValue.customId);
         }
     };
 
@@ -275,7 +274,6 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         );
     };
 
-    // TODO: add cancel button
     const renderSubmitControls = () => {
         return (
             <StyledContainer
