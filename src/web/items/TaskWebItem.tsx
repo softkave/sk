@@ -36,7 +36,7 @@ const TasksWebItem: React.FC<{}> = () => {
   const columnBody = (
     <TaskList
       demo
-      orgUsers={[demoUsers.abayomi, demoUsers.solomon]}
+      users={[demoUsers.abayomi, demoUsers.solomon]}
       tasks={demoTasks.reverse()}
       statusList={statuses}
       toggleForm={noop}

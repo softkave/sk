@@ -100,7 +100,7 @@ const ViewByStatus: React.FC<IViewByStatusProps> = (props) => {
         header={renderColumnHeader(statusName, statusBlocks.length)}
         body={
           <TaskList
-            orgUsers={orgUsers}
+            users={orgUsers}
             tasks={statusBlocks}
             toggleForm={onClickUpdateBlock}
           />
