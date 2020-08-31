@@ -99,22 +99,24 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
                             <span>Edit {blockTypeFullName}</span>
                         </Space>
                     </Menu.Item>
-                    <Menu.Item
-                        style={{ textTransform: "capitalize" }}
-                        key="delete"
-                    >
-                        <Space align="center" size={12}>
-                            <Trash2
-                                style={{
-                                    width: "14px",
-                                    height: "14px",
-                                    verticalAlign: "middle",
-                                    marginTop: "-4px",
-                                }}
-                            />
-                            <span>Delete {blockTypeFullName}</span>
-                        </Space>
-                    </Menu.Item>
+                    {block.type !== BlockType.Org && (
+                        <Menu.Item
+                            style={{ textTransform: "capitalize" }}
+                            key="delete"
+                        >
+                            <Space align="center" size={12}>
+                                <Trash2
+                                    style={{
+                                        width: "14px",
+                                        height: "14px",
+                                        verticalAlign: "middle",
+                                        marginTop: "-4px",
+                                    }}
+                                />
+                                <span>Delete {blockTypeFullName}</span>
+                            </Space>
+                        </Menu.Item>
+                    )}
                 </Menu>
             );
         },

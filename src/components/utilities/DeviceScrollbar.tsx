@@ -26,19 +26,20 @@ const DeviceScrollbar: React.FC<IDeviceScrollbarProps> = (props) => {
                 {children}
             </StyledContainer>
         ),
-        [children]
+        [children, style]
     );
 
     const desktop = React.useCallback(
         () => (
             <Scrollbars
+                autoHide
                 {...scrollbarProps}
                 style={{ ...style, ...(scrollbarProps?.style || {}) }}
             >
                 {children}
             </Scrollbars>
         ),
-        [children]
+        [children, scrollbarProps, style]
     );
 
     return (

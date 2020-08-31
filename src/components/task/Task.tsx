@@ -9,6 +9,7 @@ import {
     Space,
     Typography,
 } from "antd";
+import { noop } from "lodash";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { useDispatch } from "react-redux";
@@ -20,6 +21,7 @@ import { AppDispatch } from "../../redux/types";
 import { getOperationStats } from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
+import TaskLabelContainer from "./TaskLabelContainer";
 import TaskStatusContainer from "./TaskStatusContainer";
 import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
 import TaskThumbnailDueDate from "./TaskThumbnailDueDate";
@@ -224,6 +226,7 @@ const Task: React.FC<ITaskProps> = (props) => {
                         )}
                     </StyledContainer>
                 )}
+                <TaskLabelContainer disabled onChange={noop} task={task} />
                 {hasSubTasks && <TaskThumbnailSubTasks task={task} />}
             </Space>
         </StyledContainer>

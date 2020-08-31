@@ -20,11 +20,7 @@ import FormError from "../form/FormError";
 import useOperation, { getOperationStats } from "../hooks/useOperation";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledContainer from "../styled/Container";
-import {
-    getNotificationLatestStatus,
-    INotificationsPathParams,
-    isNotificationExpired,
-} from "./utils";
+import { INotificationsPathParams } from "./utils";
 
 export interface INotificationProps {
     isMobile: boolean;
@@ -49,7 +45,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
 
     const onBack = React.useCallback(() => {
         history.push("/app/notifications");
-    }, []);
+    }, [history]);
 
     if (!currentNotificationId) {
         history.push(getFullBaseNavPath());
@@ -89,8 +85,6 @@ const Notification: React.FC<INotificationProps> = (props) => {
     };
 
     const renderNotificationResponse = () => {
-        const response = getNotificationLatestStatus(notification!);
-        const notificationExpired = isNotificationExpired(notification!);
         const status = getRequestStatus(notification!);
 
         if (status === CollaborationRequestStatusType.Pending) {

@@ -3,6 +3,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import ProjectFormInDrawer from "../boardBlock/BoardFormInDrawer";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import LabelListWithDrawer from "../label/LabelListWithDrawer";
+import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import StatusListWithDrawer from "../status/StatusListWithDrawer";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 
@@ -64,7 +65,16 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
                         visible
                         block={block}
                         onClose={onClose}
-                        parentBlock={parentBlock}
+                        orgId={orgId}
+                    />
+                );
+
+            case BlockType.Org:
+                return (
+                    <EditOrgFormInDrawer
+                        visible
+                        onClose={onClose}
+                        block={block}
                     />
                 );
 

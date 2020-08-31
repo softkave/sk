@@ -15,7 +15,12 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import OrgsMain from "./OrgsMain";
 
-const OrgsListContainer: React.FC<{}> = (props) => {
+export interface IOrgsListContainerProps {
+    hijackRender?: () => React.ReactElement;
+}
+
+const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
+    const { hijackRender } = props;
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const user = useSelector(SessionSelectors.getSignedInUserRequired);
@@ -130,6 +135,10 @@ const OrgsListContainer: React.FC<{}> = (props) => {
         },
         [history]
     );
+
+    if (hijackRender) {
+        return hijackRender();
+    }
 
     return (
         <OrgsMain

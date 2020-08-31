@@ -6,6 +6,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/types";
 import blockValidationSchemas from "../block/validation";
+import ColorPicker from "../form/ColorPicker";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import {
@@ -24,6 +25,7 @@ export interface IBoardFormValues {
     customId: string;
     type: BlockType;
     name: string;
+    color: string;
     description?: string;
 }
 
@@ -96,7 +98,6 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                 wrapperCol={{ span: 24 }}
             >
                 <InputWithControls
-                    useTextArea
                     value={formik.values.name}
                     onChange={(val) => {
                         formik.setFieldValue("name", val);
@@ -147,17 +148,24 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         );
     };
 
-    const preSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const { errors, values, handleSubmit } = formik;
-
-        // TODO: can this be more efficient?
-        const boardNameError = errors.name || getBoardExistsError(values.name);
-
-        if (!boardNameError) {
-            handleSubmit(event);
-        }
+    const renderColorInput = () => {
+        return (
+            <Form.Item
+                label="Board Color Avatar"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                style={{ width: "100%" }}
+            >
+                <ColorPicker
+                    value={formik.values.color}
+                    disabled={isSubmitting}
+                    onChange={(val) => {
+                        formik.setFieldValue("color", val);
+                        formikChangedFieldsHelpers.addField("color");
+                    }}
+                />
+            </Form.Item>
+        );
     };
 
     const getSubmitLabel = () => {
@@ -197,10 +205,13 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         const globalError = getGlobalError(errors);
 
         return (
-            <StyledForm onSubmit={(evt) => preSubmit(evt)}>
+            <StyledForm
+                // onSubmit={(evt) => preSubmit(evt)}
+                onSubmit={formik.handleSubmit}
+            >
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ padding: "16px" }}>
+                        <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}
@@ -216,6 +227,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                         )}
                         {renderNameInput()}
                         {renderDescriptionInput()}
+                        {renderColorInput()}
                     </StyledContainer>
                     {renderControls()}
                 </StyledContainer>

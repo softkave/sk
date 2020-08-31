@@ -1,14 +1,13 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Divider } from "antd";
+import { Button, Divider } from "antd";
 import { FormikTouched } from "formik";
 import React from "react";
+import { Plus } from "react-feather";
 import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { getDateString, newId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 import StyledContainer from "../styled/Container";
-import StyledFlatButton from "../styled/FlatButton";
 import SubTask, { ISubTaskErrors } from "./SubTask";
 
 export interface ISubTaskListProps {
@@ -152,15 +151,18 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
                     Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasks}
                     )
                 </StyledContainer>
-                <StyledFlatButton
+                <Button
                     disabled={
                         disabled ||
                         subTasks.length >= blockConstants.maxSubTasks
                     }
                     onClick={internalOnAdd}
+                    htmlType="button"
+                    className="icon-btn"
+                    style={{ height: "24px" }}
                 >
-                    <PlusOutlined />
-                </StyledFlatButton>
+                    <Plus />
+                </Button>
             </StyledContainer>
         );
     };

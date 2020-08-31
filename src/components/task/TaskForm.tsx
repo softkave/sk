@@ -107,7 +107,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 statusAssignedBy: user.customId,
             });
         }
-    }, [statusList, status]);
+    }, [statusList, status, formik, user.customId]);
 
     const onChangeParent = (parentId: string) => {
         if (parentId === formik.values.parent) {
@@ -123,17 +123,26 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 statusAssignedAt: task.statusAssignedAt,
                 statusAssignedBy: task.statusAssignedBy,
             });
+
             return;
+        } else {
+            formik.setValues({
+                ...formik.values,
+                parent: parentId,
+                labels: [],
+                status: undefined,
+                statusAssignedAt: undefined,
+                statusAssignedBy: undefined,
+            });
         }
 
-        formik.setValues({
-            ...formik.values,
-            parent: parentId,
-            labels: [],
-            status: undefined,
-            statusAssignedAt: undefined,
-            statusAssignedBy: undefined,
-        });
+        formikChangedFieldsHelpers.pushFields([
+            "parent",
+            "labels",
+            "status",
+            "statusAssignedAt",
+            "statusAssignedBy",
+        ]);
     };
 
     const renderParentInput = (formikProps: TaskFormFormikProps) => {
@@ -202,7 +211,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             >
                 <InputWithControls
                     useTextArea
-                    autoSize={{ minRows: 2, maxRows: 4 }}
                     value={values.description}
                     onChange={(val) => {
                         formik.setFieldValue("description", val);
@@ -231,7 +239,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 labelAlign="left"
             >
                 <EditPriority
-                    onChange={(val: string) => setFieldValue("priority", val)}
+                    onChange={(val: string) => {
+                        setFieldValue("priority", val);
+                        formikChangedFieldsHelpers.addField("priority");
+                    }}
                     value={values.priority as TaskPriority}
                     disabled={isSubmitting}
                 />
@@ -252,12 +263,27 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <TaskStatus
                     statusList={statusList}
                     onChange={(val: string) => {
-                        setValues({
-                            ...values,
-                            status: val,
-                            statusAssignedAt: getDateString(),
-                            statusAssignedBy: user.customId,
-                        });
+                        if (val === task?.status) {
+                            setValues({
+                                ...values,
+                                status: task.status,
+                                statusAssignedAt: task.statusAssignedAt,
+                                statusAssignedBy: task.statusAssignedBy,
+                            });
+                        } else {
+                            setValues({
+                                ...values,
+                                status: val,
+                                statusAssignedAt: getDateString(),
+                                statusAssignedBy: user.customId,
+                            });
+                        }
+
+                        formikChangedFieldsHelpers.pushFields([
+                            "status",
+                            "statusAssignedAt",
+                            "statusAssignedBy",
+                        ]);
                     }}
                     statusId={values.status}
                     disabled={isSubmitting}
@@ -280,9 +306,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <TaskLabels
                     labelList={labelList}
                     user={user}
-                    onChange={(val: IBlockAssignedLabel[]) =>
-                        setFieldValue("labels", val)
-                    }
+                    onChange={(val: IBlockAssignedLabel[]) => {
+                        setFieldValue("labels", val);
+                        formikChangedFieldsHelpers.addField("labels");
+                    }}
                     labels={values.labels}
                     disabled={isSubmitting}
                 />
@@ -311,6 +338,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                                 ? val.hour(23).minute(59).second(0).valueOf()
                                 : null
                         );
+                        formikChangedFieldsHelpers.addField("dueAt");
                     }}
                     value={values.dueAt ? moment(values.dueAt) : undefined}
                     style={{ width: "100%" }}
@@ -344,14 +372,23 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         const collaboratorExists = !!assignees.find((next) => {
             return collaborator.customId === next.userId;
         });
+        const existsBefore = (task?.assignees || []).find((next) => {
+            return collaborator.customId === next.userId;
+        });
 
         if (!collaboratorExists) {
+            const assignedAt = existsBefore
+                ? existsBefore.assignedAt
+                : getDateString();
+            const assignedBy = existsBefore
+                ? existsBefore.assignedBy
+                : user.customId;
             return [
                 ...assignees,
                 {
+                    assignedAt,
+                    assignedBy,
                     userId: collaborator.customId,
-                    assignedAt: getDateString(),
-                    assignedBy: user.customId,
                 },
             ];
         }
@@ -378,15 +415,18 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                                     collaborator={
                                         indexedCollaborators[item.userId]
                                     }
-                                    onUnassign={() =>
+                                    onUnassign={() => {
                                         setFieldValue(
                                             "assignees",
                                             unassignCollaborator(
                                                 item,
                                                 values.assignees
                                             )
-                                        )
-                                    }
+                                        );
+                                        formikChangedFieldsHelpers.addField(
+                                            "assignees"
+                                        );
+                                    }}
                                     disabled={isSubmitting}
                                 />
                             </List.Item>
@@ -411,15 +451,16 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <Select
                     placeholder="Select collaborator"
                     value={undefined}
-                    onChange={(index) =>
+                    onChange={(index) => {
                         setFieldValue(
                             "assignees",
                             assignCollaborator(
                                 collaborators[Number(index)],
                                 values.assignees
                             )
-                        )
-                    }
+                        );
+                        formikChangedFieldsHelpers.addField("assignees");
+                    }}
                     disabled={isSubmitting}
                 >
                     {collaborators.map((collaborator, index) => {
@@ -443,6 +484,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                                 "assignees",
                                 assignCollaborator(user, values.assignees)
                             );
+                            formikChangedFieldsHelpers.addField("assignees");
                         }
                     }}
                     s={{
@@ -467,8 +509,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     ) => {
         const { values, setValues } = formikProps;
         const update: ITaskFormValues = { ...values, subTasks };
-
         setValues(update);
+        formikChangedFieldsHelpers.addField("subTasks");
     };
 
     const onDiscardSubTaskChanges = (index: number) => {
@@ -478,6 +520,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
         if (initialValue) {
             formik.setFieldValue(`subTasks.[${index}]`, initialValue);
+            formikChangedFieldsHelpers.addField("subTasks");
         }
     };
 
@@ -506,8 +549,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                             "subTasks",
                             subTask,
                             {},
-                            {}
+                            {},
+                            value.subTasks?.length
                         );
+                        formikChangedFieldsHelpers.addField("subTasks");
                     }}
                     onDeleteSubTask={(index) => {
                         formikHelpers.deleteInArrayField("subTasks", index);
@@ -558,7 +603,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             <StyledForm onSubmit={handleSubmit}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ padding: "16px" }}>
+                        <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}

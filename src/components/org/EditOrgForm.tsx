@@ -214,7 +214,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
             <StyledForm onSubmit={handleSubmit}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ padding: "16px" }}>
+                        <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}

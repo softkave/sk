@@ -1,12 +1,15 @@
-import { Input, Tabs } from "antd";
+/*eslint no-useless-computed-key: "off"*/
+
+import { Tabs } from "antd";
 import { noop } from "lodash";
 import path from "path";
 import React from "react";
-import { MoreHorizontal, Plus, Search } from "react-feather";
+import { MoreHorizontal } from "react-feather";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import BlockContainer from "./BlockContainer";
@@ -81,7 +84,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         return <Redirect to={nextPath} />;
     }
 
-    const renderSearch = () => {
+    const renderResourceType = () => {
         let placeholder = "";
 
         switch (resourceType) {
@@ -99,64 +102,35 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         }
 
         return (
-            <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
-                <Input
-                    allowClear
-                    placeholder={placeholder}
-                    prefix={
-                        <Search
-                            style={{
-                                width: "16px",
-                                height: "16px",
-                                color: "#999",
-                            }}
-                        />
-                    }
-                    onChange={(evt) =>
-                        setSearchQueries({
-                            ...searchQueries,
-                            [resourceType]: evt.target.value,
-                        })
-                    }
-                />
-            </StyledContainer>
-        );
-    };
-
-    const renderResourceType = () => {
-        return (
             <StyledContainer
                 s={{ height: "100%", width: "100%", flexDirection: "column" }}
             >
-                <StyledContainer
-                    s={{
-                        alignItems: "center",
+                <OrgsListHeader
+                    onClickCreate={() => {
+                        switch (resourceType) {
+                            case "boards":
+                                onClickAddBlock(block, BlockType.Board);
+                                return;
+
+                            case "collaboration-requests":
+                            case "collaborators":
+                                onClickAddCollaborator();
+                                return;
+                        }
+                    }}
+                    onSearchTextChange={(val) => {
+                        setSearchQueries({
+                            ...searchQueries,
+                            [resourceType]: val,
+                        });
+                    }}
+                    placeholder={placeholder}
+                    style={{
                         padding: "0 16px",
                         marginBottom: "8px",
                         marginTop: "8px",
                     }}
-                >
-                    {renderSearch()}
-                    <Plus
-                        onClick={() => {
-                            switch (resourceType) {
-                                case "boards":
-                                    onClickAddBlock(block, BlockType.Board);
-                                    return;
-
-                                case "collaboration-requests":
-                                case "collaborators":
-                                    onClickAddCollaborator();
-                                    return;
-                            }
-                        }}
-                        style={{
-                            width: "18px",
-                            height: "18px",
-                            cursor: "pointer",
-                        }}
-                    />
-                </StyledContainer>
+                />
                 <DeviceScrollbar>
                     <BoardTypeList
                         block={block}

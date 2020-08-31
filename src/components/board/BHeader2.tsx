@@ -1,5 +1,6 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
+import { Button } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useHistory } from "react-router";
@@ -77,11 +78,14 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
     const renderHeaderPrefixButton = () => {
         if (isMobile) {
             return (
-                <StyledContainer
-                    s={{ marginRight: "16px", cursor: "pointer" }}
-                    onClick={onBack}
-                >
-                    <ArrowLeft />
+                <StyledContainer s={{ marginRight: "16px" }}>
+                    <Button
+                        style={{ cursor: "pointer" }}
+                        onClick={onBack}
+                        className="icon-btn"
+                    >
+                        <ArrowLeft />
+                    </Button>
                 </StyledContainer>
             );
         } else {

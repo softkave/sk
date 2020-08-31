@@ -9,7 +9,7 @@ import StyledContainer from "../styled/Container";
 import HeaderMobile from "./HeaderMobile";
 import LayoutMenuDesktop from "./LayoutMenuDesktop";
 
-export interface IMainDesktopProps {
+export interface IMainLayoutProps {
     showAppMenu: boolean;
     showOrgForm: boolean;
     rootBlocksLoaded: boolean;
@@ -17,7 +17,7 @@ export interface IMainDesktopProps {
     closeNewOrgForm: () => void;
 }
 
-const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
+const MainLayout: React.FC<IMainLayoutProps> = (props) => {
     const {
         showAppMenu,
         showOrgForm,
@@ -44,14 +44,21 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
                         component={OrgsListContainer}
                     />
                     <Route
-                        exact
                         path="/app/organizations/*"
                         render={() => {
-                            if (rootBlocksLoaded) {
-                                return <OrgBoardContainer />;
-                            }
+                            console.log("i am here", rootBlocksLoaded);
+                            return (
+                                <OrgsListContainer
+                                    hijackRender={() => {
+                                        // return <span />;
+                                        if (rootBlocksLoaded) {
+                                            return <OrgBoardContainer />;
+                                        }
 
-                            return null;
+                                        return <React.Fragment />;
+                                    }}
+                                />
+                            );
                         }}
                     />
                     <Route
@@ -99,4 +106,4 @@ const MainDesktop: React.FC<IMainDesktopProps> = (props) => {
     );
 };
 
-export default MainDesktop;
+export default MainLayout;

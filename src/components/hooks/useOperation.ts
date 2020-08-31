@@ -94,11 +94,15 @@ const useOperation: UseOperation = (
                 managedOpId &&
                 options.deleteManagedOperationOnUnmount
             ) {
-                // throw new Error("P");
                 dispatch(OperationActions.deleteOperation(managedOpId));
             }
         };
-    }, [managedOpId, dispatch, options.deleteManagedOperationOnUnmount]);
+    }, [
+        managedOpId,
+        dispatch,
+        options.deleteManagedOperationOnUnmount,
+        // operation,
+    ]);
 
     return statusData;
 };

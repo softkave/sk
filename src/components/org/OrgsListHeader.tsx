@@ -8,10 +8,11 @@ export interface IOrgsListHeaderProps {
     onClickCreate: () => void;
     onSearchTextChange: (text: string) => void;
     style?: React.CSSProperties;
+    placeholder?: string;
 }
 
 const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
-    const { onSearchTextChange, onClickCreate, style } = props;
+    const { onSearchTextChange, onClickCreate, style, placeholder } = props;
 
     const [inSearchMode, setSearchMode] = React.useState(false);
     const toggleSearchMode = React.useCallback(
@@ -22,15 +23,21 @@ const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
     const leaveSearchMode = React.useCallback(() => {
         toggleSearchMode();
         onSearchTextChange("");
-    }, [toggleSearchMode]);
+    }, [toggleSearchMode, onSearchTextChange]);
 
     const renderSearchMode = () => {
         return (
-            <StyledContainer s={{ justifyContent: "flex-end", flex: 1 }}>
-                <Space>
+            <StyledContainer
+                s={{
+                    justifyContent: "flex-end",
+                    flex: 1,
+                    "& .ant-space-item:first-of-type": { flex: 1 },
+                }}
+            >
+                <Space style={{ width: "100%" }}>
                     <Input
                         allowClear
-                        placeholder="Search orgs and requests..."
+                        placeholder={placeholder}
                         prefix={<InputSearchIcon />}
                         onChange={(evt) => onSearchTextChange(evt.target.value)}
                     />

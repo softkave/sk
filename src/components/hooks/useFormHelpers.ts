@@ -1,8 +1,10 @@
 import { FormikConfig, FormikProps, useFormik } from "formik";
 import defaultTo from "lodash/defaultTo";
 import get from "lodash/get";
+import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import React from "react";
+import useObject from "./useObject";
 
 export interface IUseFormHelpersFormikProps<T> {
     formikProps: FormikConfig<T>;
@@ -28,6 +30,7 @@ export interface IUseFormHelpersFormikHelpers {
 
 export interface IUseFormHelpersFormikChangedFieldsHelpers<T = any> {
     addField: (field: string) => void;
+    pushFields: (fields: string[]) => void;
     removeField: (field: string) => void;
     hasChanges: (field?: string) => boolean;
     diffChanges: () => Partial<T> | null;
@@ -44,7 +47,7 @@ const useFormHelpers = <T>(
     props: IUseFormHelpersFormikProps<T>
 ): IUseFormHelpersResult<T> => {
     const formik = useFormik(props.formikProps);
-    const changedFields = new Map();
+    const changedFields = useObject();
 
     React.useEffect(() => {
         if (props.errors) {
@@ -59,13 +62,18 @@ const useFormHelpers = <T>(
             const initialValue = get(formik.initialValues, key);
             const value = get(formik.values, key);
 
-            if (initialValue === value) {
+            /**
+             * TODO: using isEqual could potentially be slow for fields like
+             * assignee in task, and other array and object fields.
+             * Maybe find an alternative solution.
+             */
+            if ((!initialValue && !value) || isEqual(initialValue, value)) {
                 changesReverted.push(key);
             }
         });
 
         if (changesReverted.length > 0) {
-            changesReverted.forEach((key) => changedFields.delete(key));
+            changesReverted.forEach((key) => changedFields.remove(key));
         }
     }, [changedFields, formik]);
 
@@ -106,7 +114,6 @@ const useFormHelpers = <T>(
             value.splice(index, 0, initialValue);
             touched.splice(index, 0, initialTouched);
             errors.splice(index, 0, initialError);
-
             setArrayFieldItems(field, touched, errors, value);
         },
         [setArrayFieldItems, getArrayFieldItems]
@@ -154,13 +161,24 @@ const useFormHelpers = <T>(
         [changedFields]
     );
 
+    const pushFields = React.useCallback(
+        (fields: string[]) => {
+            const objFields = fields.reduce((obj, field) => {
+                obj[field] = true;
+                return obj;
+            }, {});
+            changedFields.merge(objFields);
+        },
+        [changedFields]
+    );
+
     const hasChanges = React.useCallback(
         (field?: string) => {
             if (field) {
                 return changedFields.has(field);
             }
 
-            return changedFields.size > 0;
+            return changedFields.size() > 0;
         },
         [changedFields]
     );
@@ -177,7 +195,7 @@ const useFormHelpers = <T>(
             set(data, field, value);
         });
 
-        if (changedFields.size > 0) {
+        if (changedFields.size() > 0) {
             return data;
         }
 
@@ -190,7 +208,7 @@ const useFormHelpers = <T>(
 
     const removeField = React.useCallback(
         (field: string) => {
-            changedFields.delete(field);
+            changedFields.remove(field);
         },
         [changedFields]
     );
@@ -227,9 +245,17 @@ const useFormHelpers = <T>(
             hasChanges,
             clearAll,
             removeField,
+            pushFields,
             addField: addChangedField,
         }),
-        [diffChanges, hasChanges, clearAll, addChangedField, removeField]
+        [
+            diffChanges,
+            hasChanges,
+            clearAll,
+            addChangedField,
+            removeField,
+            pushFields,
+        ]
     );
 
     return {

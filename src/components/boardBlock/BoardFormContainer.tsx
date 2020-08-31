@@ -4,34 +4,36 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
+import BlockSelectors from "../../redux/blocks/selectors";
 import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
-import { AppDispatch } from "../../redux/types";
+import { AppDispatch, IAppState } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
-import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
 import useOperation, { getOperationStats } from "../hooks/useOperation";
 import BoardForm, { IBoardFormValues } from "./BoardForm";
 
 export interface IBoardFormContainerProps {
-    parentBlock: IBlock;
+    orgId: string;
     onClose: () => void;
 
     block?: IBlock;
 }
 
 const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
-    const { onClose, parentBlock } = props;
+    const { onClose, orgId } = props;
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const org = useSelector<IAppState, IBlock>((state) => {
+        return BlockSelectors.getBlock(state, orgId)!;
+    });
 
     const [block, setBlock] = React.useState<IBlock>(
-        props.block || getNewBlock(user, BlockType.Board, parentBlock)
+        props.block || getNewBlock(user, BlockType.Board, org)
     );
 
-    const possibleParents = useBlockPossibleParents(block);
     const operationStatus = useOperation();
     const errors = operationStatus.error
         ? flattenErrorListWithDepthInfinite(operationStatus.error)
@@ -84,7 +86,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
 
     return (
         <BoardForm
-            parent={parentBlock}
+            parent={org}
             value={block as any}
             onClose={onClose}
             board={props.block}

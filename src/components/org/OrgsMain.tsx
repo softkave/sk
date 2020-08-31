@@ -83,6 +83,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 onClickCreate={onAddOrg}
                 onSearchTextChange={setSearchQuery}
                 style={{ paddingBottom: "8px" }}
+                placeholder="Search orgs and requests..."
             />
             <DeviceScrollbar>{renderContent()}</DeviceScrollbar>
         </StyledContainer>

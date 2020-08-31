@@ -33,8 +33,8 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
                 >
                     <Clock
                         style={{
-                            width: "16px",
-                            height: "16px",
+                            width: "14px",
+                            height: "14px",
                             color: "rgba(0, 0, 0, 0.65)",
                         }}
                     />

@@ -39,6 +39,10 @@ body,
     margin-top: 3px;
 }
 
+.icon-btn.ant-btn[disabled] svg {
+    color: rgba(0, 0, 0, 0.25);
+}
+
 .ant-tabs .anticon-ellipsis {
     font-size: 20px;
 }

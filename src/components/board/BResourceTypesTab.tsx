@@ -1,7 +1,8 @@
-import { Tabs } from "antd";
+/*eslint no-useless-computed-key: "off"*/
+
 import path from "path";
 import React from "react";
-import { Redirect, useHistory, useRouteMatch } from "react-router";
+import { Redirect, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import BTasksContainer from "./BTasksContainer";
@@ -15,8 +16,6 @@ export interface IBResourceTypesTabProps {
 const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
     const { blockPath, block } = props;
 
-    const history = useHistory();
-    const resourceTypes = ["tasks"];
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
         `${blockPath}/:resourceType`
     );
@@ -29,11 +28,6 @@ const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
         return <Redirect to={nextPath} />;
     }
 
-    const onSelectResourceType = (key: string) => {
-        const nextPath = `${blockPath}/${key}`;
-        history.push(nextPath);
-    };
-
     const renderContent = (type) => {
         switch (type) {
             case "tasks":
@@ -42,17 +36,6 @@ const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
             default:
                 return null;
         }
-    };
-
-    const renderTab = (type) => {
-        return (
-            <Tabs.TabPane
-                tab={<span style={tabSpanStyle}>{type}</span>}
-                key={type}
-            >
-                {renderContent(type)}
-            </Tabs.TabPane>
-        );
     };
 
     return (
@@ -74,21 +57,8 @@ const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
             }}
         >
             {renderContent("tasks")}
-            {/* <Tabs
-                activeKey={resourceType}
-                onChange={(key) => onSelectResourceType(key)}
-                tabBarGutter={0}
-                style={{ height: "100%", width: "100%" }}
-            >
-                {resourceTypes.map(renderTab)}
-            </Tabs> */}
         </StyledContainer>
     );
-};
-
-const tabSpanStyle: React.CSSProperties = {
-    textTransform: "capitalize",
-    padding: "0 16px",
 };
 
 export default React.memo(BResourceTypesTab);

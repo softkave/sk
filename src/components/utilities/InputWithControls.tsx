@@ -1,7 +1,10 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { Button, Input, Space, Typography } from "antd";
 import { TextAreaProps } from "antd/lib/input";
 import React from "react";
 import { Check, Edit3, X as CloseIcon } from "react-feather";
+import StyledContainer from "../styled/Container";
 import Editable, { EditableRenderFn } from "./Editable";
 
 export interface IInputWithControlsProps {
@@ -61,7 +64,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         (isEditing, setEditing) => {
             if (!isEditing) {
                 return (
-                    <Space direction="vertical">
+                    <Space direction="vertical" style={{ width: "100%" }}>
                         <Typography.Paragraph>{value}</Typography.Paragraph>
                         {!noControls && (
                             <Space>
@@ -86,7 +89,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
             }
 
             return (
-                <Space direction="vertical">
+                <Space direction="vertical" style={{ width: "100%" }}>
                     {input}
                     {!noControls && (
                         <Space>
@@ -105,7 +108,10 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                                 className="icon-btn"
                             />
                             <Button
-                                onClick={revertChanges}
+                                onClick={() => {
+                                    revertChanges();
+                                    setEditing(false);
+                                }}
                                 icon={
                                     <CloseIcon
                                         style={{
@@ -123,7 +129,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 </Space>
             );
         },
-        []
+        [disabled, noControls, revertChanges, value, input]
     );
 
     if (!noEditable) {
@@ -132,7 +138,18 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         content = input;
     }
 
-    return content;
+    return (
+        <StyledContainer
+            s={{
+                ["& button"]: {
+                    width: "26px !important",
+                    height: "24.2px !important",
+                },
+            }}
+        >
+            {content}
+        </StyledContainer>
+    );
 };
 
 InputWithControls.defaultProps = { autoSize: { minRows: 4, maxRows: 8 } };

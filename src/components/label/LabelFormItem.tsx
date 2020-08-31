@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { Button, Input, Space, Tag } from "antd";
 import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";

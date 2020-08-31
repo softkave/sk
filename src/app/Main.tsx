@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import MainDesktopContainer from "../components/layout/MainDesktopContainer";
+import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
 import { connectSocket, disconnectSocket } from "../net/socket";
@@ -101,7 +101,7 @@ const Main: React.FC<{}> = () => {
             //   if the page is hidden
             onchange({ type: document[hidden] ? "blur" : "focus" });
         }
-    }, []);
+    }, [timeoutHandle]);
 
     React.useEffect(() => {
         if (sessionType === SessionType.Uninitialized) {
@@ -128,7 +128,7 @@ const Main: React.FC<{}> = () => {
                 history.push("/");
             }
         }
-    }, [sessionType]);
+    }, [sessionType, clientId, history, token, handleHidden]);
 
     const renderInitializing = () => (
         <StyledContainer
@@ -150,7 +150,7 @@ const Main: React.FC<{}> = () => {
                 return renderInitializing();
             }
 
-            return <MainDesktopContainer />;
+            return <MainLayoutContainer />;
 
         case SessionType.Web:
             return <Routes />;

@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { Button, Tabs } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";

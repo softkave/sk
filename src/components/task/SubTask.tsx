@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { Button, Checkbox, Form, Input, Space } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
@@ -115,13 +117,15 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
                         }
                         onClick={onEdit}
                         htmlType="button"
+                        className="icon-btn"
                     />
                 )}
                 <Button
                     disabled={disabled}
                     icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
-                    onClick={() => onDelete()}
+                    onClick={onDelete}
                     htmlType="button"
+                    className="icon-btn"
                 />
             </Space>
         );
@@ -129,7 +133,14 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
 
     const renderLabel = () => {
         return (
-            <StyledContainer>
+            <StyledContainer
+                s={{
+                    ["& button"]: {
+                        width: "26px !important",
+                        height: "24.2px !important",
+                    },
+                }}
+            >
                 <Checkbox
                     checked={!!subTask.completedAt}
                     onChange={onToggle}
