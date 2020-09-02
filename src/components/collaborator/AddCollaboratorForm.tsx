@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Space } from "antd";
 import isBoolean from "lodash/isBoolean";
 import isString from "lodash/isString";
 import moment from "moment";
@@ -172,7 +172,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     });
 
     const renderDefaultMessageInput = () => {
-        const { touched, errors, values, handleChange, handleBlur } = formik;
+        const { touched, errors, values, handleBlur } = formik;
 
         return (
             <Form.Item
@@ -187,7 +187,10 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                     autoComplete="off"
                     name="message"
                     value={values.message}
-                    onChange={handleChange}
+                    onChange={(evt) => {
+                        formik.setFieldValue("message", evt.target.value);
+                        formikChangedFieldsHelpers.addField("message");
+                    }}
                     onBlur={handleBlur}
                     placeholder="Enter default message"
                     disabled={isSubmitting}
@@ -211,7 +214,10 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
             >
                 <ExpiresAt
                     minDate={moment().subtract(1, "day").endOf("day")}
-                    onChange={(val) => setFieldValue("expiresAt", val)}
+                    onChange={(val) => {
+                        setFieldValue("expiresAt", val);
+                        formikChangedFieldsHelpers.addField("expiresAt");
+                    }}
                     value={values.expiresAt}
                     placeholder="Select default expiration date"
                     disabled={isSubmitting}
@@ -223,6 +229,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
     const onDelete = (index: number) => {
         formikHelpers.deleteInArrayField("collaborators", index);
+        formikChangedFieldsHelpers.addField("collaborators");
     };
 
     const onChange = (
@@ -245,6 +252,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         if (changedFields.includes("expiresAt")) {
             formik.setFieldValue(expiresAtPath, data.expiresAt);
         }
+
+        formikChangedFieldsHelpers.addField("collaborators");
     };
 
     const onAddNewStatus = () => {
@@ -255,6 +264,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         };
 
         formikHelpers.addToArrayField("collaborators", status, {}, {});
+        formikChangedFieldsHelpers.addField("collaborators");
     };
 
     const renderAddControls = () => {
@@ -266,21 +276,15 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                         formik.values.collaborators.length >=
                             blockConstants.maxAddCollaboratorValuesLength
                     }
-                    icon={
-                        <Plus
-                            style={{
-                                width: "16px",
-                                height: "16px",
-                                verticalAlign: "middle",
-                                marginTop: "-3px",
-                            }}
-                        />
-                    }
                     onClick={() => onAddNewStatus()}
                     htmlType="button"
                     className="icon-btn"
+                    style={{ padding: "2px 6px", paddingRight: "8px" }}
                 >
-                    Add Request
+                    <Space>
+                        <Plus />
+                        Add Request
+                    </Space>
                 </Button>
             </StyledContainer>
         );
@@ -349,7 +353,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
             <StyledForm onSubmit={handleSubmit}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ padding: "16px" }}>
+                        <StyledContainer>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}

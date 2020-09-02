@@ -226,7 +226,12 @@ const Task: React.FC<ITaskProps> = (props) => {
                         )}
                     </StyledContainer>
                 )}
-                <TaskLabelContainer disabled onChange={noop} task={task} />
+                <TaskLabelContainer
+                    disabled
+                    demo={demo}
+                    onChange={noop}
+                    task={task}
+                />
                 {hasSubTasks && <TaskThumbnailSubTasks task={task} />}
             </Space>
         </StyledContainer>

@@ -46,7 +46,6 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                     <Route
                         path="/app/organizations/*"
                         render={() => {
-                            console.log("i am here", rootBlocksLoaded);
                             return (
                                 <OrgsListContainer
                                     hijackRender={() => {

@@ -38,6 +38,12 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
                     width: "100%",
                     flexDirection: "column",
                     padding: "32px 0",
+
+                    ["& button"]: {
+                        width: "26px !important",
+                        height: "24.2px !important",
+                    },
+
                     ...(style || {}),
                 }}
             >
