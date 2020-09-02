@@ -1,6 +1,7 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IBGroupedTasksGroup, TaskGroup } from "./types";
+import toLabelGroups from "./utils/toLabelGroups";
 import toStatusGroups from "./utils/toStatusGroups";
 
 export type BGroupedTasksRenderFn = (
@@ -26,7 +27,8 @@ const BGroupedTasks: React.FC<IBGroupedTasksProps> = (props) => {
         }
 
         case "labels": {
-            const groups = toStatusGroups(block.boardLabels || [], tasks);
+            const groups = toLabelGroups(block.boardLabels || [], tasks);
+
             return render(groups, groupType, setGroupType);
         }
 

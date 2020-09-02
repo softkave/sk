@@ -46,8 +46,10 @@ const BTasksControls: React.FC<IBTasksControlsProps> = (props) => {
 
         return (
             <Menu
-                activeKey={selected}
-                onSelect={(e) => setGroupType(e.key as TaskGroup)}
+                selectedKeys={[selected]}
+                onClick={(e) => {
+                    setGroupType(e.key as TaskGroup);
+                }}
             >
                 {menuOptions}
             </Menu>

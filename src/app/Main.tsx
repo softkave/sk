@@ -118,7 +118,6 @@ const Main: React.FC<{}> = () => {
             });
 
             handleHidden();
-            console.log("again");
 
             if (!isPath0App()) {
                 history.push(makePath(paths.appPath));
