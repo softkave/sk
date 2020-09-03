@@ -28,7 +28,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
         props.block || getNewBlock(user, BlockType.Org)
     );
 
-    const operationStatus = useOperation();
+    const operationStatus = useOperation({ resourceId: block.customId });
 
     const errors = operationStatus.error
         ? flattenErrorListWithDepthInfinite(operationStatus.error)

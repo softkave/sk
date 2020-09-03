@@ -79,6 +79,12 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         }
     });
 
+    const existingBlock = useSelector<IAppState, IBlock | undefined>(
+        (state) => {
+            return BlockSelectors.getBlock(state, block.customId);
+        }
+    );
+
     const possibleParents = useBlockPossibleParents(block);
     const operationStatus = useOperation();
 
@@ -86,17 +92,18 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         ? flattenErrorListWithDepthInfinite(operationStatus.error)
         : undefined;
 
-    React.useEffect(() => {
-        if (operationStatus.isCompleted && !props.block) {
-            onClose();
-        }
-    });
+    // React.useEffect(() => {
+    //     // chjeck if it's a new task
+    //     if (operationStatus.isCompleted && !props.block) {
+    //         onClose();
+    //     }
+    // });
 
     const onSubmit = async (values: ITaskFormValues) => {
         const data = { ...block, ...values };
         setBlock(data);
 
-        const result = props.block
+        const result = existingBlock
             ? await dispatch(
                   updateBlockOperationAction({
                       block,
@@ -118,7 +125,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
         const opStat = getOperationStats(op);
 
-        if (!props.block) {
+        if (!existingBlock) {
             if (opStat.isCompleted) {
                 message.success("Task created successfully");
             } else if (opStat.isError) {
@@ -141,7 +148,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             statusList={statusList}
             user={user}
             onClose={onClose}
-            task={props.block}
+            task={existingBlock}
             onSubmit={onSubmit}
             isSubmitting={operationStatus.isLoading}
             errors={errors}

@@ -200,15 +200,27 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         );
     };
 
+    const preSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const { errors, values, handleSubmit } = formik;
+
+        // TODO: can this be more efficient?
+        const boardNameError = errors.name || getBoardExistsError(values.name);
+
+        if (!boardNameError) {
+            handleSubmit(event);
+        } else {
+            formik.setFieldTouched("name");
+        }
+    };
+
     const renderForm = () => {
         const { errors } = formik;
         const globalError = getGlobalError(errors);
 
         return (
-            <StyledForm
-                // onSubmit={(evt) => preSubmit(evt)}
-                onSubmit={formik.handleSubmit}
-            >
+            <StyledForm onSubmit={(evt) => preSubmit(evt)}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
                         <StyledContainer s={{ paddingBottom: "16px" }}>
