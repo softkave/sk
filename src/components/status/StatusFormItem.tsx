@@ -1,6 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
@@ -142,9 +142,12 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                         {value.name}
                     </span>
                 </StyledContainer>
-                <StyledContainer s={{ marginTop: "4px" }}>
+                <Typography.Paragraph
+                    type="secondary"
+                    style={{ margin: 0, marginTop: "4px" }}
+                >
                     {value.description}
-                </StyledContainer>
+                </Typography.Paragraph>
             </StyledContainer>
         );
     };

@@ -24,14 +24,25 @@ const toLabelGroups = (
         });
     });
 
-    const groups: IBGroupedTasksGroup[] = labels.map((s) => {
-        return {
-            id: s.customId,
-            name: s.name,
-            color: s.color,
-            tasks: map[s.customId] || [],
-        };
-    });
+    const groups: IBGroupedTasksGroup[] = labels
+        .map((s) => {
+            return {
+                id: s.customId,
+                name: s.name,
+                color: s.color,
+                tasks: map[s.customId] || [],
+            };
+        })
+        .sort((group1, group2) => {
+            // sort empty labels to the end
+            if (group2.tasks.length === 0) {
+                return -1;
+            } else if (group1.tasks.length === 0) {
+                return 1;
+            }
+
+            return 0;
+        });
 
     if (noLabel.length > 0) {
         groups.unshift({ name: NO_LABEL, tasks: noLabel, id: NO_LABEL });

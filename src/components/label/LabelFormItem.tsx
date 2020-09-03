@@ -1,6 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
-import { Button, Input, Space, Tag } from "antd";
+import { Button, Input, Space, Tag, Typography } from "antd";
 import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
@@ -127,9 +127,12 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                 <StyledContainer>
                     <Tag color={value.color}>{value.name}</Tag>
                 </StyledContainer>
-                <StyledContainer s={{ marginTop: "4px" }}>
+                <Typography.Paragraph
+                    type="secondary"
+                    style={{ margin: 0, marginTop: "4px" }}
+                >
                     {value.description}
-                </StyledContainer>
+                </Typography.Paragraph>
             </StyledContainer>
         );
     };
