@@ -30,6 +30,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         const status = getRequestStatus(request);
 
         switch (status) {
+            case CollaborationRequestStatusType.Accepted:
+                return;
+
             case CollaborationRequestStatusType.Pending:
                 pendingRequests.push(request);
                 break;
