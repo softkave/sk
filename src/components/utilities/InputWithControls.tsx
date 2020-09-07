@@ -2,6 +2,7 @@
 
 import { Button, Input, Space, Typography } from "antd";
 import { TextAreaProps } from "antd/lib/input";
+import { ParagraphProps } from "antd/lib/typography/Paragraph";
 import React from "react";
 import { Check, Edit3, X as CloseIcon } from "react-feather";
 import StyledContainer from "../styled/Container";
@@ -19,6 +20,7 @@ export interface IInputWithControlsProps {
     noEditable?: boolean;
     autoComplete?: string;
     autoSize?: TextAreaProps["autoSize"];
+    paragraphProps?: Partial<ParagraphProps>;
 }
 
 const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
@@ -33,6 +35,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         onChange,
         revertChanges,
         autoSize,
+        paragraphProps,
     } = props;
 
     const input = useTextArea ? (
@@ -65,7 +68,9 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
             if (!isEditing) {
                 return (
                     <Space direction="vertical" style={{ width: "100%" }}>
-                        <Typography.Paragraph>{value}</Typography.Paragraph>
+                        <Typography.Paragraph {...paragraphProps}>
+                            {value}
+                        </Typography.Paragraph>
                         {!noControls && (
                             <Space>
                                 <Button

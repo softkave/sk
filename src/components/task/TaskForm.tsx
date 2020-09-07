@@ -223,6 +223,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     disabled={isSubmitting}
                     noEditable={!task}
                     placeholder="Description"
+                    paragraphProps={{ type: "secondary" }}
                 />
             </Form.Item>
         );
