@@ -80,6 +80,8 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         );
     };
 
+    let isPrevGroupRendered = false;
+
     return (
         <React.Fragment>
             {pendingRequests.length > 0 &&
@@ -94,7 +96,10 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                 )}
             {orgs.length > 0 && (
                 <React.Fragment>
-                    <Divider />
+                    {(isPrevGroupRendered =
+                        isPrevGroupRendered || pendingRequests.length > 0) && (
+                        <Divider />
+                    )}
                     {orgs.map((org) =>
                         wrap(
                             org.customId,
@@ -109,7 +114,8 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
             )}
             {expiredRequests.length > 0 && (
                 <React.Fragment>
-                    <Divider />
+                    {(isPrevGroupRendered =
+                        isPrevGroupRendered || orgs.length > 0) && <Divider />}
                     {expiredRequests.map((request) =>
                         wrap(
                             request.customId,
@@ -123,6 +129,10 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
             )}
             {declinedRequests.length > 0 && (
                 <React.Fragment>
+                    {(isPrevGroupRendered =
+                        isPrevGroupRendered || expiredRequests.length > 0) && (
+                        <Divider />
+                    )}
                     {declinedRequests.map((request) =>
                         wrap(
                             request.customId,
@@ -136,6 +146,10 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
             )}
             {revokedRequests.length > 0 && (
                 <React.Fragment>
+                    {(isPrevGroupRendered =
+                        isPrevGroupRendered || declinedRequests.length > 0) && (
+                        <Divider />
+                    )}
                     {revokedRequests.map((request) =>
                         wrap(
                             request.customId,

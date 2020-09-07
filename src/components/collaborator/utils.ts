@@ -9,12 +9,16 @@ export const getRequestStatus = (
 ): CollaborationRequestStatusType => {
     const expiresAt = moment(request.expiresAt);
     const expired = request.expiresAt && moment().isAfter(expiresAt);
+    const statusHistory = request.statusHistory || [];
+    const latestStatus = statusHistory[statusHistory.length - 1];
+
+    if (latestStatus.status === CollaborationRequestStatusType.Accepted) {
+        return latestStatus.status;
+    }
 
     if (expired) {
         return CollaborationRequestStatusType.Expired;
     }
 
-    const statusHistory = request.statusHistory || [];
-    const latestStatus = statusHistory[statusHistory.length - 1];
     return latestStatus.status;
 };

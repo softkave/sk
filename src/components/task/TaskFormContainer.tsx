@@ -93,7 +93,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         : undefined;
 
     // React.useEffect(() => {
-    //     // chjeck if it's a new task
+    //     // check if it's a new task
     //     if (operationStatus.isCompleted && !props.block) {
     //         onClose();
     //     }

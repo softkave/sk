@@ -54,23 +54,35 @@ export const getOperationStats = (
     };
 };
 
+interface ISpareIdStore {
+    id: string;
+    isUsingSpareId?: boolean;
+}
+
 const useOperation: UseOperation = (
     selector = {},
     loadOperation = null,
     options = { deleteManagedOperationOnUnmount: true }
 ) => {
     const dispatch = useDispatch();
+    const [spareIdStore, setSpareIdData] = React.useState<ISpareIdStore>({
+        id: newId(),
+    });
+    const isSelectorEmpty = Object.keys(selector).length === 0;
     const operation = useSelector<IAppState, IOperation | undefined>(
         (state) => {
             // TODO: how can we cache previous filters
+
+            if (isSelectorEmpty) {
+                return OperationSelectors.getOperationWithId(
+                    state,
+                    spareIdStore.id
+                );
+            }
+
             return OperationSelectors.queryFilterOperation(state, selector);
         }
     );
-    const [managedOpId] = React.useState(() => {
-        if (!operation && !selector.id) {
-            return newId();
-        }
-    });
 
     const statusData: IUseOperationStatus = operation
         ? getOperationStats(operation)
@@ -78,8 +90,14 @@ const useOperation: UseOperation = (
               isCompleted: false,
               isError: false,
               isLoading: false,
-              opId: selector.id || managedOpId,
+              opId: selector.id || spareIdStore.id,
           };
+
+    React.useEffect(() => {
+        if (isSelectorEmpty) {
+            setSpareIdData({ id: spareIdStore.id, isUsingSpareId: true });
+        }
+    }, [isSelectorEmpty, spareIdStore.id]);
 
     React.useEffect(() => {
         if (isFunction(loadOperation)) {
@@ -90,15 +108,15 @@ const useOperation: UseOperation = (
     React.useEffect(() => {
         return () => {
             if (
-                operation &&
-                managedOpId &&
+                // operation &&
+                spareIdStore.isUsingSpareId &&
                 options.deleteManagedOperationOnUnmount
             ) {
-                dispatch(OperationActions.deleteOperation(managedOpId));
+                dispatch(OperationActions.deleteOperation(spareIdStore.id));
             }
         };
     }, [
-        managedOpId,
+        spareIdStore,
         dispatch,
         options.deleteManagedOperationOnUnmount,
         // operation,
