@@ -50,6 +50,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
     const statusList = parentBlock?.boardStatuses || [];
     const labelList = parentBlock?.boardLabels || [];
+    const resolutionsList = parentBlock?.boardResolutions || [];
 
     const collaboratorIds = Array.isArray(org.collaborators)
         ? org.collaborators
@@ -146,6 +147,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             collaborators={collaborators}
             labelList={labelList}
             statusList={statusList}
+            resolutionsList={resolutionsList}
             user={user}
             onClose={onClose}
             task={existingBlock}

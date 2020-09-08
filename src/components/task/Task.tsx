@@ -149,6 +149,51 @@ const Task: React.FC<ITaskProps> = (props) => {
         }
     };
 
+    const renderNameAndDescription = () => {
+        if (task.name && task.description) {
+            return (
+                <Space direction="vertical">
+                    <Typography.Paragraph style={{ marginBottom: "0" }}>
+                        {task.name}
+                    </Typography.Paragraph>
+                    <Typography.Paragraph
+                        type={"secondary"}
+                        ellipsis={{
+                            rows: 2,
+                            expandable: true,
+                        }}
+                        style={{ marginBottom: "0" }}
+                    >
+                        {task.description}
+                    </Typography.Paragraph>
+                </Space>
+            );
+        }
+
+        if (task.name) {
+            return (
+                <Typography.Paragraph style={{ marginBottom: "0" }}>
+                    {task.name}
+                </Typography.Paragraph>
+            );
+        }
+
+        if (task.description) {
+            return (
+                <Typography.Paragraph
+                    type={"secondary"}
+                    ellipsis={{
+                        rows: 2,
+                        expandable: true,
+                    }}
+                    style={{ marginBottom: "0" }}
+                >
+                    {task.description}
+                </Typography.Paragraph>
+            );
+        }
+    };
+
     const stopPropagation = (evt: React.MouseEvent<HTMLDivElement>) => {
         evt.stopPropagation();
     };
@@ -179,25 +224,7 @@ const Task: React.FC<ITaskProps> = (props) => {
                         width: "100%",
                     }}
                 >
-                    <Space direction="vertical">
-                        {task.name && (
-                            <Typography.Paragraph style={{ marginBottom: "0" }}>
-                                {task.name}
-                            </Typography.Paragraph>
-                        )}
-                        {task.description && (
-                            <Typography.Paragraph
-                                type={"secondary"}
-                                ellipsis={{
-                                    rows: 2,
-                                    expandable: true,
-                                }}
-                                style={{ marginBottom: "0" }}
-                            >
-                                {task.description}
-                            </Typography.Paragraph>
-                        )}
-                    </Space>
+                    {renderNameAndDescription()}
                 </StyledContainer>
                 <StyledContainer>
                     <StyledContainer onClick={stopPropagation}>

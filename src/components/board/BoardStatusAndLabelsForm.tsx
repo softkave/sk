@@ -5,6 +5,7 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import LabelListContainer from "../label/LabelListContainer";
+import ResolutionsListContainer from "../status/ResolutionsListContainer";
 import StatusListContainer from "../status/StatusListContainer";
 import StyledContainer from "../styled/Container";
 import withDrawer from "../withDrawer";
@@ -12,7 +13,7 @@ import withDrawer from "../withDrawer";
 export interface IBoardStatusAndLabelsFormProps {
     onClose: () => void;
     block: IBlock;
-    active?: "status" | "labels";
+    active?: "status" | "labels" | "resolutions";
 }
 
 const BoardStatusAndLabelsForm: React.FC<IBoardStatusAndLabelsFormProps> = (
@@ -52,6 +53,12 @@ const BoardStatusAndLabelsForm: React.FC<IBoardStatusAndLabelsFormProps> = (
                         key="status"
                     >
                         <StatusListContainer block={block} />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane
+                        tab={<span style={tabSpanStyle}>Resolutions</span>}
+                        key="resolutions"
+                    >
+                        <ResolutionsListContainer block={block} />
                     </Tabs.TabPane>
                     <Tabs.TabPane
                         tab={<span style={tabSpanStyle}>Labels</span>}

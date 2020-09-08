@@ -10,6 +10,7 @@ import {
     IBlockAssignedLabel,
     IBlockLabel,
     IBlockStatus,
+    IBoardTaskResolution,
     ISubTask,
     ITaskAssignee,
 } from "../../models/block/block";
@@ -45,6 +46,7 @@ export interface ITaskFormProps {
     user: IUser;
     collaborators: IUser[];
     statusList: IBlockStatus[];
+    resolutionsList: IBoardTaskResolution[];
     labelList: IBlockLabel[];
     possibleParents: IBlock[];
     value: ITaskFormValues;
@@ -70,6 +72,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         collaborators,
         statusList,
         labelList,
+        resolutionsList,
         user,
         errors: externalErrors,
     } = props;
@@ -251,8 +254,47 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         );
     };
 
+    const onChangeStatus = React.useCallback(
+        (val: string) => {
+            if (val === task?.status) {
+                formik.setValues({
+                    ...formik.values,
+                    status: task.status,
+                    statusAssignedAt: task.statusAssignedAt,
+                    statusAssignedBy: task.statusAssignedBy,
+                });
+            } else {
+                formik.setValues({
+                    ...formik.values,
+                    status: val,
+                    statusAssignedAt: getDateString(),
+                    statusAssignedBy: user.customId,
+                });
+            }
+
+            formikChangedFieldsHelpers.pushFields([
+                "status",
+                "statusAssignedAt",
+                "statusAssignedBy",
+            ]);
+        },
+        [formik.values]
+    );
+
+    const onChangeResolution = React.useCallback(
+        (val: string) => {
+            formik.setValues({
+                ...formik.values,
+                taskResolution: val,
+            });
+
+            formikChangedFieldsHelpers.pushFields(["taskResolution"]);
+        },
+        [formik.values]
+    );
+
     const renderStatus = (formikProps: TaskFormFormikProps) => {
-        const { values, setValues } = formikProps;
+        const { values } = formikProps;
 
         return (
             <Form.Item
@@ -263,30 +305,11 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             >
                 <TaskStatus
                     statusList={statusList}
-                    onChange={(val: string) => {
-                        if (val === task?.status) {
-                            setValues({
-                                ...values,
-                                status: task.status,
-                                statusAssignedAt: task.statusAssignedAt,
-                                statusAssignedBy: task.statusAssignedBy,
-                            });
-                        } else {
-                            setValues({
-                                ...values,
-                                status: val,
-                                statusAssignedAt: getDateString(),
-                                statusAssignedBy: user.customId,
-                            });
-                        }
-
-                        formikChangedFieldsHelpers.pushFields([
-                            "status",
-                            "statusAssignedAt",
-                            "statusAssignedBy",
-                        ]);
-                    }}
+                    resolutionsList={resolutionsList}
+                    onChangeStatus={onChangeStatus}
+                    onChangeResolution={onChangeResolution}
                     statusId={values.status}
+                    resolutionId={values.taskResolution}
                     disabled={isSubmitting}
                 />
             </Form.Item>
