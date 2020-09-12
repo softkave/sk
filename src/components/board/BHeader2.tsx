@@ -7,7 +7,9 @@ import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
-import BoardStatusAndLabelsForm from "./BoardStatusAndLabelsForm";
+import BoardStatusResolutionAndLabelsForm, {
+    BoardStatusResolutionAndLabelsFormType,
+} from "./BoardStatusResolutionAndLabelsForm";
 import SelectBlockOptionsMenu, {
     SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
@@ -34,9 +36,10 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
         onToggleFoldAppMenu: onToggleFoldMenu,
     } = props;
 
-    const [showFormFor, setFormType] = React.useState<
-        "status" | "labels" | null
-    >(null);
+    const [
+        showFormFor,
+        setFormType,
+    ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
     const history = useHistory();
 
     const onSelectSettingsMenuItem = React.useCallback(
@@ -56,6 +59,10 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
 
                 case "labels":
                     setFormType("labels");
+                    break;
+
+                case "resolutions":
+                    setFormType(key);
                     break;
             }
         },
@@ -124,7 +131,7 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
                 {renderBlockOptionsMenu()}
             </StyledContainer>
             {showFormFor && (
-                <BoardStatusAndLabelsForm
+                <BoardStatusResolutionAndLabelsForm
                     visible
                     block={block}
                     onClose={closeForm}

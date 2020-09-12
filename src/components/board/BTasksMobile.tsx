@@ -27,6 +27,7 @@ const BTasksMobile: React.FC<IBTasksProps> = (props) => {
                         setGroupType={setGroupType}
                     />
                     <BRenderGroupedTasksMobile
+                        board={block}
                         groups={groups}
                         users={users}
                         onClickUpdateBlock={onClickUpdateBlock}
@@ -34,7 +35,7 @@ const BTasksMobile: React.FC<IBTasksProps> = (props) => {
                 </React.Fragment>
             );
         },
-        [users, onClickCreate, onClickUpdateBlock, onSearchTextChange]
+        [users, block, onClickCreate, onClickUpdateBlock, onSearchTextChange]
     );
 
     return <BGroupedTasks block={block} tasks={tasks} render={render} />;

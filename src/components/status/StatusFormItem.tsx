@@ -265,7 +265,10 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 </StyledContainer>
                 <StyledContainer>{renderStatusButtons()}</StyledContainer>
                 {isLastItem && (
-                    <Typography.Paragraph type="secondary">
+                    <Typography.Paragraph
+                        type="secondary"
+                        style={{ padding: "8px 0" }}
+                    >
                         You can add resolutions in the 'Resolutions' tab.
                         Resolutions describe the state of a completed task, like
                         "won't do" or "done".

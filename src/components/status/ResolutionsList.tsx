@@ -33,6 +33,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
 
     const onSubmit = (values: { resolutionsList: IBoardTaskResolution[] }) => {
         // TODO: should we alert the user before saving if they have editing items?
+        console.log("holla!");
         editingResolutionsList.reset();
         saveChanges(values.resolutionsList);
     };
@@ -42,7 +43,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     const { formik, formikHelpers } = useFormHelpers({
         errors,
         formikProps: {
-            initialValues: { resolutionsList: resolutionsList },
+            initialValues: { resolutionsList },
             onSubmit,
             validationSchema: yup.object().shape({
                 resolutionsList: labelValidationSchemas.label,
@@ -217,7 +218,14 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                     padding: "16px",
                 }}
             >
-                <Button loading={isSubmitting} type="primary" htmlType="submit">
+                <Button
+                    loading={isSubmitting}
+                    type="primary"
+                    htmlType="submit"
+                    onClick={(e) => {
+                        console.log("holla!! with the two.");
+                    }}
+                >
                     Save Changes
                 </Button>
             </StyledContainer>
@@ -234,7 +242,6 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         };
 
         formikHelpers.addToArrayField("resolutionsList", resolution, {}, {});
-
         editingResolutionsList.add(resolution.customId);
         newResolutionsList.add(resolution.customId);
     }, [editingResolutionsList, newResolutionsList, user, formikHelpers]);
@@ -268,7 +275,10 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                 onSubmit={formik.handleSubmit}
             >
                 {renderAddControls()}
-                <Typography.Paragraph type="secondary">
+                <Typography.Paragraph
+                    type="secondary"
+                    style={{ padding: "0 16px" }}
+                >
                     Resolutions describe the state of a completed task, like
                     "won't do" or in the case of a tech product, "deployed"
                     meaning the task/feature has been deployed.

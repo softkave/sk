@@ -199,6 +199,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
                 handleBlur={(field, evt) => handleBlur(index, field)}
                 isEditing={isEditing}
                 isNew={newStatusList.exists(status.customId)}
+                isLastItem={statuses.length - 1 === index}
                 touched={touched}
                 style={{
                     borderBottom:

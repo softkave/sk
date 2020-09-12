@@ -134,7 +134,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 </Space>
             );
         },
-        [disabled, noControls, revertChanges, value, input]
+        [disabled, noControls, revertChanges, value, input, paragraphProps]
     );
 
     if (!noEditable) {

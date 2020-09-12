@@ -1,28 +1,29 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons/lib/icons";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     IBlock,
     IBlockStatus,
     IBoardTaskResolution,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import BlockSelectors from "../../redux/blocks/selectors";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
-import SessionSelectors from "../../redux/session/selectors";
-import { AppDispatch, IAppState } from "../../redux/types";
+import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
 import useOperation, { getOperationStats } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
     task: IBlock;
+    statusList: IBlockStatus[];
+    resolutionsList: IBoardTaskResolution[];
+    user: IUser;
+    onSelectAddNewStatus: () => void;
+    onSelectAddNewResolution: () => void;
 
     demo?: boolean;
-    statusList?: IBlockStatus[];
-    resolutionsList?: IBoardTaskResolution[];
     className?: string;
 }
 
@@ -30,95 +31,100 @@ export interface ITaskStatusContainerProps {
 // and for client-side only work
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-    const { task, className, demo } = props;
+    const { task, className, demo, statusList, resolutionsList, user } = props;
     const dispatch: AppDispatch = useDispatch();
-    const operation = useOperation();
+    const updateOp = useOperation();
 
-    const user = useSelector<IAppState, IUser>((state) => {
-        if (demo) {
-            return ({} as unknown) as IUser;
-        }
+    const onChangeStatus = React.useCallback(
+        async (statusId: string, resolutionId?: string) => {
+            if (demo) {
+                return false;
+            }
 
-        return SessionSelectors.getSignedInUserRequired(state);
-    });
+            const lastStatus = statusList[statusList.length - 1];
+            const isLastStatus = statusId === lastStatus.customId;
+            const update: Partial<IBlock> = {
+                status: statusId,
+                statusAssignedAt: getDateString(),
+                statusAssignedBy: user.customId,
+            };
 
-    const board = useSelector<IAppState, IBlock>((state) => {
-        return BlockSelectors.getBlock(state, task.parent!);
-    });
+            if (!isLastStatus && task.taskResolution) {
+                update.taskResolution = null;
+            }
 
-    const statusList = props.statusList || board.boardStatuses || [];
-    const resolutionsList =
-        props.resolutionsList || board.boardResolutions || [];
+            if (resolutionId) {
+                update.taskResolution = resolutionId;
+            }
 
-    const onChangeStatus = React.useCallback(async (value) => {
-        if (demo) {
-            return;
-        }
+            const result = await dispatch(
+                updateBlockOperationAction({
+                    opId: updateOp.opId,
+                    block: task,
+                    data: update,
+                })
+            );
 
-        const result = await dispatch(
-            updateBlockOperationAction({
-                opId: operation.opId,
-                block: task,
-                data: {
-                    status: value,
-                    statusAssignedAt: getDateString(),
-                    statusAssignedBy: user.customId,
-                },
-            })
-        );
+            const op = unwrapResult(result);
 
-        const op = unwrapResult(result);
+            if (!op) {
+                return false;
+            }
 
-        if (!op) {
-            return;
-        }
+            const opStat = getOperationStats(op);
 
-        const opStat = getOperationStats(op);
+            if (opStat.isError) {
+                message.error("Error updating task status");
+                return false;
+            }
 
-        if (opStat.isError) {
-            message.error("Error updating task status");
-        }
-    }, []);
+            return true;
+        },
+        [demo, dispatch, statusList, task, updateOp.opId, user.customId]
+    );
 
-    const onChangeResolution = React.useCallback(async (value) => {
-        if (demo) {
-            return;
-        }
+    const onChangeResolution = React.useCallback(
+        async (value) => {
+            if (demo) {
+                return;
+            }
 
-        const result = await dispatch(
-            updateBlockOperationAction({
-                opId: operation.opId,
-                block: task,
-                data: {
-                    taskResolution: value,
-                },
-            })
-        );
+            const result = await dispatch(
+                updateBlockOperationAction({
+                    opId: updateOp.opId,
+                    block: task,
+                    data: {
+                        taskResolution: value,
+                    },
+                })
+            );
 
-        const op = unwrapResult(result);
+            const op = unwrapResult(result);
 
-        if (!op) {
-            return;
-        }
+            if (!op) {
+                return;
+            }
 
-        const opStat = getOperationStats(op);
+            const opStat = getOperationStats(op);
 
-        if (opStat.isError) {
-            message.error("Error updating task resolution");
-        }
-    }, []);
+            if (opStat.isError) {
+                message.error("Error updating task resolution");
+            }
+        },
+        [demo, dispatch, task, updateOp.opId]
+    );
 
-    if (operation.isLoading) {
+    if (updateOp.isLoading) {
         return <LoadingOutlined />;
     }
 
     return (
         <TaskStatus
+            {...props}
             className={className}
+            task={task}
             statusList={statusList}
             resolutionsList={resolutionsList}
-            statusId={task.status}
-            resolutionId={task.taskResolution}
             onChangeStatus={onChangeStatus}
             onChangeResolution={onChangeResolution}
         />

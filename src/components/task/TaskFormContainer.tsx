@@ -102,7 +102,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
     const onSubmit = async (values: ITaskFormValues) => {
         const data = { ...block, ...values };
-        setBlock(data);
 
         const result = existingBlock
             ? await dispatch(
@@ -129,12 +128,14 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         if (!existingBlock) {
             if (opStat.isCompleted) {
                 message.success("Task created successfully");
+                setBlock(data);
             } else if (opStat.isError) {
                 message.error("Error creating task");
             }
         } else {
             if (opStat.isCompleted) {
                 message.success("Task updated successfully");
+                setBlock(data);
             } else if (opStat.isError) {
                 message.error("Error updating task");
             }
@@ -156,6 +157,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             errors={errors}
             possibleParents={possibleParents}
             onChangeParent={setParentId}
+            board={parentBlock!}
         />
     );
 };

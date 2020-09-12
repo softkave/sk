@@ -19,6 +19,9 @@ import { indexArray } from "../../utils/object";
 import { getDateString } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
+import BoardStatusResolutionAndLabelsForm, {
+    BoardStatusResolutionAndLabelsFormType,
+} from "../board/BoardStatusResolutionAndLabelsForm";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
@@ -50,6 +53,7 @@ export interface ITaskFormProps {
     labelList: IBlockLabel[];
     possibleParents: IBlock[];
     value: ITaskFormValues;
+    board: IBlock;
     onClose: () => void;
     onSubmit: (values: ITaskFormValues) => void;
     onChangeParent: (parentId: string) => void;
@@ -74,8 +78,16 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelList,
         resolutionsList,
         user,
+        board,
         errors: externalErrors,
     } = props;
+
+    const [
+        subFormType,
+        setSubFormType,
+    ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+
+    const closeForm = React.useCallback(() => setSubFormType(null), []);
 
     const [indexedCollaborators] = React.useState(
         indexArray(props.collaborators, {
@@ -255,7 +267,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const onChangeStatus = React.useCallback(
-        (val: string) => {
+        async (val: string) => {
             if (val === task?.status) {
                 formik.setValues({
                     ...formik.values,
@@ -277,8 +289,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 "statusAssignedAt",
                 "statusAssignedBy",
             ]);
+
+            return true;
         },
-        [formik.values]
+        [formik, formikChangedFieldsHelpers, task, user.customId]
     );
 
     const onChangeResolution = React.useCallback(
@@ -290,8 +304,16 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
             formikChangedFieldsHelpers.pushFields(["taskResolution"]);
         },
-        [formik.values]
+        [formik, formikChangedFieldsHelpers]
     );
+
+    const onSelectAddNewStatus = React.useCallback(() => {
+        setSubFormType("status");
+    }, []);
+
+    const onSelectAddNewResolution = React.useCallback(() => {
+        setSubFormType("resolutions");
+    }, []);
 
     const renderStatus = (formikProps: TaskFormFormikProps) => {
         const { values } = formikProps;
@@ -304,21 +326,35 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 labelAlign="left"
             >
                 <TaskStatus
+                    noResolutionModal
                     statusList={statusList}
                     resolutionsList={resolutionsList}
                     onChangeStatus={onChangeStatus}
                     onChangeResolution={onChangeResolution}
-                    statusId={values.status}
-                    resolutionId={values.taskResolution}
+                    task={(task || values) as IBlock}
                     disabled={isSubmitting}
+                    onSelectAddNewStatus={onSelectAddNewStatus}
+                    onSelectAddNewResolution={onSelectAddNewResolution}
                 />
             </Form.Item>
         );
     };
 
+    const onChangeTaskLabels = React.useCallback(
+        (val: IBlockAssignedLabel[]) => {
+            formik.setFieldValue("labels", val);
+            formikChangedFieldsHelpers.addField("labels");
+        },
+        [formik, formikChangedFieldsHelpers]
+    );
+
+    const onSelectAddNewLabel = React.useCallback(() => {
+        setSubFormType("labels");
+    }, []);
+
     // TODO: extract these fields into separate components with React.memo for speed
     const renderLabels = (formikProps: TaskFormFormikProps) => {
-        const { values, setFieldValue } = formikProps;
+        const { values } = formikProps;
 
         return (
             <Form.Item
@@ -330,12 +366,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <TaskLabels
                     labelList={labelList}
                     user={user}
-                    onChange={(val: IBlockAssignedLabel[]) => {
-                        setFieldValue("labels", val);
-                        formikChangedFieldsHelpers.addField("labels");
-                    }}
+                    onChange={onChangeTaskLabels}
                     labels={values.labels}
                     disabled={isSubmitting}
+                    onSelectAddNewLabel={onSelectAddNewLabel}
                 />
             </Form.Item>
         );
@@ -625,6 +659,14 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
         return (
             <StyledForm onSubmit={handleSubmit}>
+                {subFormType && (
+                    <BoardStatusResolutionAndLabelsForm
+                        visible
+                        block={board}
+                        onClose={closeForm}
+                        active={subFormType}
+                    />
+                )}
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
                         <StyledContainer s={{ paddingBottom: "16px" }}>

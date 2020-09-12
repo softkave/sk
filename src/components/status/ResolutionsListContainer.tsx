@@ -36,6 +36,7 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
     }
 
     const onSaveChanges = async (values: IBoardTaskResolution[]) => {
+        console.log("got here");
         const result = await dispatch(
             updateBlockOperationAction({
                 opId: operationStatus.opId,

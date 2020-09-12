@@ -29,12 +29,13 @@ const BTasksDesktop: React.FC<IBTasksProps> = (props) => {
                     <BRenderGroupedTasksDesktop
                         groups={groups}
                         users={users}
+                        board={block}
                         onClickUpdateBlock={onClickUpdateBlock}
                     />
                 </React.Fragment>
             );
         },
-        [users, onClickCreate, onClickUpdateBlock, onSearchTextChange]
+        [users, block, onClickCreate, onClickUpdateBlock, onSearchTextChange]
     );
 
     return <BGroupedTasks block={block} tasks={tasks} render={render} />;

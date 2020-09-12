@@ -68,7 +68,7 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
                             onChange({ name: val });
                         }}
                         value={value.name}
-                        placeholder="Enter status name"
+                        placeholder="Enter resolution"
                         disabled={disabled}
                         maxLength={blockConstants.maxLabelNameLength}
                     />
@@ -97,7 +97,7 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
                             onChange({ description: val });
                         }}
                         value={value.description}
-                        placeholder="Enter status description"
+                        placeholder="Enter resolution description"
                         maxLength={blockConstants.maxLabelDescriptionLength}
                     />
                 </Form.Item>
