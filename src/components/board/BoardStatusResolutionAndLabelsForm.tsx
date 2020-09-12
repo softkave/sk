@@ -5,17 +5,23 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import LabelListContainer from "../label/LabelListContainer";
+import ResolutionsListContainer from "../status/ResolutionsListContainer";
 import StatusListContainer from "../status/StatusListContainer";
 import StyledContainer from "../styled/Container";
 import withDrawer from "../withDrawer";
 
-export interface IBoardStatusAndLabelsFormProps {
+export type BoardStatusResolutionAndLabelsFormType =
+    | "status"
+    | "labels"
+    | "resolutions";
+
+export interface IBoardStatusResolutionAndLabelsFormProps {
     onClose: () => void;
     block: IBlock;
-    active?: "status" | "labels";
+    active?: BoardStatusResolutionAndLabelsFormType;
 }
 
-const BoardStatusAndLabelsForm: React.FC<IBoardStatusAndLabelsFormProps> = (
+const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabelsFormProps> = (
     props
 ) => {
     const { block, onClose, active } = props;
@@ -54,6 +60,12 @@ const BoardStatusAndLabelsForm: React.FC<IBoardStatusAndLabelsFormProps> = (
                         <StatusListContainer block={block} />
                     </Tabs.TabPane>
                     <Tabs.TabPane
+                        tab={<span style={tabSpanStyle}>Resolutions</span>}
+                        key="resolutions"
+                    >
+                        <ResolutionsListContainer block={block} />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane
                         tab={<span style={tabSpanStyle}>Labels</span>}
                         key="labels"
                     >
@@ -67,7 +79,7 @@ const BoardStatusAndLabelsForm: React.FC<IBoardStatusAndLabelsFormProps> = (
     return renderForms();
 };
 
-export default withDrawer(BoardStatusAndLabelsForm);
+export default withDrawer(BoardStatusResolutionAndLabelsForm);
 
 const tabSpanStyle: React.CSSProperties = {
     textTransform: "capitalize",

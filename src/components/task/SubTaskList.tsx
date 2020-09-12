@@ -145,7 +145,12 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     const renderLabel = () => {
         return (
             <StyledContainer
-                s={{ width: "100%", lineHeight: "40px", fontWeight: 600 }}
+                s={{
+                    width: "100%",
+                    lineHeight: "40px",
+                    fontWeight: 600,
+                    alignItems: "center",
+                }}
             >
                 <StyledContainer s={{ flex: 1 }}>
                     Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasks}

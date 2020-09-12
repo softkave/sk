@@ -1,5 +1,10 @@
 import React from "react";
-import { IBlock, IBlockStatus } from "../../models/block/block";
+import {
+    IBlock,
+    IBlockLabel,
+    IBlockStatus,
+    IBoardTaskResolution,
+} from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import StyledContainer from "../styled/Container";
@@ -7,17 +12,32 @@ import List from "../styled/List";
 import Task from "./Task";
 
 export interface ITaskListProps {
+    board: IBlock;
     tasks: IBlock[];
     users: IUser[];
+    statusList: IBlockStatus[];
+    labelList: IBlockLabel[];
+    resolutionsList: IBoardTaskResolution[];
+    user: IUser;
 
     demo?: boolean;
-    statusList?: IBlockStatus[];
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
 }
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
-    const { toggleForm, tasks, demo, statusList, users, style } = props;
+    const {
+        toggleForm,
+        tasks,
+        board,
+        demo,
+        statusList,
+        users,
+        style,
+        labelList,
+        resolutionsList,
+        user,
+    } = props;
     const tasksToRender = sortBlocksByPriority(tasks);
     const renderTask = (task: IBlock, i: number) => {
         const isNotLastTask = i < tasksToRender.length - 1;
@@ -35,6 +55,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
             >
                 <Task
                     task={task}
+                    board={board}
                     orgUsers={users}
                     demo={demo}
                     statusList={statusList}
@@ -43,6 +64,9 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                             ? (editedTask) => toggleForm(editedTask)
                             : undefined
                     }
+                    user={user}
+                    labelList={labelList}
+                    resolutionsList={resolutionsList}
                 />
             </StyledContainer>
         );

@@ -58,6 +58,16 @@ export interface IBlockAssignedLabel {
     assignedAt: string;
 }
 
+export interface IBoardTaskResolution {
+    customId: string;
+    name: string;
+    createdBy: string;
+    createdAt: string;
+    description?: string;
+    updatedBy?: string;
+    updatedAt?: string;
+}
+
 export interface IBlock {
     customId: string;
     createdBy: string;
@@ -76,9 +86,11 @@ export interface IBlock {
     subTasks?: ISubTask[]; // should sub-tasks be their own blocks?
     boardStatuses?: IBlockStatus[];
     boardLabels?: IBlockLabel[];
+    boardResolutions?: IBoardTaskResolution[];
     status?: string;
     statusAssignedBy?: string;
     statusAssignedAt?: string;
+    taskResolution?: string | null;
     labels?: IBlockAssignedLabel[];
 
     boards?: string[];

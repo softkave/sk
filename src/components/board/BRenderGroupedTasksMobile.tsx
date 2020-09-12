@@ -3,10 +3,11 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import StyledContainer from "../styled/Container";
-import TaskList from "../task/TaskList";
+import TaskListContainer from "../task/TaskListContainer";
 import { IBGroupedTasksGroup } from "./types";
 
 export interface IBRenderGroupedTasksMobileProps {
+    board: IBlock;
     groups: IBGroupedTasksGroup[];
     users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
@@ -15,7 +16,7 @@ export interface IBRenderGroupedTasksMobileProps {
 const BRenderGroupedTasksMobile: React.FC<IBRenderGroupedTasksMobileProps> = (
     props
 ) => {
-    const { groups, users, onClickUpdateBlock } = props;
+    const { groups, users, board, onClickUpdateBlock } = props;
 
     const renderTab = (group: IBGroupedTasksGroup) => {
         return (
@@ -42,9 +43,10 @@ const BRenderGroupedTasksMobile: React.FC<IBRenderGroupedTasksMobileProps> = (
                 <StyledContainer
                     s={{ padding: "0 16px", height: "100%", overflowY: "auto" }}
                 >
-                    <TaskList
+                    <TaskListContainer
                         users={users}
                         tasks={group.tasks}
+                        board={board}
                         toggleForm={onClickUpdateBlock}
                     />
                 </StyledContainer>

@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, Space, Tag } from "antd";
+import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
 import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
@@ -11,14 +11,16 @@ export interface ITaskLabelsProps {
     user: IUser;
     labelList: IBlockLabel[];
     onChange: (ids: IBlockAssignedLabel[]) => void;
+    onSelectAddNewLabel: () => void;
 
     disabled?: boolean;
     labels?: IBlockAssignedLabel[];
-    priority?: React.ReactNode;
 }
 
+const ADD_NEW_LABEL_KEY = "add-new-label";
+
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-    const { onChange, disabled, user, labelList, priority } = props;
+    const { onChange, onSelectAddNewLabel, disabled, user, labelList } = props;
     const labels = props.labels || [];
     const idToLabelMap = React.useMemo(
         () => indexArray(labelList || [], { path: "customId" }),
@@ -77,10 +79,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             }
         );
 
-        if (priority) {
-            renderedLabels.unshift(priority);
-        }
-
         return renderedLabels;
     };
 
@@ -96,17 +94,40 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         const labelListMenu = (
             <Menu
                 onClick={(evt) => {
+                    if (evt.key === ADD_NEW_LABEL_KEY) {
+                        onSelectAddNewLabel();
+                        return;
+                    }
+
+                    if (renderedLabelMenuItems.length === 0) {
+                        return;
+                    }
+
                     onAdd(evt.key as string);
                 }}
                 selectedKeys={labels.map((label) => label.customId)}
             >
+                <Menu.Item key={ADD_NEW_LABEL_KEY}>
+                    <Space align="center" size={12}>
+                        <Plus
+                            style={{
+                                width: "16px",
+                                height: "16px",
+                                verticalAlign: "middle",
+                                marginTop: "-3px",
+                            }}
+                        />
+                        New Label
+                    </Space>
+                </Menu.Item>
+                <Menu.Divider />
                 {renderedLabelMenuItems}
                 {renderedLabelMenuItems.length === 0 && (
-                    <StyledContainer
-                        s={{ justifyContent: "center", padding: "8px" }}
-                    >
-                        No Labels
-                    </StyledContainer>
+                    <Menu.Item style={{ padding: "8px", textAlign: "center" }}>
+                        <Typography.Text type="secondary">
+                            No labels yet
+                        </Typography.Text>
+                    </Menu.Item>
                 )}
             </Menu>
         );

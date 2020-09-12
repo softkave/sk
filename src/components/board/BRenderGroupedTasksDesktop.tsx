@@ -5,7 +5,7 @@ import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
-import TaskList from "../task/TaskList";
+import TaskListContainer from "../task/TaskListContainer";
 import DeviceScrollbar from "../utilities/DeviceScrollbar";
 import Column from "./Column";
 import { IBGroupedTasksGroup } from "./types";
@@ -13,13 +13,14 @@ import { IBGroupedTasksGroup } from "./types";
 export interface IBRenderGroupedTasksDesktopProps {
     groups: IBGroupedTasksGroup[];
     users: IUser[];
+    board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
 const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
     props
 ) => {
-    const { groups, users, onClickUpdateBlock } = props;
+    const { groups, users, board, onClickUpdateBlock } = props;
 
     const renderColumnHeader = (group: IBGroupedTasksGroup) => {
         return (
@@ -54,7 +55,8 @@ const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
                 header={renderColumnHeader(group)}
                 body={
                     <DeviceScrollbar style={{ flex: 1 }}>
-                        <TaskList
+                        <TaskListContainer
+                            board={board}
                             users={users}
                             tasks={group.tasks}
                             toggleForm={onClickUpdateBlock}

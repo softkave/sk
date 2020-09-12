@@ -19,6 +19,7 @@ const Column: React.FC<IColumnProps> = (props) => {
                 flexDirection: "column",
                 boxSizing: "border-box",
                 flex: 1,
+                maxWidth: "320px",
                 ...(props.style || {}),
             }}
         >

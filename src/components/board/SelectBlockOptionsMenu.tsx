@@ -9,7 +9,12 @@ import MenuWithTrigger, {
     IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 
-export type SettingsMenuKey = "view" | "delete" | "status" | "labels";
+export type SettingsMenuKey =
+    | "view"
+    | "delete"
+    | "status"
+    | "labels"
+    | "resolutions";
 
 export interface ISelectBlockOptionsMenuProps {
     block: IBlock;
@@ -56,6 +61,19 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
                                 }}
                             />
                             Status
+                        </Space>
+                    </Menu.Item>,
+                    <Menu.Item key="resolutions">
+                        <Space align="center" size={12}>
+                            <Plus
+                                style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    verticalAlign: "middle",
+                                    marginTop: "-3px",
+                                }}
+                            />
+                            Resolutions
                         </Space>
                     </Menu.Item>,
                     <Menu.Item key="labels">
