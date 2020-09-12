@@ -46,7 +46,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
             initialValues: { resolutionsList },
             onSubmit,
             validationSchema: yup.object().shape({
-                resolutionsList: labelValidationSchemas.label,
+                resolutionsList: labelValidationSchemas.labelList,
             }),
             validateOnBlur: true,
             validateOnChange: true,
@@ -218,14 +218,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                     padding: "16px",
                 }}
             >
-                <Button
-                    loading={isSubmitting}
-                    type="primary"
-                    htmlType="submit"
-                    onClick={(e) => {
-                        console.log("holla!! with the two.");
-                    }}
-                >
+                <Button loading={isSubmitting} type="primary" htmlType="submit">
                     Save Changes
                 </Button>
             </StyledContainer>
@@ -272,7 +265,12 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         return (
             <StyledContainerAsForm
                 s={{ width: "100%", height: "100%", flexDirection: "column" }}
-                onSubmit={formik.handleSubmit}
+                // onSubmit={formik.handleSubmit}
+                onSubmit={(e) => {
+                    // e.preventDefault()
+                    console.log("jo!");
+                    formik.handleSubmit(e);
+                }}
             >
                 {renderAddControls()}
                 <Typography.Paragraph

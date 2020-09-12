@@ -264,9 +264,7 @@ const Task: React.FC<ITaskProps> = (props) => {
     }
 
     return (
-        <StyledContainer
-            s={{ minWidth: "280px", width: "100%", maxWidth: "320px" }}
-        >
+        <StyledContainer s={{ minWidth: "280px", width: "100%" }}>
             {subFormType && (
                 <BoardStatusResolutionAndLabelsForm
                     visible

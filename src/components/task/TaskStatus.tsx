@@ -185,7 +185,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                     onSelectAddNewResolution={onSelectAddNewResolution}
                 />
             )}
-            <StyledContainer s={{ flex: 1 }}>
+            <StyledContainer s={{ flex: 1, marginRight: "6px" }}>
                 <Dropdown
                     disabled={disabled}
                     overlay={statusListMenu}
