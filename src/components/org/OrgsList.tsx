@@ -66,7 +66,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     cursor: "pointer",
 
                     "&:hover": {
-                        backgroundColor: selected ? undefined : "#fafafa",
+                        backgroundColor: selected ? undefined : "#f0f0f0",
                     },
 
                     "& .ant-tag": {
