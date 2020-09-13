@@ -131,11 +131,11 @@ const Task: React.FC<ITaskProps> = (props) => {
 
     const menu = (
         <Menu onClick={menuOnClick}>
-            <Menu.Item key="edit">
+            <Menu.Item key="edit" disabled={demo}>
                 <EditOutlined />
                 Edit Task
             </Menu.Item>
-            <Menu.Item key="delete">
+            <Menu.Item key="delete" disabled={demo}>
                 <DeleteOutlined />
                 Delete Task
             </Menu.Item>
