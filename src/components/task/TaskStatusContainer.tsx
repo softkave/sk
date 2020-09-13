@@ -121,6 +121,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
     return (
         <TaskStatus
             {...props}
+            disabled={demo}
             className={className}
             task={task}
             statusList={statusList}

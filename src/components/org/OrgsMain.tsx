@@ -40,10 +40,21 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
 
         if (errorMessage) {
             return (
-                <Empty
-                    image={<ExclamationCircleOutlined />}
-                    description={errorMessage}
-                ></Empty>
+                <StyledContainer
+                    s={{
+                        display: "block",
+
+                        ["& .ant-empty-image"]: {
+                            display: "flex",
+                            justifyContent: "center",
+                        },
+                    }}
+                >
+                    <Empty
+                        image={<ExclamationCircleOutlined />}
+                        description={errorMessage}
+                    ></Empty>
+                </StyledContainer>
             );
         }
 

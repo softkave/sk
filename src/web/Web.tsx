@@ -5,27 +5,27 @@ import WebFooter from "./WebFooter";
 import WebHeader from "./WebHeader";
 
 const Web: React.SFC<{}> = () => {
-  return (
-    <StyledWeb>
-      <WebHeader />
-      <StyledWebBody>
-        <WebBody />
-      </StyledWebBody>
-      <WebFooter />
-    </StyledWeb>
-  );
+    return (
+        <StyledWeb>
+            <WebHeader />
+            <StyledWebBody>
+                <WebBody />
+            </StyledWebBody>
+            <WebFooter />
+        </StyledWeb>
+    );
 };
 
 export default Web;
 
 const StyledWeb = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background-color: #f0f0f0;
 `;
 
 const StyledWebBody = styled.div`
-  flex: 1;
-  display: flex;
-  background-color: #f0f0f0;
+    flex: 1;
+    display: flex;
 `;
