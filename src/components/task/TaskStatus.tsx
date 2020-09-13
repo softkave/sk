@@ -204,7 +204,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                             alignItems: "center",
                         }}
                     >
-                        <Minus style={{ width: "16px", height: "16px" }} />
+                        <Minus style={{ width: "12px", height: "12px" }} />
                     </span>
                     <StyledContainer
                         s={{
