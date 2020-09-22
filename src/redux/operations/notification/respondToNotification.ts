@@ -8,6 +8,7 @@ import {
 import UserAPI from "../../../net/user";
 import { getDateString, newId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
+import BlockSelectors from "../../blocks/selectors";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -57,20 +58,33 @@ export const respondToNotificationOperationAction = createAsyncThunk<
             throw new Error("Request not valid");
         }
 
-        const result = await UserAPI.respondToCollaborationRequest(
-            arg.request,
-            arg.response
-        );
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        let block: IBlock | undefined;
 
-        if (result && result.errors) {
-            throw result.errors;
+        if (!isDemoMode) {
+            const result = await UserAPI.respondToCollaborationRequest(
+                arg.request,
+                arg.response
+            );
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
+
+            block = result.block;
+        } else {
+            const blockId = arg.request.from?.blockId;
+
+            if (blockId) {
+                block = BlockSelectors.getBlock(thunkAPI.getState(), blockId);
+            }
         }
 
         // dte
         await thunkAPI.dispatch(
             completeUserNotificationResponse({
                 ...arg,
-                block: result.block,
+                block,
             }) as any
         );
 

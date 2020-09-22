@@ -49,7 +49,6 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                             return (
                                 <OrgsListContainer
                                     hijackRender={() => {
-                                        // return <span />;
                                         if (rootBlocksLoaded) {
                                             return <OrgBoardContainer />;
                                         }

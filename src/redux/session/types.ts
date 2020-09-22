@@ -1,13 +1,14 @@
 export enum SessionType {
-  Initializing = "initializing",
-  Web = "web",
-  App = "app",
-  Uninitialized = "uninitialized",
+    Initializing = "initializing",
+    Web = "web",
+    App = "app",
+    Uninitialized = "uninitialized",
 }
 
 export interface ISessionState {
-  sessionType: SessionType;
-  token?: string;
-  userId?: string;
-  clientId?: string;
+    sessionType: SessionType;
+    isDemo?: boolean;
+    token?: string;
+    userId?: string;
+    clientId?: string;
 }
