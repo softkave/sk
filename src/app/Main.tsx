@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
@@ -22,9 +22,7 @@ import { newId } from "../utils/utils";
 import Routes from "./Routes";
 
 let timeoutHandle: number;
-const searchParams = new URLSearchParams(window.location.search);
 const demoKey = "demo";
-const isDemoMode = searchParams.has(demoKey);
 
 const handleHidden = () => {
     let hidden = "hidden";
@@ -114,6 +112,11 @@ const Main: React.FC<{}> = () => {
             ) as boolean
     );
 
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const isDemoMode =
+        useSelector(SessionSelectors.isDemoMode) || searchParams.has(demoKey);
+
     const routeToApp = React.useCallback(() => {
         if (!isPath0App()) {
             history.push(makePath(paths.appPath));
@@ -151,7 +154,7 @@ const Main: React.FC<{}> = () => {
         } else if (sessionType === SessionType.Uninitialized) {
             dispatch(initializeAppSessionOperationAction({ opId }));
         }
-    }, [sessionType, opId, dispatch]);
+    }, [sessionType, opId, dispatch, isDemoMode]);
 
     React.useEffect(() => {
         if (sessionType === SessionType.App && !isDemoMode) {
@@ -169,7 +172,7 @@ const Main: React.FC<{}> = () => {
                 history.push("/");
             }
         }
-    }, [sessionType, clientId, history, token]);
+    }, [sessionType, clientId, history, token, isDemoMode]);
 
     const renderInitializing = () => (
         <StyledContainer
