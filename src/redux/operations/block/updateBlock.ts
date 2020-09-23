@@ -194,10 +194,14 @@ export const updateBlockOperationAction = createAsyncThunk<
             arg.data.subTasks = addCustomIdToSubTasks(arg.data.subTasks);
         }
 
-        const result = await BlockAPI.updateBlock(arg.block, arg.data);
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
-        if (result && result.errors) {
-            throw result.errors;
+        if (!isDemoMode) {
+            const result = await BlockAPI.updateBlock(arg.block, arg.data);
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
         }
 
         // dispatch-type-error

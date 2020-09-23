@@ -36,8 +36,11 @@ const WebHeader: React.SFC<{}> = () => {
                     paddingTop: "8px",
                 }}
             >
+                <Link to="/app?demo=true">
+                    {renderMenuItemContent("Try Demo")}
+                </Link>
                 <Link to="/signup">{renderMenuItemContent("Signup")}</Link>
-                <Link to="login">{renderMenuItemContent("Login")}</Link>
+                <Link to="/login">{renderMenuItemContent("Login")}</Link>
                 <Link to="/forgot-password">
                     {renderMenuItemContent("Forgot Password")}
                 </Link>
@@ -72,21 +75,22 @@ const WebHeader: React.SFC<{}> = () => {
                 </StyledContainer>
                 <StyledContainer s={{ alignItems: "center" }}>
                     {!showMenu && !isMobile && (
+                        <Link to="/app?demo=true">
+                            <Button type="link" style={{ marginRight: "8px" }}>
+                                Try Demo
+                            </Button>
+                        </Link>
+                    )}
+                    {!showMenu && !isMobile && (
                         <Link to="/signup">
-                            <Button
-                                type="primary"
-                                style={{ marginRight: "24px" }}
-                            >
+                            <Button type="link" style={{ marginRight: "8px" }}>
                                 Signup
                             </Button>
                         </Link>
                     )}
                     {!showMenu && !isMobile && (
                         <Link to="/login">
-                            <Button
-                                type="link"
-                                style={{ padding: 0, marginRight: "24px" }}
-                            >
+                            <Button type="link" style={{ marginRight: "8px" }}>
                                 Login
                             </Button>
                         </Link>

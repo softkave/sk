@@ -1,20 +1,28 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import MainLayoutContainer from "../components/layout/MainLayoutContainer";
 import { isPath0App, makePath, paths } from "../components/layout/path";
 import StyledContainer from "../components/styled/Container";
+import seedDemoData from "../models/seedDemoData";
 import { connectSocket, disconnectSocket } from "../net/socket";
+import BlockActions from "../redux/blocks/actions";
+import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
 import { KeyValueKeys } from "../redux/key-value/types";
+import NotificationActions from "../redux/notifications/actions";
+import OperationActions from "../redux/operations/actions";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
+import SessionActions from "../redux/session/actions";
 import SessionSelectors from "../redux/session/selectors";
 import { SessionType } from "../redux/session/types";
 import { AppDispatch, IAppState } from "../redux/types";
+import UserActions from "../redux/users/actions";
 import { newId } from "../utils/utils";
 import Routes from "./Routes";
 
 let timeoutHandle: number;
+const demoKey = "demo";
 
 const handleHidden = () => {
     let hidden = "hidden";
@@ -104,24 +112,59 @@ const Main: React.FC<{}> = () => {
             ) as boolean
     );
 
-    React.useEffect(() => {
-        if (sessionType === SessionType.Uninitialized) {
-            dispatch(initializeAppSessionOperationAction({ opId }));
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const isDemoMode =
+        useSelector(SessionSelectors.isDemoMode) || searchParams.has(demoKey);
+
+    const routeToApp = React.useCallback(() => {
+        if (!isPath0App()) {
+            history.push(makePath(paths.appPath));
         }
-    }, [sessionType, opId, dispatch]);
+    }, [history]);
 
     React.useEffect(() => {
-        if (sessionType === SessionType.App) {
+        if (isDemoMode && sessionType !== SessionType.App) {
+            const demoData = seedDemoData();
+
+            dispatch(UserActions.bulkAddUsers(demoData.users));
+            dispatch(BlockActions.bulkAddBlocks(demoData.blocks));
+            dispatch(
+                NotificationActions.bulkAddNotifications(demoData.notifications)
+            );
+            dispatch(OperationActions.bulkAddOperations(demoData.operations));
+            dispatch(
+                KeyValueActions.setKey({
+                    key: KeyValueKeys.RootBlocksLoaded,
+                    value: true,
+                })
+            );
+            dispatch(
+                SessionActions.loginUser({
+                    clientId: "demo-clientId",
+                    token: "demo-token",
+                    userId: demoData.user.customId,
+                    isDemo: true,
+                })
+            );
+
+            routeToApp();
+
+            return;
+        } else if (sessionType === SessionType.Uninitialized) {
+            dispatch(initializeAppSessionOperationAction({ opId }));
+        }
+    }, [sessionType, opId, dispatch, isDemoMode]);
+
+    React.useEffect(() => {
+        if (sessionType === SessionType.App && !isDemoMode) {
             connectSocket({
                 clientId: clientId!,
                 token: token!,
             });
 
             handleHidden();
-
-            if (!isPath0App()) {
-                history.push(makePath(paths.appPath));
-            }
+            routeToApp();
         } else if (sessionType === SessionType.Web) {
             disconnectSocket();
 
@@ -129,7 +172,7 @@ const Main: React.FC<{}> = () => {
                 history.push("/");
             }
         }
-    }, [sessionType, clientId, history, token]);
+    }, [sessionType, clientId, history, token, isDemoMode]);
 
     const renderInitializing = () => (
         <StyledContainer

@@ -8,7 +8,6 @@ import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 
 export interface IUseBoardDataResult {
     loading: boolean;
-    reload: () => void;
     errors?: INetError[];
 }
 
@@ -33,11 +32,7 @@ export function useBoardData(block: IBlock): IUseBoardDataResult {
         loadOp
     );
 
-    // TODO: preferrably only update what changed
-    const reload = React.useCallback(() => {}, []);
-
     return {
-        reload,
         loading:
             block.type === BlockType.Org
                 ? loadStatus.isLoading || !loadStatus.operation
