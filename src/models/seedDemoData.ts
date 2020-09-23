@@ -110,9 +110,9 @@ export default function seedDemoData() {
         color: randomColor(),
         parent: org.customId,
         rootBlockId: org.customId,
-        name: `Softkave App`,
+        name: `Product Plan`,
         description:
-            "To track and manage the development progress of the Softkave app",
+            "To track and manage the development progress of the our product.",
         boardLabels: [
             {
                 color: randomColor(),
