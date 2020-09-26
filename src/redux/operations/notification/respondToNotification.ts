@@ -6,7 +6,7 @@ import {
     INotification,
 } from "../../../models/notification/notification";
 import UserAPI from "../../../net/user";
-import { getDateString, newId } from "../../../utils/utils";
+import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import NotificationActions from "../../notifications/actions";
@@ -34,7 +34,7 @@ export const respondToNotificationOperationAction = createAsyncThunk<
     GetOperationActionArgs<IRespondToNotificationOperationActionArgs>,
     IAppAsyncThunkConfig
 >("notification/respondToNotification", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
@@ -139,7 +139,7 @@ export const completeUserNotificationResponse = createAsyncThunk<
     IAppAsyncThunkConfig
 >("notification/completeUserNotificationResponse", async (arg, thunkAPI) => {
     const { block } = arg;
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
     // dte
     thunkAPI.dispatch(completePartialNotificationResponse(arg) as any);

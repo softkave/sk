@@ -1,58 +1,58 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import BlockAPI from "../../../net/block";
-import { newId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
-  dispatchOperationCompleted,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IOperation,
-  isOperationStarted,
+    dispatchOperationCompleted,
+    dispatchOperationError,
+    dispatchOperationStarted,
+    IOperation,
+    isOperationStarted,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { IOperationActionBaseArgs } from "../types";
 
 export const loadRootBlocksOperationAction = createAsyncThunk<
-  IOperation | undefined,
-  IOperationActionBaseArgs,
-  IAppAsyncThunkConfig
+    IOperation | undefined,
+    IOperationActionBaseArgs,
+    IAppAsyncThunkConfig
 >("session/loadRootBlocks", async (arg, thunkAPI) => {
-  const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
-  const operation = OperationSelectors.getOperationWithId(
-    thunkAPI.getState(),
-    id
-  );
+    const operation = OperationSelectors.getOperationWithId(
+        thunkAPI.getState(),
+        id
+    );
 
-  if (isOperationStarted(operation)) {
-    return;
-  }
-
-  await thunkAPI.dispatch(
-    dispatchOperationStarted(id, OperationType.LoadRootBlocks)
-  );
-
-  try {
-    const result = await BlockAPI.getUserRootBlocks();
-
-    if (result && result.errors) {
-      throw result.errors;
+    if (isOperationStarted(operation)) {
+        return;
     }
 
-    const { blocks: rootBlocks } = result;
-
-    await thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
-
     await thunkAPI.dispatch(
-      dispatchOperationCompleted(id, OperationType.LoadRootBlocks)
+        dispatchOperationStarted(id, OperationType.LoadRootBlocks)
     );
-  } catch (error) {
-    await thunkAPI.dispatch(
-      dispatchOperationError(id, OperationType.LoadRootBlocks, error)
-    );
-  }
 
-  return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    try {
+        const result = await BlockAPI.getUserRootBlocks();
+
+        if (result && result.errors) {
+            throw result.errors;
+        }
+
+        const { blocks: rootBlocks } = result;
+
+        await thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
+
+        await thunkAPI.dispatch(
+            dispatchOperationCompleted(id, OperationType.LoadRootBlocks)
+        );
+    } catch (error) {
+        await thunkAPI.dispatch(
+            dispatchOperationError(id, OperationType.LoadRootBlocks, error)
+        );
+    }
+
+    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });

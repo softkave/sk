@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import UserAPI from "../../../net/user";
+import ChatAPI, { IGetMessagesAPIParameters } from "../../../net/chat";
 import { getNewId } from "../../../utils/utils";
+import ChatActions from "../../chats/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -13,15 +14,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface IRequestForgotPasswordOperationActionArgs {
-    email: string;
-}
-
-export const requestForgotPasswordOperationAction = createAsyncThunk<
+export const getMessagesOperationAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IRequestForgotPasswordOperationActionArgs>,
+    GetOperationActionArgs<IGetMessagesAPIParameters>,
     IAppAsyncThunkConfig
->("session/requestForgotPassword", async (arg, thunkAPI) => {
+>("chat/getMessages", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -33,27 +30,22 @@ export const requestForgotPasswordOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.RequestForgotPassword)
-    );
+    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.GetMessages));
 
     try {
-        const result = await UserAPI.forgotPassword(arg.email);
+        const result = await ChatAPI.getMessages(arg);
 
         if (result && result.errors) {
             throw result.errors;
         }
 
-        await thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.RequestForgotPassword)
+        thunkAPI.dispatch(ChatActions.bulkAddChats(result.chats));
+        thunkAPI.dispatch(
+            dispatchOperationCompleted(id, OperationType.GetMessages)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
-            dispatchOperationError(
-                id,
-                OperationType.RequestForgotPassword,
-                error
-            )
+        thunkAPI.dispatch(
+            dispatchOperationError(id, OperationType.GetMessages, error)
         );
     }
 

@@ -1,8 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { INotification } from "../../../models/notification/notification";
-import UserAPI from "../../../net/user";
+import ChatAPI, {
+    IUpdateRoomReadCounterAPIParameters,
+} from "../../../net/chat";
 import { getDateString, getNewId } from "../../../utils/utils";
-import NotificationActions from "../../notifications/actions";
+import RoomActions from "../../rooms/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -16,15 +17,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface IMarkNotificationReadOperationActionArgs {
-    notification: INotification;
-}
-
-export const markNotificationReadOperationAction = createAsyncThunk<
+export const updateRoomReadCounterOperationAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
+    GetOperationActionArgs<IUpdateRoomReadCounterAPIParameters>,
     IAppAsyncThunkConfig
->("notification/markNotificationRead", async (arg, thunkAPI) => {
+>("chat/updateRoomReadCounter", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -36,54 +33,50 @@ export const markNotificationReadOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
-            OperationType.MarkNotificationRead,
-            arg.notification.customId
+            OperationType.UpdateRoomReadCounter,
+            arg.roomId
         )
     );
 
     try {
-        const readAt = getDateString();
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        arg.readCounter = arg.readCounter || getDateString();
 
         if (!isDemoMode) {
-            const result = await UserAPI.markNotificationRead(
-                arg.notification,
-                readAt
-            );
+            const result = await ChatAPI.updateRoomReadCounter(arg);
 
             if (result && result.errors) {
                 throw result.errors;
             }
         }
 
-        // TODO: Should control wait for net call, or should it happen before net call?
-        await thunkAPI.dispatch(
-            NotificationActions.updateNotification({
-                id: arg.notification.customId,
-                data: { readAt },
-                meta: {
-                    arrayUpdateStrategy: "replace",
-                },
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+
+        thunkAPI.dispatch(
+            RoomActions.updateRoomReadCounter({
+                roomId: arg.roomId,
+                userId: user.customId,
+                readCounter: arg.readCounter,
             })
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.MarkNotificationRead,
-                arg.notification.customId
+                OperationType.UpdateRoomReadCounter,
+                arg.roomId
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.MarkNotificationRead,
+                OperationType.UpdateRoomReadCounter,
                 error,
-                arg.notification.customId
+                arg.roomId
             )
         );
     }

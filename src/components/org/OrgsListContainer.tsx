@@ -23,7 +23,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     const { hijackRender } = props;
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
 
     const orgRouteMatch = useRouteMatch<{ orgId: string }>(
         "/app/organizations/:orgId"

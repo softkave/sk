@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
 import BlockAPI from "../../../net/block";
-import { newId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -27,7 +27,7 @@ export const deleteBlockOperationAction = createAsyncThunk<
     GetOperationActionArgs<IDeleteBlockOperationActionArgs>,
     IAppAsyncThunkConfig
 >("block/deleteBlock", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
@@ -125,7 +125,7 @@ export const completeDeleteBlock = createAsyncThunk<
         }
     }
 
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
     if (arg.block.type === "org") {
         const orgIndex = user.orgs.findIndex(

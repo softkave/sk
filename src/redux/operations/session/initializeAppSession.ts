@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import UserAPI from "../../../net/user";
 import UserSessionStorageFuncs from "../../../storage/userSession";
-import { newId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import UserActions from "../../users/actions";
@@ -21,7 +21,7 @@ export const initializeAppSessionOperationAction = createAsyncThunk<
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
 >("session/initializeAppSession", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),

@@ -7,7 +7,7 @@ import {
     IBoardTaskResolution,
 } from "../../../models/block/block";
 import BlockAPI from "../../../net/block";
-import { getDateString, newId } from "../../../utils/utils";
+import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -110,7 +110,7 @@ const updateTasksIfHasDeletedStatusesOrLabels = createAsyncThunk<
     }
 
     const updates: IUpdateBlockActionArgs[] = [];
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
     tasks.forEach((task) => {
         const taskUpdates: Partial<IBlock> = {};
@@ -168,7 +168,7 @@ export const updateBlockOperationAction = createAsyncThunk<
     GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
     IAppAsyncThunkConfig
 >("block/updateBlock", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),

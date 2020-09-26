@@ -23,7 +23,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     const { onClose } = props;
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
     const [block, setBlock] = React.useState<IBlock>(
         props.block || getNewBlock(user, BlockType.Org)
     );

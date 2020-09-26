@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { IBoardTaskResolution } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
@@ -231,7 +231,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
             description: "",
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
         };
 
         formikHelpers.addToArrayField("resolutionsList", resolution, {}, {});

@@ -12,7 +12,7 @@ import OperationSelectors, {
     IQueryFilterOperationSelector,
 } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/types";
-import { newId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 
 export interface IUseOperationStatus {
     isLoading: boolean;
@@ -66,7 +66,7 @@ const useOperation: UseOperation = (
 ) => {
     const dispatch = useDispatch();
     const [spareIdStore, setSpareIdData] = React.useState<ISpareIdStore>({
-        id: newId(),
+        id: getNewId(),
     });
     const isSelectorEmpty = Object.keys(selector).length === 0;
     const operation = useSelector<IAppState, IOperation | undefined>(

@@ -1,29 +1,35 @@
 enum OperationType {
-  // block
-  LoadRootBlocks = "LoadRootBlocks",
-  AddBlock = "AddBlock",
-  UpdateBlock = "UpdateBlock",
-  DeleteBlock = "DeleteBlock",
-  LoadBlockChildren = "LoadBlockChildren",
-  AddCollaborators = "AddCollaborators",
+    // block
+    LoadRootBlocks = "LoadRootBlocks",
+    AddBlock = "AddBlock",
+    UpdateBlock = "UpdateBlock",
+    DeleteBlock = "DeleteBlock",
+    LoadBlockChildren = "LoadBlockChildren",
+    AddCollaborators = "AddCollaborators",
 
-  // notification
-  LoadUserNotifications = "LoadUserNotifications",
-  MarkNotificationRead = "MarkNotificationRead",
-  RespondToNotification = "RespondToNotification",
+    // notification
+    LoadUserNotifications = "LoadUserNotifications",
+    MarkNotificationRead = "MarkNotificationRead",
+    RespondToNotification = "RespondToNotification",
 
-  // user
-  UpdateUser = "UpdateUser",
+    // user
+    UpdateUser = "UpdateUser",
 
-  // session
-  InitializeAppSession = "InitializeAppSession",
-  SignupUser = "SignupUser",
-  LoginUser = "LoginUser",
-  RequestForgotPassword = "RequestForgotPassword",
-  ChangePassword = "ChangePassword",
+    // session
+    InitializeAppSession = "InitializeAppSession",
+    SignupUser = "SignupUser",
+    LoginUser = "LoginUser",
+    RequestForgotPassword = "RequestForgotPassword",
+    ChangePassword = "ChangePassword",
 
-  // board
-  LoadBoardData = "LoadBoardData",
+    // board
+    LoadBoardData = "LoadBoardData",
+
+    // chat
+    GetRooms = "GetRooms",
+    GetMessages = "GetMessages",
+    SendMessage = "SendMessage",
+    UpdateRoomReadCounter = "UpdateRoomReadCounter",
 }
 
 export default OperationType;

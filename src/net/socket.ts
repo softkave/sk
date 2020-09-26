@@ -1,6 +1,7 @@
 import delay from "lodash/delay";
 import io, { Socket } from "socket.io-client";
 import { IBlock } from "../models/block/block";
+import { IRoomMemberWithReadCounter } from "../models/chat/types";
 import {
     CollaborationRequestStatusType,
     INotification,
@@ -19,12 +20,44 @@ import {
     completePartialNotificationResponse,
     completeUserNotificationResponse,
 } from "../redux/operations/notification/respondToNotification";
+import RoomActions from "../redux/rooms/actions";
+import RoomSelectors from "../redux/rooms/selectors";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { getSockAddr } from "./addr";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;
+
+export function getSocket() {
+    return socket;
+}
+
+class SocketNotConnectedError extends Error {
+    public name = "SocketNotConnectedError";
+    public message = "Socket is not connected";
+}
+
+export function assertGetSocket() {
+    if (!socket || !socket.connected) {
+        throw new SocketNotConnectedError();
+    }
+
+    return socket;
+}
+
+export function promisifiedEmit<Ack = any>(eventName: string, data: any) {
+    return new Promise<Ack>((resolve, reject) => {
+        try {
+            const sock = assertGetSocket();
+            sock.emit(eventName, data, (ackData: Ack) => {
+                resolve(ackData);
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 
 export interface ISocketConnectionProps {
     token: string;
@@ -40,6 +73,7 @@ export enum IncomingSocketEvents {
     UpdateNotification = "updateNotification",
     UserCollaborationRequestResponse = "userCollabReqResponse",
     OrgCollaborationRequestResponse = "orgCollabReqResponse",
+    UpdateRoomReadCounter = "updateRoomReadCounter",
 }
 
 export function connectSocket(props: ISocketConnectionProps) {
@@ -74,10 +108,10 @@ export function connectSocket(props: ISocketConnectionProps) {
         handleUserCollaborationRequestResponse
     );
     socket.on(IncomingSocketEvents.UserUpdate, handleUserUpdate);
-}
-
-export function getSocket() {
-    return socket;
+    socket.on(
+        IncomingSocketEvents.UpdateRoomReadCounter,
+        handleUpdateRoomReadCounter
+    );
 }
 
 export enum OutgoingSocketEvents {
@@ -85,6 +119,10 @@ export enum OutgoingSocketEvents {
     Subscribe = "subscribe",
     Unsubscribe = "unsubscribe",
     FetchMissingBroadcasts = "fetchMissingBroadcasts",
+    GetMessages = "getMessages",
+    SendMessage = "sendMessage",
+    GetRooms = "getRooms",
+    UpdateRoomReadCounter = "updateRoomReadCounter",
 }
 
 // outgoing packets
@@ -129,6 +167,11 @@ export interface INewNotificationsPacket {
 
 export interface IUserUpdatePacket {
     notificationsLastCheckedAt: string;
+}
+
+export interface IIncomingUpdateRoomReadCounterPacket {
+    roomId: string;
+    member: IRoomMemberWithReadCounter;
 }
 
 export interface IUpdateNotificationPacket {
@@ -249,6 +292,8 @@ function handleFetchMissingBroadcastsResponse(
                     return handleUserCollaborationRequestResponse(packet.data);
                 case IncomingSocketEvents.UserUpdate:
                     return handleUserUpdate(packet.data);
+                case IncomingSocketEvents.UpdateRoomReadCounter:
+                    return handleUpdateRoomReadCounter(packet.data);
             }
         });
     });
@@ -337,6 +382,25 @@ function handleUserCollaborationRequestResponse(
 
 function handleUserUpdate(data: IUserUpdatePacket) {
     // TODO: most likely not needed anymore
+}
+
+function handleUpdateRoomReadCounter(
+    data: IIncomingUpdateRoomReadCounterPacket
+) {
+    const room = RoomSelectors.getRoom(store.getState(), data.roomId);
+
+    if (!room) {
+        // TODO: log something to the log server
+        return;
+    }
+
+    store.dispatch(
+        RoomActions.updateRoomReadCounter({
+            roomId: room.customId,
+            userId: data.member.userId,
+            readCounter: data.member.readCounter,
+        })
+    );
 }
 
 export function subscribe(

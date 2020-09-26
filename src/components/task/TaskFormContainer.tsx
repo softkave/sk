@@ -30,7 +30,7 @@ export interface ITaskFormContainerProps {
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     const { onClose, orgId } = props;
     const dispatch: AppDispatch = useDispatch();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
     const org = useSelector<IAppState, IBlock>((state) => {
         return BlockSelectors.getBlock(state, orgId)!;
     });

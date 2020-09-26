@@ -12,7 +12,7 @@ import theme from "../theme";
 
 const HeaderMobile: React.FC<{}> = () => {
     const dispatch: AppDispatch = useDispatch();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
 
     const onLogout = () => {
         dispatch(logoutUserOperationAction());

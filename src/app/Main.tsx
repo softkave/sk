@@ -18,7 +18,7 @@ import SessionSelectors from "../redux/session/selectors";
 import { SessionType } from "../redux/session/types";
 import { AppDispatch, IAppState } from "../redux/types";
 import UserActions from "../redux/users/actions";
-import { newId } from "../utils/utils";
+import { getNewId } from "../utils/utils";
 import Routes from "./Routes";
 
 let timeoutHandle: number;
@@ -100,7 +100,7 @@ const handleHidden = () => {
 const Main: React.FC<{}> = () => {
     const history = useHistory();
     const dispatch: AppDispatch = useDispatch();
-    const [opId] = React.useState(() => newId());
+    const [opId] = React.useState(() => getNewId());
     const sessionType = useSelector(SessionSelectors.getSessionType);
     const token = useSelector(SessionSelectors.getUserToken);
     const clientId = useSelector(SessionSelectors.getClientId);

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
 import BlockAPI from "../../../net/block";
-import { newId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -29,7 +29,7 @@ export const loadBlockChildrenOperationAction = createAsyncThunk<
     GetOperationActionArgs<ILoadBlockChildrenOperationActionArgs>,
     IAppAsyncThunkConfig
 >("block/loadBlockChildren", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
