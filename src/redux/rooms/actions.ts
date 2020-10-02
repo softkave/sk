@@ -1,6 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
-import { IRoom } from "../../models/chat/types";
+import { IChat, IRoom } from "../../models/chat/types";
 import { IMergeDataMeta } from "../../utils/utils";
+import { IUpdateResourcePayload } from "../types";
 
 const addRoom = createAction<IRoom>("rooms/addRoom");
 
@@ -32,6 +33,23 @@ const updateRoomReadCounter = createAction<IUpdateRoomReadCounterActionArgs>(
     "rooms/updateRoomReadCounter"
 );
 
+export interface IAddChatActionArgs {
+    chat: IChat;
+    recipientId: string;
+    roomId: string;
+}
+
+const addChat = createAction<IAddChatActionArgs>("rooms/addChat");
+
+export interface IUpdateChatActionArgs extends IUpdateResourcePayload<IChat> {
+    roomId: string;
+    roomTempId: string;
+    chatTempId: string;
+    chatIndex?: number;
+}
+
+const updateChat = createAction<IUpdateChatActionArgs>("room/updateChat");
+
 class RoomActions {
     public static addRoom = addRoom;
     public static updateRoom = updateRoom;
@@ -40,6 +58,8 @@ class RoomActions {
     public static bulkUpdateRooms = bulkUpdateRooms;
     public static bulkDeleteRooms = bulkDeleteRooms;
     public static updateRoomReadCounter = updateRoomReadCounter;
+    public static addChat = addChat;
+    public static updateChat = updateChat;
 }
 
 export default RoomActions;

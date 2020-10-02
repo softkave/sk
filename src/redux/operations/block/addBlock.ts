@@ -87,7 +87,7 @@ export const completeAddBlock = createAsyncThunk<
         // To avoid loading the block data, cause there isn't any yet, it's a new block
         loadOps.push({
             id: getNewId(),
-            operationType: OperationType.LoadBoardData,
+            operationType: OperationType.LoadOrgUsersAndRequests,
             resourceId: arg.block.customId,
             status: {
                 status: OperationStatus.Completed,

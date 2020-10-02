@@ -1,6 +1,5 @@
 import dotProp from "dot-prop-immutable";
 import get from "lodash/get";
-import set from "lodash/set";
 
 export function getDataFromObject(
     obj: object,
@@ -20,58 +19,76 @@ export function getDataFromObject(
     return result;
 }
 
-function defaultIndexer(data: object, path: string) {
+function defaultIndexer(data: any, path: any) {
     if (path) {
-        return dotProp.get(data, path);
+        return get(data, path);
     }
 
     return JSON.stringify(data);
 }
 
-function defaultProcessValue(value: any) {
-    return value;
+function defaultReducer(data: any) {
+    return data;
 }
 
-interface IIndexArrayOptions {
-    path?: string;
+export interface IIndexArrayOptions<T, R> {
+    path?: T extends object ? keyof T : never;
     indexer?: (
-        current: any,
-        providedPath: string,
-        currentIndex: number,
-        arr: any[]
-    ) => string | number;
-    proccessValue?: (
-        current: any,
-        existing: any,
-        providedPath: string,
-        currentIndex: number,
-        arr: any[]
-    ) => any;
+        current: T,
+        path: (T extends object ? keyof T : never) | undefined,
+        arr: T[],
+        index: number
+    ) => string;
+    reducer?: (current: T, arr: T[], index: number) => R;
 }
 
-export function indexArray(
-    arr: any[] = [],
-    { path, indexer, proccessValue }: IIndexArrayOptions = {}
-) {
+export function indexArray<T, R = T>(
+    arr: T[] = [],
+    opts: IIndexArrayOptions<T, R> = {}
+): { [key: string]: R } {
+    const indexer = opts.indexer || defaultIndexer;
+    const path = opts.path;
+    const reducer = opts.reducer || defaultReducer;
+
     if (typeof indexer !== "function") {
-        indexer = defaultIndexer;
+        if (typeof path !== "string") {
+            throw new Error(
+                "Path must be provided if an indexer is not provided"
+            );
+        }
     }
 
-    proccessValue = proccessValue || defaultProcessValue;
-
-    const result = arr.reduce((accumulator, current, reduceIndex) => {
-        const index = indexer!(current, path!, reduceIndex, arr);
-        const existing = get(accumulator, index);
-        const value = proccessValue!(
+    const result = arr.reduce((accumulator, current, index) => {
+        accumulator[indexer(current, path, arr, index)] = reducer(
             current,
-            existing,
-            path!,
-            reduceIndex,
-            arr
+            arr,
+            index
         );
-        set(accumulator, index, value);
+
         return accumulator;
     }, {});
 
     return result;
+}
+
+export function getDate(initial?: any) {
+    if (initial) {
+        const date = new Date(initial);
+        return date;
+    }
+
+    return new Date();
+}
+
+export function getDateString(initial?: any) {
+    if (initial) {
+        const date = new Date(initial);
+        return date.toISOString();
+    }
+
+    return new Date().toISOString();
+}
+
+export function ternaryOp(a: any, b: any, c: any) {
+    return a ? b : c;
 }

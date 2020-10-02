@@ -1,5 +1,5 @@
 import { IRoom } from "../../models/chat/types";
 
-export interface IRoomsState {
+export interface IRoomsMap {
     [key: string]: IRoom;
 }

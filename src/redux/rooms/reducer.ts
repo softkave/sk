@@ -1,20 +1,23 @@
 import { createReducer } from "@reduxjs/toolkit";
+import { IChat } from "../../models/chat/types";
 import { mergeData } from "../../utils/utils";
 import SessionActions from "../session/actions";
 import RoomActions from "./actions";
-import { IRoomsState } from "./types";
+import { IRoomsMap } from "./types";
 
-const roomsReducer = createReducer<IRoomsState>({}, (builder) => {
+const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
     builder.addCase(RoomActions.addRoom, (state, action) => {
         state[action.payload.customId] = action.payload;
     });
 
     builder.addCase(RoomActions.updateRoom, (state, action) => {
-        state[action.payload.id] = mergeData(
+        const room = mergeData(
             state[action.payload.id],
             action.payload.data,
             action.payload.meta
         );
+
+        state[room.customId] = room;
     });
 
     builder.addCase(RoomActions.deleteRoom, (state, action) => {
@@ -27,11 +30,8 @@ const roomsReducer = createReducer<IRoomsState>({}, (builder) => {
 
     builder.addCase(RoomActions.bulkUpdateRooms, (state, action) => {
         action.payload.forEach((param) => {
-            state[param.id] = mergeData(
-                state[param.id],
-                param.data,
-                param.meta
-            );
+            const room = mergeData(state[param.id], param.data, param.meta);
+            state[room.customId] = room;
         });
     });
 
@@ -55,6 +55,52 @@ const roomsReducer = createReducer<IRoomsState>({}, (builder) => {
         }
 
         memberData.readCounter = action.payload.readCounter;
+    });
+
+    builder.addCase(RoomActions.addChat, (state, action) => {
+        let room = state[action.payload.roomId];
+
+        if (!room) {
+            const rmId = Object.keys(state).find((id) => {
+                return state[id].recipientId === action.payload.recipientId;
+            })!;
+            room = state[rmId];
+        }
+
+        room.chats.push(action.payload.chat);
+    });
+
+    builder.addCase(RoomActions.updateChat, (state, action) => {
+        const room =
+            state[action.payload.roomId] || state[action.payload.roomTempId];
+        let chat: IChat;
+
+        if (
+            action.payload.chatIndex &&
+            action.payload.chatIndex < room.chats.length &&
+            (room.chats[action.payload.chatIndex].customId ===
+                action.payload.chatTempId ||
+                room.chats[action.payload.chatIndex].customId ===
+                    action.payload.id)
+        ) {
+            chat = room.chats[action.payload.chatIndex];
+        } else {
+            // Reverse search because we most likely are trying to update the latest chat entry id
+            for (let i = room.chats.length - 1; i >= 0; i--) {
+                const ch = room.chats[i];
+
+                if (
+                    ch.customId === action.payload.chatTempId ||
+                    ch.customId === action.payload.id
+                ) {
+                    chat = ch;
+                    break;
+                }
+            }
+        }
+
+        // @ts-ignore
+        mergeData(chat, action.payload.data);
     });
 
     builder.addCase(SessionActions.logoutUser, (state) => {

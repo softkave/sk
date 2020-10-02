@@ -4,21 +4,27 @@ import set from "lodash/set";
 import { isMoment, Moment } from "moment";
 import { indexArray } from "./object";
 
-const tempDescriptor = "temp";
+const tempPrefix = "temp-";
 
 const uuid = require("uuid/v4");
-// const getId = require("nanoid");
+// const getNewId = require("nanoid");
 
 export function getNewId() {
     return uuid();
 }
 
-export function getNewTempId() {
-    return `${tempDescriptor}-${getNewId()}`;
+export function getNewTempId(id?: string) {
+    return `${tempPrefix}${id || getNewId()}`;
 }
 
-export function isTempId(id: string) {
-    return id.startsWith(tempDescriptor);
+export function isTempId(id: string, matchId?: string) {
+    const hasTempPrefix = id.startsWith(tempPrefix);
+
+    if (hasTempPrefix && matchId) {
+        return id.endsWith(matchId);
+    }
+
+    return hasTempPrefix;
 }
 
 export function getDateString(initial?: Date | string | number | Moment) {
@@ -50,7 +56,7 @@ export const flattenErrorListWithDepthOne = (
         return {};
     }
 
-    return indexArray(errors, {
+    return indexArray(errors as any[], {
         indexer: (next) => {
             if (next.field) {
                 return next.field;
@@ -58,7 +64,7 @@ export const flattenErrorListWithDepthOne = (
                 return "error";
             }
         },
-        proccessValue: (value, existing) => {
+        reducer: (value, existing) => {
             if (existing) {
                 existing.push(value.message);
                 return existing;
@@ -124,9 +130,9 @@ export interface IMergeDataMeta {
     arrayUpdateStrategy?: "merge" | "concat" | "replace";
 }
 
-export const mergeData = (
-    resource,
-    data,
+export const mergeData = <ResourceType = any>(
+    resource: ResourceType,
+    data: Partial<ResourceType>,
     meta: IMergeDataMeta = { arrayUpdateStrategy: "concat" }
 ) => {
     return mergeWith(resource, data, (objValue, srcValue) => {
@@ -137,7 +143,8 @@ export const mergeData = (
                 return srcValue;
             }
 
-            // "merge" arrayUpdateStrategy happens by default
+            // No need to handle the "merge" arrayUpdateStrategy, it happens by default
+            // if nothing is returned
         }
     });
 };

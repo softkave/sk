@@ -1,19 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IChat, IRoom } from "../../../models/chat/types";
+import { IChat } from "../../../models/chat/types";
 import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat";
-import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
-import ChatActions from "../../chats/actions";
+import {
+    getDateString,
+    getNewId,
+    getNewTempId,
+    isTempId,
+} from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
-import {
-    dispatchOperationCompleted,
-    dispatchOperationError,
-    dispatchOperationStarted,
-    IOperation,
-    isOperationStarted,
-} from "../operation";
+import { IOperation, isOperationStarted, OperationStatus } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
@@ -33,7 +31,7 @@ export class RoomDoesNotExistError extends Error {
 
 export const sendMessageOperationAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<ISendMessageAPIParameters>,
+    GetOperationActionArgs<Required<ISendMessageAPIParameters>>,
     IAppAsyncThunkConfig
 >("chat/sendMessage", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
@@ -47,91 +45,98 @@ export const sendMessageOperationAction = createAsyncThunk<
         return;
     }
 
-    let room: IRoom;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-
-    if (arg.roomId) {
-        room = RoomSelectors.getRoom(thunkAPI.getState(), arg.roomId);
-    } else if (arg.recipientId) {
-        const tempId = getNewTempId();
-        room = {
-            customId: tempId,
-            name: tempId,
-            orgId: arg.orgId,
-            createdAt: getDateString(),
-            createdBy: user.customId,
-            members: [
-                { userId: user.customId, readCounter: getDateString() },
-                { userId: arg.recipientId, readCounter: getDateString() },
-            ],
-        };
-    } else {
-        throw new NoRoomOrRecipientProvidedError();
-    }
-
+    const isTempRoom = isTempId(arg.roomId);
+    const chatTempId = getNewTempId();
     let chat: IChat = {
-        customId: getNewTempId(),
+        customId: chatTempId,
         orgId: arg.orgId,
         message: arg.message,
         sender: user.customId,
-        roomId: room.customId,
+        roomId: "",
         createdAt: getDateString(),
+        sending: true,
     };
 
-    thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.SendMessage, chat.customId)
+    const chatIndex = RoomSelectors.getRoomChatsCount(
+        thunkAPI.getState(),
+        arg.roomId,
+        arg.recipientId
     );
 
     try {
-        thunkAPI.dispatch(RoomActions.addRoom(room));
-        thunkAPI.dispatch(ChatActions.addChat(chat));
+        thunkAPI.dispatch(
+            RoomActions.addChat({
+                chat,
+                recipientId: arg.recipientId,
+                roomId: arg.roomId,
+            })
+        );
 
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
-            const result = await ChatAPI.sendMessage(arg);
+            const result = await ChatAPI.sendMessage({
+                message: arg.message,
+                orgId: arg.orgId,
+                recipientId: arg.recipientId,
+                roomId: isTempRoom ? undefined : arg.roomId,
+            });
 
             if (result && result.errors) {
                 throw result.errors;
             }
 
             chat = result.chat;
+            chat.sending = false;
             thunkAPI.dispatch(
-                RoomActions.updateRoom({
-                    id: room.customId,
-                    data: {
-                        customId: chat.roomId,
-                    },
-                })
-            );
-
-            thunkAPI.dispatch(
-                ChatActions.updateChat({
-                    id: chat.customId,
-                    data: {
-                        customId: chat.customId,
-                    },
+                RoomActions.updateChat({
+                    chatIndex,
+                    chatTempId,
+                    roomTempId: isTempRoom ? arg.roomId : "",
+                    id: result.chat.customId,
+                    data: result.chat,
+                    roomId: result.chat.roomId,
                 })
             );
         }
 
-        thunkAPI.dispatch(
-            dispatchOperationCompleted(
-                id,
-                OperationType.SendMessage,
-                chat.customId
-            )
-        );
+        const op: IOperation = {
+            id: "",
+            operationType: OperationType.SendMessage,
+            status: {
+                status: OperationStatus.Completed,
+                timestamp: Date.now(),
+            },
+            resourceId: chat.customId,
+        };
+
+        return op;
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(
-                id,
-                OperationType.SendMessage,
-                error,
-                chat.customId
-            )
+            RoomActions.updateChat({
+                chatIndex,
+                chatTempId,
+                roomTempId: isTempRoom ? arg.roomId : "",
+                id: "",
+                data: {
+                    sending: false,
+                    errorMessage: "Error sending message", // TODO: show original error message
+                },
+                roomId: "",
+            })
         );
-    }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+        const op: IOperation = {
+            id: "",
+            operationType: OperationType.SendMessage,
+            status: {
+                status: OperationStatus.Error,
+                timestamp: Date.now(),
+            },
+            resourceId: chat.customId,
+        };
+
+        return op;
+    }
 });

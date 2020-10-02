@@ -1,36 +1,32 @@
-import { IChat, IRoom } from "../models/chat/types";
+import { IChat, IRoomMemberWithReadCounter } from "../models/chat/types";
 import { OutgoingSocketEvents, promisifiedEmit } from "./socket";
 import { IEndpointResultBase } from "./types";
 
-export interface IGetRoomsAPIParameters {
+export interface IPersistedRoom {
+    customId: string;
+    name: string;
     orgId: string;
+    createdAt: string;
+    createdBy: string;
+    members: IRoomMemberWithReadCounter[];
+    updatedAt?: string;
+    updatedBy?: string;
 }
 
-export interface IGetRoomsAPIResult extends IEndpointResultBase {
-    rooms: IRoom[];
+export interface IGetUserRoomsAndChatsAPIResult extends IEndpointResultBase {
+    rooms: IPersistedRoom[];
+    chats: IChat[];
 }
 
-async function getRooms(props: IGetRoomsAPIParameters) {
-    return await promisifiedEmit<IGetRoomsAPIResult>(
-        OutgoingSocketEvents.GetRooms,
-        props
+async function getUserRoomsAndChats() {
+    return await promisifiedEmit<IGetUserRoomsAndChatsAPIResult>(
+        OutgoingSocketEvents.GetUserRoomsAndChats
     );
 }
 
 export interface IGetMessagesAPIParameters {
     orgId: string;
     roomIds: string[];
-}
-
-export interface IGetMessagesAPIResult extends IEndpointResultBase {
-    chats: IChat[];
-}
-
-async function getMessages(props: IGetMessagesAPIParameters) {
-    return promisifiedEmit<IGetMessagesAPIResult>(
-        OutgoingSocketEvents.GetMessages,
-        props
-    );
 }
 
 export interface ISendMessageAPIParameters {
@@ -67,8 +63,7 @@ async function updateRoomReadCounter(
 }
 
 export default class ChatAPI {
-    public static getRooms = getRooms;
-    public static getMessages = getMessages;
+    public static getUserRoomsAndChats = getUserRoomsAndChats;
     public static sendMessage = sendMessage;
     public static updateRoomReadCounter = updateRoomReadCounter;
 }

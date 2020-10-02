@@ -21,7 +21,7 @@ import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BlockForms, { BlockFormType } from "./BoardForms";
 import OrgBoard from "./OrgBoard";
-import { useBoardData } from "./useBoardData";
+import { useLoadOrgData } from "./useLoadOrgData";
 import { getBlockPath, getBlocksPath } from "./utils";
 
 interface IBlockFormState {
@@ -61,17 +61,17 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     })!;
 
     const showAppMenu = useSelector((state) =>
-        KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowAppMenu)
     ) as boolean;
 
     const showOrgMenu = useSelector((state) =>
-        KeyValueSelectors.getKey(state as any, KeyValueKeys.OrgMenu)
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowOrgMenu)
     ) as boolean;
 
     const toggleAppMenu = React.useCallback(() => {
         dispatch(
             KeyValueActions.setValues({
-                [KeyValueKeys.AppMenu]: !showAppMenu,
+                [KeyValueKeys.ShowAppMenu]: !showAppMenu,
             })
         );
     }, [showAppMenu, dispatch]);
@@ -79,8 +79,8 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const toggleOrgMenu = React.useCallback(() => {
         dispatch(
             KeyValueActions.setValues({
-                [KeyValueKeys.AppMenu]: !showOrgMenu,
-                [KeyValueKeys.OrgMenu]: !showOrgMenu,
+                [KeyValueKeys.ShowAppMenu]: !showOrgMenu,
+                [KeyValueKeys.ShowOrgMenu]: !showOrgMenu,
             })
         );
     }, [showOrgMenu, dispatch]);
@@ -90,7 +90,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
 
     // TODO: we need to rebuild the path when the user transfers the block
     const blockPath = getBlockPath(block, parentPath);
-    const loadBoardDataStatusAndControls = useBoardData(block);
+    const loadBoardDataStatusAndControls = useLoadOrgData(block);
 
     const pushRoute = (route) => {
         const search = new URLSearchParams(window.location.search);

@@ -23,11 +23,10 @@ enum OperationType {
     ChangePassword = "ChangePassword",
 
     // board
-    LoadBoardData = "LoadBoardData",
+    LoadOrgUsersAndRequests = "LoadOrgUsersAndRequests",
 
     // chat
-    GetRooms = "GetRooms",
-    GetMessages = "GetMessages",
+    GetUserRoomsAndChats = "getUserRoomsAndChats",
     SendMessage = "SendMessage",
     UpdateRoomReadCounter = "UpdateRoomReadCounter",
 }

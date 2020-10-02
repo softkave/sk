@@ -291,7 +291,7 @@ export default function seedDemoData() {
 
     const loadBoardDataOp: IOperation = {
         id: getNewId(),
-        operationType: OperationType.LoadBoardData,
+        operationType: OperationType.LoadOrgUsersAndRequests,
         resourceId: org.customId,
         status: { status: OperationStatus.Completed, timestamp: Date.now() },
     };
@@ -306,7 +306,7 @@ export default function seedDemoData() {
 
     const loadPendingReqOrgBoardDataOp: IOperation = {
         id: getNewId(),
-        operationType: OperationType.LoadBoardData,
+        operationType: OperationType.LoadOrgUsersAndRequests,
         resourceId: pendingRequestOrg.customId,
         status: { status: OperationStatus.Completed, timestamp: Date.now() },
     };

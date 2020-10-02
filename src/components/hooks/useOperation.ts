@@ -1,6 +1,7 @@
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { INetError } from "../../net/types";
 import OperationActions from "../../redux/operations/actions";
 import {
     IOperation,
@@ -53,6 +54,28 @@ export const getOperationStats = (
         status: operation?.status,
     };
 };
+
+export interface IMergedOperationStats {
+    loading?: boolean;
+    errors?: INetError | INetError[];
+}
+
+export function mergeOperationStats(
+    opStats: IUseOperationStatus[]
+): IMergedOperationStats {
+    for (const opStat of opStats) {
+        if (!opStat.operation || opStat.isLoading) {
+            return { loading: true };
+        }
+
+        // Only returning the first error found
+        if (opStat.error) {
+            return { errors: opStat.error };
+        }
+    }
+
+    return {};
+}
 
 interface ISpareIdStore {
     id: string;
