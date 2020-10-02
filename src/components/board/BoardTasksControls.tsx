@@ -5,7 +5,7 @@ import StyledContainer from "../styled/Container";
 import InputSearchIcon from "../utilities/InputSearchIcon";
 import { TaskGroup } from "./types";
 
-export interface IBTasksControlsProps {
+export interface IBoardTasksControlsProps {
     selected: string;
     options: string[];
     setGroupType: (key: TaskGroup) => void;
@@ -13,7 +13,7 @@ export interface IBTasksControlsProps {
     onSearchTextChange: (text: string) => void;
 }
 
-const BTasksControls: React.FC<IBTasksControlsProps> = (props) => {
+const BoardTasksControls: React.FC<IBoardTasksControlsProps> = (props) => {
     const {
         options,
         selected,
@@ -116,4 +116,4 @@ const BTasksControls: React.FC<IBTasksControlsProps> = (props) => {
     );
 };
 
-export default React.memo(BTasksControls);
+export default BoardTasksControls;

@@ -13,7 +13,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import CustomScrollbar from "../utilities/DeviceScrollbar";
 import LabelFormItem from "./LabelFormItem";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
@@ -196,7 +196,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
                     overflowY: "auto",
                 }}
             >
-                <DeviceScrollbar>{labels}</DeviceScrollbar>
+                <CustomScrollbar>{labels}</CustomScrollbar>
             </StyledContainer>
         );
     };

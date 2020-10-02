@@ -1,19 +1,48 @@
 import React from "react";
 import Scrollbars, { ScrollbarProps } from "react-custom-scrollbars";
-import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import userAgent from "../userAgent";
 
-export interface IDeviceScrollbarProps {
+export interface ICustomScrollbarProps {
     children: React.ReactNode;
     scrollbarProps?: ScrollbarProps;
     style?: React.CSSProperties;
 }
 
-const DeviceScrollbar: React.FC<IDeviceScrollbarProps> = (props) => {
+const useNativeScrollbarForDevices = ["mobile", "tablet"];
+const WINDOWS = "windows";
+
+const CustomScrollbar: React.FC<ICustomScrollbarProps> = (props) => {
     const { children, scrollbarProps, style } = props;
 
-    const mobile = React.useCallback(
-        () => (
+    const deviceType = userAgent.getDevice().type;
+    const OS = userAgent.getOS().name;
+
+    const useCustomScrollbar = React.useMemo(() => {
+        if (OS && OS.toLowerCase() === WINDOWS) {
+            return true;
+        } else if (
+            deviceType &&
+            useNativeScrollbarForDevices.includes(deviceType)
+        ) {
+            return false;
+        }
+
+        return true;
+    }, [deviceType, OS]);
+
+    if (useCustomScrollbar) {
+        return (
+            <Scrollbars
+                autoHide
+                {...scrollbarProps}
+                style={{ ...style, ...(scrollbarProps?.style || {}) }}
+            >
+                {children}
+            </Scrollbars>
+        );
+    } else {
+        return (
             <StyledContainer
                 s={{
                     flex: 1,
@@ -25,28 +54,10 @@ const DeviceScrollbar: React.FC<IDeviceScrollbarProps> = (props) => {
             >
                 {children}
             </StyledContainer>
-        ),
-        [children, style]
-    );
-
-    const desktop = React.useCallback(
-        () => (
-            <Scrollbars
-                autoHide
-                {...scrollbarProps}
-                style={{ ...style, ...(scrollbarProps?.style || {}) }}
-            >
-                {children}
-            </Scrollbars>
-        ),
-        [children, scrollbarProps, style]
-    );
-
-    return (
-        <RenderForDevice renderForDesktop={desktop} renderForMobile={mobile} />
-    );
+        );
+    }
 };
 
-DeviceScrollbar.defaultProps = { scrollbarProps: {}, style: {} };
+CustomScrollbar.defaultProps = { scrollbarProps: {}, style: {} };
 
-export default React.memo(DeviceScrollbar);
+export default React.memo(CustomScrollbar);

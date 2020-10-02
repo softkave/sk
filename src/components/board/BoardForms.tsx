@@ -7,15 +7,15 @@ import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import StatusListWithDrawer from "../status/StatusListWithDrawer";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 
-export type BlockFormType =
+export type BoardFormType =
     | "block-form"
     | "collaborator-form"
     | "status-list-form"
     | "label-list-form";
 
-export interface IBlockFormsProps {
+export interface IBoardFormsProps {
     orgId: string;
-    formType: BlockFormType;
+    formType: BoardFormType;
     parentBlock: IBlock;
     onClose: () => void;
 
@@ -23,7 +23,7 @@ export interface IBlockFormsProps {
     blockType?: BlockType;
 }
 
-const BlockForms: React.FC<IBlockFormsProps> = (props) => {
+const BoardForms: React.FC<IBoardFormsProps> = (props) => {
     const { block, formType, onClose, orgId, blockType, parentBlock } = props;
 
     const noBlockWarning = () => {
@@ -145,4 +145,4 @@ const BlockForms: React.FC<IBlockFormsProps> = (props) => {
     return renderForm();
 };
 
-export default BlockForms;
+export default BoardForms;

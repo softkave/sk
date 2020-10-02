@@ -1,19 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IChat } from "../../../models/chat/types";
 import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat";
-import {
-    getDateString,
-    getNewId,
-    getNewTempId,
-    isTempId,
-} from "../../../utils/utils";
+import { getDateString, getNewTempId, isTempId } from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
-import { IOperation, isOperationStarted, OperationStatus } from "../operation";
+import { IOperation, OperationStatus } from "../operation";
 import OperationType from "../OperationType";
-import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
 // tslint:disable-next-line: max-classes-per-file
@@ -34,17 +28,7 @@ export const sendMessageOperationAction = createAsyncThunk<
     GetOperationActionArgs<Required<ISendMessageAPIParameters>>,
     IAppAsyncThunkConfig
 >("chat/sendMessage", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
-
-    const operation = OperationSelectors.getOperationWithId(
-        thunkAPI.getState(),
-        id
-    );
-
-    if (isOperationStarted(operation)) {
-        return;
-    }
-
+    let op: IOperation;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     const isTempRoom = isTempId(arg.roomId);
     const chatTempId = getNewTempId();
@@ -53,7 +37,7 @@ export const sendMessageOperationAction = createAsyncThunk<
         orgId: arg.orgId,
         message: arg.message,
         sender: user.customId,
-        roomId: "",
+        roomId: arg.roomId,
         createdAt: getDateString(),
         sending: true,
     };
@@ -101,7 +85,7 @@ export const sendMessageOperationAction = createAsyncThunk<
             );
         }
 
-        const op: IOperation = {
+        op = {
             id: "",
             operationType: OperationType.SendMessage,
             status: {
@@ -110,8 +94,6 @@ export const sendMessageOperationAction = createAsyncThunk<
             },
             resourceId: chat.customId,
         };
-
-        return op;
     } catch (error) {
         thunkAPI.dispatch(
             RoomActions.updateChat({
@@ -127,7 +109,7 @@ export const sendMessageOperationAction = createAsyncThunk<
             })
         );
 
-        const op: IOperation = {
+        op = {
             id: "",
             operationType: OperationType.SendMessage,
             status: {
@@ -136,7 +118,16 @@ export const sendMessageOperationAction = createAsyncThunk<
             },
             resourceId: chat.customId,
         };
-
-        return op;
     }
+
+    thunkAPI.dispatch(
+        RoomActions.updateRoomReadCounter({
+            userId: user.customId,
+            roomId: chat.roomId,
+            readCounter: getDateString(),
+            isSignedInUser: true,
+        })
+    );
+
+    return op;
 });

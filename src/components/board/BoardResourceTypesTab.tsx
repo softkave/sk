@@ -5,15 +5,15 @@ import React from "react";
 import { Redirect, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
-import BTasksContainer from "./BTasksContainer";
+import BoardTasksContainer from "./BoardTasksContainer";
 import { IBoardResourceTypePathMatch } from "./types";
 
-export interface IBResourceTypesTabProps {
+export interface IBoardResourceTypesTabProps {
     blockPath: string;
     block: IBlock;
 }
 
-const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
+const BoardResourceTypesTab = (props: IBoardResourceTypesTabProps) => {
     const { blockPath, block } = props;
 
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
@@ -31,7 +31,7 @@ const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
     const renderContent = (type) => {
         switch (type) {
             case "tasks":
-                return <BTasksContainer block={block} />;
+                return <BoardTasksContainer block={block} />;
 
             default:
                 return null;
@@ -61,4 +61,4 @@ const BResourceTypesTab = (props: IBResourceTypesTabProps) => {
     );
 };
 
-export default React.memo(BResourceTypesTab);
+export default BoardResourceTypesTab;

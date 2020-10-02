@@ -4,21 +4,21 @@ import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
-import { IBGroupedTasksGroup } from "./types";
+import { IBoardGroupedTasksGroup } from "./types";
 
-export interface IBRenderGroupedTasksMobileProps {
+export interface IBoardRenderGroupedTasksMobileProps {
     board: IBlock;
-    groups: IBGroupedTasksGroup[];
+    groups: IBoardGroupedTasksGroup[];
     users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const BRenderGroupedTasksMobile: React.FC<IBRenderGroupedTasksMobileProps> = (
+const BoardRenderGroupedTasksMobile: React.FC<IBoardRenderGroupedTasksMobileProps> = (
     props
 ) => {
     const { groups, users, board, onClickUpdateBlock } = props;
 
-    const renderTab = (group: IBGroupedTasksGroup) => {
+    const renderTab = (group: IBoardGroupedTasksGroup) => {
         return (
             <Tabs.TabPane
                 tab={
@@ -65,4 +65,4 @@ const BRenderGroupedTasksMobile: React.FC<IBRenderGroupedTasksMobileProps> = (
     );
 };
 
-export default React.memo(BRenderGroupedTasksMobile);
+export default BoardRenderGroupedTasksMobile;

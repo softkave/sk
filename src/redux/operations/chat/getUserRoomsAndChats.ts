@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import {
     IChat,
     IRoom,
@@ -129,21 +129,10 @@ function prepareChats(
 
         const member = room.members.find((m) => m.userId === userId)!;
         const readCounter = moment(member.readCounter);
-        let unseenChatsStartIndex: number | null = null;
-
-        for (let i = room.chats.length - 1; i >= 0; i--) {
-            const chat = room.chats[i];
-            const chatCreated = moment(chat.createdAt);
-
-            if (chatCreated.isBefore(readCounter)) {
-                unseenChatsStartIndex = i === room.chats.length - 1 ? i : i + 1;
-                break;
-            }
-        }
-
-        const unseenChatsCount = unseenChatsStartIndex
-            ? room.chats.length - unseenChatsStartIndex - 1
-            : 0;
+        const {
+            unseenChatsCount,
+            unseenChatsStartIndex,
+        } = getRoomUserUnseenChatsCountAndStartIndex(room, readCounter);
 
         room.unseenChatsStartIndex = unseenChatsStartIndex;
         unseenChatsCountByOrg[room.orgId] =
@@ -153,5 +142,36 @@ function prepareChats(
     return {
         roomsMap,
         unseenChatsCountByOrg,
+    };
+}
+
+export interface IRoomUnseenChatsCountAndStartIndex {
+    unseenChatsCount: number;
+    unseenChatsStartIndex: number | null;
+}
+
+export function getRoomUserUnseenChatsCountAndStartIndex(
+    room: IRoom,
+    readCounter: Moment
+): IRoomUnseenChatsCountAndStartIndex {
+    let unseenChatsStartIndex: number | null = null;
+
+    for (let i = room.chats.length - 1; i >= 0; i--) {
+        const chat = room.chats[i];
+        const chatCreated = moment(chat.createdAt);
+
+        if (chatCreated.isBefore(readCounter)) {
+            unseenChatsStartIndex = i === room.chats.length - 1 ? i : i + 1;
+            break;
+        }
+    }
+
+    const unseenChatsCount = unseenChatsStartIndex
+        ? room.chats.length - unseenChatsStartIndex - 1
+        : 0;
+
+    return {
+        unseenChatsCount,
+        unseenChatsStartIndex,
     };
 }

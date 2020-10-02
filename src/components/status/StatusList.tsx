@@ -23,7 +23,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import CustomScrollbar from "../utilities/DeviceScrollbar";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -353,7 +353,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
                             flex: 1,
                         }}
                     >
-                        <DeviceScrollbar>{renderList()}</DeviceScrollbar>
+                        <CustomScrollbar>{renderList()}</CustomScrollbar>
                     </StyledContainer>
                     {renderSubmitControls()}
                 </StyledContainer>

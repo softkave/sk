@@ -60,6 +60,7 @@ export const updateRoomReadCounterOperationAction = createAsyncThunk<
                 roomId: arg.roomId,
                 userId: user.customId,
                 readCounter: arg.readCounter,
+                isSignedInUser: true,
             })
         );
 

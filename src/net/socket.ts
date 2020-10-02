@@ -409,6 +409,7 @@ function handleUserUpdate(data: IUserUpdatePacket) {
 function handleUpdateRoomReadCounter(
     data: IIncomingUpdateRoomReadCounterPacket
 ) {
+    const user = SessionSelectors.assertGetUser(store.getState());
     const room = RoomSelectors.getRoom(store.getState(), data.roomId);
 
     if (!room) {
@@ -421,6 +422,7 @@ function handleUpdateRoomReadCounter(
             roomId: room.customId,
             userId: data.member.userId,
             readCounter: data.member.readCounter,
+            isSignedInUser: user.customId === data.member.userId,
         })
     );
 }

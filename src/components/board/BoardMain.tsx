@@ -4,7 +4,7 @@ import { useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { subscribe, unsubcribe } from "../../net/socket";
-import B from "./B";
+import Board from "./Board";
 import {
     IBoardResourceTypePathMatch,
     OnClickAddCollaborator,
@@ -58,7 +58,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
     }
 
     return (
-        <B
+        <Board
             block={block}
             blockPath={blockPath}
             isAppMenuFolded={isAppMenuFolded}

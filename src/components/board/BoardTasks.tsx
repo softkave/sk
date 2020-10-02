@@ -2,10 +2,10 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import RenderForDevice from "../RenderForDevice";
-import BTasksDesktop from "./BTasksDesktop";
-import BTasksMobile from "./BTasksMobile";
+import BoardTasksDesktop from "./BoardTasksDesktop";
+import BoardTasksMobile from "./BoardTasksMobile";
 
-export interface IBTasksProps {
+export interface IBoardTasksProps {
     block: IBlock;
     tasks: IBlock[];
     users: IUser[];
@@ -14,13 +14,13 @@ export interface IBTasksProps {
     onSearchTextChange: (text: string) => void;
 }
 
-const BTasksProps: React.FC<IBTasksProps> = (props) => {
+const BoardTasks: React.FC<IBoardTasksProps> = (props) => {
     return (
         <RenderForDevice
-            renderForDesktop={() => <BTasksDesktop {...props} />}
-            renderForMobile={() => <BTasksMobile {...props} />}
+            renderForDesktop={() => <BoardTasksDesktop {...props} />}
+            renderForMobile={() => <BoardTasksMobile {...props} />}
         />
     );
 };
 
-export default React.memo(BTasksProps);
+export default React.memo(BoardTasks);

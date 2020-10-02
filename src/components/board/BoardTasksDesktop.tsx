@@ -1,11 +1,13 @@
 import React from "react";
-import BGroupedTasks, { BGroupedTasksRenderFn } from "./BGroupedTasks";
-import BRenderGroupedTasksMobile from "./BRenderGroupedTasksMobile";
-import { IBTasksProps } from "./BTasks";
-import BTasksControls from "./BTasksControls";
+import BoardGroupedTasks, {
+    BoardGroupedTasksRenderFn,
+} from "./BoardGroupedTasks";
+import BoardRenderGroupedTasksDesktop from "./BoardRenderGroupedTasksDesktop";
+import { IBoardTasksProps } from "./BoardTasks";
+import BoardTasksControls from "./BoardTasksControls";
 import { TASK_GROUPS } from "./utils";
 
-const BTasksMobile: React.FC<IBTasksProps> = (props) => {
+const BoardTasksDesktop: React.FC<IBoardTasksProps> = (props) => {
     const {
         block,
         tasks,
@@ -15,21 +17,21 @@ const BTasksMobile: React.FC<IBTasksProps> = (props) => {
         onSearchTextChange,
     } = props;
 
-    const render: BGroupedTasksRenderFn = React.useCallback(
+    const render: BoardGroupedTasksRenderFn = React.useCallback(
         (groups, groupType, setGroupType) => {
             return (
                 <React.Fragment>
-                    <BTasksControls
+                    <BoardTasksControls
                         selected={groupType}
                         options={TASK_GROUPS}
                         onClickCreate={onClickCreate}
                         onSearchTextChange={onSearchTextChange}
                         setGroupType={setGroupType}
                     />
-                    <BRenderGroupedTasksMobile
-                        board={block}
+                    <BoardRenderGroupedTasksDesktop
                         groups={groups}
                         users={users}
+                        board={block}
                         onClickUpdateBlock={onClickUpdateBlock}
                     />
                 </React.Fragment>
@@ -38,7 +40,7 @@ const BTasksMobile: React.FC<IBTasksProps> = (props) => {
         [users, block, onClickCreate, onClickUpdateBlock, onSearchTextChange]
     );
 
-    return <BGroupedTasks block={block} tasks={tasks} render={render} />;
+    return <BoardGroupedTasks block={block} tasks={tasks} render={render} />;
 };
 
-export default React.memo(BTasksMobile);
+export default BoardTasksDesktop;

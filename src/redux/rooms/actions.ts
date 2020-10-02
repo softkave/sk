@@ -27,6 +27,7 @@ export interface IUpdateRoomReadCounterActionArgs {
     roomId: string;
     userId: string;
     readCounter: string;
+    isSignedInUser: boolean;
 }
 
 const updateRoomReadCounter = createAction<IUpdateRoomReadCounterActionArgs>(

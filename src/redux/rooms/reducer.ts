@@ -1,6 +1,8 @@
 import { createReducer } from "@reduxjs/toolkit";
+import moment from "moment";
 import { IChat } from "../../models/chat/types";
 import { mergeData } from "../../utils/utils";
+import { getRoomUserUnseenChatsCountAndStartIndex } from "../operations/chat/getUserRoomsAndChats";
 import SessionActions from "../session/actions";
 import RoomActions from "./actions";
 import { IRoomsMap } from "./types";
@@ -55,6 +57,17 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
         }
 
         memberData.readCounter = action.payload.readCounter;
+
+        if (action.payload.isSignedInUser) {
+            const {
+                unseenChatsStartIndex,
+            } = getRoomUserUnseenChatsCountAndStartIndex(
+                room,
+                moment(action.payload.readCounter)
+            );
+
+            room.unseenChatsStartIndex = unseenChatsStartIndex;
+        }
     });
 
     builder.addCase(RoomActions.addChat, (state, action) => {

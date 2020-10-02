@@ -186,6 +186,10 @@ function createOrgCollaboratorsTempRooms(
     const tempRooms: IRoom[] = [];
 
     collaborators.forEach((collaborator) => {
+        if (collaborator.customId === userId) {
+            return;
+        }
+
         const existingRoom =
             existingRoomsMapByRecipientId[collaborator.customId];
 

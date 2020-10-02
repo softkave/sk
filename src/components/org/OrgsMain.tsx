@@ -4,7 +4,7 @@ import React from "react";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import CustomScrollbar from "../utilities/DeviceScrollbar";
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
@@ -96,7 +96,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 style={{ paddingBottom: "8px" }}
                 placeholder="Search orgs and requests..."
             />
-            <DeviceScrollbar>{renderContent()}</DeviceScrollbar>
+            <CustomScrollbar>{renderContent()}</CustomScrollbar>
         </StyledContainer>
     );
 };

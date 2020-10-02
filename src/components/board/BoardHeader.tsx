@@ -14,7 +14,7 @@ import SelectBlockOptionsMenu, {
     SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
 
-export interface IBHeader2Props {
+export interface IBoardHeaderProps {
     block: IBlock;
     isMobile: boolean;
     isAppMenuFolded: boolean;
@@ -25,7 +25,7 @@ export interface IBHeader2Props {
     style?: React.CSSProperties;
 }
 
-const BHeader2: React.FC<IBHeader2Props> = (props) => {
+const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
     const {
         block,
         onClickDeleteBlock,
@@ -142,4 +142,4 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
     );
 };
 
-export default React.memo(BHeader2);
+export default BoardHeader;

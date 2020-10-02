@@ -19,13 +19,13 @@ import useBlockParents from "../hooks/useBlockParents";
 import { getOperationStats } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BlockForms, { BlockFormType } from "./BoardForms";
+import BoardForms, { BoardFormType } from "./BoardForms";
 import OrgBoard from "./OrgBoard";
 import { useLoadOrgData } from "./useLoadOrgData";
 import { getBlockPath, getBlocksPath } from "./utils";
 
 interface IBlockFormState {
-    formType: BlockFormType;
+    formType: BoardFormType;
     orgId: string;
     blockType?: BlockType;
     parentBlock?: IBlock;
@@ -153,7 +153,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const renderForms = () => {
         if (blockForm) {
             return (
-                <BlockForms
+                <BoardForms
                     orgId={block.rootBlockId || block.customId}
                     blockType={blockForm.blockType}
                     block={blockForm.block}

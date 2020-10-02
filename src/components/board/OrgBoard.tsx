@@ -11,7 +11,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import CustomScrollbar from "../utilities/DeviceScrollbar";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardMain from "./BoardMain";
@@ -131,7 +131,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         marginTop: "8px",
                     }}
                 />
-                <DeviceScrollbar>
+                <CustomScrollbar>
                     <BoardTypeList
                         block={block}
                         searchQuery={searchQueries[resourceType]}
@@ -140,7 +140,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         selectedResourceType={resourceType}
                         style={{ height: "100%" }}
                     />
-                </DeviceScrollbar>
+                </CustomScrollbar>
             </StyledContainer>
         );
     };
