@@ -25,6 +25,7 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
                 autoSize={{ minRows: 1, maxRows: 3 }}
                 maxLength={300}
                 onPressEnter={sendMessage}
+                style={{ resize: "none" }}
             />
         </StyledContainer>
     );

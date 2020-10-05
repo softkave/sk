@@ -33,7 +33,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
                 readCounter: getDateString(),
             });
         }
-    }, []);
+    }, [room.unseenChatsStartIndex]);
 
     const sendMessage = (message: string) => {
         onSendMessage({

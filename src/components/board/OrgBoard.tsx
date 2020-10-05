@@ -1,6 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
-import { Tabs } from "antd";
+import { Badge, Tabs } from "antd";
 import { noop } from "lodash";
 import path from "path";
 import React from "react";
@@ -42,6 +42,7 @@ export interface IOrgBoardProps {
     isMobile: boolean;
     isAppMenuFolded: boolean;
     isOrgMenuFolded: boolean;
+    unseenChatsCount: number;
     onToggleFoldAppMenu: () => void;
     onToggleFoldOrgMenu: () => void;
     onClickUpdateBlock: OnClickUpdateBlock;
@@ -57,14 +58,15 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     const {
         blockPath,
         block,
+        isMobile,
+        isAppMenuFolded,
+        isOrgMenuFolded,
+        unseenChatsCount,
         onClickAddBlock,
         onClickAddCollaborator,
         onClickDeleteBlock,
         onClickUpdateBlock,
         onClickBlock,
-        isMobile,
-        isAppMenuFolded,
-        isOrgMenuFolded,
         onToggleFoldAppMenu,
         onToggleFoldOrgMenu,
     } = props;
@@ -175,21 +177,27 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 tabBarGutter={0}
                 moreIcon={<MoreHorizontal />}
             >
-                {resourceTypes.map((type, i) => {
-                    return (
-                        <Tabs.TabPane
-                            tab={
-                                <span
-                                    style={{
-                                        textTransform: "capitalize",
-                                        padding: "0 16px",
-                                    }}
-                                >
-                                    {getBoardResourceTypeFullName(type)}
-                                </span>
-                            }
-                            key={type}
+                {resourceTypes.map((type) => {
+                    const text = (
+                        <span
+                            style={{
+                                textTransform: "capitalize",
+                                padding: "0 16px",
+                            }}
                         >
+                            {getBoardResourceTypeFullName(type)}
+                        </span>
+                    );
+
+                    const content =
+                        type === "chat" ? (
+                            <Badge count={unseenChatsCount}>{text}</Badge>
+                        ) : (
+                            { text }
+                        );
+
+                    return (
+                        <Tabs.TabPane tab={content} key={type}>
                             {renderResourceType()}
                         </Tabs.TabPane>
                     );

@@ -9,7 +9,10 @@ import { subscribe, unsubcribe } from "../../net/socket";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
-import { KeyValueKeys } from "../../redux/key-value/types";
+import {
+    IUnseenChatsCountByOrg,
+    KeyValueKeys,
+} from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -39,8 +42,9 @@ interface IRouteMatchParams {
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const OrgBoardContainer: React.FC<{}> = (props) => {
+const OrgBoardContainer: React.FC<{}> = () => {
     const history = useHistory();
+
     const dispatch: AppDispatch = useDispatch();
     const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
         null
@@ -50,6 +54,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
         organizationPath
     );
+
     const organizationId =
         selectedOrganizationRouteMatch &&
         selectedOrganizationRouteMatch.params.organizationId;
@@ -67,6 +72,13 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const showOrgMenu = useSelector((state) =>
         KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowOrgMenu)
     ) as boolean;
+
+    const unseenChatsCountMapByOrg = useSelector<
+        IAppState,
+        IUnseenChatsCountByOrg
+    >((state) =>
+        KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
+    );
 
     const toggleAppMenu = React.useCallback(() => {
         dispatch(
@@ -176,6 +188,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
                 onToggleFoldAppMenu={toggleAppMenu}
                 onToggleFoldOrgMenu={toggleOrgMenu}
                 block={block}
+                unseenChatsCount={unseenChatsCountMapByOrg[block.customId] || 0}
                 blockPath={blockPath}
                 onClickBlock={onClickBlock}
                 onClickDeleteBlock={(blk) =>

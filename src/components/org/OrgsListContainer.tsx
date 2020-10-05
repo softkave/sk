@@ -5,14 +5,21 @@ import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
-import { KeyValueKeys } from "../../redux/key-value/types";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import {
+    IUnseenChatsCountByOrg,
+    KeyValueKeys,
+} from "../../redux/key-value/types";
 import { getNotifications } from "../../redux/notifications/selectors";
 import { loadRootBlocksOperationAction } from "../../redux/operations/block/loadRootBlocks";
 import { loadUserNotificationsOperationAction } from "../../redux/operations/notification/loadUserNotifications";
 import OperationType from "../../redux/operations/OperationType";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
-import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import useOperation, {
+    IUseOperationStatus,
+    mergeOperationStats,
+} from "../hooks/useOperation";
 import OrgsMain from "./OrgsMain";
 
 export interface IOrgsListContainerProps {
@@ -21,16 +28,25 @@ export interface IOrgsListContainerProps {
 
 const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     const { hijackRender } = props;
+
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const user = useSelector(SessionSelectors.assertGetUser);
+    const unseenChatsCountMapByOrg = useSelector<
+        IAppState,
+        IUnseenChatsCountByOrg
+    >((state) =>
+        KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
+    );
 
     const orgRouteMatch = useRouteMatch<{ orgId: string }>(
         "/app/organizations/:orgId"
     );
+
     const requestRouteMatch = useRouteMatch<{ requestId: string }>(
         "/app/notifications/:requestId"
     );
+
     const selectedId =
         orgRouteMatch?.params.orgId || requestRouteMatch?.params.requestId;
 
@@ -86,13 +102,9 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         }
     );
 
-    const errorMessage =
-        orgsOp.error || requestsOp.error ? "Error loading data" : undefined;
-    const isLoading =
-        !orgsOp.operation ||
-        orgsOp.isLoading ||
-        !requestsOp.operation ||
-        requestsOp.isLoading;
+    const loadOpsState = mergeOperationStats([orgsOp, requestsOp]);
+    const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
+    const isLoading = loadOpsState.loading;
 
     const orgs = useSelector<IAppState, IBlock[]>((state) => {
         if (!orgsOp.isCompleted) {
@@ -144,6 +156,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         <OrgsMain
             orgs={orgs}
             requests={requests}
+            unseenChatsCountMapByOrg={unseenChatsCountMapByOrg}
             errorMessage={errorMessage}
             isLoading={isLoading}
             selectedId={selectedId}

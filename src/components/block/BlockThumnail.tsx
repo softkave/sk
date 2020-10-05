@@ -1,4 +1,5 @@
-import { Badge, Typography } from "antd";
+import MessageOutlined from "@ant-design/icons/MessageOutlined";
+import { Badge, Tag, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getBlockTypeFullName } from "../../models/block/utils";
@@ -14,6 +15,7 @@ export interface IBlockThumbnailProps {
     className?: string;
     avatarSize?: IItemAvatarProps["size"];
     count?: number;
+    unseenChatsCount?: number;
     parent?: IBlock;
     style?: React.CSSProperties;
     onClick?: () => void;
@@ -30,6 +32,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
         showFields,
         avatarSize,
         count,
+        unseenChatsCount,
         parent,
         style,
     } = props;
@@ -110,6 +113,18 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
         return null;
     };
 
+    const renderUnseenChatsCount = () => {
+        if (unseenChatsCount) {
+            return (
+                <Tag icon={<MessageOutlined />} color="red">
+                    {unseenChatsCount}
+                </Tag>
+            );
+        }
+
+        return null;
+    };
+
     // TODO: do line clamping on the texts
     // TODO: I should be able to click on the thumbnail to select, not just the name
     return (
@@ -136,6 +151,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
                 {renderType()}
                 {renderDesc()}
                 {renderParentInfo()}
+                {renderUnseenChatsCount()}
             </StyledContainer>
         </StyledContainer>
     );
