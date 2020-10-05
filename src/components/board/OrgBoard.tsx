@@ -8,6 +8,8 @@ import { MoreHorizontal } from "react-feather";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
+import ChatRoom from "../chat/ChatRoom";
+import ChatRoomsContainer from "../chat/ChatRoomsContainer";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
@@ -98,6 +100,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
             case "collaborators":
                 placeholder = "Search collaborators...";
+                break;
+
+            case "chat":
+                placeholder = "Search chats...";
                 break;
         }
 
@@ -273,6 +279,27 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         );
     };
 
+    const renderChatsView = (roomId: string) => {
+        return (
+            <ChatRoomsContainer
+                orgId={block.customId}
+                render={(args) => {
+                    const room = args.sortedRooms.find(
+                        (rm) => rm.customId === roomId
+                    )!;
+                    return (
+                        <ChatRoom
+                            room={room}
+                            recipientsMap={args.recipientsMap}
+                            onSendMessage={args.onSendMessage}
+                            updateRoomReadCounter={args.updateRoomReadCounter}
+                        />
+                    );
+                }}
+            />
+        );
+    };
+
     const renderMobileView = () => {
         return (
             <Switch>
@@ -282,6 +309,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         return ensureBoardsLoaded(
                             routeProps.match.params.boardId
                         );
+                    }}
+                />
+                <Route
+                    path={`/app/organizations/${block.customId}/chat/:roomId`}
+                    render={(routeProps) => {
+                        const roomId = routeProps.match.params.roomId;
+                        return renderChatsView(roomId);
                     }}
                 />
                 <Route
@@ -315,6 +349,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                                 return ensureBoardsLoaded(
                                     routeProps.match.params.boardId
                                 );
+                            }}
+                        />
+                        <Route
+                            path={`/app/organizations/${block.customId}/chat/:roomId`}
+                            render={(routeProps) => {
+                                const roomId = routeProps.match.params.roomId;
+                                return renderChatsView(roomId);
                             }}
                         />
                     </Switch>

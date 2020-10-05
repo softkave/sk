@@ -4,7 +4,8 @@ export type BoardResourceType =
     | "tasks"
     | "boards"
     | "collaborators"
-    | "collaboration-requests";
+    | "collaboration-requests"
+    | "chat";
 
 export type BoardViewType = "status-kanban" | "list";
 

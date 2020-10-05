@@ -1,8 +1,8 @@
+import dotProp from "dot-prop-immutable";
 import get from "lodash/get";
 import mergeWith from "lodash/mergeWith";
 import set from "lodash/set";
 import { isMoment, Moment } from "moment";
-import { indexArray } from "./object";
 
 const tempPrefix = "temp-";
 
@@ -148,3 +148,86 @@ export const mergeData = <ResourceType = any>(
         }
     });
 };
+
+export function getDate(initial?: any) {
+    if (initial) {
+        const date = new Date(initial);
+        return date;
+    }
+
+    return new Date();
+}
+
+export function getDataFromObject(
+    obj: object,
+    fields: string[],
+    addEmpty?: boolean
+) {
+    const result = {};
+
+    fields.forEach((field) => {
+        const data = dotProp.get(obj, field);
+
+        if (data !== undefined || addEmpty) {
+            result[field] = data;
+        }
+    });
+
+    return result;
+}
+
+function defaultIndexer(data: any, path: any) {
+    if (path) {
+        return get(data, path);
+    }
+
+    return JSON.stringify(data);
+}
+
+function defaultReducer(data: any) {
+    return data;
+}
+
+export interface IIndexArrayOptions<T, R> {
+    path?: T extends object ? keyof T : never;
+    indexer?: (
+        current: T,
+        path: (T extends object ? keyof T : never) | undefined,
+        arr: T[],
+        index: number
+    ) => string;
+    reducer?: (current: T, arr: T[], index: number) => R;
+}
+
+export function indexArray<T, R = T>(
+    arr: T[] = [],
+    opts: IIndexArrayOptions<T, R> = {}
+): { [key: string]: R } {
+    const indexer = opts.indexer || defaultIndexer;
+    const path = opts.path;
+    const reducer = opts.reducer || defaultReducer;
+
+    if (typeof indexer !== "function") {
+        if (typeof path !== "string") {
+            throw new Error(
+                "Path must be provided if an indexer is not provided"
+            );
+        }
+    }
+
+    const result = arr.reduce((accumulator, current, index) => {
+        accumulator[indexer(current, path, arr, index)] = reducer(
+            current,
+            arr,
+            index
+        );
+
+        return accumulator;
+    }, {});
+
+    return result;
+}
+
+export function ternaryOp(a: any, b: any, c: any) {
+    return a ? b : c;
+}

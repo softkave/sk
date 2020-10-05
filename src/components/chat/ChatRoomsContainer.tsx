@@ -1,11 +1,16 @@
 import moment from "moment";
+import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { IBlock } from "../../models/block/block";
 import { IRoom } from "../../models/chat/types";
+import { IUser } from "../../models/user/user";
 import {
     ISendMessageAPIParameters,
     IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat";
+import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import {
@@ -16,18 +21,31 @@ import { sendMessageOperationAction } from "../../redux/operations/chat/sendMess
 import { updateRoomReadCounterOperationAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
 import { IAppState } from "../../redux/types";
+import UserSelectors from "../../redux/users/selectors";
+
+export interface IChatRoomsRenderProps {
+    sortedRooms: IRoom[];
+    recipientsMap: { [key: string]: IUser };
+    updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
+    onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
+    onSelectRoom: (room: IRoom) => void;
+}
 
 export interface IChatRoomsContainerProps {
     orgId: string;
+    render: (args: IChatRoomsRenderProps) => React.ReactElement;
 }
 
 const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
-    const { orgId } = props;
+    const { orgId, render } = props;
+
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const rooms = useSelector<IAppState, IRoom[]>((state) =>
         RoomSelectors.getOrgRooms(state, orgId)
     );
+
     const unseenChatsCountMapByOrg = useSelector<
         IAppState,
         IUnseenChatsCountByOrg
@@ -35,10 +53,23 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
     );
 
+    const org = useSelector<IAppState, IBlock>((state) =>
+        BlockSelectors.getBlock(state, orgId)
+    );
+
+    const collaborators = useSelector<IAppState, IUser[]>((state) =>
+        UserSelectors.getUsers(state, org.collaborators!)
+    );
+
+    const recipientsMap = collaborators.reduce((map, collaborator) => {
+        map[collaborator.customId] = collaborator;
+        return map;
+    }, {} as { [key: string]: IUser });
+
     // TODO: how can we presort or keep some parts of the result, and only
     // move the rooms when there's a new message ( sent or recived )?
     const sortedRooms = React.useMemo(() => {
-        rooms.sort((room1, room2) => {
+        return rooms.sort((room1, room2) => {
             const room1ChatsCount = room1.chats.length;
             const room2ChatsCount = room2.chats.length;
 
@@ -78,11 +109,21 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         []
     );
 
-    const updateUserReadCounter = React.useCallback(
+    const updateRoomReadCounter = React.useCallback(
         (args: IUpdateRoomReadCounterAPIParameters) => {
             dispatch(updateRoomReadCounterOperationAction(args));
         },
         []
+    );
+
+    const onSelectRoom = React.useCallback(
+        (room: IRoom) => {
+            const url = path.normalize(
+                `${window.location.pathname}/${room.customId}`
+            );
+            history.push(url);
+        },
+        [history]
     );
 
     React.useEffect(() => {
@@ -101,7 +142,13 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         }
     }, []);
 
-    return null;
+    return render({
+        sortedRooms,
+        recipientsMap,
+        onSendMessage,
+        updateRoomReadCounter,
+        onSelectRoom,
+    });
 };
 
 export default ChatRoomsContainer;

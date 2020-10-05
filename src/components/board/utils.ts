@@ -13,6 +13,7 @@ export const blockResourceTypeToBlockKeyMap: {
     collaborators: "collaborators",
     boards: "boards",
     tasks: "tasks",
+    chat: "chat",
 };
 
 export const getBoardResourceTypeFullName = (
@@ -22,13 +23,8 @@ export const getBoardResourceTypeFullName = (
         case "collaboration-requests":
             return "collaboration requests";
 
-        case "collaborators":
-        case "boards":
-        case "tasks":
-            return resourceType;
-
         default:
-            return null;
+            return resourceType;
     }
 };
 
@@ -70,6 +66,7 @@ export const getBlockResourceTypes = (
     );
 
     if (block.type === "org") {
+        blockResourceTypes.push("chat");
         blockResourceTypes.push("collaborators");
         blockResourceTypes.push("collaboration-requests");
     }
@@ -85,11 +82,7 @@ export const getBoardViewTypesForResourceType = (
         case "tasks":
             return ["status-kanban"];
 
-        case "boards":
-            return ["list"];
-
-        case "collaborators":
-        case "collaboration-requests":
+        default:
             return ["list"];
     }
 };
@@ -136,8 +129,6 @@ export const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
         case "tasks":
             return true;
 
-        case "collaborators":
-        case "collaboration-requests":
         default:
             return false;
     }
