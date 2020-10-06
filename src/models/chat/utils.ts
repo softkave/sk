@@ -1,5 +1,4 @@
 import { IPersistedRoom } from "../../net/chat";
-import { indexArray } from "../../utils/object";
 import { IRoom } from "./types";
 
 export function getRoomFromPersistedRoom(

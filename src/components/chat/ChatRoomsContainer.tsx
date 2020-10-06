@@ -2,7 +2,7 @@ import moment from "moment";
 import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useRouteMatch } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
@@ -26,6 +26,7 @@ import UserSelectors from "../../redux/users/selectors";
 export interface IChatRoomsRenderProps {
     sortedRooms: IRoom[];
     recipientsMap: { [key: string]: IUser };
+    selectedRoomRecipientId: string | undefined;
     updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
     onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
     onSelectRoom: (room: IRoom) => void;
@@ -41,6 +42,12 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
 
     const dispatch = useDispatch();
     const history = useHistory();
+
+    const chatRouteMatch = useRouteMatch<{ recipientId: string }>(
+        "/app/organizations/:orgId/chat/:recipientId"
+    );
+
+    const selectedRoomRecipientId = chatRouteMatch?.params.recipientId;
 
     const rooms = useSelector<IAppState, IRoom[]>((state) =>
         RoomSelectors.getOrgRooms(state, orgId)
@@ -106,22 +113,24 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         (args: Required<ISendMessageAPIParameters>) => {
             dispatch(sendMessageOperationAction(args));
         },
-        []
+        [dispatch]
     );
 
     const updateRoomReadCounter = React.useCallback(
         (args: IUpdateRoomReadCounterAPIParameters) => {
             dispatch(updateRoomReadCounterOperationAction(args));
         },
-        []
+        [dispatch]
     );
 
     const onSelectRoom = React.useCallback(
         (room: IRoom) => {
-            const url = path.normalize(
-                `${window.location.pathname}/${room.customId}`
-            );
-            history.push(url);
+            if (room.recipientId !== selectedRoomRecipientId) {
+                const url = path.normalize(
+                    `${window.location.pathname}/${room.recipientId}`
+                );
+                history.push(url);
+            }
         },
         [history]
     );
@@ -140,11 +149,12 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
                 })
             );
         }
-    }, []);
+    }, [dispatch, orgId, unseenChatsCountMapByOrg]);
 
     return render({
         sortedRooms,
         recipientsMap,
+        selectedRoomRecipientId,
         onSendMessage,
         updateRoomReadCounter,
         onSelectRoom,

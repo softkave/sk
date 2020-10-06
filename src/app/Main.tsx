@@ -154,7 +154,7 @@ const Main: React.FC<{}> = () => {
         } else if (sessionType === SessionType.Uninitialized) {
             dispatch(initializeAppSessionOperationAction({ opId }));
         }
-    }, [sessionType, opId, dispatch, isDemoMode]);
+    }, [sessionType, opId, dispatch, isDemoMode, routeToApp]);
 
     React.useEffect(() => {
         if (sessionType === SessionType.App && !isDemoMode) {
@@ -172,7 +172,7 @@ const Main: React.FC<{}> = () => {
                 history.push("/");
             }
         }
-    }, [sessionType, clientId, history, token, isDemoMode]);
+    }, [sessionType, clientId, history, token, isDemoMode, routeToApp]);
 
     const renderInitializing = () => (
         <StyledContainer

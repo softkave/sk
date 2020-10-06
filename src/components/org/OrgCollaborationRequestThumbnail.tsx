@@ -23,7 +23,7 @@ const OrgCollaborationRequestThumbnail: React.SFC<IOrgCollaborationRequestThumbn
             onClick={onClick}
         >
             <StyledContainer>
-                <ItemAvatar size="default" />
+                <ItemAvatar />
             </StyledContainer>
             <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
                 <Typography.Text strong>

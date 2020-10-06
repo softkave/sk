@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Empty } from "antd";
 import React from "react";

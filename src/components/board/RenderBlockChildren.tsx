@@ -45,9 +45,28 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
                 orgId={block.customId}
                 render={(args) => (
                     <RoomsList
+                        searchQuery={searchQuery}
                         sortedRooms={args.sortedRooms}
                         recipientsMap={args.recipientsMap}
                         onSelectRoom={args.onSelectRoom}
+                        getRoomStyle={(room) => {
+                            const selected =
+                                room.recipientId ===
+                                args.selectedRoomRecipientId;
+                            return {
+                                cursor: "pointer",
+                                padding: "8px 16px",
+                                backgroundColor: selected
+                                    ? "#bae7ff"
+                                    : undefined,
+
+                                "&:hover": {
+                                    backgroundColor: selected
+                                        ? undefined
+                                        : "#f0f0f0",
+                                },
+                            };
+                        }}
                     />
                 )}
             />

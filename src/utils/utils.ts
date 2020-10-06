@@ -228,6 +228,26 @@ export function indexArray<T, R = T>(
     return result;
 }
 
-export function ternaryOp(a: any, b: any, c: any) {
-    return a ? b : c;
+export function filterObjectList<T extends object = object>(
+    list: T[],
+    field: keyof T,
+    searchQuery?: string
+) {
+    if (!searchQuery) {
+        return list;
+    }
+
+    const lowerCasedSearchQuery = searchQuery.toLowerCase();
+
+    return list.filter((block) => {
+        const fieldValue = block[field];
+
+        if (fieldValue) {
+            return ((fieldValue as unknown) as string)
+                .toLowerCase()
+                .includes(lowerCasedSearchQuery);
+        }
+
+        return false;
+    });
 }

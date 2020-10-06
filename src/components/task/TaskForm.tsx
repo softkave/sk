@@ -15,8 +15,7 @@ import {
     ITaskAssignee,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { indexArray } from "../../utils/object";
-import { getDateString } from "../../utils/utils";
+import { getDateString, indexArray } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import BoardStatusResolutionAndLabelsForm, {

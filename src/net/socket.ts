@@ -1,7 +1,7 @@
 import delay from "lodash/delay";
 import io, { Socket } from "socket.io-client";
 import { IBlock } from "../models/block/block";
-import { IChat, IRoom, IRoomMemberWithReadCounter } from "../models/chat/types";
+import { IChat, IRoomMemberWithReadCounter } from "../models/chat/types";
 import { getRoomFromPersistedRoom } from "../models/chat/utils";
 import {
     CollaborationRequestStatusType,
@@ -32,28 +32,49 @@ import { IPersistedRoom } from "./chat";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;
+const socketWaitQueue: Array<(sock: typeof Socket | null) => void> = [];
+
+function clearSocketWaitQueue(sock: typeof Socket | null) {
+    if (socketWaitQueue.length > 0) {
+        socketWaitQueue.forEach((cb) => {
+            cb(sock);
+        });
+    }
+}
+
+class SocketNotConnectedError extends Error {
+    public name = "SocketNotConnectedError";
+    public message = "Error connecting to the server";
+}
 
 export function getSocket() {
     return socket;
 }
 
-class SocketNotConnectedError extends Error {
-    public name = "SocketNotConnectedError";
-    public message = "Socket is not connected";
-}
-
-export function assertGetSocket() {
-    if (!socket || !socket.connected) {
-        throw new SocketNotConnectedError();
+export async function waitGetSocket() {
+    if (socket) {
+        return socket;
     }
 
-    return socket;
+    return new Promise<typeof Socket>((resolve, reject) => {
+        if (connectionFailedBefore) {
+            reject(new SocketNotConnectedError());
+        }
+
+        socketWaitQueue.push((sock) => {
+            if (sock) {
+                resolve(sock);
+            } else {
+                reject(new SocketNotConnectedError());
+            }
+        });
+    });
 }
 
 export function promisifiedEmit<Ack = any>(eventName: string, data?: any) {
-    return new Promise<Ack>((resolve, reject) => {
+    return new Promise<Ack>(async (resolve, reject) => {
         try {
-            const sock = assertGetSocket();
+            const sock = await waitGetSocket();
             sock.emit(eventName, data, (ackData: Ack) => {
                 resolve(ackData);
             });
@@ -230,8 +251,12 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
             socket?.disconnect();
         }, tenSecsInMs);
 
+        clearSocketWaitQueue(null);
+
         return;
     }
+
+    clearSocketWaitQueue(socket);
 
     const rooms =
         KeyValueSelectors.getKey(

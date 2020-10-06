@@ -1,10 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment, { Moment } from "moment";
-import {
-    IChat,
-    IRoom,
-    IRoomMemberWithReadCounter,
-} from "../../../models/chat/types";
+import { IChat, IRoom } from "../../../models/chat/types";
 import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
 import ChatAPI, { IPersistedRoom } from "../../../net/chat";
 import { getNewId } from "../../../utils/utils";

@@ -12,6 +12,7 @@ import {
 } from "../../redux/key-value/types";
 import { getNotifications } from "../../redux/notifications/selectors";
 import { loadRootBlocksOperationAction } from "../../redux/operations/block/loadRootBlocks";
+import { getUserRoomsAndChatsOperationAction } from "../../redux/operations/chat/getUserRoomsAndChats";
 import { loadUserNotificationsOperationAction } from "../../redux/operations/notification/loadUserNotifications";
 import OperationType from "../../redux/operations/OperationType";
 import SessionSelectors from "../../redux/session/selectors";
@@ -102,7 +103,35 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         }
     );
 
-    const loadOpsState = mergeOperationStats([orgsOp, requestsOp]);
+    const loadUserRoomsAndChats = React.useCallback(
+        async (loadRequestsProps: IUseOperationStatus) => {
+            const operation = loadRequestsProps.operation;
+            const shouldLoad = !operation;
+
+            if (shouldLoad) {
+                await dispatch(
+                    getUserRoomsAndChatsOperationAction({
+                        opId: loadRequestsProps.opId,
+                    })
+                );
+            }
+        },
+        [dispatch]
+    );
+
+    const roomsAndChatsOp = useOperation(
+        { type: OperationType.GetUserRoomsAndChats },
+        loadUserRoomsAndChats,
+        {
+            deleteManagedOperationOnUnmount: false,
+        }
+    );
+
+    const loadOpsState = mergeOperationStats([
+        orgsOp,
+        requestsOp,
+        roomsAndChatsOp,
+    ]);
     const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
     const isLoading = loadOpsState.loading;
 

@@ -18,7 +18,9 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
     };
 
     return (
-        <StyledContainer s={{ borderTop: "1px solid grey" }}>
+        <StyledContainer
+            s={{ borderTop: "1px solid #d9d9d9", padding: "8px 5px" }}
+        >
             <Input.TextArea
                 bordered={false}
                 value={message}
@@ -26,6 +28,10 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
                 maxLength={300}
                 onPressEnter={sendMessage}
                 style={{ resize: "none" }}
+                placeholder="Write a message..."
+                onChange={(evt) => {
+                    setMessage(evt.target.value);
+                }}
             />
         </StyledContainer>
     );

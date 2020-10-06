@@ -90,6 +90,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
     const renderResourceType = () => {
         let placeholder = "";
+        let noAddBtn = false;
 
         switch (resourceType) {
             case "boards":
@@ -106,6 +107,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
             case "chat":
                 placeholder = "Search chats...";
+                noAddBtn = true;
                 break;
         }
 
@@ -138,6 +140,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         marginBottom: "8px",
                         marginTop: "8px",
                     }}
+                    noAddBtn={noAddBtn}
                 />
                 <CustomScrollbar>
                     <BoardTypeList
@@ -155,18 +158,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
     const onSelectResourceType = (key: BoardResourceType) => {
         const nextPath = `${blockPath}/${key}`;
-
-        switch (key) {
-            case "boards":
-            case "tasks":
-                history.push(nextPath);
-                break;
-
-            case "collaboration-requests":
-            case "collaborators":
-                history.push(nextPath);
-                break;
-        }
+        history.push(nextPath);
     };
 
     const renderTabs = () => {
@@ -193,7 +185,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         type === "chat" ? (
                             <Badge count={unseenChatsCount}>{text}</Badge>
                         ) : (
-                            { text }
+                            text
                         );
 
                     return (
@@ -231,7 +223,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     },
 
                     ["& .ant-tabs-nav"]: {
-                        marginBottom: "8px",
+                        marginBottom: "4px",
                     },
                 }}
             >
@@ -287,13 +279,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         );
     };
 
-    const renderChatsView = (roomId: string) => {
+    const renderChatsView = (recipientId: string) => {
         return (
             <ChatRoomsContainer
                 orgId={block.customId}
                 render={(args) => {
                     const room = args.sortedRooms.find(
-                        (rm) => rm.customId === roomId
+                        (rm) => rm.recipientId === recipientId
                     )!;
                     return (
                         <ChatRoom
@@ -320,10 +312,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     }}
                 />
                 <Route
-                    path={`/app/organizations/${block.customId}/chat/:roomId`}
+                    path={`/app/organizations/${block.customId}/chat/:recipientId`}
                     render={(routeProps) => {
-                        const roomId = routeProps.match.params.roomId;
-                        return renderChatsView(roomId);
+                        const recipientId = routeProps.match.params.recipientId;
+                        return renderChatsView(recipientId);
                     }}
                 />
                 <Route
@@ -360,10 +352,11 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                             }}
                         />
                         <Route
-                            path={`/app/organizations/${block.customId}/chat/:roomId`}
+                            path={`/app/organizations/${block.customId}/chat/:recipientId`}
                             render={(routeProps) => {
-                                const roomId = routeProps.match.params.roomId;
-                                return renderChatsView(roomId);
+                                const recipientId =
+                                    routeProps.match.params.recipientId;
+                                return renderChatsView(recipientId);
                             }}
                         />
                     </Switch>

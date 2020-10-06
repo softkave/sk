@@ -39,7 +39,7 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
                             {moment(request.expiresAt).fromNow()}
                         </Typography.Text>
                     )}
-                    <StyledContainer>
+                    <StyledContainer s={{ marginTop: "4px" }}>
                         <CollaborationRequestStatus request={request} />
                     </StyledContainer>
                 </StyledRequestDataContainer>,

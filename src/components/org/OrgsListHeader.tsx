@@ -7,12 +7,19 @@ import InputSearchIcon from "../utilities/InputSearchIcon";
 export interface IOrgsListHeaderProps {
     onClickCreate: () => void;
     onSearchTextChange: (text: string) => void;
-    style?: React.CSSProperties;
+    noAddBtn?: boolean;
     placeholder?: string;
+    style?: React.CSSProperties;
 }
 
 const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
-    const { onSearchTextChange, onClickCreate, style, placeholder } = props;
+    const {
+        onSearchTextChange,
+        onClickCreate,
+        style,
+        placeholder,
+        noAddBtn,
+    } = props;
 
     const [inSearchMode, setSearchMode] = React.useState(false);
     const toggleSearchMode = React.useCallback(
@@ -53,9 +60,11 @@ const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {
         return (
             <StyledContainer s={{ justifyContent: "flex-end", flex: 1 }}>
                 <Space>
-                    <Button onClick={onClickCreate} className="icon-btn">
-                        <Plus />
-                    </Button>
+                    {!noAddBtn && (
+                        <Button onClick={onClickCreate} className="icon-btn">
+                            <Plus />
+                        </Button>
+                    )}
                     <Button onClick={toggleSearchMode} className="icon-btn">
                         <Search />
                     </Button>
