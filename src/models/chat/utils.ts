@@ -8,6 +8,7 @@ export function getRoomFromPersistedRoom(
     const room: IRoom = {
         ...persistedRoom,
         unseenChatsStartIndex: null,
+        unseenChatsCount: 0,
         chats: [],
         recipientId: persistedRoom.members.find(
             (member) => member.userId !== userId
@@ -15,14 +16,4 @@ export function getRoomFromPersistedRoom(
     };
 
     return room;
-}
-
-export function mergePersistedRoomWithRoom(
-    room: IRoom,
-    persistedRoom: IPersistedRoom
-): IRoom {
-    return {
-        ...room,
-        ...persistedRoom,
-    };
 }

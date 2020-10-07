@@ -1,9 +1,9 @@
 import { IAppState } from "../types";
 
-function getKeyValue(state: IAppState, key: string) {
-  return state.keyValue[key];
+function getKeyValue<T = any>(state: IAppState, key: string): T {
+    return state.keyValue[key];
 }
 
 export default class KeyValueSelectors {
-  public static getKey = getKeyValue;
+    public static getKey = getKeyValue;
 }

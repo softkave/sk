@@ -13,7 +13,7 @@ import ChatRoomsContainer from "../chat/ChatRoomsContainer";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
-import CustomScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardMain from "./BoardMain";
@@ -142,7 +142,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     }}
                     noAddBtn={noAddBtn}
                 />
-                <CustomScrollbar>
+                <Scrollbar>
                     <BoardTypeList
                         block={block}
                         searchQuery={searchQueries[resourceType]}
@@ -151,7 +151,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         selectedResourceType={resourceType}
                         style={{ height: "100%" }}
                     />
-                </CustomScrollbar>
+                </Scrollbar>
             </StyledContainer>
         );
     };
@@ -178,18 +178,20 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                             }}
                         >
                             {getBoardResourceTypeFullName(type)}
+                            {type === "chat" && (
+                                <Badge
+                                    count={unseenChatsCount}
+                                    style={{
+                                        marginLeft: "8px",
+                                        display: "inline-block",
+                                    }}
+                                ></Badge>
+                            )}
                         </span>
                     );
 
-                    const content =
-                        type === "chat" ? (
-                            <Badge count={unseenChatsCount}>{text}</Badge>
-                        ) : (
-                            text
-                        );
-
                     return (
-                        <Tabs.TabPane tab={content} key={type}>
+                        <Tabs.TabPane tab={text} key={type}>
                             {renderResourceType()}
                         </Tabs.TabPane>
                     );

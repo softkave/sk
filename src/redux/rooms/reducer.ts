@@ -19,7 +19,7 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
             action.payload.meta
         );
 
-        state[room.customId] = room;
+        state[room.customId || action.payload.id] = room;
     });
 
     builder.addCase(RoomActions.deleteRoom, (state, action) => {
@@ -33,7 +33,7 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
     builder.addCase(RoomActions.bulkUpdateRooms, (state, action) => {
         action.payload.forEach((param) => {
             const room = mergeData(state[param.id], param.data, param.meta);
-            state[room.customId] = room;
+            state[room.customId || param.id] = room;
         });
     });
 
@@ -61,12 +61,14 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
         if (action.payload.isSignedInUser) {
             const {
                 unseenChatsStartIndex,
+                unseenChatsCount,
             } = getRoomUserUnseenChatsCountAndStartIndex(
                 room,
                 moment(action.payload.readCounter)
             );
 
             room.unseenChatsStartIndex = unseenChatsStartIndex;
+            room.unseenChatsCount = unseenChatsCount;
         }
     });
 
@@ -77,16 +79,25 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
             const rmId = Object.keys(state).find((id) => {
                 return state[id].recipientId === action.payload.recipientId;
             })!;
+
             room = state[rmId];
         }
 
         room.chats.push(action.payload.chat);
+
+        if (action.payload.markAsUnseen) {
+            room.unseenChatsCount += 1;
+
+            if (!room.unseenChatsStartIndex) {
+                room.unseenChatsStartIndex = room.chats.length - 1;
+            }
+        }
     });
 
     builder.addCase(RoomActions.updateChat, (state, action) => {
         const room =
             state[action.payload.roomId] || state[action.payload.roomTempId];
-        let chat: IChat;
+        let chat: IChat | undefined;
 
         if (
             action.payload.chatIndex &&
@@ -112,7 +123,10 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
             }
         }
 
-        // @ts-ignore
+        if (!chat) {
+            return;
+        }
+
         mergeData(chat, action.payload.data);
     });
 

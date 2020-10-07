@@ -22,11 +22,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     const { room, recipientsMap, updateRoomReadCounter, onSendMessage } = props;
 
     React.useEffect(() => {
-        const unseenChatsCount = room.unseenChatsStartIndex
-            ? room.chats.length - room.unseenChatsStartIndex - 1
-            : 0;
-
-        if (unseenChatsCount > 0) {
+        if (room.unseenChatsCount > 0) {
             updateRoomReadCounter({
                 orgId: room.orgId,
                 roomId: room.customId,

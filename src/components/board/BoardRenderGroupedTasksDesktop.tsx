@@ -6,7 +6,7 @@ import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
-import CustomScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
 import { IBoardGroupedTasksGroup } from "./types";
 
@@ -54,7 +54,7 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
                 key={group.id}
                 header={renderColumnHeader(group)}
                 body={
-                    <CustomScrollbar style={{ flex: 1 }}>
+                    <Scrollbar style={{ flex: 1 }}>
                         <TaskListContainer
                             board={board}
                             users={users}
@@ -62,7 +62,7 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
                             toggleForm={onClickUpdateBlock}
                             style={{ height: "100%" }}
                         />
-                    </CustomScrollbar>
+                    </Scrollbar>
                 }
                 style={{
                     marginLeft: "16px",

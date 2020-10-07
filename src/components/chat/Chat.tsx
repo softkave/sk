@@ -33,8 +33,12 @@ const Chat: React.FC<IChatProps> = (props) => {
                     />
                 )}
             </StyledContainer>
-            <StyledContainer s={{ flex: 1, marginLeft: "16px" }}>
-                <Typography.Paragraph>{chat.message}</Typography.Paragraph>
+            <StyledContainer
+                s={{ flex: 1, marginLeft: "16px", flexDirection: "column" }}
+            >
+                <Typography.Paragraph style={{ margin: 0 }}>
+                    {chat.message}
+                </Typography.Paragraph>
                 {chat.sending ? (
                     <Typography.Text type="secondary">
                         Sending...

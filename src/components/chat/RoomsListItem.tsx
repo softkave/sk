@@ -12,12 +12,8 @@ export interface IRoomsListItemProps {
 const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
     const { room, recipient } = props;
 
-    const unseenChatsCount = room.unseenChatsStartIndex
-        ? room.chats.length - room.unseenChatsStartIndex - 1
-        : 0;
-
     return (
-        <StyledContainer>
+        <StyledContainer s={{ width: "100%", alignItems: "center" }}>
             <Avatar
                 size="small"
                 shape="square"
@@ -30,7 +26,10 @@ const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
                     {recipient.name}
                 </Typography.Text>
             </StyledContainer>
-            <Badge count={unseenChatsCount} />
+            <Badge
+                count={room.unseenChatsCount}
+                style={{ boxShadow: "none" }}
+            />
         </StyledContainer>
     );
 };

@@ -3,7 +3,7 @@ import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
-import CustomScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import RoomsListItem from "./RoomsListItem";
 
 export interface IRoomsListProps {
@@ -44,7 +44,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
     }
 
     return (
-        <CustomScrollbar>
+        <Scrollbar>
             {filteredRooms.map((room, i) => {
                 const recipient = recipientsMap[room.recipientId];
 
@@ -58,7 +58,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
                     </StyledContainer>
                 );
             })}
-        </CustomScrollbar>
+        </Scrollbar>
     );
 };
 

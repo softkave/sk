@@ -135,21 +135,21 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         [history]
     );
 
-    React.useEffect(() => {
-        const orgUnseenChatsCount = unseenChatsCountMapByOrg[orgId] || 0;
+    // React.useEffect(() => {
+    //     const orgUnseenChatsCount = unseenChatsCountMapByOrg[orgId] || 0;
 
-        if (orgUnseenChatsCount) {
-            dispatch(
-                KeyValueActions.setKey({
-                    key: KeyValueKeys.UnseenChatsCountByOrg,
-                    value: {
-                        ...unseenChatsCountMapByOrg,
-                        [orgId]: 0,
-                    },
-                })
-            );
-        }
-    }, [dispatch, orgId, unseenChatsCountMapByOrg]);
+    //     if (orgUnseenChatsCount) {
+    //         dispatch(
+    //             KeyValueActions.setKey({
+    //                 key: KeyValueKeys.UnseenChatsCountByOrg,
+    //                 value: {
+    //                     ...unseenChatsCountMapByOrg,
+    //                     [orgId]: 0,
+    //                 },
+    //             })
+    //         );
+    //     }
+    // }, [dispatch, orgId, unseenChatsCountMapByOrg]);
 
     return render({
         sortedRooms,

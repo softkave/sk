@@ -7,7 +7,7 @@ import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import StyledContainer from "../styled/Container";
-import CustomScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
@@ -103,7 +103,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 style={{ paddingBottom: "8px" }}
                 placeholder="Search orgs and requests..."
             />
-            <CustomScrollbar>{renderContent()}</CustomScrollbar>
+            <Scrollbar>{renderContent()}</Scrollbar>
         </StyledContainer>
     );
 };

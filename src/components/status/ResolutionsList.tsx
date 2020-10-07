@@ -12,7 +12,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
-import CustomScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import ResolutionFormItem from "./ResolutionFormItem";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
@@ -204,7 +204,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                     overflowY: "auto",
                 }}
             >
-                <CustomScrollbar>{resolutions}</CustomScrollbar>
+                <Scrollbar>{resolutions}</Scrollbar>
             </StyledContainer>
         );
     };

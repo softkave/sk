@@ -35,8 +35,8 @@ export function updateResources<
     A extends PayloadAction<Array<IUpdateResourcePayload<any>>>
 >(state: S, action: A) {
     action.payload.forEach((param) => {
-        const room = mergeData(state[param.id], param.data, param.meta);
-        state[room.customId] = room;
+        const item = mergeData(state[param.id], param.data, param.meta);
+        state[item.customId || param.id] = item;
     });
 }
 

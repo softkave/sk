@@ -31,15 +31,23 @@ const keyValueReducer = createReducer<IKeyValueState>(
             delete state[key];
         });
 
-        builder.addCase(KeyValueActions.pushRoom, (state, action) => {
+        builder.addCase(KeyValueActions.pushRooms, (state, action) => {
             const rooms = state[KeyValueKeys.RoomsSubscribedTo] || {};
-            rooms[action.payload] = true;
+
+            action.payload.forEach((name) => {
+                rooms[name] = true;
+            });
+
             state[KeyValueKeys.RoomsSubscribedTo] = rooms;
         });
 
-        builder.addCase(KeyValueActions.removeRoom, (state, action) => {
+        builder.addCase(KeyValueActions.removeRooms, (state, action) => {
             const rooms = state[KeyValueKeys.RoomsSubscribedTo] || {};
-            delete rooms[action.payload];
+
+            action.payload.forEach((name) => {
+                delete rooms[name];
+            });
+
             state[KeyValueKeys.RoomsSubscribedTo] = rooms;
         });
 

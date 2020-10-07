@@ -8,8 +8,11 @@ import {
 } from "../../../models/fragments";
 import { IUser } from "../../../models/user/user";
 import { netCallWithAuth } from "../../../net/utils";
-import { getNewId, getNewTempId } from "../../../utils/utils";
+import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
+import KeyValueActions from "../../key-value/actions";
+import KeyValueSelectors from "../../key-value/selectors";
+import { KeyValueKeys } from "../../key-value/types";
 import NotificationActions from "../../notifications/actions";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
@@ -146,6 +149,24 @@ export const loadOrgDataOperationAction = createAsyncThunk<
 
         thunkAPI.dispatch(RoomActions.bulkAddRooms(tempRooms));
 
+        const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
+            thunkAPI.getState(),
+            KeyValueKeys.UnseenChatsCountByOrg
+        );
+
+        const a = { ...unseenChatsCountMapByOrg };
+
+        tempRooms.forEach((rm) => {
+            a[rm.orgId] = (a[rm.orgId] || 0) + rm.unseenChatsCount;
+        });
+
+        thunkAPI.dispatch(
+            KeyValueActions.setKey({
+                key: KeyValueKeys.UnseenChatsCountByOrg,
+                value: a,
+            })
+        );
+
         // End operation
         thunkAPI.dispatch(
             dispatchOperationCompleted(
@@ -197,9 +218,10 @@ function createOrgCollaboratorsTempRooms(
             return;
         }
 
+        const tempRoomId = getNewTempId(collaborator.customId);
         const tempRoom: IRoom = {
             orgId,
-            customId: getNewTempId(collaborator.customId),
+            customId: tempRoomId,
             name: "",
             createdAt: "",
             createdBy: "",
@@ -207,9 +229,38 @@ function createOrgCollaboratorsTempRooms(
                 { userId, readCounter: "" },
                 { userId: collaborator.customId, readCounter: "" },
             ],
-
+            // unseenChatsStartIndex: null,
+            // unseenChatsCount: 0,
             unseenChatsStartIndex: null,
-            chats: [],
+            unseenChatsCount: 3,
+            chats: [
+                {
+                    customId: "1",
+                    orgId,
+                    message: "Hello World!",
+                    sender: userId,
+                    roomId: tempRoomId,
+                    createdAt: getDateString(),
+                    sending: true,
+                },
+                {
+                    customId: "2",
+                    orgId,
+                    message: "Bye Bye World!",
+                    sender: collaborator.customId,
+                    roomId: tempRoomId,
+                    createdAt: getDateString(),
+                    errorMessage: "Error sending message",
+                },
+                {
+                    customId: "3",
+                    orgId,
+                    message: "Another One!",
+                    sender: collaborator.customId,
+                    roomId: tempRoomId,
+                    createdAt: getDateString(),
+                },
+            ],
             recipientId: collaborator.customId,
         };
 

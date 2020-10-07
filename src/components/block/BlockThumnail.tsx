@@ -116,9 +116,11 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
     const renderUnseenChatsCount = () => {
         if (unseenChatsCount) {
             return (
-                <Tag icon={<MessageOutlined />} color="red">
-                    {unseenChatsCount}
-                </Tag>
+                <StyledContainer s={{ marginTop: "4px" }}>
+                    <Tag icon={<MessageOutlined />} color="red" style={{}}>
+                        {unseenChatsCount}
+                    </Tag>
+                </StyledContainer>
             );
         }
 

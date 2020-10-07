@@ -38,6 +38,7 @@ export interface IAddChatActionArgs {
     chat: IChat;
     recipientId: string;
     roomId: string;
+    markAsUnseen?: boolean;
 }
 
 const addChat = createAction<IAddChatActionArgs>("rooms/addChat");

@@ -12,6 +12,7 @@ export interface IChat {
     updatedAt?: string;
 
     sending?: boolean;
+    queued?: boolean;
     errorMessage?: string;
 }
 
@@ -22,6 +23,7 @@ export interface IRoomMemberWithReadCounter {
 
 export interface IRoom extends IPersistedRoom {
     unseenChatsStartIndex: number | null;
+    unseenChatsCount: number;
     chats: IChat[];
     recipientId: string;
 }

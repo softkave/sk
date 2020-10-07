@@ -3,6 +3,7 @@ import moment, { Moment } from "moment";
 import { IChat, IRoom } from "../../../models/chat/types";
 import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
 import ChatAPI, { IPersistedRoom } from "../../../net/chat";
+import { subscribe } from "../../../net/socket";
 import { getNewId } from "../../../utils/utils";
 import KeyValueActions from "../../key-value/actions";
 import { IUnseenChatsCountByOrg, KeyValueKeys } from "../../key-value/types";
@@ -54,6 +55,7 @@ export const getUserRoomsAndChatsOperationAction = createAsyncThunk<
             result.chats,
             user.customId
         );
+
         const roomsList = Object.keys(roomsMap).map(
             (roomId) => roomsMap[roomId]
         );
@@ -63,6 +65,10 @@ export const getUserRoomsAndChatsOperationAction = createAsyncThunk<
             KeyValueActions.setValues({
                 [KeyValueKeys.UnseenChatsCountByOrg]: unseenChatsCountByOrg,
             })
+        );
+
+        subscribe(
+            roomsList.map((room) => ({ customId: room.customId, type: "room" }))
         );
 
         thunkAPI.dispatch(
@@ -131,6 +137,7 @@ function prepareChats(
         } = getRoomUserUnseenChatsCountAndStartIndex(room, readCounter);
 
         room.unseenChatsStartIndex = unseenChatsStartIndex;
+        room.unseenChatsCount = unseenChatsCount;
         unseenChatsCountByOrg[room.orgId] =
             (unseenChatsCountByOrg[room.orgId] || 0) + unseenChatsCount;
     });
@@ -157,7 +164,7 @@ export function getRoomUserUnseenChatsCountAndStartIndex(
         const chatCreated = moment(chat.createdAt);
 
         if (chatCreated.isBefore(readCounter)) {
-            unseenChatsStartIndex = i === room.chats.length - 1 ? i : i + 1;
+            unseenChatsStartIndex = i === room.chats.length - 1 ? null : i + 1;
             break;
         }
     }

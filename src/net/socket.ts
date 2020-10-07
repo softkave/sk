@@ -10,7 +10,10 @@ import {
 import BlockSelectors from "../redux/blocks/selectors";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
-import { KeyValueKeys } from "../redux/key-value/types";
+import {
+    ClientSubscribedResources,
+    KeyValueKeys,
+} from "../redux/key-value/types";
 import NotificationActions from "../redux/notifications/actions";
 import NotificationSelectors from "../redux/notifications/selectors";
 import { completeAddBlock } from "../redux/operations/block/addBlock";
@@ -161,8 +164,7 @@ export interface IOutgoingAuthPacket {
 }
 
 export interface IOutgoingSubscribePacket {
-    customId: string;
-    type: "board" | "org" | "user";
+    items: ClientSubscribedResources;
 }
 
 interface IOutgoingFetchMissingBroadcastsPacket {
@@ -263,14 +265,16 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
             store.getState(),
             KeyValueKeys.RoomsSubscribedTo
         ) || {};
-    const roomIds = Object.keys(rooms);
 
-    roomIds.forEach((roomId) => {
-        const split = roomId.split("-");
+    const roomSignatures = Object.keys(rooms);
+    const items = roomSignatures.map((signature) => {
+        const split = signature.split("-");
         const type = split.shift();
         const resourceId = split.join("-"); // we use uuids, and they ( uuid ) use '-'
-        subscribe(type as any, resourceId);
-    });
+        return { type: type!, customId: resourceId };
+    }) as ClientSubscribedResources;
+
+    subscribe(items);
 
     const socketDisconnectedAt = KeyValueSelectors.getKey(
         store.getState(),
@@ -284,7 +288,8 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
                 value: true,
             })
         );
-        fetchMissingBroadcasts(socketDisconnectedAt as number, roomIds);
+
+        fetchMissingBroadcasts(socketDisconnectedAt as number, roomSignatures);
     }
 }
 
@@ -458,6 +463,7 @@ function handleNewRoom(data: IIncomingNewRoomPacket) {
     const recipientMemberData = persistedRoom.members.find(
         (member) => member.userId !== user.customId
     )!;
+
     const recipientId = recipientMemberData.userId;
     const tempRoomId = getNewTempId(recipientId);
     const tempRoom = RoomSelectors.getRoom(store.getState(), tempRoomId);
@@ -477,6 +483,7 @@ function handleNewRoom(data: IIncomingNewRoomPacket) {
         );
 
         if (existingRoom) {
+            // TODO: this shouldn't happen, log it to the server
             store.dispatch(
                 RoomActions.updateRoom({
                     id: existingRoom.customId,
@@ -493,42 +500,48 @@ function handleNewRoom(data: IIncomingNewRoomPacket) {
         }
     }
 
-    store.dispatch(KeyValueActions.pushRoom(persistedRoom.name));
+    store.dispatch(KeyValueActions.pushRooms([persistedRoom.name]));
 }
 
 function handleNewMessage(data: IIncomingNewMessagePacket) {
     const chat = data.chat;
-
-    // Check if room exists
     const room = RoomSelectors.getRoom(store.getState(), chat.roomId);
 
     if (!room) {
         throw new RoomDoesNotExistError();
     }
 
+    const pathname = window.location.pathname;
+    const splitPath = pathname.split("chat");
+
+    /**
+     * path format is .../chat/:recipientId
+     * so, if we split, [0] will be ".../", and [1] will be "/:recipientId" if it exists
+     * so basically, return if user is in room
+     */
+    const isUserInRoom =
+        splitPath[1] && splitPath[1].includes(room.recipientId);
+
     // Add chat to room
     store.dispatch(
         RoomActions.addChat({
             chat,
             roomId: room.customId,
-            recipientId: room.recipientId!,
+            recipientId: room.recipientId,
+            markAsUnseen: !isUserInRoom,
         })
     );
 
-    // Update org unseen chats count
-    const currentOrgId = KeyValueSelectors.getKey(
-        store.getState(),
-        KeyValueKeys.CurrentOrgId
-    );
-
-    if (currentOrgId === chat.orgId) {
+    if (isUserInRoom) {
         return;
     }
 
+    // Update org unseen chats count
     const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
         store.getState(),
         KeyValueKeys.UnseenChatsCountByOrg
     );
+
     const orgUnseenChatsCount = (unseenChatsCountMapByOrg[chat.orgId] || 0) + 1;
 
     store.dispatch(
@@ -542,35 +555,34 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
     );
 }
 
-export function subscribe(
-    type: IOutgoingSubscribePacket["type"],
-    resourceId: string
-) {
-    if (socket) {
-        const data: IOutgoingSubscribePacket = { type, customId: resourceId };
+export function subscribe(items: ClientSubscribedResources) {
+    if (socket && items.length > 0) {
+        const data: IOutgoingSubscribePacket = { items };
+        const roomsToPush: string[] = [];
         socket.emit(OutgoingSocketEvents.Subscribe, data);
 
         const rooms =
-            KeyValueSelectors.getKey(
+            KeyValueSelectors.getKey<ClientSubscribedResources>(
                 store.getState(),
                 KeyValueKeys.RoomsSubscribedTo
             ) || {};
-        const roomId = `${type}-${resourceId}`;
 
-        if (!!rooms[roomId]) {
-            return;
-        }
+        items.forEach((item) => {
+            const roomSignature = `${item.type}-${item.customId}`;
 
-        store.dispatch(KeyValueActions.pushRoom(roomId));
+            if (!rooms[roomSignature]) {
+                roomsToPush.push(roomSignature);
+            }
+        });
+
+        store.dispatch(KeyValueActions.pushRooms(roomsToPush));
     }
 }
 
-export function unsubcribe(
-    type: IOutgoingSubscribePacket["type"],
-    resourceId: string
-) {
-    if (socket) {
-        const data: IOutgoingSubscribePacket = { type, customId: resourceId };
+export function unsubcribe(items: ClientSubscribedResources) {
+    if (socket && items.length > 0) {
+        const data: IOutgoingSubscribePacket = { items };
+        const roomsToRemove: string[] = [];
         socket.emit(OutgoingSocketEvents.Unsubscribe, data);
 
         const rooms =
@@ -578,13 +590,16 @@ export function unsubcribe(
                 store.getState(),
                 KeyValueKeys.RoomsSubscribedTo
             ) || {};
-        const roomId = `${type}-${resourceId}`;
 
-        if (!!!rooms[roomId]) {
-            return;
-        }
+        items.forEach((item) => {
+            const roomId = `${item.type}-${item.customId}`;
 
-        store.dispatch(KeyValueActions.removeRoom(roomId));
+            if (rooms[roomId]) {
+                roomsToRemove.push(roomId);
+            }
+        });
+
+        store.dispatch(KeyValueActions.removeRooms(roomsToRemove));
     }
 }
 
