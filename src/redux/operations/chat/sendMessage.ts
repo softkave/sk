@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import moment from "moment";
 import { IChat } from "../../../models/chat/types";
 import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat";
 import {
@@ -272,7 +273,9 @@ export const sendMessageOperationAction = createAsyncThunk<
         RoomActions.updateRoomReadCounter({
             userId: user.customId,
             roomId: chat.roomId,
-            readCounter: getDateString(),
+            readCounter: moment(chat.createdAt)
+                .add("1", "milliseconds")
+                .toISOString(),
             isSignedInUser: true,
         })
     );
