@@ -22,7 +22,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
     const { board } = props;
 
     const user = useSelector<IAppState, IUser>((state) => {
-        return SessionSelectors.getSignedInUserRequired(state);
+        return SessionSelectors.assertGetUser(state);
     });
 
     const statusList = board.boardStatuses || [];

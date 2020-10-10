@@ -7,13 +7,13 @@ import * as yup from "yup";
 import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import LabelFormItem from "./LabelFormItem";
 
 const StyledContainerAsForm = StyledContainer.withComponent("form");
@@ -196,7 +196,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
                     overflowY: "auto",
                 }}
             >
-                <DeviceScrollbar>{labels}</DeviceScrollbar>
+                <Scrollbar>{labels}</Scrollbar>
             </StyledContainer>
         );
     };
@@ -224,7 +224,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
             color: randomColor(),
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
         };
 
         formikHelpers.addToArrayField("labelList", label, {}, {});

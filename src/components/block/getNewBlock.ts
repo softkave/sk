@@ -12,7 +12,7 @@ import {
 } from "../../models/block/utils";
 import { IUser } from "../../models/user/user";
 import cast from "../../utils/cast";
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 
 export default function getNewBlock(
     user: IUser,
@@ -28,7 +28,7 @@ export default function getNewBlock(
     // Maybe get the id from the server when a form is created without an initial data, or without data with id
     const newBlock: IBlock = {
         type,
-        customId: newId(),
+        customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
         color: randomColor(),
@@ -74,7 +74,7 @@ export function addCustomIdToSubTasks(subTasks?: ISubTask[]) {
     return Array.isArray(subTasks)
         ? subTasks.map((subTask) => ({
               ...subTask,
-              customId: subTask.customId || newId(),
+              customId: subTask.customId || getNewId(),
           }))
         : [];
 }

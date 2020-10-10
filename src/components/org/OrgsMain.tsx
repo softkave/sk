@@ -1,16 +1,20 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Empty } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
+import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
 export interface IOrgsMainProps {
     orgs: IBlock[];
     requests: INotification[];
+    unseenChatsCountMapByOrg: IUnseenChatsCountByOrg;
     onAddOrg: () => void;
     onSelectOrg: (org: IBlock) => void;
     onSelectRequest: (request: INotification) => void;
@@ -26,11 +30,13 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
         isLoading,
         errorMessage,
         selectedId,
+        requests,
+        unseenChatsCountMapByOrg,
         onAddOrg,
         onSelectOrg,
-        requests,
         onSelectRequest,
     } = props;
+
     const [searchQuery, setSearchQuery] = React.useState("");
 
     const renderContent = () => {
@@ -79,6 +85,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
             <OrgsList
                 orgs={o}
                 requests={r}
+                unseenChatsCountMapByOrg={unseenChatsCountMapByOrg}
                 selectedId={selectedId}
                 onClickBlock={onSelectOrg}
                 onClickRequest={onSelectRequest}
@@ -96,7 +103,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 style={{ paddingBottom: "8px" }}
                 placeholder="Search orgs and requests..."
             />
-            <DeviceScrollbar>{renderContent()}</DeviceScrollbar>
+            <Scrollbar>{renderContent()}</Scrollbar>
         </StyledContainer>
     );
 };

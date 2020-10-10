@@ -9,7 +9,10 @@ import { subscribe, unsubcribe } from "../../net/socket";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
-import { KeyValueKeys } from "../../redux/key-value/types";
+import {
+    IUnseenChatsCountByOrg,
+    KeyValueKeys,
+} from "../../redux/key-value/types";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -19,13 +22,13 @@ import useBlockParents from "../hooks/useBlockParents";
 import { getOperationStats } from "../hooks/useOperation";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BlockForms, { BlockFormType } from "./BoardForms";
+import BoardForms, { BoardFormType } from "./BoardForms";
 import OrgBoard from "./OrgBoard";
-import { useBoardData } from "./useBoardData";
+import { useLoadOrgData } from "./useLoadOrgData";
 import { getBlockPath, getBlocksPath } from "./utils";
 
 interface IBlockFormState {
-    formType: BlockFormType;
+    formType: BoardFormType;
     orgId: string;
     blockType?: BlockType;
     parentBlock?: IBlock;
@@ -39,8 +42,9 @@ interface IRouteMatchParams {
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const OrgBoardContainer: React.FC<{}> = (props) => {
+const OrgBoardContainer: React.FC<{}> = () => {
     const history = useHistory();
+
     const dispatch: AppDispatch = useDispatch();
     const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
         null
@@ -50,6 +54,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
         organizationPath
     );
+
     const organizationId =
         selectedOrganizationRouteMatch &&
         selectedOrganizationRouteMatch.params.organizationId;
@@ -61,17 +66,24 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     })!;
 
     const showAppMenu = useSelector((state) =>
-        KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowAppMenu)
     ) as boolean;
 
     const showOrgMenu = useSelector((state) =>
-        KeyValueSelectors.getKey(state as any, KeyValueKeys.OrgMenu)
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowOrgMenu)
     ) as boolean;
+
+    const unseenChatsCountMapByOrg = useSelector<
+        IAppState,
+        IUnseenChatsCountByOrg
+    >((state) =>
+        KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
+    );
 
     const toggleAppMenu = React.useCallback(() => {
         dispatch(
             KeyValueActions.setValues({
-                [KeyValueKeys.AppMenu]: !showAppMenu,
+                [KeyValueKeys.ShowAppMenu]: !showAppMenu,
             })
         );
     }, [showAppMenu, dispatch]);
@@ -79,8 +91,8 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const toggleOrgMenu = React.useCallback(() => {
         dispatch(
             KeyValueActions.setValues({
-                [KeyValueKeys.AppMenu]: !showOrgMenu,
-                [KeyValueKeys.OrgMenu]: !showOrgMenu,
+                [KeyValueKeys.ShowAppMenu]: !showOrgMenu,
+                [KeyValueKeys.ShowOrgMenu]: !showOrgMenu,
             })
         );
     }, [showOrgMenu, dispatch]);
@@ -90,7 +102,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
 
     // TODO: we need to rebuild the path when the user transfers the block
     const blockPath = getBlockPath(block, parentPath);
-    const loadBoardDataStatusAndControls = useBoardData(block);
+    const loadBoardDataStatusAndControls = useLoadOrgData(block);
 
     const pushRoute = (route) => {
         const search = new URLSearchParams(window.location.search);
@@ -153,7 +165,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     const renderForms = () => {
         if (blockForm) {
             return (
-                <BlockForms
+                <BoardForms
                     orgId={block.rootBlockId || block.customId}
                     blockType={blockForm.blockType}
                     block={blockForm.block}
@@ -176,6 +188,7 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
                 onToggleFoldAppMenu={toggleAppMenu}
                 onToggleFoldOrgMenu={toggleOrgMenu}
                 block={block}
+                unseenChatsCount={unseenChatsCountMapByOrg[block.customId] || 0}
                 blockPath={blockPath}
                 onClickBlock={onClickBlock}
                 onClickDeleteBlock={(blk) =>
@@ -223,10 +236,10 @@ const OrgBoardContainer: React.FC<{}> = (props) => {
     };
 
     React.useEffect(() => {
-        subscribe(block.type as any, block.customId);
+        subscribe([{ type: block.type as any, customId: block.customId }]);
 
         return () => {
-            unsubcribe(block.type as any, block.customId);
+            unsubcribe([{ type: block.type as any, customId: block.customId }]);
         };
     }, [block.customId, block.type]);
 

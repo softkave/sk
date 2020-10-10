@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
 import { BlockType, IBlock } from "../../../models/block/block";
 import BlockAPI from "../../../net/block";
-import { newId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -33,7 +33,7 @@ export const completeAddBlock = createAsyncThunk<
     await thunkAPI.dispatch(BlockActions.addBlock(arg.block));
 
     let parent: IBlock | undefined;
-    const user = SessionSelectors.getSignedInUserRequired(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
     if (arg.block.parent) {
         parent = BlockSelectors.getBlock(thunkAPI.getState(), arg.block.parent);
@@ -72,7 +72,7 @@ export const completeAddBlock = createAsyncThunk<
     ) {
         // To avoid loading the block children, cause there isn't any yet, it's a new block
         loadOps.push({
-            id: newId(),
+            id: getNewId(),
             operationType: OperationType.LoadBlockChildren,
             resourceId: arg.block.customId,
             status: {
@@ -86,8 +86,8 @@ export const completeAddBlock = createAsyncThunk<
     if (arg.block.type === BlockType.Org) {
         // To avoid loading the block data, cause there isn't any yet, it's a new block
         loadOps.push({
-            id: newId(),
-            operationType: OperationType.LoadBoardData,
+            id: getNewId(),
+            operationType: OperationType.LoadOrgUsersAndRequests,
             resourceId: arg.block.customId,
             status: {
                 status: OperationStatus.Completed,
@@ -106,7 +106,7 @@ export const addBlockOperationAction = createAsyncThunk<
     GetOperationActionArgs<IAddBlockOperationActionArgs>,
     IAppAsyncThunkConfig
 >("blockOperation/addBlock", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),

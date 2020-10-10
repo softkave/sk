@@ -3,8 +3,7 @@ import React from "react";
 import { Plus } from "react-feather";
 import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { indexArray } from "../../utils/object";
-import { getDateString } from "../../utils/utils";
+import { getDateString, indexArray } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskLabelsProps {

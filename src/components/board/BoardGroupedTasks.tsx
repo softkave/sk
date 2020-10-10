@@ -1,22 +1,22 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import { IBGroupedTasksGroup, TaskGroup } from "./types";
+import { IBoardGroupedTasksGroup, TaskGroup } from "./types";
 import toLabelGroups from "./utils/toLabelGroups";
 import toStatusGroups from "./utils/toStatusGroups";
 
-export type BGroupedTasksRenderFn = (
-    groups: IBGroupedTasksGroup[],
+export type BoardGroupedTasksRenderFn = (
+    groups: IBoardGroupedTasksGroup[],
     groupType: TaskGroup,
     setGroupType: (type: TaskGroup) => void
 ) => React.ReactElement;
 
-export interface IBGroupedTasksProps {
+export interface IBoardGroupedTasksProps {
     block: IBlock;
     tasks: IBlock[];
-    render: BGroupedTasksRenderFn;
+    render: BoardGroupedTasksRenderFn;
 }
 
-const BGroupedTasks: React.FC<IBGroupedTasksProps> = (props) => {
+const BoardGroupedTasks: React.FC<IBoardGroupedTasksProps> = (props) => {
     const { block, tasks, render } = props;
     const [groupType, setGroupType] = React.useState<TaskGroup>("status");
 
@@ -37,4 +37,4 @@ const BGroupedTasks: React.FC<IBGroupedTasksProps> = (props) => {
     }
 };
 
-export default React.memo(BGroupedTasks);
+export default BoardGroupedTasks;

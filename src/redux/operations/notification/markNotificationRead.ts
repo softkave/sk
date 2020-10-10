@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { INotification } from "../../../models/notification/notification";
 import UserAPI from "../../../net/user";
-import { getDateString, newId } from "../../../utils/utils";
+import { getDateString, getNewId } from "../../../utils/utils";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -25,7 +25,7 @@ export const markNotificationReadOperationAction = createAsyncThunk<
     GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
     IAppAsyncThunkConfig
 >("notification/markNotificationRead", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),

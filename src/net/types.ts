@@ -1,6 +1,8 @@
-export interface INetError {
-  field?: string;
-  message?: string;
-  action?: string;
-  name: string;
+export interface INetError extends Error {
+    field?: string;
+    action?: string;
+}
+
+export interface IEndpointResultBase {
+    errors: INetError[];
 }

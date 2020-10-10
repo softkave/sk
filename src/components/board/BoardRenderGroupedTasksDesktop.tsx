@@ -6,23 +6,23 @@ import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
-import { IBGroupedTasksGroup } from "./types";
+import { IBoardGroupedTasksGroup } from "./types";
 
-export interface IBRenderGroupedTasksDesktopProps {
-    groups: IBGroupedTasksGroup[];
+export interface IBoardRenderGroupedTasksDesktopProps {
+    groups: IBoardGroupedTasksGroup[];
     users: IUser[];
     board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
+const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopProps> = (
     props
 ) => {
     const { groups, users, board, onClickUpdateBlock } = props;
 
-    const renderColumnHeader = (group: IBGroupedTasksGroup) => {
+    const renderColumnHeader = (group: IBoardGroupedTasksGroup) => {
         return (
             <StyledContainer>
                 {group.color && (
@@ -48,13 +48,13 @@ const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
         );
     };
 
-    const renderColumn = (group: IBGroupedTasksGroup, i: number) => {
+    const renderColumn = (group: IBoardGroupedTasksGroup, i: number) => {
         return (
             <Column
                 key={group.id}
                 header={renderColumnHeader(group)}
                 body={
-                    <DeviceScrollbar style={{ flex: 1 }}>
+                    <Scrollbar style={{ flex: 1 }}>
                         <TaskListContainer
                             board={board}
                             users={users}
@@ -62,7 +62,7 @@ const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
                             toggleForm={onClickUpdateBlock}
                             style={{ height: "100%" }}
                         />
-                    </DeviceScrollbar>
+                    </Scrollbar>
                 }
                 style={{
                     marginLeft: "16px",
@@ -96,4 +96,4 @@ const BRenderGroupedTasksDesktop: React.FC<IBRenderGroupedTasksDesktopProps> = (
     );
 };
 
-export default React.memo(BRenderGroupedTasksDesktop);
+export default BoardRenderGroupedTasksDesktop;

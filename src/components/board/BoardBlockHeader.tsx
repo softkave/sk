@@ -188,12 +188,14 @@ const BoardBlockHeader: React.FC<IBoardBlockHeaderProps> = (props) => {
                     ...style,
                     flex: 1,
                     alignItems: "center",
+                    borderBottom: "1px solid #d9d9d9",
+                    height: "56px",
                 }}
             >
                 {renderHeaderPrefixButton()}
                 <BlockThumbnail
                     block={block}
-                    showFields={["name", "type"]}
+                    showFields={["name"]}
                     style={{ flex: 1 }}
                 />
                 <StyledContainer s={{ alignItems: "center" }}>

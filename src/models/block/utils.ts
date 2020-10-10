@@ -1,4 +1,4 @@
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import { IUser } from "../user/user";
 import { BlockType, IBlock, IBlockStatus, ITaskAssignee } from "./block";
 
@@ -86,7 +86,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             description: "Available tasks",
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
             color: "#f28b79",
         },
         {
@@ -94,7 +94,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             description: "Currently being worked on",
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
             color: "#aa2244",
         },
         {
@@ -102,7 +102,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             description: "Completed, pending review",
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
             color: "#ffd3c6",
         },
         {
@@ -110,7 +110,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             description: "Completed, and reviewed",
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
             color: "#25b71b",
         },
     ];

@@ -1,24 +1,24 @@
 import { createAction } from "@reduxjs/toolkit";
 
 const setKeyValue = createAction<{
-  key: string;
-  value: any;
+    key: string;
+    value: any;
 }>("keyValue/set");
 
 const setValues = createAction<{
-  [key: string]: any;
+    [key: string]: any;
 }>("keyValue/setValues");
 
 const deleteKeyValue = createAction<string>("keyValue/deleteKey");
 
 // room utilities
-const pushRoom = createAction<string>("keyValue/pushRoom");
-const removeRoom = createAction<string>("keyValue/removeRoom");
+const pushRooms = createAction<string[]>("keyValue/pushRoom");
+const removeRooms = createAction<string[]>("keyValue/removeRoom");
 
 export default class KeyValueActions {
-  public static setKey = setKeyValue;
-  public static setValues = setValues;
-  public static deleteKey = deleteKeyValue;
-  public static pushRoom = pushRoom;
-  public static removeRoom = removeRoom;
+    public static setKey = setKeyValue;
+    public static setValues = setValues;
+    public static deleteKey = deleteKeyValue;
+    public static pushRooms = pushRooms;
+    public static removeRooms = removeRooms;
 }

@@ -1,15 +1,15 @@
 import { IAppState } from "../types";
-import { getUser } from "../users/selectors";
+import UserSelectors from "../users/selectors";
 
 function getUserToken(state: IAppState) {
     return state.session.token;
 }
 
-function getSignedInUser(state: IAppState) {
+function getUser(state: IAppState) {
     const userId = state.session.userId;
 
     if (userId) {
-        return getUser(state, userId);
+        return UserSelectors.getUser(state, userId);
     }
 }
 
@@ -28,10 +28,10 @@ function assertUserSignedIn(state: IAppState) {
     }
 }
 
-function getSignedInUserRequired(state: IAppState) {
+function assertGetUser(state: IAppState) {
     assertUserSignedIn(state);
 
-    const user = getSignedInUser(state)!;
+    const user = getUser(state)!;
     return user;
 }
 
@@ -49,9 +49,9 @@ function isDemoMode(state: IAppState) {
 
 export default class SessionSelectors {
     public static getUserToken = getUserToken;
-    public static getSignedInUser = getSignedInUser;
+    public static getUser = getUser;
     public static isUserSignedIn = isUserSignedIn;
-    public static getSignedInUserRequired = getSignedInUserRequired;
+    public static assertGetUser = assertGetUser;
     public static getSessionType = getSessionType;
     public static getClientId = getClientId;
     public static isDemoMode = isDemoMode;

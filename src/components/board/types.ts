@@ -4,7 +4,8 @@ export type BoardResourceType =
     | "tasks"
     | "boards"
     | "collaborators"
-    | "collaboration-requests";
+    | "collaboration-requests"
+    | "chat";
 
 export type BoardViewType = "status-kanban" | "list";
 
@@ -31,7 +32,7 @@ export type OnClickDeleteBlock = (block: IBlock) => void;
 
 export type TaskGroup = "status" | "labels";
 
-export interface IBGroupedTasksGroup {
+export interface IBoardGroupedTasksGroup {
     id: string;
     name: string;
     tasks: IBlock[];

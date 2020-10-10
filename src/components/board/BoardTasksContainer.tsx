@@ -11,9 +11,9 @@ import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BTasks from "./BTasks";
+import BoardTasks from "./BoardTasks";
 
-export interface IBTasksContainerProps {
+export interface IBoardTasksContainerProps {
     block: IBlock;
 }
 
@@ -106,7 +106,7 @@ function useComponentData(
     return { org, tasks, collaborators };
 }
 
-const BTasksContainer: React.FC<IBTasksContainerProps> = (props) => {
+const BoardTasksContainer: React.FC<IBoardTasksContainerProps> = (props) => {
     const { block } = props;
     const [showTask, setShowTask] = React.useState<IShowTaskForm | null>(null);
     const [searchText, setSearchText] = React.useState<string>("");
@@ -157,7 +157,7 @@ const BTasksContainer: React.FC<IBTasksContainerProps> = (props) => {
     return (
         <React.Fragment>
             {renderTaskForm()}
-            <BTasks
+            <BoardTasks
                 block={block}
                 tasks={tasks}
                 users={collaborators}
@@ -169,4 +169,4 @@ const BTasksContainer: React.FC<IBTasksContainerProps> = (props) => {
     );
 };
 
-export default React.memo(BTasksContainer);
+export default BoardTasksContainer;

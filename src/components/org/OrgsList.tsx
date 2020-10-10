@@ -5,6 +5,7 @@ import {
     CollaborationRequestStatusType,
     INotification,
 } from "../../models/notification/notification";
+import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import BlockThumbnail from "../block/BlockThumnail";
 import { getRequestStatus } from "../collaborator/utils";
 import EmptyMessage from "../EmptyMessage";
@@ -14,13 +15,22 @@ import OrgCollaborationRequestThumbnail from "./OrgCollaborationRequestThumbnail
 export interface IOrgsListProps {
     orgs: IBlock[];
     requests: INotification[];
+    unseenChatsCountMapByOrg: IUnseenChatsCountByOrg;
     selectedId?: string;
     onClickBlock: (block: IBlock) => void;
     onClickRequest: (request: INotification) => void;
 }
 
 const OrgsList: React.FC<IOrgsListProps> = (props) => {
-    const { orgs, requests, selectedId, onClickBlock, onClickRequest } = props;
+    const {
+        orgs,
+        requests,
+        selectedId,
+        unseenChatsCountMapByOrg,
+        onClickBlock,
+        onClickRequest,
+    } = props;
+
     const pendingRequests: INotification[] = [];
     const expiredRequests: INotification[] = [];
     const declinedRequests: INotification[] = [];
@@ -106,6 +116,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                             <BlockThumbnail
                                 block={org}
                                 showFields={["name"]}
+                                unseenChatsCount={
+                                    unseenChatsCountMapByOrg[org.customId]
+                                }
                             />,
                             () => onClickBlock(org)
                         )

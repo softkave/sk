@@ -28,6 +28,7 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
                 const selected =
                     block.customId === boardRouteMatch?.params.boardId;
                 return {
+                    cursor: "pointer",
                     padding: "8px 16px",
                     backgroundColor: selected ? "#bae7ff" : undefined,
 

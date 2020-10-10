@@ -9,7 +9,7 @@ const MainLayoutContainer: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const showAppMenu = useSelector((state) =>
-        KeyValueSelectors.getKey(state as any, KeyValueKeys.AppMenu)
+        KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowAppMenu)
     ) as boolean;
 
     const showNewOrgForm = useSelector((state) =>
@@ -24,7 +24,7 @@ const MainLayoutContainer: React.FC<{}> = () => {
         const newAppMenuState = !showAppMenu;
         dispatch(
             KeyValueActions.setKey({
-                key: KeyValueKeys.AppMenu,
+                key: KeyValueKeys.ShowAppMenu,
                 value: newAppMenuState,
             })
         );

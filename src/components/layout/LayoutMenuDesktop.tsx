@@ -22,16 +22,24 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
                 overflowY: "auto",
             }}
         >
-            <Typography.Title
-                level={4}
-                style={{
+            <StyledContainer
+                s={{
+                    height: "56px",
+                    alignItems: "center",
                     padding: "0 16px",
-                    paddingTop: "16px",
-                    paddingBottom: "8px",
+                    marginBottom: "4px",
+                    borderBottom: "1px solid #d9d9d9",
                 }}
             >
-                softkave
-            </Typography.Title>
+                <Typography.Title
+                    level={4}
+                    style={{
+                        margin: 0,
+                    }}
+                >
+                    softkave
+                </Typography.Title>
+            </StyledContainer>
             <StyledContainer
                 s={{
                     padding: "8px 0",

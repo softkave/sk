@@ -25,7 +25,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
     const { onClose, orgId } = props;
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
     const org = useSelector<IAppState, IBlock>((state) => {
         return BlockSelectors.getBlock(state, orgId)!;
     });

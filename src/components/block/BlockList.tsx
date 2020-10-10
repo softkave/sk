@@ -56,14 +56,9 @@ class BlockList extends React.PureComponent<IBlockListProps> {
                     <StyledContainer
                         key={block.customId}
                         s={getBlockStyle ? getBlockStyle(block, i) : undefined}
+                        onClick={() => isFunction(onClick) && onClick(block)}
                     >
-                        <BlockThumbnail
-                            block={block}
-                            showFields={showFields}
-                            onClick={() =>
-                                isFunction(onClick) && onClick(block)
-                            }
-                        />
+                        <BlockThumbnail block={block} showFields={showFields} />
                     </StyledContainer>
                 )}
             />

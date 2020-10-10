@@ -1,6 +1,8 @@
 import delay from "lodash/delay";
 import io, { Socket } from "socket.io-client";
 import { IBlock } from "../models/block/block";
+import { IChat, IRoomMemberWithReadCounter } from "../models/chat/types";
+import { getRoomFromPersistedRoom } from "../models/chat/utils";
 import {
     CollaborationRequestStatusType,
     INotification,
@@ -8,23 +10,83 @@ import {
 import BlockSelectors from "../redux/blocks/selectors";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
-import { KeyValueKeys } from "../redux/key-value/types";
+import {
+    ClientSubscribedResources,
+    KeyValueKeys,
+} from "../redux/key-value/types";
 import NotificationActions from "../redux/notifications/actions";
 import NotificationSelectors from "../redux/notifications/selectors";
 import { completeAddBlock } from "../redux/operations/block/addBlock";
 import { completeDeleteBlock } from "../redux/operations/block/deleteBlock";
 import { completeUpdateBlock } from "../redux/operations/block/updateBlock";
+import { RoomDoesNotExistError } from "../redux/operations/chat/sendMessage";
 import { completeLoadUserNotifications } from "../redux/operations/notification/loadUserNotifications";
 import {
     completePartialNotificationResponse,
     completeUserNotificationResponse,
 } from "../redux/operations/notification/respondToNotification";
+import RoomActions from "../redux/rooms/actions";
+import RoomSelectors from "../redux/rooms/selectors";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
+import { getNewTempId } from "../utils/utils";
 import { getSockAddr } from "./addr";
+import { IPersistedRoom } from "./chat";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;
+let socketAuthCompleted = false;
+const socketWaitQueue: Array<(sock: typeof Socket | null) => void> = [];
+
+function clearSocketWaitQueue(sock: typeof Socket | null) {
+    if (socketWaitQueue.length > 0) {
+        socketWaitQueue.forEach((cb) => {
+            cb(sock);
+        });
+    }
+}
+
+class SocketNotConnectedError extends Error {
+    public name = "SocketNotConnectedError";
+    public message = "Error connecting to the server";
+}
+
+export function getSocket() {
+    return socket;
+}
+
+export async function waitGetSocket() {
+    if (socket && socket.connected && socketAuthCompleted) {
+        return socket;
+    }
+
+    return new Promise<typeof Socket>((resolve, reject) => {
+        if (connectionFailedBefore) {
+            reject(new SocketNotConnectedError());
+        }
+
+        socketWaitQueue.push((sock) => {
+            if (sock) {
+                resolve(sock);
+            } else {
+                reject(new SocketNotConnectedError());
+            }
+        });
+    });
+}
+
+export function promisifiedEmit<Ack = any>(eventName: string, data?: any) {
+    return new Promise<Ack>(async (resolve, reject) => {
+        try {
+            const sock = await waitGetSocket();
+            sock.emit(eventName, data, (ackData: Ack) => {
+                resolve(ackData);
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 
 export interface ISocketConnectionProps {
     token: string;
@@ -40,6 +102,9 @@ export enum IncomingSocketEvents {
     UpdateNotification = "updateNotification",
     UserCollaborationRequestResponse = "userCollabReqResponse",
     OrgCollaborationRequestResponse = "orgCollabReqResponse",
+    UpdateRoomReadCounter = "updateRoomReadCounter",
+    NewRoom = "newRoom",
+    NewMessage = "newMessage",
 }
 
 export function connectSocket(props: ISocketConnectionProps) {
@@ -74,10 +139,12 @@ export function connectSocket(props: ISocketConnectionProps) {
         handleUserCollaborationRequestResponse
     );
     socket.on(IncomingSocketEvents.UserUpdate, handleUserUpdate);
-}
-
-export function getSocket() {
-    return socket;
+    socket.on(
+        IncomingSocketEvents.UpdateRoomReadCounter,
+        handleUpdateRoomReadCounter
+    );
+    socket.on(IncomingSocketEvents.NewRoom, handleNewRoom);
+    socket.on(IncomingSocketEvents.NewMessage, handleNewMessage);
 }
 
 export enum OutgoingSocketEvents {
@@ -85,6 +152,9 @@ export enum OutgoingSocketEvents {
     Subscribe = "subscribe",
     Unsubscribe = "unsubscribe",
     FetchMissingBroadcasts = "fetchMissingBroadcasts",
+    SendMessage = "sendMessage",
+    GetUserRoomsAndChats = "getUserRoomsAndChats",
+    UpdateRoomReadCounter = "updateRoomReadCounter",
 }
 
 // outgoing packets
@@ -95,8 +165,7 @@ export interface IOutgoingAuthPacket {
 }
 
 export interface IOutgoingSubscribePacket {
-    customId: string;
-    type: "board" | "org" | "user";
+    items: ClientSubscribedResources;
 }
 
 interface IOutgoingFetchMissingBroadcastsPacket {
@@ -129,6 +198,19 @@ export interface INewNotificationsPacket {
 
 export interface IUserUpdatePacket {
     notificationsLastCheckedAt: string;
+}
+
+export interface IIncomingUpdateRoomReadCounterPacket {
+    roomId: string;
+    member: IRoomMemberWithReadCounter;
+}
+
+export interface IIncomingNewRoomPacket {
+    room: IPersistedRoom;
+}
+
+export interface IIncomingNewMessagePacket {
+    chat: IChat;
 }
 
 export interface IUpdateNotificationPacket {
@@ -172,23 +254,33 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
             socket?.disconnect();
         }, tenSecsInMs);
 
+        clearSocketWaitQueue(null);
+
         return;
     }
 
-    const rooms =
-        KeyValueSelectors.getKey(store.getState(), KeyValueKeys.Rooms) || {};
-    const roomIds = Object.keys(rooms);
+    socketAuthCompleted = true;
+    clearSocketWaitQueue(socket);
 
-    roomIds.forEach((roomId) => {
-        const split = roomId.split("-");
+    const rooms =
+        KeyValueSelectors.getKey(
+            store.getState(),
+            KeyValueKeys.RoomsSubscribedTo
+        ) || {};
+
+    const roomSignatures = Object.keys(rooms);
+    const items = roomSignatures.map((signature) => {
+        const split = signature.split("-");
         const type = split.shift();
         const resourceId = split.join("-"); // we use uuids, and they ( uuid ) use '-'
-        subscribe(type as any, resourceId);
-    });
+        return { type: type!, customId: resourceId };
+    }) as ClientSubscribedResources;
+
+    subscribe(items);
 
     const socketDisconnectedAt = KeyValueSelectors.getKey(
         store.getState(),
-        KeyValueKeys.SocketDisconnectTimestamp
+        KeyValueKeys.SocketDisconnectedAt
     );
 
     if (socketDisconnectedAt) {
@@ -198,12 +290,16 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
                 value: true,
             })
         );
-        fetchMissingBroadcasts(socketDisconnectedAt as number, roomIds);
+
+        fetchMissingBroadcasts(socketDisconnectedAt as number, roomSignatures);
     }
 }
 
 function handleDisconnect() {
-    socket = null;
+    // TODO: should we set to null, won't that prevent reconnection
+    // because it will be garbage collected
+    // socket = null;
+    socketAuthCompleted = false;
 
     if (connectionFailedBefore) {
         return;
@@ -215,7 +311,7 @@ function handleDisconnect() {
     if (isUserLoggedIn) {
         store.dispatch(
             KeyValueActions.setKey({
-                key: KeyValueKeys.SocketDisconnectTimestamp,
+                key: KeyValueKeys.SocketDisconnectedAt,
                 value: socketDisconnectedAt,
             })
         );
@@ -249,6 +345,12 @@ function handleFetchMissingBroadcastsResponse(
                     return handleUserCollaborationRequestResponse(packet.data);
                 case IncomingSocketEvents.UserUpdate:
                     return handleUserUpdate(packet.data);
+                case IncomingSocketEvents.UpdateRoomReadCounter:
+                    return handleUpdateRoomReadCounter(packet.data);
+                case IncomingSocketEvents.NewRoom:
+                    return handleNewRoom(packet.data);
+                case IncomingSocketEvents.NewMessage:
+                    return handleNewMessage(packet.data);
             }
         });
     });
@@ -339,45 +441,170 @@ function handleUserUpdate(data: IUserUpdatePacket) {
     // TODO: most likely not needed anymore
 }
 
-export function subscribe(
-    type: IOutgoingSubscribePacket["type"],
-    resourceId: string
+function handleUpdateRoomReadCounter(
+    data: IIncomingUpdateRoomReadCounterPacket
 ) {
-    if (socket) {
-        const data: IOutgoingSubscribePacket = { type, customId: resourceId };
+    const user = SessionSelectors.assertGetUser(store.getState());
+    const room = RoomSelectors.getRoom(store.getState(), data.roomId);
+
+    if (!room) {
+        // TODO: log something to the log server
+        return;
+    }
+
+    store.dispatch(
+        RoomActions.updateRoomReadCounter({
+            roomId: room.customId,
+            userId: data.member.userId,
+            readCounter: data.member.readCounter,
+            isSignedInUser: user.customId === data.member.userId,
+        })
+    );
+}
+
+function handleNewRoom(data: IIncomingNewRoomPacket) {
+    const persistedRoom = data.room;
+    const user = SessionSelectors.assertGetUser(store.getState());
+    const recipientMemberData = persistedRoom.members.find(
+        (member) => member.userId !== user.customId
+    )!;
+
+    const recipientId = recipientMemberData.userId;
+    const tempRoomId = getNewTempId(recipientId);
+    const tempRoom = RoomSelectors.getRoom(store.getState(), tempRoomId);
+
+    if (tempRoom) {
+        store.dispatch(
+            RoomActions.updateRoom({
+                id: tempRoom.customId,
+                data: persistedRoom,
+                meta: { arrayUpdateStrategy: "replace" },
+            })
+        );
+    } else {
+        const existingRoom = RoomSelectors.getRoom(
+            store.getState(),
+            persistedRoom.customId
+        );
+
+        if (existingRoom) {
+            // TODO: this shouldn't happen, log it to the server
+            store.dispatch(
+                RoomActions.updateRoom({
+                    id: existingRoom.customId,
+                    data: persistedRoom,
+                    meta: { arrayUpdateStrategy: "replace" },
+                })
+            );
+        } else {
+            store.dispatch(
+                RoomActions.addRoom(
+                    getRoomFromPersistedRoom(persistedRoom, user.customId)
+                )
+            );
+        }
+    }
+
+    store.dispatch(KeyValueActions.pushRooms([persistedRoom.name]));
+}
+
+function handleNewMessage(data: IIncomingNewMessagePacket) {
+    const chat = data.chat;
+    const room = RoomSelectors.getRoom(store.getState(), chat.roomId);
+
+    if (!room) {
+        throw new RoomDoesNotExistError();
+    }
+
+    const pathname = window.location.pathname;
+    const splitPath = pathname.split("chat");
+
+    /**
+     * path format is .../chat/:recipientId
+     * so, if we split, [0] will be ".../", and [1] will be "/:recipientId" if it exists
+     * so basically, return if user is in room
+     */
+    const isUserInRoom =
+        splitPath[1] && splitPath[1].includes(room.recipientId);
+
+    // Add chat to room
+    store.dispatch(
+        RoomActions.addChat({
+            chat,
+            roomId: room.customId,
+            recipientId: room.recipientId,
+            markAsUnseen: !isUserInRoom,
+        })
+    );
+
+    if (isUserInRoom) {
+        return;
+    }
+
+    // Update org unseen chats count
+    const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
+        store.getState(),
+        KeyValueKeys.UnseenChatsCountByOrg
+    );
+
+    const orgUnseenChatsCount = (unseenChatsCountMapByOrg[chat.orgId] || 0) + 1;
+
+    store.dispatch(
+        KeyValueActions.setKey({
+            key: KeyValueKeys.UnseenChatsCountByOrg,
+            value: {
+                ...unseenChatsCountMapByOrg,
+                [chat.orgId]: orgUnseenChatsCount,
+            },
+        })
+    );
+}
+
+export function subscribe(items: ClientSubscribedResources) {
+    if (socket && items.length > 0) {
+        const data: IOutgoingSubscribePacket = { items };
+        const roomsToPush: string[] = [];
         socket.emit(OutgoingSocketEvents.Subscribe, data);
 
         const rooms =
-            KeyValueSelectors.getKey(store.getState(), KeyValueKeys.Rooms) ||
-            {};
-        const roomId = `${type}-${resourceId}`;
+            KeyValueSelectors.getKey<ClientSubscribedResources>(
+                store.getState(),
+                KeyValueKeys.RoomsSubscribedTo
+            ) || {};
 
-        if (!!rooms[roomId]) {
-            return;
-        }
+        items.forEach((item) => {
+            const roomSignature = `${item.type}-${item.customId}`;
 
-        store.dispatch(KeyValueActions.pushRoom(roomId));
+            if (!rooms[roomSignature]) {
+                roomsToPush.push(roomSignature);
+            }
+        });
+
+        store.dispatch(KeyValueActions.pushRooms(roomsToPush));
     }
 }
 
-export function unsubcribe(
-    type: IOutgoingSubscribePacket["type"],
-    resourceId: string
-) {
-    if (socket) {
-        const data: IOutgoingSubscribePacket = { type, customId: resourceId };
+export function unsubcribe(items: ClientSubscribedResources) {
+    if (socket && items.length > 0) {
+        const data: IOutgoingSubscribePacket = { items };
+        const roomsToRemove: string[] = [];
         socket.emit(OutgoingSocketEvents.Unsubscribe, data);
 
         const rooms =
-            KeyValueSelectors.getKey(store.getState(), KeyValueKeys.Rooms) ||
-            {};
-        const roomId = `${type}-${resourceId}`;
+            KeyValueSelectors.getKey(
+                store.getState(),
+                KeyValueKeys.RoomsSubscribedTo
+            ) || {};
 
-        if (!!!rooms[roomId]) {
-            return;
-        }
+        items.forEach((item) => {
+            const roomId = `${item.type}-${item.customId}`;
 
-        store.dispatch(KeyValueActions.removeRoom(roomId));
+            if (rooms[roomId]) {
+                roomsToRemove.push(roomId);
+            }
+        });
+
+        store.dispatch(KeyValueActions.removeRooms(roomsToRemove));
     }
 }
 

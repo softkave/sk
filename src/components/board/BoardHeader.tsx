@@ -14,7 +14,7 @@ import SelectBlockOptionsMenu, {
     SettingsMenuKey,
 } from "./SelectBlockOptionsMenu";
 
-export interface IBHeader2Props {
+export interface IBoardHeaderProps {
     block: IBlock;
     isMobile: boolean;
     isAppMenuFolded: boolean;
@@ -25,7 +25,7 @@ export interface IBHeader2Props {
     style?: React.CSSProperties;
 }
 
-const BHeader2: React.FC<IBHeader2Props> = (props) => {
+const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
     const {
         block,
         onClickDeleteBlock,
@@ -118,13 +118,14 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
                 width: "100%",
                 alignItems: "center",
                 padding: "16px",
+                height: 56,
                 borderBottom: "1px solid #d9d9d9",
             }}
         >
             {renderHeaderPrefixButton()}
             <BlockThumbnail
                 block={block}
-                showFields={["name", "type"]}
+                showFields={["name"]}
                 style={{ flex: 1 }}
             />
             <StyledContainer s={{ alignItems: "center" }}>
@@ -142,4 +143,4 @@ const BHeader2: React.FC<IBHeader2Props> = (props) => {
     );
 };
 
-export default React.memo(BHeader2);
+export default BoardHeader;

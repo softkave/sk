@@ -22,7 +22,7 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
 ) => {
     const { block } = props;
     const dispatch: AppDispatch = useDispatch();
-    const user = useSelector(SessionSelectors.getSignedInUserRequired);
+    const user = useSelector(SessionSelectors.assertGetUser);
     const resolutions = block.boardResolutions || [];
     const operationStatus = useOperation();
 
@@ -36,7 +36,6 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
     }
 
     const onSaveChanges = async (values: IBoardTaskResolution[]) => {
-        console.log("got here");
         const result = await dispatch(
             updateBlockOperationAction({
                 opId: operationStatus.opId,

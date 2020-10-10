@@ -5,7 +5,7 @@ import { Plus } from "react-feather";
 import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 import StyledContainer from "../styled/Container";
 import SubTask, { ISubTaskErrors } from "./SubTask";
@@ -42,7 +42,7 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
 
     const internalOnAdd = () => {
         const subTask: ISubTask = {
-            customId: newId(),
+            customId: getNewId(),
             description: "",
             createdAt: getDateString(),
             createdBy: user.customId,

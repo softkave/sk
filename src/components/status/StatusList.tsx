@@ -15,7 +15,7 @@ import * as yup from "yup";
 import { IBlockStatus } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, newId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import { IFormikFormErrors } from "../form/formik-utils";
 import { StyledForm } from "../form/FormStyledComponents";
 import { getFormikTouched, validateWithYupSchema } from "../form/utils";
@@ -23,7 +23,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -304,7 +304,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
             color: randomColor(),
             createdAt: getDateString(),
             createdBy: user.customId,
-            customId: newId(),
+            customId: getNewId(),
         };
 
         formikHelpers.addToArrayField("statusList", status, { name: "" }, {});
@@ -353,7 +353,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
                             flex: 1,
                         }}
                     >
-                        <DeviceScrollbar>{renderList()}</DeviceScrollbar>
+                        <Scrollbar>{renderList()}</Scrollbar>
                     </StyledContainer>
                     {renderSubmitControls()}
                 </StyledContainer>

@@ -1,6 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
-import { Tabs } from "antd";
+import { Badge, Tabs } from "antd";
 import { noop } from "lodash";
 import path from "path";
 import React from "react";
@@ -8,10 +8,12 @@ import { MoreHorizontal } from "react-feather";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
+import ChatRoom from "../chat/ChatRoom";
+import ChatRoomsContainer from "../chat/ChatRoomsContainer";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
-import DeviceScrollbar from "../utilities/DeviceScrollbar";
+import Scrollbar from "../utilities/Scrollbar";
 import BlockContainer from "./BlockContainer";
 import BoardBlockHeader from "./BoardBlockHeader";
 import BoardMain from "./BoardMain";
@@ -40,6 +42,7 @@ export interface IOrgBoardProps {
     isMobile: boolean;
     isAppMenuFolded: boolean;
     isOrgMenuFolded: boolean;
+    unseenChatsCount: number;
     onToggleFoldAppMenu: () => void;
     onToggleFoldOrgMenu: () => void;
     onClickUpdateBlock: OnClickUpdateBlock;
@@ -55,14 +58,15 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     const {
         blockPath,
         block,
+        isMobile,
+        isAppMenuFolded,
+        isOrgMenuFolded,
+        unseenChatsCount,
         onClickAddBlock,
         onClickAddCollaborator,
         onClickDeleteBlock,
         onClickUpdateBlock,
         onClickBlock,
-        isMobile,
-        isAppMenuFolded,
-        isOrgMenuFolded,
         onToggleFoldAppMenu,
         onToggleFoldOrgMenu,
     } = props;
@@ -86,6 +90,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
     const renderResourceType = () => {
         let placeholder = "";
+        let noAddBtn = false;
 
         switch (resourceType) {
             case "boards":
@@ -98,6 +103,11 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
             case "collaborators":
                 placeholder = "Search collaborators...";
+                break;
+
+            case "chat":
+                placeholder = "Search chats...";
+                noAddBtn = true;
                 break;
         }
 
@@ -130,8 +140,9 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         marginBottom: "8px",
                         marginTop: "8px",
                     }}
+                    noAddBtn={noAddBtn}
                 />
-                <DeviceScrollbar>
+                <Scrollbar>
                     <BoardTypeList
                         block={block}
                         searchQuery={searchQueries[resourceType]}
@@ -140,25 +151,14 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         selectedResourceType={resourceType}
                         style={{ height: "100%" }}
                     />
-                </DeviceScrollbar>
+                </Scrollbar>
             </StyledContainer>
         );
     };
 
     const onSelectResourceType = (key: BoardResourceType) => {
         const nextPath = `${blockPath}/${key}`;
-
-        switch (key) {
-            case "boards":
-            case "tasks":
-                history.push(nextPath);
-                break;
-
-            case "collaboration-requests":
-            case "collaborators":
-                history.push(nextPath);
-                break;
-        }
+        history.push(nextPath);
     };
 
     const renderTabs = () => {
@@ -169,21 +169,29 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 tabBarGutter={0}
                 moreIcon={<MoreHorizontal />}
             >
-                {resourceTypes.map((type, i) => {
-                    return (
-                        <Tabs.TabPane
-                            tab={
-                                <span
-                                    style={{
-                                        textTransform: "capitalize",
-                                        padding: "0 16px",
-                                    }}
-                                >
-                                    {getBoardResourceTypeFullName(type)}
-                                </span>
-                            }
-                            key={type}
+                {resourceTypes.map((type) => {
+                    const text = (
+                        <span
+                            style={{
+                                textTransform: "capitalize",
+                                padding: "0 16px",
+                            }}
                         >
+                            {getBoardResourceTypeFullName(type)}
+                            {type === "chat" && (
+                                <Badge
+                                    count={unseenChatsCount}
+                                    style={{
+                                        marginLeft: "8px",
+                                        display: "inline-block",
+                                    }}
+                                ></Badge>
+                            )}
+                        </span>
+                    );
+
+                    return (
+                        <Tabs.TabPane tab={text} key={type}>
                             {renderResourceType()}
                         </Tabs.TabPane>
                     );
@@ -217,7 +225,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     },
 
                     ["& .ant-tabs-nav"]: {
-                        marginBottom: "8px",
+                        marginBottom: "4px",
                     },
                 }}
             >
@@ -273,6 +281,27 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         );
     };
 
+    const renderChatsView = (recipientId: string) => {
+        return (
+            <ChatRoomsContainer
+                orgId={block.customId}
+                render={(args) => {
+                    const room = args.sortedRooms.find(
+                        (rm) => rm.recipientId === recipientId
+                    )!;
+                    return (
+                        <ChatRoom
+                            room={room}
+                            recipientsMap={args.recipientsMap}
+                            onSendMessage={args.onSendMessage}
+                            updateRoomReadCounter={args.updateRoomReadCounter}
+                        />
+                    );
+                }}
+            />
+        );
+    };
+
     const renderMobileView = () => {
         return (
             <Switch>
@@ -282,6 +311,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         return ensureBoardsLoaded(
                             routeProps.match.params.boardId
                         );
+                    }}
+                />
+                <Route
+                    path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                    render={(routeProps) => {
+                        const recipientId = routeProps.match.params.recipientId;
+                        return renderChatsView(recipientId);
                     }}
                 />
                 <Route
@@ -315,6 +351,14 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                                 return ensureBoardsLoaded(
                                     routeProps.match.params.boardId
                                 );
+                            }}
+                        />
+                        <Route
+                            path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                            render={(routeProps) => {
+                                const recipientId =
+                                    routeProps.match.params.recipientId;
+                                return renderChatsView(recipientId);
                             }}
                         />
                     </Switch>

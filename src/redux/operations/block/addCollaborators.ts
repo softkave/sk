@@ -8,7 +8,7 @@ import {
 } from "../../../models/notification/notification";
 import { IAddCollaboratorFormItemValues } from "../../../models/types";
 import BlockAPI from "../../../net/block";
-import { getDateString, newId } from "../../../utils/utils";
+import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
@@ -38,7 +38,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     GetOperationActionArgs<IAddCollaboratorsOperationActionArgs>,
     IAppAsyncThunkConfig
 >("block/addCollaborators", async (arg, thunkAPI) => {
-    const id = arg.opId || newId();
+    const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
@@ -68,13 +68,11 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                 expiresAt: requestExpiresAt
                     ? moment(requestExpiresAt).valueOf()
                     : undefined,
-                customId: newId(),
+                customId: getNewId(),
             };
         });
 
-        const user = SessionSelectors.getSignedInUserRequired(
-            thunkAPI.getState()
-        );
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
         if (!isDemoMode) {
             const result = await BlockAPI.addCollaborators(
@@ -90,7 +88,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                 return {
                     body: req.body,
                     createdAt: getDateString(),
-                    customId: newId(),
+                    customId: getNewId(),
                     to: {
                         email: req.email,
                     },

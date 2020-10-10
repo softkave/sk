@@ -14,7 +14,7 @@ import { IAddCollaboratorFormItemValues } from "../../models/types";
 import { IUser } from "../../models/user/user";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
-import { newId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 import FormError from "../form/FormError";
 import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
 import {
@@ -260,7 +260,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         const status: IAddCollaboratorFormItemValues & { customId: string } = {
             email: "",
             body: "",
-            customId: newId(),
+            customId: getNewId(),
         };
 
         formikHelpers.addToArrayField("collaborators", status, {}, {});
