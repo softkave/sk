@@ -236,10 +236,10 @@ const OrgBoardContainer: React.FC<{}> = () => {
     };
 
     React.useEffect(() => {
-        subscribe(block.type as any, block.customId);
+        subscribe([{ type: block.type as any, customId: block.customId }]);
 
         return () => {
-            unsubcribe(block.type as any, block.customId);
+            unsubcribe([{ type: block.type as any, customId: block.customId }]);
         };
     }, [block.customId, block.type]);
 

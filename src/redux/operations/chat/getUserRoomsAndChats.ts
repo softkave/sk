@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import isNumber from "lodash/isNumber";
 import moment, { Moment } from "moment";
 import { IChat, IRoom } from "../../../models/chat/types";
 import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
@@ -164,14 +165,16 @@ export function getRoomUserUnseenChatsCountAndStartIndex(
         const chatCreated = moment(chat.createdAt);
 
         if (chatCreated.isBefore(readCounter)) {
-            unseenChatsStartIndex = i === room.chats.length - 1 ? null : i + 1;
             break;
         }
+
+        unseenChatsStartIndex = i;
     }
 
-    const unseenChatsCount = unseenChatsStartIndex
-        ? room.chats.length - unseenChatsStartIndex - 1
-        : 0;
+    const unseenChatsCount =
+        isNumber(unseenChatsStartIndex) && unseenChatsStartIndex >= 0
+            ? room.chats.length - unseenChatsStartIndex
+            : 0;
 
     return {
         unseenChatsCount,

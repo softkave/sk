@@ -1,4 +1,4 @@
-import { AsyncThunk, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IChat } from "../../../models/chat/types";
 import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat";
 import {
@@ -15,7 +15,7 @@ import RoomSelectors from "../../rooms/selectors";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import OperationActions from "../actions";
-import { IOperation, OperationStatus } from "../operation";
+import { OperationStatus } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
@@ -24,7 +24,7 @@ import { GetOperationActionArgs } from "../types";
 export class NoRoomOrRecipientProvidedError extends Error {
     public name = "NoRoomOrRecipientProvidedError";
     public message =
-        "A room or recipient must be provided when sending message";
+        "A room or recipient must be provided when sending a message";
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -39,6 +39,7 @@ export const sendMessageOperationAction = createAsyncThunk<
     IAppAsyncThunkConfig
 >("chat/sendMessage", async (arg, thunkAPI) => {
     const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+    // const isDemoMode = true;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     const isTempRoom = isTempId(arg.roomId);
     const chatTempId = getNewTempId();
@@ -52,9 +53,12 @@ export const sendMessageOperationAction = createAsyncThunk<
         sending: true,
     };
 
-    const firstChatOp = OperationSelectors.queryFilterOperation(
+    const opId = arg.opId || getNewId();
+    let firstChatOp = OperationSelectors.queryFilterOperation(
         thunkAPI.getState(),
-        { type: OperationType.SendMessage }
+        {
+            type: OperationType.SendMessage,
+        }
     );
 
     const chatIndex = RoomSelectors.getRoomChatsCount(
@@ -107,8 +111,7 @@ export const sendMessageOperationAction = createAsyncThunk<
     }
 
     if (isTempRoom && !isDemoMode) {
-        const opId = arg.opId || getNewId();
-        const op = {
+        firstChatOp = {
             id: opId,
             operationType: OperationType.SendMessage,
             status: {
@@ -117,8 +120,7 @@ export const sendMessageOperationAction = createAsyncThunk<
             },
             resourceId: chat.customId,
         };
-
-        thunkAPI.dispatch(OperationActions.pushOperation(op));
+        thunkAPI.dispatch(OperationActions.pushOperation(firstChatOp));
     }
 
     try {
@@ -218,6 +220,15 @@ export const sendMessageOperationAction = createAsyncThunk<
                 roomId: isTempRoom ? "" : arg.roomId,
             })
         );
+
+        if (firstChatOp) {
+            firstChatOp.status = {
+                status: OperationStatus.Error,
+                timestamp: Date.now(),
+                error: "Error sending message",
+            };
+            thunkAPI.dispatch(OperationActions.pushOperation(firstChatOp));
+        }
 
         const queuedChats =
             KeyValueSelectors.getKey<IQueuedChatsByRoomId>(

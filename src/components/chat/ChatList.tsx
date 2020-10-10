@@ -14,44 +14,47 @@ export interface IChatListProps {
 const ChatList: React.FC<IChatListProps> = (props) => {
     const { chats, recipientsMap } = props;
 
-    const ref = React.useRef<typeof Scrollbar>();
+    const parentRef = React.useRef<ScrollbarMethods>();
 
     React.useEffect(() => {
-        if (ref.current) {
-            ((ref.current as unknown) as ScrollbarMethods)?.scrollToBottom();
+        if (parentRef.current && chats.length > 0) {
+            parentRef.current.scrollToBottom();
         }
-    }, []);
+    }, [chats.length]);
 
     if (chats.length === 0) {
-        return <EmptyMessage>Send a message to begin</EmptyMessage>;
+        return (
+            <EmptyMessage>
+                Write a message and press the enter button to send
+            </EmptyMessage>
+        );
     }
 
     let hideAvatarCheck: { [key: string]: boolean } = {};
 
     return (
-        <StyledContainer s={{ flexDirection: "column", padding: "16px" }}>
-            <Scrollbar>
-                {chats.map((chat, i) => {
-                    const chatRender = (
-                        <StyledContainer
-                            key={i}
-                            s={{
-                                marginBottom: i < chats.length - 1 ? "16px" : 0,
-                            }}
-                        >
-                            <Chat
-                                chat={chat}
-                                sender={recipientsMap[chat.sender]}
-                                hideAvatar={hideAvatarCheck[chat.sender]}
-                            />
-                        </StyledContainer>
-                    );
+        <Scrollbar ref={parentRef}>
+            {chats.map((chat, i) => {
+                const chatRender = (
+                    <StyledContainer
+                        key={i}
+                        s={{
+                            margin: "16px",
+                            marginTop: i === 0 ? "16px" : 0,
+                        }}
+                    >
+                        <Chat
+                            chat={chat}
+                            sender={recipientsMap[chat.sender]}
+                            hideAvatar={hideAvatarCheck[chat.sender]}
+                        />
+                    </StyledContainer>
+                );
 
-                    hideAvatarCheck = { [chat.sender]: true };
-                    return chatRender;
-                })}
-            </Scrollbar>
-        </StyledContainer>
+                hideAvatarCheck = { [chat.sender]: true };
+                return chatRender;
+            })}
+        </Scrollbar>
     );
 };
 

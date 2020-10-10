@@ -35,6 +35,7 @@ import { IPersistedRoom } from "./chat";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;
+let socketAuthCompleted = false;
 const socketWaitQueue: Array<(sock: typeof Socket | null) => void> = [];
 
 function clearSocketWaitQueue(sock: typeof Socket | null) {
@@ -55,7 +56,7 @@ export function getSocket() {
 }
 
 export async function waitGetSocket() {
-    if (socket) {
+    if (socket && socket.connected && socketAuthCompleted) {
         return socket;
     }
 
@@ -258,6 +259,7 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
         return;
     }
 
+    socketAuthCompleted = true;
     clearSocketWaitQueue(socket);
 
     const rooms =
@@ -294,7 +296,10 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
 }
 
 function handleDisconnect() {
-    socket = null;
+    // TODO: should we set to null, won't that prevent reconnection
+    // because it will be garbage collected
+    // socket = null;
+    socketAuthCompleted = false;
 
     if (connectionFailedBefore) {
         return;

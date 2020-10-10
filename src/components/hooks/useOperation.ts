@@ -7,6 +7,7 @@ import {
     IOperation,
     IOperationStatus,
     isOperationCompleted,
+    isOperationError,
     isOperationStartedOrPending,
 } from "../../redux/operations/operation";
 import OperationSelectors, {
@@ -29,6 +30,10 @@ type LoadOperation = (statusData: IUseOperationStatus) => void;
 
 interface IUseOperationOptions {
     deleteManagedOperationOnUnmount?: boolean;
+    waitFor?: Array<
+        IQueryFilterOperationSelector | IOperation | null | undefined
+    >;
+    handleWaitForError?: () => void;
 }
 
 type UseOperation = (
@@ -91,11 +96,11 @@ const useOperation: UseOperation = (
     const [spareIdStore, setSpareIdData] = React.useState<ISpareIdStore>({
         id: getNewId(),
     });
+
     const isSelectorEmpty = Object.keys(selector).length === 0;
     const operation = useSelector<IAppState, IOperation | undefined>(
         (state) => {
             // TODO: how can we cache previous filters
-
             if (isSelectorEmpty) {
                 return OperationSelectors.getOperationWithId(
                     state,
@@ -106,6 +111,44 @@ const useOperation: UseOperation = (
             return OperationSelectors.queryFilterOperation(state, selector);
         }
     );
+
+    const shouldWait = useSelector<IAppState, boolean>((state) => {
+        if (operation) {
+            return false;
+        }
+
+        if (
+            !options.waitFor ||
+            options.waitFor.length === 0 ||
+            !options.handleWaitForError
+        ) {
+            return false;
+        }
+
+        const waitForOperations = OperationSelectors.queryFilterOperations(
+            state,
+            options.waitFor
+        );
+
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < waitForOperations.length; i++) {
+            const op = waitForOperations[i];
+
+            if (!op) {
+                return true;
+            }
+
+            if (isOperationError(op)) {
+                options.handleWaitForError();
+            }
+
+            if (!isOperationCompleted(op)) {
+                return true;
+            }
+        }
+
+        return false;
+    });
 
     const statusData: IUseOperationStatus = operation
         ? getOperationStats(operation)
@@ -123,10 +166,10 @@ const useOperation: UseOperation = (
     }, [isSelectorEmpty, spareIdStore.id]);
 
     React.useEffect(() => {
-        if (isFunction(loadOperation)) {
+        if (isFunction(loadOperation) && !shouldWait) {
             loadOperation(statusData);
         }
-    }, [statusData, loadOperation]);
+    }, [statusData, loadOperation, shouldWait]);
 
     React.useEffect(() => {
         return () => {

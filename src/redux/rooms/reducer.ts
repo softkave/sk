@@ -19,7 +19,10 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
             action.payload.meta
         );
 
-        state[room.customId || action.payload.id] = room;
+        if (room.customId) {
+            delete state[action.payload.id];
+            state[room.customId] = room;
+        }
     });
 
     builder.addCase(RoomActions.deleteRoom, (state, action) => {

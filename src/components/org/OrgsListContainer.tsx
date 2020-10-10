@@ -51,6 +51,30 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     const selectedId =
         orgRouteMatch?.params.orgId || requestRouteMatch?.params.requestId;
 
+    const loadUserRoomsAndChats = React.useCallback(
+        async (loadRequestsProps: IUseOperationStatus) => {
+            const operation = loadRequestsProps.operation;
+            const shouldLoad = !operation;
+
+            if (shouldLoad) {
+                await dispatch(
+                    getUserRoomsAndChatsOperationAction({
+                        opId: loadRequestsProps.opId,
+                    })
+                );
+            }
+        },
+        [dispatch]
+    );
+
+    const loadRoomsAndChatsOp = useOperation(
+        { type: OperationType.GetUserRoomsAndChats },
+        loadUserRoomsAndChats,
+        {
+            deleteManagedOperationOnUnmount: false,
+        }
+    );
+
     const loadOrgs = React.useCallback(
         async (loadOrgsProps: IUseOperationStatus) => {
             const operation = loadOrgsProps.operation;
@@ -76,6 +100,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         loadOrgs,
         {
             deleteManagedOperationOnUnmount: false,
+            waitFor: [loadRoomsAndChatsOp.operation],
         }
     );
 
@@ -103,34 +128,10 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         }
     );
 
-    const loadUserRoomsAndChats = React.useCallback(
-        async (loadRequestsProps: IUseOperationStatus) => {
-            const operation = loadRequestsProps.operation;
-            const shouldLoad = !operation;
-
-            if (shouldLoad) {
-                await dispatch(
-                    getUserRoomsAndChatsOperationAction({
-                        opId: loadRequestsProps.opId,
-                    })
-                );
-            }
-        },
-        [dispatch]
-    );
-
-    const roomsAndChatsOp = useOperation(
-        { type: OperationType.GetUserRoomsAndChats },
-        loadUserRoomsAndChats,
-        {
-            deleteManagedOperationOnUnmount: false,
-        }
-    );
-
     const loadOpsState = mergeOperationStats([
         orgsOp,
         requestsOp,
-        roomsAndChatsOp,
+        loadRoomsAndChatsOp,
     ]);
     const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
     const isLoading = loadOpsState.loading;

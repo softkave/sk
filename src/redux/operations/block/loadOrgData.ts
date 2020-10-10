@@ -8,7 +8,7 @@ import {
 } from "../../../models/fragments";
 import { IUser } from "../../../models/user/user";
 import { netCallWithAuth } from "../../../net/utils";
-import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
+import { getNewId, getNewTempId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import KeyValueActions from "../../key-value/actions";
 import KeyValueSelectors from "../../key-value/selectors";
@@ -229,39 +229,43 @@ function createOrgCollaboratorsTempRooms(
                 { userId, readCounter: "" },
                 { userId: collaborator.customId, readCounter: "" },
             ],
-            // unseenChatsStartIndex: null,
-            // unseenChatsCount: 0,
-            unseenChatsStartIndex: null,
-            unseenChatsCount: 3,
-            chats: [
-                {
-                    customId: "1",
-                    orgId,
-                    message: "Hello World!",
-                    sender: userId,
-                    roomId: tempRoomId,
-                    createdAt: getDateString(),
-                    sending: true,
-                },
-                {
-                    customId: "2",
-                    orgId,
-                    message: "Bye Bye World!",
-                    sender: collaborator.customId,
-                    roomId: tempRoomId,
-                    createdAt: getDateString(),
-                    errorMessage: "Error sending message",
-                },
-                {
-                    customId: "3",
-                    orgId,
-                    message: "Another One!",
-                    sender: collaborator.customId,
-                    roomId: tempRoomId,
-                    createdAt: getDateString(),
-                },
-            ],
             recipientId: collaborator.customId,
+            unseenChatsStartIndex: null,
+            unseenChatsCount: 0,
+            chats: [],
+            // unseenChatsStartIndex: 0,
+            // unseenChatsCount: 3,
+            // chats: [
+            //     {
+            //         customId: "1",
+            //         orgId,
+            //         message:
+            //             "Hello World! Hello World! Hello World! Hello World! Hello World! Hello World! Hello World!",
+            //         sender: userId,
+            //         roomId: tempRoomId,
+            //         createdAt: getDateString(),
+            //         sending: true,
+            //     },
+            //     {
+            //         customId: "2",
+            //         orgId,
+            //         message:
+            //             "Bye Bye World! Bye Bye World! Bye Bye World! Bye Bye World! Bye Bye World!",
+            //         sender: collaborator.customId,
+            //         roomId: tempRoomId,
+            //         createdAt: getDateString(),
+            //         errorMessage: "Error sending message",
+            //     },
+            //     {
+            //         customId: "3",
+            //         orgId,
+            //         message: "Another One!",
+            //         sender: collaborator.customId,
+            //         roomId: tempRoomId,
+            //         createdAt: getDateString(),
+            //         queued: true,
+            //     },
+            // ],
         };
 
         tempRooms.push(tempRoom);

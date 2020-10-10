@@ -39,7 +39,11 @@ const Chat: React.FC<IChatProps> = (props) => {
                 <Typography.Paragraph style={{ margin: 0 }}>
                     {chat.message}
                 </Typography.Paragraph>
-                {chat.sending ? (
+                {chat.queued ? (
+                    <Typography.Text type="secondary">
+                        Queued for sending
+                    </Typography.Text>
+                ) : chat.sending ? (
                     <Typography.Text type="secondary">
                         Sending...
                     </Typography.Text>
@@ -49,7 +53,7 @@ const Chat: React.FC<IChatProps> = (props) => {
                     </Typography.Text>
                 ) : (
                     <Typography.Text type="secondary">
-                        {createdAt.fromNow()}{" "}
+                        {/* {createdAt.fromNow()}{" "} */}
                         {createdAt.format("h:mm A, ddd MMM D YYYY")}
                     </Typography.Text>
                 )}

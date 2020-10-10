@@ -33,7 +33,6 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
 
     const onSubmit = (values: { resolutionsList: IBoardTaskResolution[] }) => {
         // TODO: should we alert the user before saving if they have editing items?
-        console.log("holla!");
         editingResolutionsList.reset();
         saveChanges(values.resolutionsList);
     };
@@ -265,10 +264,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         return (
             <StyledContainerAsForm
                 s={{ width: "100%", height: "100%", flexDirection: "column" }}
-                // onSubmit={formik.handleSubmit}
                 onSubmit={(e) => {
-                    // e.preventDefault()
-                    console.log("jo!");
                     formik.handleSubmit(e);
                 }}
             >

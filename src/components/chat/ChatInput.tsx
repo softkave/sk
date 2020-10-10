@@ -26,7 +26,10 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
                 value={message}
                 autoSize={{ minRows: 1, maxRows: 3 }}
                 maxLength={300}
-                onPressEnter={sendMessage}
+                onPressEnter={(evt) => {
+                    evt.preventDefault();
+                    sendMessage();
+                }}
                 style={{ resize: "none" }}
                 placeholder="Write a message..."
                 onChange={(evt) => {

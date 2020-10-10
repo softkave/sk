@@ -11,12 +11,6 @@ import {
     IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat";
 import BlockSelectors from "../../redux/blocks/selectors";
-import KeyValueActions from "../../redux/key-value/actions";
-import KeyValueSelectors from "../../redux/key-value/selectors";
-import {
-    IUnseenChatsCountByOrg,
-    KeyValueKeys,
-} from "../../redux/key-value/types";
 import { sendMessageOperationAction } from "../../redux/operations/chat/sendMessage";
 import { updateRoomReadCounterOperationAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
@@ -51,13 +45,6 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
 
     const rooms = useSelector<IAppState, IRoom[]>((state) =>
         RoomSelectors.getOrgRooms(state, orgId)
-    );
-
-    const unseenChatsCountMapByOrg = useSelector<
-        IAppState,
-        IUnseenChatsCountByOrg
-    >((state) =>
-        KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
     );
 
     const org = useSelector<IAppState, IBlock>((state) =>
@@ -132,24 +119,8 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
                 history.push(url);
             }
         },
-        [history]
+        [history, selectedRoomRecipientId]
     );
-
-    // React.useEffect(() => {
-    //     const orgUnseenChatsCount = unseenChatsCountMapByOrg[orgId] || 0;
-
-    //     if (orgUnseenChatsCount) {
-    //         dispatch(
-    //             KeyValueActions.setKey({
-    //                 key: KeyValueKeys.UnseenChatsCountByOrg,
-    //                 value: {
-    //                     ...unseenChatsCountMapByOrg,
-    //                     [orgId]: 0,
-    //                 },
-    //             })
-    //         );
-    //     }
-    // }, [dispatch, orgId, unseenChatsCountMapByOrg]);
 
     return render({
         sortedRooms,

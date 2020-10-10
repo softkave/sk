@@ -34,6 +34,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
         room.customId,
         room.orgId,
         room.chats.length,
+        room.unseenChatsCount,
         updateRoomReadCounter,
     ]);
 
@@ -49,7 +50,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     return (
         <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
             <ChatRoomHeader recipient={recipientsMap[room.recipientId]} />
-            <StyledContainer s={{ flex: 1 }}>
+            <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
                 <ChatList chats={room.chats} recipientsMap={recipientsMap} />
             </StyledContainer>
             <ChatInput onSendMessage={sendMessage} />
