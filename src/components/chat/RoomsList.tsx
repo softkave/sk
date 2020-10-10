@@ -24,6 +24,10 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
         getRoomStyle,
     } = props;
 
+    if (sortedRooms.length === 0) {
+        return <EmptyMessage>No collaborators in org yet</EmptyMessage>;
+    }
+
     const filterRooms = () => {
         if (!searchQuery) {
             return sortedRooms;

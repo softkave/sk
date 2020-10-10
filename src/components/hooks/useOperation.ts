@@ -33,7 +33,7 @@ interface IUseOperationOptions {
     waitFor?: Array<
         IQueryFilterOperationSelector | IOperation | null | undefined
     >;
-    handleWaitForError?: () => void;
+    handleWaitForError?: () => boolean; // True to cancel the op load, false to fetch
 }
 
 type UseOperation = (
@@ -139,7 +139,7 @@ const useOperation: UseOperation = (
             }
 
             if (isOperationError(op)) {
-                options.handleWaitForError();
+                return options.handleWaitForError();
             }
 
             if (!isOperationCompleted(op)) {

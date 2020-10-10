@@ -101,6 +101,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         {
             deleteManagedOperationOnUnmount: false,
             waitFor: [loadRoomsAndChatsOp.operation],
+            handleWaitForError: () => false,
         }
     );
 

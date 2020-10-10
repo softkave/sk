@@ -474,6 +474,7 @@ function handleNewRoom(data: IIncomingNewRoomPacket) {
     const tempRoom = RoomSelectors.getRoom(store.getState(), tempRoomId);
 
     if (tempRoom) {
+        persistedRoom.members = tempRoom.members;
         store.dispatch(
             RoomActions.updateRoom({
                 id: tempRoom.customId,
@@ -489,6 +490,7 @@ function handleNewRoom(data: IIncomingNewRoomPacket) {
 
         if (existingRoom) {
             // TODO: this shouldn't happen, log it to the server
+            persistedRoom.members = existingRoom.members;
             store.dispatch(
                 RoomActions.updateRoom({
                     id: existingRoom.customId,
@@ -516,16 +518,24 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
         throw new RoomDoesNotExistError();
     }
 
-    const pathname = window.location.pathname;
-    const splitPath = pathname.split("chat");
-
     /**
-     * path format is .../chat/:recipientId
-     * so, if we split, [0] will be ".../", and [1] will be "/:recipientId" if it exists
-     * so basically, return if user is in room
+     * path format is /app/orgs/:orgId/chat/:recipientId
      */
-    const isUserInRoom =
-        splitPath[1] && splitPath[1].includes(room.recipientId);
+    let isUserInRoom = false;
+    const pathname = window.location.pathname;
+    const splitPath = pathname.split("/");
+    const orgsPathIndex = splitPath.indexOf("orgs");
+
+    if (orgsPathIndex !== -1) {
+        const chatPathIndex = splitPath.indexOf("chat");
+
+        if (chatPathIndex !== -1) {
+            const orgId = splitPath[orgsPathIndex + 1];
+            const recipientId = splitPath[chatPathIndex + 1];
+            isUserInRoom =
+                chat.orgId === orgId && room.recipientId === recipientId;
+        }
+    }
 
     // Add chat to room
     store.dispatch(
@@ -536,6 +546,8 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
             markAsUnseen: !isUserInRoom,
         })
     );
+
+    console.log({ isUserInRoom });
 
     if (isUserInRoom) {
         return;

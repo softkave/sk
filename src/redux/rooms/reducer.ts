@@ -1,4 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
+import isNumber from "lodash/isNumber";
 import moment from "moment";
 import { IChat } from "../../models/chat/types";
 import { mergeData } from "../../utils/utils";
@@ -91,7 +92,7 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
         if (action.payload.markAsUnseen) {
             room.unseenChatsCount += 1;
 
-            if (!room.unseenChatsStartIndex) {
+            if (isNumber(room.unseenChatsStartIndex)) {
                 room.unseenChatsStartIndex = room.chats.length - 1;
             }
         }

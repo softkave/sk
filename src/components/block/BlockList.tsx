@@ -31,6 +31,14 @@ class BlockList extends React.PureComponent<IBlockListProps> {
             searchQuery,
         } = this.props;
 
+        if (blocks.length === 0) {
+            return (
+                <EmptyMessage>
+                    {emptyDescription || "No blocks yet"}
+                </EmptyMessage>
+            );
+        }
+
         const filterBlocks = () => {
             if (!searchQuery) {
                 return blocks;
