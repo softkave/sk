@@ -1,8 +1,9 @@
 import { Typography } from "antd";
 import React from "react";
+import Task, { ITaskProps } from "../../../components/task/Task";
 import WebCard from "./WebCard";
 
-const TasksCard: React.FC<{}> = () => {
+const TasksCard: React.FC<ITaskProps> = (props) => {
     return (
         <WebCard
             title={
@@ -13,7 +14,11 @@ const TasksCard: React.FC<{}> = () => {
                     <Typography.Text strong>resolutions</Typography.Text>,{" "}
                 </Typography.Text>
             }
-        ></WebCard>
+        >
+            <div style={{ width: "300px" }}>
+                <Task demo {...props} />
+            </div>
+        </WebCard>
     );
 };
 

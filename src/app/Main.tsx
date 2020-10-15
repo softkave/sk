@@ -13,6 +13,7 @@ import { KeyValueKeys } from "../redux/key-value/types";
 import NotificationActions from "../redux/notifications/actions";
 import OperationActions from "../redux/operations/actions";
 import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
+import RoomActions from "../redux/rooms/actions";
 import SessionActions from "../redux/session/actions";
 import SessionSelectors from "../redux/session/selectors";
 import { SessionType } from "../redux/session/types";
@@ -130,9 +131,10 @@ const Main: React.FC<{}> = () => {
             dispatch(UserActions.bulkAddUsers(demoData.users));
             dispatch(BlockActions.bulkAddBlocks(demoData.blocks));
             dispatch(
-                NotificationActions.bulkAddNotifications(demoData.notifications)
+                NotificationActions.bulkAddNotifications(demoData.requests)
             );
-            dispatch(OperationActions.bulkAddOperations(demoData.operations));
+            dispatch(RoomActions.bulkAddRooms(demoData.rooms));
+            dispatch(OperationActions.bulkAddOperations(demoData.ops));
             dispatch(
                 KeyValueActions.setKey({
                     key: KeyValueKeys.RootBlocksLoaded,
@@ -143,7 +145,7 @@ const Main: React.FC<{}> = () => {
                 SessionActions.loginUser({
                     clientId: "demo-clientId",
                     token: "demo-token",
-                    userId: demoData.user.customId,
+                    userId: demoData.web.user.customId,
                     isDemo: true,
                 })
             );

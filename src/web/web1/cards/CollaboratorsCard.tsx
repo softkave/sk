@@ -1,8 +1,14 @@
 import { Typography } from "antd";
 import React from "react";
+import CollaborationRequestThumbnail from "../../../components/collaborator/CollaborationRequestThumbnail";
+import { INotification } from "../../../models/notification/notification";
 import WebCard from "./WebCard";
 
-const CollaboratorsCard: React.FC<{}> = () => {
+export interface ICollaboratorsCardProps {
+    request: INotification;
+}
+
+const CollaboratorsCard: React.FC<ICollaboratorsCardProps> = (props) => {
     return (
         <WebCard
             title={
@@ -11,7 +17,9 @@ const CollaboratorsCard: React.FC<{}> = () => {
                     <Typography.Text strong>collaborators</Typography.Text>
                 </Typography.Text>
             }
-        ></WebCard>
+        >
+            <CollaborationRequestThumbnail {...props} />
+        </WebCard>
     );
 };
 

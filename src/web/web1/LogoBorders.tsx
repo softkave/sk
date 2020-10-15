@@ -9,7 +9,9 @@ export default LogoBorders;
 
 const LogoContainer = styled.div({
     padding: "4px",
-    border: "2px solid black",
+    border: "2px solid grey",
     textTransform: "uppercase",
-    borderRight: "4px solid black",
+    borderRight: "32px solid grey",
+    display: "inline-block",
+    fontWeight: "bold",
 });

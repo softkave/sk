@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import styled from "@emotion/styled";
 import { Space, Typography } from "antd";
 import React from "react";
@@ -17,36 +19,40 @@ const Face: React.FC<{}> = () => {
                 <StyledButtonsContainer>
                     <StyledTagLikeButton
                         to="/signup"
-                        style={{ backgroundColor: "" }}
+                        style={{ backgroundColor: "#36B37E" }}
                     >
                         Signup
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to="/login"
-                        style={{ backgroundColor: "" }}
+                        style={{ backgroundColor: "#6554C0" }}
                     >
                         Login
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to="/forgot-password"
-                        style={{ backgroundColor: "" }}
+                        style={{ backgroundColor: "#00B8D9" }}
                     >
                         Forgot Password
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to="#pricing"
-                        style={{ backgroundColor: "" }}
+                        style={{ backgroundColor: "#FF5630" }}
                     >
                         Pricing
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to={webConstants.demoURL}
-                        style={{ backgroundColor: "" }}
+                        style={{ backgroundColor: "#FFAB00" }}
                     >
                         <Space>
                             Try Demo
                             <ArrowRightCircle
-                                style={{ width: "14px", height: "14px" }}
+                                style={{
+                                    width: "14px",
+                                    height: "14px",
+                                    verticalAlign: "middle",
+                                }}
                             />
                         </Space>
                     </StyledTagLikeButton>
@@ -67,9 +73,15 @@ const StyledTagLikeButton = styled(Link)({
     marginRight: "4px",
     color: "white",
     borderRadius: "4px",
+    padding: "2px 8px",
+    marginBottom: "4px",
 
     ["&:last-of-type"]: {
         marginRight: 0,
+    },
+
+    ["&:hover"]: {
+        color: "white",
     },
 });
 
@@ -77,4 +89,5 @@ const StyledFace = styled.div({
     height: "100%",
     padding: "16px",
     alignItems: "center",
+    display: "flex",
 });

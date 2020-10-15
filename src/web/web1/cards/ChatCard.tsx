@@ -1,8 +1,11 @@
 import { Typography } from "antd";
 import React from "react";
+import RoomsListItem, {
+    IRoomsListItemProps,
+} from "../../../components/chat/RoomsListItem";
 import WebCard from "./WebCard";
 
-const ChatCard: React.FC<{}> = () => {
+const ChatCard: React.FC<IRoomsListItemProps> = (props) => {
     return (
         <WebCard
             title={
@@ -10,7 +13,9 @@ const ChatCard: React.FC<{}> = () => {
                     <Typography.Text strong>Chat</Typography.Text>
                 </Typography.Text>
             }
-        ></WebCard>
+        >
+            <RoomsListItem {...props} />
+        </WebCard>
     );
 };
 

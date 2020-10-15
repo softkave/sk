@@ -1,8 +1,16 @@
 import { Typography } from "antd";
 import React from "react";
+import BlockThumbnail from "../../../components/block/BlockThumnail";
+import { IBlock } from "../../../models/block/block";
 import WebCard from "./WebCard";
 
-const BoardsCard: React.FC<{}> = () => {
+export interface IBoardsCardProps {
+    board: IBlock;
+}
+
+const BoardsCard: React.FC<IBoardsCardProps> = (props) => {
+    const { board } = props;
+
     return (
         <WebCard
             title={
@@ -11,7 +19,9 @@ const BoardsCard: React.FC<{}> = () => {
                     <Typography.Text strong>boards</Typography.Text>
                 </Typography.Text>
             }
-        ></WebCard>
+        >
+            <BlockThumbnail block={board} showFields={["name", "type"]} />
+        </WebCard>
     );
 };
 

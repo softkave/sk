@@ -1,8 +1,16 @@
 import { Typography } from "antd";
 import React from "react";
+import BlockThumbnail from "../../../components/block/BlockThumnail";
+import { IBlock } from "../../../models/block/block";
 import WebCard from "./WebCard";
 
-const OrgsCard: React.FC<{}> = () => {
+export interface IOrgsCardProps {
+    org: IBlock;
+}
+
+const OrgsCard: React.FC<IOrgsCardProps> = (props) => {
+    const { org } = props;
+
     return (
         <WebCard
             title={
@@ -11,7 +19,9 @@ const OrgsCard: React.FC<{}> = () => {
                     <Typography.Text strong>orgs</Typography.Text>
                 </Typography.Text>
             }
-        ></WebCard>
+        >
+            <BlockThumbnail block={org} showFields={["name", "type"]} />
+        </WebCard>
     );
 };
 

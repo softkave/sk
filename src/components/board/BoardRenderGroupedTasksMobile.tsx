@@ -1,4 +1,4 @@
-import { Avatar, Space, Tabs } from "antd";
+import { Avatar, Badge, Space, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -29,12 +29,11 @@ const BoardRenderGroupedTasksMobile: React.FC<IBoardRenderGroupedTasksMobileProp
                         }}
                     >
                         <Space>
-                            <Avatar
-                                size="small"
-                                shape="square"
-                                style={{ backgroundColor: group.color }}
-                            />
                             <span>{group.name}</span>
+                            <Badge
+                                count={group.tasks.length}
+                                style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+                            />
                         </Space>
                     </span>
                 }
