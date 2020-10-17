@@ -15,21 +15,16 @@ const Middle: React.FC<{}> = () => {
     const r = (style: React.CSSProperties) => {
         return (
             <MiddleContainer>
-                <CardContainer style={style}>
+                {/* <CardContainer style={style}>
                     <OrgsCard org={seedData.web.org} />
                 </CardContainer>
                 <CardContainer style={style}>
                     <CollaboratorsCard request={seedData.web.request} />
                 </CardContainer>
-                <CardContainer style={style}>
-                    <ChatCard
-                        room={seedData.web.room}
-                        recipient={seedData.web.recipient}
-                    />
-                </CardContainer>
+
                 <CardContainer style={style}>
                     <BoardsCard board={seedData.web.board} />
-                </CardContainer>
+                </CardContainer> */}
                 <CardContainer style={style}>
                     <TasksCard
                         demo
@@ -42,6 +37,12 @@ const Middle: React.FC<{}> = () => {
                         user={seedData.web.user}
                     />
                 </CardContainer>
+                <CardContainer style={style}>
+                    <ChatCard
+                        room={seedData.web.room}
+                        recipient={seedData.web.recipient}
+                    />
+                </CardContainer>
             </MiddleContainer>
         );
     };
@@ -52,11 +53,14 @@ const Middle: React.FC<{}> = () => {
                 r({
                     // width: getWindowWidth() / 2 - 16,
                     width: "50%",
-                    height: getWindowHeight() / 2 - 16,
+                    // height: getWindowHeight() / 2 - 16,
                 })
             }
             renderForMobile={() =>
-                r({ width: "100%", height: getWindowHeight() })
+                r({
+                    width: "100%",
+                    height: getWindowHeight(),
+                })
             }
         />
     );
@@ -73,7 +77,8 @@ const CardContainer = styled.div({
 
 const MiddleContainer = styled.div({
     // display: "flex",
-    minHeight: "100%",
+    // minHeight: "100%",
     padding: "16px",
+    paddingBottom: "128px",
     // alignItems: "center",
 });

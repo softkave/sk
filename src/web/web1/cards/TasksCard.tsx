@@ -1,23 +1,15 @@
 import { Typography } from "antd";
 import React from "react";
-import Task, { ITaskProps } from "../../../components/task/Task";
+import { ITaskProps } from "../../../components/task/Task";
 import WebCard from "./WebCard";
 
-const TasksCard: React.FC<ITaskProps> = (props) => {
+const TasksCard: React.FC<ITaskProps> = () => {
     return (
         <WebCard
-            title={
-                <Typography.Text>
-                    Create and manage{" "}
-                    <Typography.Text strong>tasks</Typography.Text>,{" "}
-                    <Typography.Text strong>status</Typography.Text>, and{" "}
-                    <Typography.Text strong>resolutions</Typography.Text>,{" "}
-                </Typography.Text>
-            }
+            title={<Typography.Text strong>Task Management</Typography.Text>}
         >
-            <div style={{ width: "300px" }}>
-                <Task demo {...props} />
-            </div>
+            Softkave provides you tools for managing your tasks, from status{" "}
+            tracking, to labels, and priorities and so on.
         </WebCard>
     );
 };

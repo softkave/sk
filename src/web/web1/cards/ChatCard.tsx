@@ -14,7 +14,9 @@ const ChatCard: React.FC<IRoomsListItemProps> = (props) => {
                 </Typography.Text>
             }
         >
-            <RoomsListItem {...props} />
+            With chat tools integrated into the app, you can work and{" "}
+            collaborate with colleagues in real-time.
+            {/* <RoomsListItem {...props} /> */}
         </WebCard>
     );
 };

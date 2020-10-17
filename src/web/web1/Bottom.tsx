@@ -26,7 +26,7 @@ const Bottom: React.FC<{}> = () => {
                 />
                 <IconLink
                     icon={<Facebook />}
-                    text="softave"
+                    text="softkave"
                     href="https://www.facebook.com/softkave"
                 />
             </Space>
@@ -38,8 +38,10 @@ export default Bottom;
 
 const BottomContainer = styled.div({
     display: "flex",
-    height: "100%",
     padding: "16px",
+    paddingBottom: "128px",
     flexDirection: "column",
     width: "100%",
+    height: "100%",
+    justifyContent: "center",
 });

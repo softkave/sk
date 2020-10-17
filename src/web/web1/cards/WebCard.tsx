@@ -30,4 +30,5 @@ const WebCardContainer = styled.div({
     flexDirection: "column",
     width: "100%",
     padding: "12px",
+    maxWidth: "300px",
 });

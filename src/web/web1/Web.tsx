@@ -9,7 +9,7 @@ const Web1: React.FC<{}> = () => {
     return (
         <StyledWeb>
             <Face />
-            <Middle />
+            {/* <Middle /> */}
             <Pricing />
             <Bottom />
         </StyledWeb>

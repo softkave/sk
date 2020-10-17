@@ -104,9 +104,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
 
         return (
             <React.Fragment>
-                <Typography.Text style={{ padding: "0 16px" }}>
-                    Declined Requests
-                </Typography.Text>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Pending Requests
+                </Typography.Text> */}
                 {pendingRequests.map((request) =>
                     wrap(
                         request.customId,
@@ -131,9 +131,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     isPrevGroupRendered || pendingRequests.length > 0) && (
                     <Divider />
                 )}
-                <Typography.Text style={{ padding: "0 16px" }}>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
                     Orgs
-                </Typography.Text>
+                </Typography.Text> */}
                 {orgs.map((org) =>
                     wrap(
                         org.customId,
@@ -160,9 +160,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
             <React.Fragment>
                 {(isPrevGroupRendered =
                     isPrevGroupRendered || orgs.length > 0) && <Divider />}
-                <Typography.Text style={{ padding: "0 16px" }}>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
                     Expired Requests
-                </Typography.Text>
+                </Typography.Text> */}
                 {expiredRequests.map((request) =>
                     wrap(
                         request.customId,
@@ -187,9 +187,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     isPrevGroupRendered || expiredRequests.length > 0) && (
                     <Divider />
                 )}
-                <Typography.Text style={{ padding: "0 16px" }}>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
                     Declined Requests
-                </Typography.Text>
+                </Typography.Text> */}
                 {declinedRequests.map((request) =>
                     wrap(
                         request.customId,
@@ -214,9 +214,9 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                     isPrevGroupRendered || declinedRequests.length > 0) && (
                     <Divider />
                 )}
-                <Typography.Text style={{ padding: "0 16px" }}>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
                     Revoked Requests
-                </Typography.Text>
+                </Typography.Text> */}
                 {revokedRequests.map((request) =>
                     wrap(
                         request.customId,

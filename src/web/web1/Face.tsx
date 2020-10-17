@@ -13,8 +13,10 @@ const Face: React.FC<{}> = () => {
         <StyledFace>
             <Space direction="vertical">
                 <LogoBorders />
-                <Typography.Paragraph type="secondary" style={{ margin: 0 }}>
-                    Chat and task management application
+                <Typography.Paragraph
+                    style={{ margin: "16px 0", fontSize: "20px" }}
+                >
+                    Chat and task management for startups
                 </Typography.Paragraph>
                 <StyledButtonsContainer>
                     <StyledTagLikeButton
@@ -37,13 +39,13 @@ const Face: React.FC<{}> = () => {
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to="#pricing"
-                        style={{ backgroundColor: "#FF5630" }}
+                        style={{ backgroundColor: "#36B37E" }}
                     >
                         Pricing
                     </StyledTagLikeButton>
                     <StyledTagLikeButton
                         to={webConstants.demoURL}
-                        style={{ backgroundColor: "#FFAB00" }}
+                        style={{ backgroundColor: "#FF5630" }}
                     >
                         <Space>
                             Try Demo

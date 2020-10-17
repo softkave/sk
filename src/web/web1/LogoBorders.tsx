@@ -1,14 +1,21 @@
 import styled from "@emotion/styled";
+import { Typography } from "antd";
 import React from "react";
 
 const LogoBorders: React.FC<{}> = () => {
-    return <LogoContainer>Softkave</LogoContainer>;
+    return (
+        <LogoContainer>
+            <Typography.Title style={{ margin: 0, fontSize: "16px" }} level={3}>
+                Softkave
+            </Typography.Title>
+        </LogoContainer>
+    );
 };
 
 export default LogoBorders;
 
 const LogoContainer = styled.div({
-    padding: "4px",
+    padding: "8px",
     border: "2px solid grey",
     textTransform: "uppercase",
     borderRight: "32px solid grey",
