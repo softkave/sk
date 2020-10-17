@@ -547,7 +547,7 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
         })
     );
 
-    console.log({ isUserInRoom });
+    // console.log({ isUserInRoom });
 
     if (isUserInRoom) {
         return;

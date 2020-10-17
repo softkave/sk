@@ -538,8 +538,6 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ]),
     });
 
-    console.log({ board1 });
-
     const task1 = seedBlock({
         user,
         name: "Demo Task One",
