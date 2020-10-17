@@ -1,4 +1,4 @@
-import { Divider } from "antd";
+import { Divider, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import {
@@ -91,11 +91,23 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
     };
 
     let isPrevGroupRendered = false;
+    const hasPendingRequests = pendingRequests.length > 0;
+    const hasOrgs = orgs.length > 0;
+    const hasExpiredRequests = expiredRequests.length > 0;
+    const hasDeclinedRequests = declinedRequests.length > 0;
+    const hasRevokedRequests = revokedRequests.length > 0;
 
-    return (
-        <React.Fragment>
-            {pendingRequests.length > 0 &&
-                pendingRequests.map((request) =>
+    const renderPendingRequests = () => {
+        if (!hasPendingRequests) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Pending Requests
+                </Typography.Text> */}
+                {pendingRequests.map((request) =>
                     wrap(
                         request.customId,
                         <OrgCollaborationRequestThumbnail
@@ -104,76 +116,127 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         () => onClickRequest(request)
                     )
                 )}
-            {orgs.length > 0 && (
-                <React.Fragment>
-                    {(isPrevGroupRendered =
-                        isPrevGroupRendered || pendingRequests.length > 0) && (
-                        <Divider />
-                    )}
-                    {orgs.map((org) =>
-                        wrap(
-                            org.customId,
-                            <BlockThumbnail
-                                block={org}
-                                showFields={["name"]}
-                                unseenChatsCount={
-                                    unseenChatsCountMapByOrg[org.customId]
-                                }
-                            />,
-                            () => onClickBlock(org)
-                        )
-                    )}
-                </React.Fragment>
-            )}
-            {expiredRequests.length > 0 && (
-                <React.Fragment>
-                    {(isPrevGroupRendered =
-                        isPrevGroupRendered || orgs.length > 0) && <Divider />}
-                    {expiredRequests.map((request) =>
-                        wrap(
-                            request.customId,
-                            <OrgCollaborationRequestThumbnail
-                                collabRequest={request}
-                            />,
-                            () => onClickRequest(request)
-                        )
-                    )}
-                </React.Fragment>
-            )}
-            {declinedRequests.length > 0 && (
-                <React.Fragment>
-                    {(isPrevGroupRendered =
-                        isPrevGroupRendered || expiredRequests.length > 0) && (
-                        <Divider />
-                    )}
-                    {declinedRequests.map((request) =>
-                        wrap(
-                            request.customId,
-                            <OrgCollaborationRequestThumbnail
-                                collabRequest={request}
-                            />,
-                            () => onClickRequest(request)
-                        )
-                    )}
-                </React.Fragment>
-            )}
-            {revokedRequests.length > 0 && (
-                <React.Fragment>
-                    {(isPrevGroupRendered =
-                        isPrevGroupRendered || declinedRequests.length > 0) && (
-                        <Divider />
-                    )}
-                    {revokedRequests.map((request) =>
-                        wrap(
-                            request.customId,
-                            <OrgCollaborationRequestThumbnail
-                                collabRequest={request}
-                            />,
-                            () => onClickRequest(request)
-                        )
-                    )}
-                </React.Fragment>
-            )}
+            </React.Fragment>
+        );
+    };
+
+    const renderOrgs = () => {
+        if (!hasOrgs) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                {(isPrevGroupRendered =
+                    isPrevGroupRendered || pendingRequests.length > 0) && (
+                    <Divider />
+                )}
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Orgs
+                </Typography.Text> */}
+                {orgs.map((org) =>
+                    wrap(
+                        org.customId,
+                        <BlockThumbnail
+                            block={org}
+                            showFields={["name"]}
+                            unseenChatsCount={
+                                unseenChatsCountMapByOrg[org.customId]
+                            }
+                        />,
+                        () => onClickBlock(org)
+                    )
+                )}
+            </React.Fragment>
+        );
+    };
+
+    const renderExpiredRequests = () => {
+        if (!hasExpiredRequests) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                {(isPrevGroupRendered =
+                    isPrevGroupRendered || orgs.length > 0) && <Divider />}
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Expired Requests
+                </Typography.Text> */}
+                {expiredRequests.map((request) =>
+                    wrap(
+                        request.customId,
+                        <OrgCollaborationRequestThumbnail
+                            collabRequest={request}
+                        />,
+                        () => onClickRequest(request)
+                    )
+                )}
+            </React.Fragment>
+        );
+    };
+
+    const renderDeclinedRequests = () => {
+        if (!hasDeclinedRequests) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                {(isPrevGroupRendered =
+                    isPrevGroupRendered || expiredRequests.length > 0) && (
+                    <Divider />
+                )}
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Declined Requests
+                </Typography.Text> */}
+                {declinedRequests.map((request) =>
+                    wrap(
+                        request.customId,
+                        <OrgCollaborationRequestThumbnail
+                            collabRequest={request}
+                        />,
+                        () => onClickRequest(request)
+                    )
+                )}
+            </React.Fragment>
+        );
+    };
+
+    const renderRevokedRequests = () => {
+        if (!hasRevokedRequests) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                {(isPrevGroupRendered =
+                    isPrevGroupRendered || declinedRequests.length > 0) && (
+                    <Divider />
+                )}
+                {/* <Typography.Text style={{ padding: "0 16px" }}>
+                    Revoked Requests
+                </Typography.Text> */}
+                {revokedRequests.map((request) =>
+                    wrap(
+                        request.customId,
+                        <OrgCollaborationRequestThumbnail
+                            collabRequest={request}
+                        />,
+                        () => onClickRequest(request)
+                    )
+                )}
+            </React.Fragment>
+        );
+    };
+
+    return (
+        <React.Fragment>
+            {renderPendingRequests()}
+            {renderOrgs()}
+            {renderExpiredRequests()}
+            {renderDeclinedRequests()}
+            {renderRevokedRequests()}
         </React.Fragment>
     );
 };

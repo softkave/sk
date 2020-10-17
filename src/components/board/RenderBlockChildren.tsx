@@ -1,7 +1,9 @@
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import BoardList from "../boardBlock/BoardList";
-import ChatRoomsContainer from "../chat/ChatRoomsContainer";
+import ChatRoomsContainer, {
+    IChatRoomsRenderProps,
+} from "../chat/ChatRoomsContainer";
 import RoomsList from "../chat/RoomsList";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
@@ -39,36 +41,35 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
         );
     };
 
+    const renderRoomsList = (args: IChatRoomsRenderProps) => {
+        return (
+            <RoomsList
+                searchQuery={searchQuery}
+                sortedRooms={args.sortedRooms}
+                recipientsMap={args.recipientsMap}
+                onSelectRoom={args.onSelectRoom}
+                getRoomStyle={(room) => {
+                    const selected =
+                        room.recipientId === args.selectedRoomRecipientId;
+                    return {
+                        cursor: "pointer",
+                        padding: "8px 16px",
+                        backgroundColor: selected ? "#bae7ff" : undefined,
+
+                        "&:hover": {
+                            backgroundColor: selected ? undefined : "#f0f0f0",
+                        },
+                    };
+                }}
+            />
+        );
+    };
+
     const renderChatRoomsList = () => {
         return (
             <ChatRoomsContainer
                 orgId={block.customId}
-                render={(args) => (
-                    <RoomsList
-                        searchQuery={searchQuery}
-                        sortedRooms={args.sortedRooms}
-                        recipientsMap={args.recipientsMap}
-                        onSelectRoom={args.onSelectRoom}
-                        getRoomStyle={(room) => {
-                            const selected =
-                                room.recipientId ===
-                                args.selectedRoomRecipientId;
-                            return {
-                                cursor: "pointer",
-                                padding: "8px 16px",
-                                backgroundColor: selected
-                                    ? "#bae7ff"
-                                    : undefined,
-
-                                "&:hover": {
-                                    backgroundColor: selected
-                                        ? undefined
-                                        : "#f0f0f0",
-                                },
-                            };
-                        }}
-                    />
-                )}
+                render={renderRoomsList}
             />
         );
     };

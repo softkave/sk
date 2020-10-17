@@ -1,11 +1,11 @@
 import { Badge, Typography } from "antd";
+import { noop } from "lodash";
 import React from "react";
-import Column from "../../components/board/Column";
-import StyledContainer from "../../components/styled/Container";
-import TaskList from "../../components/task/TaskList";
-import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
-import { noop } from "../../utils/utils";
+import Column from "../../../components/board/Column";
+import StyledContainer from "../../../components/styled/Container";
+import TaskList from "../../../components/task/TaskList";
+import { IBlock } from "../../../models/block/block";
+import { IUser } from "../../../models/user/user";
 import { demoStatuses, demoTasks, demoUsers } from "./data";
 import WebItem from "./Item";
 

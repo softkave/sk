@@ -4,13 +4,13 @@ import { Button } from "antd";
 import React from "react";
 import { X } from "react-feather";
 import { Link } from "react-router-dom";
-import RenderForDevice from "../components/RenderForDevice";
-import StyledContainer from "../components/styled/Container";
+import RenderForDevice from "../../components/RenderForDevice";
+import StyledContainer from "../../components/styled/Container";
 
 const StyledContainerAsH1 = StyledContainer.withComponent("h1");
 const hoverSelector = "&:hover";
 
-const WebHeader: React.SFC<{}> = () => {
+const WebHeader: React.FC<{}> = () => {
     const [showMenu, setShowMenu] = React.useState(false);
 
     const renderMenuItemContent = (content: React.ReactNode) => (

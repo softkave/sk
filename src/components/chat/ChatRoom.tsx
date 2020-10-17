@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router";
 import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
 import {
@@ -20,6 +21,8 @@ export interface IChatRoomProps {
 
 const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     const { room, recipientsMap, updateRoomReadCounter, onSendMessage } = props;
+
+    const history = useHistory();
 
     React.useEffect(() => {
         if (room.unseenChatsCount > 0) {
@@ -47,9 +50,16 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
         });
     };
 
+    const onBack = () => {
+        history.push(`/app/organizations/${room.orgId}/chat`);
+    };
+
     return (
         <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-            <ChatRoomHeader recipient={recipientsMap[room.recipientId]} />
+            <ChatRoomHeader
+                recipient={recipientsMap[room.recipientId]}
+                onBack={onBack}
+            />
             <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
                 <ChatList chats={room.chats} recipientsMap={recipientsMap} />
             </StyledContainer>

@@ -1,9 +1,9 @@
 import MailOutlined from "@ant-design/icons/MailOutlined";
 import styled from "@emotion/styled";
 import React from "react";
-import StyledContainer from "../components/styled/Container";
+import StyledContainer from "../../components/styled/Container";
 
-const WebFooter: React.SFC<{}> = () => {
+const WebFooter: React.FC<{}> = () => {
     return (
         <StyledWebFooter>
             <StyledContainer s={{ width: "100%", flex: 1, margin: "auto" }}>

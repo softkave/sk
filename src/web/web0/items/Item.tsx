@@ -1,6 +1,6 @@
 import React from "react";
-import RenderForDevice from "../../components/RenderForDevice";
-import StyledContainer from "../../components/styled/Container";
+import RenderForDevice from "../../../components/RenderForDevice";
+import StyledContainer from "../../../components/styled/Container";
 
 export interface IWebItemProps {
     label: React.ReactNode;
