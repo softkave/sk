@@ -1,3 +1,5 @@
+import { IBoardSprintOptions } from "../sprint/types";
+
 export const blockSchemaVersion = 3; // increment when you make changes that are not backward compatible
 
 export enum BlockPriority {
@@ -68,6 +70,12 @@ export interface IBoardTaskResolution {
     updatedAt?: string;
 }
 
+export interface ITaskSprint {
+    sprintId: string;
+    assignedAt: Date;
+    assignedBy: string;
+}
+
 export interface IBlock {
     customId: string;
     createdBy: string;
@@ -92,6 +100,9 @@ export interface IBlock {
     statusAssignedAt?: string;
     taskResolution?: string | null;
     labels?: IBlockAssignedLabel[];
+    currentSprintId?: string;
+    sprintOptions?: IBoardSprintOptions;
+    taskSprint?: ITaskSprint;
 
     boards?: string[];
     collaborators?: string[];
