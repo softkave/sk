@@ -1,4 +1,4 @@
-import { Divider, Typography } from "antd";
+import { Divider } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import {

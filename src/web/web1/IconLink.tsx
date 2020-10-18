@@ -11,7 +11,7 @@ const IconLink: React.FC<IIconLinkProps> = (props) => {
     const { icon, text, href } = props;
 
     return (
-        <a href={href} target="_blank">
+        <a href={href} target="_blank" rel="noopener noreferrer">
             <Space>
                 <Button style={{ cursor: "pointer" }} className="icon-btn">
                     {icon}

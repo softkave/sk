@@ -37,12 +37,12 @@ const Face: React.FC<{}> = () => {
                     >
                         Forgot Password
                     </StyledTagLikeButton>
-                    <StyledTagLikeButton
-                        to="#pricing"
+                    <StyledTagLikeButtonWithNativeLink
+                        href="#pricing"
                         style={{ backgroundColor: "#36B37E" }}
                     >
                         Pricing
-                    </StyledTagLikeButton>
+                    </StyledTagLikeButtonWithNativeLink>
                     <StyledTagLikeButton
                         to={webConstants.demoURL}
                         style={{ backgroundColor: "#FF5630" }}
@@ -72,6 +72,22 @@ const StyledButtonsContainer = styled.div({
 });
 
 const StyledTagLikeButton = styled(Link)({
+    marginRight: "4px",
+    color: "white",
+    borderRadius: "4px",
+    padding: "2px 8px",
+    marginBottom: "4px",
+
+    ["&:last-of-type"]: {
+        marginRight: 0,
+    },
+
+    ["&:hover"]: {
+        color: "white",
+    },
+});
+
+const StyledTagLikeButtonWithNativeLink = styled.a({
     marginRight: "4px",
     color: "white",
     borderRadius: "4px",

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import React from "react";
 import Bottom from "./Bottom";
 import Face from "./Face";
-import Middle from "./Middle";
 import Pricing from "./Pricing";
 
 const Web1: React.FC<{}> = () => {
