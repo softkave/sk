@@ -28,16 +28,6 @@ const BoardResourceTypesTab = (props: IBoardResourceTypesTabProps) => {
         return <Redirect to={nextPath} />;
     }
 
-    const renderContent = (type) => {
-        switch (type) {
-            case "tasks":
-                return <BoardTasksContainer block={block} />;
-
-            default:
-                return null;
-        }
-    };
-
     return (
         <StyledContainer
             s={{
@@ -56,7 +46,7 @@ const BoardResourceTypesTab = (props: IBoardResourceTypesTabProps) => {
                 },
             }}
         >
-            {renderContent("tasks")}
+            <BoardTasksContainer block={block} />
         </StyledContainer>
     );
 };

@@ -1,7 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
 import { Badge, Tabs } from "antd";
-import { noop } from "lodash";
 import path from "path";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
@@ -15,10 +14,10 @@ import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import BlockContainer from "./BlockContainer";
-import BoardBlockHeader from "./BoardBlockHeader";
 import BoardMain from "./BoardMain";
 import BoardTypeList from "./BoardTypeList";
 import LoadBlockChildren from "./LoadBlockChildren";
+import OrgBoardHeader from "./OrgBoardHeader";
 import {
     BoardResourceType,
     IBoardResourceTypePathMatch,
@@ -229,15 +228,9 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     },
                 }}
             >
-                <BoardBlockHeader
+                <OrgBoardHeader
                     {...props}
-                    onClickAddCollaborator={noop}
-                    onClickAddOrEditLabel={noop}
-                    onClickAddOrEditStatus={noop}
-                    onClickCreateNewBlock={noop}
-                    onClickDeleteBlock={() => onClickDeleteBlock(block)}
                     onClickEditBlock={() => onClickUpdateBlock(block)}
-                    onNavigate={noop}
                     isAppMenuFolded={isAppMenuFolded}
                     onToggleFoldAppMenu={onToggleFoldAppMenu}
                     style={{

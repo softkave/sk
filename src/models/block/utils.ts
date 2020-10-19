@@ -66,19 +66,6 @@ export function getBlockPositionFromParent(parent: IBlock, block: IBlock) {
     }
 }
 
-export const getBlockTypeFullName = (type: BlockType) => {
-    switch (type) {
-        case "org":
-            return "organization";
-        case "board":
-            return "board";
-        case "task":
-            return "task";
-        default:
-            return "block";
-    }
-};
-
 export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
     return [
         {

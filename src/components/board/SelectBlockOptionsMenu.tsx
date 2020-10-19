@@ -2,7 +2,6 @@ import { Menu, Space } from "antd";
 import React from "react";
 import { Edit3, MoreHorizontal, Plus, Trash2 } from "react-feather";
 import { BlockType, IBlock } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
     IMenuWithTriggerRenderMenuProps,
@@ -45,7 +44,6 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
 
     const renderBlockOptions = React.useCallback(
         (renderMenuProps: IMenuWithTriggerRenderMenuProps) => {
-            const blockTypeFullName = getBlockTypeFullName(block.type);
             const extraOptions: React.ReactNode[] = [];
 
             if (block.type === BlockType.Board) {
@@ -114,7 +112,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
                                     marginTop: "-3px",
                                 }}
                             />
-                            <span>Edit {blockTypeFullName}</span>
+                            <span>Edit {block.type}</span>
                         </Space>
                     </Menu.Item>
                     {block.type !== BlockType.Org && (
@@ -131,7 +129,7 @@ const SelectBlockOptionsMenu: React.FC<ISelectBlockOptionsMenuProps> = (
                                         marginTop: "-4px",
                                     }}
                                 />
-                                <span>Delete {blockTypeFullName}</span>
+                                <span>Delete {block.type}</span>
                             </Space>
                         </Menu.Item>
                     )}

@@ -2,7 +2,6 @@ import MessageOutlined from "@ant-design/icons/MessageOutlined";
 import { Badge, Tag, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import { getBlockTypeFullName } from "../../models/block/utils";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 
@@ -17,6 +16,7 @@ export interface IBlockThumbnailProps {
     count?: number;
     unseenChatsCount?: number;
     parent?: IBlock;
+    makeNameBold?: boolean;
     style?: React.CSSProperties;
     onClick?: () => void;
 }
@@ -35,6 +35,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
         unseenChatsCount,
         parent,
         style,
+        makeNameBold,
     } = props;
 
     const color = block.color;
@@ -63,7 +64,10 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
         if (fieldsToShow.name) {
             return (
                 <StyledContainer s={{ alignItems: "center" }}>
-                    <Typography.Text strong style={{ marginRight: "8px" }}>
+                    <Typography.Text
+                        strong={makeNameBold}
+                        style={{ marginRight: "8px" }}
+                    >
                         {block.name}
                     </Typography.Text>
                     {count ? (
@@ -81,11 +85,7 @@ const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
 
     const renderType = () => {
         if (fieldsToShow.type && !parent) {
-            return (
-                <StyledContainer>
-                    {getBlockTypeFullName(block.type)}
-                </StyledContainer>
-            );
+            return <StyledContainer>{block.type}</StyledContainer>;
         }
 
         return null;

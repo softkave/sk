@@ -124,6 +124,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         >
             {renderHeaderPrefixButton()}
             <BlockThumbnail
+                makeNameBold
                 block={block}
                 showFields={["name"]}
                 style={{ flex: 1 }}
