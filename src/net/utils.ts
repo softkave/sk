@@ -6,7 +6,7 @@ import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
-import { INetError } from "./types";
+import { IAppError } from "./types";
 
 function getUserClientId() {
     return SessionSelectors.getClientId(store.getState());
@@ -16,7 +16,7 @@ const isExpectedErrorType = (errors) => {
     return Array.isArray(errors) && !!errors.find((e) => !!e.name);
 };
 
-export const toNetError = (err: Error | INetError | string): INetError => {
+export const toAppError = (err: Error | IAppError | string): IAppError => {
     const error = isString(err) ? new Error(err) : err;
 
     return {
@@ -27,28 +27,30 @@ export const toNetError = (err: Error | INetError | string): INetError => {
     };
 };
 
-export const toNetErrorsArray = (err: any) => {
+export const toAppErrorsArray = (err: any) => {
     if (Array.isArray(err)) {
-        return err.map((error) => toNetError(error));
+        return err.map((error) => toAppError(error));
     } else {
-        return toNetError(err);
+        return toAppError(err);
     }
 };
 
-export interface INetCallProps {
+export interface IGraphQLAPICallParams {
     query: string;
     variables: any;
     paths: string[];
     headers?: OutgoingHttpHeaders;
 }
 
-export interface INetCallResult {
-    errors?: INetError[];
+export interface IGraphQLAPICallResult {
+    errors?: IAppError[];
     result?: any;
     data: { [key: string]: any };
 }
 
-export async function netCall(props: INetCallProps): Promise<INetCallResult> {
+export async function graphQLAPICall(
+    props: IGraphQLAPICallParams
+): Promise<IGraphQLAPICallResult> {
     const { query, variables, paths } = props;
 
     try {
@@ -68,7 +70,7 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
         });
 
         if (!result.headers.get("Content-Type")?.includes("application/json")) {
-            throw new Error(ErrorMessages.anErrorOccurred);
+            throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }
 
         const body = await result.json();
@@ -96,7 +98,7 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
                 if (continueProcessing) {
                     return { errors, data, result: body };
                 } else {
-                    throw new Error(ErrorMessages.anErrorOccurred);
+                    throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
                 }
 
                 // TODO: what should we do on else
@@ -118,14 +120,14 @@ export async function netCall(props: INetCallProps): Promise<INetCallResult> {
                         // TODO: what should we do on else
                     }
 
-                    throw new Error(ErrorMessages.anErrorOccurred);
+                    throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
                 }
             }
         }
 
         throw new Error(result.statusText);
     } catch (error) {
-        const errors = toNetErrorsArray(error);
+        const errors = toAppErrorsArray(error);
         throw errors;
     }
 }
@@ -134,18 +136,20 @@ function getToken() {
     return SessionSelectors.getUserToken(store.getState());
 }
 
-export interface INetCallWithAuthProps extends INetCallProps {
+export interface IGraphQLAPICallWithAuthParams extends IGraphQLAPICallParams {
     token?: string;
 }
 
-export async function netCallWithAuth(props: INetCallWithAuthProps) {
+export async function graphQLAPICallWithAuth(
+    props: IGraphQLAPICallWithAuthParams
+) {
     const requestToken = props.token || getToken();
 
     if (!requestToken) {
         throw new Error("Invalid credentials");
     }
 
-    return netCall({
+    return graphQLAPICall({
         ...props,
         headers: {
             Authorization: `Bearer ${requestToken}`,

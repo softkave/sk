@@ -1,30 +1,34 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { INotification } from "../../../models/notification/notification";
-import UserAPI from "../../../net/user/user";
+import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
+import { BlockType, IBlock } from "../../../models/block/block";
+import BlockAPI from "../../../net/block/block";
+import SprintAPI, {
+    IUpdateSprintOptionsAPIParams,
+} from "../../../net/sprint/sprint";
 import { getDateString, getNewId } from "../../../utils/utils";
-import NotificationActions from "../../notifications/actions";
+import BlockActions from "../../blocks/actions";
+import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
+import UserActions from "../../users/actions";
+import OperationActions from "../actions";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    OperationStatus,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface IMarkNotificationReadOperationActionArgs {
-    notification: INotification;
-}
-
-export const markNotificationReadOperationAction = createAsyncThunk<
+export const updateSprintOptionsOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
+    GetOperationActionArgs<IUpdateSprintOptionsAPIParams>,
     IAppAsyncThunkConfig
->("notification/markNotificationRead", async (arg, thunkAPI) => {
+>("op/sprint/updateSprintOptions", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -36,54 +40,55 @@ export const markNotificationReadOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
-            OperationType.MarkNotificationRead,
-            arg.notification.customId
+            OperationType.UPDATE_SPRINT_OPTIONS,
+            arg.boardId
         )
     );
 
     try {
-        const readAt = getDateString();
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        let updatedAt = getDateString();
 
         if (!isDemoMode) {
-            const result = await UserAPI.markNotificationRead(
-                arg.notification,
-                readAt
-            );
+            const result = await SprintAPI.updateSprintOptions(arg);
 
             if (result && result.errors) {
                 throw result.errors;
             }
+
+            updatedAt = result.data!.updatedAt;
         }
 
-        // TODO: Should control wait for net call, or should it happen before net call?
-        await thunkAPI.dispatch(
-            NotificationActions.updateNotification({
-                id: arg.notification.customId,
-                data: { readAt },
-                meta: {
-                    arrayUpdateStrategy: "replace",
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+
+        thunkAPI.dispatch(
+            BlockActions.updateBlock({
+                id: arg.boardId,
+                data: {
+                    ...arg.data,
+                    updatedAt,
+                    updatedBy: user.customId,
                 },
             })
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.MarkNotificationRead,
-                arg.notification.customId
+                OperationType.UPDATE_SPRINT_OPTIONS,
+                arg.boardId
             )
         );
     } catch (error) {
         await thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.MarkNotificationRead,
+                OperationType.UPDATE_SPRINT_OPTIONS,
                 error,
-                arg.notification.customId
+                arg.boardId
             )
         );
     }

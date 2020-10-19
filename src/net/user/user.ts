@@ -1,8 +1,8 @@
-import { INotification } from "../models/notification/notification";
-import { IUser } from "../models/user/user";
-import { getDataFromObject } from "../utils/utils";
-import auth from "./auth";
-import query from "./query";
+import { INotification } from "../../models/notification/notification";
+import { IUser } from "../../models/user/user";
+import { getDataFromObject } from "../../utils/utils";
+import auth from "../auth";
+import query from "../query";
 import {
     changePasswordMutation,
     changePasswordWithTokenMutation,
@@ -15,7 +15,7 @@ import {
     userExistsQuery,
     userLoginMutation,
     userSignupMutation,
-} from "./schema/user";
+} from "./schema";
 
 // TODO: Define types for the parameters
 

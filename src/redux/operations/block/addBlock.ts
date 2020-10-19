@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
 import { BlockType, IBlock } from "../../../models/block/block";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import UserAPI from "../../../net/user/user";
+import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
+import SprintActions from "../../sprints/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -13,15 +14,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface IRequestForgotPasswordOperationActionArgs {
-    email: string;
-}
-
-export const requestForgotPasswordOperationAction = createAsyncThunk<
+export const getSprintsOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IRequestForgotPasswordOperationActionArgs>,
+    GetOperationActionArgs<string>,
     IAppAsyncThunkConfig
->("session/requestForgotPassword", async (arg, thunkAPI) => {
+>("op/sprint/getSprints", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -33,27 +30,24 @@ export const requestForgotPasswordOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.RequestForgotPassword)
+    thunkAPI.dispatch(
+        dispatchOperationStarted(id, OperationType.GET_SPRINTS, arg)
     );
 
     try {
-        const result = await UserAPI.forgotPassword(arg.email);
+        const result = await SprintAPI.getSprints(arg);
 
         if (result && result.errors) {
             throw result.errors;
         }
 
-        await thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.RequestForgotPassword)
+        thunkAPI.dispatch(SprintActions.bulkAddSprints(result.data!));
+        thunkAPI.dispatch(
+            dispatchOperationCompleted(id, OperationType.GET_SPRINTS, arg)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
-            dispatchOperationError(
-                id,
-                OperationType.RequestForgotPassword,
-                error
-            )
+        thunkAPI.dispatch(
+            dispatchOperationError(id, OperationType.GET_SPRINTS, error, arg)
         );
     }
 

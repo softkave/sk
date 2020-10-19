@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
 import { IChat } from "../../../models/chat/types";
-import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat";
+import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat/chat";
 import {
     getDateString,
     getNewId,

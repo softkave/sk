@@ -1,4 +1,4 @@
-import { IPersistedRoom } from "../../net/chat";
+import { IPersistedRoom } from "../../net/chat/chat";
 
 // TODO: should we make the createdAt and other timstamps numbers on the client-side
 // for increased performance?

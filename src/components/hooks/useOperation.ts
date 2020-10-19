@@ -1,7 +1,7 @@
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { INetError } from "../../net/types";
+import { IAppError } from "../../net/types";
 import OperationActions from "../../redux/operations/actions";
 import {
     IOperation,
@@ -62,7 +62,7 @@ export const getOperationStats = (
 
 export interface IMergedOperationStats {
     loading?: boolean;
-    errors?: INetError | INetError[];
+    errors?: IAppError | IAppError[];
 }
 
 export function mergeOperationStats(

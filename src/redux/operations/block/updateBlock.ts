@@ -6,7 +6,7 @@ import {
     IBlock,
     IBoardTaskResolution,
 } from "../../../models/block/block";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";

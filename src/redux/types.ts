@@ -7,6 +7,7 @@ import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
 import { IRoomsMap } from "./rooms/types";
 import { ISessionState } from "./session/types";
+import { ISprintsState } from "./sprints/types";
 import { IUsersState } from "./users/types";
 
 export interface IAppState {
@@ -17,6 +18,7 @@ export interface IAppState {
     operations: IOperationState;
     keyValue: IKeyValueState;
     rooms: IRoomsMap;
+    sprints: ISprintsState;
 }
 
 export interface IAppAsyncThunkConfig {

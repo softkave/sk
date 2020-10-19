@@ -1,6 +1,6 @@
-import { IChat, IRoomMemberWithReadCounter } from "../models/chat/types";
-import { OutgoingSocketEvents, promisifiedEmit } from "./socket";
-import { IEndpointResultBase } from "./types";
+import { IChat, IRoomMemberWithReadCounter } from "../../models/chat/types";
+import { OutgoingSocketEvents, promisifiedEmit } from "../socket";
+import { IEndpointResultBase } from "../types";
 
 export interface IPersistedRoom {
     customId: string;

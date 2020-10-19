@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
@@ -26,7 +26,7 @@ export const deleteBlockOperationAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IDeleteBlockOperationActionArgs>,
     IAppAsyncThunkConfig
->("block/deleteBlock", async (arg, thunkAPI) => {
+>("op/block/deleteBlock", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(

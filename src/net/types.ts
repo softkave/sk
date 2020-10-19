@@ -1,8 +1,12 @@
-export interface INetError extends Error {
+export interface IAppError extends Error {
     field?: string;
     action?: string;
 }
 
 export interface IEndpointResultBase {
-    errors: INetError[];
+    errors?: IAppError[];
 }
+
+export type GetEndpointResult<T extends any = any> = {
+    data?: T;
+} & IEndpointResultBase;

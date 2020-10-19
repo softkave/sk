@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { INotification } from "../../../models/notification/notification";
-import UserAPI from "../../../net/user/user";
+import { IBoardSprintOptions } from "../../../models/sprint/types";
+import SprintAPI, { ISetupSprintsAPIParams } from "../../../net/sprint/sprint";
 import { getDateString, getNewId } from "../../../utils/utils";
-import NotificationActions from "../../notifications/actions";
+import BlockActions from "../../blocks/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -16,15 +16,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface IMarkNotificationReadOperationActionArgs {
-    notification: INotification;
-}
-
-export const markNotificationReadOperationAction = createAsyncThunk<
+export const setupSprintsOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
+    GetOperationActionArgs<ISetupSprintsAPIParams>,
     IAppAsyncThunkConfig
->("notification/markNotificationRead", async (arg, thunkAPI) => {
+>("op/sprint/setupSprints", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -37,53 +33,51 @@ export const markNotificationReadOperationAction = createAsyncThunk<
     }
 
     await thunkAPI.dispatch(
-        dispatchOperationStarted(
-            id,
-            OperationType.MarkNotificationRead,
-            arg.notification.customId
-        )
+        dispatchOperationStarted(id, OperationType.SETUP_SPRINTS, arg.boardId)
     );
 
     try {
-        const readAt = getDateString();
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+        const sprintOptions: IBoardSprintOptions = {
+            duration: arg.duration,
+            createdAt: getDateString(),
+            createdBy: user.customId,
+        };
 
         if (!isDemoMode) {
-            const result = await UserAPI.markNotificationRead(
-                arg.notification,
-                readAt
-            );
+            const result = await SprintAPI.setupSprint(arg);
 
             if (result && result.errors) {
                 throw result.errors;
             }
+
+            sprintOptions.createdAt = result.data!.createdAt;
         }
 
-        // TODO: Should control wait for net call, or should it happen before net call?
-        await thunkAPI.dispatch(
-            NotificationActions.updateNotification({
-                id: arg.notification.customId,
-                data: { readAt },
-                meta: {
-                    arrayUpdateStrategy: "replace",
+        thunkAPI.dispatch(
+            BlockActions.updateBlock({
+                id: arg.boardId,
+                data: {
+                    sprintOptions,
                 },
             })
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.MarkNotificationRead,
-                arg.notification.customId
+                OperationType.SETUP_SPRINTS,
+                arg.boardId
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.MarkNotificationRead,
+                OperationType.SETUP_SPRINTS,
                 error,
-                arg.notification.customId
+                arg.boardId
             )
         );
     }

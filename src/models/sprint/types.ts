@@ -6,9 +6,9 @@ export enum SprintDuration {
 
 export interface IBoardSprintOptions {
     duration: SprintDuration;
-    updatedAt?: Date;
+    updatedAt?: string;
     updatedBy?: string;
-    createdAt: Date;
+    createdAt: string;
     createdBy: string;
 }
 
@@ -18,9 +18,13 @@ export interface ISprint {
     orgId: string;
     duration: SprintDuration;
     sprintIndex: number;
+    createdAt: string;
+    createdBy: string;
     name?: string;
-    startDate?: Date;
+    startDate?: string;
     startedBy?: string;
-    endDate?: Date;
+    endDate?: string;
     endedBy?: string;
+    updatedAt?: string;
+    updatedBy?: string;
 }

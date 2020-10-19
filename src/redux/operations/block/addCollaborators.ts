@@ -7,7 +7,7 @@ import {
     NotificationType,
 } from "../../../models/notification/notification";
 import { IAddCollaboratorFormItemValues } from "../../../models/types";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import NotificationActions from "../../notifications/actions";

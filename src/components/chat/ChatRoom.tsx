@@ -5,7 +5,7 @@ import { IUser } from "../../models/user/user";
 import {
     ISendMessageAPIParameters,
     IUpdateRoomReadCounterAPIParameters,
-} from "../../net/chat";
+} from "../../net/chat/chat";
 import { getDateString } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 import ChatInput from "./ChatInput";

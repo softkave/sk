@@ -1,9 +1,9 @@
-import { BlockType, IBlock } from "../models/block/block";
-import { INotification } from "../models/notification/notification";
-import { IAddCollaboratorFormItemValues } from "../models/types";
-import { IUser } from "../models/user/user";
-import { getDataFromObject } from "../utils/utils";
-import auth from "./auth";
+import { BlockType, IBlock } from "../../models/block/block";
+import { INotification } from "../../models/notification/notification";
+import { IAddCollaboratorFormItemValues } from "../../models/types";
+import { IUser } from "../../models/user/user";
+import { getDataFromObject } from "../../utils/utils";
+import auth from "../auth";
 import {
     addBlockMutation,
     addCollaboratorsMutation,
@@ -14,7 +14,7 @@ import {
     revokeRequestMutation,
     transferBlockMutation,
     updateBlockMutation,
-} from "./schema/block";
+} from "./schema";
 
 function addBlock(block: IBlock) {
     // TODO: Find a way to define central structures that'll be used by server and client, including

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import ErrorMessages from "../../../models/errorMessages";
-import UserAPI from "../../../net/user";
+import UserAPI from "../../../net/user/user";
 import UserSessionStorageFuncs from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
 import SessionActions from "../../session/actions";
@@ -64,7 +64,7 @@ export const changePasswordOperationAction = createAsyncThunk<
 
             UserSessionStorageFuncs.saveTokenIfExists(result.token);
         } else {
-            throw new Error(ErrorMessages.anErrorOccurred);
+            throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }
 
         await thunkAPI.dispatch(

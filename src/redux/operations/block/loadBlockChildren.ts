@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import { IAppAsyncThunkConfig } from "../../types";

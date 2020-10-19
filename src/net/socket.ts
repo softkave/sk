@@ -31,7 +31,7 @@ import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import { getNewTempId } from "../utils/utils";
 import { getSockAddr } from "./addr";
-import { IPersistedRoom } from "./chat";
+import { IPersistedRoom } from "./chat/chat";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;

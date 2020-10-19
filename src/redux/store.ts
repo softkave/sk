@@ -6,6 +6,7 @@ import notificationsReducer from "./notifications/reducer";
 import operationsReducer from "./operations/reducer";
 import roomsReducer from "./rooms/reducer";
 import sessionReducer from "./session/reducer";
+import sprintsReducer from "./sprints/reducer";
 import usersReducer from "./users/reducer";
 
 const reducer = combineReducers({
@@ -16,6 +17,7 @@ const reducer = combineReducers({
     operations: operationsReducer,
     keyValue: keyValueReducer,
     rooms: roomsReducer,
+    sprints: sprintsReducer,
 });
 
 const store = configureStore({
