@@ -1,4 +1,4 @@
-import { Avatar, Badge, Space, Tabs } from "antd";
+import { Badge, Space, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
@@ -6,17 +6,15 @@ import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
 import { IBoardGroupedTasks } from "./types";
 
-export interface IBoardRenderGroupedTasksMobileProps {
+export interface IGroupedTasksMobileProps {
     board: IBlock;
-    groups: IBoardGroupedTasks[];
+    groupedTasks: IBoardGroupedTasks[];
     users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const BoardRenderGroupedTasksMobile: React.FC<IBoardRenderGroupedTasksMobileProps> = (
-    props
-) => {
-    const { groups, users, board, onClickUpdateBlock } = props;
+const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
+    const { groupedTasks, users, board, onClickUpdateBlock } = props;
 
     const renderTab = (group: IBoardGroupedTasks) => {
         return (
@@ -55,13 +53,15 @@ const BoardRenderGroupedTasksMobile: React.FC<IBoardRenderGroupedTasksMobileProp
 
     return (
         <Tabs
-            defaultActiveKey={groups[0] ? groups[0].name : undefined}
+            defaultActiveKey={
+                groupedTasks[0] ? groupedTasks[0].name : undefined
+            }
             tabBarGutter={0}
             style={{ marginTop: "12px" }}
         >
-            {groups.map(renderTab)}
+            {groupedTasks.map(renderTab)}
         </Tabs>
     );
 };
 
-export default BoardRenderGroupedTasksMobile;
+export default GroupedTasksMobile;

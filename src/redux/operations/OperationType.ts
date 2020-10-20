@@ -1,11 +1,11 @@
 enum OperationType {
     // block
-    LoadRootBlocks = "LoadRootBlocks",
-    AddBlock = "AddBlock",
-    UpdateBlock = "UpdateBlock",
-    DeleteBlock = "DeleteBlock",
-    LoadBlockChildren = "LoadBlockChildren",
-    AddCollaborators = "AddCollaborators",
+    LOAD_ROOT_BLOCKS = "LOAD_ROOT_BLOCKS",
+    ADD_BLOCK = "ADD_BLOCK",
+    UPDATE_BLOCK = "UPDATE_BLOCK",
+    DELETE_BLOCK = "DELETE_BLOCK",
+    LOAD_BLOCK_CHILDREN = "LOAD_BLOCK_CHILDREN",
+    ADD_COLLABORATORS = "ADD_COLLABORATORS",
 
     // notification
     LoadUserNotifications = "LoadUserNotifications",

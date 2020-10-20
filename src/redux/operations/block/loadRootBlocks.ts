@@ -31,7 +31,7 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
     }
 
     await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.LoadRootBlocks)
+        dispatchOperationStarted(id, OperationType.LOAD_ROOT_BLOCKS)
     );
 
     try {
@@ -46,11 +46,11 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
 
         await thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.LoadRootBlocks)
+            dispatchOperationCompleted(id, OperationType.LOAD_ROOT_BLOCKS)
         );
     } catch (error) {
         await thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.LoadRootBlocks, error)
+            dispatchOperationError(id, OperationType.LOAD_ROOT_BLOCKS, error)
         );
     }
 

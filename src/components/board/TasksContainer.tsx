@@ -1,3 +1,4 @@
+import forEach from "lodash/forEach";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -9,20 +10,27 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
-import TaskFormInDrawer from "../task/TaskFormInDrawer";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardTasks from "./BoardTasks";
+import { BoardGroupBy } from "./BoardHeaderOptionsMenu";
+import GroupedTasks from "./GroupedTasks";
 
-export interface IBoardTasksContainerProps {
+export interface ITasksContainerProps {
     block: IBlock;
+    useCurrentSprint: boolean;
+    groupType: BoardGroupBy;
+    searchText?: string;
+    onClickUpdateBlock: (block: IBlock) => void;
 }
 
-interface IShowTaskForm {
-    isNew: boolean;
-    task?: IBlock;
-}
+const BoardTasksContainer: React.FC<ITasksContainerProps> = (props) => {
+    const {
+        block,
+        useCurrentSprint,
+        searchText,
+        groupType,
+        onClickUpdateBlock,
+    } = props;
 
-function useLoadStatus(block: IBlock) {
     const dispatch: AppDispatch = useDispatch();
 
     const loadTasks = (loadProps: IUseOperationStatus) => {
@@ -48,14 +56,6 @@ function useLoadStatus(block: IBlock) {
         { deleteManagedOperationOnUnmount: false }
     );
 
-    return op;
-}
-
-function useComponentData(
-    op: IUseOperationStatus,
-    block: IBlock,
-    searchText: string
-) {
     const org = useSelector<IAppState, IBlock>((state) => {
         return BlockSelectors.getBlock(
             state,
@@ -78,24 +78,27 @@ function useComponentData(
             return [];
         }
 
-        const blockList: IBlock[] = [];
-        Object.keys(state.blocks).forEach((id) => {
-            const task = state.blocks[id];
+        const taskList: IBlock[] = [];
 
-            if (
-                task.type === BlockType.Task &&
-                task.parent === block.customId
-            ) {
-                blockList.push(task);
+        forEach(state.blocks, (task) => {
+            const selectTask =
+                task.parent === block.customId &&
+                (useCurrentSprint
+                    ? task.currentSprintId === block.currentSprintId
+                    : true);
+
+            if (selectTask) {
+                taskList.push(task);
             }
         });
 
         if (!searchText) {
-            return blockList;
+            return taskList;
         }
 
         const lowerSearchText = searchText.toLowerCase();
-        return blockList.filter((task) => {
+
+        return taskList.filter((task) => {
             return (
                 task.name?.toLowerCase().includes(lowerSearchText) ||
                 task.description?.toLowerCase().includes(lowerSearchText)
@@ -103,50 +106,7 @@ function useComponentData(
         });
     });
 
-    return { org, tasks, collaborators };
-}
-
-const BoardTasksContainer: React.FC<IBoardTasksContainerProps> = (props) => {
-    const { block } = props;
-    const [showTask, setShowTask] = React.useState<IShowTaskForm | null>(null);
-    const [searchText, setSearchText] = React.useState<string>("");
-
-    const op = useLoadStatus(block);
-    const { org, tasks, collaborators } = useComponentData(
-        op,
-        block,
-        searchText
-    );
-
-    const closeTaskForm = React.useCallback(() => {
-        setShowTask(null);
-    }, []);
-
-    const renderTaskForm = () => {
-        if (showTask) {
-            return (
-                <TaskFormInDrawer
-                    visible
-                    block={showTask.task}
-                    onClose={closeTaskForm}
-                    orgId={org.customId}
-                    parentBlock={block}
-                />
-            );
-        }
-
-        return null;
-    };
-
-    const onClickCreateTask = React.useCallback(() => {
-        setShowTask({ isNew: true });
-    }, []);
-
-    const onClickUpdateTask = React.useCallback((task: IBlock) => {
-        setShowTask({ task, isNew: false });
-    }, []);
-
-    const isLoadingChildren = op.isLoading || !!!op.operation;
+    const isLoadingChildren = op.isLoading || !op.operation;
 
     if (isLoadingChildren) {
         return <LoadingEllipsis />;
@@ -155,17 +115,13 @@ const BoardTasksContainer: React.FC<IBoardTasksContainerProps> = (props) => {
     }
 
     return (
-        <React.Fragment>
-            {renderTaskForm()}
-            <BoardTasks
-                block={block}
-                tasks={tasks}
-                users={collaborators}
-                onClickCreate={onClickCreateTask}
-                onClickUpdateBlock={onClickUpdateTask}
-                onSearchTextChange={setSearchText}
-            />
-        </React.Fragment>
+        <GroupedTasks
+            block={block}
+            collaborators={collaborators}
+            groupType={groupType}
+            tasks={tasks}
+            onClickUpdateBlock={onClickUpdateBlock}
+        />
     );
 };
 

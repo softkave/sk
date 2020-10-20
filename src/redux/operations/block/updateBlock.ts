@@ -182,7 +182,7 @@ export const updateBlockOperationAction = createAsyncThunk<
     await thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
-            OperationType.UpdateBlock,
+            OperationType.UPDATE_BLOCK,
             arg.block.customId
         )
     );
@@ -209,7 +209,7 @@ export const updateBlockOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.UpdateBlock,
+                OperationType.UPDATE_BLOCK,
                 arg.block.customId
             )
         );
@@ -217,7 +217,7 @@ export const updateBlockOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.UpdateBlock,
+                OperationType.UPDATE_BLOCK,
                 error,
                 arg.block.customId
             )

@@ -74,11 +74,11 @@ export const startSprintOpAction = createAsyncThunk<
         );
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.AddBlock, arg)
+            dispatchOperationCompleted(id, OperationType.ADD_BLOCK, arg)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.AddBlock, error, arg)
+            dispatchOperationError(id, OperationType.ADD_BLOCK, error, arg)
         );
     }
 

@@ -10,17 +10,15 @@ import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
 import { IBoardGroupedTasks } from "./types";
 
-export interface IBoardRenderGroupedTasksDesktopProps {
-    groups: IBoardGroupedTasks[];
+export interface IGroupedTasksDesktopProps {
+    groupedTasks: IBoardGroupedTasks[];
     users: IUser[];
     board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopProps> = (
-    props
-) => {
-    const { groups, users, board, onClickUpdateBlock } = props;
+const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
+    const { groupedTasks, users, board, onClickUpdateBlock } = props;
 
     const renderColumnHeader = (group: IBoardGroupedTasks) => {
         return (
@@ -66,19 +64,22 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
                 }
                 style={{
                     marginLeft: "16px",
-                    paddingRight: i === groups.length - 1 ? "16px" : undefined,
+                    paddingRight:
+                        i === groupedTasks.length - 1 ? "16px" : undefined,
                     minWidth:
-                        i === groups.length - 1 ? 280 + 16 : "280px !important",
+                        i === groupedTasks.length - 1
+                            ? 280 + 16
+                            : "280px !important",
                 }}
             />
         );
     };
 
     const renderGroups = () => {
-        return groups.map((group, i) => renderColumn(group, i));
+        return groupedTasks.map((group, i) => renderColumn(group, i));
     };
 
-    if (groups.length === 0) {
+    if (groupedTasks.length === 0) {
         return <EmptyMessage>Board is empty!</EmptyMessage>;
     }
 
@@ -96,4 +97,4 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
     );
 };
 
-export default BoardRenderGroupedTasksDesktop;
+export default GroupedTasksDesktop;

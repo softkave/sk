@@ -32,7 +32,7 @@ import {
 import {
     getBlockPath,
     getBlockResourceTypes,
-    getBoardResourceTypeFullName,
+    getBoardResourceTypeDisplayName,
 } from "./utils";
 
 export interface IOrgBoardProps {
@@ -75,6 +75,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     const [searchQueries, setSearchQueries] = React.useState<{
         [key: string]: string;
     }>({});
+
     const resourceTypes = getBlockResourceTypes(block, childrenTypes);
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
         `${blockPath}/:resourceType`
@@ -176,7 +177,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                                 padding: "0 16px",
                             }}
                         >
-                            {getBoardResourceTypeFullName(type)}
+                            {getBoardResourceTypeDisplayName(type)}
                             {type === "chat" && (
                                 <Badge
                                     count={unseenChatsCount}

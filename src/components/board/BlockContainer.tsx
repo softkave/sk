@@ -5,7 +5,7 @@ import BlockSelectors from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/types";
 import EmptyMessage from "../EmptyMessage";
 
-const defaultNotFoundMessage = "Block not found.";
+const DEFAULT_NOT_FOUND_TEXT = "Block not found";
 
 export interface IBlockContainerProps {
     blockId: string;
@@ -23,7 +23,7 @@ const BlockContainer: React.FC<IBlockContainerProps> = (props) => {
     if (!block) {
         return (
             <EmptyMessage>
-                {notFoundMessage || defaultNotFoundMessage}
+                {notFoundMessage || DEFAULT_NOT_FOUND_TEXT}
             </EmptyMessage>
         );
     }

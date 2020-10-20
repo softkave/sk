@@ -52,7 +52,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     await thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
-            OperationType.AddCollaborators,
+            OperationType.ADD_COLLABORATORS,
             arg.block.customId
         )
     );
@@ -130,7 +130,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.AddCollaborators,
+                OperationType.ADD_COLLABORATORS,
                 arg.block.customId
             )
         );
@@ -138,7 +138,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.AddCollaborators,
+                OperationType.ADD_COLLABORATORS,
                 error,
                 arg.block.customId
             )

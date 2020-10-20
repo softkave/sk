@@ -73,7 +73,7 @@ export const completeAddBlock = createAsyncThunk<
         // To avoid loading the block children, cause there isn't any yet, it's a new block
         loadOps.push({
             id: getNewId(),
-            operationType: OperationType.LoadBlockChildren,
+            operationType: OperationType.LOAD_BLOCK_CHILDREN,
             resourceId: arg.block.customId,
             status: {
                 status: OperationStatus.Completed,
@@ -118,7 +118,11 @@ export const addBlockOperationAction = createAsyncThunk<
     }
 
     await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.AddBlock, arg.block.customId)
+        dispatchOperationStarted(
+            id,
+            OperationType.ADD_BLOCK,
+            arg.block.customId
+        )
     );
 
     try {
@@ -142,7 +146,7 @@ export const addBlockOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.AddBlock,
+                OperationType.ADD_BLOCK,
                 arg.block.customId
             )
         );
@@ -150,7 +154,7 @@ export const addBlockOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.AddBlock,
+                OperationType.ADD_BLOCK,
                 error,
                 arg.block.customId
             )

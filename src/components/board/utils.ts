@@ -1,21 +1,9 @@
 import path from "path";
 import { BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
-import { BoardResourceType, BoardViewType } from "./types";
+import { BoardResourceType } from "./types";
 
-const cbReq = "collaboration-requests";
-
-export const blockResourceTypeToBlockKeyMap: {
-    [key in BoardResourceType]: string;
-} = {
-    [cbReq]: "collaborationRequests",
-    collaborators: "collaborators",
-    boards: "boards",
-    tasks: "tasks",
-    chat: "chat",
-};
-
-export const getBoardResourceTypeFullName = (
+export const getBoardResourceTypeDisplayName = (
     resourceType?: BoardResourceType | null
 ) => {
     switch (resourceType) {
@@ -25,35 +13,6 @@ export const getBoardResourceTypeFullName = (
         default:
             return resourceType;
     }
-};
-
-export const getBoardViewTypeFullName = (
-    resourceType?: BoardViewType | null
-) => {
-    switch (resourceType) {
-        case "list":
-            return "list";
-
-        case "status-kanban":
-            return "status kanban";
-
-        default:
-            return null;
-    }
-};
-
-export const sortBlockResourceTypesByCount = (
-    block: IBlock,
-    resourceTypes: BoardResourceType[]
-) => {
-    return resourceTypes
-        .map((rt) => rt)
-        .sort((a, b) => {
-            return (
-                (block[blockResourceTypeToBlockKeyMap[a]] || 0) -
-                (block[blockResourceTypeToBlockKeyMap[b]] || 0)
-            );
-        });
 };
 
 export const getBlockResourceTypes = (
@@ -73,42 +32,6 @@ export const getBlockResourceTypes = (
     return blockResourceTypes;
 };
 
-export const getBoardViewTypesForResourceType = (
-    block: IBlock,
-    resourceType: BoardResourceType
-): BoardViewType[] => {
-    switch (resourceType) {
-        case "tasks":
-            return ["status-kanban"];
-
-        default:
-            return ["list"];
-    }
-};
-
-export const getDefaultBoardViewType = (block: IBlock) => {
-    return getBoardViewTypesForResourceType(block, "tasks")[0];
-};
-
-export const getBlockTypeFromResourceType = (
-    resourceType: BoardResourceType
-): BlockType | null => {
-    switch (resourceType) {
-        case "boards":
-            return BlockType.Board;
-
-        case "tasks":
-            return BlockType.Task;
-
-        default:
-            return null;
-    }
-};
-
-export const getResourceTypeFieldName = (resourceType: BoardResourceType) => {
-    return blockResourceTypeToBlockKeyMap[resourceType];
-};
-
 export const getBlockPath = (b: IBlock, parentPath?: string) => {
     const type = b.type;
     const blockPath = `/${pluralize(type)}/${b.customId}`;
@@ -119,20 +42,8 @@ export const getBlocksPath = (blocks: IBlock[]) => {
     const blocksPath = `/app${blocks
         .map((block) => getBlockPath(block))
         .join("")}`;
+
     return path.normalize(blocksPath);
 };
 
-export const isBlockRelatedResourceType = (type?: BoardResourceType | null) => {
-    switch (type) {
-        case "boards":
-        case "tasks":
-            return true;
-
-        default:
-            return false;
-    }
-};
-
 export const TASK_GROUPS = ["status", "labels"];
-export const NO_STATUS = "no status";
-export const NO_LABEL = "no label";

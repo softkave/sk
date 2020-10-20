@@ -1,11 +1,11 @@
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import { IBoardGroupedTasksGroup, TaskGroup } from "./types";
-import toLabelGroups from "./utils/toLabelGroups";
-import toStatusGroups from "./utils/toStatusGroups";
+import { IBoardGroupedTasks, TaskGroup } from "./types";
+import groupByLabels from "./utils/groupByLabels";
+import groupByStatus from "./utils/groupByStatus";
 
 export type BoardGroupedTasksRenderFn = (
-    groups: IBoardGroupedTasksGroup[],
+    groups: IBoardGroupedTasks[],
     groupType: TaskGroup,
     setGroupType: (type: TaskGroup) => void
 ) => React.ReactElement;
@@ -22,13 +22,12 @@ const BoardGroupedTasks: React.FC<IBoardGroupedTasksProps> = (props) => {
 
     switch (groupType) {
         case "status": {
-            const groups = toStatusGroups(block.boardStatuses || [], tasks);
+            const groups = groupByStatus(block.boardStatuses || [], tasks);
             return render(groups, groupType, setGroupType);
         }
 
         case "labels": {
-            const groups = toLabelGroups(block.boardLabels || [], tasks);
-
+            const groups = groupByLabels(block.boardLabels || [], tasks);
             return render(groups, groupType, setGroupType);
         }
 

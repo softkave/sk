@@ -1,11 +1,12 @@
 import { IBlock, IBlockLabel } from "../../../models/block/block";
-import { IBoardGroupedTasksGroup } from "../types";
-import { NO_LABEL } from "../utils";
+import { IBoardGroupedTasks } from "../types";
 
-const toLabelGroups = (
+const NO_LABEL_TEXT = "No label";
+
+const groupByLabels = (
     labels: IBlockLabel[],
     tasks: IBlock[]
-): IBoardGroupedTasksGroup[] => {
+): IBoardGroupedTasks[] => {
     const map: { [key: string]: IBlock[] } = {};
     const noLabel: IBlock[] = [];
 
@@ -24,7 +25,7 @@ const toLabelGroups = (
         });
     });
 
-    const groups: IBoardGroupedTasksGroup[] = labels
+    const groups: IBoardGroupedTasks[] = labels
         .map((s) => {
             return {
                 id: s.customId,
@@ -45,10 +46,14 @@ const toLabelGroups = (
         });
 
     if (noLabel.length > 0) {
-        groups.unshift({ name: NO_LABEL, tasks: noLabel, id: NO_LABEL });
+        groups.unshift({
+            name: NO_LABEL_TEXT,
+            tasks: noLabel,
+            id: NO_LABEL_TEXT,
+        });
     }
 
     return groups;
 };
 
-export default toLabelGroups;
+export default groupByLabels;

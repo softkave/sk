@@ -1,11 +1,12 @@
 import { IBlock, IBlockStatus } from "../../../models/block/block";
-import { IBoardGroupedTasksGroup } from "../types";
-import { NO_STATUS } from "../utils";
+import { IBoardGroupedTasks } from "../types";
 
-const toStatusGroups = (
+const NO_STATUS_TEXT = "No status";
+
+const groupByStatus = (
     status: IBlockStatus[],
     tasks: IBlock[]
-): IBoardGroupedTasksGroup[] => {
+): IBoardGroupedTasks[] => {
     const map: { [key: string]: IBlock[] } = {};
     const noStatus: IBlock[] = [];
 
@@ -20,7 +21,7 @@ const toStatusGroups = (
         map[task.status] = statusTasks;
     });
 
-    const groups: IBoardGroupedTasksGroup[] = status.map((s) => {
+    const groups: IBoardGroupedTasks[] = status.map((s) => {
         return {
             id: s.customId,
             name: s.name,
@@ -30,10 +31,14 @@ const toStatusGroups = (
     });
 
     if (noStatus.length > 0) {
-        groups.unshift({ name: NO_STATUS, tasks: noStatus, id: NO_STATUS });
+        groups.unshift({
+            name: NO_STATUS_TEXT,
+            tasks: noStatus,
+            id: NO_STATUS_TEXT,
+        });
     }
 
     return groups;
 };
 
-export default toStatusGroups;
+export default groupByStatus;
