@@ -2,9 +2,9 @@ import { SprintDuration } from "./types";
 
 export const sprintConstants = {
     durationOptions: [
-        SprintDuration.OneWeek,
-        SprintDuration.TwoWeeks,
-        SprintDuration.OneMonth,
+        SprintDuration.ONE_WEEK,
+        SprintDuration.TWO_WEEKS,
+        SprintDuration.ONE_MONTH,
     ],
     maxNameLength: 100,
 };

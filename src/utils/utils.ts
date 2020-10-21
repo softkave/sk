@@ -195,7 +195,7 @@ export interface IIndexArrayOptions<T, R> {
         path: (T extends object ? keyof T : never) | undefined,
         arr: T[],
         index: number
-    ) => string;
+    ) => string | undefined;
     reducer?: (current: T, arr: T[], index: number) => R;
 }
 
@@ -216,11 +216,13 @@ export function indexArray<T, R = T>(
     }
 
     const result = arr.reduce((accumulator, current, index) => {
-        accumulator[indexer(current, path, arr, index)] = reducer(
-            current,
-            arr,
-            index
-        );
+        const key = indexer(current, path, arr, index);
+
+        if (!key) {
+            return accumulator;
+        }
+
+        accumulator[key] = reducer(current, arr, index);
 
         return accumulator;
     }, {});

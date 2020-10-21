@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI, { IAddSprintAPIParams } from "../../../net/sprint/sprint";
-import { getNewId, getNewTempId } from "../../../utils/utils";
+import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
@@ -55,18 +55,22 @@ export const addSprintOpAction = createAsyncThunk<
                 arg.boardId
             );
 
-            const boardSprintsCount = SprintSelectors.countSprints(
+            const boardSprintsCount = SprintSelectors.countBoardSprints(
                 thunkAPI.getState(),
                 arg.boardId
             );
+
+            const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
             const sprint: ISprint = {
                 customId: getNewTempId(),
                 boardId: arg.boardId,
                 orgId: board.rootBlockId!,
-                duration: board.sprintOptions!.duration,
+                duration: arg.duration,
                 sprintIndex: boardSprintsCount,
                 name: arg.name,
+                createdAt: getDateString(),
+                createdBy: user.customId,
             };
 
             thunkAPI.dispatch(SprintActions.addSprint(sprint));

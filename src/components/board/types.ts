@@ -23,8 +23,6 @@ export type OnClickBlockWithSearchParamKey = (
 export type OnClickUpdateBlock = (block: IBlock) => void;
 export type OnClickAddBlock = (parent: IBlock, type: BlockType) => void;
 export type OnClickAddCollaborator = () => void;
-export type OnClickAddOrEditLabel = () => void;
-export type OnClickAddOrEditStatus = () => void;
 export type OnClickDeleteBlock = (block: IBlock) => void;
 
 export interface IBoardGroupedTasks {
@@ -32,4 +30,10 @@ export interface IBoardGroupedTasks {
     name: string;
     tasks: IBlock[];
     color?: string;
+}
+
+export interface IBoardFormData {
+    type: BlockType;
+    block?: IBlock;
+    parentBlock?: IBlock;
 }

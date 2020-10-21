@@ -40,7 +40,7 @@ export const setupSprintsOpAction = createAsyncThunk<
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
         const sprintOptions: IBoardSprintOptions = {
-            duration: arg.duration,
+            duration: arg.data.duration,
             createdAt: getDateString(),
             createdBy: user.customId,
         };

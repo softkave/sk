@@ -22,7 +22,8 @@ export interface IBoardHeaderProps {
     view: BoardCurrentView;
     groupBy: BoardGroupBy;
     searchIn: SearchTasksMode;
-    onChange: (text: string) => void;
+    isSearchMode: boolean;
+    onChangeSearchText: (text: string) => void;
     onChangeSearchMode: (mode: SearchTasksMode) => void;
     onToggleFoldAppMenu: () => void;
     onSelectMenuKey: (key: BoardHeaderSettingsMenuKey) => void;
@@ -36,12 +37,13 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         block,
         isMobile,
         style,
+        isSearchMode,
         isAppMenuFolded: isMenuFolded,
         onToggleFoldAppMenu: onToggleFoldMenu,
         onSelectMenuKey,
     } = props;
 
-    const [showSearch, setShowSearch] = React.useState(false);
+    const [showSearch, setShowSearch] = React.useState(isSearchMode);
     const history = useHistory();
 
     const onSelectSettingsMenuItem = (key: BoardHeaderSettingsMenuKey) => {

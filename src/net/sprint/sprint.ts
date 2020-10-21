@@ -15,7 +15,8 @@ import {
 
 export interface IAddSprintAPIParams {
     boardId: string;
-    name?: string;
+    name: string;
+    duration: SprintDuration;
 }
 
 export type IAddSprintAPIResult = GetEndpointResult<ISprint>;
@@ -58,7 +59,9 @@ async function endSprint(sprintId: string): Promise<IEndSprintAPIResult> {
 
 export interface ISetupSprintsAPIParams {
     boardId: string;
-    duration: SprintDuration;
+    data: {
+        duration: SprintDuration;
+    };
 }
 
 export type ISetupSprintsResult = GetEndpointResult<{

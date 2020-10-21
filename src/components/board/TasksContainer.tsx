@@ -22,7 +22,7 @@ export interface ITasksContainerProps {
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
-const BoardTasksContainer: React.FC<ITasksContainerProps> = (props) => {
+const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
     const {
         block,
         useCurrentSprint,
@@ -125,4 +125,4 @@ const BoardTasksContainer: React.FC<ITasksContainerProps> = (props) => {
     );
 };
 
-export default BoardTasksContainer;
+export default TasksContainer;

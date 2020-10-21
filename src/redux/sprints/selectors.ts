@@ -2,7 +2,7 @@ import forEach from "lodash/forEach";
 import { ISprint } from "../../models/sprint/types";
 import { IAppState } from "../types";
 
-function countSprints(state: IAppState, boardId: string): number {
+function countBoardSprints(state: IAppState, boardId: string): number {
     let count = 0;
 
     forEach(state.sprints, (sprint) => {
@@ -12,6 +12,18 @@ function countSprints(state: IAppState, boardId: string): number {
     });
 
     return count;
+}
+
+function getBoardSprints(state: IAppState, boardId: string): ISprint[] {
+    const sprints: ISprint[] = [];
+
+    forEach(state.sprints, (sprint) => {
+        if (sprint.boardId === boardId) {
+            sprints.push(sprint);
+        }
+    });
+
+    return sprints;
 }
 
 function getSprint(state: IAppState, id: string): ISprint {
@@ -50,7 +62,8 @@ function getNextSprintAfterIndex(
 }
 
 export default class SprintSelectors {
-    public static countSprints = countSprints;
+    public static countBoardSprints = countBoardSprints;
+    public static getBoardSprints = getBoardSprints;
     public static getSprint = getSprint;
     public static getSprintsFromIndex = getSprintsFromIndex;
     public static getNextSprintAfterIndex = getNextSprintAfterIndex;

@@ -1,7 +1,7 @@
 export enum SprintDuration {
-    OneWeek = "1 week",
-    TwoWeeks = "2 weeks",
-    OneMonth = "1 month",
+    ONE_WEEK = "1 week",
+    TWO_WEEKS = "2 weeks",
+    ONE_MONTH = "1 month",
 }
 
 export interface IBoardSprintOptions {
@@ -20,7 +20,7 @@ export interface ISprint {
     sprintIndex: number;
     createdAt: string;
     createdBy: string;
-    name?: string;
+    name: string;
     startDate?: string;
     startedBy?: string;
     endDate?: string;

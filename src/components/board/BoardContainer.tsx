@@ -5,37 +5,25 @@ import { Redirect } from "react-router-dom";
 import { IBlock } from "../../models/block/block";
 import { subscribe, unsubcribe } from "../../net/socket";
 import Board from "./Board";
-import {
-    IBoardResourceTypePathMatch,
-    OnClickAddCollaborator,
-    OnClickAddOrEditLabel,
-    OnClickAddOrEditStatus,
-    OnClickDeleteBlock,
-    OnClickUpdateBlock,
-} from "./types";
+import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";
 
-export interface IBoardHomeForBlockProps {
+export interface IBoardContainerProps {
     blockPath: string;
     block: IBlock;
     isMobile: boolean;
     isAppMenuFolded: boolean;
     onToggleFoldAppMenu: () => void;
-    onClickUpdateBlock: OnClickUpdateBlock;
-    onClickAddCollaborator: OnClickAddCollaborator;
-    onClickAddOrEditLabel: OnClickAddOrEditLabel;
-    onClickAddOrEditStatus: OnClickAddOrEditStatus;
     onClickDeleteBlock: OnClickDeleteBlock;
 }
 
-const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
+const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     const {
         blockPath,
         block,
-        onClickDeleteBlock,
-        onClickUpdateBlock,
-        isAppMenuFolded,
-        onToggleFoldAppMenu,
         isMobile,
+        isAppMenuFolded,
+        onClickDeleteBlock,
+        onToggleFoldAppMenu,
     } = props;
 
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
@@ -46,6 +34,7 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
     React.useEffect(() => {
         subscribe([{ type: block.type as any, customId: block.customId }]);
+
         return () => {
             unsubcribe([{ type: block.type as any, customId: block.customId }]);
         };
@@ -59,15 +48,13 @@ const BoardMain: React.FC<IBoardHomeForBlockProps> = (props) => {
 
     return (
         <Board
-            block={block}
-            blockPath={blockPath}
+            board={block}
             isAppMenuFolded={isAppMenuFolded}
             isMobile={isMobile}
             onClickDeleteBlock={onClickDeleteBlock}
-            onClickEditBlock={onClickUpdateBlock}
             onToggleFoldAppMenu={onToggleFoldAppMenu}
         />
     );
 };
 
-export default BoardMain;
+export default BoardContainer;

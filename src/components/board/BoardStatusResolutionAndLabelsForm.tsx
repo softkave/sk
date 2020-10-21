@@ -10,10 +10,11 @@ import StatusListContainer from "../status/StatusListContainer";
 import StyledContainer from "../styled/Container";
 import withDrawer from "../withDrawer";
 
-export type BoardStatusResolutionAndLabelsFormType =
-    | "status"
-    | "labels"
-    | "resolutions";
+export enum BoardStatusResolutionAndLabelsFormType {
+    STATUS = "Status",
+    LABELS = "Labels",
+    RESOLUTIONS = "Resolutions",
+}
 
 export interface IBoardStatusResolutionAndLabelsFormProps {
     onClose: () => void;
@@ -54,20 +55,34 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                 </StyledContainer>
                 <Tabs defaultActiveKey={active} tabBarGutter={0}>
                     <Tabs.TabPane
-                        tab={<span style={tabSpanStyle}>Status List</span>}
-                        key="status"
+                        tab={
+                            <span style={tabSpanStyle}>
+                                {BoardStatusResolutionAndLabelsFormType.STATUS}
+                            </span>
+                        }
+                        key={BoardStatusResolutionAndLabelsFormType.STATUS}
                     >
                         <StatusListContainer block={block} />
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={tabSpanStyle}>Resolutions</span>}
-                        key="resolutions"
+                        tab={
+                            <span style={tabSpanStyle}>
+                                {
+                                    BoardStatusResolutionAndLabelsFormType.RESOLUTIONS
+                                }
+                            </span>
+                        }
+                        key={BoardStatusResolutionAndLabelsFormType.LABELS}
                     >
                         <ResolutionsListContainer block={block} />
                     </Tabs.TabPane>
                     <Tabs.TabPane
-                        tab={<span style={tabSpanStyle}>Labels</span>}
-                        key="labels"
+                        tab={
+                            <span style={tabSpanStyle}>
+                                {BoardStatusResolutionAndLabelsFormType.LABELS}
+                            </span>
+                        }
+                        key={BoardStatusResolutionAndLabelsFormType.RESOLUTIONS}
                     >
                         <LabelListContainer block={block} />
                     </Tabs.TabPane>

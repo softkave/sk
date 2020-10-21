@@ -22,7 +22,6 @@ import TaskForm, { ITaskFormValues } from "./TaskForm";
 export interface ITaskFormContainerProps {
     orgId: string;
     onClose: () => void;
-
     parentBlock?: IBlock;
     block?: IBlock;
 }

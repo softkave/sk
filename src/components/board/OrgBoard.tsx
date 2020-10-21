@@ -14,7 +14,7 @@ import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import BlockContainer from "./BlockContainer";
-import BoardMain from "./BoardMain";
+import BoardContainer from "./BoardContainer";
 import BoardTypeList from "./BoardTypeList";
 import LoadBlockChildren from "./LoadBlockChildren";
 import OrgBoardHeader from "./OrgBoardHeader";
@@ -23,8 +23,6 @@ import {
     IBoardResourceTypePathMatch,
     OnClickAddBlock,
     OnClickAddCollaborator,
-    OnClickAddOrEditLabel,
-    OnClickAddOrEditStatus,
     OnClickBlockWithSearchParamKey,
     OnClickDeleteBlock,
     OnClickUpdateBlock,
@@ -47,9 +45,7 @@ export interface IOrgBoardProps {
     onClickUpdateBlock: OnClickUpdateBlock;
     onClickAddBlock: OnClickAddBlock;
     onClickBlock: OnClickBlockWithSearchParamKey;
-    onClickAddCollaborator: OnClickAddCollaborator;
-    onClickAddOrEditLabel: OnClickAddOrEditLabel;
-    onClickAddOrEditStatus: OnClickAddOrEditStatus;
+    onAddCollaborator: OnClickAddCollaborator;
     onClickDeleteBlock: OnClickDeleteBlock;
 }
 
@@ -62,7 +58,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         isOrgMenuFolded,
         unseenChatsCount,
         onClickAddBlock,
-        onClickAddCollaborator,
+        onAddCollaborator,
         onClickDeleteBlock,
         onClickUpdateBlock,
         onClickBlock,
@@ -124,7 +120,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
                             case "collaboration-requests":
                             case "collaborators":
-                                onClickAddCollaborator();
+                                onAddCollaborator();
                                 return;
                         }
                     }}
@@ -255,18 +251,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         blockId={boardId}
                         notFoundMessage="Board not found"
                         render={(board) => (
-                            <BoardMain
-                                {...props}
+                            <BoardContainer
+                                isMobile={isMobile}
                                 block={board}
                                 blockPath={getBlockPath(board, blockPath)}
                                 isAppMenuFolded={isOrgMenuFolded}
-                                onClickDeleteBlock={(b) =>
-                                    onClickDeleteBlock(b)
-                                }
-                                onClickUpdateBlock={(b) =>
-                                    onClickUpdateBlock(b)
-                                }
                                 onToggleFoldAppMenu={onToggleFoldOrgMenu}
+                                onClickDeleteBlock={onClickDeleteBlock}
                             />
                         )}
                     />

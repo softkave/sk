@@ -307,11 +307,11 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
 
     const onSelectAddNewStatus = React.useCallback(() => {
-        setSubFormType("status");
+        setSubFormType(BoardStatusResolutionAndLabelsFormType.STATUS);
     }, []);
 
     const onSelectAddNewResolution = React.useCallback(() => {
-        setSubFormType("resolutions");
+        setSubFormType(BoardStatusResolutionAndLabelsFormType.RESOLUTIONS);
     }, []);
 
     const renderStatus = (formikProps: TaskFormFormikProps) => {
@@ -348,7 +348,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
 
     const onSelectAddNewLabel = React.useCallback(() => {
-        setSubFormType("labels");
+        setSubFormType(BoardStatusResolutionAndLabelsFormType.LABELS);
     }, []);
 
     // TODO: extract these fields into separate components with React.memo for speed

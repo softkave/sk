@@ -12,7 +12,7 @@ export enum SearchTasksMode {
 export interface ISearchTasksInputProps {
     searchIn: SearchTasksMode;
     isMobile: boolean;
-    onChange: (text: string) => void;
+    onChangeSearchText: (text: string) => void;
     onChangeSearchMode: (mode: SearchTasksMode) => void;
     onCancel: () => void;
 }
@@ -33,7 +33,7 @@ const SearchTasksInput: React.FC<ISearchTasksInputProps> = (props) => {
         searchIn,
         isMobile,
         onCancel,
-        onChange,
+        onChangeSearchText,
         onChangeSearchMode,
     } = props;
 
@@ -92,7 +92,7 @@ const SearchTasksInput: React.FC<ISearchTasksInputProps> = (props) => {
                             : SEARCH_TASKS_IN_ALL_TASKS
                     }
                     prefix={<InputSearchIcon />}
-                    onChange={(evt) => onChange(evt.target.value)}
+                    onChange={(evt) => onChangeSearchText(evt.target.value)}
                 />
                 <Button onClick={onCancel} className="icon-btn">
                     <CloseIcon />
