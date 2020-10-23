@@ -4,7 +4,7 @@ import React from "react";
 
 const Pricing: React.FC<{}> = () => {
     return (
-        <PricingContainer>
+        <PricingContainer id="pricing">
             <Typography.Text strong>Pricing</Typography.Text>
             <Typography.Paragraph>
                 <Typography.Text>Softkave</Typography.Text> is{" "}

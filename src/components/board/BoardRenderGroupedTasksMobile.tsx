@@ -1,4 +1,4 @@
-import { Avatar, Badge, Space, Tabs } from "antd";
+import { Badge, Space, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
