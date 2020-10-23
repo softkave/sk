@@ -11,7 +11,7 @@ import { addCollaboratorsOperationAction } from "../../redux/operations/block/ad
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import AddCollaboratorForm, {
     IAddCollaboratorFormValues,
 } from "./AddCollaboratorForm";
@@ -76,7 +76,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (opStat.isCompleted) {
             onClose();

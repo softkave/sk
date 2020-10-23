@@ -42,9 +42,7 @@ type UseOperation = (
     options?: IUseOperationOptions
 ) => IUseOperationStatus;
 
-export const getOperationStats = (
-    operation: IOperation
-): IUseOperationStatus => {
+export const getOpStats = (operation: IOperation): IUseOperationStatus => {
     const isLoading = isOperationStartedOrPending(operation);
     const isCompleted = isOperationCompleted(operation);
     const error = operation.status.error;
@@ -151,7 +149,7 @@ const useOperation: UseOperation = (
     });
 
     const statusData: IUseOperationStatus = operation
-        ? getOperationStats(operation)
+        ? getOpStats(operation)
         : {
               isCompleted: false,
               isError: false,

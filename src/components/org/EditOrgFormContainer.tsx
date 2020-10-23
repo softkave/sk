@@ -10,7 +10,7 @@ import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import EditOrgForm, { IEditOrgFormValues } from "./EditOrgForm";
 
 export interface IEditOrgFormContainerProps {
@@ -64,7 +64,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
             return;
         }
 
-        const createOrgOpStat = getOperationStats(op);
+        const createOrgOpStat = getOpStats(op);
 
         if (!props.block) {
             if (createOrgOpStat.isCompleted) {

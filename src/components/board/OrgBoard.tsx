@@ -253,7 +253,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         render={(board) => (
                             <BoardContainer
                                 isMobile={isMobile}
-                                block={board}
+                                board={board}
                                 blockPath={getBlockPath(board, blockPath)}
                                 isAppMenuFolded={isOrgMenuFolded}
                                 onToggleFoldAppMenu={onToggleFoldOrgMenu}

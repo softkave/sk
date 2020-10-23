@@ -1,7 +1,12 @@
+import path from "path";
 import React from "react";
+import { useHistory } from "react-router";
+import { Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import BoardFormInDrawer from "../boardBlock/BoardFormInDrawer";
+import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
+import SprintOptionsFormInDrawer from "../sprint/SprintOptionsFormInDrawer";
 import StyledContainer from "../styled/Container";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 import BoardHeader from "./BoardHeader";
@@ -13,30 +18,39 @@ import {
 import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "./BoardStatusResolutionAndLabelsForm";
+import GroupedTasks from "./GroupedTasks";
 import { SearchTasksMode } from "./SearchTasksInput";
+import SprintsContainer from "./SprintsContainer";
 import TasksContainer from "./TasksContainer";
 import { IBoardFormData, OnClickDeleteBlock } from "./types";
 
 export interface IBoardProps {
     board: IBlock;
+    blockPath: string;
     isMobile: boolean;
     isAppMenuFolded: boolean;
     onToggleFoldAppMenu: () => void;
     onClickDeleteBlock: OnClickDeleteBlock;
 }
 
-interface IUpdateSprintFormData {
-    sprint: ISprint;
+interface ISprintFormData {
+    sprint?: ISprint;
 }
 
 const Board: React.FC<IBoardProps> = (props) => {
     const {
         board,
+        blockPath,
         isMobile,
         isAppMenuFolded,
         onToggleFoldAppMenu,
         onClickDeleteBlock,
     } = props;
+
+    const history = useHistory();
+
+    const SPRINTS_PATH = path.normalize(`${blockPath}/sprints`);
+    const TASKS_PATH = path.normalize(`${blockPath}/tasks`);
 
     const [groupBy, setGroupBy] = React.useState(BoardGroupBy.STATUS);
     const [view, setView] = React.useState(BoardCurrentView.CURRENT_SPRINT);
@@ -47,12 +61,10 @@ const Board: React.FC<IBoardProps> = (props) => {
         IBoardFormData | undefined
     >();
 
-    const [showSetupSprintsForm, setShowSetupSprintsForm] = React.useState(
-        false
-    );
+    const [sprintOptionsForm, setSprintOptionsForm] = React.useState(false);
 
-    const [updateSprintForm, setUpdateSprintForm] = React.useState<
-        IUpdateSprintFormData | undefined
+    const [sprintForm, setSprintForm] = React.useState<
+        ISprintFormData | undefined
     >();
 
     const [otherResourcesForm, setOtherResourcesForm] = React.useState<
@@ -106,7 +118,24 @@ const Board: React.FC<IBoardProps> = (props) => {
                 break;
 
             case BoardHeaderSettingsMenuKey.SETUP_SPRINTS:
-                setShowSetupSprintsForm(true);
+                setSprintOptionsForm(true);
+                break;
+
+            case BoardHeaderSettingsMenuKey.ADD_SPRINT:
+                setSprintForm({});
+                break;
+        }
+    };
+
+    const onSelectView = (key: BoardCurrentView) => {
+        switch (key) {
+            case BoardCurrentView.SPRINTS: {
+                history.push(SPRINTS_PATH);
+                break;
+            }
+
+            default:
+                setView(key);
                 break;
         }
     };
@@ -168,19 +197,33 @@ const Board: React.FC<IBoardProps> = (props) => {
     };
 
     const renderSprintForms = () => {
-        if (!showSetupSprintsForm || !updateSprintForm) {
+        if (!sprintOptionsForm || !sprintForm) {
             return null;
         }
 
-        if (showSetupSprintsForm) {
-            return null;
+        if (sprintOptionsForm) {
+            return (
+                <SprintOptionsFormInDrawer
+                    visible
+                    board={board}
+                    onClose={() => setSprintOptionsForm(false)}
+                />
+            );
         }
 
-        if (updateSprintForm) {
-            return null;
+        if (sprintForm) {
+            return (
+                <SprintFormInDrawer
+                    visible
+                    board={board}
+                    sprint={sprintForm.sprint}
+                    onClose={() => setSprintForm(undefined)}
+                />
+            );
         }
     };
 
+    // TODO: should we move what TaskContainer does higher up so that it only happens once
     return (
         <StyledContainer
             s={{ flexDirection: "column", flex: 1, width: "100%" }}
@@ -198,18 +241,55 @@ const Board: React.FC<IBoardProps> = (props) => {
                 isSearchMode={showSearch}
                 onChangeSearchMode={setSearchIn}
                 onChangeSearchText={setSearchText}
-                onSelectCurrentView={setView}
+                onSelectCurrentView={onSelectView}
                 onSelectGroupBy={setGroupBy}
                 onSelectMenuKey={onSelectMenuKey}
                 onToggleFoldAppMenu={onToggleFoldAppMenu}
             />
-            <TasksContainer
-                block={board}
-                groupType={groupBy}
-                searchText={searchText}
-                useCurrentSprint={view === BoardCurrentView.CURRENT_SPRINT}
-                onClickUpdateBlock={updateTask}
-            />
+            <Switch>
+                <Route
+                    path={TASKS_PATH}
+                    render={() => (
+                        <TasksContainer
+                            board={board}
+                            searchText={searchText}
+                            useCurrentSprint={
+                                view === BoardCurrentView.CURRENT_SPRINT
+                            }
+                            render={(args) => (
+                                <GroupedTasks
+                                    {...args}
+                                    block={board}
+                                    groupType={groupBy}
+                                    onClickUpdateBlock={updateTask}
+                                />
+                            )}
+                        />
+                    )}
+                />
+                <Route
+                    path={SPRINTS_PATH}
+                    render={() => (
+                        <TasksContainer
+                            board={board}
+                            searchText={searchText}
+                            useCurrentSprint={
+                                view === BoardCurrentView.CURRENT_SPRINT
+                            }
+                            render={(args) => (
+                                <SprintsContainer
+                                    {...args}
+                                    board={board}
+                                    onUpdateSprint={(sprint) =>
+                                        setSprintForm({ sprint })
+                                    }
+                                    onClickUpdateBlock={updateTask}
+                                />
+                            )}
+                        />
+                    )}
+                />
+            </Switch>
         </StyledContainer>
     );
 };

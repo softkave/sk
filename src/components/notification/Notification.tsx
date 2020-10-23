@@ -17,7 +17,7 @@ import CollaborationRequestStatus from "../collaborator/CollaborationRequestStat
 import { getRequestStatus } from "../collaborator/utils";
 import EmptyMessage from "../EmptyMessage";
 import FormError from "../form/FormError";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import { getFullBaseNavPath } from "../layout/path";
 import StyledContainer from "../styled/Container";
 import { INotificationsPathParams } from "./utils";
@@ -75,7 +75,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
             return;
         }
 
-        const currentOpStat = getOperationStats(op);
+        const currentOpStat = getOpStats(op);
 
         if (currentOpStat.isCompleted) {
             message.success("Response sent successfully");

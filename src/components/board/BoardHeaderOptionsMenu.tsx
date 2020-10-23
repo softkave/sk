@@ -17,6 +17,7 @@ export enum BoardHeaderSettingsMenuKey {
     ADD_TASK = "add-task",
     SEARCH_TASKS = "search-tasks",
     SETUP_SPRINTS = "setup-sprints",
+    ADD_SPRINT = "add-sprint",
 }
 
 export enum BoardCurrentView {
@@ -29,6 +30,7 @@ export enum BoardGroupBy {
     STATUS = "status",
     LABELS = "labels",
     ASSIGNEES = "assignees",
+    SPRINT = "sprint",
 }
 
 export interface IBoardHeaderOptionsMenuProps {
@@ -81,6 +83,7 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
             case BoardHeaderSettingsMenuKey.ADD_TASK:
             case BoardHeaderSettingsMenuKey.SEARCH_TASKS:
             case BoardHeaderSettingsMenuKey.SETUP_SPRINTS:
+            case BoardHeaderSettingsMenuKey.ADD_SPRINT:
                 onSelectMenuKey(key as BoardHeaderSettingsMenuKey);
                 break;
 
@@ -138,40 +141,40 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
         </React.Fragment>
     );
 
-    const renderGroupByMenuItems = () => (
-        <React.Fragment>
-            {(view === BoardCurrentView.CURRENT_SPRINT ||
-                view === BoardCurrentView.ALL_TASKS) && (
-                <React.Fragment>
-                    <Menu.Divider />
-                    <Menu.Item key={BoardGroupBy.STATUS}>
-                        <Space align="center" size={12}>
-                            <Checkbox
-                                checked={groupBy === BoardGroupBy.STATUS}
-                            />
-                            Status
-                        </Space>
-                    </Menu.Item>
-                    <Menu.Item key={BoardGroupBy.LABELS}>
-                        <Space align="center" size={12}>
-                            <Checkbox
-                                checked={groupBy === BoardGroupBy.LABELS}
-                            />
-                            Labels
-                        </Space>
-                    </Menu.Item>
-                    <Menu.Item key={BoardGroupBy.ASSIGNEES}>
-                        <Space align="center" size={12}>
-                            <Checkbox
-                                checked={groupBy === BoardGroupBy.ASSIGNEES}
-                            />
-                            Assignees
-                        </Space>
-                    </Menu.Item>
-                </React.Fragment>
-            )}
-        </React.Fragment>
-    );
+    const renderGroupByMenuItems = () => {
+        if (
+            view !== BoardCurrentView.CURRENT_SPRINT &&
+            view !== BoardCurrentView.ALL_TASKS
+        ) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                <Menu.Divider />
+                <Menu.Item key={BoardGroupBy.STATUS}>
+                    <Space align="center" size={12}>
+                        <Checkbox checked={groupBy === BoardGroupBy.STATUS} />
+                        Status
+                    </Space>
+                </Menu.Item>
+                <Menu.Item key={BoardGroupBy.LABELS}>
+                    <Space align="center" size={12}>
+                        <Checkbox checked={groupBy === BoardGroupBy.LABELS} />
+                        Labels
+                    </Space>
+                </Menu.Item>
+                <Menu.Item key={BoardGroupBy.ASSIGNEES}>
+                    <Space align="center" size={12}>
+                        <Checkbox
+                            checked={groupBy === BoardGroupBy.ASSIGNEES}
+                        />
+                        Assignees
+                    </Space>
+                </Menu.Item>
+            </React.Fragment>
+        );
+    };
 
     const renderTaskMenuItems = () => (
         <React.Fragment>
@@ -194,6 +197,14 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
     const renderBoardResourceMenuItems = () => (
         <React.Fragment>
             <Menu.Divider />
+            {boardHasSprintsSetup && (
+                <Menu.Item key={BoardHeaderSettingsMenuKey.ADD_SPRINT}>
+                    <Space align="center" size={12}>
+                        <Plus style={plusIconStyles} />
+                        Sprint
+                    </Space>
+                </Menu.Item>
+            )}
             <Menu.Item key={BoardHeaderSettingsMenuKey.EDIT_STATUS}>
                 <Space align="center" size={12}>
                     <Plus style={plusIconStyles} />

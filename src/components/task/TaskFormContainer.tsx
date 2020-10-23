@@ -16,7 +16,7 @@ import {
 } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import TaskForm, { ITaskFormValues } from "./TaskForm";
 
 export interface ITaskFormContainerProps {
@@ -122,7 +122,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (!existingBlock) {
             if (opStat.isCompleted) {

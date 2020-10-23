@@ -19,7 +19,7 @@ import { AppDispatch } from "../../redux/types";
 import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
-import { getOperationStats } from "../hooks/useOperation";
+import { getOpStats } from "../hooks/useOperation";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
 import TaskLabels from "./TaskLabels";
@@ -67,11 +67,11 @@ const Task: React.FC<ITaskProps> = (props) => {
     ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
 
     const onSelectAddNewStatus = React.useCallback(() => {
-        setSubFormType("status");
+        setSubFormType(BoardStatusResolutionAndLabelsFormType.STATUS);
     }, []);
 
     const onSelectAddNewResolution = React.useCallback(() => {
-        setSubFormType("resolutions");
+        setSubFormType(BoardStatusResolutionAndLabelsFormType.RESOLUTIONS);
     }, []);
 
     const closeForm = React.useCallback(() => setSubFormType(null), []);
@@ -98,14 +98,15 @@ const Task: React.FC<ITaskProps> = (props) => {
                     return;
                 }
 
-                const opStat = getOperationStats(op);
+                const opStat = getOpStats(op);
 
                 if (opStat.isCompleted) {
                     message.success("Task deleted successfully");
-                    dispatch(OperationActions.deleteOperation(op.id));
                 } else if (opStat.isError) {
                     message.error("Error deleting task");
                 }
+
+                dispatch(OperationActions.deleteOperation(op.id));
             },
             onCancel() {
                 // do nothing

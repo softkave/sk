@@ -22,7 +22,7 @@ import { GetOperationActionArgs } from "../types";
 
 export const deleteSprintOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<string>,
+    GetOperationActionArgs<{ sprintId: string }>,
     IAppAsyncThunkConfig
 >("op/sprint/deleteSprint", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
@@ -37,32 +37,43 @@ export const deleteSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.DELETE_SPRINT, arg)
+        dispatchOperationStarted(id, OperationType.DELETE_SPRINT, arg.sprintId)
     );
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
-            const result = await SprintAPI.deleteSprint(arg);
+            const result = await SprintAPI.deleteSprint(arg.sprintId);
 
             if (result && result.errors) {
                 throw result.errors;
             }
         }
 
-        const sprint = SprintSelectors.getSprint(thunkAPI.getState(), arg);
+        const sprint = SprintSelectors.getSprint(
+            thunkAPI.getState(),
+            arg.sprintId
+        );
 
         removeSprintInTasks(sprint);
         updateSprintIndexes(sprint);
-        thunkAPI.dispatch(SprintActions.deleteSprint(arg));
-
+        thunkAPI.dispatch(SprintActions.deleteSprint(arg.sprintId));
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.DELETE_SPRINT, arg)
+            dispatchOperationCompleted(
+                id,
+                OperationType.DELETE_SPRINT,
+                arg.sprintId
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.DELETE_SPRINT, error, arg)
+            dispatchOperationError(
+                id,
+                OperationType.DELETE_SPRINT,
+                error,
+                arg.sprintId
+            )
         );
     }
 

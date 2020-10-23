@@ -15,14 +15,21 @@ export interface IGroupedTasksDesktopProps {
     users: IUser[];
     board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
+    renderColumnHeaderOptions?: (group: IBoardGroupedTasks) => React.ReactNode;
 }
 
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
-    const { groupedTasks, users, board, onClickUpdateBlock } = props;
+    const {
+        groupedTasks,
+        users,
+        board,
+        onClickUpdateBlock,
+        renderColumnHeaderOptions,
+    } = props;
 
     const renderColumnHeader = (group: IBoardGroupedTasks) => {
-        return (
-            <StyledContainer>
+        const defaultContent = (
+            <React.Fragment>
                 {group.color && (
                     <Avatar
                         shape="square"
@@ -42,8 +49,23 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                     count={group.tasks.length}
                     style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
                 />
-            </StyledContainer>
+            </React.Fragment>
         );
+
+        let content: React.ReactNode = defaultContent;
+
+        if (renderColumnHeaderOptions) {
+            content = (
+                <React.Fragment>
+                    <StyledContainer s={{ flex: 1 }}>
+                        {defaultContent}
+                    </StyledContainer>
+                    {renderColumnHeaderOptions(group)}
+                </React.Fragment>
+            );
+        }
+
+        return <StyledContainer>{content}</StyledContainer>;
     };
 
     const renderColumn = (group: IBoardGroupedTasks, i: number) => {

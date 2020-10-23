@@ -12,7 +12,7 @@ import { IUser } from "../../models/user/user";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
@@ -71,7 +71,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 return false;
             }
 
-            const opStat = getOperationStats(op);
+            const opStat = getOpStats(op);
 
             if (opStat.isError) {
                 message.error("Error updating task status");
@@ -105,7 +105,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 return;
             }
 
-            const opStat = getOperationStats(op);
+            const opStat = getOpStats(op);
 
             if (opStat.isError) {
                 message.error("Error updating task resolution");

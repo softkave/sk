@@ -10,7 +10,7 @@ import { updateSprintOpAction } from "../../redux/operations/sprint/updateSprint
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import SprintForm, { ISprintFormValues } from "./SprintForm";
 
 export interface ISprintFormContainerProps {
@@ -66,13 +66,16 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (!props.sprint) {
             if (opStat.isCompleted) {
                 message.success(SPRINT_CREATED_SUCCESSFULLY);
-
-                // TODO: route to sprints
+                history.push(
+                    `/app/organizations/${board.rootBlockId!}/boards/${
+                        board.customId
+                    }/sprints`
+                );
 
                 onClose();
             } else if (opStat.isError) {

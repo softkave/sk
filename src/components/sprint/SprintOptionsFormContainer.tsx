@@ -7,7 +7,7 @@ import { setupSprintsOpAction } from "../../redux/operations/sprint/setupSprints
 import { updateSprintOptionsOpAction } from "../../redux/operations/sprint/updateSprintOptions";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import SprintOptionsForm, {
     ISprintOptionsFormValues,
 } from "./SprintOptionsForm";
@@ -60,7 +60,7 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (!board.sprintOptions) {
             if (opStat.isCompleted) {
