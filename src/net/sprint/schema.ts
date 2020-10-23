@@ -24,9 +24,9 @@ export const sprintFragment = `
 export const addSprintMutation = `
     ${errorFragment}
     ${sprintFragment}
-    mutation AddSprintMutation ($boardId: String!, $name: String) {
+    mutation AddSprintMutation ($boardId: String!, $data: NewSprintInput!) {
         sprint {
-            addSprint (boardId: $boardId, name: $name) {
+            addSprint (boardId: $boardId, data: $data) {
                 errors {
                     ...errorFragment
                 }
@@ -85,9 +85,9 @@ export const endSprintMutation = `
 
 export const setupSprintMutation = `
     ${errorFragment}
-    mutation SetupSprintMutation ($boardId: String!, $duration: String!) {
+    mutation SetupSprintMutation ($boardId: String!, $data: SprintOptionsInput!) {
         sprint {
-            setupSprint (boardId: $boardId, duration: $duration) {
+            setupSprint (boardId: $boardId, data: $data) {
                 errors {
                     ...errorFragment
                 }

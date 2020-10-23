@@ -4,7 +4,6 @@ import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import React from "react";
-import { boolean } from "yup";
 import useObject from "./useObject";
 
 export interface IUseFormHelpersFormikProps<T> {

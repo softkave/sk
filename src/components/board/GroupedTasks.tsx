@@ -32,10 +32,12 @@ const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
     switch (groupType) {
         case BoardGroupBy.STATUS: {
             groupedTasks = groupByStatus(block.boardStatuses || [], tasks);
+            break;
         }
 
         case BoardGroupBy.LABELS: {
             groupedTasks = groupByLabels(block.boardLabels || [], tasks);
+            break;
         }
 
         case BoardGroupBy.ASSIGNEES: {
@@ -44,6 +46,8 @@ const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
                 tasks,
                 block.boardStatuses || []
             );
+
+            break;
         }
     }
 

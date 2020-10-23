@@ -1,4 +1,3 @@
-import { PayloadAction } from "@reduxjs/toolkit";
 import isString from "lodash/isString";
 import { IAppError } from "../net/types";
 import { mergeData } from "../utils/utils";

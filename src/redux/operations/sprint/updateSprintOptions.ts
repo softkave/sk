@@ -1,24 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
-import { BlockType, IBlock } from "../../../models/block/block";
-import BlockAPI from "../../../net/block/block";
 import SprintAPI, {
     IUpdateSprintOptionsAPIParams,
 } from "../../../net/sprint/sprint";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
-import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
-import UserActions from "../../users/actions";
-import OperationActions from "../actions";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
-    OperationStatus,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
