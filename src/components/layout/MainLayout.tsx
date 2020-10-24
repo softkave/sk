@@ -40,11 +40,11 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                     />
                     <Route
                         exact
-                        path="/app/organizations"
+                        path="/app/orgs"
                         component={OrgsListContainer}
                     />
                     <Route
-                        path="/app/organizations/*"
+                        path="/app/orgs/*"
                         render={() => {
                             return (
                                 <OrgsListContainer
@@ -62,7 +62,7 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                     <Route
                         exact
                         path="*"
-                        render={() => <Redirect to="/app/organizations" />}
+                        render={() => <Redirect to="/app/orgs" />}
                     />
                 </Switch>
             </StyledContainer>
@@ -81,7 +81,7 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                     render={() => renderNotification(false)}
                 />
                 <Route
-                    path="/app/organizations/*"
+                    path="/app/orgs/*"
                     render={() => {
                         if (rootBlocksLoaded) {
                             return <OrgBoardContainer />;
@@ -93,7 +93,7 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
                 <Route
                     exact
                     path="*"
-                    render={() => <Redirect to="/app/organizations" />}
+                    render={() => <Redirect to="/app/orgs" />}
                 />
             </Switch>
         </StyledContainer>

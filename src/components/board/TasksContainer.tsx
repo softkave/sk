@@ -39,11 +39,12 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
         const taskList: IBlock[] = [];
 
         forEach(state.blocks, (task) => {
-            const selectTask =
-                task.parent === board.customId &&
-                (useCurrentSprint
-                    ? task.currentSprintId === board.currentSprintId
-                    : true);
+            let selectTask = task.parent === board.customId;
+
+            if (selectTask && useCurrentSprint) {
+                selectTask =
+                    task.taskSprint?.sprintId === board.currentSprintId;
+            }
 
             if (selectTask) {
                 taskList.push(task);

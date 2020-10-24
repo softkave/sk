@@ -51,7 +51,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     };
 
     const onBack = () => {
-        history.push(`/app/organizations/${room.orgId}/chat`);
+        history.push(`/app/orgs/${room.orgId}/chat`);
     };
 
     return (

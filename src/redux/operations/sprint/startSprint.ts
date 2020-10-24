@@ -19,7 +19,7 @@ import { GetOperationActionArgs } from "../types";
 
 export const startSprintOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<string>,
+    GetOperationActionArgs<{ sprintId: string }>,
     IAppAsyncThunkConfig
 >("op/sprint/startSprint", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
@@ -34,7 +34,7 @@ export const startSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.START_SPRINT, arg)
+        dispatchOperationStarted(id, OperationType.START_SPRINT, arg.sprintId)
     );
 
     try {
@@ -42,7 +42,7 @@ export const startSprintOpAction = createAsyncThunk<
         let startDate = getDateString();
 
         if (!isDemoMode) {
-            const result = await SprintAPI.startSprint(arg);
+            const result = await SprintAPI.startSprint(arg.sprintId);
 
             if (result && result.errors) {
                 throw result.errors;
@@ -52,11 +52,14 @@ export const startSprintOpAction = createAsyncThunk<
         }
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-        const sprint = SprintSelectors.getSprint(thunkAPI.getState(), arg);
+        const sprint = SprintSelectors.getSprint(
+            thunkAPI.getState(),
+            arg.sprintId
+        );
 
         thunkAPI.dispatch(
             SprintActions.updateSprint({
-                id: arg,
+                id: arg.sprintId,
                 data: {
                     startDate,
                     startedBy: user.customId,
@@ -74,11 +77,20 @@ export const startSprintOpAction = createAsyncThunk<
         );
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.ADD_BLOCK, arg)
+            dispatchOperationCompleted(
+                id,
+                OperationType.ADD_BLOCK,
+                arg.sprintId
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.ADD_BLOCK, error, arg)
+            dispatchOperationError(
+                id,
+                OperationType.ADD_BLOCK,
+                error,
+                arg.sprintId
+            )
         );
     }
 

@@ -49,7 +49,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
         false
     );
 
-    const organizationPath = "/app/organizations/:organizationId";
+    const organizationPath = "/app/orgs/:organizationId";
     const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
         organizationPath
     );

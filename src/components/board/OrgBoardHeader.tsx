@@ -42,9 +42,9 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
 
     const onBack = () => {
         if (block.type === BlockType.Board) {
-            history.push(`/app/organizations/${block.rootBlockId}/boards`);
+            history.push(`/app/orgs/${block.rootBlockId}/boards`);
         } else {
-            history.push(`/app/organizations`);
+            history.push(`/app/orgs`);
         }
     };
 

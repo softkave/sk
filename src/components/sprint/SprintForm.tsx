@@ -67,7 +67,7 @@ const SprintForm: React.FC<ISprintFormProps> = (props) => {
         errors: externalErrors,
         formikProps: {
             onSubmit,
-            initialValues: value,
+            initialValues: value || {},
             validationSchema: sprintFormValidationSchema,
         },
     });
@@ -171,7 +171,11 @@ const SprintForm: React.FC<ISprintFormProps> = (props) => {
                     type="primary"
                     htmlType="submit"
                     loading={isSubmitting}
-                    disabled={!formikChangedFieldsHelpers.hasChanges()}
+                    disabled={
+                        sprint
+                            ? !formikChangedFieldsHelpers.hasChanges()
+                            : false
+                    }
                 >
                     {getSubmitLabel()}
                 </Button>

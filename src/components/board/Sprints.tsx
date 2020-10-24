@@ -1,40 +1,76 @@
+import ClockCircleOutlined from "@ant-design/icons/ClockCircleOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import EditOutlined from "@ant-design/icons/DeleteOutlined";
+import EditOutlined from "@ant-design/icons/EditOutlined";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
+import { indexArray } from "../../utils/utils";
 import RenderForDevice from "../RenderForDevice";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
 import GroupedTasksMobile from "./GroupedTasksMobile";
 import { IBoardGroupedTasks } from "./types";
+import groupBySprints, { BACKLOG } from "./utils/groupBySprints";
 
 export interface ISprintsProps {
     board: IBlock;
-    groups: IBoardGroupedTasks[];
+    sprints: ISprint[];
+    tasks: IBlock[];
     collaborators: IUser[];
     onUpdateSprint: (sprintId: string) => void;
     onDeleteSprint: (sprintId: string) => void;
+    onStartSprint: (sprintId: string) => void;
+    onEndSprint: (sprint: ISprint) => void;
     onClickUpdateBlock: (block: IBlock) => void;
 }
 
 enum SprintMenuOptions {
     EDIT = "EDIT",
     DELETE = "DELETE",
+    START = "START",
+    END = "END",
 }
 
 const Sprints: React.FC<ISprintsProps> = (props) => {
     const {
         board,
-        groups,
+        sprints,
+        tasks,
         collaborators,
         onUpdateSprint,
         onDeleteSprint,
+        onStartSprint,
+        onEndSprint,
         onClickUpdateBlock,
     } = props;
 
+    // TODO: look for ways to make it better
+    const groups = groupBySprints(sprints, tasks, board.boardStatuses || []);
+    // const sortedSprints = sprints.sort((sprint1, sprint2) => {
+    //     return sprint1.sprintIndex - sprint2.sprintIndex;
+    // });
+
+    const currentSprintIndex = board.currentSprintId
+        ? sprints.findIndex(
+              (sprint) => sprint.customId === board.currentSprintId
+          )
+        : -1;
+
+    const sprintsMap = indexArray(sprints, { path: "customId" });
+
     const renderDesktopColumnHeaderOptions = (group: IBoardGroupedTasks) => {
+        if (group.id === BACKLOG) {
+            return null;
+        }
+
+        const sprint = sprintsMap[group.id];
+
+        if (sprint.endDate) {
+            return null;
+        }
+
         const menuOnClick = (evt) => {
             switch (evt.key) {
                 case SprintMenuOptions.EDIT:
@@ -44,21 +80,56 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
                 case SprintMenuOptions.DELETE:
                     onDeleteSprint(group.id);
                     break;
+
+                case SprintMenuOptions.START:
+                    onStartSprint(group.id);
+                    break;
+
+                case SprintMenuOptions.END:
+                    onEndSprint(sprint);
+                    break;
             }
         };
 
-        const menu = (
-            <Menu onClick={menuOnClick}>
-                <Menu.Item key={SprintMenuOptions.EDIT}>
-                    <EditOutlined />
-                    Edit Sprint
+        const items: React.ReactNode[] = [];
+
+        if (board.currentSprintId === group.id) {
+            items.push(
+                <Menu.Item key={SprintMenuOptions.START}>
+                    <ClockCircleOutlined />
+                    End Sprint
                 </Menu.Item>
-                <Menu.Item key={SprintMenuOptions.DELETE}>
-                    <DeleteOutlined />
-                    Delete Sprint
+            );
+        }
+
+        if (
+            !board.currentSprintId &&
+            sprint.sprintIndex === currentSprintIndex + 1
+        ) {
+            items.push(
+                <Menu.Item key={SprintMenuOptions.START}>
+                    <ClockCircleOutlined />
+                    Start Sprint
                 </Menu.Item>
-            </Menu>
+            );
+        }
+
+        if (items.length > 0) {
+            items.push(<Menu.Divider key="divider" />);
+        }
+
+        items.push(
+            <Menu.Item key={SprintMenuOptions.EDIT}>
+                <EditOutlined />
+                Edit Sprint
+            </Menu.Item>,
+            <Menu.Item key={SprintMenuOptions.DELETE}>
+                <DeleteOutlined />
+                Delete Sprint
+            </Menu.Item>
         );
+
+        const menu = <Menu onClick={menuOnClick}>{items}</Menu>;
 
         return (
             <Dropdown

@@ -48,7 +48,7 @@ const SprintOptionsForm: React.FC<ISprintOptionsFormProps> = (props) => {
         errors: externalErrors,
         formikProps: {
             onSubmit,
-            initialValues: value,
+            initialValues: value || {},
             validationSchema: sprintOptionsFormValidationSchema,
         },
     });

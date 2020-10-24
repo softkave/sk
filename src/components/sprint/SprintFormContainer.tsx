@@ -30,9 +30,18 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         SprintSelectors.getBoardSprints(state, board.customId)
     );
 
+    const boardSprintsCount = useSelector<IAppState, number>((state) =>
+        SprintSelectors.countBoardSprints(state, board.customId)
+    );
+
     const [cachedValues, setValues] = React.useState<
         ISprintFormValues | undefined
-    >(props.sprint);
+    >(
+        props.sprint || {
+            name: `Sprint ${boardSprintsCount + 1}`,
+            duration: board.sprintOptions!.duration,
+        }
+    );
 
     const saveOpStatus = useOperation();
     const errors = saveOpStatus.error
@@ -54,7 +63,7 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
               )
             : await dispatch(
                   addSprintOpAction({
-                      ...data,
+                      data,
                       boardId: board.customId,
                       opId: saveOpStatus.opId,
                   })
@@ -72,7 +81,7 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
             if (opStat.isCompleted) {
                 message.success(SPRINT_CREATED_SUCCESSFULLY);
                 history.push(
-                    `/app/organizations/${board.rootBlockId!}/boards/${
+                    `/app/orgs/${board.rootBlockId!}/boards/${
                         board.customId
                     }/sprints`
                 );

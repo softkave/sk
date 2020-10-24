@@ -74,6 +74,7 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
             menuType="dropdown"
             renderTrigger={renderTrigger}
             renderMenu={renderBlockOptions}
+            // dropdownPlacement="bottomRight"
         />
     );
 };

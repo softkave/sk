@@ -16,7 +16,7 @@ import OperationSelectors, {
 import { IAppState } from "../../redux/types";
 import { getNewId } from "../../utils/utils";
 
-export interface IUseOperationStatus {
+export interface IOperationDerivedData {
     isLoading: boolean;
     isError: boolean;
     isCompleted: boolean;
@@ -26,7 +26,7 @@ export interface IUseOperationStatus {
     status?: IOperationStatus;
 }
 
-type LoadOperation = (statusData: IUseOperationStatus) => void;
+type LoadOperation = (opData: IOperationDerivedData) => void;
 
 interface IUseOperationOptions {
     deleteManagedOperationOnUnmount?: boolean;
@@ -40,9 +40,9 @@ type UseOperation = (
     selector?: IQueryFilterOperationSelector,
     loadOperation?: LoadOperation | false | null,
     options?: IUseOperationOptions
-) => IUseOperationStatus;
+) => IOperationDerivedData;
 
-export const getOpStats = (operation: IOperation): IUseOperationStatus => {
+export const getOpStats = (operation: IOperation): IOperationDerivedData => {
     const isLoading = isOperationStartedOrPending(operation);
     const isCompleted = isOperationCompleted(operation);
     const error = operation.status.error;
@@ -63,8 +63,8 @@ export interface IMergedOperationStats {
     errors?: IAppError | IAppError[];
 }
 
-export function mergeOperationStats(
-    opStats: IUseOperationStatus[]
+export function mergeOps(
+    opStats: IOperationDerivedData[]
 ): IMergedOperationStats {
     for (const opStat of opStats) {
         if (!opStat.operation || opStat.isLoading) {
@@ -148,7 +148,7 @@ const useOperation: UseOperation = (
         return false;
     });
 
-    const statusData: IUseOperationStatus = operation
+    const statusData: IOperationDerivedData = operation
         ? getOpStats(operation)
         : {
               isCompleted: false,

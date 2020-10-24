@@ -14,7 +14,7 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
     const { onClick, boards, searchQuery } = props;
 
     const boardRouteMatch = useRouteMatch<{ boardId: string }>(
-        "/app/organizations/:orgId/boards/:boardId"
+        "/app/orgs/:orgId/boards/:boardId"
     );
 
     return (

@@ -18,8 +18,8 @@ import OperationType from "../../redux/operations/OperationType";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import useOperation, {
-    IUseOperationStatus,
-    mergeOperationStats,
+    IOperationDerivedData,
+    mergeOps,
 } from "../hooks/useOperation";
 import OrgsMain from "./OrgsMain";
 
@@ -40,9 +40,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
     );
 
-    const orgRouteMatch = useRouteMatch<{ orgId: string }>(
-        "/app/organizations/:orgId"
-    );
+    const orgRouteMatch = useRouteMatch<{ orgId: string }>("/app/orgs/:orgId");
 
     const requestRouteMatch = useRouteMatch<{ requestId: string }>(
         "/app/notifications/:requestId"
@@ -52,7 +50,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         orgRouteMatch?.params.orgId || requestRouteMatch?.params.requestId;
 
     const loadUserRoomsAndChats = React.useCallback(
-        async (loadRequestsProps: IUseOperationStatus) => {
+        async (loadRequestsProps: IOperationDerivedData) => {
             const operation = loadRequestsProps.operation;
             const shouldLoad = !operation;
 
@@ -76,7 +74,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     );
 
     const loadOrgs = React.useCallback(
-        async (loadOrgsProps: IUseOperationStatus) => {
+        async (loadOrgsProps: IOperationDerivedData) => {
             const operation = loadOrgsProps.operation;
             const shouldLoad = !operation;
 
@@ -106,7 +104,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     );
 
     const loadRequests = React.useCallback(
-        async (loadRequestsProps: IUseOperationStatus) => {
+        async (loadRequestsProps: IOperationDerivedData) => {
             const operation = loadRequestsProps.operation;
             const shouldLoad = !operation;
 
@@ -129,11 +127,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
         }
     );
 
-    const loadOpsState = mergeOperationStats([
-        orgsOp,
-        requestsOp,
-        loadRoomsAndChatsOp,
-    ]);
+    const loadOpsState = mergeOps([orgsOp, requestsOp, loadRoomsAndChatsOp]);
     const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
     const isLoading = loadOpsState.loading;
 
@@ -167,7 +161,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
 
     const onSelectOrg = React.useCallback(
         (org: IBlock) => {
-            history.push(`/app/organizations/${org.customId}`);
+            history.push(`/app/orgs/${org.customId}`);
         },
         [history]
     );

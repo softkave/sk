@@ -69,7 +69,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
             if (opStat.isCompleted) {
                 message.success("Board created successfully");
                 history.push(
-                    `/app/organizations/${data.parent}/boards/${data.customId}`
+                    `/app/orgs/${data.parent}/boards/${data.customId}`
                 );
                 onClose();
             } else if (opStat.isError) {

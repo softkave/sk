@@ -38,7 +38,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     const history = useHistory();
 
     const chatRouteMatch = useRouteMatch<{ recipientId: string }>(
-        "/app/organizations/:orgId/chat/:recipientId"
+        "/app/orgs/:orgId/chat/:recipientId"
     );
 
     const selectedRoomRecipientId = chatRouteMatch?.params.recipientId;

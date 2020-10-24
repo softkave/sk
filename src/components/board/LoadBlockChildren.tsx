@@ -9,7 +9,7 @@ import {
 import OperationType from "../../redux/operations/OperationType";
 import { AppDispatch, IAppState } from "../../redux/types";
 import GeneralErrorList from "../GeneralErrorList";
-import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
 export interface ILoadBlockChildrenProps {
@@ -25,7 +25,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
         BlockSelectors.getBlockChildren(state, parent, type)
     );
 
-    const loadChildren = (loadProps: IUseOperationStatus) => {
+    const loadChildren = (loadProps: IOperationDerivedData) => {
         if (!loadProps.operation) {
             dispatch(
                 loadBlockChildrenOpAction({

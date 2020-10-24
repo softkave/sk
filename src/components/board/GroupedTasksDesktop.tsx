@@ -1,4 +1,4 @@
-import { Badge, Typography } from "antd";
+import { Badge, Space, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
 import { IBlock } from "../../models/block/block";
@@ -29,7 +29,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
 
     const renderColumnHeader = (group: IBoardGroupedTasks) => {
         const defaultContent = (
-            <React.Fragment>
+            <Space>
                 {group.color && (
                     <Avatar
                         shape="square"
@@ -39,7 +39,6 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                 )}
                 <Typography.Text
                     style={{
-                        margin: "0 8px",
                         textTransform: "capitalize",
                     }}
                 >
@@ -49,7 +48,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                     count={group.tasks.length}
                     style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
                 />
-            </React.Fragment>
+            </Space>
         );
 
         let content: React.ReactNode = defaultContent;
@@ -65,7 +64,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
             );
         }
 
-        return <StyledContainer>{content}</StyledContainer>;
+        return content;
     };
 
     const renderColumn = (group: IBoardGroupedTasks, i: number) => {

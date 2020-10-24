@@ -66,9 +66,9 @@ export const addSprintOpAction = createAsyncThunk<
                 customId: getNewTempId(),
                 boardId: arg.boardId,
                 orgId: board.rootBlockId!,
-                duration: arg.duration,
+                duration: arg.data.duration,
                 sprintIndex: boardSprintsCount,
-                name: arg.name,
+                name: arg.data.name,
                 createdAt: getDateString(),
                 createdBy: user.customId,
             };

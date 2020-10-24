@@ -22,7 +22,7 @@ import { GetOperationActionArgs } from "../types";
 
 export const endSprintOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<string>,
+    GetOperationActionArgs<{ sprintId: string }>,
     IAppAsyncThunkConfig
 >("op/sprint/endSprint", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
@@ -37,7 +37,7 @@ export const endSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.END_SPRINT, arg)
+        dispatchOperationStarted(id, OperationType.END_SPRINT, arg.sprintId)
     );
 
     try {
@@ -45,7 +45,7 @@ export const endSprintOpAction = createAsyncThunk<
         let endDate = getDateString();
 
         if (!isDemoMode) {
-            const result = await SprintAPI.endSprint(arg);
+            const result = await SprintAPI.endSprint(arg.sprintId);
 
             if (result && result.errors) {
                 throw result.errors;
@@ -54,13 +54,16 @@ export const endSprintOpAction = createAsyncThunk<
             endDate = result.data!.endDate;
         }
 
-        const sprint = SprintSelectors.getSprint(thunkAPI.getState(), arg);
+        const sprint = SprintSelectors.getSprint(
+            thunkAPI.getState(),
+            arg.sprintId
+        );
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
         moveIncompleteTasksToTheNextSprint(sprint, endDate);
         thunkAPI.dispatch(
             SprintActions.updateSprint({
-                id: arg,
+                id: arg.sprintId,
                 data: {
                     endDate,
                     endedBy: user.customId,
@@ -78,11 +81,20 @@ export const endSprintOpAction = createAsyncThunk<
         );
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.END_SPRINT, arg)
+            dispatchOperationCompleted(
+                id,
+                OperationType.END_SPRINT,
+                arg.sprintId
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.END_SPRINT, error, arg)
+            dispatchOperationError(
+                id,
+                OperationType.END_SPRINT,
+                error,
+                arg.sprintId
+            )
         );
     }
 

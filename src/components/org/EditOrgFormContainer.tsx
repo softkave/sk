@@ -69,7 +69,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
         if (!props.block) {
             if (createOrgOpStat.isCompleted) {
                 message.success("Org created successfully");
-                history.push(`/app/organizations/${data.customId}`);
+                history.push(`/app/orgs/${data.customId}`);
                 onClose();
             }
         } else {

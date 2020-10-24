@@ -87,12 +87,12 @@ export const setupSprintMutation = `
     ${errorFragment}
     mutation SetupSprintMutation ($boardId: String!, $data: SprintOptionsInput!) {
         sprint {
-            setupSprint (boardId: $boardId, data: $data) {
+            setupSprints (boardId: $boardId, data: $data) {
                 errors {
                     ...errorFragment
                 }
                 data {
-                    createdAt: String
+                    createdAt
                 }
             }
         }

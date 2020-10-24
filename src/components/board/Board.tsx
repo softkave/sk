@@ -53,7 +53,12 @@ const Board: React.FC<IBoardProps> = (props) => {
     const TASKS_PATH = path.normalize(`${blockPath}/tasks`);
 
     const [groupBy, setGroupBy] = React.useState(BoardGroupBy.STATUS);
-    const [view, setView] = React.useState(BoardCurrentView.CURRENT_SPRINT);
+    const [view, setView] = React.useState(
+        board.currentSprintId
+            ? BoardCurrentView.CURRENT_SPRINT
+            : BoardCurrentView.ALL_TASKS
+    );
+
     const [searchIn, setSearchIn] = React.useState(SearchTasksMode.ALL_TASKS);
     const [showSearch, setShowSearch] = React.useState(false);
     const [searchText, setSearchText] = React.useState("");
@@ -128,6 +133,8 @@ const Board: React.FC<IBoardProps> = (props) => {
     };
 
     const onSelectView = (key: BoardCurrentView) => {
+        setView(key);
+
         switch (key) {
             case BoardCurrentView.SPRINTS: {
                 history.push(SPRINTS_PATH);
@@ -135,7 +142,7 @@ const Board: React.FC<IBoardProps> = (props) => {
             }
 
             default:
-                setView(key);
+                history.push(TASKS_PATH);
                 break;
         }
     };
@@ -197,7 +204,7 @@ const Board: React.FC<IBoardProps> = (props) => {
     };
 
     const renderSprintForms = () => {
-        if (!sprintOptionsForm || !sprintForm) {
+        if (!sprintOptionsForm && !sprintForm) {
             return null;
         }
 

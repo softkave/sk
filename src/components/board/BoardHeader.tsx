@@ -59,7 +59,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
     };
 
     const onBack = React.useCallback(() => {
-        history.push(`/app/organizations/${block.rootBlockId}/boards`);
+        history.push(`/app/orgs/${block.rootBlockId}/boards`);
     }, [block, history]);
 
     const renderBackButton = () => {
@@ -101,6 +101,36 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
             />
         );
     } else {
+        let desktopContent: React.ReactNode = null;
+
+        if (!isMobile) {
+            desktopContent = [
+                <Button
+                    key={BoardHeaderSettingsMenuKey.ADD_TASK}
+                    onClick={() =>
+                        onSelectMenuKey(BoardHeaderSettingsMenuKey.ADD_TASK)
+                    }
+                    className="icon-btn"
+                >
+                    <Plus />
+                </Button>,
+                <Button
+                    key="sch"
+                    onClick={() => setShowSearch(true)}
+                    className="icon-btn"
+                >
+                    <Search />
+                </Button>,
+            ];
+        }
+
+        const options = (
+            <BoardHeaderOptionsMenu
+                {...props}
+                onSelectMenuKey={onSelectSettingsMenuItem}
+            />
+        );
+
         content = (
             <React.Fragment>
                 {renderBackButton()}
@@ -111,30 +141,14 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
                     style={{ flex: 1 }}
                 />
                 <StyledContainer s={{ alignItems: "center" }}>
-                    {!isMobile && (
+                    {desktopContent ? (
                         <Space>
-                            <Button
-                                onClick={() =>
-                                    onSelectMenuKey(
-                                        BoardHeaderSettingsMenuKey.ADD_TASK
-                                    )
-                                }
-                                className="icon-btn"
-                            >
-                                <Plus />
-                            </Button>
-                            <Button
-                                onClick={() => setShowSearch(true)}
-                                className="icon-btn"
-                            >
-                                <Search />
-                            </Button>
+                            {desktopContent}
+                            {options}
                         </Space>
+                    ) : (
+                        options
                     )}
-                    <BoardHeaderOptionsMenu
-                        {...props}
-                        onSelectMenuKey={onSelectSettingsMenuItem}
-                    />
                 </StyledContainer>
             </React.Fragment>
         );

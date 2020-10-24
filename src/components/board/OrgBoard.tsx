@@ -291,7 +291,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         return (
             <Switch>
                 <Route
-                    path={`/app/organizations/${block.customId}/boards/:boardId`}
+                    path={`/app/orgs/${block.customId}/boards/:boardId`}
                     render={(routeProps) => {
                         return ensureBoardsLoaded(
                             routeProps.match.params.boardId
@@ -299,14 +299,14 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     }}
                 />
                 <Route
-                    path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                    path={`/app/orgs/${block.customId}/chat/:recipientId`}
                     render={(routeProps) => {
                         const recipientId = routeProps.match.params.recipientId;
                         return renderChatsView(recipientId);
                     }}
                 />
                 <Route
-                    path={`/app/organizations/${block.customId}`}
+                    path={`/app/orgs/${block.customId}`}
                     render={renderSelectedOrgView}
                 />
             </Switch>
@@ -331,7 +331,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 >
                     <Switch>
                         <Route
-                            path={`/app/organizations/${block.customId}/boards/:boardId`}
+                            path={`/app/orgs/${block.customId}/boards/:boardId`}
                             render={(routeProps) => {
                                 return ensureBoardsLoaded(
                                     routeProps.match.params.boardId
@@ -339,7 +339,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                             }}
                         />
                         <Route
-                            path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                            path={`/app/orgs/${block.customId}/chat/:recipientId`}
                             render={(routeProps) => {
                                 const recipientId =
                                     routeProps.match.params.recipientId;

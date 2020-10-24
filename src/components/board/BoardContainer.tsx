@@ -7,9 +7,13 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { subscribe, unsubcribe } from "../../net/socket";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
+import { getSprintsOpAction } from "../../redux/operations/sprint/getSprints";
 import { AppDispatch } from "../../redux/types";
 import GeneralErrorList from "../GeneralErrorList";
-import useOperation, { IUseOperationStatus } from "../hooks/useOperation";
+import useOperation, {
+    IOperationDerivedData,
+    mergeOps,
+} from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Board from "./Board";
 import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";
@@ -42,7 +46,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     const resourceType =
         resourceTypeMatch && resourceTypeMatch.params.resourceType;
 
-    const loadTasks = (loadProps: IUseOperationStatus) => {
+    const loadTasks = (loadProps: IOperationDerivedData) => {
         const shouldLoad = !loadProps.operation;
 
         if (shouldLoad) {
@@ -56,7 +60,29 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         }
     };
 
-    const op = useOperation(
+    const loadSprints = (loadProps: IOperationDerivedData) => {
+        const shouldLoad = !loadProps.operation;
+
+        if (shouldLoad) {
+            dispatch(
+                getSprintsOpAction({
+                    boardId: board.customId,
+                    opId: loadProps.opId,
+                })
+            );
+        }
+    };
+
+    const sprintsOp = useOperation(
+        {
+            resourceId: board.customId,
+            type: OperationType.GET_SPRINTS,
+        },
+        loadSprints,
+        { deleteManagedOperationOnUnmount: false }
+    );
+
+    const tasksOp = useOperation(
         {
             resourceId: board.customId,
             type: OperationType.LOAD_BLOCK_CHILDREN,
@@ -73,12 +99,12 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         };
     }, [board.customId, board.type]);
 
-    const isLoadingChildren = op.isLoading || !op.operation;
+    const ops = mergeOps([tasksOp, sprintsOp]);
 
-    if (isLoadingChildren) {
+    if (ops.loading) {
         return <LoadingEllipsis />;
-    } else if (op && op.error) {
-        return <GeneralErrorList fill errors={[op.error]} />;
+    } else if (ops.errors) {
+        return <GeneralErrorList fill errors={ops.errors} />;
     }
 
     // TODO: should we show error if block type is task?

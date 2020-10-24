@@ -102,133 +102,147 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
     };
 
     const boardHasSprintsSetup = !!block.sprintOptions;
+    console.log({ block });
 
-    const renderViewMenuItems = () => (
-        <React.Fragment>
-            <Menu.Item key={BoardCurrentView.CURRENT_SPRINT}>
+    const renderViewMenuItems = () => {
+        const items: React.ReactNode[] = [
+            <Menu.Item
+                key={BoardCurrentView.CURRENT_SPRINT}
+                disabled={!block.currentSprintId}
+            >
                 <Space align="center" size={12}>
                     <Checkbox
                         checked={view === BoardCurrentView.CURRENT_SPRINT}
+                        disabled={!block.currentSprintId}
                     />
                     Current Sprint
                 </Space>
-            </Menu.Item>
+            </Menu.Item>,
             <Menu.Item key={BoardCurrentView.ALL_TASKS}>
                 <Space align="center" size={12}>
                     <Checkbox checked={view === BoardCurrentView.ALL_TASKS} />
                     All Tasks
                 </Space>
-            </Menu.Item>
-            {boardHasSprintsSetup && (
-                <Menu.Item key={BoardCurrentView.SPRINTS}>
-                    <Space align="center" size={12}>
-                        <Checkbox checked={view === BoardCurrentView.SPRINTS} />
-                        Sprints
-                    </Space>
-                </Menu.Item>
-            )}
-            {!boardHasSprintsSetup && (
-                <React.Fragment>
-                    <Menu.Divider />
-                    <Menu.Item key={BoardHeaderSettingsMenuKey.SETUP_SPRINTS}>
-                        <Space align="center" size={12}>
-                            <Plus style={plusIconStyles} />
-                            Setup Sprints
-                        </Space>
-                    </Menu.Item>
-                </React.Fragment>
-            )}
-        </React.Fragment>
-    );
+            </Menu.Item>,
+            <Menu.Item key={BoardCurrentView.SPRINTS}>
+                <Space align="center" size={12}>
+                    <Checkbox checked={view === BoardCurrentView.SPRINTS} />
+                    Sprints
+                </Space>
+            </Menu.Item>,
+        ];
+
+        return items;
+    };
 
     const renderGroupByMenuItems = () => {
+        const items: React.ReactNode[] = [];
+
         if (
             view !== BoardCurrentView.CURRENT_SPRINT &&
             view !== BoardCurrentView.ALL_TASKS
         ) {
-            return null;
+            return items;
         }
 
-        return (
-            <React.Fragment>
-                <Menu.Divider />
-                <Menu.Item key={BoardGroupBy.STATUS}>
-                    <Space align="center" size={12}>
-                        <Checkbox checked={groupBy === BoardGroupBy.STATUS} />
-                        Status
-                    </Space>
-                </Menu.Item>
-                <Menu.Item key={BoardGroupBy.LABELS}>
-                    <Space align="center" size={12}>
-                        <Checkbox checked={groupBy === BoardGroupBy.LABELS} />
-                        Labels
-                    </Space>
-                </Menu.Item>
-                <Menu.Item key={BoardGroupBy.ASSIGNEES}>
-                    <Space align="center" size={12}>
-                        <Checkbox
-                            checked={groupBy === BoardGroupBy.ASSIGNEES}
-                        />
-                        Assignees
-                    </Space>
-                </Menu.Item>
-            </React.Fragment>
+        items.push(
+            <Menu.Divider key="group-by-divider" />,
+            <Menu.Item key={BoardGroupBy.STATUS}>
+                <Space align="center" size={12}>
+                    <Checkbox checked={groupBy === BoardGroupBy.STATUS} />
+                    Status
+                </Space>
+            </Menu.Item>,
+            <Menu.Item key={BoardGroupBy.LABELS}>
+                <Space align="center" size={12}>
+                    <Checkbox checked={groupBy === BoardGroupBy.LABELS} />
+                    Labels
+                </Space>
+            </Menu.Item>,
+            <Menu.Item key={BoardGroupBy.ASSIGNEES}>
+                <Space align="center" size={12}>
+                    <Checkbox checked={groupBy === BoardGroupBy.ASSIGNEES} />
+                    Assignees
+                </Space>
+            </Menu.Item>
         );
+
+        return items;
     };
 
-    const renderTaskMenuItems = () => (
-        <React.Fragment>
-            <Menu.Divider />
+    const renderTaskMenuItems = () => {
+        const items: React.ReactNode[] = [
+            <Menu.Divider key="tasks-menu-divider" />,
             <Menu.Item key={BoardHeaderSettingsMenuKey.ADD_TASK}>
                 <Space align="center" size={12}>
                     <Plus style={plusIconStyles} />
                     Add Task
                 </Space>
-            </Menu.Item>
+            </Menu.Item>,
             <Menu.Item key={BoardHeaderSettingsMenuKey.SEARCH_TASKS}>
                 <Space align="center" size={12}>
                     <Search style={plusIconStyles} />
                     Search Tasks
                 </Space>
-            </Menu.Item>
-        </React.Fragment>
-    );
+            </Menu.Item>,
+        ];
 
-    const renderBoardResourceMenuItems = () => (
-        <React.Fragment>
-            <Menu.Divider />
-            {boardHasSprintsSetup && (
+        return items;
+    };
+
+    const renderBoardResourcesMenuItems = () => {
+        const items: React.ReactNode[] = [
+            <Menu.Divider key="board-resources-divider" />,
+        ];
+
+        if (boardHasSprintsSetup) {
+            items.push(
                 <Menu.Item key={BoardHeaderSettingsMenuKey.ADD_SPRINT}>
                     <Space align="center" size={12}>
                         <Plus style={plusIconStyles} />
                         Sprint
                     </Space>
                 </Menu.Item>
-            )}
+            );
+        } else {
+            items.push(
+                <Menu.Item key={BoardHeaderSettingsMenuKey.SETUP_SPRINTS}>
+                    <Space align="center" size={12}>
+                        <Plus style={plusIconStyles} />
+                        Setup Sprints
+                    </Space>
+                </Menu.Item>,
+                <Menu.Divider key="setup-sprints-divider" />
+            );
+        }
+
+        items.push(
             <Menu.Item key={BoardHeaderSettingsMenuKey.EDIT_STATUS}>
                 <Space align="center" size={12}>
                     <Plus style={plusIconStyles} />
                     Status
                 </Space>
-            </Menu.Item>
+            </Menu.Item>,
             <Menu.Item key={BoardHeaderSettingsMenuKey.EDIT_RESOLUTIONS}>
                 <Space align="center" size={12}>
                     <Plus style={plusIconStyles} />
                     Resolutions
                 </Space>
-            </Menu.Item>
+            </Menu.Item>,
             <Menu.Item key={BoardHeaderSettingsMenuKey.EDIT_LABELS}>
                 <Space align="center" size={12}>
                     <Plus style={plusIconStyles} />
                     Labels
                 </Space>
             </Menu.Item>
-        </React.Fragment>
-    );
+        );
 
-    const renderBoardOwnMenuItems = () => (
-        <React.Fragment>
-            <Menu.Divider key="divider" />
+        return items;
+    };
+
+    const renderBoardOwnMenuItems = () => {
+        const items: React.ReactNode[] = [
+            <Menu.Divider key="board-own-items-divider" />,
             <Menu.Item
                 style={{ textTransform: "capitalize" }}
                 key={BoardHeaderSettingsMenuKey.EDIT}
@@ -244,7 +258,7 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                     />
                     <span>Edit {block.type}</span>
                 </Space>
-            </Menu.Item>
+            </Menu.Item>,
             <Menu.Item
                 style={{ textTransform: "capitalize" }}
                 key={BoardHeaderSettingsMenuKey.DELETE}
@@ -260,9 +274,11 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                     />
                     <span>Delete {block.type}</span>
                 </Space>
-            </Menu.Item>
-        </React.Fragment>
-    );
+            </Menu.Item>,
+        ];
+
+        return items;
+    };
 
     const renderBlockOptions = (
         renderMenuProps: IMenuWithTriggerRenderMenuProps
@@ -277,7 +293,7 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                 {renderViewMenuItems()}
                 {renderGroupByMenuItems()}
                 {renderTaskMenuItems()}
-                {renderBoardResourceMenuItems()}
+                {renderBoardResourcesMenuItems()}
                 {renderBoardOwnMenuItems()}
             </Menu>
         );

@@ -1,17 +1,23 @@
-import { IBlock } from "../../../models/block/block";
+import { IBlock, IBlockStatus } from "../../../models/block/block";
 import { ISprint } from "../../../models/sprint/types";
 import { IBoardGroupedTasks } from "../types";
 
-const BACKLOG = "Backlog";
+export const BACKLOG = "Backlog";
 
 const groupBySprints = (
     sprints: ISprint[],
-    tasks: IBlock[]
+    tasks: IBlock[],
+    statuses: IBlockStatus[]
 ): IBoardGroupedTasks[] => {
+    const completedStatus = statuses[statuses.length - 1];
     const map: { [key: string]: IBlock[] } = {};
     const backlog: IBlock[] = [];
 
     tasks.forEach((task) => {
+        if (completedStatus && task.status === completedStatus.customId) {
+            return;
+        }
+
         if (!task.taskSprint) {
             backlog.push(task);
             return;

@@ -15,8 +15,10 @@ import {
 
 export interface IAddSprintAPIParams {
     boardId: string;
-    name: string;
-    duration: SprintDuration;
+    data: {
+        name: string;
+        duration: SprintDuration;
+    };
 }
 
 export type IAddSprintAPIResult = GetEndpointResult<ISprint>;
@@ -71,7 +73,7 @@ export type ISetupSprintsResult = GetEndpointResult<{
 async function setupSprint(
     params: ISetupSprintsAPIParams
 ): Promise<ISetupSprintsResult> {
-    return auth(null, setupSprintMutation, params, "data.sprint.setupSprint");
+    return auth(null, setupSprintMutation, params, "data.sprint.setupSprints");
 }
 
 export interface IUpdateSprintAPIParams {
