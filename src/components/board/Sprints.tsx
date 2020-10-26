@@ -48,9 +48,6 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
     // TODO: look for ways to make it better
     const groups = groupBySprints(sprints, tasks, board.boardStatuses || []);
-    // const sortedSprints = sprints.sort((sprint1, sprint2) => {
-    //     return sprint1.sprintIndex - sprint2.sprintIndex;
-    // });
 
     const currentSprintIndex = board.currentSprintId
         ? sprints.findIndex(
@@ -95,7 +92,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
         if (board.currentSprintId === group.id) {
             items.push(
-                <Menu.Item key={SprintMenuOptions.START}>
+                <Menu.Item key={SprintMenuOptions.END}>
                     <ClockCircleOutlined />
                     End Sprint
                 </Menu.Item>

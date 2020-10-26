@@ -67,6 +67,7 @@ const SprintOptionsForm: React.FC<ISprintOptionsFormProps> = (props) => {
                         formik.setFieldValue("duration", val);
                         formikChangedFieldsHelpers.addField("duration");
                     }}
+                    disabled={isSubmitting}
                 >
                     <Select.Option value={SprintDuration.ONE_WEEK}>
                         {SprintDuration.ONE_WEEK}

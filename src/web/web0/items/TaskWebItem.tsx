@@ -42,9 +42,11 @@ const TasksWebItem: React.FC<{}> = () => {
             user={{} as IUser}
             labelList={[]}
             resolutionsList={[]}
+            sprints={[]}
             users={[demoUsers.abayomi, demoUsers.solomon]}
             tasks={demoTasks.reverse()}
             statusList={statuses}
+            sprintsMap={{}}
             toggleForm={noop}
         />
     );

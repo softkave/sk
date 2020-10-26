@@ -132,6 +132,7 @@ const SprintForm: React.FC<ISprintFormProps> = (props) => {
                         formikChangedFieldsHelpers.addField("duration");
                     }}
                     placeholder="Choose duration"
+                    disabled={isSubmitting}
                 >
                     <Select.Option value={SprintDuration.ONE_WEEK}>
                         {SprintDuration.ONE_WEEK}

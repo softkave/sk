@@ -55,6 +55,11 @@ export const addSprintOpAction = createAsyncThunk<
                 arg.boardId
             );
 
+            const existingSprints = SprintSelectors.getBoardSprints(
+                thunkAPI.getState(),
+                board.customId
+            );
+
             const boardSprintsCount = SprintSelectors.countBoardSprints(
                 thunkAPI.getState(),
                 arg.boardId

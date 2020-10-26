@@ -1,12 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
-import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -51,13 +49,8 @@ export const deleteSprintOpAction = createAsyncThunk<
             }
         }
 
-        const sprint = SprintSelectors.getSprint(
-            thunkAPI.getState(),
-            arg.sprintId
-        );
-
-        removeSprintInTasks(sprint);
-        updateSprintIndexes(sprint);
+        removeSprintInTasks(arg.sprintId);
+        // updateSprintIndexes(sprint);
         thunkAPI.dispatch(SprintActions.deleteSprint(arg.sprintId));
         thunkAPI.dispatch(
             dispatchOperationCompleted(
@@ -80,11 +73,8 @@ export const deleteSprintOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-function removeSprintInTasks(sprint: ISprint) {
-    const tasks = BlockSelectors.getSprintTasks(
-        store.getState(),
-        sprint.customId
-    );
+export function removeSprintInTasks(sprintId: string) {
+    const tasks = BlockSelectors.getSprintTasks(store.getState(), sprintId);
 
     store.dispatch(
         BlockActions.bulkUpdateBlocks(
@@ -93,31 +83,6 @@ function removeSprintInTasks(sprint: ISprint) {
                     id: task.customId,
                     data: {
                         taskSprint: null,
-                    },
-                };
-            })
-        )
-    );
-}
-
-function updateSprintIndexes(sprint: ISprint) {
-    const sprints = SprintSelectors.getSprintsFromIndex(
-        store.getState(),
-        sprint.boardId,
-        sprint.sprintIndex
-    );
-
-    if (sprints.length === 0) {
-        return;
-    }
-
-    store.dispatch(
-        SprintActions.bulkUpdateSprints(
-            sprints.map((spr) => {
-                return {
-                    id: spr.customId,
-                    data: {
-                        sprintIndex: spr.sprintIndex - 1,
                     },
                 };
             })

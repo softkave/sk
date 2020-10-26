@@ -40,7 +40,13 @@ export const updateSprintOpAction = createAsyncThunk<
         let updatedAt = getDateString();
 
         if (!isDemoMode) {
-            const result = await SprintAPI.updateSprint(arg);
+            const result = await SprintAPI.updateSprint({
+                sprintId: arg.sprintId,
+                data: {
+                    name: arg.data.name,
+                    duration: arg.data.duration,
+                },
+            });
 
             if (result && result.errors) {
                 throw result.errors;

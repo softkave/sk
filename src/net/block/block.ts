@@ -40,6 +40,7 @@ function addBlock(block: IBlock) {
         "statusAssignedAt",
         "taskResolution",
         "labels",
+        "taskSprint",
     ];
 
     return auth(
@@ -68,6 +69,7 @@ function updateBlock(block: IBlock, data: Partial<IBlock>) {
         "statusAssignedAt",
         "taskResolution",
         "labels",
+        "taskSprint",
     ];
 
     return auth(

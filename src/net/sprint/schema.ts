@@ -7,6 +7,8 @@ export const sprintFragment = `
         orgId
         duration
         sprintIndex
+        prevSprintId
+        nextSprintId
         name
         startDate
         startedBy

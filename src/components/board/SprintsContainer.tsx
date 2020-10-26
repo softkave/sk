@@ -84,7 +84,6 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
             okText: YES,
             cancelText: NO,
             okType: "primary",
-            okButtonProps: { danger: true },
             onOk: async () => startSprint(sprintId),
             onCancel() {
                 // do nothing

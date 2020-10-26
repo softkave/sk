@@ -3,16 +3,23 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
+import {
+    getCurrentAndUpcomingSprints,
+    sortSprintByIndex,
+} from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
 import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
+import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import {
     flattenErrorListWithDepthInfinite,
     getDateString,
+    indexArray,
 } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
 import useBlockPossibleParents from "../hooks/useBlockPossibleParents";
@@ -37,6 +44,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     const [parentId, setParentId] = React.useState(
         props.parentBlock?.customId || props.block?.parent
     );
+
     const parentBlock = useSelector<IAppState, IBlock | undefined>((state) => {
         if (parentId) {
             return BlockSelectors.getBlock(state, parentId);
@@ -47,6 +55,16 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         }
     });
 
+    const sprints = useSelector<IAppState, ISprint[]>((state) => {
+        const totalSprints = SprintSelectors.getBoardSprints(
+            state,
+            parentBlock!.customId
+        );
+
+        return getCurrentAndUpcomingSprints(totalSprints);
+    });
+
+    const memoizedSprintsMap = indexArray(sprints, { path: "customId" });
     const statusList = parentBlock?.boardStatuses || [];
     const labelList = parentBlock?.boardLabels || [];
     const resolutionsList = parentBlock?.boardResolutions || [];
@@ -157,6 +175,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             possibleParents={possibleParents}
             onChangeParent={setParentId}
             board={parentBlock!}
+            sprints={sprints}
+            sprintsMap={memoizedSprintsMap}
         />
     );
 };

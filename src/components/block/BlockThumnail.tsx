@@ -21,10 +21,10 @@ export interface IBlockThumbnailProps {
     onClick?: () => void;
 }
 
-const defaultFields: BlockThumbnailShowField[] = ["name", "type"];
+const defaultFields: BlockThumbnailShowField[] = ["name"];
 const blockDescriptionMarginWidth = 16;
 
-const BlockThumbnail: React.SFC<IBlockThumbnailProps> = (props) => {
+const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
     const {
         block,
         className,

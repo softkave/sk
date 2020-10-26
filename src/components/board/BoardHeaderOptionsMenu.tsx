@@ -102,7 +102,6 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
     };
 
     const boardHasSprintsSetup = !!block.sprintOptions;
-    console.log({ block });
 
     const renderViewMenuItems = () => {
         const items: React.ReactNode[] = [

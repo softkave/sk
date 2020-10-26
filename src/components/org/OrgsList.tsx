@@ -67,20 +67,33 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
 
     const wrap = (key: string, node: React.ReactNode, onClick: any) => {
         const selected = selectedId === key;
+        let color: string | undefined;
+        let backgroundColor: string | undefined;
+
+        if (selected) {
+            color = "#1890ff";
+            backgroundColor = "#e6f7ff";
+        }
+
         return (
             <StyledContainer
                 key={key}
                 s={{
+                    color,
+                    backgroundColor,
                     padding: "8px 16px",
-                    backgroundColor: selected ? "#bae7ff" : undefined,
                     cursor: "pointer",
 
                     "&:hover": {
-                        backgroundColor: selected ? undefined : "#f0f0f0",
+                        backgroundColor,
                     },
 
                     "& .ant-tag": {
                         cursor: "pointer",
+                    },
+
+                    "& .ant-typography": {
+                        color,
                     },
                 }}
                 onClick={onClick}

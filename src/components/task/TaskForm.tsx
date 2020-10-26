@@ -13,7 +13,9 @@ import {
     IBoardTaskResolution,
     ISubTask,
     ITaskAssignee,
+    ITaskSprint,
 } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import { getDateString, indexArray } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
@@ -30,10 +32,12 @@ import {
     StyledForm,
 } from "../form/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
+import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
+import SelectTaskSprint from "./SelectTaskSprint";
 import SubTaskList from "./SubTaskList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import TaskLabels from "./TaskLabels";
@@ -53,6 +57,8 @@ export interface ITaskFormProps {
     possibleParents: IBlock[];
     value: ITaskFormValues;
     board: IBlock;
+    sprints: ISprint[];
+    sprintsMap: { [key: string]: ISprint };
     onClose: () => void;
     onSubmit: (values: ITaskFormValues) => void;
     onChangeParent: (parentId: string) => void;
@@ -69,15 +75,17 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         task,
         isSubmitting,
         possibleParents,
-        onClose,
         value,
-        onSubmit,
         collaborators,
         statusList,
         labelList,
         resolutionsList,
         user,
         board,
+        sprints,
+        sprintsMap,
+        onClose,
+        onSubmit,
         errors: externalErrors,
     } = props;
 
@@ -85,6 +93,12 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         subFormType,
         setSubFormType,
     ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+
+    const [showSprintForm, setShowSprintForm] = React.useState<boolean>(false);
+
+    const toggleShowSprintForm = React.useCallback(() => {
+        setShowSprintForm(!showSprintForm);
+    }, [showSprintForm]);
 
     const closeForm = React.useCallback(() => setSubFormType(null), []);
 
@@ -174,6 +188,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     possibleParents={possibleParents}
                     onChange={(val) => onChangeParent(val)}
                     disabled={isSubmitting}
+                    placeholder="Select board"
                 />
             </Form.Item>
         );
@@ -261,6 +276,79 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     value={values.priority as TaskPriority}
                     disabled={isSubmitting}
                 />
+            </Form.Item>
+        );
+    };
+
+    const renderSprintInput = () => {
+        const currentValue = formik.values.taskSprint?.sprintId || BACKLOG;
+
+        // const input = (
+        //     <Select
+        //         value={currentValue}
+        //         disabled={isSubmitting}
+        //         onChange={(val) => {
+        //             if (currentValue === val) {
+        //                 return;
+        //             }
+
+        //             if (val === BACKLOG) {
+        //                 formik.setFieldValue("taskSprint", null);
+        //             } else {
+        //                 formik.setFieldValue("taskSprint", {
+        //                     sprintId: val,
+        //                     assignedAt: getDateString(),
+        //                     assignedBy: user.customId,
+        //                 } as ITaskSprint);
+        //             }
+
+        //             formikChangedFieldsHelpers.addField("taskSprint");
+        //         }}
+        //     >
+        //         <Select.Option key={BACKLOG} value={BACKLOG}>
+        //             {BACKLOG}
+        //         </Select.Option>
+        //         {sprints.map((sprint) => (
+        //             <Select.Option
+        //                 key={sprint.customId}
+        //                 value={sprint.customId}
+        //             >
+        //                 {sprint.name}
+        //             </Select.Option>
+        //         ))}
+        //     </Select>
+        // );
+
+        const input = (
+            <SelectTaskSprint
+                sprints={sprints}
+                sprintsMap={sprintsMap}
+                task={(task || formik.values) as IBlock}
+                disabled={isSubmitting}
+                onAddNewSprint={toggleShowSprintForm}
+                onChangeSprint={(val) => {
+                    if (val === BACKLOG) {
+                        formik.setFieldValue("taskSprint", null);
+                    } else {
+                        formik.setFieldValue("taskSprint", {
+                            sprintId: val,
+                            assignedAt: getDateString(),
+                            assignedBy: user.customId,
+                        } as ITaskSprint);
+                    }
+                    formikChangedFieldsHelpers.addField("taskSprint");
+                }}
+            />
+        );
+
+        return (
+            <Form.Item
+                label="Sprint"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                labelAlign="left"
+            >
+                {input}
             </Form.Item>
         );
     };
@@ -456,44 +544,38 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     const renderAssignees = (formikProps: TaskFormFormikProps) => {
         const { values, setFieldValue } = formikProps;
 
-        if (Array.isArray(values.assignees)) {
-            if (values.assignees.length === 0) {
-                return "Not assigned to anybody yet";
-            }
-
-            return (
-                <List
-                    dataSource={values.assignees}
-                    renderItem={(item) => {
-                        return (
-                            <List.Item>
-                                <TaskCollaboratorThumbnail
-                                    key={item.userId}
-                                    collaborator={
-                                        indexedCollaborators[item.userId]
-                                    }
-                                    onUnassign={() => {
-                                        setFieldValue(
-                                            "assignees",
-                                            unassignCollaborator(
-                                                item,
-                                                values.assignees
-                                            )
-                                        );
-                                        formikChangedFieldsHelpers.addField(
-                                            "assignees"
-                                        );
-                                    }}
-                                    disabled={isSubmitting}
-                                />
-                            </List.Item>
-                        );
-                    }}
-                />
-            );
+        if (!Array.isArray(values.assignees)) {
+            return null;
         }
 
-        return null;
+        if (values.assignees.length === 0) {
+            return "Not assigned to anybody yet";
+        }
+
+        return (
+            <List
+                dataSource={values.assignees}
+                renderItem={(item) => (
+                    <List.Item>
+                        <TaskCollaboratorThumbnail
+                            key={item.userId}
+                            collaborator={indexedCollaborators[item.userId]}
+                            onUnassign={() => {
+                                setFieldValue(
+                                    "assignees",
+                                    unassignCollaborator(item, values.assignees)
+                                );
+
+                                formikChangedFieldsHelpers.addField(
+                                    "assignees"
+                                );
+                            }}
+                            disabled={isSubmitting}
+                        />
+                    </List.Item>
+                )}
+            />
+        );
     };
 
     const renderAssignedToInput = (formikProps: TaskFormFormikProps) => {
@@ -519,12 +601,14 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         formikChangedFieldsHelpers.addField("assignees");
                     }}
                     disabled={isSubmitting}
+                    optionLabelProp="label"
                 >
                     {collaborators.map((collaborator, index) => {
                         return (
                             <Select.Option
                                 value={index}
                                 key={collaborator.customId}
+                                label={collaborator.name}
                             >
                                 <CollaboratorThumbnail
                                     collaborator={collaborator}
@@ -666,6 +750,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         active={subFormType}
                     />
                 )}
+                {showSprintForm && (
+                    <SprintFormInDrawer
+                        visible
+                        board={board}
+                        onClose={toggleShowSprintForm}
+                    />
+                )}
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
                         <StyledContainer s={{ paddingBottom: "16px" }}>
@@ -686,6 +777,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         {renderDescriptionInput(formikProps)}
                         {renderParentInput(formikProps)}
                         {renderPriority(formikProps)}
+                        {renderSprintInput()}
                         {renderStatus(formikProps)}
                         {renderLabels(formikProps)}
                         {renderDueDateInput(formikProps)}
@@ -706,3 +798,5 @@ const StyledTaskCollaboaratorsContainer = styled.div({
 });
 
 export default React.memo(TaskForm);
+
+const BACKLOG = "Backlog";

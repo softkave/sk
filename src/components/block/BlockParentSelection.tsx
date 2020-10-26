@@ -1,5 +1,5 @@
 import { CaretDownOutlined } from "@ant-design/icons";
-import { Dropdown, Menu } from "antd";
+import { Dropdown, Menu, Space } from "antd";
 import React from "react";
 import { findBlock, IBlock } from "../../models/block/block";
 import ItemAvatar from "../ItemAvatar";
@@ -7,94 +7,95 @@ import StyledContainer from "../styled/Container";
 import BlockThumbnail from "./BlockThumnail";
 
 export interface IBlockParentSelectionProps {
-  possibleParents: IBlock[];
+    possibleParents: IBlock[];
 
-  disabled?: boolean;
-  value?: string;
-  onChange?: (parentId: string) => void;
+    disabled?: boolean;
+    value?: string;
+    placeholder?: string;
+    onChange?: (parentId: string) => void;
 }
 
-const BlockParentSelection: React.SFC<IBlockParentSelectionProps> = (props) => {
-  const { value, possibleParents, onChange, disabled } = props;
-  const [parentsMap] = React.useState(() => {
-    return possibleParents.reduce((accumulator, p) => {
-      accumulator[p.customId] = p;
-      return accumulator;
-    }, {});
-  });
+const BlockParentSelection: React.FC<IBlockParentSelectionProps> = (props) => {
+    const { value, possibleParents, placeholder, disabled, onChange } = props;
+    const [parentsMap] = React.useState(() => {
+        return possibleParents.reduce((accumulator, p) => {
+            accumulator[p.customId] = p;
+            return accumulator;
+        }, {});
+    });
 
-  React.useEffect(() => {
-    if (!value && possibleParents.length === 1 && onChange) {
-      onChange(possibleParents[0].customId);
-    }
-  });
+    React.useEffect(() => {
+        if (!value && possibleParents.length === 1 && onChange) {
+            onChange(possibleParents[0].customId);
+        }
+    });
 
-  const selectParent = (id: string) => {
-    if (onChange) {
-      const parent = findBlock(possibleParents, id)!;
-      onChange(parent.customId);
-    }
-  };
+    const selectParent = (id: string) => {
+        if (onChange) {
+            const parent = findBlock(possibleParents, id)!;
+            onChange(parent.customId);
+        }
+    };
 
-  const parentsMenu = (
-    <Menu
-      onClick={(event) => selectParent(event.key as string)}
-      style={{ maxHeight: "300px", overflowY: "auto" }}
-    >
-      {possibleParents.map((parent) => (
-        <Menu.Item key={parent.customId}>
-          <BlockThumbnail
-            block={parent}
-            parent={parent.parent && parentsMap[parent.parent]}
-            style={{ marginBottom: "16px" }}
-          />
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
-  const renderSelectedParent = () => {
-    if (value) {
-      const immediateParentId = value;
-      const immediateParent = findBlock(possibleParents, immediateParentId);
-
-      if (immediateParent) {
-        return <BlockThumbnail block={immediateParent} />;
-      } else {
-        return <ItemAvatar />;
-      }
-    }
-
-    return "Select parent block";
-  };
-
-  const renderDropdownContent = () => {
-    return (
-      <StyledContainer s={{ cursor: disabled ? "not-allowed" : "pointer" }}>
-        <StyledContainer s={{ display: "flex", flex: 1, marginRight: "16px" }}>
-          {renderSelectedParent()}
-        </StyledContainer>
-        <StyledContainer
-          s={{
-            alignItems: "center",
-            fontSize: "16px",
-          }}
+    const parentsMenu = (
+        <Menu
+            onClick={(event) => selectParent(event.key as string)}
+            style={{ maxHeight: "300px", overflowY: "auto" }}
+            selectedKeys={value ? [value] : undefined}
         >
-          <CaretDownOutlined />
-        </StyledContainer>
-      </StyledContainer>
+            {possibleParents.map((parent) => (
+                <Menu.Item key={parent.customId}>
+                    <BlockThumbnail
+                        block={parent}
+                        parent={parent.parent && parentsMap[parent.parent]}
+                    />
+                </Menu.Item>
+            ))}
+        </Menu>
     );
-  };
 
-  if (disabled) {
-    return renderDropdownContent();
-  }
+    const renderSelectedParent = () => {
+        if (value) {
+            const immediateParentId = value;
+            const immediateParent = findBlock(
+                possibleParents,
+                immediateParentId
+            );
 
-  return (
-    <Dropdown overlay={parentsMenu} trigger={["click"]}>
-      {renderDropdownContent()}
-    </Dropdown>
-  );
+            if (immediateParent) {
+                return <BlockThumbnail block={immediateParent} />;
+            } else {
+                return <ItemAvatar />;
+            }
+        }
+
+        return placeholder || "Select parent block";
+    };
+
+    const renderDropdownContent = () => {
+        return (
+            <StyledContainer
+                s={{ cursor: disabled ? "not-allowed" : "pointer" }}
+            >
+                <Space>
+                    {renderSelectedParent()}
+                    <CaretDownOutlined
+                        style={{ color: "#999", fontSize: "10px" }}
+                    />
+                </Space>
+            </StyledContainer>
+        );
+    };
+
+    if (disabled) {
+        return renderDropdownContent();
+    }
+
+    return (
+        <Dropdown overlay={parentsMenu} trigger={["click"]}>
+            {renderDropdownContent()}
+        </Dropdown>
+    );
 };
 
 export default BlockParentSelection;

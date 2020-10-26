@@ -5,53 +5,55 @@ import { BlockPriority } from "../../models/block/block";
 import Priority, { TaskPriority } from "./Priority";
 
 export interface IEditPriorityProps {
-  value: TaskPriority;
-  onChange: (value: string) => void;
+    value: TaskPriority;
+    onChange: (value: string) => void;
 
-  disabled?: boolean;
+    disabled?: boolean;
 }
 
 export default class EditPriority extends React.Component<IEditPriorityProps> {
-  public render() {
-    const { value, onChange, disabled } = this.props;
+    public render() {
+        const { value, onChange, disabled } = this.props;
 
-    const menu = (
-      <Menu onClick={({ key }) => onChange(key as string)}>
-        <Menu.Item key="very important">
-          <Priority level={BlockPriority.VeryImportant} />
-        </Menu.Item>
-        <Menu.Item key="not important">
-          <Priority level={BlockPriority.NotImportant} />
-        </Menu.Item>
-        <Menu.Item key="important">
-          <Priority level={BlockPriority.Important} />
-        </Menu.Item>
-      </Menu>
-    );
+        const menu = (
+            <Menu
+                onClick={({ key }) => onChange(key as string)}
+                selectedKeys={[value]}
+            >
+                <Menu.Item key="very important">
+                    <Priority level={BlockPriority.VeryImportant} />
+                </Menu.Item>
+                <Menu.Item key="not important">
+                    <Priority level={BlockPriority.NotImportant} />
+                </Menu.Item>
+                <Menu.Item key="important">
+                    <Priority level={BlockPriority.Important} />
+                </Menu.Item>
+            </Menu>
+        );
 
-    const renderDropdownContent = () => {
-      return (
-        <div
-          style={{
-            cursor: disabled ? "not-allowed" : "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-          }}
-        >
-          <Priority level={value} />
-          <CaretDownOutlined style={{ marginLeft: "2px" }} />
-        </div>
-      );
-    };
+        const renderDropdownContent = () => {
+            return (
+                <div
+                    style={{
+                        cursor: disabled ? "not-allowed" : "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                    }}
+                >
+                    <Priority withSelectIcon level={value} />
+                </div>
+            );
+        };
 
-    if (disabled) {
-      return renderDropdownContent();
+        if (disabled) {
+            return renderDropdownContent();
+        }
+
+        return (
+            <Dropdown overlay={menu} trigger={["click"]}>
+                {renderDropdownContent()}
+            </Dropdown>
+        );
     }
-
-    return (
-      <Dropdown overlay={menu} trigger={["click"]}>
-        {renderDropdownContent()}
-      </Dropdown>
-    );
-  }
 }

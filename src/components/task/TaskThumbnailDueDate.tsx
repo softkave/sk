@@ -16,10 +16,15 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
         return null;
     }
 
-    const dueAt = moment(task.dueAt);
-    const completedAt = moment(task.statusAssignedAt);
     const lastStatus = statusList[statusList.length - 1];
     const isInLastStatus = task.status === lastStatus.customId;
+
+    if (isInLastStatus) {
+        return null;
+    }
+
+    const dueAt = moment(task.dueAt);
+    const completedAt = moment(task.statusAssignedAt);
     const isDue = task.dueAt && Date.now() > dueAt.valueOf();
 
     const contentText = isInLastStatus
@@ -27,7 +32,7 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
         : `Due ${dueAt.fromNow()}`;
 
     return (
-        <Tag color={isInLastStatus ? "green" : isDue ? "red" : undefined}>
+        <Tag color={isDue ? "red" : undefined}>
             <Space align="center" style={{ height: "100%" }}>
                 <span
                     style={{
@@ -38,9 +43,9 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
                 >
                     <Clock
                         style={{
-                            width: "16px",
-                            height: "14px",
-                            color: "rgba(0, 0, 0, 0.65)",
+                            width: "12px",
+                            height: "12px",
+                            color: "#999",
                         }}
                     />
                 </span>

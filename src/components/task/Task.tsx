@@ -12,6 +12,7 @@ import {
     IBlockStatus,
     IBoardTaskResolution,
 } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
@@ -20,8 +21,11 @@ import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import { getOpStats } from "../hooks/useOperation";
+import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
+import SelectTaskSprint from "./SelectTaskSprint";
+import SelectTaskSprintContainer from "./SelectTaskSprintContainer";
 import TaskLabels from "./TaskLabels";
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskStatusContainer from "./TaskStatusContainer";
@@ -39,6 +43,8 @@ export interface ITaskProps {
     statusList: IBlockStatus[];
     resolutionsList: IBoardTaskResolution[];
     labelList: IBlockLabel[];
+    sprints: ISprint[];
+    sprintsMap: { [key: string]: ISprint };
 
     demo?: boolean;
     onEdit?: (task: IBlock) => void;
@@ -52,19 +58,23 @@ const Task: React.FC<ITaskProps> = (props) => {
     const {
         task,
         board,
-        onEdit,
         demo,
         statusList,
         orgUsers,
         labelList,
         resolutionsList,
         user,
+        sprints,
+        sprintsMap,
+        onEdit,
     } = props;
 
     const [
         subFormType,
         setSubFormType,
     ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+
+    const [showSprintForm, setShowSprintForm] = React.useState<boolean>(false);
 
     const onSelectAddNewStatus = React.useCallback(() => {
         setSubFormType(BoardStatusResolutionAndLabelsFormType.STATUS);
@@ -73,6 +83,10 @@ const Task: React.FC<ITaskProps> = (props) => {
     const onSelectAddNewResolution = React.useCallback(() => {
         setSubFormType(BoardStatusResolutionAndLabelsFormType.RESOLUTIONS);
     }, []);
+
+    const toggleShowSprintForm = React.useCallback(() => {
+        setShowSprintForm(!showSprintForm);
+    }, [showSprintForm]);
 
     const closeForm = React.useCallback(() => setSubFormType(null), []);
 
@@ -214,6 +228,15 @@ const Task: React.FC<ITaskProps> = (props) => {
         >
             <TaskNameAndDescription task={task} />
         </StyledContainer>,
+        <StyledContainer key="sprint">
+            <SelectTaskSprintContainer
+                task={task}
+                sprints={sprints}
+                sprintsMap={sprintsMap}
+                user={user}
+                onAddNewSprint={toggleShowSprintForm}
+            />
+        </StyledContainer>,
         <StyledContainer key="status" onClick={stopPropagation}>
             <TaskStatusContainer
                 task={task}
@@ -272,6 +295,13 @@ const Task: React.FC<ITaskProps> = (props) => {
                     block={board}
                     onClose={closeForm}
                     active={subFormType}
+                />
+            )}
+            {showSprintForm && (
+                <SprintFormInDrawer
+                    visible
+                    board={board}
+                    onClose={toggleShowSprintForm}
                 />
             )}
             <Space direction="vertical" style={{ width: "100%" }}>

@@ -54,7 +54,9 @@ const Board: React.FC<IBoardProps> = (props) => {
 
     const [groupBy, setGroupBy] = React.useState(BoardGroupBy.STATUS);
     const [view, setView] = React.useState(
-        board.currentSprintId
+        window.location.pathname.includes(SPRINT)
+            ? BoardCurrentView.SPRINTS
+            : board.currentSprintId
             ? BoardCurrentView.CURRENT_SPRINT
             : BoardCurrentView.ALL_TASKS
     );
@@ -222,6 +224,7 @@ const Board: React.FC<IBoardProps> = (props) => {
             return (
                 <SprintFormInDrawer
                     visible
+                    navigateOnCreate
                     board={board}
                     sprint={sprintForm.sprint}
                     onClose={() => setSprintForm(undefined)}
@@ -302,3 +305,5 @@ const Board: React.FC<IBoardProps> = (props) => {
 };
 
 export default Board;
+
+const SPRINT = "sprint";

@@ -5,6 +5,7 @@ import {
     IBlockStatus,
     IBoardTaskResolution,
 } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import StyledContainer from "../styled/Container";
@@ -18,6 +19,8 @@ export interface ITaskListProps {
     statusList: IBlockStatus[];
     labelList: IBlockLabel[];
     resolutionsList: IBoardTaskResolution[];
+    sprints: ISprint[];
+    sprintsMap: { [key: string]: ISprint };
     user: IUser;
 
     demo?: boolean;
@@ -27,7 +30,6 @@ export interface ITaskListProps {
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
     const {
-        toggleForm,
         tasks,
         board,
         demo,
@@ -37,6 +39,9 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
         labelList,
         resolutionsList,
         user,
+        sprints,
+        sprintsMap,
+        toggleForm,
     } = props;
     const tasksToRender = sortBlocksByPriority(tasks);
     const renderTask = (task: IBlock, i: number) => {
@@ -67,6 +72,8 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                     user={user}
                     labelList={labelList}
                     resolutionsList={resolutionsList}
+                    sprints={sprints}
+                    sprintsMap={sprintsMap}
                 />
             </StyledContainer>
         );

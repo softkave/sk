@@ -21,6 +21,8 @@ export interface ISprint {
     createdAt: string;
     createdBy: string;
     name: string;
+    prevSprintId?: string;
+    nextSprintId?: string;
     startDate?: string;
     startedBy?: string;
     endDate?: string;

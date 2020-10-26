@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
+import { sortSprintByIndex } from "../../models/sprint/utils";
 import { addSprintOpAction } from "../../redux/operations/sprint/addSprint";
 import { updateSprintOpAction } from "../../redux/operations/sprint/updateSprint";
 import SprintSelectors from "../../redux/sprints/selectors";
@@ -18,10 +19,11 @@ export interface ISprintFormContainerProps {
     onClose: () => void;
 
     sprint?: ISprint;
+    navigateOnCreate?: boolean;
 }
 
 const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
-    const { onClose, board } = props;
+    const { board, navigateOnCreate, onClose } = props;
 
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
@@ -30,18 +32,43 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         SprintSelectors.getBoardSprints(state, board.customId)
     );
 
-    const boardSprintsCount = useSelector<IAppState, number>((state) =>
-        SprintSelectors.countBoardSprints(state, board.customId)
-    );
-
     const [cachedValues, setValues] = React.useState<
         ISprintFormValues | undefined
-    >(
-        props.sprint || {
-            name: `Sprint ${boardSprintsCount + 1}`,
-            duration: board.sprintOptions!.duration,
+    >(() => {
+        if (props.sprint) {
+            return props.sprint;
         }
-    );
+
+        const sortedSprints = sortSprintByIndex(existingSprints);
+        const lastSprintIndex =
+            sortedSprints[sortedSprints.length - 1]?.sprintIndex || -1;
+
+        return (
+            props.sprint || {
+                name: `Sprint ${lastSprintIndex + 1}`,
+                duration: board.sprintOptions!.duration,
+            }
+        );
+    });
+
+    const thisSprint = useSelector<IAppState, ISprint | undefined>((state) => {
+        if (props.sprint) {
+            return props.sprint;
+        } else if (cachedValues?.name) {
+            // To prevent sprint name exists error when creating a new sprint
+            const name = cachedValues.name.toLowerCase();
+            const sprintId = Object.keys(state.sprints).find((id) => {
+                const sprint = state.sprints[id];
+                if (sprint.boardId === board.customId) {
+                    return sprint.name === name;
+                }
+            });
+
+            if (sprintId) {
+                return state.sprints[sprintId];
+            }
+        }
+    });
 
     const saveOpStatus = useOperation();
     const errors = saveOpStatus.error
@@ -49,21 +76,19 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         : undefined;
 
     const onSubmit = async (values: ISprintFormValues) => {
-        const data = { ...cachedValues, ...values };
-
-        setValues(data);
+        setValues(values);
 
         const result = props.sprint
             ? await dispatch(
                   updateSprintOpAction({
-                      data,
+                      data: values,
                       sprintId: props.sprint.customId,
                       opId: saveOpStatus.opId,
                   })
               )
             : await dispatch(
                   addSprintOpAction({
-                      data,
+                      data: values,
                       boardId: board.customId,
                       opId: saveOpStatus.opId,
                   })
@@ -80,13 +105,15 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         if (!props.sprint) {
             if (opStat.isCompleted) {
                 message.success(SPRINT_CREATED_SUCCESSFULLY);
-                history.push(
-                    `/app/orgs/${board.rootBlockId!}/boards/${
-                        board.customId
-                    }/sprints`
-                );
-
                 onClose();
+
+                if (navigateOnCreate) {
+                    history.push(
+                        `/app/orgs/${board.rootBlockId!}/boards/${
+                            board.customId
+                        }/sprints`
+                    );
+                }
             } else if (opStat.isError) {
                 message.error(ERROR_CREATING_SPRINT);
             }
@@ -103,7 +130,7 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         <SprintForm
             value={cachedValues as any}
             onClose={onClose}
-            sprint={props.sprint}
+            sprint={thisSprint}
             onSubmit={onSubmit}
             isSubmitting={saveOpStatus.isLoading}
             errors={errors}

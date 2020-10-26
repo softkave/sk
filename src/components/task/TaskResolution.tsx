@@ -1,4 +1,4 @@
-import { CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
@@ -54,7 +54,8 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
             selectedKeys={getSelectedKeys()}
         >
             <Menu.Item key={ADD_NEW_RESOLUTION_KEY}>
-                <Space align="center" size={12}>
+                <PlusOutlined /> Resolution
+                {/* <Space align="center" size={12}>
                     <Plus
                         style={{
                             width: "16px",
@@ -64,7 +65,7 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
                         }}
                     />
                     New Resolution
-                </Space>
+                </Space> */}
             </Menu.Item>
             <Menu.Divider />
             {resolutionsList.map((resolution) => {
@@ -90,6 +91,8 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
                 s={{
                     cursor: disabled ? "not-allowed" : "pointer",
                     display: "inline-flex",
+                    width: "100%",
+                    justifyContent: "flex-end",
                 }}
             >
                 <Space>
@@ -101,7 +104,7 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
                     <CaretDownOutlined
                         style={{
                             fontSize: "10px",
-                            color: disabled ? "#f5f5f5" : undefined,
+                            color: disabled ? "#f5f5f5" : "#999",
                         }}
                     />
                 </Space>

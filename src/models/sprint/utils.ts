@@ -21,3 +21,21 @@ export function getSprintRemainingWorkingDays(sprint: ISprint) {
 
     return remainingDays;
 }
+
+export function sortSprintByIndex(sprints: ISprint[]) {
+    return sprints.sort((sprint1, sprint2) => {
+        return sprint1.sprintIndex - sprint2.sprintIndex;
+    });
+}
+
+export function getCurrentAndUpcomingSprints(totalSprints: ISprint[]) {
+    const currentAndUpcomingSprints = totalSprints.filter((sprint) => {
+        if (sprint.endDate) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+
+    return sortSprintByIndex(currentAndUpcomingSprints);
+}

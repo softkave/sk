@@ -58,6 +58,7 @@ export const endSprintOpAction = createAsyncThunk<
             thunkAPI.getState(),
             arg.sprintId
         );
+
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
         moveIncompleteTasksToTheNextSprint(sprint, endDate);
@@ -101,7 +102,10 @@ export const endSprintOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-function moveIncompleteTasksToTheNextSprint(sprint: ISprint, date: string) {
+export function moveIncompleteTasksToTheNextSprint(
+    sprint: ISprint,
+    date: string
+) {
     const board = BlockSelectors.getBlock(store.getState(), sprint.boardId);
     const statusList = board.boardStatuses || [];
     const taskCompleteStatus = statusList[statusList.length - 1];
