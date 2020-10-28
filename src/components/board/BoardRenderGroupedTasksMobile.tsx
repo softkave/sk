@@ -4,11 +4,11 @@ import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
-import { IBoardGroupedTasksGroup } from "./types";
+import { IBoardGroupedTasks } from "./types";
 
 export interface IBoardRenderGroupedTasksMobileProps {
     board: IBlock;
-    groups: IBoardGroupedTasksGroup[];
+    groups: IBoardGroupedTasks[];
     users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
 }
@@ -18,7 +18,7 @@ const BoardRenderGroupedTasksMobile: React.FC<IBoardRenderGroupedTasksMobileProp
 ) => {
     const { groups, users, board, onClickUpdateBlock } = props;
 
-    const renderTab = (group: IBoardGroupedTasksGroup) => {
+    const renderTab = (group: IBoardGroupedTasks) => {
         return (
             <Tabs.TabPane
                 tab={

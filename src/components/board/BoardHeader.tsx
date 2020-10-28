@@ -1,88 +1,68 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
-import { Button } from "antd";
+import { Button, Space } from "antd";
 import React from "react";
-import { ArrowLeft } from "react-feather";
+import { ArrowLeft, Plus, Search } from "react-feather";
 import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import BlockThumbnail from "../block/BlockThumnail";
 import StyledContainer from "../styled/Container";
-import BoardStatusResolutionAndLabelsForm, {
-    BoardStatusResolutionAndLabelsFormType,
-} from "./BoardStatusResolutionAndLabelsForm";
-import SelectBlockOptionsMenu, {
-    SettingsMenuKey,
-} from "./SelectBlockOptionsMenu";
+import { layoutOptions } from "../utilities/layout";
+import BoardHeaderOptionsMenu, {
+    BoardCurrentView,
+    BoardGroupBy,
+    BoardHeaderSettingsMenuKey,
+} from "./BoardHeaderOptionsMenu";
+import SearchTasksInput, { SearchTasksMode } from "./SearchTasksInput";
 
 export interface IBoardHeaderProps {
     block: IBlock;
     isMobile: boolean;
     isAppMenuFolded: boolean;
-    onClickEditBlock: (block: IBlock) => void;
-    onClickDeleteBlock: (block: IBlock) => void;
+    view: BoardCurrentView;
+    groupBy: BoardGroupBy;
+    searchIn: SearchTasksMode;
+    isSearchMode: boolean;
+    onChangeSearchText: (text: string) => void;
+    onChangeSearchMode: (mode: SearchTasksMode) => void;
     onToggleFoldAppMenu: () => void;
-
+    onSelectMenuKey: (key: BoardHeaderSettingsMenuKey) => void;
+    onSelectCurrentView: (key: BoardCurrentView) => void;
+    onSelectGroupBy: (key: BoardGroupBy) => void;
     style?: React.CSSProperties;
 }
 
 const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
     const {
         block,
-        onClickDeleteBlock,
-        onClickEditBlock,
         isMobile,
         style,
+        isSearchMode,
         isAppMenuFolded: isMenuFolded,
         onToggleFoldAppMenu: onToggleFoldMenu,
+        onSelectMenuKey,
     } = props;
 
-    const [
-        showFormFor,
-        setFormType,
-    ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+    const [showSearch, setShowSearch] = React.useState(isSearchMode);
     const history = useHistory();
 
-    const onSelectSettingsMenuItem = React.useCallback(
-        (key: SettingsMenuKey) => {
-            switch (key) {
-                case "view":
-                    onClickEditBlock(block);
-                    break;
+    const onSelectSettingsMenuItem = (key: BoardHeaderSettingsMenuKey) => {
+        switch (key) {
+            case BoardHeaderSettingsMenuKey.SEARCH_TASKS:
+                setShowSearch(true);
+                break;
 
-                case "delete":
-                    onClickDeleteBlock(block);
-                    break;
-
-                case "status":
-                    setFormType("status");
-                    break;
-
-                case "labels":
-                    setFormType("labels");
-                    break;
-
-                case "resolutions":
-                    setFormType(key);
-                    break;
-            }
-        },
-        [block, onClickDeleteBlock, onClickEditBlock]
-    );
-
-    const renderBlockOptionsMenu = () => (
-        <SelectBlockOptionsMenu
-            block={block}
-            onSelect={onSelectSettingsMenuItem}
-        />
-    );
-
-    const closeForm = React.useCallback(() => setFormType(null), []);
+            default:
+                onSelectMenuKey(key as BoardHeaderSettingsMenuKey);
+                break;
+        }
+    };
 
     const onBack = React.useCallback(() => {
-        history.push(`/app/organizations/${block.rootBlockId}/boards`);
+        history.push(`/app/orgs/${block.rootBlockId}/boards`);
     }, [block, history]);
 
-    const renderHeaderPrefixButton = () => {
+    const renderBackButton = () => {
         if (isMobile) {
             return (
                 <StyledContainer s={{ marginRight: "16px" }}>
@@ -111,6 +91,69 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         }
     };
 
+    let content: React.ReactNode = null;
+
+    if (showSearch) {
+        content = (
+            <SearchTasksInput
+                {...props}
+                onCancel={() => setShowSearch(false)}
+            />
+        );
+    } else {
+        let desktopContent: React.ReactNode = null;
+
+        if (!isMobile) {
+            desktopContent = [
+                <Button
+                    key={BoardHeaderSettingsMenuKey.ADD_TASK}
+                    onClick={() =>
+                        onSelectMenuKey(BoardHeaderSettingsMenuKey.ADD_TASK)
+                    }
+                    className="icon-btn"
+                >
+                    <Plus />
+                </Button>,
+                <Button
+                    key="sch"
+                    onClick={() => setShowSearch(true)}
+                    className="icon-btn"
+                >
+                    <Search />
+                </Button>,
+            ];
+        }
+
+        const options = (
+            <BoardHeaderOptionsMenu
+                {...props}
+                onSelectMenuKey={onSelectSettingsMenuItem}
+            />
+        );
+
+        content = (
+            <React.Fragment>
+                {renderBackButton()}
+                <BlockThumbnail
+                    makeNameBold
+                    block={block}
+                    showFields={["name"]}
+                    style={{ flex: 1 }}
+                />
+                <StyledContainer s={{ alignItems: "center" }}>
+                    {desktopContent ? (
+                        <Space>
+                            {desktopContent}
+                            {options}
+                        </Space>
+                    ) : (
+                        options
+                    )}
+                </StyledContainer>
+            </React.Fragment>
+        );
+    }
+
     return (
         <StyledContainer
             s={{
@@ -118,27 +161,11 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
                 width: "100%",
                 alignItems: "center",
                 padding: "16px",
-                height: 56,
+                height: layoutOptions.HEADER_HEIGHT,
                 borderBottom: "1px solid #d9d9d9",
             }}
         >
-            {renderHeaderPrefixButton()}
-            <BlockThumbnail
-                block={block}
-                showFields={["name"]}
-                style={{ flex: 1 }}
-            />
-            <StyledContainer s={{ alignItems: "center" }}>
-                {renderBlockOptionsMenu()}
-            </StyledContainer>
-            {showFormFor && (
-                <BoardStatusResolutionAndLabelsForm
-                    visible
-                    block={block}
-                    onClose={closeForm}
-                    active={showFormFor}
-                />
-            )}
+            {content}
         </StyledContainer>
     );
 };

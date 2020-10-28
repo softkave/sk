@@ -5,8 +5,8 @@ import { loadOrgDataOperationAction } from "../../redux/operations/block/loadOrg
 import OperationType from "../../redux/operations/OperationType";
 import useOperation, {
     IMergedOperationStats,
-    IUseOperationStatus,
-    mergeOperationStats,
+    IOperationDerivedData,
+    mergeOps,
 } from "../hooks/useOperation";
 
 // For loading org data necessary for initialization, like users, requests, chat rooms, and messages
@@ -15,7 +15,7 @@ export function useLoadOrgData(org: IBlock): IMergedOperationStats {
 
     // Load org users and collaboration requests
     const loadOrgUsersAndRequests = React.useCallback(
-        (loadProps: IUseOperationStatus) => {
+        (loadProps: IOperationDerivedData) => {
             if (!loadProps.operation) {
                 dispatch(
                     loadOrgDataOperationAction({
@@ -36,5 +36,5 @@ export function useLoadOrgData(org: IBlock): IMergedOperationStats {
         loadOrgUsersAndRequests
     );
 
-    return mergeOperationStats([loadOrgUsersAndRequestsStatus]);
+    return mergeOps([loadOrgUsersAndRequestsStatus]);
 }

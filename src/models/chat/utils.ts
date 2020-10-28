@@ -1,4 +1,4 @@
-import { IPersistedRoom } from "../../net/chat";
+import { IPersistedRoom } from "../../net/chat/chat";
 import { IRoom } from "./types";
 
 export function getRoomFromPersistedRoom(

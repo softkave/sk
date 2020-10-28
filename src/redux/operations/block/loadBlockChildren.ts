@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { BlockType, IBlock } from "../../../models/block/block";
-import BlockAPI from "../../../net/block";
+import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -15,20 +15,20 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
-export interface ILoadBlockChildrenOperationActionArgs {
+export interface ILoadBlockChildrenOpActionArgs {
     block: IBlock;
     typeList?: BlockType[];
 }
 
-export interface ILoadBlockChildrenOperationMeta {
+export interface ILoadBlockChildrenOpMeta {
     typeList?: BlockType[];
 }
 
-export const loadBlockChildrenOperationAction = createAsyncThunk<
+export const loadBlockChildrenOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<ILoadBlockChildrenOperationActionArgs>,
+    GetOperationActionArgs<ILoadBlockChildrenOpActionArgs>,
     IAppAsyncThunkConfig
->("block/loadBlockChildren", async (arg, thunkAPI) => {
+>("op/block/loadBlockChildren", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -43,7 +43,7 @@ export const loadBlockChildrenOperationAction = createAsyncThunk<
     await thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
-            OperationType.LoadBlockChildren,
+            OperationType.LOAD_BLOCK_CHILDREN,
             arg.block.customId,
             null,
             { typeList: arg.typeList }
@@ -83,7 +83,7 @@ export const loadBlockChildrenOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.LoadBlockChildren,
+                OperationType.LOAD_BLOCK_CHILDREN,
                 arg.block.customId
             )
         );
@@ -91,7 +91,7 @@ export const loadBlockChildrenOperationAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.LoadBlockChildren,
+                OperationType.LOAD_BLOCK_CHILDREN,
                 error,
                 arg.block.customId
             )

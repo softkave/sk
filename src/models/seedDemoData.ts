@@ -291,7 +291,7 @@ function seedUserOps() {
 
     const loadUserRootBlocksOp: IOperation = {
         id: getNewId(),
-        operationType: OperationType.LoadRootBlocks,
+        operationType: OperationType.LOAD_ROOT_BLOCKS,
         status: { status: OperationStatus.Completed, timestamp: Date.now() },
     };
 
@@ -325,7 +325,7 @@ function seedOrgOps(org: IBlock) {
 
     const loadOrgChildren: IOperation = {
         id: getNewId(),
-        operationType: OperationType.LoadBlockChildren,
+        operationType: OperationType.LOAD_BLOCK_CHILDREN,
         resourceId: org.customId,
         status: { status: OperationStatus.Completed, timestamp: Date.now() },
         meta: { typeList: [BlockType.Board] },
@@ -337,7 +337,7 @@ function seedOrgOps(org: IBlock) {
 function seedBoardOps(board: IBlock) {
     const loadBoardChildren: IOperation = {
         id: getNewId(),
-        operationType: OperationType.LoadBlockChildren,
+        operationType: OperationType.LOAD_BLOCK_CHILDREN,
         resourceId: board.customId,
         status: { status: OperationStatus.Completed, timestamp: Date.now() },
         meta: { typeList: [BlockType.Task] },

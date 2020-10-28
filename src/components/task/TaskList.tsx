@@ -5,6 +5,7 @@ import {
     IBlockStatus,
     IBoardTaskResolution,
 } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import { sortBlocksByPriority } from "../block/sortBlocks";
 import StyledContainer from "../styled/Container";
@@ -18,16 +19,18 @@ export interface ITaskListProps {
     statusList: IBlockStatus[];
     labelList: IBlockLabel[];
     resolutionsList: IBoardTaskResolution[];
+    sprints: ISprint[];
+    sprintsMap: { [key: string]: ISprint };
     user: IUser;
 
     demo?: boolean;
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
+    getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
     const {
-        toggleForm,
         tasks,
         board,
         demo,
@@ -37,15 +40,21 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
         labelList,
         resolutionsList,
         user,
+        sprints,
+        sprintsMap,
+        toggleForm,
+        getBlockStyle,
     } = props;
     const tasksToRender = sortBlocksByPriority(tasks);
     const renderTask = (task: IBlock, i: number) => {
         const isNotLastTask = i < tasksToRender.length - 1;
+        const taskStyle = getBlockStyle ? getBlockStyle(task, i) : {};
 
         return (
             <StyledContainer
                 key={task.customId}
                 style={{
+                    ...taskStyle,
                     borderBottom: isNotLastTask
                         ? "1px solid #f0f0f0"
                         : undefined,
@@ -67,6 +76,8 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                     user={user}
                     labelList={labelList}
                     resolutionsList={resolutionsList}
+                    sprints={sprints}
+                    sprintsMap={sprintsMap}
                 />
             </StyledContainer>
         );

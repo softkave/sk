@@ -17,23 +17,18 @@ import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
 import confirmBlockDelete from "../block/confirmBlockDelete";
+import BoardFormInDrawer from "../boardBlock/BoardFormInDrawer";
+import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
-import { getOperationStats } from "../hooks/useOperation";
+import { getOpStats } from "../hooks/useOperation";
+import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
-import BoardForms, { BoardFormType } from "./BoardForms";
 import OrgBoard from "./OrgBoard";
+import { IBoardFormData } from "./types";
 import { useLoadOrgData } from "./useLoadOrgData";
 import { getBlockPath, getBlocksPath } from "./utils";
-
-interface IBlockFormState {
-    formType: BoardFormType;
-    orgId: string;
-    blockType?: BlockType;
-    parentBlock?: IBlock;
-    block?: IBlock;
-}
 
 interface IRouteMatchParams {
     organizationId?: string;
@@ -44,13 +39,17 @@ interface IRouteMatchParams {
 
 const OrgBoardContainer: React.FC<{}> = () => {
     const history = useHistory();
-
     const dispatch: AppDispatch = useDispatch();
-    const [blockForm, setBlockForm] = React.useState<IBlockFormState | null>(
-        null
+
+    const [boardForm, setBoardForm] = React.useState<
+        IBoardFormData | undefined
+    >();
+
+    const [showCollaboratorsForm, setShowCollaboratorsForm] = React.useState(
+        false
     );
 
-    const organizationPath = "/app/organizations/:organizationId";
+    const organizationPath = "/app/orgs/:organizationId";
     const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
         organizationPath
     );
@@ -142,7 +141,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (opStat.isCompleted) {
             message.success(`${blockToDelete.type} deleted successfully`);
@@ -150,33 +149,62 @@ const OrgBoardContainer: React.FC<{}> = () => {
             if (blockToDelete.customId === block.customId) {
                 pushRoute(parentPath);
             }
-
-            dispatch(OperationActions.deleteOperation(op.id));
         } else if (opStat.isError) {
             message.error(`Error deleting ${blockToDelete.type}`);
         }
+
+        dispatch(OperationActions.deleteOperation(op.id));
     };
 
-    const resetBlockForm = () => {
+    const closeBoardForm = () => {
         // TODO: prompt the user if she has unsaved changes
-        setBlockForm(null);
+        setBoardForm(undefined);
     };
 
-    const renderForms = () => {
-        if (blockForm) {
-            return (
-                <BoardForms
-                    orgId={block.rootBlockId || block.customId}
-                    blockType={blockForm.blockType}
-                    block={blockForm.block}
-                    formType={blockForm.formType}
-                    onClose={resetBlockForm}
-                    parentBlock={blockForm.parentBlock!}
-                />
-            );
+    const renderBoardForm = () => {
+        if (!boardForm) {
+            return null;
         }
 
-        return null;
+        switch (boardForm.type) {
+            case BlockType.Task: {
+                return (
+                    <EditOrgFormInDrawer
+                        visible
+                        block={boardForm.block}
+                        onClose={closeBoardForm}
+                    />
+                );
+            }
+
+            case BlockType.Board: {
+                return (
+                    <BoardFormInDrawer
+                        visible
+                        orgId={block.customId}
+                        block={boardForm.block}
+                        onClose={closeBoardForm}
+                    />
+                );
+            }
+
+            default:
+                return null;
+        }
+    };
+
+    const renderCollaboratorForm = () => {
+        if (!showCollaboratorsForm) {
+            return null;
+        }
+
+        return (
+            <AddCollaboratorFormInDrawer
+                visible
+                orgId={block.customId}
+                onClose={() => setShowCollaboratorsForm(false)}
+            />
+        );
     };
 
     const renderBoardMain = (isMobile: boolean) => {
@@ -195,42 +223,18 @@ const OrgBoardContainer: React.FC<{}> = () => {
                     confirmBlockDelete(blk, onDeleteBlock)
                 }
                 onClickAddBlock={(parentBlock, blockType) => {
-                    setBlockForm({
-                        blockType,
+                    setBoardForm({
                         parentBlock,
-                        formType: "block-form",
-                        orgId: block.rootBlockId!,
+                        type: blockType,
                     });
                 }}
                 onClickUpdateBlock={(blockToUpdate) =>
-                    setBlockForm({
+                    setBoardForm({
+                        type: blockToUpdate.type,
                         block: blockToUpdate,
-                        formType: "block-form",
-                        orgId: block.rootBlockId!,
-                        blockType: blockToUpdate.type,
                     })
                 }
-                onClickAddCollaborator={() =>
-                    setBlockForm({
-                        block,
-                        formType: "collaborator-form",
-                        orgId: block.rootBlockId!,
-                    })
-                }
-                onClickAddOrEditLabel={() =>
-                    setBlockForm({
-                        block,
-                        formType: "label-list-form",
-                        orgId: block.rootBlockId!,
-                    })
-                }
-                onClickAddOrEditStatus={() =>
-                    setBlockForm({
-                        block,
-                        formType: "status-list-form",
-                        orgId: block.rootBlockId!,
-                    })
-                }
+                onAddCollaborator={() => setShowCollaboratorsForm(true)}
             />
         );
     };
@@ -257,7 +261,8 @@ const OrgBoardContainer: React.FC<{}> = () => {
 
         return (
             <React.Fragment>
-                {renderForms()}
+                {renderBoardForm()}
+                {renderCollaboratorForm()}
                 <RenderForDevice
                     renderForDesktop={() => renderBoardMain(false)}
                     renderForMobile={() => renderBoardMain(true)}

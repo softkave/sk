@@ -1,28 +1,30 @@
-import forEach from "lodash/forEach";
 import React from "react";
 
-export interface IUseObjectHookProps {
-    initialValues?: object;
+export interface IUseObjectHookProps<T extends object = object> {
+    initialValues?: T;
 }
 
-type Iterator = (v: any, k: string, obj: object) => void;
-export interface IUseObjectHookResult {
-    set: (key: string, item: any) => void;
-    merge: (obj: object) => void;
-    remove: (key: string) => boolean;
-    has: (key: string) => boolean;
+type Iterator<T extends object> = (v: T[keyof T], k: keyof T, obj: T) => void;
+
+export interface IUseObjectHookResult<T extends object> {
+    set: (key: keyof T, item: any) => void;
+    merge: (obj: T) => void;
+    remove: (key: keyof T) => boolean;
+    has: (key: keyof T) => boolean;
     clear: () => void;
-    setObject: (val: object) => void;
-    get: (key: string) => object;
-    getObject: () => object;
-    forEach: (iter: Iterator) => void;
+    setObject: (val: T) => void;
+    get: (key: keyof T) => T[keyof T];
+    getObject: () => T;
+    forEach: (iter: Iterator<T>) => void;
     size: () => number;
 }
 
-const useObject = (props: IUseObjectHookProps = {}): IUseObjectHookResult => {
-    const [obj, setObject] = React.useState(props.initialValues || {});
+const useObject = <T extends object>(
+    props: IUseObjectHookProps<T> = {}
+): IUseObjectHookResult<T> => {
+    const [obj, setObject] = React.useState(props.initialValues || ({} as T));
 
-    const remove = (key: string) => {
+    const remove = (key: keyof T) => {
         const newObj = { ...obj };
         const itemExists = exists(key);
 
@@ -32,27 +34,33 @@ const useObject = (props: IUseObjectHookProps = {}): IUseObjectHookResult => {
         return itemExists;
     };
 
-    const exists = (key: string) => {
+    const exists = (key: keyof T) => {
         return !!obj[key];
     };
 
-    const add = (key: string, item: any) => {
+    const add = (key: keyof T, item: T[keyof T]) => {
         const newObj = { ...obj };
         newObj[key] = item;
         setObject(newObj);
     };
 
-    const reset = () => setObject(props.initialValues || {});
+    const reset = () => setObject(props.initialValues || ({} as T));
 
-    const get = (key: string) => obj[key];
+    const get = (key: keyof T) => obj[key];
 
     const getObject = () => obj;
 
-    const forEachLoop = (iter: Iterator) => forEach(obj, iter);
+    const forEachLoop = (iter: Iterator<T>) => {
+        // tslint:disable-next-line: forin
+        for (const key in obj) {
+            const data = obj[key];
+            iter(data, key, obj);
+        }
+    };
 
     const size = () => Object.keys(obj).length;
 
-    const merge = (data: object) => {
+    const merge = (data: T) => {
         const newObj = { ...obj, ...data };
         setObject(newObj);
     };

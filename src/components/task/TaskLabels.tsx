@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
@@ -107,7 +108,8 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                 selectedKeys={labels.map((label) => label.customId)}
             >
                 <Menu.Item key={ADD_NEW_LABEL_KEY}>
-                    <Space align="center" size={12}>
+                    <PlusOutlined /> Label
+                    {/* <Space align="center" size={12}>
                         <Plus
                             style={{
                                 width: "16px",
@@ -117,7 +119,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                             }}
                         />
                         New Label
-                    </Space>
+                    </Space> */}
                 </Menu.Item>
                 <Menu.Divider />
                 {renderedLabelMenuItems}
@@ -146,12 +148,8 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
 
     return (
         <StyledContainer>
-            <Space direction="vertical">
-                <Space size={2}>
-                    {renderSelectedLabels()}
-                    {!disabled && renderAddNewLabel()}
-                </Space>
-            </Space>
+            {renderSelectedLabels()}
+            {!disabled && renderAddNewLabel()}
         </StyledContainer>
     );
 };

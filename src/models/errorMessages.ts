@@ -1,10 +1,5 @@
-const invalidText = "Invalid text";
-const emailAddressRequired = "Email address is required";
-const fieldIsRequired = "Field is required";
-
 export default class ErrorMessages {
-  public static invalidText = invalidText;
-  public static emailAddressRequired = emailAddressRequired;
-  public static fieldIsRequired = fieldIsRequired;
-  public static anErrorOccurred = "An error occurred";
+    public static EMAIL_ADDRESS_IS_REQUIRED = "Email address is required";
+    public static FIELD_IS_REQUIRED = "Field is required";
+    public static AN_ERROR_OCCURRED = "An error occurred";
 }

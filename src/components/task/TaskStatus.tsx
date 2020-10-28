@@ -1,7 +1,7 @@
-import { CaretDownOutlined } from "@ant-design/icons";
+import { CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space } from "antd";
 import React from "react";
-import { Minus, Plus } from "react-feather";
+import { Minus } from "react-feather";
 import {
     IBlock,
     IBlockStatus,
@@ -121,7 +121,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
             selectedKeys={getSelectedKeys()}
         >
             <Menu.Item key={ADD_NEW_STATUS_KEY}>
-                <Space align="center" size={12}>
+                <PlusOutlined /> Status
+                {/* <Space align="center" size={12}>
                     <Plus
                         style={{
                             width: "16px",
@@ -130,8 +131,9 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                             marginTop: "-3px",
                         }}
                     />
-                    New Status
-                </Space>
+                    <PlusOutlined />
+                    Status
+                </Space> */}
             </Menu.Item>
             <Menu.Divider />
             {statusList.map((status) => {
@@ -157,7 +159,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                 <CaretDownOutlined
                     style={{
                         fontSize: "10px",
-                        color: disabled ? "#f5f5f5" : undefined,
+                        color: disabled ? "#f5f5f5" : "#999",
                     }}
                 />
             </Space>
@@ -209,7 +211,6 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                     <StyledContainer
                         s={{
                             flex: 1,
-                            justifyContent: "flex-end",
                             marginRight: "6px",
                         }}
                     >

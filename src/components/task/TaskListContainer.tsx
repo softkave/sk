@@ -1,9 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
+import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import SessionSelectors from "../../redux/session/selectors";
+import SprintSelectors from "../../redux/sprints/selectors";
 import { IAppState } from "../../redux/types";
+import { indexArray } from "../../utils/utils";
 import TaskList from "./TaskList";
 
 export interface ITaskStatusContainerProps {
@@ -13,6 +17,7 @@ export interface ITaskStatusContainerProps {
 
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
+    getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
 
 // TODO: should we make updates locally first before persisting it in the server for better UX?
@@ -25,6 +30,17 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
         return SessionSelectors.assertGetUser(state);
     });
 
+    const sprints = useSelector<IAppState, ISprint[]>((state) => {
+        const totalSprints = SprintSelectors.getBoardSprints(
+            state,
+            board.customId
+        );
+
+        return getCurrentAndUpcomingSprints(totalSprints);
+    });
+
+    const sprintsMap = indexArray(sprints, { path: "customId" });
+
     const statusList = board.boardStatuses || [];
     const resolutionsList = board.boardResolutions || [];
     const labelList = board.boardLabels || [];
@@ -35,6 +51,8 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
             labelList={labelList}
             resolutionsList={resolutionsList}
             statusList={statusList}
+            sprints={sprints}
+            sprintsMap={sprintsMap}
             user={user}
         />
     );

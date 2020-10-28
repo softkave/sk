@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import randomColor from "randomcolor";
-import UserAPI from "../../../net/user";
+import UserAPI from "../../../net/user/user";
 import UserSessionStorageFuncs from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
 import SessionActions from "../../session/actions";

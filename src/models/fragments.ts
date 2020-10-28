@@ -73,12 +73,18 @@ fragment blockFragment on Block {
     updatedBy
     parent
     rootBlockId
+    priority
+    status
+    statusAssignedBy
+    statusAssignedAt
+    taskResolution
+    currentSprintId
+    lastSprintId
     assignees {
         userId
         assignedAt
         assignedBy
     }
-    priority
     subTasks {
         customId
         description
@@ -109,6 +115,23 @@ fragment blockFragment on Block {
         updatedBy
         updatedAt
     }
+    labels {
+        customId
+        assignedBy
+        assignedAt
+    }
+    sprintOptions {
+        duration
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
+    }
+    taskSprint {
+        sprintId
+        assignedAt
+        assignedBy
+    }
     boardResolutions {
         customId
         name
@@ -117,15 +140,6 @@ fragment blockFragment on Block {
         description
         updatedBy
         updatedAt
-    }
-    status
-    statusAssignedBy
-    statusAssignedAt
-    taskResolution
-    labels {
-        customId
-        assignedBy
-        assignedAt
     }
 }
 `;

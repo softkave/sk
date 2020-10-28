@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { INotification } from "../../../models/notification/notification";
-import UserAPI from "../../../net/user";
+import UserAPI from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";

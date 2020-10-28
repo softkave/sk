@@ -9,7 +9,7 @@ import { IUser } from "../../models/user/user";
 import {
     ISendMessageAPIParameters,
     IUpdateRoomReadCounterAPIParameters,
-} from "../../net/chat";
+} from "../../net/chat/chat";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { sendMessageOperationAction } from "../../redux/operations/chat/sendMessage";
 import { updateRoomReadCounterOperationAction } from "../../redux/operations/chat/updateRoomReadCounter";
@@ -38,7 +38,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     const history = useHistory();
 
     const chatRouteMatch = useRouteMatch<{ recipientId: string }>(
-        "/app/organizations/:orgId/chat/:recipientId"
+        "/app/orgs/:orgId/chat/:recipientId"
     );
 
     const selectedRoomRecipientId = chatRouteMatch?.params.recipientId;

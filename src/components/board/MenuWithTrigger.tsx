@@ -4,95 +4,110 @@ import StyledContainer from "../styled/Container";
 import wrapMenu from "../utilities/wrapMenu";
 
 export interface IMenuWithTriggerRenderMenuProps {
-  closeMenu: () => void;
+    closeMenu: () => void;
 }
 
 export interface IMenuWithTriggerRenderTriggerProps {
-  openMenu: () => void;
+    openMenu: () => void;
 }
 
 export interface IMenuWithTriggerProps {
-  menuType: "drawer" | "dropdown";
-  renderTrigger: (props: IMenuWithTriggerRenderTriggerProps) => React.ReactNode;
-  renderMenu: (
-    props: IMenuWithTriggerRenderMenuProps
-  ) => React.ReactNode | React.ReactElement;
+    menuType: "drawer" | "dropdown";
+    renderTrigger: (
+        props: IMenuWithTriggerRenderTriggerProps
+    ) => React.ReactNode;
+    renderMenu: (props: IMenuWithTriggerRenderMenuProps) => React.ReactElement;
 
-  menuTitle?: React.ReactNode;
+    menuTitle?: React.ReactNode;
+    dropdownPlacement?:
+        | "topLeft"
+        | "topCenter"
+        | "topRight"
+        | "bottomLeft"
+        | "bottomCenter"
+        | "bottomRight";
 }
 
 const MenuWithTrigger: React.FC<IMenuWithTriggerProps> = (props) => {
-  const { menuType, renderMenu, renderTrigger, menuTitle } = props;
-  const [showMenu, setShowMenu] = React.useState(false);
-  const openMenu = () => setShowMenu(true);
-  const closeMenu = () => setShowMenu(false);
+    const {
+        menuType,
+        menuTitle,
+        renderMenu,
+        renderTrigger,
+        dropdownPlacement,
+    } = props;
 
-  const renderOptionsDrawer = (
-    title: React.ReactNode,
-    onClose: () => void,
-    renderContent: () => React.ReactNode
-  ) => {
-    return (
-      <Drawer
-        visible
-        closable
-        title={title}
-        placement="right"
-        onClose={onClose}
-        width={300}
-      >
-        <StyledContainer
-          s={{
-            flexDirection: "column",
-            width: "100%",
-            flex: 1,
-            alignItems: "center",
-          }}
-        >
-          {renderContent()}
-        </StyledContainer>
-      </Drawer>
-    );
-  };
+    const [showMenu, setShowMenu] = React.useState(false);
 
-  const renderMenuForDrawer = () => {
-    return (
-      <React.Fragment>
-        {renderTrigger({ openMenu })}
-        {showMenu &&
-          renderOptionsDrawer(menuTitle || "Options", closeMenu, () =>
-            wrapMenu(renderMenu({ closeMenu }))
-          )}
-      </React.Fragment>
-    );
-  };
+    const openMenu = () => setShowMenu(true);
+    const closeMenu = () => setShowMenu(false);
 
-  const renderMenuForDropdown = () => {
-    return (
-      <Dropdown
-        // @ts-ignore
-        overlay={renderMenu({ closeMenu })}
-        trigger={["click"]}
-      >
-        {renderTrigger({ openMenu })}
-      </Dropdown>
-    );
-  };
+    const renderOptionsDrawer = (
+        title: React.ReactNode,
+        onClose: () => void,
+        renderContent: () => React.ReactNode
+    ) => {
+        return (
+            <Drawer
+                visible
+                closable
+                title={title}
+                placement="right"
+                onClose={onClose}
+                width={300}
+            >
+                <StyledContainer
+                    s={{
+                        flexDirection: "column",
+                        width: "100%",
+                        flex: 1,
+                        alignItems: "center",
+                    }}
+                >
+                    {renderContent()}
+                </StyledContainer>
+            </Drawer>
+        );
+    };
 
-  const render = () => {
-    switch (menuType) {
-      case "drawer":
-        return renderMenuForDrawer();
+    const renderMenuForDrawer = () => {
+        return (
+            <React.Fragment>
+                {renderTrigger({ openMenu })}
+                {showMenu &&
+                    renderOptionsDrawer(menuTitle || "Options", closeMenu, () =>
+                        wrapMenu(renderMenu({ closeMenu }))
+                    )}
+            </React.Fragment>
+        );
+    };
 
-      case "dropdown":
-        return renderMenuForDropdown();
+    const renderMenuForDropdown = () => {
+        return (
+            <Dropdown
+                overlay={renderMenu({ closeMenu })}
+                trigger={["click"]}
+                placement={dropdownPlacement}
+            >
+                {renderTrigger({ openMenu })}
+            </Dropdown>
+        );
+    };
 
-      default:
-        return null;
-    }
-  };
+    const render = () => {
+        switch (menuType) {
+            case "drawer":
+                return renderMenuForDrawer();
 
-  return render();
+            case "dropdown":
+                return renderMenuForDropdown();
+
+            default:
+                return null;
+        }
+    };
+
+    return render();
 };
 
 export default MenuWithTrigger;

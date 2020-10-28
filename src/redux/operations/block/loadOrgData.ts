@@ -7,7 +7,7 @@ import {
     notificationFragment,
 } from "../../../models/fragments";
 import { IUser } from "../../../models/user/user";
-import { netCallWithAuth } from "../../../net/utils";
+import { graphQLAPICallWithAuth } from "../../../net/utils";
 import { getNewId, getNewTempId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import KeyValueActions from "../../key-value/actions";
@@ -62,7 +62,7 @@ const notificationsPath = "block.getBlockNotifications";
 const paths = [collaboratorsPath, notificationsPath];
 
 async function getData(block: IBlock) {
-    return netCallWithAuth({
+    return graphQLAPICallWithAuth({
         query,
         paths,
         variables: { blockId: block.customId },

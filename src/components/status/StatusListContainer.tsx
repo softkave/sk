@@ -10,7 +10,7 @@ import {
     flattenErrorListWithDepthInfinite,
     getDateString,
 } from "../../utils/utils";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
 export interface IStatusListContainerProps {
@@ -55,7 +55,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (opStat.isError) {
             message.error("Error saving changes");

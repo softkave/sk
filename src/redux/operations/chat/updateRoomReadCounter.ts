@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
 import ChatAPI, {
     IUpdateRoomReadCounterAPIParameters,
-} from "../../../net/chat";
+} from "../../../net/chat/chat";
 import { getDateString, getNewId } from "../../../utils/utils";
 import KeyValueActions from "../../key-value/actions";
 import KeyValueSelectors from "../../key-value/selectors";

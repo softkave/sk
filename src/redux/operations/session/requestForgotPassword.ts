@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import UserAPI from "../../../net/user";
+import UserAPI from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import { IAppAsyncThunkConfig } from "../../types";
 import {

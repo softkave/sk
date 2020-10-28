@@ -33,7 +33,7 @@ const requestSchema = yup.object().shape({
     email: yup
         .string()
         .email(userErrorMessages.invalidEmail)
-        .required(ErrorMessages.emailAddressRequired), // TODO: Central place for error messages
+        .required(ErrorMessages.EMAIL_ADDRESS_IS_REQUIRED), // TODO: Central place for error messages
     body: yup
         .string()
         .max(notificationConstants.maxAddCollaboratorMessageLength, () => {

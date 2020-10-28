@@ -5,7 +5,7 @@ import {
     CollaborationRequestStatusType,
     INotification,
 } from "../../../models/notification/notification";
-import UserAPI from "../../../net/user";
+import UserAPI from "../../../net/user/user";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";

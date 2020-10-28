@@ -1,10 +1,9 @@
-import { PayloadAction } from "@reduxjs/toolkit";
 import isString from "lodash/isString";
-import { INetError } from "../net/types";
+import { IAppError } from "../net/types";
 import { mergeData } from "../utils/utils";
 import { IResourcePayload, IUpdateResourcePayload } from "./types";
 
-export const errorToAppError = (err: Error | INetError | string): INetError => {
+export const errorToAppError = (err: Error | IAppError | string): IAppError => {
     const error = isString(err) ? new Error(err) : err;
 
     return {
@@ -23,26 +22,26 @@ export const getAppErrorOrAppErrorList = (err: any) => {
     }
 };
 
-export function addResources<
+export function reducerAddResources<
     S extends object,
-    A extends PayloadAction<IResourcePayload[]>
->(state: S, action: A) {
-    action.payload.forEach((room) => (state[room.customId] = room));
+    A extends IResourcePayload[]
+>(state: S, payload: A) {
+    payload.forEach((room) => (state[room.customId] = room));
 }
 
-export function updateResources<
+export function reducerUpdateResources<
     S extends object,
-    A extends PayloadAction<Array<IUpdateResourcePayload<any>>>
->(state: S, action: A) {
-    action.payload.forEach((param) => {
+    A extends Array<IUpdateResourcePayload<any>>
+>(state: S, payload: A) {
+    payload.forEach((param) => {
         const item = mergeData(state[param.id], param.data, param.meta);
         state[item.customId || param.id] = item;
     });
 }
 
-export function deleteResources<
-    S extends object,
-    A extends PayloadAction<string[]>
->(state: S, action: A) {
-    action.payload.forEach((id) => delete state[id]);
+export function reducerDeleteResources<S extends object, A extends string[]>(
+    state: S,
+    payload: A
+) {
+    payload.forEach((id) => delete state[id]);
 }

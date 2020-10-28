@@ -8,10 +8,10 @@ import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
 import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
-import { IBoardGroupedTasksGroup } from "./types";
+import { IBoardGroupedTasks } from "./types";
 
 export interface IBoardRenderGroupedTasksDesktopProps {
-    groups: IBoardGroupedTasksGroup[];
+    groups: IBoardGroupedTasks[];
     users: IUser[];
     board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
@@ -22,7 +22,7 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
 ) => {
     const { groups, users, board, onClickUpdateBlock } = props;
 
-    const renderColumnHeader = (group: IBoardGroupedTasksGroup) => {
+    const renderColumnHeader = (group: IBoardGroupedTasks) => {
         return (
             <StyledContainer>
                 {group.color && (
@@ -48,7 +48,7 @@ const BoardRenderGroupedTasksDesktop: React.FC<IBoardRenderGroupedTasksDesktopPr
         );
     };
 
-    const renderColumn = (group: IBoardGroupedTasksGroup, i: number) => {
+    const renderColumn = (group: IBoardGroupedTasks, i: number) => {
         return (
             <Column
                 key={group.id}

@@ -1,6 +1,8 @@
+import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
 import OrgsListContainer from "../org/OrgsListContainer";
 import StyledContainer from "../styled/Container";
@@ -35,14 +37,18 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
                     level={4}
                     style={{
                         margin: 0,
+                        fontSize: "16px",
+                        lineHeight: "16px",
+                        alignItems: "center",
+                        display: "flex",
+                        // fontWeight: "normal",
                     }}
                 >
-                    softkave
+                    <StyledLink to="/app">Softkave</StyledLink>
                 </Typography.Title>
             </StyledContainer>
             <StyledContainer
                 s={{
-                    padding: "8px 0",
                     flex: 1,
                 }}
             >
@@ -52,6 +58,7 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
                 s={{
                     padding: "16px",
                     cursor: "pointer",
+                    borderTop: "1px solid #d9d9d9",
 
                     "&:hover": {
                         backgroundColor: "#eee",
@@ -66,3 +73,5 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
 };
 
 export default LayoutMenuDesktop;
+
+const StyledLink = styled(Link)({ color: "inherit !important" });

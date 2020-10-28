@@ -7,6 +7,7 @@ import {
     CollaborationRequestStatusType,
     INotification,
 } from "../models/notification/notification";
+import { ISprint, SprintDuration } from "../models/sprint/types";
 import BlockSelectors from "../redux/blocks/selectors";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
@@ -25,13 +26,19 @@ import {
     completePartialNotificationResponse,
     completeUserNotificationResponse,
 } from "../redux/operations/notification/respondToNotification";
+import { completeAddSprint } from "../redux/operations/sprint/addSprint";
+import { completeDeleteSprint } from "../redux/operations/sprint/deleteSprint";
+import { completeEndSprint } from "../redux/operations/sprint/endSprint";
+import { completeStartSprint } from "../redux/operations/sprint/startSprint";
 import RoomActions from "../redux/rooms/actions";
 import RoomSelectors from "../redux/rooms/selectors";
 import SessionSelectors from "../redux/session/selectors";
+import SprintActions from "../redux/sprints/actions";
+import SprintSelectors from "../redux/sprints/selectors";
 import store from "../redux/store";
 import { getNewTempId } from "../utils/utils";
 import { getSockAddr } from "./addr";
-import { IPersistedRoom } from "./chat";
+import { IPersistedRoom } from "./chat/chat";
 
 let socket: typeof Socket | null = null;
 let connectionFailedBefore = false;
@@ -105,6 +112,11 @@ export enum IncomingSocketEvents {
     UpdateRoomReadCounter = "updateRoomReadCounter",
     NewRoom = "newRoom",
     NewMessage = "newMessage",
+    NewSprint = "newSprint",
+    UpdateSprint = "updateSprint",
+    EndSprint = "endSprint",
+    StartSprint = "startSprint",
+    DeleteSprint = "deleteSprint",
 }
 
 export function connectSocket(props: ISocketConnectionProps) {
@@ -123,6 +135,7 @@ export function connectSocket(props: ISocketConnectionProps) {
     socket.on(IncomingSocketEvents.Connect, () =>
         handleConnect(props.token, props.clientId)
     );
+
     socket.on(IncomingSocketEvents.Disconnect, handleDisconnect);
     socket.on(IncomingSocketEvents.BlockUpdate, handleBlockUpdate);
     socket.on(IncomingSocketEvents.NewNotifications, handleNewNotifications);
@@ -130,21 +143,30 @@ export function connectSocket(props: ISocketConnectionProps) {
         IncomingSocketEvents.OrgCollaborationRequestResponse,
         handleOrgCollaborationRequestResponse
     );
+
     socket.on(
         IncomingSocketEvents.UpdateNotification,
         handleUpdateNotification
     );
+
     socket.on(
         IncomingSocketEvents.UserCollaborationRequestResponse,
         handleUserCollaborationRequestResponse
     );
+
     socket.on(IncomingSocketEvents.UserUpdate, handleUserUpdate);
     socket.on(
         IncomingSocketEvents.UpdateRoomReadCounter,
         handleUpdateRoomReadCounter
     );
+
     socket.on(IncomingSocketEvents.NewRoom, handleNewRoom);
     socket.on(IncomingSocketEvents.NewMessage, handleNewMessage);
+    socket.on(IncomingSocketEvents.NewSprint, handleNewSprintEvent);
+    socket.on(IncomingSocketEvents.UpdateSprint, handleUpdateSprintEvent);
+    socket.on(IncomingSocketEvents.StartSprint, handleStartSprintEvent);
+    socket.on(IncomingSocketEvents.EndSprint, handleEndSprintEvent);
+    socket.on(IncomingSocketEvents.DeleteSprint, handleDeleteSprintEvent);
 }
 
 export enum OutgoingSocketEvents {
@@ -229,8 +251,35 @@ export interface IOrgCollaborationRequestResponsePacket {
     response: CollaborationRequestStatusType;
 }
 
-// tslint:disable-next-line: no-empty-interface
-export interface IBoardUpdatePacket {}
+export interface IIncomingNewSprintPacket {
+    sprint: ISprint;
+}
+
+export interface IIncomingUpdateSprintPacket {
+    sprintId: string;
+    data: {
+        name?: string;
+        duration?: SprintDuration;
+        updatedAt: string;
+        updatedBy: string;
+    };
+}
+
+export interface IIncomingEndSprintPacket {
+    sprintId: string;
+    endedAt: string;
+    endedBy: string;
+}
+
+export interface IIncomingStartSprintPacket {
+    sprintId: string;
+    startedAt: string;
+    startedBy: string;
+}
+
+export interface IIncomingDeleteSprintPacket {
+    sprintId: string;
+}
 
 export function disconnectSocket() {
     if (socket) {
@@ -351,6 +400,16 @@ function handleFetchMissingBroadcastsResponse(
                     return handleNewRoom(packet.data);
                 case IncomingSocketEvents.NewMessage:
                     return handleNewMessage(packet.data);
+                case IncomingSocketEvents.NewSprint:
+                    return handleNewSprintEvent(packet.data);
+                case IncomingSocketEvents.UpdateSprint:
+                    return handleUpdateSprintEvent(packet.data);
+                case IncomingSocketEvents.StartSprint:
+                    return handleStartSprintEvent(packet.data);
+                case IncomingSocketEvents.EndSprint:
+                    return handleEndSprintEvent(packet.data);
+                case IncomingSocketEvents.DeleteSprint:
+                    return handleDeleteSprintEvent(packet.data);
             }
         });
     });
@@ -572,10 +631,70 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
     );
 }
 
+function handleNewSprintEvent(data: IIncomingNewSprintPacket) {
+    const board = BlockSelectors.getBlock(
+        store.getState(),
+        data.sprint.boardId
+    );
+
+    store.dispatch(SprintActions.addSprint(data.sprint));
+    completeAddSprint(data.sprint, board);
+}
+
+function handleUpdateSprintEvent(data: IIncomingUpdateSprintPacket) {
+    store.dispatch(
+        SprintActions.updateSprint({
+            id: data.sprintId,
+            data: data.data,
+        })
+    );
+}
+
+function handleStartSprintEvent(data: IIncomingStartSprintPacket) {
+    store.dispatch(
+        SprintActions.updateSprint({
+            id: data.sprintId,
+            data: {
+                startDate: data.startedAt,
+                startedBy: data.startedBy,
+            },
+        })
+    );
+
+    const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
+
+    completeStartSprint(sprint);
+}
+
+function handleEndSprintEvent(data: IIncomingEndSprintPacket) {
+    const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
+
+    completeEndSprint(sprint, data.endedAt);
+    store.dispatch(
+        SprintActions.updateSprint({
+            id: data.sprintId,
+            data: {
+                endDate: data.endedAt,
+                endedBy: data.endedBy,
+            },
+        })
+    );
+}
+
+function handleDeleteSprintEvent(data: IIncomingDeleteSprintPacket) {
+    console.log("holla!");
+    const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
+    const board = BlockSelectors.getBlock(store.getState(), sprint.boardId);
+
+    completeDeleteSprint(sprint, board);
+    store.dispatch(SprintActions.deleteSprint(data.sprintId));
+}
+
 export function subscribe(items: ClientSubscribedResources) {
     if (socket && items.length > 0) {
         const data: IOutgoingSubscribePacket = { items };
         const roomsToPush: string[] = [];
+
         socket.emit(OutgoingSocketEvents.Subscribe, data);
 
         const rooms =

@@ -35,6 +35,8 @@ const Middle: React.FC<{}> = () => {
                         statusList={seedData.web.statusList}
                         task={seedData.web.task}
                         user={seedData.web.user}
+                        sprints={[]} // TODO: seed
+                        sprintsMap={{}}
                     />
                 </CardContainer>
                 <CardContainer style={style}>

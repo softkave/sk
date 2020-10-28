@@ -11,7 +11,7 @@ import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
-import useOperation, { getOperationStats } from "../hooks/useOperation";
+import useOperation, { getOpStats } from "../hooks/useOperation";
 import BoardForm, { IBoardFormValues } from "./BoardForm";
 
 export interface IBoardFormContainerProps {
@@ -63,13 +63,13 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOperationStats(op);
+        const opStat = getOpStats(op);
 
         if (!props.block) {
             if (opStat.isCompleted) {
                 message.success("Board created successfully");
                 history.push(
-                    `/app/organizations/${data.parent}/boards/${data.customId}`
+                    `/app/orgs/${data.parent}/boards/${data.customId}`
                 );
                 onClose();
             } else if (opStat.isError) {

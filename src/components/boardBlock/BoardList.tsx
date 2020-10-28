@@ -14,7 +14,7 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
     const { onClick, boards, searchQuery } = props;
 
     const boardRouteMatch = useRouteMatch<{ boardId: string }>(
-        "/app/organizations/:orgId/boards/:boardId"
+        "/app/orgs/:orgId/boards/:boardId"
     );
 
     return (
@@ -27,13 +27,28 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
             getBlockStyle={(block) => {
                 const selected =
                     block.customId === boardRouteMatch?.params.boardId;
+
+                let color: string | undefined;
+                let backgroundColor: string | undefined;
+
+                if (selected) {
+                    color = "#1890ff";
+                    backgroundColor = "#e6f7ff";
+                }
+
                 return {
+                    backgroundColor,
+                    color,
                     cursor: "pointer",
                     padding: "8px 16px",
-                    backgroundColor: selected ? "#bae7ff" : undefined,
+                    // backgroundColor: selected ? "#bae7ff" : undefined,
 
                     "&:hover": {
-                        backgroundColor: selected ? undefined : "#f0f0f0",
+                        backgroundColor,
+                    },
+
+                    "& .ant-typography": {
+                        color,
                     },
                 };
             }}

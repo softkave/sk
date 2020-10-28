@@ -1,12 +1,12 @@
 import { Divider } from "antd";
 import isString from "lodash/isString";
 import React from "react";
-import { INetError } from "../net/types";
+import { IAppError } from "../net/types";
 import GeneralError from "./GeneralError";
 import StyledContainer from "./styled/Container";
 
 export interface IGeneralErrorListProps {
-    errors: string | INetError | Array<string | INetError>;
+    errors: string | IAppError | Array<string | IAppError>;
     fill?: boolean;
 }
 
@@ -14,7 +14,7 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = (props) => {
     const { errors, fill } = props;
 
     // TODO: should we show a generic error instead of []
-    let errorList: INetError[] = [];
+    let errorList: IAppError[] = [];
 
     if (errors) {
         if (Array.isArray(errors)) {

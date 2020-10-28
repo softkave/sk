@@ -11,43 +11,49 @@ export interface IUseFormHelpersFormikProps<T> {
     errors?: any;
 }
 
-export interface IUseFormHelpersFormikHelpers {
+export interface IUseFormHelpersFormikHelpers<T extends object> {
     addToArrayField: (
-        field: string,
+        field: keyof T | string,
         value: any,
         initialTouched?: any,
         initialError?: any,
         index?: number
     ) => void;
-    deleteInArrayField: (field: string, index: number) => void;
+    deleteInArrayField: (field: keyof T | string, index: number) => void;
     moveInArrayField: (
         field: string,
         srcIndex: number,
         destIndex: number
     ) => void;
-    revertChanges: (field?: string) => void;
+    revertChanges: (field?: keyof T | string) => void;
 }
 
-export interface IUseFormHelpersFormikChangedFieldsHelpers<T = any> {
-    addField: (field: string) => void;
-    pushFields: (fields: string[]) => void;
-    removeField: (field: string) => void;
-    hasChanges: (field?: string) => boolean;
+export interface IUseFormHelpersFormikChangedFieldsHelpers<
+    T extends object = any
+> {
+    addField: (field: keyof T) => void;
+    pushFields: (fields: Array<keyof T>) => void;
+    removeField: (field: keyof T) => void;
+    hasChanges: (field?: keyof T) => boolean;
     diffChanges: () => Partial<T> | null;
     clearAll: () => void;
 }
 
-export interface IUseFormHelpersResult<T> {
+export interface IUseFormHelpersResult<T extends object> {
     formik: FormikProps<T>;
-    formikHelpers: IUseFormHelpersFormikHelpers;
+    formikHelpers: IUseFormHelpersFormikHelpers<T>;
     formikChangedFieldsHelpers: IUseFormHelpersFormikChangedFieldsHelpers<T>;
 }
 
-const useFormHelpers = <T>(
+type GetChangedFieldsObjectType<T extends object> = {
+    [key in keyof T]: boolean;
+};
+
+const useFormHelpers = <T extends object>(
     props: IUseFormHelpersFormikProps<T>
 ): IUseFormHelpersResult<T> => {
     const formik = useFormik(props.formikProps);
-    const changedFields = useObject();
+    const changedFields = useObject<GetChangedFieldsObjectType<T>>();
 
     React.useEffect(() => {
         if (props.errors) {
@@ -56,7 +62,7 @@ const useFormHelpers = <T>(
     }, [props.errors, formik]);
 
     React.useEffect(() => {
-        const changesReverted: string[] = [];
+        const changesReverted: Array<keyof T> = [];
 
         changedFields.forEach((v, key) => {
             const initialValue = get(formik.initialValues, key);
@@ -78,7 +84,7 @@ const useFormHelpers = <T>(
     }, [changedFields, formik]);
 
     const getArrayFieldItems = React.useCallback(
-        (field: string) => {
+        (field: keyof T | string) => {
             const currentValue = get(formik.values, field);
             const currentTouched = get(formik.touched, field);
             const currentErrors = get(formik.errors, field);
@@ -93,17 +99,22 @@ const useFormHelpers = <T>(
     );
 
     const setArrayFieldItems = React.useCallback(
-        (field: string, touched: any[], errors: any[], value: any[]) => {
-            formik.setFieldTouched(field, touched as any);
-            formik.setFieldError(field, errors as any);
-            formik.setFieldValue(field, value as any);
+        (
+            field: keyof T | string,
+            touched: any[],
+            errors: any[],
+            value: any[]
+        ) => {
+            formik.setFieldTouched(field as string, touched as any);
+            formik.setFieldError(field as string, errors as any);
+            formik.setFieldValue(field as string, value as any);
         },
         [formik]
     );
 
     const addToArrayField = React.useCallback(
         (
-            field: string,
+            field: keyof T | string,
             initialValue: any,
             initialError?: any,
             initialTouched?: any,
@@ -120,7 +131,7 @@ const useFormHelpers = <T>(
     );
 
     const deleteInArrayField = React.useCallback(
-        (field: string, index: number) => {
+        (field: keyof T | string, index: number) => {
             const { value, touched, errors } = getArrayFieldItems(field);
 
             value.splice(index, 1);
@@ -133,7 +144,7 @@ const useFormHelpers = <T>(
     );
 
     const moveInArrayField = React.useCallback(
-        (field: string, srcIndex: number, destIndex: number) => {
+        (field: keyof T | string, srcIndex: number, destIndex: number) => {
             const { value, touched, errors } = getArrayFieldItems(field);
 
             const status = value[srcIndex];
@@ -153,7 +164,7 @@ const useFormHelpers = <T>(
     );
 
     const addChangedField = React.useCallback(
-        (field: string) => {
+        (field: keyof T) => {
             if (!changedFields.has(field)) {
                 changedFields.set(field, true);
             }
@@ -162,18 +173,18 @@ const useFormHelpers = <T>(
     );
 
     const pushFields = React.useCallback(
-        (fields: string[]) => {
-            const objFields = fields.reduce((obj, field) => {
-                obj[field] = true;
-                return obj;
-            }, {});
+        (fields: Array<keyof T>) => {
+            const objFields = fields.reduce((accumulator, field) => {
+                accumulator[field] = true;
+                return accumulator;
+            }, {} as GetChangedFieldsObjectType<T>);
             changedFields.merge(objFields);
         },
         [changedFields]
     );
 
     const hasChanges = React.useCallback(
-        (field?: string) => {
+        (field?: keyof T) => {
             if (field) {
                 return changedFields.has(field);
             }
@@ -207,20 +218,20 @@ const useFormHelpers = <T>(
     }, [changedFields]);
 
     const removeField = React.useCallback(
-        (field: string) => {
+        (field: keyof T) => {
             changedFields.remove(field);
         },
         [changedFields]
     );
 
     const revertChanges = React.useCallback(
-        (field?: string) => {
+        (field?: keyof T | string) => {
             if (field) {
                 const fieldInitialValue = get(formik.initialValues, field);
 
                 if (fieldInitialValue) {
-                    formik.setFieldValue(field, fieldInitialValue);
-                    removeField(field);
+                    formik.setFieldValue(field as string, fieldInitialValue);
+                    removeField(field as any);
                 }
             } else {
                 formik.setValues(formik.initialValues, true);
@@ -229,7 +240,7 @@ const useFormHelpers = <T>(
         [removeField, formik]
     );
 
-    const formikHelpers: IUseFormHelpersFormikHelpers = React.useMemo(
+    const formikHelpers: IUseFormHelpersFormikHelpers<T> = React.useMemo(
         () => ({
             addToArrayField,
             deleteInArrayField,

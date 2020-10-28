@@ -26,7 +26,7 @@ const OrgCollaborationRequestThumbnail: React.SFC<IOrgCollaborationRequestThumbn
                 <ItemAvatar />
             </StyledContainer>
             <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
-                <Typography.Text strong>
+                <Typography.Text>
                     {collabRequest.from?.blockName}
                 </Typography.Text>
                 <CollaborationRequestStatus request={collabRequest} />

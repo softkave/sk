@@ -1,7 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
 import { Badge, Tabs } from "antd";
-import { noop } from "lodash";
 import path from "path";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
@@ -15,17 +14,15 @@ import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import BlockContainer from "./BlockContainer";
-import BoardBlockHeader from "./BoardBlockHeader";
-import BoardMain from "./BoardMain";
+import BoardContainer from "./BoardContainer";
 import BoardTypeList from "./BoardTypeList";
 import LoadBlockChildren from "./LoadBlockChildren";
+import OrgBoardHeader from "./OrgBoardHeader";
 import {
     BoardResourceType,
     IBoardResourceTypePathMatch,
     OnClickAddBlock,
     OnClickAddCollaborator,
-    OnClickAddOrEditLabel,
-    OnClickAddOrEditStatus,
     OnClickBlockWithSearchParamKey,
     OnClickDeleteBlock,
     OnClickUpdateBlock,
@@ -33,7 +30,7 @@ import {
 import {
     getBlockPath,
     getBlockResourceTypes,
-    getBoardResourceTypeFullName,
+    getBoardResourceTypeDisplayName,
 } from "./utils";
 
 export interface IOrgBoardProps {
@@ -48,9 +45,7 @@ export interface IOrgBoardProps {
     onClickUpdateBlock: OnClickUpdateBlock;
     onClickAddBlock: OnClickAddBlock;
     onClickBlock: OnClickBlockWithSearchParamKey;
-    onClickAddCollaborator: OnClickAddCollaborator;
-    onClickAddOrEditLabel: OnClickAddOrEditLabel;
-    onClickAddOrEditStatus: OnClickAddOrEditStatus;
+    onAddCollaborator: OnClickAddCollaborator;
     onClickDeleteBlock: OnClickDeleteBlock;
 }
 
@@ -63,7 +58,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         isOrgMenuFolded,
         unseenChatsCount,
         onClickAddBlock,
-        onClickAddCollaborator,
+        onAddCollaborator,
         onClickDeleteBlock,
         onClickUpdateBlock,
         onClickBlock,
@@ -76,6 +71,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     const [searchQueries, setSearchQueries] = React.useState<{
         [key: string]: string;
     }>({});
+
     const resourceTypes = getBlockResourceTypes(block, childrenTypes);
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
         `${blockPath}/:resourceType`
@@ -124,7 +120,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
 
                             case "collaboration-requests":
                             case "collaborators":
-                                onClickAddCollaborator();
+                                onAddCollaborator();
                                 return;
                         }
                     }}
@@ -177,7 +173,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                                 padding: "0 16px",
                             }}
                         >
-                            {getBoardResourceTypeFullName(type)}
+                            {getBoardResourceTypeDisplayName(type)}
                             {type === "chat" && (
                                 <Badge
                                     count={unseenChatsCount}
@@ -227,17 +223,15 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     ["& .ant-tabs-nav"]: {
                         marginBottom: "4px",
                     },
+
+                    ["& .ant-tabs-nav-more > .anticon-ellipsis"]: {
+                        verticalAlign: "middle",
+                    },
                 }}
             >
-                <BoardBlockHeader
+                <OrgBoardHeader
                     {...props}
-                    onClickAddCollaborator={noop}
-                    onClickAddOrEditLabel={noop}
-                    onClickAddOrEditStatus={noop}
-                    onClickCreateNewBlock={noop}
-                    onClickDeleteBlock={() => onClickDeleteBlock(block)}
                     onClickEditBlock={() => onClickUpdateBlock(block)}
-                    onNavigate={noop}
                     isAppMenuFolded={isAppMenuFolded}
                     onToggleFoldAppMenu={onToggleFoldAppMenu}
                     style={{
@@ -261,18 +255,13 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         blockId={boardId}
                         notFoundMessage="Board not found"
                         render={(board) => (
-                            <BoardMain
-                                {...props}
-                                block={board}
+                            <BoardContainer
+                                isMobile={isMobile}
+                                board={board}
                                 blockPath={getBlockPath(board, blockPath)}
                                 isAppMenuFolded={isOrgMenuFolded}
-                                onClickDeleteBlock={(b) =>
-                                    onClickDeleteBlock(b)
-                                }
-                                onClickUpdateBlock={(b) =>
-                                    onClickUpdateBlock(b)
-                                }
                                 onToggleFoldAppMenu={onToggleFoldOrgMenu}
+                                onClickDeleteBlock={onClickDeleteBlock}
                             />
                         )}
                     />
@@ -306,7 +295,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         return (
             <Switch>
                 <Route
-                    path={`/app/organizations/${block.customId}/boards/:boardId`}
+                    path={`/app/orgs/${block.customId}/boards/:boardId`}
                     render={(routeProps) => {
                         return ensureBoardsLoaded(
                             routeProps.match.params.boardId
@@ -314,14 +303,14 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     }}
                 />
                 <Route
-                    path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                    path={`/app/orgs/${block.customId}/chat/:recipientId`}
                     render={(routeProps) => {
                         const recipientId = routeProps.match.params.recipientId;
                         return renderChatsView(recipientId);
                     }}
                 />
                 <Route
-                    path={`/app/organizations/${block.customId}`}
+                    path={`/app/orgs/${block.customId}`}
                     render={renderSelectedOrgView}
                 />
             </Switch>
@@ -346,7 +335,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 >
                     <Switch>
                         <Route
-                            path={`/app/organizations/${block.customId}/boards/:boardId`}
+                            path={`/app/orgs/${block.customId}/boards/:boardId`}
                             render={(routeProps) => {
                                 return ensureBoardsLoaded(
                                     routeProps.match.params.boardId
@@ -354,7 +343,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                             }}
                         />
                         <Route
-                            path={`/app/organizations/${block.customId}/chat/:recipientId`}
+                            path={`/app/orgs/${block.customId}/chat/:recipientId`}
                             render={(routeProps) => {
                                 const recipientId =
                                     routeProps.match.params.recipientId;

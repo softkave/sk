@@ -51,13 +51,27 @@ const RenderBlockChildren: React.FC<IRenderBlockChildrenProps> = (props) => {
                 getRoomStyle={(room) => {
                     const selected =
                         room.recipientId === args.selectedRoomRecipientId;
+
+                    let color: string | undefined;
+                    let backgroundColor: string | undefined;
+
+                    if (selected) {
+                        color = "#1890ff";
+                        backgroundColor = "#e6f7ff";
+                    }
+
                     return {
+                        backgroundColor,
+                        color,
                         cursor: "pointer",
                         padding: "8px 16px",
-                        backgroundColor: selected ? "#bae7ff" : undefined,
 
                         "&:hover": {
-                            backgroundColor: selected ? undefined : "#f0f0f0",
+                            backgroundColor,
+                        },
+
+                        "& .ant-typography": {
+                            color,
                         },
                     };
                 }}
