@@ -1,11 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { IBlock } from "../../../models/block/block";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI, { IAddSprintAPIParams } from "../../../net/sprint/sprint";
 import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
+import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
+import store from "../../store";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -39,7 +42,9 @@ export const addSprintOpAction = createAsyncThunk<
     );
 
     try {
+        let sprint: ISprint;
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        const board = BlockSelectors.getBlock(thunkAPI.getState(), arg.boardId);
 
         if (!isDemoMode) {
             const result = await SprintAPI.addSprint(arg);
@@ -48,39 +53,38 @@ export const addSprintOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            thunkAPI.dispatch(SprintActions.addSprint(result.data!));
+            sprint = result.data!;
         } else {
-            const board = BlockSelectors.getBlock(
-                thunkAPI.getState(),
-                arg.boardId
-            );
-
-            const existingSprints = SprintSelectors.getBoardSprints(
-                thunkAPI.getState(),
-                board.customId
-            );
-
-            const boardSprintsCount = SprintSelectors.countBoardSprints(
-                thunkAPI.getState(),
-                arg.boardId
-            );
-
             const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+            let sprintIndex: number;
+            const prevSprint = board.lastSprintId
+                ? SprintSelectors.getSprint(
+                      thunkAPI.getState(),
+                      board.lastSprintId
+                  )
+                : null;
 
-            const sprint: ISprint = {
+            if (prevSprint) {
+                sprintIndex = prevSprint.sprintIndex + 1;
+            } else {
+                sprintIndex = 1;
+            }
+
+            sprint = {
                 customId: getNewTempId(),
                 boardId: arg.boardId,
                 orgId: board.rootBlockId!,
                 duration: arg.data.duration,
-                sprintIndex: boardSprintsCount,
+                sprintIndex,
                 name: arg.data.name,
                 createdAt: getDateString(),
                 createdBy: user.customId,
+                prevSprintId: board.lastSprintId,
             };
-
-            thunkAPI.dispatch(SprintActions.addSprint(sprint));
         }
 
+        thunkAPI.dispatch(SprintActions.addSprint(sprint));
+        completeAddSprint(sprint, board);
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
@@ -101,3 +105,25 @@ export const addSprintOpAction = createAsyncThunk<
 
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
+
+export function completeAddSprint(sprint: ISprint, board: IBlock) {
+    if (board.lastSprintId) {
+        store.dispatch(
+            SprintActions.updateSprint({
+                id: board.lastSprintId,
+                data: {
+                    nextSprintId: sprint.customId,
+                },
+            })
+        );
+    }
+
+    store.dispatch(
+        BlockActions.updateBlock({
+            id: sprint.boardId,
+            data: {
+                lastSprintId: sprint.customId,
+            },
+        })
+    );
+}

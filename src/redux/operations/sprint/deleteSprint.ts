@@ -1,10 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { IBlock } from "../../../models/block/block";
+import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
-import SprintActions from "../../sprints/actions";
+import SprintActions, { IUpdateSprintActionArgs } from "../../sprints/actions";
+import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -49,8 +52,17 @@ export const deleteSprintOpAction = createAsyncThunk<
             }
         }
 
-        removeSprintInTasks(arg.sprintId);
-        // updateSprintIndexes(sprint);
+        const sprint = SprintSelectors.getSprint(
+            thunkAPI.getState(),
+            arg.sprintId
+        );
+
+        const board = BlockSelectors.getBlock(
+            thunkAPI.getState(),
+            sprint.boardId
+        );
+
+        completeDeleteSprint(sprint, board);
         thunkAPI.dispatch(SprintActions.deleteSprint(arg.sprintId));
         thunkAPI.dispatch(
             dispatchOperationCompleted(
@@ -73,8 +85,27 @@ export const deleteSprintOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-export function removeSprintInTasks(sprintId: string) {
-    const tasks = BlockSelectors.getSprintTasks(store.getState(), sprintId);
+export function completeDeleteSprint(sprint: ISprint, board: IBlock) {
+    const boardUpdates: Partial<IBlock> = {};
+
+    if (sprint.customId === board.lastSprintId) {
+        boardUpdates.lastSprintId = sprint.prevSprintId;
+    }
+
+    if (Object.keys(boardUpdates).length > 0) {
+        // If has board updates
+        store.dispatch(
+            BlockActions.updateBlock({
+                id: board.customId,
+                data: boardUpdates,
+            })
+        );
+    }
+
+    const tasks = BlockSelectors.getSprintTasks(
+        store.getState(),
+        sprint.customId
+    );
 
     store.dispatch(
         BlockActions.bulkUpdateBlocks(
@@ -88,4 +119,26 @@ export function removeSprintInTasks(sprintId: string) {
             })
         )
     );
+
+    const bulkSprintUpdates: IUpdateSprintActionArgs[] = [];
+
+    if (sprint.prevSprintId) {
+        bulkSprintUpdates.push({
+            id: sprint.prevSprintId,
+            data: {
+                nextSprintId: sprint.nextSprintId || null,
+            },
+        });
+    }
+
+    if (sprint.nextSprintId) {
+        bulkSprintUpdates.push({
+            id: sprint.nextSprintId,
+            data: {
+                prevSprintId: sprint.prevSprintId!,
+            },
+        });
+    }
+
+    store.dispatch(SprintActions.bulkUpdateSprints(bulkSprintUpdates));
 }

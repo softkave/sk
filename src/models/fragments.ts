@@ -79,6 +79,7 @@ fragment blockFragment on Block {
     statusAssignedAt
     taskResolution
     currentSprintId
+    lastSprintId
     assignees {
         userId
         assignedAt

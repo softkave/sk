@@ -16,6 +16,7 @@ export interface IGroupedTasksDesktopProps {
     board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
     renderColumnHeaderOptions?: (group: IBoardGroupedTasks) => React.ReactNode;
+    emptyMessage?: string;
 }
 
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
@@ -23,6 +24,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         groupedTasks,
         users,
         board,
+        emptyMessage,
         onClickUpdateBlock,
         renderColumnHeaderOptions,
     } = props;
@@ -101,7 +103,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     };
 
     if (groupedTasks.length === 0) {
-        return <EmptyMessage>Board is empty!</EmptyMessage>;
+        return <EmptyMessage>{emptyMessage || "Board is empty!"}</EmptyMessage>;
     }
 
     return (

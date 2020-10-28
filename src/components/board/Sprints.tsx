@@ -1,7 +1,7 @@
 import ClockCircleOutlined from "@ant-design/icons/ClockCircleOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import { Button, Dropdown, Menu } from "antd";
+import { Badge, Button, Dropdown, Menu, Tag } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";
@@ -48,13 +48,6 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
     // TODO: look for ways to make it better
     const groups = groupBySprints(sprints, tasks, board.boardStatuses || []);
-
-    const currentSprintIndex = board.currentSprintId
-        ? sprints.findIndex(
-              (sprint) => sprint.customId === board.currentSprintId
-          )
-        : -1;
-
     const sprintsMap = indexArray(sprints, { path: "customId" });
 
     const renderDesktopColumnHeaderOptions = (group: IBoardGroupedTasks) => {
@@ -101,7 +94,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
         if (
             !board.currentSprintId &&
-            sprint.sprintIndex === currentSprintIndex + 1
+            sprint.customId === sprints[0]?.customId
         ) {
             items.push(
                 <Menu.Item key={SprintMenuOptions.START}>
@@ -129,24 +122,29 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
         const menu = <Menu onClick={menuOnClick}>{items}</Menu>;
 
         return (
-            <Dropdown
-                overlay={menu}
-                trigger={["click"]}
-                placement="bottomRight"
-                className="task-menu-dropdown"
-            >
-                <Button
-                    icon={<MoreHorizontal />}
-                    style={{
-                        border: 0,
-                        padding: 0,
-                        backgroundColor: "inherit",
-                        borderRadius: 0,
-                        boxShadow: "none",
-                        height: "22px",
-                    }}
-                />
-            </Dropdown>
+            <React.Fragment>
+                {group.id === board.currentSprintId && (
+                    <Tag color="#7ED321">ongoing</Tag>
+                )}
+                <Dropdown
+                    overlay={menu}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    className="task-menu-dropdown"
+                >
+                    <Button
+                        icon={<MoreHorizontal style={{ height: "100%" }} />}
+                        style={{
+                            border: 0,
+                            padding: 0,
+                            backgroundColor: "inherit",
+                            borderRadius: 0,
+                            boxShadow: "none",
+                            height: "22px",
+                        }}
+                    />
+                </Dropdown>
+            </React.Fragment>
         );
     };
 
@@ -158,6 +156,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
                 users={collaborators}
                 onClickUpdateBlock={onClickUpdateBlock}
                 renderColumnHeaderOptions={renderDesktopColumnHeaderOptions}
+                emptyMessage={"Add sprints to begin"}
             />
         );
     };
@@ -169,6 +168,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
                 groupedTasks={groups}
                 users={collaborators}
                 onClickUpdateBlock={onClickUpdateBlock}
+                emptyMessage={"Add sprints to begin"}
             />
         );
     };

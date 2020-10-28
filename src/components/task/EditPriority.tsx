@@ -1,4 +1,3 @@
-import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
 import { Dropdown, Menu } from "antd";
 import React from "react";
 import { BlockPriority } from "../../models/block/block";

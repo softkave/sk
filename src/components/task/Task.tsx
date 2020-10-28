@@ -24,7 +24,6 @@ import { getOpStats } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
-import SelectTaskSprint from "./SelectTaskSprint";
 import SelectTaskSprintContainer from "./SelectTaskSprintContainer";
 import TaskLabels from "./TaskLabels";
 import TaskNameAndDescription from "./TaskNameAndDescription";

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { sortSprintByIndex } from "../../models/sprint/utils";
 import { addSprintOpAction } from "../../redux/operations/sprint/addSprint";
 import { updateSprintOpAction } from "../../redux/operations/sprint/updateSprint";
 import SprintSelectors from "../../redux/sprints/selectors";
@@ -32,6 +31,21 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
         SprintSelectors.getBoardSprints(state, board.customId)
     );
 
+    const nextSprintIndex = useSelector<IAppState, number>((state) => {
+        let prevSprint: ISprint;
+
+        if (board.lastSprintId) {
+            prevSprint = SprintSelectors.getSprint(state, board.lastSprintId);
+        }
+
+        // @ts-ignore
+        if (prevSprint) {
+            return prevSprint.sprintIndex + 1;
+        } else {
+            return 1;
+        }
+    });
+
     const [cachedValues, setValues] = React.useState<
         ISprintFormValues | undefined
     >(() => {
@@ -39,16 +53,10 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
             return props.sprint;
         }
 
-        const sortedSprints = sortSprintByIndex(existingSprints);
-        const lastSprintIndex =
-            sortedSprints[sortedSprints.length - 1]?.sprintIndex || -1;
-
-        return (
-            props.sprint || {
-                name: `Sprint ${lastSprintIndex + 1}`,
-                duration: board.sprintOptions!.duration,
-            }
-        );
+        return {
+            name: `Sprint ${nextSprintIndex}`,
+            duration: board.sprintOptions!.duration,
+        };
     });
 
     const thisSprint = useSelector<IAppState, ISprint | undefined>((state) => {
@@ -59,15 +67,20 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
             const name = cachedValues.name.toLowerCase();
             const sprintId = Object.keys(state.sprints).find((id) => {
                 const sprint = state.sprints[id];
+
                 if (sprint.boardId === board.customId) {
                     return sprint.name === name;
                 }
+
+                return false;
             });
 
             if (sprintId) {
                 return state.sprints[sprintId];
             }
         }
+
+        return undefined;
     });
 
     const saveOpStatus = useOperation();

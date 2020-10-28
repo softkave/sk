@@ -1,19 +1,29 @@
+import { unwrapResult } from "@reduxjs/toolkit";
+import { message, Modal } from "antd";
 import path from "path";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useRouteMatch } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
+import { ISprint } from "../../models/sprint/types";
+import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
 import { subscribe, unsubcribe } from "../../net/socket";
+import BlockSelectors from "../../redux/blocks/selectors";
+import OperationActions from "../../redux/operations/actions";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
+import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
 import { getSprintsOpAction } from "../../redux/operations/sprint/getSprints";
-import { AppDispatch } from "../../redux/types";
+import SprintSelectors from "../../redux/sprints/selectors";
+import { AppDispatch, IAppState } from "../../redux/types";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, {
+    getOpStats,
     IOperationDerivedData,
     mergeOps,
 } from "../hooks/useOperation";
+import handleOpResult from "../utilities/handleOpResult";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Board from "./Board";
 import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";
@@ -38,6 +48,17 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     } = props;
 
     const dispatch: AppDispatch = useDispatch();
+    const history = useHistory();
+
+    const currentSprint = useSelector<IAppState, ISprint | undefined>(
+        (state) => {
+            if (board.currentSprintId) {
+                return SprintSelectors.getSprint(state, board.currentSprintId);
+            }
+
+            return undefined;
+        }
+    );
 
     const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
         `${blockPath}/:resourceType`
@@ -91,6 +112,64 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         { deleteManagedOperationOnUnmount: false }
     );
 
+    // TODO: this code is duplicated in SprintsContainer
+    const closeSprint = async (sprintId: string) => {
+        const result = await dispatch(
+            endSprintOpAction({
+                sprintId,
+            })
+        );
+
+        const op: any = unwrapResult(result);
+
+        if (!op) {
+            return;
+        }
+
+        const opStat = getOpStats(op);
+
+        if (opStat.isCompleted) {
+            // TODO: duplicated in Board
+            const SPRINTS_PATH = path.normalize(`${blockPath}/sprints`);
+            history.push(SPRINTS_PATH);
+            message.success(ENDED_SPRINT_SUCCESSFULLY);
+        } else if (opStat.isError) {
+            message.error(ERROR_CLOSING_SPRINT);
+        }
+
+        dispatch(OperationActions.deleteOperation(op.id));
+    };
+
+    const promptCloseSprint = () => {
+        if (!currentSprint) {
+            return;
+        }
+
+        const remainingWorkingDays = getSprintRemainingWorkingDays(
+            currentSprint
+        );
+
+        let promptMessage = END_SPRINT_PROMPT_MESSAGE;
+
+        if (remainingWorkingDays > 0) {
+            promptMessage = getEndSprintRemainingWorkingDaysPromptMessage(
+                remainingWorkingDays
+            );
+        }
+
+        Modal.confirm({
+            title: promptMessage,
+            okText: YES,
+            cancelText: NO,
+            okType: "primary",
+            okButtonProps: { danger: true },
+            onOk: async () => closeSprint(currentSprint.customId),
+            onCancel() {
+                // do nothing
+            },
+        });
+    };
+
     React.useEffect(() => {
         subscribe([{ type: board.type as any, customId: board.customId }]);
 
@@ -121,8 +200,23 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
             isMobile={isMobile}
             onClickDeleteBlock={onClickDeleteBlock}
             onToggleFoldAppMenu={onToggleFoldAppMenu}
+            onCloseSprint={promptCloseSprint}
         />
     );
 };
 
 export default BoardContainer;
+
+const END_SPRINT_PROMPT_MESSAGE = "Are you sure you want to end this sprint?";
+const ENDED_SPRINT_SUCCESSFULLY = "Sprint ended successfully";
+const ERROR_CLOSING_SPRINT = "Error ending sprint";
+const YES = "Yes";
+const NO = "No";
+
+const getEndSprintRemainingWorkingDaysPromptMessage = (
+    remainingDays: number
+) => {
+    return `${END_SPRINT_PROMPT_MESSAGE} It has ${remainingDays} working day${
+        remainingDays === 1 ? "" : "s"
+    } remaining.`;
+};

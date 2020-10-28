@@ -26,6 +26,7 @@ export interface ITaskListProps {
     demo?: boolean;
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
+    getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
@@ -42,15 +43,18 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
         sprints,
         sprintsMap,
         toggleForm,
+        getBlockStyle,
     } = props;
     const tasksToRender = sortBlocksByPriority(tasks);
     const renderTask = (task: IBlock, i: number) => {
         const isNotLastTask = i < tasksToRender.length - 1;
+        const taskStyle = getBlockStyle ? getBlockStyle(task, i) : {};
 
         return (
             <StyledContainer
                 key={task.customId}
                 style={{
+                    ...taskStyle,
                     borderBottom: isNotLastTask
                         ? "1px solid #f0f0f0"
                         : undefined,

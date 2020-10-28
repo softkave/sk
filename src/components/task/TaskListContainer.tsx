@@ -17,6 +17,7 @@ export interface ITaskStatusContainerProps {
 
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
+    getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
 
 // TODO: should we make updates locally first before persisting it in the server for better UX?

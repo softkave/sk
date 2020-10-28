@@ -1,6 +1,6 @@
 import path from "path";
 import React from "react";
-import { useHistory } from "react-router";
+import { useHistory, useRouteMatch } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
@@ -31,6 +31,7 @@ export interface IBoardProps {
     isAppMenuFolded: boolean;
     onToggleFoldAppMenu: () => void;
     onClickDeleteBlock: OnClickDeleteBlock;
+    onCloseSprint: () => void;
 }
 
 interface ISprintFormData {
@@ -45,21 +46,24 @@ const Board: React.FC<IBoardProps> = (props) => {
         isAppMenuFolded,
         onToggleFoldAppMenu,
         onClickDeleteBlock,
+        onCloseSprint,
     } = props;
 
     const history = useHistory();
 
     const SPRINTS_PATH = path.normalize(`${blockPath}/sprints`);
     const TASKS_PATH = path.normalize(`${blockPath}/tasks`);
+    const sprintsRouteMatch = useRouteMatch(SPRINTS_PATH);
+    const isSprintsRoute = !!sprintsRouteMatch;
 
     const [groupBy, setGroupBy] = React.useState(BoardGroupBy.STATUS);
-    const [view, setView] = React.useState(
-        window.location.pathname.includes(SPRINT)
+    const [view, setView] = React.useState(() => {
+        return window.location.pathname.includes(SPRINT)
             ? BoardCurrentView.SPRINTS
             : board.currentSprintId
             ? BoardCurrentView.CURRENT_SPRINT
-            : BoardCurrentView.ALL_TASKS
-    );
+            : BoardCurrentView.ALL_TASKS;
+    });
 
     const [searchIn, setSearchIn] = React.useState(SearchTasksMode.ALL_TASKS);
     const [showSearch, setShowSearch] = React.useState(false);
@@ -77,6 +81,12 @@ const Board: React.FC<IBoardProps> = (props) => {
     const [otherResourcesForm, setOtherResourcesForm] = React.useState<
         BoardStatusResolutionAndLabelsFormType | undefined
     >();
+
+    React.useEffect(() => {
+        if (sprintsRouteMatch?.isExact && view !== BoardCurrentView.SPRINTS) {
+            setView(BoardCurrentView.SPRINTS);
+        }
+    }, [isSprintsRoute, view]);
 
     const closeBoardForm = () => {
         setBoardForm(undefined);
@@ -130,6 +140,10 @@ const Board: React.FC<IBoardProps> = (props) => {
 
             case BoardHeaderSettingsMenuKey.ADD_SPRINT:
                 setSprintForm({});
+                break;
+
+            case BoardHeaderSettingsMenuKey.END_SPRINT:
+                onCloseSprint();
                 break;
         }
     };

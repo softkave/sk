@@ -1,7 +1,7 @@
 import { CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space } from "antd";
 import React from "react";
-import { Minus, Plus } from "react-feather";
+import { Minus } from "react-feather";
 import {
     IBlock,
     IBlockStatus,

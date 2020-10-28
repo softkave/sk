@@ -2,8 +2,10 @@ import { Badge, Space, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
+import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskListContainer from "../task/TaskListContainer";
+import Scrollbar from "../utilities/Scrollbar";
 import { IBoardGroupedTasks } from "./types";
 
 export interface IGroupedTasksMobileProps {
@@ -11,10 +13,17 @@ export interface IGroupedTasksMobileProps {
     groupedTasks: IBoardGroupedTasks[];
     users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
+    emptyMessage?: string;
 }
 
 const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
-    const { groupedTasks, users, board, onClickUpdateBlock } = props;
+    const {
+        groupedTasks,
+        users,
+        board,
+        emptyMessage,
+        onClickUpdateBlock,
+    } = props;
 
     const renderTab = (group: IBoardGroupedTasks) => {
         return (
@@ -37,30 +46,53 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 }
                 key={group.name}
             >
-                <StyledContainer
-                    s={{ padding: "0 16px", height: "100%", overflowY: "auto" }}
-                >
+                <Scrollbar style={{ height: "100%" }}>
                     <TaskListContainer
                         users={users}
                         tasks={group.tasks}
                         board={board}
                         toggleForm={onClickUpdateBlock}
+                        getBlockStyle={() => ({ padding: "0 16px" })}
                     />
-                </StyledContainer>
+                </Scrollbar>
             </Tabs.TabPane>
         );
     };
 
+    if (groupedTasks.length === 0) {
+        return <EmptyMessage>{emptyMessage || "Board is empty!"}</EmptyMessage>;
+    }
+
     return (
-        <Tabs
-            defaultActiveKey={
-                groupedTasks[0] ? groupedTasks[0].name : undefined
-            }
-            tabBarGutter={0}
-            style={{ marginTop: "12px" }}
+        <StyledContainer
+            s={{
+                flex: 1,
+                overflow: "hidden",
+
+                ["& .ant-tabs"]: {
+                    height: "100%",
+                },
+
+                ["& .ant-tabs-content"]: {
+                    height: "100%",
+                },
+
+                ["& .ant-tabs-content-holder"]: {
+                    overflow: "hidden",
+                },
+
+                ["& .ant-tabs-nav"]: { margin: 0 },
+            }}
         >
-            {groupedTasks.map(renderTab)}
-        </Tabs>
+            <Tabs
+                defaultActiveKey={
+                    groupedTasks[0] ? groupedTasks[0].name : undefined
+                }
+                tabBarGutter={0}
+            >
+                {groupedTasks.map(renderTab)}
+            </Tabs>
+        </StyledContainer>
     );
 };
 

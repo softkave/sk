@@ -22,7 +22,7 @@ export interface ISprint {
     createdBy: string;
     name: string;
     prevSprintId?: string;
-    nextSprintId?: string;
+    nextSprintId?: string | null;
     startDate?: string;
     startedBy?: string;
     endDate?: string;

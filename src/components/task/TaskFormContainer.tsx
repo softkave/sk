@@ -4,10 +4,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import {
-    getCurrentAndUpcomingSprints,
-    sortSprintByIndex,
-} from "../../models/sprint/utils";
+import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { addBlockOperationAction } from "../../redux/operations/block/addBlock";

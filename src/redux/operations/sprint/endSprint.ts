@@ -54,29 +54,19 @@ export const endSprintOpAction = createAsyncThunk<
             endDate = result.data!.endDate;
         }
 
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
         const sprint = SprintSelectors.getSprint(
             thunkAPI.getState(),
             arg.sprintId
         );
 
-        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-
-        moveIncompleteTasksToTheNextSprint(sprint, endDate);
+        completeEndSprint(sprint, endDate);
         thunkAPI.dispatch(
             SprintActions.updateSprint({
                 id: arg.sprintId,
                 data: {
                     endDate,
                     endedBy: user.customId,
-                },
-            })
-        );
-
-        thunkAPI.dispatch(
-            BlockActions.updateBlock({
-                id: sprint.boardId,
-                data: {
-                    currentSprintId: null,
                 },
             })
         );
@@ -102,10 +92,16 @@ export const endSprintOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-export function moveIncompleteTasksToTheNextSprint(
-    sprint: ISprint,
-    date: string
-) {
+export function completeEndSprint(sprint: ISprint, date: string) {
+    store.dispatch(
+        BlockActions.updateBlock({
+            id: sprint.boardId,
+            data: {
+                currentSprintId: null,
+            },
+        })
+    );
+
     const board = BlockSelectors.getBlock(store.getState(), sprint.boardId);
     const statusList = board.boardStatuses || [];
     const taskCompleteStatus = statusList[statusList.length - 1];
@@ -118,6 +114,7 @@ export function moveIncompleteTasksToTheNextSprint(
         store.getState(),
         sprint.customId
     );
+
     const incompleteTasks = tasks.filter((task) => {
         return task.status !== taskCompleteStatus.customId;
     });
@@ -126,28 +123,30 @@ export function moveIncompleteTasksToTheNextSprint(
         return;
     }
 
-    const nextSprint = SprintSelectors.getNextSprintAfterIndex(
-        store.getState(),
-        sprint.boardId,
-        sprint.sprintIndex
-    );
+    let nextSprint: ISprint;
 
-    if (!nextSprint) {
-        return;
+    if (sprint.nextSprintId) {
+        nextSprint = SprintSelectors.getSprint(
+            store.getState(),
+            sprint.nextSprintId
+        );
     }
 
     const user = SessionSelectors.assertGetUser(store.getState());
+
     store.dispatch(
         BlockActions.bulkUpdateBlocks(
             tasks.map((task) => {
                 return {
                     id: task.customId,
                     data: {
-                        taskSprint: {
-                            sprintId: nextSprint.customId,
-                            assignedAt: date,
-                            assignedBy: user.customId,
-                        },
+                        taskSprint: nextSprint
+                            ? {
+                                  sprintId: nextSprint.customId,
+                                  assignedAt: date,
+                                  assignedBy: user.customId,
+                              }
+                            : null,
                     },
                 };
             })

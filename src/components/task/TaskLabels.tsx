@@ -148,12 +148,8 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
 
     return (
         <StyledContainer>
-            <Space direction="vertical">
-                <Space size={2}>
-                    {renderSelectedLabels()}
-                    {!disabled && renderAddNewLabel()}
-                </Space>
-            </Space>
+            {renderSelectedLabels()}
+            {!disabled && renderAddNewLabel()}
         </StyledContainer>
     );
 };

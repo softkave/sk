@@ -8,7 +8,6 @@ import {
     INotification,
 } from "../models/notification/notification";
 import { ISprint, SprintDuration } from "../models/sprint/types";
-import BlockActions from "../redux/blocks/actions";
 import BlockSelectors from "../redux/blocks/selectors";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
@@ -27,8 +26,10 @@ import {
     completePartialNotificationResponse,
     completeUserNotificationResponse,
 } from "../redux/operations/notification/respondToNotification";
-import { removeSprintInTasks } from "../redux/operations/sprint/deleteSprint";
-import { moveIncompleteTasksToTheNextSprint } from "../redux/operations/sprint/endSprint";
+import { completeAddSprint } from "../redux/operations/sprint/addSprint";
+import { completeDeleteSprint } from "../redux/operations/sprint/deleteSprint";
+import { completeEndSprint } from "../redux/operations/sprint/endSprint";
+import { completeStartSprint } from "../redux/operations/sprint/startSprint";
 import RoomActions from "../redux/rooms/actions";
 import RoomSelectors from "../redux/rooms/selectors";
 import SessionSelectors from "../redux/session/selectors";
@@ -631,7 +632,13 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
 }
 
 function handleNewSprintEvent(data: IIncomingNewSprintPacket) {
+    const board = BlockSelectors.getBlock(
+        store.getState(),
+        data.sprint.boardId
+    );
+
     store.dispatch(SprintActions.addSprint(data.sprint));
+    completeAddSprint(data.sprint, board);
 }
 
 function handleUpdateSprintEvent(data: IIncomingUpdateSprintPacket) {
@@ -656,20 +663,13 @@ function handleStartSprintEvent(data: IIncomingStartSprintPacket) {
 
     const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
 
-    store.dispatch(
-        BlockActions.updateBlock({
-            id: sprint.boardId,
-            data: {
-                currentSprintId: sprint.customId,
-            },
-        })
-    );
+    completeStartSprint(sprint);
 }
 
 function handleEndSprintEvent(data: IIncomingEndSprintPacket) {
     const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
 
-    moveIncompleteTasksToTheNextSprint(sprint, data.endedAt);
+    completeEndSprint(sprint, data.endedAt);
     store.dispatch(
         SprintActions.updateSprint({
             id: data.sprintId,
@@ -682,8 +682,11 @@ function handleEndSprintEvent(data: IIncomingEndSprintPacket) {
 }
 
 function handleDeleteSprintEvent(data: IIncomingDeleteSprintPacket) {
-    removeSprintInTasks(data.sprintId);
-    // updateSprintIndexes(sprint);
+    console.log("holla!");
+    const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
+    const board = BlockSelectors.getBlock(store.getState(), sprint.boardId);
+
+    completeDeleteSprint(sprint, board);
     store.dispatch(SprintActions.deleteSprint(data.sprintId));
 }
 
@@ -691,6 +694,7 @@ export function subscribe(items: ClientSubscribedResources) {
     if (socket && items.length > 0) {
         const data: IOutgoingSubscribePacket = { items };
         const roomsToPush: string[] = [];
+
         socket.emit(OutgoingSocketEvents.Subscribe, data);
 
         const rooms =

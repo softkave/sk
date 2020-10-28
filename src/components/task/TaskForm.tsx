@@ -281,44 +281,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const renderSprintInput = () => {
-        const currentValue = formik.values.taskSprint?.sprintId || BACKLOG;
-
-        // const input = (
-        //     <Select
-        //         value={currentValue}
-        //         disabled={isSubmitting}
-        //         onChange={(val) => {
-        //             if (currentValue === val) {
-        //                 return;
-        //             }
-
-        //             if (val === BACKLOG) {
-        //                 formik.setFieldValue("taskSprint", null);
-        //             } else {
-        //                 formik.setFieldValue("taskSprint", {
-        //                     sprintId: val,
-        //                     assignedAt: getDateString(),
-        //                     assignedBy: user.customId,
-        //                 } as ITaskSprint);
-        //             }
-
-        //             formikChangedFieldsHelpers.addField("taskSprint");
-        //         }}
-        //     >
-        //         <Select.Option key={BACKLOG} value={BACKLOG}>
-        //             {BACKLOG}
-        //         </Select.Option>
-        //         {sprints.map((sprint) => (
-        //             <Select.Option
-        //                 key={sprint.customId}
-        //                 value={sprint.customId}
-        //             >
-        //                 {sprint.name}
-        //             </Select.Option>
-        //         ))}
-        //     </Select>
-        // );
-
         const input = (
             <SelectTaskSprint
                 sprints={sprints}

@@ -1,10 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
+import store from "../../store";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -57,6 +59,7 @@ export const startSprintOpAction = createAsyncThunk<
             arg.sprintId
         );
 
+        completeStartSprint(sprint);
         thunkAPI.dispatch(
             SprintActions.updateSprint({
                 id: arg.sprintId,
@@ -68,18 +71,9 @@ export const startSprintOpAction = createAsyncThunk<
         );
 
         thunkAPI.dispatch(
-            BlockActions.updateBlock({
-                id: sprint.boardId,
-                data: {
-                    currentSprintId: sprint.customId,
-                },
-            })
-        );
-
-        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
-                OperationType.ADD_BLOCK,
+                OperationType.START_SPRINT,
                 arg.sprintId
             )
         );
@@ -87,7 +81,7 @@ export const startSprintOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationError(
                 id,
-                OperationType.ADD_BLOCK,
+                OperationType.START_SPRINT,
                 error,
                 arg.sprintId
             )
@@ -96,3 +90,14 @@ export const startSprintOpAction = createAsyncThunk<
 
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
+
+export function completeStartSprint(sprint: ISprint) {
+    store.dispatch(
+        BlockActions.updateBlock({
+            id: sprint.boardId,
+            data: {
+                currentSprintId: sprint.customId,
+            },
+        })
+    );
+}

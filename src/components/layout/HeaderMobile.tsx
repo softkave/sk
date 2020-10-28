@@ -1,8 +1,9 @@
 import { LogoutOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, Dropdown, Menu, Typography } from "antd";
+import { Dropdown, Menu, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
@@ -12,6 +13,7 @@ import theme from "../theme";
 
 const HeaderMobile: React.FC<{}> = () => {
     const dispatch: AppDispatch = useDispatch();
+
     const user = useSelector(SessionSelectors.assertGetUser);
 
     const onLogout = () => {
@@ -42,20 +44,27 @@ const HeaderMobile: React.FC<{}> = () => {
     return (
         <StyledHeaderContainer>
             <StyledContainer s={{ flex: 1 }}>
-                <Typography.Title level={4} style={{ marginBottom: 0 }}>
-                    Softkave
+                <Typography.Title
+                    style={{
+                        margin: 0,
+                        fontSize: "16px",
+                        lineHeight: "16px",
+                        alignItems: "center",
+                        display: "flex",
+                        // fontWeight: "normal",
+                    }}
+                >
+                    <StyledLink to="/app">Softkave</StyledLink>
                 </Typography.Title>
             </StyledContainer>
             <StyledContainer s={{ marginLeft: "16px" }}>
                 <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
-                    <StyledAvatarButton>
-                        <ItemAvatar
-                            clickable
-                            size="small"
-                            onClick={() => null}
-                            color={user.color || theme.colors.defaults.avatar}
-                        />
-                    </StyledAvatarButton>
+                    <ItemAvatar
+                        clickable
+                        size="small"
+                        onClick={() => null}
+                        color={user.color || theme.colors.defaults.avatar}
+                    />
                 </Dropdown>
             </StyledContainer>
         </StyledHeaderContainer>
@@ -68,11 +77,7 @@ const StyledHeaderContainer = styled.div({
     display: "flex",
     width: "100%",
     padding: "16px 16px",
+    borderBottom: "1px solid #d9d9d9",
 });
 
-const StyledAvatarButton = styled(Button)({
-    border: "none",
-    backgroundColor: "inherit",
-    boxShadow: "none",
-    padding: 0,
-});
+const StyledLink = styled(Link)({ color: "inherit !important" });

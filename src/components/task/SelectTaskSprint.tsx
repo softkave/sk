@@ -3,7 +3,6 @@ import { Dropdown, Menu, Space, Tag } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { indexArray } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 
 export interface ISelectTaskSprintProps {

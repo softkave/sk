@@ -103,6 +103,7 @@ export interface IBlock {
     currentSprintId?: string | null;
     sprintOptions?: IBoardSprintOptions;
     taskSprint?: ITaskSprint | null;
+    lastSprintId?: string;
 
     boards?: string[];
     collaborators?: string[];

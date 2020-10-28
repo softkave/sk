@@ -55,8 +55,12 @@ function getNextSprintAfterIndex(
     for (const id in state.sprints) {
         const sprint = state.sprints[id];
 
-        if (sprint.boardId === boardId && sprint.sprintIndex === index + 1) {
-            return sprint;
+        if (
+            sprint.boardId === boardId &&
+            sprint.sprintIndex === index &&
+            sprint.nextSprintId
+        ) {
+            return state.sprints[sprint.nextSprintId];
         }
     }
 }

@@ -223,6 +223,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     ["& .ant-tabs-nav"]: {
                         marginBottom: "4px",
                     },
+
+                    ["& .ant-tabs-nav-more > .anticon-ellipsis"]: {
+                        verticalAlign: "middle",
+                    },
                 }}
             >
                 <OrgBoardHeader

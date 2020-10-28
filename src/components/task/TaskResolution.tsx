@@ -1,7 +1,6 @@
 import { CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Space, Typography } from "antd";
 import React from "react";
-import { Plus } from "react-feather";
 import { IBoardTaskResolution } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 

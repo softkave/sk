@@ -95,7 +95,13 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
 
     return (
         <StyledContainer
-            s={{ height: "100%", width: "100%", flexDirection: "column" }}
+            s={{
+                height: "100%",
+                width: "100%",
+                flexDirection: "column",
+                paddingTop: "16px",
+                paddingBottom: "8px",
+            }}
         >
             <OrgsListHeader
                 onClickCreate={onAddOrg}

@@ -3,7 +3,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
+import {
+    getCurrentAndUpcomingSprints,
+    getSprintRemainingWorkingDays,
+} from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import { deleteSprintOpAction } from "../../redux/operations/sprint/deleteSprint";
 import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
@@ -35,6 +38,8 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
     const sprints = useSelector<IAppState, ISprint[]>((state) =>
         SprintSelectors.getBoardSprints(state, board.customId)
     );
+
+    const currentAndUpcomingSprints = getCurrentAndUpcomingSprints(sprints);
 
     const onDeleteSprint = async (sprintId: string) => {
         const result = await dispatch(
@@ -110,7 +115,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
         let promptMessage = END_SPRINT_PROMPT_MESSAGE;
 
         if (remainingWorkingDays > 0) {
-            promptMessage = getEndSprintRemainingDaysPromptMessage(
+            promptMessage = getEndSprintRemainingWorkingDaysPromptMessage(
                 remainingWorkingDays
             );
         }
@@ -130,7 +135,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
 
     return (
         <Sprints
-            sprints={sprints}
+            sprints={currentAndUpcomingSprints}
             tasks={tasks}
             board={board}
             collaborators={collaborators}
@@ -162,8 +167,10 @@ const END_SPRINT_PROMPT_MESSAGE = "Are you sure you want to end this sprint?";
 const ENDED_SPRINT_SUCCESSFULLY = "Sprint ended successfully";
 const ERROR_CLOSING_SPRINT = "Error ending sprint";
 
-const getEndSprintRemainingDaysPromptMessage = (remainingDays: number) => {
-    return `${END_SPRINT_PROMPT_MESSAGE} It has ${remainingDays} day${
+const getEndSprintRemainingWorkingDaysPromptMessage = (
+    remainingDays: number
+) => {
+    return `${END_SPRINT_PROMPT_MESSAGE} It has ${remainingDays} working day${
         remainingDays === 1 ? "" : "s"
     } remaining.`;
 };

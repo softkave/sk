@@ -1,6 +1,13 @@
 import { Checkbox, Menu, Space } from "antd";
 import React from "react";
-import { Edit3, MoreHorizontal, Plus, Search, Trash2 } from "react-feather";
+import {
+    Clock,
+    Edit3,
+    MoreHorizontal,
+    Plus,
+    Search,
+    Trash2,
+} from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
@@ -18,6 +25,7 @@ export enum BoardHeaderSettingsMenuKey {
     SEARCH_TASKS = "search-tasks",
     SETUP_SPRINTS = "setup-sprints",
     ADD_SPRINT = "add-sprint",
+    END_SPRINT = "end-sprint",
 }
 
 export enum BoardCurrentView {
@@ -84,6 +92,7 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
             case BoardHeaderSettingsMenuKey.SEARCH_TASKS:
             case BoardHeaderSettingsMenuKey.SETUP_SPRINTS:
             case BoardHeaderSettingsMenuKey.ADD_SPRINT:
+            case BoardHeaderSettingsMenuKey.END_SPRINT:
                 onSelectMenuKey(key as BoardHeaderSettingsMenuKey);
                 break;
 
@@ -203,16 +212,6 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                     </Space>
                 </Menu.Item>
             );
-        } else {
-            items.push(
-                <Menu.Item key={BoardHeaderSettingsMenuKey.SETUP_SPRINTS}>
-                    <Space align="center" size={12}>
-                        <Plus style={plusIconStyles} />
-                        Setup Sprints
-                    </Space>
-                </Menu.Item>,
-                <Menu.Divider key="setup-sprints-divider" />
-            );
         }
 
         items.push(
@@ -275,6 +274,33 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                 </Space>
             </Menu.Item>,
         ];
+
+        if (block.currentSprintId) {
+            items.unshift(
+                <Menu.Divider key="end-sprint-divider" />,
+                <Menu.Item
+                    style={{ textTransform: "capitalize" }}
+                    key={BoardHeaderSettingsMenuKey.END_SPRINT}
+                >
+                    <Space align="center" size={12}>
+                        <Clock style={plusIconStyles} />
+                        <span>End Sprint</span>
+                    </Space>
+                </Menu.Item>
+            );
+        }
+
+        if (!boardHasSprintsSetup) {
+            items.unshift(
+                <Menu.Divider key="setup-sprints-divider" />,
+                <Menu.Item key={BoardHeaderSettingsMenuKey.SETUP_SPRINTS}>
+                    <Space align="center" size={12}>
+                        <Plus style={plusIconStyles} />
+                        Setup Sprints
+                    </Space>
+                </Menu.Item>
+            );
+        }
 
         return items;
     };
