@@ -36,11 +36,18 @@ const Face: React.FC<{}> = () => {
                         fontSize: "16px",
                         textTransform: "uppercase",
                         margin: 0,
+                        letterSpacing: "1px",
+                        fontWeight: "bold",
                     }}
                 >
                     Softkave
                 </h1>
-                <Typography.Paragraph style={styles.p1}>
+                <Typography.Paragraph
+                    style={{
+                        letterSpacing: "0.5px",
+                        ...styles.p1,
+                    }}
+                >
                     Chat and tasks platform built for startups
                 </Typography.Paragraph>
                 <Typography.Text style={styles.p2}>

@@ -66,31 +66,15 @@ const WebHeader: React.FC<{}> = () => {
                             Softkave
                         </StyledContainerAsH1>
                     </Link>
-                    <StyledContainer>
-                        Task management application
-                    </StyledContainer>
                 </StyledContainer>
                 <StyledContainer s={{ alignItems: "center" }}>
                     {!showMenu && !isMobile && (
-                        <Link to="/app?demo=true">
-                            <Button type="link" style={{ marginRight: "8px" }}>
-                                Try Demo
-                            </Button>
-                        </Link>
+                        <StyledLink to="/signup">Signup</StyledLink>
                     )}
                     {!showMenu && !isMobile && (
-                        <Link to="/signup">
-                            <Button type="link" style={{ marginRight: "8px" }}>
-                                Signup
-                            </Button>
-                        </Link>
-                    )}
-                    {!showMenu && !isMobile && (
-                        <Link to="/login">
-                            <Button type="link" style={{ marginRight: "8px" }}>
-                                Login
-                            </Button>
-                        </Link>
+                        <StyledLink to="/login" style={{ marginRight: "16px" }}>
+                            Login
+                        </StyledLink>
                     )}
                     <Button
                         type="link"
@@ -137,3 +121,7 @@ export default WebHeader;
 const StyledWebHeader = styled.div`
     padding: 16px 16px;
 `;
+
+const StyledLink = styled(Link)({
+    padding: "0 16px",
+});
