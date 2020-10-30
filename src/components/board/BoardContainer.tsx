@@ -9,7 +9,6 @@ import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
 import { subscribe, unsubcribe } from "../../net/socket";
-import BlockSelectors from "../../redux/blocks/selectors";
 import OperationActions from "../../redux/operations/actions";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
@@ -23,7 +22,6 @@ import useOperation, {
     IOperationDerivedData,
     mergeOps,
 } from "../hooks/useOperation";
-import handleOpResult from "../utilities/handleOpResult";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Board from "./Board";
 import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";

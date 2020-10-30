@@ -1,7 +1,7 @@
 import ClockCircleOutlined from "@ant-design/icons/ClockCircleOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
-import { Badge, Button, Dropdown, Menu, Tag } from "antd";
+import { Button, Dropdown, Menu, Tag } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";

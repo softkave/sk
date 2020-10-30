@@ -5,7 +5,10 @@ import React from "react";
 const LogoBorders: React.FC<{}> = () => {
     return (
         <LogoContainer>
-            <Typography.Title style={{ margin: 0, fontSize: "16px" }} level={3}>
+            <Typography.Title
+                style={{ margin: 0, fontSize: "16px", color: "black" }}
+                level={3}
+            >
                 Softkave
             </Typography.Title>
         </LogoContainer>

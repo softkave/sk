@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
+import { Button, Dropdown, Menu, Tag, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
 import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";

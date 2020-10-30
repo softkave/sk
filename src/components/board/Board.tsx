@@ -83,7 +83,7 @@ const Board: React.FC<IBoardProps> = (props) => {
     >();
 
     React.useEffect(() => {
-        if (sprintsRouteMatch?.isExact && view !== BoardCurrentView.SPRINTS) {
+        if (isSprintsRoute && view !== BoardCurrentView.SPRINTS) {
             setView(BoardCurrentView.SPRINTS);
         }
     }, [isSprintsRoute, view]);
