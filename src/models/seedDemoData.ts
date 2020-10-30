@@ -343,7 +343,14 @@ function seedBoardOps(board: IBlock) {
         meta: { typeList: [BlockType.Task] },
     };
 
-    return [loadBoardChildren];
+    const getSprintsOp: IOperation = {
+        id: getNewId(),
+        operationType: OperationType.GET_SPRINTS,
+        resourceId: board.customId,
+        status: { status: OperationStatus.Completed, timestamp: Date.now() },
+    };
+
+    return [loadBoardChildren, getSprintsOp];
 }
 
 function seedResolutions(
