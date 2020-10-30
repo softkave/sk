@@ -22,9 +22,7 @@ const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
                 }}
             />
             <StyledContainer s={{ flex: 1, margin: "0 16px" }}>
-                <Typography.Text strong ellipsis>
-                    {recipient.name}
-                </Typography.Text>
+                <Typography.Text ellipsis>{recipient.name}</Typography.Text>
             </StyledContainer>
             <Badge
                 count={room.unseenChatsCount}

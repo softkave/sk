@@ -227,15 +227,23 @@ const Task: React.FC<ITaskProps> = (props) => {
         >
             <TaskNameAndDescription task={task} />
         </StyledContainer>,
-        <StyledContainer key="sprint">
-            <SelectTaskSprintContainer
-                task={task}
-                sprints={sprints}
-                sprintsMap={sprintsMap}
-                user={user}
-                onAddNewSprint={toggleShowSprintForm}
-            />
-        </StyledContainer>,
+    ];
+
+    if (board.sprintOptions) {
+        contentElem.push(
+            <StyledContainer key="sprint">
+                <SelectTaskSprintContainer
+                    task={task}
+                    sprints={sprints}
+                    sprintsMap={sprintsMap}
+                    user={user}
+                    onAddNewSprint={toggleShowSprintForm}
+                />
+            </StyledContainer>
+        );
+    }
+
+    contentElem.push(
         <StyledContainer key="status" onClick={stopPropagation}>
             <TaskStatusContainer
                 task={task}
@@ -247,8 +255,8 @@ const Task: React.FC<ITaskProps> = (props) => {
                 onSelectAddNewStatus={onSelectAddNewStatus}
                 onSelectAddNewResolution={onSelectAddNewResolution}
             />
-        </StyledContainer>,
-    ];
+        </StyledContainer>
+    );
 
     if (hasAssignees || task.dueAt) {
         contentElem.push(

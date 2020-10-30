@@ -34,10 +34,12 @@ const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = (
                         flexDirection: "column",
                     }}
                 >
-                    <Typography.Text strong ellipsis>
+                    <Typography.Text ellipsis>
                         {collaborator.name}
                     </Typography.Text>
-                    <Typography.Text>{collaborator.email}</Typography.Text>
+                    <Typography.Text type="secondary">
+                        {collaborator.email}
+                    </Typography.Text>
                 </StyledContainer>,
                 { marginLeft: 16 }
             )}

@@ -30,11 +30,11 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
         >
             {cloneWithWidth(
                 <StyledRequestDataContainer>
-                    <Typography.Text strong ellipsis>
+                    <Typography.Text ellipsis>
                         {request.to.email}
                     </Typography.Text>
                     {request.expiresAt && (
-                        <Typography.Text>
+                        <Typography.Text type="secondary">
                             {expired ? "Expired" : "Expires"}{" "}
                             {moment(request.expiresAt).fromNow()}
                         </Typography.Text>

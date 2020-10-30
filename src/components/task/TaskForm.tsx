@@ -281,6 +281,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const renderSprintInput = () => {
+        if (!board.sprintOptions) {
+            return null;
+        }
+
         const input = (
             <SelectTaskSprint
                 sprints={sprints}

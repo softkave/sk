@@ -72,7 +72,7 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                                 }
                             </span>
                         }
-                        key={BoardStatusResolutionAndLabelsFormType.LABELS}
+                        key={BoardStatusResolutionAndLabelsFormType.RESOLUTIONS}
                     >
                         <ResolutionsListContainer block={block} />
                     </Tabs.TabPane>
@@ -82,7 +82,7 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                                 {BoardStatusResolutionAndLabelsFormType.LABELS}
                             </span>
                         }
-                        key={BoardStatusResolutionAndLabelsFormType.RESOLUTIONS}
+                        key={BoardStatusResolutionAndLabelsFormType.LABELS}
                     >
                         <LabelListContainer block={block} />
                     </Tabs.TabPane>
