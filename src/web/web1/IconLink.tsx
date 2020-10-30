@@ -5,13 +5,14 @@ export interface IIconLinkProps {
     icon: React.ReactNode;
     text: string;
     href: string;
+    style?: React.CSSProperties;
 }
 
 const IconLink: React.FC<IIconLinkProps> = (props) => {
-    const { icon, text, href } = props;
+    const { icon, text, href, style } = props;
 
     return (
-        <a href={href} target="_blank" rel="noopener noreferrer">
+        <a href={href} target="_blank" rel="noopener noreferrer" style={style}>
             <Space>
                 <Button style={{ cursor: "pointer" }} className="icon-btn">
                     {icon}

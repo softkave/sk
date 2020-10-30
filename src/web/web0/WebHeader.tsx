@@ -8,7 +8,6 @@ import RenderForDevice from "../../components/RenderForDevice";
 import StyledContainer from "../../components/styled/Container";
 
 const StyledContainerAsH1 = StyledContainer.withComponent("h1");
-const hoverSelector = "&:hover";
 
 const WebHeader: React.FC<{}> = () => {
     const [showMenu, setShowMenu] = React.useState(false);
@@ -16,10 +15,8 @@ const WebHeader: React.FC<{}> = () => {
     const renderMenuItemContent = (content: React.ReactNode) => (
         <StyledContainer
             s={{
-                color: "rgba(0,0,0,0.65)",
                 justifyContent: "flex-end",
                 lineHeight: "40px",
-                [hoverSelector]: { color: "rgb(66,133,244)" },
             }}
         >
             <span onClick={() => setShowMenu(false)}>{content}</span>

@@ -5,19 +5,48 @@ import { Space, Typography } from "antd";
 import React from "react";
 import { ArrowRightCircle } from "react-feather";
 import { Link } from "react-router-dom";
+import RenderForDevice from "../../components/RenderForDevice";
 import webConstants from "./constants";
-import LogoBorders from "./LogoBorders";
+
+const desktopStyles = {
+    p1: { textAlign: "center", fontSize: "32px", margin: "32px 0" },
+    p2: { textAlign: "center", marginBottom: "24px" },
+    face: {
+        justifyContent: "center",
+        maxWidth: "520px",
+        margin: "auto",
+        alignItems: "center",
+    },
+};
+
+const mobileStyles = {
+    p1: { fontSize: "24px", margin: "24px 0" },
+    p2: { marginBottom: "24px" },
+    face: {},
+};
 
 const Face: React.FC<{}> = () => {
-    return (
-        <StyledFace>
-            <Space direction="vertical">
-                <LogoBorders />
-                <Typography.Paragraph
-                    style={{ margin: "16px 0", fontSize: "20px" }}
+    const render = (mobile = false) => {
+        const styles = mobile ? mobileStyles : desktopStyles;
+
+        return (
+            <StyledFace style={styles.face}>
+                <h1
+                    style={{
+                        fontSize: "16px",
+                        textTransform: "uppercase",
+                        margin: 0,
+                    }}
                 >
-                    Chat and task management for startups
+                    Softkave
+                </h1>
+                <Typography.Paragraph style={styles.p1}>
+                    Chat and tasks platform built for startups
                 </Typography.Paragraph>
+                <Typography.Text style={styles.p2}>
+                    The best part is, Softkave is free for your first year!
+                    Then, it's a dollar per user per month.
+                </Typography.Text>
                 <StyledButtonsContainer>
                     <StyledTagLikeButton
                         to="/signup"
@@ -37,12 +66,12 @@ const Face: React.FC<{}> = () => {
                     >
                         Forgot Password
                     </StyledTagLikeButton>
-                    <StyledTagLikeButtonWithNativeLink
+                    {/* <StyledTagLikeButtonWithNativeLink
                         href="#pricing"
                         style={{ backgroundColor: "#36B37E" }}
                     >
                         Pricing
-                    </StyledTagLikeButtonWithNativeLink>
+                    </StyledTagLikeButtonWithNativeLink> */}
                     <StyledTagLikeButton
                         to={webConstants.demoURL}
                         style={{ backgroundColor: "#FF5630" }}
@@ -59,8 +88,15 @@ const Face: React.FC<{}> = () => {
                         </Space>
                     </StyledTagLikeButton>
                 </StyledButtonsContainer>
-            </Space>
-        </StyledFace>
+            </StyledFace>
+        );
+    };
+
+    return (
+        <RenderForDevice
+            renderForDesktop={() => render(false)}
+            renderForMobile={() => render(true)}
+        />
     );
 };
 
@@ -87,25 +123,26 @@ const StyledTagLikeButton = styled(Link)({
     },
 });
 
-const StyledTagLikeButtonWithNativeLink = styled.a({
-    marginRight: "4px",
-    color: "white",
-    borderRadius: "4px",
-    padding: "2px 8px",
-    marginBottom: "4px",
+// const StyledTagLikeButtonWithNativeLink = styled.a({
+//     marginRight: "4px",
+//     color: "white",
+//     borderRadius: "4px",
+//     padding: "2px 8px",
+//     marginBottom: "4px",
 
-    ["&:last-of-type"]: {
-        marginRight: 0,
-    },
+//     ["&:last-of-type"]: {
+//         marginRight: 0,
+//     },
 
-    ["&:hover"]: {
-        color: "white",
-    },
-});
+//     ["&:hover"]: {
+//         color: "white",
+//     },
+// });
 
 const StyledFace = styled.div({
     height: "100%",
     padding: "16px",
-    alignItems: "center",
     display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
 });

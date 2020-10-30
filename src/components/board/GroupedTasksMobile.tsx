@@ -1,3 +1,5 @@
+/*eslint no-useless-computed-key: "off"*/
+
 import { Badge, Space, Tabs } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";

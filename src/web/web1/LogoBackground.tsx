@@ -9,6 +9,6 @@ export default LogoBackground;
 
 const Logo = styled.div({
     padding: "4px",
-    backgroundColor: "#FFAB00",
+    backgroundColor: "#00B8D9",
     textTransform: "uppercase",
 });

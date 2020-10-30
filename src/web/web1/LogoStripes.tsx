@@ -42,6 +42,7 @@ const LogoText = styled.div({
     left: 0,
     lineHeight: `${lineHeight}px`,
     textTransform: "uppercase",
+    zIndex: 99,
 });
 
 const LogoContainer = styled.div({
