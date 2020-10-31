@@ -580,21 +580,9 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
     /**
      * path format is /app/orgs/:orgId/chat/:recipientId
      */
-    let isUserInRoom = false;
-    const pathname = window.location.pathname;
-    const splitPath = pathname.split("/");
-    const orgsPathIndex = splitPath.indexOf("orgs");
-
-    if (orgsPathIndex !== -1) {
-        const chatPathIndex = splitPath.indexOf("chat");
-
-        if (chatPathIndex !== -1) {
-            const orgId = splitPath[orgsPathIndex + 1];
-            const recipientId = splitPath[chatPathIndex + 1];
-            isUserInRoom =
-                chat.orgId === orgId && room.recipientId === recipientId;
-        }
-    }
+    const isUserInOrg = window.location.pathname.includes(room.orgId);
+    const isUserInRoom =
+        isUserInOrg && window.location.pathname.includes(room.recipientId);
 
     // Add chat to room
     store.dispatch(
