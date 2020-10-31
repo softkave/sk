@@ -39,3 +39,8 @@ export interface IUpdateResourcePayload<R> {
     data: Partial<R>;
     meta?: IMergeDataMeta;
 }
+
+export interface IStoreLikeObject {
+    getState: () => IAppState;
+    dispatch: (action: any) => void;
+}

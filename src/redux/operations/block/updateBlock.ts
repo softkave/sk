@@ -11,7 +11,7 @@ import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,
@@ -71,11 +71,10 @@ function getDeletedStatuses(
     return deletedStatuses;
 }
 
-const updateTasksIfHasDeletedStatusesOrLabels = createAsyncThunk<
-    void,
-    GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
-    IAppAsyncThunkConfig
->("block/updateTasksIfHasDeletedStatusesOrLabels", async (args, thunkAPI) => {
+const updateTasksIfHasDeletedStatusesOrLabels = (
+    args: IUpdateBlockOperationActionArgs,
+    thunkAPI: IStoreLikeObject
+) => {
     const deletedStatuses = getDeletedStatuses(
         args.block.boardStatuses,
         args.data.boardStatuses
@@ -160,8 +159,8 @@ const updateTasksIfHasDeletedStatusesOrLabels = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(BlockActions.bulkUpdateBlocks(updates));
-});
+    thunkAPI.dispatch(BlockActions.bulkUpdateBlocks(updates));
+};
 
 export const updateBlockOperationAction = createAsyncThunk<
     IOperation | undefined,
@@ -255,7 +254,5 @@ export const completeUpdateBlock = createAsyncThunk<
         })
     );
 
-    await thunkAPI.dispatch(
-        updateTasksIfHasDeletedStatusesOrLabels(arg) as any
-    );
+    updateTasksIfHasDeletedStatusesOrLabels(arg, thunkAPI);
 });
