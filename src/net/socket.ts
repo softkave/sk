@@ -606,8 +606,6 @@ function handleNewMessage(data: IIncomingNewMessagePacket) {
         })
     );
 
-    // console.log({ isUserInRoom });
-
     if (isUserInRoom) {
         return;
     }
@@ -682,7 +680,6 @@ function handleEndSprintEvent(data: IIncomingEndSprintPacket) {
 }
 
 function handleDeleteSprintEvent(data: IIncomingDeleteSprintPacket) {
-    console.log("holla!");
     const sprint = SprintSelectors.getSprint(store.getState(), data.sprintId);
     const board = BlockSelectors.getBlock(store.getState(), sprint.boardId);
 

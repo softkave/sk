@@ -19,7 +19,6 @@ import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "./BoardStatusResolutionAndLabelsForm";
 import GroupedTasks from "./GroupedTasks";
-import { SearchTasksMode } from "./SearchTasksInput";
 import SprintsContainer from "./SprintsContainer";
 import TasksContainer from "./TasksContainer";
 import { IBoardFormData, OnClickDeleteBlock } from "./types";
@@ -65,7 +64,6 @@ const Board: React.FC<IBoardProps> = (props) => {
             : BoardCurrentView.ALL_TASKS;
     });
 
-    const [searchIn, setSearchIn] = React.useState(SearchTasksMode.ALL_TASKS);
     const [showSearch, setShowSearch] = React.useState(false);
     const [searchText, setSearchText] = React.useState("");
     const [boardForm, setBoardForm] = React.useState<
@@ -260,10 +258,8 @@ const Board: React.FC<IBoardProps> = (props) => {
                 groupBy={groupBy}
                 isAppMenuFolded={isAppMenuFolded}
                 isMobile={isMobile}
-                searchIn={searchIn}
                 view={view}
                 isSearchMode={showSearch}
-                onChangeSearchMode={setSearchIn}
                 onChangeSearchText={setSearchText}
                 onSelectCurrentView={onSelectView}
                 onSelectGroupBy={setGroupBy}

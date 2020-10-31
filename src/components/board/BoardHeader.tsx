@@ -13,7 +13,7 @@ import BoardHeaderOptionsMenu, {
     BoardGroupBy,
     BoardHeaderSettingsMenuKey,
 } from "./BoardHeaderOptionsMenu";
-import SearchTasksInput, { SearchTasksMode } from "./SearchTasksInput";
+import SearchTasksInput from "./SearchTasksInput";
 
 export interface IBoardHeaderProps {
     block: IBlock;
@@ -21,10 +21,8 @@ export interface IBoardHeaderProps {
     isAppMenuFolded: boolean;
     view: BoardCurrentView;
     groupBy: BoardGroupBy;
-    searchIn: SearchTasksMode;
     isSearchMode: boolean;
     onChangeSearchText: (text: string) => void;
-    onChangeSearchMode: (mode: SearchTasksMode) => void;
     onToggleFoldAppMenu: () => void;
     onSelectMenuKey: (key: BoardHeaderSettingsMenuKey) => void;
     onSelectCurrentView: (key: BoardCurrentView) => void;
@@ -38,13 +36,19 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         isMobile,
         style,
         isSearchMode,
+        onSelectMenuKey,
+        onChangeSearchText,
         isAppMenuFolded: isMenuFolded,
         onToggleFoldAppMenu: onToggleFoldMenu,
-        onSelectMenuKey,
     } = props;
 
-    const [showSearch, setShowSearch] = React.useState(isSearchMode);
     const history = useHistory();
+    const [showSearch, setShowSearch] = React.useState(isSearchMode);
+
+    const closeSearch = React.useCallback(() => {
+        setShowSearch(false);
+        onChangeSearchText("");
+    }, [onChangeSearchText]);
 
     const onSelectSettingsMenuItem = (key: BoardHeaderSettingsMenuKey) => {
         switch (key) {
@@ -94,12 +98,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
     let content: React.ReactNode = null;
 
     if (showSearch) {
-        content = (
-            <SearchTasksInput
-                {...props}
-                onCancel={() => setShowSearch(false)}
-            />
-        );
+        content = <SearchTasksInput {...props} onCancel={closeSearch} />;
     } else {
         let desktopContent: React.ReactNode = null;
 
