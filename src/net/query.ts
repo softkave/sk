@@ -1,10 +1,9 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
-import { logoutUserOperationAction } from "../redux/operations/session/logoutUser";
-import store from "../redux/store";
 import { getAppErrorOrAppErrorList } from "../redux/utils";
 import { devLog } from "../utils/log";
 import { IAnyObject } from "../utils/types";
+import { handleLoginAgainError } from "./serverRecommendedActions";
 
 type NetResultProcessorFunction = (data: any) => any;
 export type NetResultProcessor = string | NetResultProcessorFunction;
@@ -71,7 +70,7 @@ export default async function query(
 
         if (result.ok) {
             if (resultBody && shouldLoginAgain(resultBody.errors)) {
-                store.dispatch(logoutUserOperationAction());
+                handleLoginAgainError();
             }
 
             return resultBody;
@@ -80,7 +79,7 @@ export default async function query(
                 if (rawResultBody && rawResultBody.errors) {
                     if (isExpectedErrorType(rawResultBody.errors)) {
                         if (shouldLoginAgain(rawResultBody.errors)) {
-                            store.dispatch(logoutUserOperationAction());
+                            handleLoginAgainError();
                         } else {
                             throw rawResultBody.errors;
                         }

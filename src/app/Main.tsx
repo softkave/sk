@@ -20,6 +20,7 @@ import { SessionType } from "../redux/session/types";
 import { AppDispatch, IAppState } from "../redux/types";
 import UserActions from "../redux/users/actions";
 import { getNewId } from "../utils/utils";
+import ExistentialRenderer from "./ExistentialRenderer";
 import Routes from "./Routes";
 
 let timeoutHandle: number;
@@ -190,22 +191,31 @@ const Main: React.FC<{}> = () => {
         </StyledContainer>
     );
 
-    switch (sessionType) {
-        case SessionType.App:
-            if (isFetchingMissingBroadcasts) {
+    const render = () => {
+        switch (sessionType) {
+            case SessionType.App:
+                if (isFetchingMissingBroadcasts) {
+                    return renderInitializing();
+                }
+
+                return <MainLayoutContainer />;
+
+            case SessionType.Web:
+                return <Routes />;
+
+            case SessionType.Uninitialized:
+            case SessionType.Initializing:
+            default:
                 return renderInitializing();
-            }
+        }
+    };
 
-            return <MainLayoutContainer />;
-
-        case SessionType.Web:
-            return <Routes />;
-
-        case SessionType.Uninitialized:
-        case SessionType.Initializing:
-        default:
-            return renderInitializing();
-    }
+    return (
+        <React.Fragment>
+            {render()}
+            <ExistentialRenderer />
+        </React.Fragment>
+    );
 };
 
 export default Main;

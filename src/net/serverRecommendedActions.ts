@@ -1,9 +1,12 @@
+import KeyValueActions from "../redux/key-value/actions";
+import { KeyValueKeys } from "../redux/key-value/types";
 import { logoutUserOperationAction } from "../redux/operations/session/logoutUser";
 import store from "../redux/store";
 import { IAppError } from "./types";
 
 export enum ServerRecommendedActions {
-    LoginAgain = "login-again",
+    LOGIN_AGAIN = "LOGIN_AGAIN",
+    LOGOUT = "LOGOUT",
 }
 
 function getErrorsWithServerRecommendedActions(errors: IAppError[]) {
@@ -13,12 +16,25 @@ function getErrorsWithServerRecommendedActions(errors: IAppError[]) {
 }
 
 const shouldLoginAgain = (error: IAppError) => {
-    if (error.action === ServerRecommendedActions.LoginAgain) {
+    if (
+        error.action === ServerRecommendedActions.LOGIN_AGAIN ||
+        error.action === ServerRecommendedActions.LOGOUT
+    ) {
         return true;
     }
 
     return false;
 };
+
+export function handleLoginAgainError() {
+    store.dispatch(logoutUserOperationAction());
+    store.dispatch(
+        KeyValueActions.setKey({
+            key: KeyValueKeys.LOGIN_AGAIN,
+            value: true,
+        })
+    );
+}
 
 export function processServerRecommendedActions(errors: IAppError[]) {
     const errorsWithActions = getErrorsWithServerRecommendedActions(errors);
@@ -31,7 +47,7 @@ export function processServerRecommendedActions(errors: IAppError[]) {
 
     errorsWithActions.forEach((error) => {
         if (shouldLoginAgain(error)) {
-            store.dispatch(logoutUserOperationAction());
+            handleLoginAgainError();
             result = false;
         }
     });

@@ -52,7 +52,7 @@ const keyValueReducer = createReducer<IKeyValueState>(
             state[KeyValueKeys.RoomsSubscribedTo] = rooms;
         });
 
-        builder.addCase(SessionActions.logoutUser, (state) => {
+        builder.addCase(SessionActions.logoutUser, () => {
             return {};
         });
 

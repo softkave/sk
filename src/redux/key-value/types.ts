@@ -14,6 +14,7 @@ export enum KeyValueKeys {
     FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
     UnseenChatsCountByOrg = "unseenChatsCountByOrg",
     QueuedChats = "queuedChats",
+    LOGIN_AGAIN = "loginAgain",
 }
 
 export interface IUnseenChatsCountByOrg {
