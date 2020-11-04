@@ -22,11 +22,11 @@ export interface ILoginUserOperationActionArgs {
     remember: boolean;
 }
 
-export const loginUserOperationAction = createAsyncThunk<
+export const loginUserOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<ILoginUserOperationActionArgs>,
     IAppAsyncThunkConfig
->("session/loginUser", async (arg, thunkAPI) => {
+>("op/session/loginUser", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -38,9 +38,7 @@ export const loginUserOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.LoginUser)
-    );
+    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.LoginUser));
 
     try {
         // TODO: define types for the result
@@ -49,8 +47,8 @@ export const loginUserOperationAction = createAsyncThunk<
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            await thunkAPI.dispatch(UserActions.addUser(result.user));
-            await thunkAPI.dispatch(
+            thunkAPI.dispatch(UserActions.addUser(result.user));
+            thunkAPI.dispatch(
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
@@ -65,11 +63,11 @@ export const loginUserOperationAction = createAsyncThunk<
             throw new Error("An error occurred");
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LoginUser)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(id, OperationType.LoginUser, error)
         );
     }

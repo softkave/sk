@@ -23,11 +23,11 @@ export interface IChangePasswordOperationActionArgs {
     opId?: string;
 }
 
-export const changePasswordOperationAction = createAsyncThunk<
+export const changePasswordOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IChangePasswordOperationActionArgs>,
     IAppAsyncThunkConfig
->("session/changePassword", async (arg, thunkAPI) => {
+>("op/session/changePassword", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -39,7 +39,7 @@ export const changePasswordOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(id, OperationType.ChangePassword)
     );
 
@@ -53,8 +53,8 @@ export const changePasswordOperationAction = createAsyncThunk<
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            await thunkAPI.dispatch(UserActions.addUser(result.user));
-            await thunkAPI.dispatch(
+            thunkAPI.dispatch(UserActions.addUser(result.user));
+            thunkAPI.dispatch(
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
@@ -67,11 +67,11 @@ export const changePasswordOperationAction = createAsyncThunk<
             throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.ChangePassword)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(id, OperationType.ChangePassword, error)
         );
     }

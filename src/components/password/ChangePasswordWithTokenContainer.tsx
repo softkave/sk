@@ -3,7 +3,7 @@ import { message, notification } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { changePasswordOperationAction } from "../../redux/operations/session/changePassword";
+import { changePasswordOpAction } from "../../redux/operations/session/changePassword";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation, { getOpStats } from "../hooks/useOperation";
@@ -41,7 +41,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
         }
 
         const result = await dispatch(
-            changePasswordOperationAction({
+            changePasswordOpAction({
                 token,
                 password: data.password,
                 opId: operationStatus.opId,

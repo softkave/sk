@@ -1,6 +1,6 @@
 import KeyValueActions from "../redux/key-value/actions";
 import { KeyValueKeys } from "../redux/key-value/types";
-import { logoutUserOperationAction } from "../redux/operations/session/logoutUser";
+import { logoutUserOpAction } from "../redux/operations/session/logoutUser";
 import store from "../redux/store";
 import { IAppError } from "./types";
 
@@ -27,7 +27,7 @@ const shouldLoginAgain = (error: IAppError) => {
 };
 
 export function handleLoginAgainError() {
-    store.dispatch(logoutUserOperationAction());
+    store.dispatch(logoutUserOpAction());
     store.dispatch(
         KeyValueActions.setKey({
             key: KeyValueKeys.LOGIN_AGAIN,

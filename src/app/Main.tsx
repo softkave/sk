@@ -12,7 +12,7 @@ import KeyValueSelectors from "../redux/key-value/selectors";
 import { KeyValueKeys } from "../redux/key-value/types";
 import NotificationActions from "../redux/notifications/actions";
 import OperationActions from "../redux/operations/actions";
-import { initializeAppSessionOperationAction } from "../redux/operations/session/initializeAppSession";
+import { initializeAppSessionOpAction } from "../redux/operations/session/initializeAppSession";
 import RoomActions from "../redux/rooms/actions";
 import SessionActions from "../redux/session/actions";
 import SessionSelectors from "../redux/session/selectors";
@@ -155,7 +155,7 @@ const Main: React.FC<{}> = () => {
 
             return;
         } else if (sessionType === SessionType.Uninitialized) {
-            dispatch(initializeAppSessionOperationAction({ opId }));
+            dispatch(initializeAppSessionOpAction({ opId }));
         }
     }, [sessionType, opId, dispatch, isDemoMode, routeToApp]);
 

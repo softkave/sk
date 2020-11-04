@@ -4,7 +4,7 @@ import { Dropdown, Menu, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
+import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import ItemAvatar from "../ItemAvatar";
@@ -17,7 +17,7 @@ const HeaderMobile: React.FC<{}> = () => {
     const user = useSelector(SessionSelectors.assertGetUser);
 
     const onLogout = () => {
-        dispatch(logoutUserOperationAction());
+        dispatch(logoutUserOpAction());
     };
 
     const onSelectAvatarMenu = (event) => {

@@ -3,7 +3,7 @@ import { Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUserOperationAction } from "../../redux/operations/session/logoutUser";
+import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
 import OrgsListContainer from "../org/OrgsListContainer";
 import StyledContainer from "../styled/Container";
 
@@ -11,7 +11,7 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const onLogout = () => {
-        dispatch(logoutUserOperationAction());
+        dispatch(logoutUserOpAction());
     };
 
     return (

@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message, notification } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { requestForgotPasswordOperationAction } from "../../redux/operations/session/requestForgotPassword";
+import { requestForgotPasswordOpAction } from "../../redux/operations/session/requestForgotPassword";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation, { getOpStats } from "../hooks/useOperation";
@@ -23,7 +23,7 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
 
     const onSubmit = async (data: IForgotPasswordFormData) => {
         const result = await dispatch(
-            requestForgotPasswordOperationAction({
+            requestForgotPasswordOpAction({
                 email: data.email,
                 opId: operationStatus.opId,
             })

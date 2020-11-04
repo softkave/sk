@@ -23,11 +23,11 @@ export interface ISignupUserOperationActionArgs {
     password: string;
 }
 
-export const signupUserOperationAction = createAsyncThunk<
+export const signupUserOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<ISignupUserOperationActionArgs>,
     IAppAsyncThunkConfig
->("session/signupUser", async (arg, thunkAPI) => {
+>("op/session/signupUser", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -39,9 +39,7 @@ export const signupUserOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.SignupUser)
-    );
+    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.SignupUser));
 
     try {
         const data = { ...arg, color: randomColor() };
@@ -50,9 +48,8 @@ export const signupUserOperationAction = createAsyncThunk<
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            // setClientId(result.clientId);
-            await thunkAPI.dispatch(UserActions.addUser(result.user));
-            await thunkAPI.dispatch(
+            thunkAPI.dispatch(UserActions.addUser(result.user));
+            thunkAPI.dispatch(
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
@@ -66,11 +63,11 @@ export const signupUserOperationAction = createAsyncThunk<
             throw new Error("An error occurred");
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.SignupUser)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(id, OperationType.SignupUser, error)
         );
     }

@@ -17,11 +17,11 @@ export interface IRequestForgotPasswordOperationActionArgs {
     email: string;
 }
 
-export const requestForgotPasswordOperationAction = createAsyncThunk<
+export const requestForgotPasswordOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IRequestForgotPasswordOperationActionArgs>,
     IAppAsyncThunkConfig
->("session/requestForgotPassword", async (arg, thunkAPI) => {
+>("op/session/requestForgotPassword", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -33,7 +33,7 @@ export const requestForgotPasswordOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(id, OperationType.RequestForgotPassword)
     );
 
@@ -44,11 +44,11 @@ export const requestForgotPasswordOperationAction = createAsyncThunk<
             throw result.errors;
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.RequestForgotPassword)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.RequestForgotPassword,

@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { loginUserOperationAction } from "../../redux/operations/session/loginUser";
+import { loginUserOpAction } from "../../redux/operations/session/loginUser";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import useOperation, { getOpStats } from "../hooks/useOperation";
@@ -18,7 +18,7 @@ const LoginContainer: React.FC<{}> = () => {
 
     const onSubmit = async (user: ILoginFormValues) => {
         const result = await dispatch(
-            loginUserOperationAction({
+            loginUserOpAction({
                 opId: operationStatus.opId,
                 email: user.email,
                 password: user.password,

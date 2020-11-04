@@ -16,11 +16,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { IOperationActionBaseArgs } from "../types";
 
-export const initializeAppSessionOperationAction = createAsyncThunk<
+export const initializeAppSessionOpAction = createAsyncThunk<
     IOperation | undefined,
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
->("session/initializeAppSession", async (arg, thunkAPI) => {
+>("op/session/initializeAppSession", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -32,7 +32,7 @@ export const initializeAppSessionOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(id, OperationType.InitializeAppSession)
     );
 
@@ -48,9 +48,8 @@ export const initializeAppSessionOperationAction = createAsyncThunk<
 
             const { user } = result;
 
-            // setClientId(result.clientId);
-            await thunkAPI.dispatch(UserActions.addUser(user));
-            await thunkAPI.dispatch(
+            thunkAPI.dispatch(UserActions.addUser(user));
+            thunkAPI.dispatch(
                 SessionActions.loginUser({
                     token,
                     userId: user.customId,
@@ -58,15 +57,15 @@ export const initializeAppSessionOperationAction = createAsyncThunk<
                 })
             );
         } else {
-            await thunkAPI.dispatch(SessionActions.setSessionToWeb());
+            thunkAPI.dispatch(SessionActions.setSessionToWeb());
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.InitializeAppSession)
         );
     } catch (error) {
-        await thunkAPI.dispatch(SessionActions.setSessionToWeb());
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(SessionActions.setSessionToWeb());
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.InitializeAppSession,
