@@ -25,30 +25,37 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
         BlockSelectors.getBlockChildren(state, parent, type)
     );
 
-    const loadChildren = (loadProps: IOperationDerivedData) => {
-        if (!loadProps.operation) {
-            dispatch(
-                loadBlockChildrenOpAction({
-                    block: parent,
-                    typeList: [type],
-                    opId: loadProps.opId,
-                })
-            );
-        }
-    };
+    const loadChildren = React.useCallback(
+        (loadProps: IOperationDerivedData) => {
+            if (!loadProps.operation) {
+                console.log({ loadProps });
+                dispatch(
+                    loadBlockChildrenOpAction({
+                        block: parent,
+                        typeList: [type],
+                        opId: loadProps.opId,
+                    })
+                );
+            }
+        },
+        [dispatch, parent, type]
+    );
 
     const op = useOperation(
         {
             filter: (operation) => {
+                const opMeta = (operation.meta as ILoadBlockChildrenOpMeta)
+                    ?.typeList;
+
+                if (!opMeta) {
+                    return false;
+                }
+
                 return (
                     operation.resourceId === parent.customId &&
                     operation.operationType ===
                         OperationType.LOAD_BLOCK_CHILDREN &&
-                    operation.meta &&
-                    (
-                        (operation.meta as ILoadBlockChildrenOpMeta).typeList ||
-                        []
-                    ).includes(type)
+                    opMeta.includes(type)
                 );
             },
         },

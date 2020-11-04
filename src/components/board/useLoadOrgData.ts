@@ -9,12 +9,12 @@ import useOperation, {
     mergeOps,
 } from "../hooks/useOperation";
 
-// For loading org data necessary for initialization, like users, requests, chat rooms, and messages
+// For loading org data necessary for initialization, like users, requests, etc.
 export function useLoadOrgData(org: IBlock): IMergedOperationStats {
     const dispatch = useDispatch();
 
     // Load org users and collaboration requests
-    const loadOrgUsersAndRequests = React.useCallback(
+    const loadOrgData = React.useCallback(
         (loadProps: IOperationDerivedData) => {
             if (!loadProps.operation) {
                 dispatch(
@@ -28,13 +28,19 @@ export function useLoadOrgData(org: IBlock): IMergedOperationStats {
         [org, dispatch]
     );
 
-    const loadOrgUsersAndRequestsStatus = useOperation(
+    const loadOrgDataOp = useOperation(
         {
             resourceId: org.customId,
             type: OperationType.LoadOrgUsersAndRequests,
         },
-        loadOrgUsersAndRequests
+        loadOrgData
     );
 
-    return mergeOps([loadOrgUsersAndRequestsStatus]);
+    // const fetchMissingOp = useFetchMissingBlockUpdates({
+    //     block: org,
+    //     isBlockDataLoaded: !!loadOrgDataOp,
+    // });
+
+    return mergeOps([loadOrgDataOp]);
+    // return mergeOps([loadOrgDataOp, fetchMissingOp]);
 }

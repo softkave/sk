@@ -101,7 +101,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
 
     // TODO: we need to rebuild the path when the user transfers the block
     const blockPath = getBlockPath(block, parentPath);
-    const loadBoardDataStatusAndControls = useLoadOrgData(block);
+    const orgDataOp = useLoadOrgData(block);
 
     const pushRoute = (route) => {
         const search = new URLSearchParams(window.location.search);
@@ -248,15 +248,10 @@ const OrgBoardContainer: React.FC<{}> = () => {
     }, [block.customId, block.type]);
 
     const render = () => {
-        if (loadBoardDataStatusAndControls.loading) {
+        if (orgDataOp.loading) {
             return <LoadingEllipsis />;
-        } else if (loadBoardDataStatusAndControls.errors) {
-            return (
-                <GeneralErrorList
-                    fill
-                    errors={loadBoardDataStatusAndControls.errors}
-                />
-            );
+        } else if (orgDataOp.errors) {
+            return <GeneralErrorList fill errors={orgDataOp.errors} />;
         }
 
         return (

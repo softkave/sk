@@ -63,17 +63,19 @@ export interface IMergedOperationStats {
     errors?: IAppError | IAppError[];
 }
 
-export function mergeOps(
-    opStats: IOperationDerivedData[]
-): IMergedOperationStats {
-    for (const opStat of opStats) {
-        if (!opStat.operation || opStat.isLoading) {
+export function mergeOps(ops: IOperationDerivedData[]): IMergedOperationStats {
+    for (const op of ops) {
+        if (op.isCompleted) {
+            continue;
+        }
+
+        if (!op.operation || op.isLoading) {
             return { loading: true };
         }
 
-        // Only returning the first error found
-        if (opStat.error) {
-            return { errors: opStat.error };
+        // TODO: Only returning the first error found
+        if (op.error) {
+            return { errors: op.error };
         }
     }
 
@@ -148,14 +150,18 @@ const useOperation: UseOperation = (
         return false;
     });
 
-    const statusData: IOperationDerivedData = operation
-        ? getOpStats(operation)
-        : {
-              isCompleted: false,
-              isError: false,
-              isLoading: false,
-              opId: selector.id || spareIdStore.id,
-          };
+    const statusData: IOperationDerivedData = React.useMemo(() => {
+        const data = operation
+            ? getOpStats(operation)
+            : {
+                  isCompleted: false,
+                  isError: false,
+                  isLoading: false,
+                  opId: selector.id || spareIdStore.id,
+              };
+
+        return data;
+    }, [operation, selector.id, spareIdStore.id]);
 
     React.useEffect(() => {
         if (isSelectorEmpty) {
@@ -172,19 +178,13 @@ const useOperation: UseOperation = (
     React.useEffect(() => {
         return () => {
             if (
-                // operation &&
                 spareIdStore.isUsingSpareId &&
                 options.deleteManagedOperationOnUnmount
             ) {
                 dispatch(OperationActions.deleteOperation(spareIdStore.id));
             }
         };
-    }, [
-        spareIdStore,
-        dispatch,
-        options.deleteManagedOperationOnUnmount,
-        // operation,
-    ]);
+    }, [spareIdStore, dispatch, options.deleteManagedOperationOnUnmount]);
 
     return statusData;
 };

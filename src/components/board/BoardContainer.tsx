@@ -65,32 +65,38 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     const resourceType =
         resourceTypeMatch && resourceTypeMatch.params.resourceType;
 
-    const loadTasks = (loadProps: IOperationDerivedData) => {
-        const shouldLoad = !loadProps.operation;
+    const loadTasks = React.useCallback(
+        (loadProps: IOperationDerivedData) => {
+            const shouldLoad = !loadProps.operation;
 
-        if (shouldLoad) {
-            dispatch(
-                loadBlockChildrenOpAction({
-                    block: board,
-                    typeList: [BlockType.Task],
-                    opId: loadProps.opId,
-                })
-            );
-        }
-    };
+            if (shouldLoad) {
+                dispatch(
+                    loadBlockChildrenOpAction({
+                        block: board,
+                        typeList: [BlockType.Task],
+                        opId: loadProps.opId,
+                    })
+                );
+            }
+        },
+        [dispatch, board]
+    );
 
-    const loadSprints = (loadProps: IOperationDerivedData) => {
-        const shouldLoad = !loadProps.operation;
+    const loadSprints = React.useCallback(
+        (loadProps: IOperationDerivedData) => {
+            const shouldLoad = !loadProps.operation;
 
-        if (shouldLoad) {
-            dispatch(
-                getSprintsOpAction({
-                    boardId: board.customId,
-                    opId: loadProps.opId,
-                })
-            );
-        }
-    };
+            if (shouldLoad) {
+                dispatch(
+                    getSprintsOpAction({
+                        boardId: board.customId,
+                        opId: loadProps.opId,
+                    })
+                );
+            }
+        },
+        [dispatch, board.customId]
+    );
 
     const sprintsOp = useOperation(
         {
@@ -109,6 +115,11 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         loadTasks,
         { deleteManagedOperationOnUnmount: false }
     );
+
+    // const fetchMissingOp = useFetchMissingBlockUpdates({
+    //     block: board,
+    //     isBlockDataLoaded: !!tasksOp && !!sprintsOp,
+    // });
 
     // TODO: this code is duplicated in SprintsContainer
     const closeSprint = async (sprintId: string) => {
@@ -177,6 +188,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     }, [board.customId, board.type]);
 
     const ops = mergeOps([tasksOp, sprintsOp]);
+    // const ops = mergeOps([tasksOp, sprintsOp, fetchMissingOp]);
 
     if (ops.loading) {
         return <LoadingEllipsis />;
@@ -184,7 +196,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         return <GeneralErrorList fill errors={ops.errors} />;
     }
 
-    // TODO: should we show error if block type is task?
+    // TODO: should we show error if block type is task ( it should never be task )?
     if (!resourceType) {
         const nextPath = path.normalize(blockPath + `/tasks`);
         return <Redirect to={nextPath} />;

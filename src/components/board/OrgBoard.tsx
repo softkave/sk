@@ -245,7 +245,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         );
     };
 
-    const ensureBoardsLoaded = (boardId: string) => {
+    const ensureBoardsAreLoaded = (boardId: string) => {
         return (
             <LoadBlockChildren
                 parent={block}
@@ -297,7 +297,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 <Route
                     path={`/app/orgs/${block.customId}/boards/:boardId`}
                     render={(routeProps) => {
-                        return ensureBoardsLoaded(
+                        return ensureBoardsAreLoaded(
                             routeProps.match.params.boardId
                         );
                     }}
@@ -337,7 +337,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                         <Route
                             path={`/app/orgs/${block.customId}/boards/:boardId`}
                             render={(routeProps) => {
-                                return ensureBoardsLoaded(
+                                return ensureBoardsAreLoaded(
                                     routeProps.match.params.boardId
                                 );
                             }}

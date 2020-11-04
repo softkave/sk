@@ -6,7 +6,6 @@ import {
     handleFetchMissingBroadcastsResponse,
 } from "../../../net/socket";
 import { getNewId } from "../../../utils/utils";
-import BlockActions from "../../blocks/actions";
 import { ResourceType } from "../../key-value/types";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -37,6 +36,8 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         id
     );
 
+    // TODO: should we return if client is currently fetching missing broadcasts
+    // and how can we coordinate them?
     if (isOperationStarted(operation)) {
         return;
     }
@@ -74,15 +75,6 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
 
             handleFetchMissingBroadcastsResponse(result);
         }
-
-        thunkAPI.dispatch(
-            BlockActions.updateBlock({
-                id: arg.block.customId,
-                data: {
-                    missingBroadcastsLastFetchedAt: Date.now(),
-                },
-            })
-        );
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
