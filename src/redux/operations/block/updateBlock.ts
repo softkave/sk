@@ -162,11 +162,11 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
     thunkAPI.dispatch(BlockActions.bulkUpdateBlocks(updates));
 };
 
-export const updateBlockOperationAction = createAsyncThunk<
+export const updateBlockOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
     IAppAsyncThunkConfig
->("block/updateBlock", async (arg, thunkAPI) => {
+>("op/block/updateBlock", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -178,7 +178,7 @@ export const updateBlockOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.UPDATE_BLOCK,
@@ -204,8 +204,8 @@ export const updateBlockOperationAction = createAsyncThunk<
         }
 
         // dispatch-type-error
-        await thunkAPI.dispatch(completeUpdateBlock(arg) as any);
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(completeUpdateBlock(arg) as any);
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.UPDATE_BLOCK,
@@ -213,7 +213,7 @@ export const updateBlockOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.UPDATE_BLOCK,
@@ -230,11 +230,11 @@ export const completeUpdateBlock = createAsyncThunk<
     void,
     IUpdateBlockOperationActionArgs,
     IAppAsyncThunkConfig
->("block/completeUpdateBlock", async (arg, thunkAPI) => {
+>("op/block/completeUpdateBlock", async (arg, thunkAPI) => {
     const forTransferBlockOnly = { ...arg.block, ...arg.data };
 
     if (hasBlockParentChanged(arg.block, forTransferBlockOnly)) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             transferBlockHelperAction({
                 data: {
                     draggedBlockId: forTransferBlockOnly.customId,
@@ -244,7 +244,7 @@ export const completeUpdateBlock = createAsyncThunk<
         );
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         BlockActions.updateBlock({
             id: arg.block.customId,
             data: arg.data,

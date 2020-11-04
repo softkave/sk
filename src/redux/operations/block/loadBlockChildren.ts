@@ -40,7 +40,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.LOAD_BLOCK_CHILDREN,
@@ -58,10 +58,9 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         }
 
         const { blocks } = result;
-        await thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));
-
         const boards: string[] = [];
 
+        thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));
         blocks.forEach((nextBlock) => {
             if (nextBlock.type === BlockType.Board) {
                 boards.push(nextBlock.customId);
@@ -69,7 +68,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         });
 
         if (boards.length > 0) {
-            await thunkAPI.dispatch(
+            thunkAPI.dispatch(
                 BlockActions.updateBlock({
                     id: arg.block.customId,
                     data: { boards },
@@ -80,7 +79,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
             );
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.LOAD_BLOCK_CHILDREN,
@@ -88,7 +87,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.LOAD_BLOCK_CHILDREN,

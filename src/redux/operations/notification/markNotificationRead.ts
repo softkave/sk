@@ -20,11 +20,11 @@ export interface IMarkNotificationReadOperationActionArgs {
     notification: INotification;
 }
 
-export const markNotificationReadOperationAction = createAsyncThunk<
+export const markNotificationReadOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IMarkNotificationReadOperationActionArgs>,
     IAppAsyncThunkConfig
->("notification/markNotificationRead", async (arg, thunkAPI) => {
+>("op/notification/markNotificationRead", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -36,7 +36,7 @@ export const markNotificationReadOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.MarkNotificationRead,
@@ -60,7 +60,7 @@ export const markNotificationReadOperationAction = createAsyncThunk<
         }
 
         // TODO: Should control wait for net call, or should it happen before net call?
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             NotificationActions.updateNotification({
                 id: arg.notification.customId,
                 data: { readAt },
@@ -70,7 +70,7 @@ export const markNotificationReadOperationAction = createAsyncThunk<
             })
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.MarkNotificationRead,
@@ -78,7 +78,7 @@ export const markNotificationReadOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.MarkNotificationRead,

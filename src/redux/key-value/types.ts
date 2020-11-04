@@ -23,12 +23,12 @@ export interface IUnseenChatsCountByOrg {
 
 export type ResourceType = "board" | "org" | "user" | "room";
 
-export interface ISubscriptionableResource {
+export interface IRoomLikeResource {
     customId: string;
     type: ResourceType;
 }
 
-export type ClientSubscribedResources = ISubscriptionableResource[];
+export type ClientSubscribedResources = IRoomLikeResource[];
 
 export interface IQueuedChatsByRoomId {
     [key: string]: Array<IChat & { chatIndex: number }>;

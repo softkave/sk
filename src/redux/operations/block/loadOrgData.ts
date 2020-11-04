@@ -36,24 +36,24 @@ ${errorFragment}
 ${collaboratorFragment}
 ${notificationFragment}
 query LoadOrgDataQuery ($blockId: String!) {
-  block {
-    getBlockCollaborators (blockId: $blockId) {
-      errors {
-        ...errorFragment
-      }
-      collaborators {
-        ...collaboratorFragment
-      }
+    block {
+        getBlockCollaborators (blockId: $blockId) {
+            errors {
+                ...errorFragment
+            }
+            collaborators {
+                ...collaboratorFragment
+            }
+        }
+        getBlockNotifications (blockId: $blockId) {
+            errors {
+                ...errorFragment
+            }
+            notifications {
+                ...notificationFragment
+            }
+        }
     }
-    getBlockNotifications (blockId: $blockId) {
-      errors {
-        ...errorFragment
-      }
-      notifications {
-        ...notificationFragment
-      }
-    }
-  }
 }
 `;
 
@@ -73,11 +73,11 @@ export interface ILoadOrgDataOperationActionArgs {
     block: IBlock;
 }
 
-export const loadOrgDataOperationAction = createAsyncThunk<
+export const loadOrgDataOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<ILoadOrgDataOperationActionArgs>,
     IAppAsyncThunkConfig
->("blockOperation/loadBoardData", async (arg, thunkAPI) => {
+>("op/block/loadBoardData", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -104,12 +104,10 @@ export const loadOrgDataOperationAction = createAsyncThunk<
             throw result.errors;
         }
 
-        // Save collaborators
         const collaborators = result.data[collaboratorsPath].collaborators;
-        thunkAPI.dispatch(UserActions.bulkAddUsers(collaborators));
-
-        // Save notifications
         const notifications = result.data[notificationsPath].notifications;
+
+        thunkAPI.dispatch(UserActions.bulkAddUsers(collaborators));
         thunkAPI.dispatch(
             NotificationActions.bulkAddNotifications(notifications)
         );
@@ -139,6 +137,7 @@ export const loadOrgDataOperationAction = createAsyncThunk<
             thunkAPI.getState(),
             arg.block.customId
         );
+
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
         const tempRooms = createOrgCollaboratorsTempRooms(
             collaborators,
@@ -167,7 +166,6 @@ export const loadOrgDataOperationAction = createAsyncThunk<
             })
         );
 
-        // End operation
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,

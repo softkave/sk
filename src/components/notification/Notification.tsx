@@ -11,7 +11,7 @@ import {
     INotification,
 } from "../../models/notification/notification";
 import { getNotification } from "../../redux/notifications/selectors";
-import { respondToNotificationOperationAction } from "../../redux/operations/notification/respondToNotification";
+import { respondToNotificationOpAction } from "../../redux/operations/notification/respondToNotification";
 import { AppDispatch, IAppState } from "../../redux/types";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
 import { getRequestStatus } from "../collaborator/utils";
@@ -62,7 +62,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
         selectedResponse: CollaborationRequestStatusType
     ) => {
         const result = await dispatch(
-            respondToNotificationOperationAction({
+            respondToNotificationOpAction({
                 response: selectedResponse,
                 request: notification!,
                 opId: opStatus.opId,

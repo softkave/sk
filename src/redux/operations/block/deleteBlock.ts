@@ -38,7 +38,7 @@ export const deleteBlockOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.DELETE_BLOCK,
@@ -58,8 +58,8 @@ export const deleteBlockOperationAction = createAsyncThunk<
         }
 
         // dispatch-type-error
-        await thunkAPI.dispatch(completeDeleteBlock(arg) as any);
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(completeDeleteBlock(arg) as any);
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.DELETE_BLOCK,
@@ -67,7 +67,7 @@ export const deleteBlockOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.DELETE_BLOCK,

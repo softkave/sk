@@ -17,11 +17,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { IOperationActionBaseArgs } from "../types";
 
-export const loadUserNotificationsOperationAction = createAsyncThunk<
+export const loadUserNotificationsOpAction = createAsyncThunk<
     IOperation | undefined,
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
->("notification/loadUserNotifications", async (arg, thunkAPI) => {
+>("op/notification/loadUserNotifications", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -33,7 +33,7 @@ export const loadUserNotificationsOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(id, OperationType.LoadUserNotifications)
     );
 
@@ -45,17 +45,17 @@ export const loadUserNotificationsOperationAction = createAsyncThunk<
         }
 
         // dispatch-type-error
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             completeLoadUserNotifications({
                 notifications: result.notifications,
             }) as any
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LoadUserNotifications)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.LoadUserNotifications,
@@ -71,16 +71,14 @@ export const completeLoadUserNotifications = createAsyncThunk<
     void,
     { notifications: INotification[] },
     IAppAsyncThunkConfig
->("notification/completeLoadUserNotifications", async (arg, thunkAPI) => {
+>("op/notification/completeLoadUserNotifications", async (arg, thunkAPI) => {
     const { notifications } = arg;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     const ids = notifications.map((request) => request.customId);
 
-    await thunkAPI.dispatch(
-        NotificationActions.bulkAddNotifications(notifications)
-    );
+    thunkAPI.dispatch(NotificationActions.bulkAddNotifications(notifications));
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         UserActions.updateUser({
             id: user.customId,
             data: {

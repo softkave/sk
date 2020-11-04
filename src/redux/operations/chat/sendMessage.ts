@@ -34,11 +34,11 @@ export class RoomDoesNotExistError extends Error {
     public message = "Room does not exist";
 }
 
-export const sendMessageOperationAction = createAsyncThunk<
+export const sendMessageOpAction = createAsyncThunk<
     void,
     GetOperationActionArgs<Required<ISendMessageAPIParameters>>,
     IAppAsyncThunkConfig
->("chat/sendMessage", async (arg, thunkAPI) => {
+>("op/chat/sendMessage", async (arg, thunkAPI) => {
     const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
     // const isDemoMode = true;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());

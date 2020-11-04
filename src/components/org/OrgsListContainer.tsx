@@ -12,8 +12,8 @@ import {
 } from "../../redux/key-value/types";
 import { getNotifications } from "../../redux/notifications/selectors";
 import { loadRootBlocksOperationAction } from "../../redux/operations/block/loadRootBlocks";
-import { getUserRoomsAndChatsOperationAction } from "../../redux/operations/chat/getUserRoomsAndChats";
-import { loadUserNotificationsOperationAction } from "../../redux/operations/notification/loadUserNotifications";
+import { getUserRoomsAndChatsOpAction } from "../../redux/operations/chat/getUserRoomsAndChats";
+import { loadUserNotificationsOpAction } from "../../redux/operations/notification/loadUserNotifications";
 import OperationType from "../../redux/operations/OperationType";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -56,7 +56,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
 
             if (shouldLoad) {
                 await dispatch(
-                    getUserRoomsAndChatsOperationAction({
+                    getUserRoomsAndChatsOpAction({
                         opId: loadRequestsProps.opId,
                     })
                 );
@@ -110,7 +110,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
 
             if (shouldLoad) {
                 await dispatch(
-                    loadUserNotificationsOperationAction({
+                    loadUserNotificationsOpAction({
                         opId: loadRequestsProps.opId,
                     })
                 );

@@ -23,11 +23,11 @@ import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { IOperationActionBaseArgs } from "../types";
 
-export const getUserRoomsAndChatsOperationAction = createAsyncThunk<
+export const getUserRoomsAndChatsOpAction = createAsyncThunk<
     IOperation | undefined,
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
->("chat/getUserRoomsAndChats", async (arg, thunkAPI) => {
+>("op/chat/getUserRoomsAndChats", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(

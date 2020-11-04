@@ -3,7 +3,7 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBlock, IBoardTaskResolution } from "../../models/block/block";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import {
@@ -37,7 +37,7 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
 
     const onSaveChanges = async (values: IBoardTaskResolution[]) => {
         const result = await dispatch(
-            updateBlockOperationAction({
+            updateBlockOpAction({
                 opId: operationStatus.opId,
                 block,
                 data: {

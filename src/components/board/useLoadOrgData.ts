@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { IBlock } from "../../models/block/block";
-import { loadOrgDataOperationAction } from "../../redux/operations/block/loadOrgData";
+import { loadOrgDataOpAction } from "../../redux/operations/block/loadOrgData";
 import OperationType from "../../redux/operations/OperationType";
 import useOperation, {
     IMergedOperationStats,
@@ -18,7 +18,7 @@ export function useLoadOrgData(org: IBlock): IMergedOperationStats {
         (loadProps: IOperationDerivedData) => {
             if (!loadProps.operation) {
                 dispatch(
-                    loadOrgDataOperationAction({
+                    loadOrgDataOpAction({
                         block: org,
                         opId: loadProps.opId,
                     })

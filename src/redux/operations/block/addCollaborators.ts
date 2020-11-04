@@ -37,7 +37,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IAddCollaboratorsOperationActionArgs>,
     IAppAsyncThunkConfig
->("block/addCollaborators", async (arg, thunkAPI) => {
+>("op/block/addCollaborators", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -49,7 +49,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.ADD_COLLABORATORS,
@@ -127,7 +127,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
             );
         }
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.ADD_COLLABORATORS,
@@ -135,7 +135,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.ADD_COLLABORATORS,

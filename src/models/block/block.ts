@@ -108,6 +108,9 @@ export interface IBlock {
     boards?: string[];
     collaborators?: string[];
     notifications?: string[];
+
+    userLeftBlockAt?: number;
+    missingBroadcastsLastFetchedAt?: number;
 }
 
 // const blockFieldsToBlockTypes: {

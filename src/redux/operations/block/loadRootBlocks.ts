@@ -18,7 +18,7 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
     IOperation | undefined,
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
->("session/loadRootBlocks", async (arg, thunkAPI) => {
+>("op/block/loadRootBlocks", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -30,7 +30,7 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(id, OperationType.LOAD_ROOT_BLOCKS)
     );
 
@@ -43,13 +43,12 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
 
         const { blocks: rootBlocks } = result;
 
-        await thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
-
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
+        thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LOAD_ROOT_BLOCKS)
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(id, OperationType.LOAD_ROOT_BLOCKS, error)
         );
     }

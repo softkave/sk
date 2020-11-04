@@ -21,11 +21,12 @@ export const transferBlockHelperAction = createAsyncThunk<
     void,
     GetOperationActionArgs<ITransferBlockProps>,
     IAppAsyncThunkConfig
->("session/transferBlockHelperAction", async (arg, thunkAPI) => {
+>("op/block/transferBlockHelperAction", async (arg, thunkAPI) => {
     const draggedBlock = BlockSelectors.getBlock(
         thunkAPI.getState(),
         arg.data.draggedBlockId
     )!;
+
     const destinationBlock = BlockSelectors.getBlock(
         thunkAPI.getState(),
         arg.data.destinationBlockId
@@ -36,21 +37,7 @@ export const transferBlockHelperAction = createAsyncThunk<
         parent: destinationBlock.customId,
     };
 
-    // Already done in task form, will conflict
-    // if (draggedBlock.type === BlockType.Task) {
-    //   const statuses = destinationBlock.boardStatuses || [];
-
-    //   if (statuses.length > 0) {
-    //     const user = SessionSelectors.getSignedInUserRequired(
-    //       thunkAPI.getState()
-    //     );
-    //     draggedBlockUpdates.status = statuses[0]?.customId;
-    //     draggedBlockUpdates.statusAssignedAt = getDateString();
-    //     draggedBlockUpdates.statusAssignedBy = user.customId;
-    //   }
-    // }
-
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         BlockActions.updateBlock({
             id: draggedBlock.customId,
             data: draggedBlockUpdates,

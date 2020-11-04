@@ -3,7 +3,7 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBlock, IBlockStatus } from "../../models/block/block";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import {
@@ -35,7 +35,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
 
     const onSaveChanges = async (values: IBlockStatus[]) => {
         const result = await dispatch(
-            updateBlockOperationAction({
+            updateBlockOpAction({
                 opId: operationStatus.opId,
                 block,
                 data: {

@@ -6,6 +6,7 @@ enum OperationType {
     DELETE_BLOCK = "DELETE_BLOCK",
     LOAD_BLOCK_CHILDREN = "LOAD_BLOCK_CHILDREN",
     ADD_COLLABORATORS = "ADD_COLLABORATORS",
+    FETCH_BLOCK_BROADCASTS = "FETCH_BLOCK_BROADCASTS",
 
     // notification
     LoadUserNotifications = "LoadUserNotifications",

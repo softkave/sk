@@ -4,8 +4,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { addBlockOpAction } from "../../redux/operations/block/addBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
@@ -46,14 +46,14 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
 
         const result = props.block
             ? await dispatch(
-                  updateBlockOperationAction({
+                  updateBlockOpAction({
                       block,
                       data,
                       opId: operationStatus.opId,
                   })
               )
             : await dispatch(
-                  addBlockOperationAction({
+                  addBlockOpAction({
                       block: data,
                       opId: operationStatus.opId,
                   })

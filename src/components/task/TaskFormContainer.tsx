@@ -7,8 +7,8 @@ import { ISprint } from "../../models/sprint/types";
 import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
-import { addBlockOperationAction } from "../../redux/operations/block/addBlock";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { addBlockOpAction } from "../../redux/operations/block/addBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -119,14 +119,14 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
         const result = existingBlock
             ? await dispatch(
-                  updateBlockOperationAction({
+                  updateBlockOpAction({
                       block,
                       data,
                       opId: operationStatus.opId,
                   })
               )
             : await dispatch(
-                  addBlockOperationAction({
+                  addBlockOpAction({
                       block: data,
                       opId: operationStatus.opId,
                   })

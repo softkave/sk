@@ -23,11 +23,11 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 import { getRoomUserUnseenChatsCountAndStartIndex } from "./getUserRoomsAndChats";
 
-export const updateRoomReadCounterOperationAction = createAsyncThunk<
+export const updateRoomReadCounterOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IUpdateRoomReadCounterAPIParameters>,
     IAppAsyncThunkConfig
->("chat/updateRoomReadCounter", async (arg, thunkAPI) => {
+>("op/chat/updateRoomReadCounter", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(

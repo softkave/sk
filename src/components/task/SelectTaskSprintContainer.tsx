@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
 import useOperation, { getOpStats } from "../hooks/useOperation";
@@ -37,7 +37,7 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
             }
 
             const result = await dispatch(
-                updateBlockOperationAction({
+                updateBlockOpAction({
                     opId: updateOp.opId,
                     block: task,
                     data: {

@@ -29,11 +29,11 @@ export interface IRespondToNotificationOperationActionArgs {
     response: CollaborationRequestStatusType;
 }
 
-export const respondToNotificationOperationAction = createAsyncThunk<
+export const respondToNotificationOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IRespondToNotificationOperationActionArgs>,
     IAppAsyncThunkConfig
->("notification/respondToNotification", async (arg, thunkAPI) => {
+>("op/notification/respondToNotification", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -45,7 +45,7 @@ export const respondToNotificationOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.RespondToNotification,
@@ -81,14 +81,14 @@ export const respondToNotificationOperationAction = createAsyncThunk<
         }
 
         // dte
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             completeUserNotificationResponse({
                 ...arg,
                 block,
             }) as any
         );
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.RespondToNotification,
@@ -96,7 +96,7 @@ export const respondToNotificationOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.RespondToNotification,
@@ -113,31 +113,34 @@ export const completePartialNotificationResponse = createAsyncThunk<
     void,
     IRespondToNotificationOperationActionArgs,
     IAppAsyncThunkConfig
->("notification/completePartialNotificationResponse", async (arg, thunkAPI) => {
-    const statusHistory =
-        arg.request.statusHistory?.concat({
-            status: arg.response,
-            date: getDateString(),
-        }) || [];
+>(
+    "op/notification/completePartialNotificationResponse",
+    async (arg, thunkAPI) => {
+        const statusHistory =
+            arg.request.statusHistory?.concat({
+                status: arg.response,
+                date: getDateString(),
+            }) || [];
 
-    const update = { statusHistory };
+        const update = { statusHistory };
 
-    await thunkAPI.dispatch(
-        NotificationActions.updateNotification({
-            id: arg.request.customId,
-            data: update,
-            meta: {
-                arrayUpdateStrategy: "replace",
-            },
-        })
-    );
-});
+        thunkAPI.dispatch(
+            NotificationActions.updateNotification({
+                id: arg.request.customId,
+                data: update,
+                meta: {
+                    arrayUpdateStrategy: "replace",
+                },
+            })
+        );
+    }
+);
 
 export const completeUserNotificationResponse = createAsyncThunk<
     void,
     IRespondToNotificationOperationActionArgs & { block?: IBlock },
     IAppAsyncThunkConfig
->("notification/completeUserNotificationResponse", async (arg, thunkAPI) => {
+>("op/notification/completeUserNotificationResponse", async (arg, thunkAPI) => {
     const { block } = arg;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
@@ -145,8 +148,8 @@ export const completeUserNotificationResponse = createAsyncThunk<
     thunkAPI.dispatch(completePartialNotificationResponse(arg) as any);
 
     if (arg.response === CollaborationRequestStatusType.Accepted && block) {
-        await thunkAPI.dispatch(BlockActions.addBlock(block));
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(BlockActions.addBlock(block));
+        thunkAPI.dispatch(
             UserActions.updateUser({
                 id: user.customId,
                 data: { orgs: [{ customId: arg.request.from!.blockId }] },

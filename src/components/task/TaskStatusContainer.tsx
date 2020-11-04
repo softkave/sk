@@ -9,7 +9,7 @@ import {
     IBoardTaskResolution,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { updateBlockOperationAction } from "../../redux/operations/block/updateBlock";
+import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
 import useOperation, { getOpStats } from "../hooks/useOperation";
@@ -58,7 +58,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
             }
 
             const result = await dispatch(
-                updateBlockOperationAction({
+                updateBlockOpAction({
                     opId: updateOp.opId,
                     block: task,
                     data: update,
@@ -90,7 +90,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
             }
 
             const result = await dispatch(
-                updateBlockOperationAction({
+                updateBlockOpAction({
                     opId: updateOp.opId,
                     block: task,
                     data: {

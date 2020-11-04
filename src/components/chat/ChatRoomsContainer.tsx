@@ -11,8 +11,8 @@ import {
     IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";
 import BlockSelectors from "../../redux/blocks/selectors";
-import { sendMessageOperationAction } from "../../redux/operations/chat/sendMessage";
-import { updateRoomReadCounterOperationAction } from "../../redux/operations/chat/updateRoomReadCounter";
+import { sendMessageOpAction } from "../../redux/operations/chat/sendMessage";
+import { updateRoomReadCounterOpAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
 import { IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
@@ -98,14 +98,14 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
 
     const onSendMessage = React.useCallback(
         (args: Required<ISendMessageAPIParameters>) => {
-            dispatch(sendMessageOperationAction(args));
+            dispatch(sendMessageOpAction(args));
         },
         [dispatch]
     );
 
     const updateRoomReadCounter = React.useCallback(
         (args: IUpdateRoomReadCounterAPIParameters) => {
-            dispatch(updateRoomReadCounterOperationAction(args));
+            dispatch(updateRoomReadCounterOpAction(args));
         },
         [dispatch]
     );

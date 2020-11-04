@@ -7,6 +7,7 @@ import {
     CollaborationRequestStatusType,
     INotification,
 } from "../models/notification/notification";
+import { getRoomId, getRoomLikeResource } from "../models/rooms/utils";
 import { ISprint, SprintDuration } from "../models/sprint/types";
 import BlockSelectors from "../redux/blocks/selectors";
 import KeyValueActions from "../redux/key-value/actions";
@@ -293,7 +294,7 @@ function handleConnect(token: string, clientId: string) {
     socket?.emit(OutgoingSocketEvents.Auth, authData, handleAuthResponse);
 }
 
-function handleAuthResponse(data: IIncomingAuthPacket) {
+async function handleAuthResponse(data: IIncomingAuthPacket) {
     if (!data.valid) {
         connectionFailedBefore = true;
 
@@ -318,12 +319,9 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
         ) || {};
 
     const roomSignatures = Object.keys(rooms);
-    const items = roomSignatures.map((signature) => {
-        const split = signature.split("-");
-        const type = split.shift();
-        const resourceId = split.join("-"); // we use uuids, and they ( uuid ) use '-'
-        return { type: type!, customId: resourceId };
-    }) as ClientSubscribedResources;
+    const items = roomSignatures.map((signature) =>
+        getRoomLikeResource(signature)
+    ) as ClientSubscribedResources;
 
     subscribe(items);
 
@@ -340,7 +338,18 @@ function handleAuthResponse(data: IIncomingAuthPacket) {
             })
         );
 
-        fetchMissingBroadcasts(socketDisconnectedAt as number, roomSignatures);
+        const packet = await fetchMissingBroadcasts(
+            socketDisconnectedAt as number,
+            roomSignatures
+        );
+
+        handleFetchMissingBroadcastsResponse(packet);
+        store.dispatch(
+            KeyValueActions.setKey({
+                key: KeyValueKeys.FetchingMissingBroadcasts,
+                value: false,
+            })
+        );
     }
 }
 
@@ -367,7 +376,7 @@ function handleDisconnect() {
     }
 }
 
-function handleFetchMissingBroadcastsResponse(
+export function handleFetchMissingBroadcastsResponse(
     data: IIncomingBroadcastHistoryPacket
 ) {
     if (data.reload) {
@@ -413,13 +422,6 @@ function handleFetchMissingBroadcastsResponse(
             }
         });
     });
-
-    store.dispatch(
-        KeyValueActions.setKey({
-            key: KeyValueKeys.FetchingMissingBroadcasts,
-            value: false,
-        })
-    );
 }
 
 function handleBlockUpdate(data: IBlockUpdatePacket) {
@@ -689,7 +691,7 @@ export function subscribe(items: ClientSubscribedResources) {
             ) || {};
 
         items.forEach((item) => {
-            const roomSignature = `${item.type}-${item.customId}`;
+            const roomSignature = getRoomId(item);
 
             if (!rooms[roomSignature]) {
                 roomsToPush.push(roomSignature);
@@ -724,11 +726,14 @@ export function unsubcribe(items: ClientSubscribedResources) {
     }
 }
 
-function fetchMissingBroadcasts(from: number, rooms: string[]) {
-    const arg: IOutgoingFetchMissingBroadcastsPacket = { from, rooms };
-    socket?.emit(
+export function fetchMissingBroadcasts(fromTimestamp: number, rooms: string[]) {
+    const arg: IOutgoingFetchMissingBroadcastsPacket = {
+        rooms,
+        from: fromTimestamp,
+    };
+
+    return promisifiedEmit<IIncomingBroadcastHistoryPacket>(
         OutgoingSocketEvents.FetchMissingBroadcasts,
-        arg,
-        handleFetchMissingBroadcastsResponse
+        arg
     );
 }

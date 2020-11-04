@@ -30,7 +30,7 @@ export const completeAddBlock = createAsyncThunk<
     IAddBlockOperationActionArgs,
     IAppAsyncThunkConfig
 >("blockOperation/completeAddBlock", async (arg, thunkAPI) => {
-    await thunkAPI.dispatch(BlockActions.addBlock(arg.block));
+    thunkAPI.dispatch(BlockActions.addBlock(arg.block));
 
     let parent: IBlock | undefined;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
@@ -43,7 +43,7 @@ export const completeAddBlock = createAsyncThunk<
         const pluralType = `${arg.block.type}s`;
         const parentUpdate = { [pluralType]: [arg.block.customId] };
 
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             BlockActions.updateBlock({
                 id: parent.customId,
                 data: parentUpdate,
@@ -55,7 +55,7 @@ export const completeAddBlock = createAsyncThunk<
     }
 
     if (arg.block.type === BlockType.Org) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             UserActions.updateUser({
                 id: user.customId,
                 data: { orgs: [{ customId: arg.block.customId }] },
@@ -101,11 +101,11 @@ export const completeAddBlock = createAsyncThunk<
     }
 });
 
-export const addBlockOperationAction = createAsyncThunk<
+export const addBlockOpAction = createAsyncThunk<
     IOperation | undefined,
     GetOperationActionArgs<IAddBlockOperationActionArgs>,
     IAppAsyncThunkConfig
->("blockOperation/addBlock", async (arg, thunkAPI) => {
+>("op/block/addBlock", async (arg, thunkAPI) => {
     const id = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -117,7 +117,7 @@ export const addBlockOperationAction = createAsyncThunk<
         return;
     }
 
-    await thunkAPI.dispatch(
+    thunkAPI.dispatch(
         dispatchOperationStarted(
             id,
             OperationType.ADD_BLOCK,
@@ -142,8 +142,8 @@ export const addBlockOperationAction = createAsyncThunk<
 
         // TODO: find a fix for the type error occurring here
         // dispatch-type-error
-        await thunkAPI.dispatch(completeAddBlock({ block: arg.block }) as any);
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(completeAddBlock({ block: arg.block }) as any);
+        thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,
                 OperationType.ADD_BLOCK,
@@ -151,7 +151,7 @@ export const addBlockOperationAction = createAsyncThunk<
             )
         );
     } catch (error) {
-        await thunkAPI.dispatch(
+        thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.ADD_BLOCK,
