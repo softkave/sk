@@ -122,7 +122,9 @@ function seedRequest({
     const r = requestDatesAndStatus[status];
 
     const request: INotification = {
-        body: message || "Sample collaboration request message",
+        body:
+            message ||
+            "Join us, we have tuna! No we don't, *rolls eyes. But join us?",
         createdAt: r.createdAt,
         customId: getNewId(),
         to: {
@@ -407,46 +409,49 @@ function seedTaskLabels(
 
 export default function seedDemoData({ name }: { name?: string } = {}) {
     const user = seedUser({
-        name: name || "Demo User One",
+        name: name || "Abayomi Isaac",
         email: "demo-user-1@softkave.com",
     });
 
     const demoUser2 = seedUser({
-        name: "Demo User Two",
+        name: "Solomon Temitope",
         email: "demo-user-2@softkave.com",
     });
 
     const demoUser3 = seedUser({
-        name: "Demo User Three",
+        name: "Yomi Isaac",
         email: "demo-user-3@softkave.com",
     });
 
     const org1 = seedBlock({
         user,
-        name: "Demo Org One",
+        name: "Softkave",
         type: BlockType.Org,
-        description: "Sample Org",
+        description:
+            "We make startup productivity tools, from chat, to task management.",
     });
 
     const org2 = seedBlock({
         user,
-        name: "Demo Org Two",
+        name: "Our Awesome Company",
         type: BlockType.Org,
-        description: "Sample Org",
+        description:
+            "We are just very awesome individuals that do what we love.",
     });
 
     const org3 = seedBlock({
         user,
-        name: "Demo Org Three",
+        name: "The Can Factory",
         type: BlockType.Org,
-        description: "Sample Org",
+        description:
+            "Simple and efficient can factory. We strive to be the best!",
     });
 
     const org4 = seedBlock({
         user,
-        name: "Demo Org Four",
+        name: "Pot of Beans",
         type: BlockType.Org,
-        description: "Sample Org",
+        description: "We make comic books.",
     });
 
     const org1Rooms = seedRooms({
@@ -463,7 +468,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
 
     const board1 = seedBlock({
         user,
-        name: "Demo Board One",
+        name: "App Engineering Efforts",
         type: BlockType.Board,
         description: "Sample Board",
         parent: org1,
@@ -519,7 +524,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
 
     const board2 = seedBlock({
         user,
-        name: "Demo Board Two",
+        name: "Marketing 101",
         type: BlockType.Board,
         description: "Sample Board",
         boardLabels: seedLabels(user, [
@@ -547,9 +552,10 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
 
     const task1 = seedBlock({
         user,
-        name: "Demo Task One",
+        name: "Build Softkave, a super-awesome chat and task management app.",
         type: BlockType.Task,
-        description: "Sample Task",
+        description:
+            "We are currently light on details, but we'll update the task as we receive more information from the higher up. -- Classic Product Manager tact. LoL.",
         assignees: [user, demoUser2],
         dueAt: moment().add(2, "weeks").toISOString(),
         parent: board1,
@@ -557,15 +563,16 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
             board1.boardLabels![0],
             board1.boardLabels![2],
         ]),
-        priority: BlockPriority.NotImportant,
+        priority: BlockPriority.Important,
         status: board1.boardStatuses![0].customId,
     });
 
     const task2 = seedBlock({
         user,
-        name: "Demo Task One",
+        name: "Avengers Assemble!",
         type: BlockType.Task,
-        description: "Sample Task",
+        description:
+            "Hired skill workers for the task ahead, it's not for the faint of heart.",
         assignees: [user, demoUser2],
         dueAt: moment().add(2, "weeks").toISOString(),
         parent: board1,
@@ -579,9 +586,10 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
 
     const task3 = seedBlock({
         user,
-        name: "Demo Task One",
+        name: "Rule the world, muah ha ha!!",
         type: BlockType.Task,
-        description: "Sample Task",
+        description:
+            "Just casually displaying Darth Vader traits! Long live the Sith!!",
         assignees: [user, demoUser2],
         dueAt: moment().add(2, "weeks").toISOString(),
         parent: board1,
@@ -590,20 +598,6 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         status: board1.boardStatuses![board1.boardStatuses!.length - 1]
             .customId,
         taskResolution: board1.boardResolutions![0].customId,
-    });
-
-    const userOrg2DeclinedRequest = seedRequest({
-        from: demoUser3,
-        fromOrg: org2,
-        to: user,
-        status: CollaborationRequestStatusType.Declined,
-    });
-
-    const userOrg3ExpiredRequest = seedRequest({
-        from: demoUser3,
-        fromOrg: org3,
-        to: user,
-        status: CollaborationRequestStatusType.Expired,
     });
 
     const userOrg4PendingRequest = seedRequest({
@@ -627,11 +621,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
     const board2Ops = seedBoardOps(board2);
 
     updateUserData(user, {
-        notifications: [
-            userOrg3ExpiredRequest,
-            userOrg2DeclinedRequest,
-            userOrg4PendingRequest,
-        ],
+        notifications: [userOrg4PendingRequest],
         orgs: [org1],
     });
 
@@ -654,13 +644,13 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
     updateBlockData(org2, {
         boards: [],
         collaborators: [demoUser3],
-        notifications: [userOrg2DeclinedRequest],
+        notifications: [],
     });
 
     updateBlockData(org3, {
         boards: [],
         collaborators: [demoUser3],
-        notifications: [userOrg3ExpiredRequest],
+        notifications: [],
     });
 
     updateBlockData(org4, {
@@ -675,12 +665,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         boards: [board1, board2],
         tasks: [task1, task2, task3],
         blocks: [org1, org2, org3, org4, board1, board2, task1, task2, task3],
-        requests: [
-            userOrg4PendingRequest,
-            userOrg2DeclinedRequest,
-            userOrg3ExpiredRequest,
-            org1AcceptedRequest,
-        ],
+        requests: [userOrg4PendingRequest, org1AcceptedRequest],
         rooms: org1Rooms.concat(org4Rooms),
         ops: userOps.concat(org1Ops, org4Ops, board1Ops, board2Ops),
         web: {
