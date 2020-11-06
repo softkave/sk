@@ -193,6 +193,8 @@ export const updateBlockOpAction = createAsyncThunk<
             arg.data.subTasks = addCustomIdToSubTasks(arg.data.subTasks);
         }
 
+        assignUserToTaskOnUpdateStatus(thunkAPI, arg.block, arg.data);
+
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
@@ -256,3 +258,29 @@ export const completeUpdateBlock = createAsyncThunk<
 
     updateTasksIfHasDeletedStatusesOrLabels(arg, thunkAPI);
 });
+
+function assignUserToTaskOnUpdateStatus(
+    store: IStoreLikeObject,
+    block: IBlock,
+    data: Partial<IBlock>
+) {
+    if (block.type !== BlockType.Task) {
+        return;
+    }
+
+    if (data.status && data.status !== block.status) {
+        const assignees = data.assignees || block.assignees || [];
+
+        if (assignees.length === 0) {
+            const user = SessionSelectors.assertGetUser(store.getState());
+
+            data.assignees = [
+                {
+                    userId: user.customId,
+                    assignedAt: getDateString(),
+                    assignedBy: user.customId,
+                },
+            ];
+        }
+    }
+}

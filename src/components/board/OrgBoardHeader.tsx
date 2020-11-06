@@ -34,7 +34,7 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
 
     const onSelectSettingsMenuItem = (key: OrgHeaderSettingsMenuKey) => {
         switch (key) {
-            case "view":
+            case OrgHeaderSettingsMenuKey.EDIT:
                 onClickEditBlock();
                 break;
         }

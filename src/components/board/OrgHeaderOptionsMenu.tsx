@@ -8,7 +8,9 @@ import MenuWithTrigger, {
     IMenuWithTriggerRenderTriggerProps,
 } from "./MenuWithTrigger";
 
-export type OrgHeaderSettingsMenuKey = "view";
+export enum OrgHeaderSettingsMenuKey {
+    EDIT = "EDIT",
+}
 
 export interface IOrgHeaderOptionsMenuProps {
     block: IBlock;
@@ -37,8 +39,6 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
 
     const renderBlockOptions = React.useCallback(
         (renderMenuProps: IMenuWithTriggerRenderMenuProps) => {
-            const extraOptions: React.ReactNode[] = [];
-
             return (
                 <Menu
                     onClick={(event) => {
@@ -46,10 +46,9 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
                         renderMenuProps.closeMenu();
                     }}
                 >
-                    {extraOptions}
                     <Menu.Item
                         style={{ textTransform: "capitalize" }}
-                        key="view"
+                        key={OrgHeaderSettingsMenuKey.EDIT}
                     >
                         <Space align="center" size={12}>
                             <Edit3

@@ -167,7 +167,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
         }
 
         switch (boardForm.type) {
-            case BlockType.Task: {
+            case BlockType.Org: {
                 return (
                     <EditOrgFormInDrawer
                         visible
@@ -228,12 +228,12 @@ const OrgBoardContainer: React.FC<{}> = () => {
                         type: blockType,
                     });
                 }}
-                onClickUpdateBlock={(blockToUpdate) =>
+                onClickUpdateBlock={(blockToUpdate) => {
                     setBoardForm({
                         type: blockToUpdate.type,
                         block: blockToUpdate,
-                    })
-                }
+                    });
+                }}
                 onAddCollaborator={() => setShowCollaboratorsForm(true)}
             />
         );
