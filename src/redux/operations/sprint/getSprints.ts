@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
+import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -35,13 +37,20 @@ export const getSprintsOpAction = createAsyncThunk<
     );
 
     try {
-        const result = await SprintAPI.getSprints(arg.boardId);
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        let sprints: ISprint[] = [];
 
-        if (result && result.errors) {
-            throw result.errors;
+        if (!isDemoMode) {
+            const result = await SprintAPI.getSprints(arg.boardId);
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
+
+            sprints = result.data || [];
         }
 
-        thunkAPI.dispatch(SprintActions.bulkAddSprints(result.data!));
+        thunkAPI.dispatch(SprintActions.bulkAddSprints(sprints));
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 id,

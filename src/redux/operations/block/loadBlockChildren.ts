@@ -3,6 +3,7 @@ import { BlockType, IBlock } from "../../../models/block/block";
 import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
+import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -51,13 +52,22 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
     );
 
     try {
-        const result = await BlockAPI.getBlockChildren(arg.block, arg.typeList);
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        let blocks: IBlock[] = [];
 
-        if (result && result.errors) {
-            throw result.errors;
+        if (!isDemoMode) {
+            const result = await BlockAPI.getBlockChildren(
+                arg.block,
+                arg.typeList
+            );
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
+
+            blocks = result.blocks || [];
         }
 
-        const { blocks } = result;
         const boards: string[] = [];
 
         thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));

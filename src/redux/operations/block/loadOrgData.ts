@@ -98,73 +98,88 @@ export const loadOrgDataOpAction = createAsyncThunk<
     );
 
     try {
-        const result = await getData(arg.block);
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
-        if (result.errors) {
-            throw result.errors;
+        if (!isDemoMode) {
+            const result = await getData(arg.block);
+
+            if (result.errors) {
+                throw result.errors;
+            }
+
+            const collaborators = result.data[collaboratorsPath].collaborators;
+            const notifications = result.data[notificationsPath].notifications;
+
+            thunkAPI.dispatch(UserActions.bulkAddUsers(collaborators));
+            thunkAPI.dispatch(
+                NotificationActions.bulkAddNotifications(notifications)
+            );
+
+            // Cache collaborator and notification ids in the block
+            const notificationIds = notifications.map(
+                (notification) => notification.customId
+            );
+
+            const collaboratorIds = collaborators.map(
+                (collaborator) => collaborator.customId
+            );
+
+            thunkAPI.dispatch(
+                BlockActions.updateBlock({
+                    id: arg.block.customId,
+                    data: {
+                        collaborators: collaboratorIds,
+                        notifications: notificationIds,
+                    },
+                    meta: { arrayUpdateStrategy: "replace" },
+                })
+            );
+
+            // Generate org temp rooms
+            const existingRooms = RoomSelectors.getOrgRooms(
+                thunkAPI.getState(),
+                arg.block.customId
+            );
+
+            const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+            const tempRooms = createOrgCollaboratorsTempRooms(
+                collaborators,
+                existingRooms,
+                user.customId,
+                arg.block.customId
+            );
+
+            thunkAPI.dispatch(RoomActions.bulkAddRooms(tempRooms));
+
+            const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
+                thunkAPI.getState(),
+                KeyValueKeys.UnseenChatsCountByOrg
+            );
+
+            const a = { ...unseenChatsCountMapByOrg };
+
+            tempRooms.forEach((rm) => {
+                a[rm.orgId] = (a[rm.orgId] || 0) + rm.unseenChatsCount;
+            });
+
+            thunkAPI.dispatch(
+                KeyValueActions.setKey({
+                    key: KeyValueKeys.UnseenChatsCountByOrg,
+                    value: a,
+                })
+            );
+        } else {
+            thunkAPI.dispatch(
+                BlockActions.updateBlock({
+                    id: arg.block.customId,
+                    data: {
+                        collaborators: [],
+                        notifications: [],
+                    },
+                    meta: { arrayUpdateStrategy: "replace" },
+                })
+            );
         }
-
-        const collaborators = result.data[collaboratorsPath].collaborators;
-        const notifications = result.data[notificationsPath].notifications;
-
-        thunkAPI.dispatch(UserActions.bulkAddUsers(collaborators));
-        thunkAPI.dispatch(
-            NotificationActions.bulkAddNotifications(notifications)
-        );
-
-        // Cache collaborator and notification ids in the block
-        const notificationIds = notifications.map(
-            (notification) => notification.customId
-        );
-
-        const collaboratorIds = collaborators.map(
-            (collaborator) => collaborator.customId
-        );
-
-        thunkAPI.dispatch(
-            BlockActions.updateBlock({
-                id: arg.block.customId,
-                data: {
-                    collaborators: collaboratorIds,
-                    notifications: notificationIds,
-                },
-                meta: { arrayUpdateStrategy: "replace" },
-            })
-        );
-
-        // Generate org temp rooms
-        const existingRooms = RoomSelectors.getOrgRooms(
-            thunkAPI.getState(),
-            arg.block.customId
-        );
-
-        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-        const tempRooms = createOrgCollaboratorsTempRooms(
-            collaborators,
-            existingRooms,
-            user.customId,
-            arg.block.customId
-        );
-
-        thunkAPI.dispatch(RoomActions.bulkAddRooms(tempRooms));
-
-        const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
-            thunkAPI.getState(),
-            KeyValueKeys.UnseenChatsCountByOrg
-        );
-
-        const a = { ...unseenChatsCountMapByOrg };
-
-        tempRooms.forEach((rm) => {
-            a[rm.orgId] = (a[rm.orgId] || 0) + rm.unseenChatsCount;
-        });
-
-        thunkAPI.dispatch(
-            KeyValueActions.setKey({
-                key: KeyValueKeys.UnseenChatsCountByOrg,
-                value: a,
-            })
-        );
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
