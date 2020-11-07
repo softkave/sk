@@ -204,7 +204,7 @@ function seedBlock({
             (type === BlockType.Task ? BlockPriority.NotImportant : undefined),
         subTasks,
         dueAt,
-        rootBlockId: parent ? parent.rootBlockId : undefined,
+        rootBlockId: parent ? parent.rootBlockId || parent.customId : undefined,
         customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
@@ -470,7 +470,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         user,
         name: "App Engineering Efforts",
         type: BlockType.Board,
-        description: "Sample Board",
+        description: "Our apps engineering efforts",
         parent: org1,
         boardStatuses: seedStatuses(user, [
             {
@@ -526,7 +526,8 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         user,
         name: "Marketing 101",
         type: BlockType.Board,
-        description: "Sample Board",
+        parent: org1,
+        description: "Just some marketing efforts here and there.",
         boardLabels: seedLabels(user, [
             {
                 name: "Organic advertisement",

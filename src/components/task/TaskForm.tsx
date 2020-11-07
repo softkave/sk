@@ -289,7 +289,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             <SelectTaskSprint
                 sprints={sprints}
                 sprintsMap={sprintsMap}
-                task={(task || formik.values) as IBlock}
+                task={formik.values as IBlock}
                 disabled={isSubmitting}
                 onAddNewSprint={toggleShowSprintForm}
                 onChangeSprint={(val) => {
@@ -384,7 +384,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     resolutionsList={resolutionsList}
                     onChangeStatus={onChangeStatus}
                     onChangeResolution={onChangeResolution}
-                    task={(task || values) as IBlock}
+                    task={values as IBlock}
                     disabled={isSubmitting}
                     onSelectAddNewStatus={onSelectAddNewStatus}
                     onSelectAddNewResolution={onSelectAddNewResolution}
