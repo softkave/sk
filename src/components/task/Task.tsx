@@ -12,6 +12,7 @@ import {
     IBlockStatus,
     IBoardTaskResolution,
 } from "../../models/block/block";
+import { isTaskInLastStatus } from "../../models/block/utils";
 import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import OperationActions from "../../redux/operations/actions";
@@ -202,6 +203,7 @@ const Task: React.FC<ITaskProps> = (props) => {
     };
 
     const hasAssignees = task.assignees && task.assignees.length > 0;
+    const isInLastStatus = isTaskInLastStatus(task, statusList);
     const hasSubTasks = task.subTasks && task.subTasks.length > 0;
     const contentElem: React.ReactNode[] = [
         <StyledContainer key="header">
@@ -261,12 +263,9 @@ const Task: React.FC<ITaskProps> = (props) => {
     if (hasAssignees || task.dueAt) {
         contentElem.push(
             <StyledContainer key="assignees-and-dueAt">
-                {task.dueAt && (
+                {task.dueAt && !isInLastStatus && (
                     <StyledContainer s={{ flex: 1, paddingRight: "16px" }}>
-                        <TaskThumbnailDueDate
-                            task={task}
-                            statusList={statusList}
-                        />
+                        <TaskThumbnailDueDate isInLastStatus task={task} />
                     </StyledContainer>
                 )}
                 {hasAssignees && (
