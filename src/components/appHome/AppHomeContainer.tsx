@@ -3,10 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { KeyValueKeys } from "../../redux/key-value/types";
+import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
+import SessionSelectors from "../../redux/session/selectors";
 import AppHome from "./AppHome";
 
 const AppHomeContainer: React.FC<{}> = () => {
     const dispatch = useDispatch();
+
+    const user = useSelector(SessionSelectors.assertGetUser);
 
     const showAppMenu = useSelector((state) =>
         KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowAppMenu)
@@ -39,13 +43,19 @@ const AppHomeContainer: React.FC<{}> = () => {
         );
     }, [dispatch]);
 
+    const onLogout = React.useCallback(() => {
+        dispatch(logoutUserOpAction());
+    }, [dispatch]);
+
     return (
         <AppHome
+            user={user}
             showOrgForm={!!showNewOrgForm}
             showAppMenu={showAppMenu}
             rootBlocksLoaded={!!rootBlocksLoaded}
             toggleMenu={toggleAppMenu}
             closeNewOrgForm={closeNewOrgForm}
+            onLogout={onLogout}
         />
     );
 };

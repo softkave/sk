@@ -1,8 +1,9 @@
+import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import AppHomeContainer from "../components/appHome/AppHomeContainer";
-import { isPath0App, makePath, paths } from "../components/appHome/path";
+import { isPath0App, paths } from "../components/appHome/path";
 import StyledContainer from "../components/styled/Container";
 import seedDemoData from "../models/seedDemoData";
 import { connectSocket, disconnectSocket } from "../net/socket";
@@ -121,7 +122,7 @@ const Main: React.FC<{}> = () => {
 
     const routeToApp = React.useCallback(() => {
         if (!isPath0App()) {
-            history.push(makePath(paths.appPath));
+            history.push(path.normalize(paths.appPath));
         }
     }, [history]);
 

@@ -1,6 +1,6 @@
 import withDrawer, { WithDrawerType } from "../withDrawer";
-import FeedbackForm from "./FeedbackForm";
+import FeedbackFormContainer from "./FeedbackFormContainer";
 
-export default withDrawer(FeedbackForm, {
+export default withDrawer(FeedbackFormContainer, {
     type: WithDrawerType.Modal,
 });

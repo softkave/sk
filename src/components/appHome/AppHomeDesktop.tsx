@@ -1,18 +1,20 @@
 import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
-import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
+import { IUser } from "../../models/user/user";
 import OrgsListContainer from "../org/OrgsListContainer";
 import StyledContainer from "../styled/Container";
+import AppHomeDesktopMenu from "./AppHomeDesktopMenu";
+import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
-const AppHomeDesktop: React.FC<{}> = () => {
-    const dispatch = useDispatch();
+export interface IAppHomeDesktopProps {
+    user: IUser;
+    onSelect: (key: UserOptionsMenuKeys) => void;
+}
 
-    const onLogout = () => {
-        dispatch(logoutUserOpAction());
-    };
+const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
+    const { user, onSelect } = props;
 
     return (
         <StyledContainer
@@ -41,7 +43,6 @@ const AppHomeDesktop: React.FC<{}> = () => {
                         lineHeight: "16px",
                         alignItems: "center",
                         display: "flex",
-                        // fontWeight: "normal",
                     }}
                 >
                     <StyledLink to="/app">Softkave</StyledLink>
@@ -54,20 +55,7 @@ const AppHomeDesktop: React.FC<{}> = () => {
             >
                 <OrgsListContainer />
             </StyledContainer>
-            <StyledContainer
-                s={{
-                    padding: "16px",
-                    cursor: "pointer",
-                    borderTop: "1px solid #d9d9d9",
-
-                    "&:hover": {
-                        backgroundColor: "#eee",
-                    },
-                }}
-                onClick={onLogout}
-            >
-                Logout
-            </StyledContainer>
+            <AppHomeDesktopMenu user={user} onSelect={onSelect} />
         </StyledContainer>
     );
 };

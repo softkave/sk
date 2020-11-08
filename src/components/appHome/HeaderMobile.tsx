@@ -1,45 +1,19 @@
-import { LogoutOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Dropdown, Menu, Typography } from "antd";
+import { Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
-import SessionSelectors from "../../redux/session/selectors";
-import { AppDispatch } from "../../redux/types";
-import ItemAvatar from "../ItemAvatar";
+import { IUser } from "../../models/user/user";
 import StyledContainer from "../styled/Container";
-import theme from "../theme";
+import HeaderMobileMenu from "./HeaderMobileMenu";
+import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
-const HeaderMobile: React.FC<{}> = () => {
-    const dispatch: AppDispatch = useDispatch();
+export interface IHeaderMobileProps {
+    user: IUser;
+    onSelect: (key: UserOptionsMenuKeys) => void;
+}
 
-    const user = useSelector(SessionSelectors.assertGetUser);
-
-    const onLogout = () => {
-        dispatch(logoutUserOpAction());
-    };
-
-    const onSelectAvatarMenu = (event) => {
-        if (event.key === "logout") {
-            onLogout();
-        }
-    };
-
-    const avatarMenuOverlay = (
-        <Menu onClick={onSelectAvatarMenu} style={{ minWidth: "120px" }}>
-            <Menu.Item key="logout">
-                <StyledContainer
-                    s={{ color: "rgb(255, 77, 79)", alignItems: "center" }}
-                >
-                    <LogoutOutlined />
-                    <StyledContainer s={{ flex: 1, marginLeft: "10px" }}>
-                        Logout
-                    </StyledContainer>
-                </StyledContainer>
-            </Menu.Item>
-        </Menu>
-    );
+const HeaderMobile: React.FC<IHeaderMobileProps> = (props) => {
+    const { user, onSelect } = props;
 
     return (
         <StyledHeaderContainer>
@@ -51,21 +25,13 @@ const HeaderMobile: React.FC<{}> = () => {
                         lineHeight: "16px",
                         alignItems: "center",
                         display: "flex",
-                        // fontWeight: "normal",
                     }}
                 >
                     <StyledLink to="/app">Softkave</StyledLink>
                 </Typography.Title>
             </StyledContainer>
             <StyledContainer s={{ marginLeft: "16px" }}>
-                <Dropdown overlay={avatarMenuOverlay} trigger={["click"]}>
-                    <ItemAvatar
-                        clickable
-                        size="small"
-                        onClick={() => null}
-                        color={user.color || theme.colors.defaults.avatar}
-                    />
-                </Dropdown>
+                <HeaderMobileMenu user={user} onSelect={onSelect} />
             </StyledContainer>
         </StyledHeaderContainer>
     );

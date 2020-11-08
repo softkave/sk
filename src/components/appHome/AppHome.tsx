@@ -1,6 +1,8 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
+import { IUser } from "../../models/user/user";
 import OrgBoardContainer from "../board/OrgBoardContainer";
+import FeedbackFormModal from "../feedback/FeedbackFormModal";
 import Notification from "../notification/Notification";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
@@ -8,30 +10,51 @@ import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
+import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeProps {
+    user: IUser;
     showAppMenu: boolean;
     showOrgForm: boolean;
     rootBlocksLoaded: boolean;
     toggleMenu: () => void;
     closeNewOrgForm: () => void;
+    onLogout: () => void;
 }
 
 const AppHome: React.FC<IAppHomeProps> = (props) => {
     const {
+        user,
         showAppMenu,
         showOrgForm,
-        closeNewOrgForm,
         rootBlocksLoaded,
+        closeNewOrgForm,
+        onLogout,
     } = props;
+
+    const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
+
+    const toggleFeedbackForm = () => setShowFeedbackForm(!showFeedbackForm);
 
     const renderNotification = (isMobile: boolean) => (
         <Notification isMobile={isMobile} />
     );
 
+    const onSelect = (key: UserOptionsMenuKeys) => {
+        switch (key) {
+            case UserOptionsMenuKeys.Logout:
+                onLogout();
+                break;
+
+            case UserOptionsMenuKeys.SendFeedback:
+                toggleFeedbackForm();
+                break;
+        }
+    };
+
     const mobile = () => (
         <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
-            <HeaderMobile />
+            <HeaderMobile user={user} onSelect={onSelect} />
             <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
                 <Switch>
                     <Route
@@ -71,7 +94,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
     const desktop = () => (
         <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
-            {showAppMenu && <AppHomeDesktop />}
+            {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
             {showOrgForm && (
                 <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
             )}
@@ -100,7 +123,15 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
     );
 
     return (
-        <RenderForDevice renderForDesktop={desktop} renderForMobile={mobile} />
+        <React.Fragment>
+            {showFeedbackForm && (
+                <FeedbackFormModal visible onClose={toggleFeedbackForm} />
+            )}
+            <RenderForDevice
+                renderForDesktop={desktop}
+                renderForMobile={mobile}
+            />
+        </React.Fragment>
     );
 };
 

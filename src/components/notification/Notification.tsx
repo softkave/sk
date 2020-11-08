@@ -18,7 +18,6 @@ import { getRequestStatus } from "../collaborator/utils";
 import EmptyMessage from "../EmptyMessage";
 import FormError from "../forms/FormError";
 import useOperation, { getOpStats } from "../hooks/useOperation";
-import { getFullBaseNavPath } from "../appHome/path";
 import StyledContainer from "../styled/Container";
 import { INotificationsPathParams } from "./utils";
 
@@ -48,7 +47,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
     }, [history]);
 
     if (!currentNotificationId) {
-        history.push(getFullBaseNavPath());
+        history.push("/app/notifications");
         return null;
     }
 
