@@ -3,13 +3,13 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import * as yup from "yup";
 import { IBoardSprintOptions, SprintDuration } from "../../models/sprint/types";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
 
@@ -117,7 +117,7 @@ const SprintOptionsForm: React.FC<ISprintOptionsFormProps> = (props) => {
 
     const renderForm = () => {
         const { errors } = formik;
-        const globalError = getGlobalError(errors);
+        const globalError = getFormError(errors);
 
         return (
             <StyledForm onSubmit={formik.handleSubmit}>

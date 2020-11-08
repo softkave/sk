@@ -2,8 +2,7 @@ import { Space, Tag, Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { Clock } from "react-feather";
-import { IBlock, IBlockStatus } from "../../models/block/block";
-import { isTaskInLastStatus } from "../../models/block/utils";
+import { IBlock } from "../../models/block/block";
 
 export interface ITaskThumbnailDueDateProps {
     task: IBlock;

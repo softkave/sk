@@ -14,8 +14,8 @@ import {
 } from "react-feather";
 import { IBlockStatus } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import ColorPicker from "../form/ColorPicker";
-import FormError from "../form/FormError";
+import ColorPicker from "../forms/ColorPicker";
+import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface IStatusFormItemProps {

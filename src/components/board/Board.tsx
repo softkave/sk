@@ -4,11 +4,11 @@ import { useHistory, useRouteMatch } from "react-router";
 import { Route, Switch } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import BoardFormInDrawer from "../boardBlock/BoardFormInDrawer";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import SprintOptionsFormInDrawer from "../sprint/SprintOptionsFormInDrawer";
 import StyledContainer from "../styled/Container";
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
+import BoardFormInDrawer from "./BoardFormInDrawer";
 import BoardHeader from "./BoardHeader";
 import {
     BoardCurrentView,

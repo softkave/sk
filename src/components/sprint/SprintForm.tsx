@@ -4,13 +4,13 @@ import { ArrowLeft } from "react-feather";
 import * as yup from "yup";
 import { ISprint, SprintDuration } from "../../models/sprint/types";
 import { indexArray } from "../../utils/utils";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
@@ -202,7 +202,7 @@ const SprintForm: React.FC<ISprintFormProps> = (props) => {
 
     const renderForm = () => {
         const { errors } = formik;
-        const globalError = getGlobalError(errors);
+        const globalError = getFormError(errors);
 
         return (
             <StyledForm onSubmit={(evt) => preSubmit(evt)}>

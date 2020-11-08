@@ -11,8 +11,8 @@ import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
 import getNewBlock from "../block/getNewBlock";
+import BoardForm, { IBoardFormValues } from "../board/BoardForm";
 import useOperation, { getOpStats } from "../hooks/useOperation";
-import BoardForm, { IBoardFormValues } from "./BoardForm";
 
 export interface IBoardFormContainerProps {
     orgId: string;

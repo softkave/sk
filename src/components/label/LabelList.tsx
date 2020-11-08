@@ -8,7 +8,7 @@ import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { getDateString, getNewId } from "../../utils/utils";
-import { getFormikTouched, validateWithYupSchema } from "../form/utils";
+import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";

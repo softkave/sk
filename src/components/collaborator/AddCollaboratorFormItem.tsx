@@ -5,11 +5,16 @@ import { FormikErrors, FormikTouched } from "formik";
 import moment from "moment";
 import React from "react";
 import { Trash2 } from "react-feather";
-import { IAddCollaboratorFormItemValues } from "../../models/types";
-import FormError from "../form/FormError";
+import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 import ExpiresAt from "./ExpiresAt";
 import Message from "./Message";
+
+export interface IAddCollaboratorFormItemValues {
+    email: string;
+    body?: string;
+    expiresAt?: number;
+}
 
 export interface IAddCollaboratorFormItemProps {
     value: IAddCollaboratorFormItemValues;

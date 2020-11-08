@@ -41,6 +41,9 @@ enum OperationType {
     START_SPRINT = "START_SPRINT",
     UPDATE_SPRINT = "UPDATE_SPRINT",
     UPDATE_SPRINT_OPTIONS = "UPDATE_SPRINT_OPTIONS",
+
+    // system
+    SendFeedback = "SendFeedback",
 }
 
 export default OperationType;

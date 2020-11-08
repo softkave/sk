@@ -1,13 +1,6 @@
-import { Checkbox, Menu, Space } from "antd";
+import { Button, Checkbox, Menu, Space } from "antd";
 import React from "react";
-import {
-    Clock,
-    Edit3,
-    MoreHorizontal,
-    Plus,
-    Search,
-    Trash2,
-} from "react-feather";
+import { Clock, Edit3, Plus, Search, Settings, Trash2 } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
@@ -72,7 +65,10 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                     }}
                     onClick={renderTriggerProps.openMenu}
                 >
-                    <MoreHorizontal />
+                    {/* <MoreHorizontal /> */}
+                    <Button className="icon-btn">
+                        <Settings />
+                    </Button>
                 </StyledContainer>
             );
         },

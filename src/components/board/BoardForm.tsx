@@ -6,14 +6,14 @@ import { BlockType, IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
 import { IAppState } from "../../redux/types";
 import blockValidationSchemas from "../block/validation";
-import ColorPicker from "../form/ColorPicker";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import ColorPicker from "../forms/ColorPicker";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
@@ -217,7 +217,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
 
     const renderForm = () => {
         const { errors } = formik;
-        const globalError = getGlobalError(errors);
+        const globalError = getFormError(errors);
 
         return (
             <StyledForm onSubmit={(evt) => preSubmit(evt)}>

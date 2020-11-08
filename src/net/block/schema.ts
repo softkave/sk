@@ -2,7 +2,7 @@ import {
     blockFragment,
     errorFragment,
     notificationFragment,
-} from "../../models/fragments";
+} from "../fragments";
 
 const addBlockMutation = `
     ${errorFragment}

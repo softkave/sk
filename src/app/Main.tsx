@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
-import MainLayoutContainer from "../components/layout/MainLayoutContainer";
-import { isPath0App, makePath, paths } from "../components/layout/path";
+import AppHomeContainer from "../components/appHome/AppHomeContainer";
+import { isPath0App, makePath, paths } from "../components/appHome/path";
 import StyledContainer from "../components/styled/Container";
 import seedDemoData from "../models/seedDemoData";
 import { connectSocket, disconnectSocket } from "../net/socket";
@@ -198,7 +198,7 @@ const Main: React.FC<{}> = () => {
                     return renderInitializing();
                 }
 
-                return <MainLayoutContainer />;
+                return <AppHomeContainer />;
 
             case SessionType.Web:
                 return <Routes />;

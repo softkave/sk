@@ -54,17 +54,6 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
         >
             <Menu.Item key={ADD_NEW_RESOLUTION_KEY}>
                 <PlusOutlined /> Resolution
-                {/* <Space align="center" size={12}>
-                    <Plus
-                        style={{
-                            width: "16px",
-                            height: "16px",
-                            verticalAlign: "middle",
-                            marginTop: "-3px",
-                        }}
-                    />
-                    New Resolution
-                </Space> */}
             </Menu.Item>
             <Menu.Divider />
             {resolutionsList.map((resolution) => {

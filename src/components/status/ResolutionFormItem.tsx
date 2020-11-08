@@ -6,7 +6,7 @@ import React from "react";
 import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
 import { IBoardTaskResolution } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import FormError from "../form/FormError";
+import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface IResolutionFormItemProps {

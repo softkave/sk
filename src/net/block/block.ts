@@ -1,6 +1,6 @@
+import { IAddCollaboratorFormItemValues } from "../../components/collaborator/AddCollaboratorFormItem";
 import { BlockType, IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
-import { IAddCollaboratorFormItemValues } from "../../models/types";
 import { IUser } from "../../models/user/user";
 import { getDataFromObject } from "../../utils/utils";
 import auth from "../auth";

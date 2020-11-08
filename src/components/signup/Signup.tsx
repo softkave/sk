@@ -6,9 +6,9 @@ import { userConstants } from "../../models/user/constants";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { passwordPattern, textPattern } from "../../models/user/validation";
 import cast from "../../utils/cast";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
-import { FormBody } from "../form/FormStyledComponents";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
+import { FormBody } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 
 // TODO: Add minimum and maximum to input helper
@@ -94,7 +94,7 @@ const Signup: React.FC<ISignupProps> = (props) => {
         handleBlur,
         handleSubmit,
     } = formik;
-    const globalError = getGlobalError(errors);
+    const globalError = getFormError(errors);
 
     return (
         <FormBody>

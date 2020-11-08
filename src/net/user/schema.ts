@@ -1,9 +1,9 @@
+import { blockFragment } from "../block/schema";
 import {
     errorFragment,
     notificationFragment,
     userFragment,
-} from "../../models/fragments";
-import { blockFragment } from "../block/schema";
+} from "../fragments";
 
 export const userExistsQuery = `
   ${errorFragment}

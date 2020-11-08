@@ -6,10 +6,10 @@ import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
-import LayoutMenuDesktop from "./LayoutMenuDesktop";
 
-export interface IMainLayoutProps {
+export interface IAppHomeProps {
     showAppMenu: boolean;
     showOrgForm: boolean;
     rootBlocksLoaded: boolean;
@@ -17,7 +17,7 @@ export interface IMainLayoutProps {
     closeNewOrgForm: () => void;
 }
 
-const MainLayout: React.FC<IMainLayoutProps> = (props) => {
+const AppHome: React.FC<IAppHomeProps> = (props) => {
     const {
         showAppMenu,
         showOrgForm,
@@ -71,7 +71,7 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
 
     const desktop = () => (
         <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
-            {showAppMenu && <LayoutMenuDesktop />}
+            {showAppMenu && <AppHomeDesktop />}
             {showOrgForm && (
                 <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
             )}
@@ -104,4 +104,4 @@ const MainLayout: React.FC<IMainLayoutProps> = (props) => {
     );
 };
 
-export default MainLayout;
+export default AppHome;

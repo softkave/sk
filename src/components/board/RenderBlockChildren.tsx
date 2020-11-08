@@ -1,12 +1,12 @@
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
-import BoardList from "../boardBlock/BoardList";
 import ChatRoomsContainer, {
     IChatRoomsRenderProps,
 } from "../chat/ChatRoomsContainer";
 import RoomsList from "../chat/RoomsList";
 import CollaborationRequests from "../collaborator/CollaborationRequests";
 import CollaboratorList from "../collaborator/CollaboratorList";
+import BoardList from "./BoardList";
 import LoadBlockChildren from "./LoadBlockChildren";
 import { BoardResourceType } from "./types";
 

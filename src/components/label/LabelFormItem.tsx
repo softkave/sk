@@ -7,8 +7,8 @@ import React from "react";
 import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
 import { IBlockLabel } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import ColorPicker from "../form/ColorPicker";
-import FormError from "../form/FormError";
+import ColorPicker from "../forms/ColorPicker";
+import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface ILabelFormItemProps {

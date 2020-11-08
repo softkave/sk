@@ -4,14 +4,14 @@ import { ArrowLeft } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
 import blockValidationSchemas from "../block/validation";
-import ColorPicker from "../form/ColorPicker";
-import FormError from "../form/FormError";
-import { IFormikFormErrors } from "../form/formik-utils";
+import ColorPicker from "../forms/ColorPicker";
+import FormError from "../forms/FormError";
+import { IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";

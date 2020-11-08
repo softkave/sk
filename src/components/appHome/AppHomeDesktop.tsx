@@ -7,7 +7,7 @@ import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
 import OrgsListContainer from "../org/OrgsListContainer";
 import StyledContainer from "../styled/Container";
 
-const LayoutMenuDesktop: React.FC<{}> = () => {
+const AppHomeDesktop: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const onLogout = () => {
@@ -72,6 +72,6 @@ const LayoutMenuDesktop: React.FC<{}> = () => {
     );
 };
 
-export default LayoutMenuDesktop;
+export default AppHomeDesktop;
 
 const StyledLink = styled(Link)({ color: "inherit !important" });

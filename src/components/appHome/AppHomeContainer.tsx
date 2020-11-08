@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { KeyValueKeys } from "../../redux/key-value/types";
-import MainLayout from "./MainLayout";
+import AppHome from "./AppHome";
 
-const MainLayoutContainer: React.FC<{}> = () => {
+const AppHomeContainer: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const showAppMenu = useSelector((state) =>
@@ -40,7 +40,7 @@ const MainLayoutContainer: React.FC<{}> = () => {
     }, [dispatch]);
 
     return (
-        <MainLayout
+        <AppHome
             showOrgForm={!!showNewOrgForm}
             showAppMenu={showAppMenu}
             rootBlocksLoaded={!!rootBlocksLoaded}
@@ -50,4 +50,4 @@ const MainLayoutContainer: React.FC<{}> = () => {
     );
 };
 
-export default MainLayoutContainer;
+export default AppHomeContainer;

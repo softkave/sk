@@ -16,9 +16,9 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
 import { getRequestStatus } from "../collaborator/utils";
 import EmptyMessage from "../EmptyMessage";
-import FormError from "../form/FormError";
+import FormError from "../forms/FormError";
 import useOperation, { getOpStats } from "../hooks/useOperation";
-import { getFullBaseNavPath } from "../layout/path";
+import { getFullBaseNavPath } from "../appHome/path";
 import StyledContainer from "../styled/Container";
 import { INotificationsPathParams } from "./utils";
 

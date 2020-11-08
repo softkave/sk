@@ -5,38 +5,38 @@ import BlockSelectors from "../../redux/blocks/selectors";
 import useBlockParents from "./useBlockParents";
 
 const useBlockPossibleParents = (block: IBlock) => {
-  const store = useStore();
-  const parents = useBlockParents(block);
-  const org = parents[0];
-  const cache: any = {};
-  let pp: IBlock[] = [];
+    const store = useStore();
+    const parents = useBlockParents(block);
+    const org = parents[0];
+    const cache: any = {};
+    let possibleParents: IBlock[] = [];
 
-  parents.reverse().forEach((p) => {
-    let extra: IBlock[] = [];
+    parents.reverse().forEach((parent) => {
+        let extra: IBlock[] = [];
 
-    if (org && block.type !== BlockType.Board) {
-      // TODO: improve, cause it loops through all blocks parents.length number of times
-      extra = BlockSelectors.getBlockChildren(
-        store.getState(),
-        org,
-        BlockType.Board
-      );
-    }
+        if (org && block.type !== BlockType.Board) {
+            // TODO: improve, cause it loops through all blocks parents.length number of times
+            extra = BlockSelectors.getBlockChildren(
+                store.getState(),
+                org,
+                BlockType.Board
+            );
+        }
 
-    pp = pp.concat(p, extra);
-  });
+        possibleParents = possibleParents.concat(parent, extra);
+    });
 
-  pp.forEach((p) => {
-    if (p.type === block.type || !!cache[p.customId]) {
-      return;
-    }
+    possibleParents.forEach((parent) => {
+        if (parent.type === block.type || !!cache[parent.customId]) {
+            return;
+        }
 
-    cache[p.customId] = p;
-  });
+        cache[parent.customId] = parent;
+    });
 
-  pp = Object.keys(cache).map((id) => cache[id]);
+    possibleParents = Object.keys(cache).map((id) => cache[id]);
 
-  return filterValidParentsForBlockType(pp, block.type);
+    return filterValidParentsForBlockType(possibleParents, block.type);
 };
 
 export default useBlockPossibleParents;

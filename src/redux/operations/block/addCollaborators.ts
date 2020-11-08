@@ -1,12 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
+import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { BlockType, IBlock } from "../../../models/block/block";
 import {
     CollaborationRequestStatusType,
     INotification,
     NotificationType,
 } from "../../../models/notification/notification";
-import { IAddCollaboratorFormItemValues } from "../../../models/types";
 import BlockAPI from "../../../net/block/block";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";

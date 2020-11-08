@@ -37,3 +37,7 @@ export default async function queryWithAuth(
         process
     );
 }
+
+export function isUserSignedIn() {
+    return SessionSelectors.isUserSignedIn(store.getState());
+}

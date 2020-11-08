@@ -1,12 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBlock } from "../../../models/block/block";
 import { IRoom } from "../../../models/chat/types";
+import { IUser } from "../../../models/user/user";
 import {
     collaboratorFragment,
     errorFragment,
     notificationFragment,
-} from "../../../models/fragments";
-import { IUser } from "../../../models/user/user";
+} from "../../../net/fragments";
 import { graphQLAPICallWithAuth } from "../../../net/utils";
 import { getNewId, getNewTempId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";

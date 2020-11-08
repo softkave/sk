@@ -24,13 +24,13 @@ import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
@@ -704,7 +704,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     const renderForm = (formikProps: TaskFormFormikProps) => {
         const { handleSubmit, errors } = formikProps;
-        const globalError = getGlobalError(errors);
+        const globalError = getFormError(errors);
 
         return (
             <StyledForm onSubmit={handleSubmit}>

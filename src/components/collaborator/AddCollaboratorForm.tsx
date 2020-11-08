@@ -10,21 +10,22 @@ import ErrorMessages from "../../models/errorMessages";
 import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
-import { IAddCollaboratorFormItemValues } from "../../models/types";
 import { IUser } from "../../models/user/user";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
 import { getNewId } from "../../utils/utils";
-import FormError from "../form/FormError";
-import { getGlobalError, IFormikFormErrors } from "../form/formik-utils";
+import FormError from "../forms/FormError";
+import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
     formContentWrapperStyle,
     formInputContentWrapperStyle,
     StyledForm,
-} from "../form/FormStyledComponents";
+} from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
-import AddCollaboratorFormItem from "./AddCollaboratorFormItem";
+import AddCollaboratorFormItem, {
+    IAddCollaboratorFormItemValues,
+} from "./AddCollaboratorFormItem";
 import ExpiresAt from "./ExpiresAt";
 
 const emailExistsErrorMessage = "Email addresss has been entered already";
@@ -347,7 +348,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
     const renderForm = () => {
         const { errors, handleSubmit } = formik;
-        const globalError = getGlobalError(errors);
+        const globalError = getFormError(errors);
 
         return (
             <StyledForm onSubmit={handleSubmit}>

@@ -1,4 +1,4 @@
-import { errorFragment } from "../../models/fragments";
+import { errorFragment } from "../fragments";
 
 export const sprintFragment = `
     fragment sprintFragment on Sprint {
