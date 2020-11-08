@@ -73,6 +73,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         });
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+        let requests: INotification[] = [];
 
         if (!isDemoMode) {
             const result = await BlockAPI.addCollaborators(
@@ -83,8 +84,10 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
             if (result && result.errors) {
                 throw result.errors;
             }
+
+            requests = result.data;
         } else {
-            const requests: INotification[] = proccessedRequests.map((req) => {
+            requests = proccessedRequests.map((req) => {
                 return {
                     body: req.body,
                     createdAt: getDateString(),
@@ -111,21 +114,19 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                     ],
                 };
             });
-
-            thunkAPI.dispatch(
-                NotificationActions.bulkAddNotifications(requests)
-            );
-
-            thunkAPI.dispatch(
-                BlockActions.updateBlock({
-                    id: arg.block.customId,
-                    data: {
-                        notifications: requests.map((req) => req.customId),
-                    },
-                    meta: { arrayUpdateStrategy: "concat" },
-                })
-            );
         }
+
+        thunkAPI.dispatch(NotificationActions.bulkAddNotifications(requests));
+
+        thunkAPI.dispatch(
+            BlockActions.updateBlock({
+                id: arg.block.customId,
+                data: {
+                    notifications: requests.map((req) => req.customId),
+                },
+                meta: { arrayUpdateStrategy: "concat" },
+            })
+        );
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(

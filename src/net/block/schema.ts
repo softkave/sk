@@ -1,16 +1,20 @@
-import { blockFragment, errorFragment } from "../../models/fragments";
+import {
+    blockFragment,
+    errorFragment,
+    notificationFragment,
+} from "../../models/fragments";
 
 const addBlockMutation = `
-  ${errorFragment}
-  mutation AddBlockMutation ($block: AddBlockInput!) {
-    block {
-      addBlock (block: $block) {
-        errors {
-          ...errorFragment
+    ${errorFragment}
+    mutation AddBlockMutation ($block: AddBlockInput!) {
+        block {
+            addBlock (block: $block) {
+                errors {
+                    ...errorFragment
+                }
+            }
         }
-      }
     }
-  }
 `;
 
 const updateBlockMutation = `
@@ -74,19 +78,23 @@ const getBlockChildrenQuery = `
 `;
 
 const addCollaboratorsMutation = `
-  ${errorFragment}
-  mutation AddCollaborators (
-    $blockId: String!,
-    $collaborators: [AddCollaboratorInput!]!
-  ) {
-    block {
-      addCollaborators (blockId: $blockId, collaborators: $collaborators) {
-        errors {
-          ...errorFragment
+    ${errorFragment}
+    ${notificationFragment}
+    mutation AddCollaborators (
+        $blockId: String!,
+        $collaborators: [AddCollaboratorInput!]!
+    ) {
+        block {
+            addCollaborators (blockId: $blockId, collaborators: $collaborators) {
+                errors {
+                    ...errorFragment
+                }
+                data {
+                    ...notificationFragment
+                }
+            }
         }
-      }
     }
-  }
 `;
 
 const removeCollaboratorMutation = `
@@ -135,14 +143,14 @@ const transferBlockMutation = `
 `;
 
 export {
-  addBlockMutation,
-  updateBlockMutation,
-  deleteBlockMutation,
-  getBlockChildrenQuery,
-  blockFragment,
-  addCollaboratorsMutation,
-  getUserRootBlocksQuery as getRootBlocksQuery,
-  removeCollaboratorMutation,
-  revokeRequestMutation,
-  transferBlockMutation,
+    addBlockMutation,
+    updateBlockMutation,
+    deleteBlockMutation,
+    getBlockChildrenQuery,
+    blockFragment,
+    addCollaboratorsMutation,
+    getUserRootBlocksQuery as getRootBlocksQuery,
+    removeCollaboratorMutation,
+    revokeRequestMutation,
+    transferBlockMutation,
 };
