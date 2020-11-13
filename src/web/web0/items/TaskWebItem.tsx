@@ -43,7 +43,7 @@ const TasksWebItem: React.FC<{}> = () => {
             labelList={[]}
             resolutionsList={[]}
             sprints={[]}
-            users={[demoUsers.abayomi, demoUsers.solomon]}
+            collaborators={[demoUsers.abayomi, demoUsers.solomon]}
             tasks={demoTasks.reverse()}
             statusList={statuses}
             sprintsMap={{}}

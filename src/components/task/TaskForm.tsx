@@ -54,6 +54,9 @@ export interface ITaskFormProps {
     statusList: IBlockStatus[];
     resolutionsList: IBoardTaskResolution[];
     labelList: IBlockLabel[];
+    labelsMap: { [key: string]: IBlockLabel };
+    statusMap: { [key: string]: IBlockStatus };
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
     possibleParents: IBlock[];
     value: ITaskFormValues;
     board: IBlock;
@@ -79,11 +82,14 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         collaborators,
         statusList,
         labelList,
+        labelsMap,
         resolutionsList,
         user,
         board,
         sprints,
         sprintsMap,
+        statusMap,
+        resolutionsMap,
         onClose,
         onSubmit,
         errors: externalErrors,
@@ -382,6 +388,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     noResolutionModal
                     statusList={statusList}
                     resolutionsList={resolutionsList}
+                    statusMap={statusMap}
+                    resolutionsMap={resolutionsMap}
                     onChangeStatus={onChangeStatus}
                     onChangeResolution={onChangeResolution}
                     task={values as IBlock}
@@ -418,6 +426,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             >
                 <TaskLabels
                     labelList={labelList}
+                    labelsMap={labelsMap}
                     user={user}
                     onChange={onChangeTaskLabels}
                     labels={values.labels}

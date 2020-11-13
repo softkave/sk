@@ -38,13 +38,16 @@ const ignoreClassNames = ["ant-typography-expand", "task-menu-dropdown"];
 export interface ITaskProps {
     task: IBlock;
     board: IBlock;
-    orgUsers: IUser[];
+    collaborators: IUser[];
     user: IUser;
     statusList: IBlockStatus[];
     resolutionsList: IBoardTaskResolution[];
     labelList: IBlockLabel[];
+    labelsMap: { [key: string]: IBlockLabel };
     sprints: ISprint[];
     sprintsMap: { [key: string]: ISprint };
+    statusMap: { [key: string]: IBlockStatus };
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
 
     demo?: boolean;
     onEdit?: (task: IBlock) => void;
@@ -60,12 +63,15 @@ const Task: React.FC<ITaskProps> = (props) => {
         board,
         demo,
         statusList,
-        orgUsers,
+        collaborators,
         labelList,
+        labelsMap,
         resolutionsList,
         user,
         sprints,
         sprintsMap,
+        statusMap,
+        resolutionsMap,
         onEdit,
     } = props;
 
@@ -253,6 +259,8 @@ const Task: React.FC<ITaskProps> = (props) => {
                 demo={demo}
                 statusList={statusList}
                 resolutionsList={resolutionsList}
+                statusMap={statusMap}
+                resolutionsMap={resolutionsMap}
                 user={user}
                 onSelectAddNewStatus={onSelectAddNewStatus}
                 onSelectAddNewResolution={onSelectAddNewResolution}
@@ -269,7 +277,7 @@ const Task: React.FC<ITaskProps> = (props) => {
                     </StyledContainer>
                 )}
                 {hasAssignees && (
-                    <TaskThumbnailAssignees task={task} users={orgUsers} />
+                    <TaskThumbnailAssignees task={task} users={collaborators} />
                 )}
             </StyledContainer>
         );
@@ -281,6 +289,7 @@ const Task: React.FC<ITaskProps> = (props) => {
                 disabled
                 key="labels"
                 labelList={labelList}
+                labelsMap={labelsMap}
                 user={user}
                 labels={task.labels}
                 onChange={noop}

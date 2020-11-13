@@ -30,7 +30,7 @@ const Middle: React.FC<{}> = () => {
                         demo
                         board={seedData.web.board}
                         labelList={seedData.web.labelList}
-                        orgUsers={seedData.web.orgUsers}
+                        collaborators={seedData.web.orgUsers}
                         resolutionsList={seedData.web.resolutionsList}
                         statusList={seedData.web.statusList}
                         task={seedData.web.task}

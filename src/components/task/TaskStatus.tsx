@@ -14,7 +14,9 @@ import TaskResolution from "./TaskResolution";
 export interface ITaskStatusProps {
     task: IBlock;
     statusList: IBlockStatus[];
+    statusMap: { [key: string]: IBlockStatus };
     resolutionsList: IBoardTaskResolution[];
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
     onChangeStatus: (statusId: string, resolutionId?: string) => void;
     onChangeResolution: (value: string) => void;
     onSelectAddNewStatus: () => void;
@@ -44,7 +46,9 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         disabled,
         className,
         statusList,
+        statusMap,
         resolutionsList,
+        resolutionsMap,
         noResolutionModal,
     } = props;
 
@@ -54,11 +58,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
 
     const statusId = task.status;
     const resolutionId = task.taskResolution;
-    const selectedStatus = statusId
-        ? statusList.find((status) => {
-              return status.customId === statusId;
-          })
-        : null;
+    const selectedStatus = statusId ? statusMap[statusId] : null;
     const lastStatus = statusList[statusList.length - 1];
     const selectedStatusIsLastStatus =
         lastStatus &&
@@ -122,18 +122,6 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         >
             <Menu.Item key={ADD_NEW_STATUS_KEY}>
                 <PlusOutlined /> Status
-                {/* <Space align="center" size={12}>
-                    <Plus
-                        style={{
-                            width: "16px",
-                            height: "16px",
-                            verticalAlign: "middle",
-                            marginTop: "-3px",
-                        }}
-                    />
-                    <PlusOutlined />
-                    Status
-                </Space> */}
             </Menu.Item>
             <Menu.Divider />
             {statusList.map((status) => {
@@ -170,6 +158,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         <TaskResolution
             resolutionId={resolutionId}
             resolutionsList={resolutionsList}
+            resolutionsMap={resolutionsMap}
             onChange={onChangeResolution}
             disabled={disabled}
             onSelectAddNewResolution={onSelectAddNewResolution}

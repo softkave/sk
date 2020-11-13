@@ -5,15 +5,15 @@ import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
-import TaskListContainer from "../task/TaskListContainer";
+import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
+import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 
-export interface IGroupedTasksDesktopProps {
+export interface IGroupedTasksDesktopProps
+    extends ITasksContainerRenderFnProps {
     groupedTasks: IBoardGroupedTasks[];
-    users: IUser[];
-    board: IBlock;
     onClickUpdateBlock: (block: IBlock) => void;
     renderColumnHeaderOptions?: (group: IBoardGroupedTasks) => React.ReactNode;
     emptyMessage?: string;
@@ -22,8 +22,6 @@ export interface IGroupedTasksDesktopProps {
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     const {
         groupedTasks,
-        users,
-        board,
         emptyMessage,
         onClickUpdateBlock,
         renderColumnHeaderOptions,
@@ -76,9 +74,8 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                 header={renderColumnHeader(group)}
                 body={
                     <Scrollbar style={{ flex: 1 }}>
-                        <TaskListContainer
-                            board={board}
-                            users={users}
+                        <TaskList
+                            {...props}
                             tasks={group.tasks}
                             toggleForm={onClickUpdateBlock}
                             style={{ height: "100%" }}

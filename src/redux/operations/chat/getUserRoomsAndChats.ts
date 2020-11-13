@@ -4,7 +4,7 @@ import moment, { Moment } from "moment";
 import { IChat, IRoom } from "../../../models/chat/types";
 import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
 import ChatAPI, { IPersistedRoom } from "../../../net/chat/chat";
-import { subscribe } from "../../../net/socket";
+import { subscribe } from "../../../net/socket/socket";
 import { getNewId } from "../../../utils/utils";
 import KeyValueActions from "../../key-value/actions";
 import { IUnseenChatsCountByOrg, KeyValueKeys } from "../../key-value/types";

@@ -6,7 +6,7 @@ import AppHomeContainer from "../components/appHome/AppHomeContainer";
 import { isPath0App, paths } from "../components/appHome/path";
 import StyledContainer from "../components/styled/Container";
 import seedDemoData from "../models/seedDemoData";
-import { connectSocket, disconnectSocket } from "../net/socket";
+import { connectSocket, disconnectSocket } from "../net/socket/socket";
 import BlockActions from "../redux/blocks/actions";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";

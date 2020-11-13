@@ -16,7 +16,11 @@ import {
     updateBlockMutation,
 } from "./schema";
 
-function addBlock(block: IBlock) {
+export interface IAddBlockAPIProps {
+    block: {};
+}
+
+export function addBlock(block: IBlock) {
     // TODO: Find a way to define central structures that'll be used by server and client, including
     // mongo schemas, graphql schemas, extract functions, and other places.
     // TODO: define the type of the arguments, so that we can avoid using fields

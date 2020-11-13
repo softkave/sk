@@ -4,12 +4,13 @@ import React from "react";
 import { Plus } from "react-feather";
 import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
-import { getDateString, indexArray } from "../../utils/utils";
+import { getDateString } from "../../utils/utils";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskLabelsProps {
     user: IUser;
     labelList: IBlockLabel[];
+    labelsMap: { [key: string]: IBlockLabel };
     onChange: (ids: IBlockAssignedLabel[]) => void;
     onSelectAddNewLabel: () => void;
 
@@ -20,12 +21,16 @@ export interface ITaskLabelsProps {
 const ADD_NEW_LABEL_KEY = "add-new-label";
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-    const { onChange, onSelectAddNewLabel, disabled, user, labelList } = props;
+    const {
+        onChange,
+        onSelectAddNewLabel,
+        disabled,
+        user,
+        labelList,
+        labelsMap,
+    } = props;
+
     const labels = props.labels || [];
-    const idToLabelMap = React.useMemo(
-        () => indexArray(labelList || [], { path: "customId" }),
-        [labelList]
-    );
 
     const onAdd = (id: string) => {
         const i = labels.findIndex((label) => label.customId === id);
@@ -70,7 +75,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     const renderSelectedLabels = () => {
         const renderedLabels: React.ReactNode[] = labels.map(
             (assignedLabel) => {
-                const label: IBlockLabel = idToLabelMap[assignedLabel.customId];
+                const label: IBlockLabel = labelsMap[assignedLabel.customId];
 
                 if (label) {
                     return renderLabelTag(label, true);
@@ -110,17 +115,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             >
                 <Menu.Item key={ADD_NEW_LABEL_KEY}>
                     <PlusOutlined /> Label
-                    {/* <Space align="center" size={12}>
-                        <Plus
-                            style={{
-                                width: "16px",
-                                height: "16px",
-                                verticalAlign: "middle",
-                                marginTop: "-3px",
-                            }}
-                        />
-                        New Label
-                    </Space> */}
                 </Menu.Item>
                 <Menu.Divider />
                 {renderedLabelMenuItems}

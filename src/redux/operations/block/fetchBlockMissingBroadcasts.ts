@@ -4,7 +4,7 @@ import { getRoomId } from "../../../models/rooms/utils";
 import {
     fetchMissingBroadcasts,
     handleFetchMissingBroadcastsResponse,
-} from "../../../net/socket";
+} from "../../../net/socket/socket";
 import { getNewId } from "../../../utils/utils";
 import { ResourceType } from "../../key-value/types";
 import SessionSelectors from "../../session/selectors";

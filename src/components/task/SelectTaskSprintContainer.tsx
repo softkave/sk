@@ -9,7 +9,7 @@ import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { getOpStats } from "../hooks/useOperation";
 import SelectTaskSprint, { BACKLOG } from "./SelectTaskSprint";
 
 export interface ISelectTaskSprintContainerProps {
@@ -27,8 +27,12 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
 ) => {
     const { task, demo, user } = props;
 
+    const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
-    const updateOp = useOperation();
+
+    const toggleLoading = React.useCallback(() => setIsLoading(!isLoading), [
+        isLoading,
+    ]);
 
     const onChangeStatus = React.useCallback(
         async (val: string) => {
@@ -36,9 +40,10 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
                 return false;
             }
 
+            toggleLoading();
+
             const result = await dispatch(
                 updateBlockOpAction({
-                    opId: updateOp.opId,
                     block: task,
                     data: {
                         taskSprint:
@@ -55,23 +60,20 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
 
             const op = unwrapResult(result);
 
-            if (!op) {
-                return false;
+            if (op) {
+                const opStat = getOpStats(op);
+
+                if (opStat.isError) {
+                    message.error(ERROR_UPDATING_TASK_SPRINT);
+                }
             }
 
-            const opStat = getOpStats(op);
-
-            if (opStat.isError) {
-                message.error(ERROR_UPDATING_TASK_SPRINT);
-                return false;
-            }
-
-            return true;
+            toggleLoading();
         },
-        [demo, dispatch, task, updateOp.opId, user.customId]
+        [demo, dispatch, task, toggleLoading, user.customId]
     );
 
-    if (updateOp.isLoading) {
+    if (isLoading) {
         return <LoadingOutlined />;
     }
 

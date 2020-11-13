@@ -11,7 +11,7 @@ import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
@@ -59,7 +59,7 @@ export const respondToNotificationOpAction = createAsyncThunk<
         }
 
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-        let block: IBlock | undefined;
+        let responseData: IUpdateCollaborationRequestResponseProps
 
         if (!isDemoMode) {
             const result = await UserAPI.respondToCollaborationRequest(
@@ -71,22 +71,27 @@ export const respondToNotificationOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            block = result.block;
+            responseData = result.block;
         } else {
             const blockId = arg.request.from?.blockId;
+            let block: IBlock | undefined;
 
-            if (blockId) {
+            if (arg.response === CollaborationRequestStatusType.Accepted) {
                 block = BlockSelectors.getBlock(thunkAPI.getState(), blockId);
+            }
+
+            responseData = {
+                customId: arg.request.customId,
+                response: arg.response,
+                respondedAt: getDateString(),
+                org: block
             }
         }
 
-        // dte
-        thunkAPI.dispatch(
-            completeUserNotificationResponse({
-                ...arg,
-                block,
-            }) as any
-        );
+        completeUserNotificationResponse(thunkAPI, {
+            customId: arg.request.customId,
+
+        })
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
@@ -109,52 +114,46 @@ export const respondToNotificationOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-export const completePartialNotificationResponse = createAsyncThunk<
-    void,
-    IRespondToNotificationOperationActionArgs,
-    IAppAsyncThunkConfig
->(
-    "op/notification/completePartialNotificationResponse",
-    async (arg, thunkAPI) => {
-        const statusHistory =
-            arg.request.statusHistory?.concat({
-                status: arg.response,
-                date: getDateString(),
-            }) || [];
+export interface IUpdateCollaborationRequestResponseProps {
+    customId: string;
+    response: CollaborationRequestStatusType;
+    respondedAt: string;
+    org?: IBlock;
+}
 
-        const update = { statusHistory };
-
-        thunkAPI.dispatch(
-            NotificationActions.updateNotification({
-                id: arg.request.customId,
-                data: update,
-                meta: {
-                    arrayUpdateStrategy: "replace",
-                },
-            })
-        );
-    }
-);
-
-export const completeUserNotificationResponse = createAsyncThunk<
-    void,
-    IRespondToNotificationOperationActionArgs & { block?: IBlock },
-    IAppAsyncThunkConfig
->("op/notification/completeUserNotificationResponse", async (arg, thunkAPI) => {
-    const { block } = arg;
+export const updateNotificationStatus = (
+    thunkAPI: IStoreLikeObject,
+    arg: IUpdateCollaborationRequestResponseProps
+) => {
+    thunkAPI.dispatch(
+        NotificationActions.updateNotification({
+            id: arg.customId,
+            data: {
+                statusHistory: [
+                    {
+                        status: arg.response,
+                        date: arg.respondedAt,
+                    },
+                ],
+            },
+            meta: {
+                arrayUpdateStrategy: "concat",
+            },
+        })
+    );
+};
+export const completeUserNotificationResponse = (thunkAPI: IStoreLikeObject, arg: IUpdateCollaborationRequestResponseProps) => {
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
-    // dte
-    thunkAPI.dispatch(completePartialNotificationResponse(arg) as any);
+    updateNotificationStatus(thunkAPI, arg)
 
-    if (arg.response === CollaborationRequestStatusType.Accepted && block) {
-        thunkAPI.dispatch(BlockActions.addBlock(block));
+    if (arg.response === CollaborationRequestStatusType.Accepted && arg.org) {
+        thunkAPI.dispatch(BlockActions.addBlock(arg.org));
         thunkAPI.dispatch(
             UserActions.updateUser({
                 id: user.customId,
-                data: { orgs: [{ customId: arg.request.from!.blockId }] },
+                data: { orgs: [{ customId: arg.org.customId }] },
                 meta: { arrayUpdateStrategy: "concat" },
             })
         );
     }
-});

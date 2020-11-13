@@ -6,26 +6,19 @@ import { IBlock } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
-import TaskListContainer from "../task/TaskListContainer";
+import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
+import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 
-export interface IGroupedTasksMobileProps {
-    board: IBlock;
+export interface IGroupedTasksMobileProps extends ITasksContainerRenderFnProps {
     groupedTasks: IBoardGroupedTasks[];
-    users: IUser[];
     onClickUpdateBlock: (block: IBlock) => void;
     emptyMessage?: string;
 }
 
 const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
-    const {
-        groupedTasks,
-        users,
-        board,
-        emptyMessage,
-        onClickUpdateBlock,
-    } = props;
+    const { groupedTasks, emptyMessage, onClickUpdateBlock } = props;
 
     const renderTab = (group: IBoardGroupedTasks) => {
         return (
@@ -49,10 +42,9 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 key={group.name}
             >
                 <Scrollbar style={{ height: "100%" }}>
-                    <TaskListContainer
-                        users={users}
+                    <TaskList
+                        {...props}
                         tasks={group.tasks}
-                        board={board}
                         toggleForm={onClickUpdateBlock}
                         getBlockStyle={() => ({ padding: "0 16px" })}
                     />

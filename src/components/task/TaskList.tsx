@@ -1,28 +1,12 @@
 import React from "react";
-import {
-    IBlock,
-    IBlockLabel,
-    IBlockStatus,
-    IBoardTaskResolution,
-} from "../../models/block/block";
-import { ISprint } from "../../models/sprint/types";
-import { IUser } from "../../models/user/user";
+import { IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
+import { ITasksContainerRenderFnProps } from "../board/TasksContainer";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 import Task from "./Task";
 
-export interface ITaskListProps {
-    board: IBlock;
-    tasks: IBlock[];
-    users: IUser[];
-    statusList: IBlockStatus[];
-    labelList: IBlockLabel[];
-    resolutionsList: IBoardTaskResolution[];
-    sprints: ISprint[];
-    sprintsMap: { [key: string]: ISprint };
-    user: IUser;
-
+export interface ITaskListProps extends ITasksContainerRenderFnProps {
     demo?: boolean;
     style?: React.CSSProperties;
     toggleForm?: (block: IBlock) => void;
@@ -30,22 +14,10 @@ export interface ITaskListProps {
 }
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
-    const {
-        tasks,
-        board,
-        demo,
-        statusList,
-        users,
-        style,
-        labelList,
-        resolutionsList,
-        user,
-        sprints,
-        sprintsMap,
-        toggleForm,
-        getBlockStyle,
-    } = props;
+    const { tasks, demo, style, toggleForm, getBlockStyle } = props;
+
     const tasksToRender = sortBlocksByPriority(tasks);
+
     const renderTask = (task: IBlock, i: number) => {
         const isNotLastTask = i < tasksToRender.length - 1;
         const taskStyle = getBlockStyle ? getBlockStyle(task, i) : {};
@@ -63,21 +35,14 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                 }}
             >
                 <Task
+                    {...props}
                     task={task}
-                    board={board}
-                    orgUsers={users}
                     demo={demo}
-                    statusList={statusList}
                     onEdit={
                         toggleForm
                             ? (editedTask) => toggleForm(editedTask)
                             : undefined
                     }
-                    user={user}
-                    labelList={labelList}
-                    resolutionsList={resolutionsList}
-                    sprints={sprints}
-                    sprintsMap={sprintsMap}
                 />
             </StyledContainer>
         );

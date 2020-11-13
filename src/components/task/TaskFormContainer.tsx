@@ -33,8 +33,6 @@ export interface ITaskFormContainerProps {
 const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     const { onClose, orgId } = props;
 
-    console.log({ props });
-
     const dispatch: AppDispatch = useDispatch();
     const user = useSelector(SessionSelectors.assertGetUser);
     const org = useSelector<IAppState, IBlock>((state) => {
@@ -66,8 +64,22 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
     const memoizedSprintsMap = indexArray(sprints, { path: "customId" });
     const statusList = parentBlock?.boardStatuses || [];
+    const statusMap = React.useMemo(
+        () => indexArray(statusList, { path: "customId" }),
+        [statusList]
+    );
+
     const labelList = parentBlock?.boardLabels || [];
+    const labelsMap = React.useMemo(
+        () => indexArray(labelList, { path: "customId" }),
+        [labelList]
+    );
+
     const resolutionsList = parentBlock?.boardResolutions || [];
+    const resolutionsMap = React.useMemo(
+        () => indexArray(resolutionsList, { path: "customId" }),
+        [resolutionsList]
+    );
 
     const collaboratorIds = Array.isArray(org.collaborators)
         ? org.collaborators
@@ -109,13 +121,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     const errors = operationStatus.error
         ? flattenErrorListWithDepthInfinite(operationStatus.error)
         : undefined;
-
-    // React.useEffect(() => {
-    //     // check if it's a new task
-    //     if (operationStatus.isCompleted && !props.block) {
-    //         onClose();
-    //     }
-    // });
 
     const onSubmit = async (values: ITaskFormValues) => {
         const data = { ...block, ...values };
@@ -164,6 +169,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             value={block as any}
             collaborators={collaborators}
             labelList={labelList}
+            labelsMap={labelsMap}
             statusList={statusList}
             resolutionsList={resolutionsList}
             user={user}
@@ -177,6 +183,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             board={parentBlock!}
             sprints={sprints}
             sprintsMap={memoizedSprintsMap}
+            statusMap={statusMap}
+            resolutionsMap={resolutionsMap}
         />
     );
 };

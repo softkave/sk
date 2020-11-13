@@ -12,13 +12,15 @@ import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getDateString } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { getOpStats } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
     task: IBlock;
     statusList: IBlockStatus[];
     resolutionsList: IBoardTaskResolution[];
+    statusMap: { [key: string]: IBlockStatus };
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
     user: IUser;
     onSelectAddNewStatus: () => void;
     onSelectAddNewResolution: () => void;
@@ -27,19 +29,23 @@ export interface ITaskStatusContainerProps {
     className?: string;
 }
 
-// TODO: should we make updates locally first before persisting it in the server for better UX?
-// and for client-side only work
-
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-    const { task, className, demo, statusList, resolutionsList, user } = props;
+    const { task, demo, statusList, user } = props;
+
+    const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
-    const updateOp = useOperation();
+
+    const toggleLoading = React.useCallback(() => setIsLoading(!isLoading), [
+        isLoading,
+    ]);
 
     const onChangeStatus = React.useCallback(
         async (statusId: string, resolutionId?: string) => {
             if (demo) {
-                return false;
+                return;
             }
+
+            toggleLoading();
 
             const lastStatus = statusList[statusList.length - 1];
             const isLastStatus = statusId === lastStatus.customId;
@@ -59,7 +65,6 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const result = await dispatch(
                 updateBlockOpAction({
-                    opId: updateOp.opId,
                     block: task,
                     data: update,
                 })
@@ -67,20 +72,17 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const op = unwrapResult(result);
 
-            if (!op) {
-                return false;
+            if (op) {
+                const opStat = getOpStats(op);
+
+                if (opStat.isError) {
+                    message.error("Error updating task status");
+                }
             }
 
-            const opStat = getOpStats(op);
-
-            if (opStat.isError) {
-                message.error("Error updating task status");
-                return false;
-            }
-
-            return true;
+            toggleLoading();
         },
-        [demo, dispatch, statusList, task, updateOp.opId, user.customId]
+        [demo, dispatch, statusList, task, user.customId, toggleLoading]
     );
 
     const onChangeResolution = React.useCallback(
@@ -89,9 +91,10 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 return;
             }
 
+            toggleLoading();
+
             const result = await dispatch(
                 updateBlockOpAction({
-                    opId: updateOp.opId,
                     block: task,
                     data: {
                         taskResolution: value,
@@ -101,31 +104,26 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const op = unwrapResult(result);
 
-            if (!op) {
-                return;
+            if (op) {
+                const opStat = getOpStats(op);
+
+                if (opStat.isError) {
+                    message.error("Error updating task resolution");
+                }
             }
 
-            const opStat = getOpStats(op);
-
-            if (opStat.isError) {
-                message.error("Error updating task resolution");
-            }
+            toggleLoading();
         },
-        [demo, dispatch, task, updateOp.opId]
+        [demo, dispatch, task, toggleLoading]
     );
 
-    if (updateOp.isLoading) {
+    if (isLoading) {
         return <LoadingOutlined />;
     }
 
     return (
         <TaskStatus
             {...props}
-            disabled={demo}
-            className={className}
-            task={task}
-            statusList={statusList}
-            resolutionsList={resolutionsList}
             onChangeStatus={onChangeStatus}
             onChangeResolution={onChangeResolution}
         />

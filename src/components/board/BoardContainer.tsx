@@ -8,7 +8,7 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
-import { subscribe, unsubcribe } from "../../net/socket";
+import { subscribe, unsubcribe } from "../../net/socket/socket";
 import OperationActions from "../../redux/operations/actions";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";

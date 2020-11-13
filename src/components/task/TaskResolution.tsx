@@ -6,6 +6,7 @@ import StyledContainer from "../styled/Container";
 
 export interface ITaskResolutionProps {
     resolutionsList: IBoardTaskResolution[];
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
     onChange: (value: string) => void;
     onSelectAddNewResolution: () => void;
 
@@ -19,17 +20,16 @@ const ADD_NEW_RESOLUTION_KEY = "add-new-resolution";
 const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
     const {
         resolutionId,
-        onChange,
-        onSelectAddNewResolution,
         disabled,
         className,
         resolutionsList,
+        resolutionsMap,
+        onChange,
+        onSelectAddNewResolution,
     } = props;
 
     const selectedResolution = resolutionId
-        ? resolutionsList.find((status) => {
-              return status.customId === resolutionId;
-          })
+        ? resolutionsMap[resolutionId]
         : null;
 
     const getSelectedKeys = () => (resolutionId ? [resolutionId] : []);

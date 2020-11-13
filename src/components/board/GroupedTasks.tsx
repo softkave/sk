@@ -5,12 +5,13 @@ import RenderForDevice from "../RenderForDevice";
 import { BoardGroupBy } from "./BoardHeaderOptionsMenu";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
 import GroupedTasksMobile from "./GroupedTasksMobile";
+import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 import groupByAssignees from "./utils/groupByAssignees";
 import groupByLabels from "./utils/groupByLabels";
 import groupByStatus from "./utils/groupByStatus";
 
-export interface IGroupedTasksProps {
+export interface IGroupedTasksProps extends ITasksContainerRenderFnProps {
     block: IBlock;
     tasks: IBlock[];
     collaborators: IUser[];
@@ -19,13 +20,7 @@ export interface IGroupedTasksProps {
 }
 
 const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
-    const {
-        block,
-        tasks,
-        collaborators,
-        groupType,
-        onClickUpdateBlock,
-    } = props;
+    const { block, tasks, collaborators, groupType } = props;
 
     let groupedTasks: IBoardGroupedTasks[] = [];
 
@@ -52,25 +47,11 @@ const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
     }
 
     const renderGroupedTasksDesktop = () => {
-        return (
-            <GroupedTasksDesktop
-                board={block}
-                groupedTasks={groupedTasks}
-                users={collaborators}
-                onClickUpdateBlock={onClickUpdateBlock}
-            />
-        );
+        return <GroupedTasksDesktop {...props} groupedTasks={groupedTasks} />;
     };
 
     const renderGroupedTasksMobile = () => {
-        return (
-            <GroupedTasksMobile
-                board={block}
-                groupedTasks={groupedTasks}
-                users={collaborators}
-                onClickUpdateBlock={onClickUpdateBlock}
-            />
-        );
+        return <GroupedTasksMobile {...props} groupedTasks={groupedTasks} />;
     };
 
     return (

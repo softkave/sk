@@ -5,7 +5,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import { subscribe, unsubcribe } from "../../net/socket";
+import { subscribe, unsubcribe } from "../../net/socket/socket";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
