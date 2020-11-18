@@ -4,18 +4,18 @@ import { KeyValueKeys } from "../../../redux/key-value/types";
 import { RoomDoesNotExistError } from "../../../redux/operations/chat/sendMessage";
 import RoomActions from "../../../redux/rooms/actions";
 import RoomSelectors from "../../../redux/rooms/selectors";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingSendMessagePacket } from "../incomingEventTypes";
 
 export default function handleNewMessageEvent(
+    store: IStoreLikeObject,
     data: IIncomingSendMessagePacket
 ) {
-    if (!data.data) {
+    if (data.errors) {
         return;
     }
 
-    const innerData = data.data;
-    const chat = innerData.chat;
+    const chat = data.chat;
     const room = RoomSelectors.getRoom(store.getState(), chat.roomId);
 
     if (!room) {

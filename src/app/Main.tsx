@@ -6,7 +6,7 @@ import AppHomeContainer from "../components/appHome/AppHomeContainer";
 import { isPath0App, paths } from "../components/appHome/path";
 import StyledContainer from "../components/styled/Container";
 import seedDemoData from "../models/seedDemoData";
-import { connectSocket, disconnectSocket } from "../net/socket/socket";
+import SocketAPI from "../net/socket/socket";
 import BlockActions from "../redux/blocks/actions";
 import KeyValueActions from "../redux/key-value/actions";
 import KeyValueSelectors from "../redux/key-value/selectors";
@@ -106,7 +106,6 @@ const Main: React.FC<{}> = () => {
     const [opId] = React.useState(() => getNewId());
     const sessionType = useSelector(SessionSelectors.getSessionType);
     const token = useSelector(SessionSelectors.getUserToken);
-    const clientId = useSelector(SessionSelectors.getClientId);
     const isFetchingMissingBroadcasts = useSelector<IAppState, boolean>(
         (state) =>
             KeyValueSelectors.getKey(
@@ -145,7 +144,6 @@ const Main: React.FC<{}> = () => {
             );
             dispatch(
                 SessionActions.loginUser({
-                    clientId: "demo-clientId",
                     token: "demo-token",
                     userId: demoData.web.user.customId,
                     isDemo: true,
@@ -162,21 +160,20 @@ const Main: React.FC<{}> = () => {
 
     React.useEffect(() => {
         if (sessionType === SessionType.App && !isDemoMode) {
-            connectSocket({
-                clientId: clientId!,
+            SocketAPI.connectSocket({
                 token: token!,
             });
 
             handleHidden();
             routeToApp();
         } else if (sessionType === SessionType.Web) {
-            disconnectSocket();
+            SocketAPI.disconnectSocket();
 
             if (isPath0App()) {
                 history.push("/");
             }
         }
-    }, [sessionType, clientId, history, token, isDemoMode, routeToApp]);
+    }, [sessionType, history, token, isDemoMode, routeToApp]);
 
     const renderInitializing = () => (
         <StyledContainer

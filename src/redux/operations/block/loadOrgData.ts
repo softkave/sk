@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBlock } from "../../../models/block/block";
 import { IRoom } from "../../../models/chat/types";
+import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import {
     collaboratorFragment,
@@ -18,7 +19,7 @@ import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
 import { IRoomsMap } from "../../rooms/types";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
@@ -110,30 +111,8 @@ export const loadOrgDataOpAction = createAsyncThunk<
             const collaborators = result.data[collaboratorsPath].collaborators;
             const notifications = result.data[notificationsPath].notifications;
 
-            thunkAPI.dispatch(UserActions.bulkAddUsers(collaborators));
-            thunkAPI.dispatch(
-                NotificationActions.bulkAddNotifications(notifications)
-            );
-
-            // Cache collaborator and notification ids in the block
-            const notificationIds = notifications.map(
-                (notification) => notification.customId
-            );
-
-            const collaboratorIds = collaborators.map(
-                (collaborator) => collaborator.customId
-            );
-
-            thunkAPI.dispatch(
-                BlockActions.updateBlock({
-                    id: arg.block.customId,
-                    data: {
-                        collaborators: collaboratorIds,
-                        notifications: notificationIds,
-                    },
-                    meta: { arrayUpdateStrategy: "replace" },
-                })
-            );
+            storeOrgNotifications(thunkAPI, arg.block.customId, notifications);
+            storeOrgCollaborators(thunkAPI, arg.block.customId, collaborators);
 
             // Generate org temp rooms
             const existingRooms = RoomSelectors.getOrgRooms(
@@ -252,4 +231,48 @@ function createOrgCollaboratorsTempRooms(
     });
 
     return tempRooms;
+}
+
+export function storeOrgNotifications(
+    store: IStoreLikeObject,
+    blockId: string,
+    notifications: INotification[]
+) {
+    store.dispatch(NotificationActions.bulkAddNotifications(notifications));
+
+    const notificationIds = notifications.map(
+        (notification) => notification.customId
+    );
+
+    store.dispatch(
+        BlockActions.updateBlock({
+            id: blockId,
+            data: {
+                notifications: notificationIds,
+            },
+            meta: { arrayUpdateStrategy: "replace" },
+        })
+    );
+}
+
+export function storeOrgCollaborators(
+    store: IStoreLikeObject,
+    blockId: string,
+    collaborators: IUser[]
+) {
+    store.dispatch(UserActions.bulkAddUsers(collaborators));
+
+    const collaboratorIds = collaborators.map(
+        (collaborator) => collaborator.customId
+    );
+
+    store.dispatch(
+        BlockActions.updateBlock({
+            id: blockId,
+            data: {
+                collaborators: collaboratorIds,
+            },
+            meta: { arrayUpdateStrategy: "replace" },
+        })
+    );
 }

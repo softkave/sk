@@ -1,18 +1,20 @@
 import BlockSelectors from "../../../redux/blocks/selectors";
 import { completeAddSprint } from "../../../redux/operations/sprint/addSprint";
 import SprintActions from "../../../redux/sprints/actions";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingNewSprintPacket } from "../incomingEventTypes";
 
-export default function handleNewSprintEvent(data: IIncomingNewSprintPacket) {
-    if (data.data) {
-        const innerData = data.data;
+export default function handleNewSprintEvent(
+    store: IStoreLikeObject,
+    data: IIncomingNewSprintPacket
+) {
+    if (!data.errors) {
         const board = BlockSelectors.getBlock(
             store.getState(),
-            innerData.sprint.boardId
+            data.sprint.boardId
         );
 
-        store.dispatch(SprintActions.addSprint(innerData.sprint));
-        completeAddSprint(innerData.sprint, board);
+        store.dispatch(SprintActions.addSprint(data.sprint));
+        completeAddSprint(data.sprint, board);
     }
 }

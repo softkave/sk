@@ -21,7 +21,7 @@ export interface IAddSprintAPIParams {
     };
 }
 
-export type IAddSprintAPIResult = GetEndpointResult<ISprint>;
+export type IAddSprintAPIResult = GetEndpointResult<{ sprint: ISprint }>;
 
 async function addSprint(
     params: IAddSprintAPIParams
@@ -127,7 +127,7 @@ export interface ISprintExistsAPIParams {
     name: string;
 }
 
-export type ISprintExistsAPIResult = GetEndpointResult<boolean>;
+export type ISprintExistsAPIResult = GetEndpointResult<{ exists: boolean }>;
 
 async function sprintExists(
     params: ISprintExistsAPIParams

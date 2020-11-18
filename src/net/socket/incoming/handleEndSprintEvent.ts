@@ -1,24 +1,26 @@
 import { completeEndSprint } from "../../../redux/operations/sprint/endSprint";
 import SprintActions from "../../../redux/sprints/actions";
 import SprintSelectors from "../../../redux/sprints/selectors";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingEndSprintPacket } from "../incomingEventTypes";
 
-export default function handleEndSprintEvent(data: IIncomingEndSprintPacket) {
-    if (data.data) {
-        const result = data.data;
+export default function handleEndSprintEvent(
+    store: IStoreLikeObject,
+    data: IIncomingEndSprintPacket
+) {
+    if (!data.errors) {
         const sprint = SprintSelectors.getSprint(
             store.getState(),
-            result.sprintId
+            data.sprintId
         );
 
-        completeEndSprint(sprint, result.endedAt);
+        completeEndSprint(sprint, data.endedAt);
         store.dispatch(
             SprintActions.updateSprint({
-                id: result.sprintId,
+                id: data.sprintId,
                 data: {
-                    endDate: result.endedAt,
-                    endedBy: result.endedBy,
+                    endDate: data.endedAt,
+                    endedBy: data.endedBy,
                 },
             })
         );

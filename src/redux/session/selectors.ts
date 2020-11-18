@@ -39,10 +39,6 @@ function getSessionType(state: IAppState) {
     return state.session.sessionType;
 }
 
-function getClientId(state: IAppState) {
-    return state.session.clientId;
-}
-
 function isDemoMode(state: IAppState) {
     return !!state.session.isDemo;
 }
@@ -53,6 +49,5 @@ export default class SessionSelectors {
     public static isUserSignedIn = isUserSignedIn;
     public static assertGetUser = assertGetUser;
     public static getSessionType = getSessionType;
-    public static getClientId = getClientId;
     public static isDemoMode = isDemoMode;
 }

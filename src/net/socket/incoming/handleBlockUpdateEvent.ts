@@ -3,14 +3,15 @@ import BlockSelectors from "../../../redux/blocks/selectors";
 import { completeAddBlock } from "../../../redux/operations/block/addBlock";
 import { completeDeleteBlock } from "../../../redux/operations/block/deleteBlock";
 import { completeUpdateBlock } from "../../../redux/operations/block/updateBlock";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingBlockUpdatePacket } from "../incomingEventTypes";
 
 export default function handleBlockUpdateEvent(
+    store: IStoreLikeObject,
     data: IIncomingBlockUpdatePacket
 ) {
-    if (data.data) {
-        const innerData = data.data;
+    if (data && !data.errors) {
+        const innerData = data;
 
         if (innerData.isNew && innerData.block) {
             store.dispatch(

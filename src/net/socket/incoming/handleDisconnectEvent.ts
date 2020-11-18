@@ -1,15 +1,13 @@
 import KeyValueActions from "../../../redux/key-value/actions";
 import { KeyValueKeys } from "../../../redux/key-value/types";
 import SessionSelectors from "../../../redux/session/selectors";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
+import SocketAPI from "../socket";
 
-export default function handleDisconnectEvent() {
-    // TODO: should we set to null, won't that prevent reconnection
-    // because it will be garbage collected
-    // socket = null;
-    socketAuthCompleted = false;
+export default function handleDisconnectEvent(store: IStoreLikeObject) {
+    SocketAPI.authCompleted = false;
 
-    if (connectionFailedBefore) {
+    if (SocketAPI.connFailedBefore) {
         return;
     }
 

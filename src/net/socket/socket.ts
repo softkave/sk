@@ -1,15 +1,16 @@
 import io, { Socket } from "socket.io-client";
+import store from "../../redux/store";
 import { getSockAddr } from "../addr";
 import handleBlockUpdateEvent from "./incoming/handleBlockUpdateEvent";
+import handleConnectEvent from "./incoming/handleConnectEvent";
 import handleDeleteSprintEvent from "./incoming/handleDeleteSprintEvent";
 import handleDisconnectEvent from "./incoming/handleDisconnectEvent";
 import handleEndSprintEvent from "./incoming/handleEndSprintEvent";
 import handleNewMessageEvent from "./incoming/handleNewMessageEvent";
-import handleNewNotificationsEvent from "./incoming/handleNewNotificationsEvent";
 import handleNewRoomEvent from "./incoming/handleNewRoomEvent";
 import handleNewSprintEvent from "./incoming/handleNewSprintEvent";
-import handleUserCollaborationRequestEvent from "./incoming/handleNewUserCollaborationRequestEvent";
-import handleOrgCollaborationRequestEvent from "./incoming/handleOrgCollaborationRequestEvent";
+import handleUserCollaborationRequestsEvent from "./incoming/handleNewUserCollaborationRequestEvent";
+import handleOrgCollaborationRequestsEvent from "./incoming/handleOrgCollaborationRequestEvent";
 import handleUpdateRoomReadCounterEvent from "./incoming/handleRoomReadCounterEvent";
 import handleStartSprintEvent from "./incoming/handleStartSprintEvent";
 import handleUpdateNotificationsEvent from "./incoming/handleUpdateNotificationsEvent";
@@ -24,14 +25,13 @@ class SocketNotConnectedError extends Error {
 
 export interface ISocketConnectionProps {
     token: string;
-    clientId: string;
 }
 
 // tslint:disable-next-line: max-classes-per-file
 export default class SocketAPI {
     public static socket: typeof Socket | null = null;
     public static connFailedBefore = false;
-    public static authComplete = false;
+    public static authCompleted = false;
     public static waitQueue: Array<(sock: typeof Socket | null) => void> = [];
 
     public static flushWaitQueue(sock: typeof Socket | null) {
@@ -50,7 +50,7 @@ export default class SocketAPI {
         if (
             SocketAPI.socket &&
             SocketAPI.socket.connected &&
-            SocketAPI.authComplete
+            SocketAPI.authCompleted
         ) {
             return SocketAPI.socket;
         }
@@ -98,37 +98,27 @@ export default class SocketAPI {
         });
 
         socket.on(IncomingSocketEvents.Connect, () =>
-            handleConnect(props.token, props.clientId)
+            handleConnectEvent(store, props.token)
         );
-
         socket.on(IncomingSocketEvents.Disconnect, handleDisconnectEvent);
         socket.on(IncomingSocketEvents.BlockUpdate, handleBlockUpdateEvent);
         socket.on(
-            IncomingSocketEvents.NewNotifications,
-            handleNewNotificationsEvent
+            IncomingSocketEvents.OrgNewCollaborationRequests,
+            handleOrgCollaborationRequestsEvent
         );
-
         socket.on(
-            IncomingSocketEvents.OrgCollaborationRequestResponse,
-            handleOrgCollaborationRequestEvent
-        );
-
-        socket.on(
-            IncomingSocketEvents.UpdateNotification,
+            IncomingSocketEvents.UpdateCollaborationRequests,
             handleUpdateNotificationsEvent
         );
-
         socket.on(
-            IncomingSocketEvents.UserCollaborationRequestResponse,
-            handleUserCollaborationRequestEvent
+            IncomingSocketEvents.UpdateCollaborationRequests,
+            handleUserCollaborationRequestsEvent
         );
-
         socket.on(IncomingSocketEvents.UserUpdate, handleUserUpdateEvent);
         socket.on(
             IncomingSocketEvents.UpdateRoomReadCounter,
             handleUpdateRoomReadCounterEvent
         );
-
         socket.on(IncomingSocketEvents.NewRoom, handleNewRoomEvent);
         socket.on(IncomingSocketEvents.NewMessage, handleNewMessageEvent);
         socket.on(IncomingSocketEvents.NewSprint, handleNewSprintEvent);

@@ -4,7 +4,7 @@ import UserAPI from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
@@ -44,13 +44,7 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
             throw result.errors;
         }
 
-        // dispatch-type-error
-        thunkAPI.dispatch(
-            completeLoadUserNotifications({
-                notifications: result.notifications,
-            }) as any
-        );
-
+        storeUserNotifications(thunkAPI, result.notifications);
         thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LoadUserNotifications)
         );
@@ -67,18 +61,15 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-export const completeLoadUserNotifications = createAsyncThunk<
-    void,
-    { notifications: INotification[] },
-    IAppAsyncThunkConfig
->("op/notification/completeLoadUserNotifications", async (arg, thunkAPI) => {
-    const { notifications } = arg;
-    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+export const storeUserNotifications = (
+    store: IStoreLikeObject,
+    notifications: INotification[]
+) => {
+    const user = SessionSelectors.assertGetUser(store.getState());
     const ids = notifications.map((request) => request.customId);
 
-    thunkAPI.dispatch(NotificationActions.bulkAddNotifications(notifications));
-
-    thunkAPI.dispatch(
+    store.dispatch(NotificationActions.bulkAddNotifications(notifications));
+    store.dispatch(
         UserActions.updateUser({
             id: user.customId,
             data: {
@@ -87,4 +78,4 @@ export const completeLoadUserNotifications = createAsyncThunk<
             meta: { arrayUpdateStrategy: "replace" },
         })
     );
-});
+};

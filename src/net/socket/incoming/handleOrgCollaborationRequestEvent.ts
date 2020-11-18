@@ -1,25 +1,18 @@
-import NotificationSelectors from "../../../redux/notifications/selectors";
-import { updateNotificationStatus } from "../../../redux/operations/notification/respondToNotification";
-import store from "../../../redux/store";
+import { storeOrgNotifications } from "../../../redux/operations/block/loadOrgData";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingNewNotificationsPacket } from "../incomingEventTypes";
 
-export default function handleOrgCollaborationRequestEvent(
+export default function handleOrgCollaborationRequestsEvent(
+    store: IStoreLikeObject,
     data: IIncomingNewNotificationsPacket
 ) {
-    if (!data.data) {
+    if (!data.errors) {
         return;
     }
 
-    const innerData = data.data;
-    const notification = NotificationSelectors.getNotification(
-        store.getState(),
-        innerData.customId
-    );
-
-    store.dispatch(
-        updateNotificationStatus({
-            request: notification,
-            response: innerData.response,
-        })
+    storeOrgNotifications(
+        store,
+        data.notifications[0].from?.blockId,
+        data.notifications
     );
 }

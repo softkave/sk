@@ -3,7 +3,6 @@ import { createAction } from "@reduxjs/toolkit";
 const loginUser = createAction<{
     token: string;
     userId: string;
-    clientId: string;
     isDemo?: boolean;
 }>("session/loginUser");
 

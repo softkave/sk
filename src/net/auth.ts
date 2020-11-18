@@ -7,10 +7,6 @@ function getToken() {
     return SessionSelectors.getUserToken(store.getState());
 }
 
-function getUserClientId() {
-    return SessionSelectors.getClientId(store.getState());
-}
-
 export default async function queryWithAuth(
     headers: { [key: string]: string } | null,
     netQuery: string,
@@ -24,12 +20,9 @@ export default async function queryWithAuth(
         throw new Error("Invalid credentials");
     }
 
-    const clientId = getUserClientId();
-
     return await query(
         {
             Authorization: `Bearer ${requestToken}`,
-            "x-client-id": clientId,
             ...headers,
         },
         netQuery,

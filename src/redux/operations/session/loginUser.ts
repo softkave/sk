@@ -41,8 +41,10 @@ export const loginUserOpAction = createAsyncThunk<
     thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.LoginUser));
 
     try {
-        // TODO: define types for the result
-        const result = await UserAPI.login(arg.email, arg.password);
+        const result = await UserAPI.login({
+            email: arg.email,
+            password: arg.password,
+        });
 
         if (result && result.errors) {
             throw result.errors;
@@ -52,7 +54,6 @@ export const loginUserOpAction = createAsyncThunk<
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
-                    clientId: result.clientId,
                 })
             );
 

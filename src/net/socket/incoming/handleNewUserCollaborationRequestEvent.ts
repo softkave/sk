@@ -1,16 +1,14 @@
-export default function handleUserCollaborationRequestEvent(
-    data: IUserCollaborationRequestResponsePacket
-) {
-    const notification = NotificationSelectors.getNotification(
-        store.getState(),
-        data.customId
-    );
+import { storeUserNotifications } from "../../../redux/operations/notification/loadUserNotifications";
+import { IStoreLikeObject } from "../../../redux/types";
+import { IIncomingNewNotificationsPacket } from "../incomingEventTypes";
 
-    store.dispatch(
-        completeUserNotificationResponse({
-            request: notification,
-            response: data.response,
-            block: data.org,
-        })
-    );
+export default function handleUserCollaborationRequestsEvent(
+    store: IStoreLikeObject,
+    data: IIncomingNewNotificationsPacket
+) {
+    if (data.errors) {
+        return;
+    }
+
+    storeUserNotifications(store, data.notifications);
 }

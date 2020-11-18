@@ -1,9 +1,5 @@
-import { IAddCollaboratorFormItemValues } from "../../components/collaborator/AddCollaboratorFormItem";
-import { BlockType, IBlock } from "../../models/block/block";
-import { INotification } from "../../models/notification/notification";
-import { IUser } from "../../models/user/user";
-import { getDataFromObject } from "../../utils/utils";
 import auth from "../auth";
+import { IEndpointResultBase } from "../types";
 import {
     addBlockMutation,
     addCollaboratorsMutation,
@@ -12,156 +8,86 @@ import {
     getRootBlocksQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
-    transferBlockMutation,
     updateBlockMutation,
 } from "./schema";
+import {
+    IAddBlockAPIParams,
+    IAddBlockAPIResult,
+    IAddCollaboratorAPIParams,
+    IAddCollaboratorAPIResult,
+    IDeleteBlockAPIParams,
+    IGetBlockChildrenAPIParams,
+    IGetBlockChildrenAPIResult,
+    IGetUserRootBlocksAPIResult,
+    IRemoveCollaboratorAPIParams,
+    IRevokeRequestAPIParams,
+    IUpdateBlockAPIParams,
+    IUpdateBlockAPIResult,
+} from "./types";
 
-export interface IAddBlockAPIProps {
-    block: {};
+async function addBlock(
+    props: IAddBlockAPIParams
+): Promise<IAddBlockAPIResult> {
+    return auth(null, addBlockMutation, props, "data.block.addBlock");
 }
 
-export function addBlock(block: IBlock) {
-    // TODO: Find a way to define central structures that'll be used by server and client, including
-    // mongo schemas, graphql schemas, extract functions, and other places.
-    // TODO: define the type of the arguments, so that we can avoid using fields
-    const fields = [
-        "customId",
-        "type",
-        "name",
-        "description",
-        "dueAt",
-        "color",
-        "parent",
-        "rootBlockId",
-        "assignees",
-        "priority",
-        "subTasks",
-        "boardStatuses",
-        "boardLabels",
-        "boardResolutions",
-        "status",
-        "statusAssignedBy",
-        "statusAssignedAt",
-        "taskResolution",
-        "labels",
-        "taskSprint",
-    ];
-
-    return auth(
-        null,
-        addBlockMutation,
-        { block: getDataFromObject(block, fields) },
-        "data.block.addBlock"
-    );
+async function updateBlock(
+    props: IUpdateBlockAPIParams
+): Promise<IUpdateBlockAPIResult> {
+    return auth(null, updateBlockMutation, props, "data.block.updateBlock");
 }
 
-function updateBlock(block: IBlock, data: Partial<IBlock>) {
-    const dataFields = [
-        "name",
-        "description",
-        "color",
-        "priority",
-        "parent",
-        "subTasks",
-        "dueAt",
-        "assignees",
-        "boardStatuses",
-        "boardLabels",
-        "boardResolutions",
-        "status",
-        "statusAssignedBy",
-        "statusAssignedAt",
-        "taskResolution",
-        "labels",
-        "taskSprint",
-    ];
-
-    return auth(
-        null,
-        updateBlockMutation,
-        {
-            blockId: block.customId,
-            data: {
-                ...getDataFromObject(data, dataFields),
-            },
-        },
-        "data.block.updateBlock"
-    );
+async function deleteBlock(
+    props: IDeleteBlockAPIParams
+): Promise<IEndpointResultBase> {
+    return auth(null, deleteBlockMutation, props, "data.block.deleteBlock");
 }
 
-function deleteBlock(block: IBlock) {
-    return auth(
-        null,
-        deleteBlockMutation,
-        { blockId: block.customId },
-        "data.block.deleteBlock"
-    );
-}
-
-function getBlockChildren(block: IBlock, typeList?: BlockType[]) {
+async function getBlockChildren(
+    props: IGetBlockChildrenAPIParams
+): Promise<IGetBlockChildrenAPIResult> {
     return auth(
         null,
         getBlockChildrenQuery,
-        { typeList, blockId: block.customId },
+        props,
         "data.block.getBlockChildren"
     );
 }
 
-function addCollaborators(
-    block: IBlock,
-    collaborators: IAddCollaboratorFormItemValues[]
-) {
-    const collaboratorFields = ["email", "body", "expiresAt", "customId"];
+async function addCollaborators(
+    props: IAddCollaboratorAPIParams
+): Promise<IAddCollaboratorAPIResult> {
     return auth(
         null,
         addCollaboratorsMutation,
-        {
-            blockId: block.customId,
-            collaborators: collaborators.map((request) =>
-                getDataFromObject(request, collaboratorFields)
-            ),
-        },
+        props,
         "data.block.addCollaborators"
     );
 }
 
-function removeCollaborator(block: IBlock, collaborator: IUser) {
+function removeCollaborator(
+    props: IRemoveCollaboratorAPIParams
+): Promise<IEndpointResultBase> {
     return auth(
         null,
         removeCollaboratorMutation,
-        {
-            blockId: block.customId,
-            collaboratorId: collaborator.customId,
-        },
+        props,
         "data.block.removeCollaborator"
     );
 }
 
-function getUserRootBlocks() {
+function getUserRootBlocks(): Promise<IGetUserRootBlocksAPIResult> {
     return auth(null, getRootBlocksQuery, {}, "data.block.getUserRootBlocks");
 }
 
-function revokeRequest(block: IBlock, request: INotification) {
+function revokeRequest(
+    props: IRevokeRequestAPIParams
+): Promise<IEndpointResultBase> {
     return auth(
         null,
         revokeRequestMutation,
-        {
-            requestId: request.customId,
-            blockId: block.customId,
-        },
+        props,
         "data.block.revokeCollaborationRequest"
-    );
-}
-
-function transferBlock(draggedBlock: IBlock, destinationBlock: IBlock) {
-    return auth(
-        null,
-        transferBlockMutation,
-        {
-            draggedBlockId: draggedBlock.customId,
-            destinationBlockId: destinationBlock.customId,
-        },
-        "data.block.transferBlock"
     );
 }
 
@@ -174,5 +100,4 @@ export default class BlockAPI {
     public static removeCollaborator = removeCollaborator;
     public static getUserRootBlocks = getUserRootBlocks;
     public static revokeRequest = revokeRequest;
-    public static transferBlock = transferBlock;
 }

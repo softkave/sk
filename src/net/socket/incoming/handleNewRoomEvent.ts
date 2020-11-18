@@ -3,17 +3,19 @@ import KeyValueActions from "../../../redux/key-value/actions";
 import RoomActions from "../../../redux/rooms/actions";
 import RoomSelectors from "../../../redux/rooms/selectors";
 import SessionSelectors from "../../../redux/session/selectors";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { getNewTempId } from "../../../utils/utils";
 import { IIncomingNewRoomPacket } from "../incomingEventTypes";
 
-export default function handleNewRoomEvent(data: IIncomingNewRoomPacket) {
-    if (!data.data) {
+export default function handleNewRoomEvent(
+    store: IStoreLikeObject,
+    data: IIncomingNewRoomPacket
+) {
+    if (data.errors) {
         return;
     }
 
-    const innerData = data.data;
-    const persistedRoom = innerData.room;
+    const persistedRoom = data.room;
     const user = SessionSelectors.assertGetUser(store.getState());
     const recipientMemberData = persistedRoom.members.find(
         (member) => member.userId !== user.customId

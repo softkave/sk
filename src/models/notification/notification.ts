@@ -22,6 +22,10 @@ export enum CollaborationRequestStatusType {
     Expired = "expired",
 }
 
+export type CollaborationRequestResponse =
+    | CollaborationRequestStatusType.Accepted
+    | CollaborationRequestStatusType.Declined;
+
 export interface ICollaborationRequestStatus {
     status: CollaborationRequestStatusType;
     date: string;
@@ -41,7 +45,7 @@ export interface INotification {
     customId: string;
     to: INotificationTo;
     body: string;
-    from?: ICollaborationRequestFrom;
+    from: ICollaborationRequestFrom;
     createdAt: string;
     type: NotificationType;
     readAt?: string;

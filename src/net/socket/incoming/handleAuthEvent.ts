@@ -6,32 +6,32 @@ import {
     ClientSubscribedResources,
     KeyValueKeys,
 } from "../../../redux/key-value/types";
-import store from "../../../redux/store";
-import {
-    fetchMissingBroadcasts,
-    handleFetchMissingBroadcastsResponse,
-    subscribe,
-} from "../socket";
-import { IIncomingSocketEventPacket } from "../types";
+import { IStoreLikeObject } from "../../../redux/types";
+import { GetEndpointResult } from "../../types";
+import fetchMissingBroadcastsEvent from "../outgoing/fetchMissingBroadcastsEvent";
+import subscribeEvent from "../outgoing/subscribeEvent";
+import SocketAPI from "../socket";
+import handleFetchMissingBroadcastsEvent from "./handleFetchMissingBroadcastsEvent";
 
 export default async function handleAuthEvent(
-    data: IIncomingSocketEventPacket<void>
+    store: IStoreLikeObject,
+    data: GetEndpointResult<{}>
 ) {
     if (data.errors) {
-        connectionFailedBefore = true;
+        SocketAPI.connFailedBefore = true;
 
         // TODO: maybe show notification
         const tenSecsInMs = 10000;
         delay(() => {
-            socket?.disconnect();
+            SocketAPI.disconnectSocket();
         }, tenSecsInMs);
 
-        clearSocketWaitQueue(null);
+        SocketAPI.flushWaitQueue(null);
         return;
     }
 
-    socketAuthCompleted = true;
-    clearSocketWaitQueue(socket);
+    SocketAPI.authCompleted = true;
+    SocketAPI.flushWaitQueue(SocketAPI.socket);
 
     const rooms =
         KeyValueSelectors.getKey(
@@ -44,7 +44,7 @@ export default async function handleAuthEvent(
         getRoomLikeResource(signature)
     ) as ClientSubscribedResources;
 
-    subscribe(items);
+    subscribeEvent(items);
 
     const socketDisconnectedAt = KeyValueSelectors.getKey(
         store.getState(),
@@ -59,12 +59,13 @@ export default async function handleAuthEvent(
             })
         );
 
-        const packet = await fetchMissingBroadcasts(
+        const packet = await fetchMissingBroadcastsEvent(
             socketDisconnectedAt as number,
             roomSignatures
         );
 
-        handleFetchMissingBroadcastsResponse(packet);
+        handleFetchMissingBroadcastsEvent(store, packet);
+
         store.dispatch(
             KeyValueActions.setKey({
                 key: KeyValueKeys.FetchingMissingBroadcasts,

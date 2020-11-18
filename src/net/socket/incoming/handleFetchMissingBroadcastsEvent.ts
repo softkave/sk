@@ -1,3 +1,4 @@
+import { IStoreLikeObject } from "../../../redux/types";
 import {
     IIncomingBroadcastHistoryPacket,
     IncomingSocketEvents,
@@ -8,7 +9,8 @@ import handleEndSprintEvent from "./handleEndSprintEvent";
 import handleNewMessageEvent from "./handleNewMessageEvent";
 import handleNewRoomEvent from "./handleNewRoomEvent";
 import handleNewSprintEvent from "./handleNewSprintEvent";
-import handleUserCollaborationRequestEvent from "./handleNewUserCollaborationRequestEvent";
+import handleUserCollaborationRequestsEvent from "./handleNewUserCollaborationRequestEvent";
+import handleOrgCollaborationRequestsEvent from "./handleOrgCollaborationRequestEvent";
 import handleUpdateRoomReadCounterEvent from "./handleRoomReadCounterEvent";
 import handleStartSprintEvent from "./handleStartSprintEvent";
 import handleUpdateNotificationsEvent from "./handleUpdateNotificationsEvent";
@@ -16,54 +18,57 @@ import handleUpdateSprintEvent from "./handleUpdateSprintEvent";
 import handleUserUpdateEvent from "./handleUserUpdateEvent";
 
 export default function handleFetchMissingBroadcastsEvent(
+    store: IStoreLikeObject,
     data: IIncomingBroadcastHistoryPacket
 ) {
-    if (!data.data) {
+    if (data.errors) {
         return;
     }
 
-    const innerData = data.data;
-
-    if (innerData.reload) {
+    if (data.reload) {
         window.location.reload();
         return;
     }
 
-    const roomIds = Object.keys(innerData.rooms);
+    const roomIds = Object.keys(data.rooms);
 
     roomIds.forEach((roomId) => {
-        const packets = innerData.rooms[roomId];
+        const packets = data.rooms[roomId];
 
         packets.forEach((packet) => {
             switch (packet.event) {
                 case IncomingSocketEvents.BlockUpdate:
-                    return handleBlockUpdateEvent(packet.data);
-                case IncomingSocketEvents.NewNotifications:
-                    return handleNewNotifications(packet.data);
-                case IncomingSocketEvents.OrgCollaborationRequestResponse:
-                    return handleOrgCollaborationRequestResponse(packet.data);
-                case IncomingSocketEvents.UpdateNotification:
-                    return handleUpdateNotificationsEvent(packet.data);
-                case IncomingSocketEvents.UserCollaborationRequestResponse:
-                    return handleUserCollaborationRequestEvent(packet.data);
+                    return handleBlockUpdateEvent(store, packet.data);
+                case IncomingSocketEvents.OrgNewCollaborationRequests:
+                    return handleOrgCollaborationRequestsEvent(
+                        store,
+                        packet.data
+                    );
+                case IncomingSocketEvents.UpdateCollaborationRequests:
+                    return handleUpdateNotificationsEvent(store, packet.data);
+                case IncomingSocketEvents.UserNewCollaborationRequest:
+                    return handleUserCollaborationRequestsEvent(
+                        store,
+                        packet.data
+                    );
                 case IncomingSocketEvents.UserUpdate:
-                    return handleUserUpdateEvent(packet.data);
+                    return handleUserUpdateEvent(store, packet.data);
                 case IncomingSocketEvents.UpdateRoomReadCounter:
-                    return handleUpdateRoomReadCounterEvent(packet.data);
+                    return handleUpdateRoomReadCounterEvent(store, packet.data);
                 case IncomingSocketEvents.NewRoom:
-                    return handleNewRoomEvent(packet.data);
+                    return handleNewRoomEvent(store, packet.data);
                 case IncomingSocketEvents.NewMessage:
-                    return handleNewMessageEvent(packet.data);
+                    return handleNewMessageEvent(store, packet.data);
                 case IncomingSocketEvents.NewSprint:
-                    return handleNewSprintEvent(packet.data);
+                    return handleNewSprintEvent(store, packet.data);
                 case IncomingSocketEvents.UpdateSprint:
-                    return handleUpdateSprintEvent(packet.data);
+                    return handleUpdateSprintEvent(store, packet.data);
                 case IncomingSocketEvents.StartSprint:
-                    return handleStartSprintEvent(packet.data);
+                    return handleStartSprintEvent(store, packet.data);
                 case IncomingSocketEvents.EndSprint:
-                    return handleEndSprintEvent(packet.data);
+                    return handleEndSprintEvent(store, packet.data);
                 case IncomingSocketEvents.DeleteSprint:
-                    return handleDeleteSprintEvent(packet.data);
+                    return handleDeleteSprintEvent(store, packet.data);
             }
         });
     });

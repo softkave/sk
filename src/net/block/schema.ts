@@ -6,9 +6,43 @@ import {
 
 const addBlockMutation = `
     ${errorFragment}
+    ${blockFragment}
     mutation AddBlockMutation ($block: AddBlockInput!) {
         block {
             addBlock (block: $block) {
+                errors {
+                    ...errorFragment
+                }
+                block {
+                    ...blockFragment
+                }
+            }
+        }
+    }
+`;
+
+const updateBlockMutation = `
+    ${errorFragment}
+    ${blockFragment}
+    mutation UpdateBlockMutation ($blockId: String!, $data: UpdateBlockInput!) {
+        block {
+            updateBlock (blockId: $blockId, data: $data) {
+                errors {
+                    ...errorFragment
+                }
+                block {
+                    ...blockFragment
+                }
+            }
+        }
+    }
+`;
+
+const deleteBlockMutation = `
+    ${errorFragment}
+    mutation DeleteBlockMutation ($blockId: String!) {
+        block {
+            deleteBlock (blockId: $blockId) {
                 errors {
                     ...errorFragment
                 }
@@ -17,64 +51,38 @@ const addBlockMutation = `
     }
 `;
 
-const updateBlockMutation = `
-  ${errorFragment}
-  mutation UpdateBlockMutation ($blockId: String!, $data: UpdateBlockInput!) {
-    block {
-      updateBlock (blockId: $blockId, data: $data) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
-const deleteBlockMutation = `
-  ${errorFragment}
-  mutation DeleteBlockMutation ($blockId: String!) {
-    block {
-      deleteBlock (blockId: $blockId) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
-`;
-
 const getUserRootBlocksQuery = `
-  ${blockFragment}
-  ${errorFragment}
-  query GetUserRootBlocksQuery {
-    block {
-      getUserRootBlocks {
-        errors {
-          ...errorFragment
+    ${blockFragment}
+    ${errorFragment}
+    query GetUserRootBlocksQuery {
+        block {
+            getUserRootBlocks {
+                errors {
+                    ...errorFragment
+                }
+                blocks {
+                    ...blockFragment
+                }
+            }
         }
-        blocks {
-          ...blockFragment
-        }
-      }
     }
-  }
 `;
 
 const getBlockChildrenQuery = `
-  ${blockFragment}
-  ${errorFragment}
-  query GetBlockChildrenQuery ($blockId: String!, $typeList: [String!]) {
-    block {
-      getBlockChildren (blockId: $blockId, typeList: $typeList) {
-        errors {
-          ...errorFragment
+    ${blockFragment}
+    ${errorFragment}
+    query GetBlockChildrenQuery ($blockId: String!, $typeList: [String!]) {
+        block {
+            getBlockChildren (blockId: $blockId, typeList: $typeList) {
+                errors {
+                    ...errorFragment
+                }
+                blocks {
+                    ...blockFragment
+                }
+            }
         }
-        blocks {
-          ...blockFragment
-        }
-      }
     }
-  }
 `;
 
 const addCollaboratorsMutation = `
@@ -89,7 +97,7 @@ const addCollaboratorsMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                requests {
                     ...notificationFragment
                 }
             }
@@ -98,48 +106,29 @@ const addCollaboratorsMutation = `
 `;
 
 const removeCollaboratorMutation = `
-  ${errorFragment}
-  mutation RemoveCollaboratorsMutation ($blockId: String!, $collaboratorId: String!) {
-    block {
-      removeCollaborator (blockId: $blockId, collaboratorId: $collaboratorId) {
-        errors {
-          ...errorFragment
+    ${errorFragment}
+    mutation RemoveCollaboratorsMutation ($blockId: String!, $collaboratorId: String!) {
+        block {
+            removeCollaborator (blockId: $blockId, collaboratorId: $collaboratorId) {
+                errors {
+                    ...errorFragment
+                }
+            }
         }
-      }
     }
-  }
 `;
 
 const revokeRequestMutation = `
-  ${errorFragment}
-  mutation RevokeCollaborationRequestMutation ($blockId: String!, $requestId: String!) {
-    block {
-      revokeCollaborationRequest (blockId: $blockId, requestId: $requestId) {
-        errors {
-          ...errorFragment
+    ${errorFragment}
+    mutation RevokeCollaborationRequestMutation ($blockId: String!, $requestId: String!) {
+        block {
+            revokeCollaborationRequest (blockId: $blockId, requestId: $requestId) {
+                errors {
+                    ...errorFragment
+                }
+            }
         }
-      }
     }
-  }
-`;
-
-const transferBlockMutation = `
-  ${errorFragment}
-  mutation DragAndDropMutation (
-    $draggedBlockId: String!,
-    $destinationBlockId: String!
-  ) {
-    block {
-      transferBlock (
-        draggedBlockId: $draggedBlockId,
-        destinationBlockId: $destinationBlockId
-      ) {
-        errors {
-          ...errorFragment
-        }
-      }
-    }
-  }
 `;
 
 export {
@@ -152,5 +141,4 @@ export {
     getUserRootBlocksQuery as getRootBlocksQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
-    transferBlockMutation,
 };

@@ -38,7 +38,7 @@ export const requestForgotPasswordOpAction = createAsyncThunk<
     );
 
     try {
-        const result = await UserAPI.forgotPassword(arg.email);
+        const result = await UserAPI.forgotPassword({ email: arg.email });
 
         if (result && result.errors) {
             throw result.errors;

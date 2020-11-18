@@ -43,7 +43,14 @@ export const signupUserOpAction = createAsyncThunk<
 
     try {
         const data = { ...arg, color: randomColor() };
-        const result = await UserAPI.signup(data);
+        const result = await UserAPI.signup({
+            user: {
+                color: data.color,
+                email: data.email,
+                name: data.name,
+                password: data.password,
+            },
+        });
 
         if (result && result.errors) {
             throw result.errors;
@@ -53,7 +60,6 @@ export const signupUserOpAction = createAsyncThunk<
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
-                    clientId: result.clientId,
                 })
             );
 

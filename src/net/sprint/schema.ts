@@ -32,7 +32,7 @@ export const addSprintMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                sprint {
                     ...sprintFragment
                 }
             }
@@ -61,9 +61,7 @@ export const startSprintMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
-                    startDate
-                }
+                startDate
             }
         }
     }
@@ -77,9 +75,7 @@ export const endSprintMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
-                    endDate
-                }
+                endDate
             }
         }
     }
@@ -93,7 +89,7 @@ export const setupSprintMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                sprintOptions {
                     createdAt
                 }
             }
@@ -109,7 +105,7 @@ export const updateSprintMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                sprint {
                     updatedAt
                 }
             }
@@ -125,7 +121,7 @@ export const updateSprintOptionsMutation = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                sprintOptions {
                     updatedAt
                 }
             }
@@ -142,7 +138,7 @@ export const getSprintsQuery = `
                 errors {
                     ...errorFragment
                 }
-                data {
+                sprints {
                     ...sprintFragment
                 }
             }
@@ -158,7 +154,7 @@ export const sprintExistsQuery = `
                 errors {
                     ...errorFragment
                 }
-                data
+                exists
             }
         }
     }

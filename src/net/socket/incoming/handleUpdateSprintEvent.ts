@@ -1,16 +1,16 @@
 import SprintActions from "../../../redux/sprints/actions";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingUpdateSprintPacket } from "../incomingEventTypes";
 
 export default function handleUpdateSprintEvent(
+    store: IStoreLikeObject,
     data: IIncomingUpdateSprintPacket
 ) {
-    if (data.data) {
-        const innerData = data.data;
+    if (!data.errors) {
         store.dispatch(
             SprintActions.updateSprint({
-                id: innerData.sprintId,
-                data: innerData.data,
+                id: data.sprintId,
+                data: data.data,
             })
         );
     }

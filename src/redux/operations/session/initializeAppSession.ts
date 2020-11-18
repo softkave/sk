@@ -40,7 +40,7 @@ export const initializeAppSessionOpAction = createAsyncThunk<
         const token = UserSessionStorageFuncs.getUserToken();
 
         if (token) {
-            const result = await UserAPI.getUserData(token);
+            const result = await UserAPI.getUserData({ token });
 
             if (result && result.errors) {
                 throw result.errors;
@@ -53,7 +53,6 @@ export const initializeAppSessionOpAction = createAsyncThunk<
                 SessionActions.loginUser({
                     token,
                     userId: user.customId,
-                    clientId: result.clientId,
                 })
             );
         } else {

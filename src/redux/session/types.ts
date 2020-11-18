@@ -10,5 +10,4 @@ export interface ISessionState {
     isDemo?: boolean;
     token?: string;
     userId?: string;
-    clientId?: string;
 }

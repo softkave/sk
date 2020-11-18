@@ -8,10 +8,6 @@ import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError } from "./types";
 
-function getUserClientId() {
-    return SessionSelectors.getClientId(store.getState());
-}
-
 const isExpectedErrorType = (errors) => {
     return Array.isArray(errors) && !!errors.find((e) => !!e.name);
 };
@@ -153,7 +149,6 @@ export async function graphQLAPICallWithAuth(
         ...props,
         headers: {
             Authorization: `Bearer ${requestToken}`,
-            "x-client-id": getUserClientId(),
             ...props.headers,
         },
     });

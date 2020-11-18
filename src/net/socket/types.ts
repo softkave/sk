@@ -1,11 +1,4 @@
-import { IAppError } from "../types";
-
-export interface IOutgoingSocketEventPacket<T> {
+export interface IOutgoingSocketEventPacket<T = any> {
     token: string;
-    data: T;
-}
-
-export interface IIncomingSocketEventPacket<T> {
-    errors?: IAppError;
     data?: T;
 }

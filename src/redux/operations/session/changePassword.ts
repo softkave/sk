@@ -44,11 +44,10 @@ export const changePasswordOpAction = createAsyncThunk<
     );
 
     try {
-        // TODO: define type
-        const result: any = await UserAPI.changePasswordWithToken(
-            arg.password,
-            arg.token
-        );
+        const result = await UserAPI.changePasswordWithToken({
+            password: arg.password,
+            token: arg.token,
+        });
 
         if (result && result.errors) {
             throw result.errors;
@@ -58,7 +57,6 @@ export const changePasswordOpAction = createAsyncThunk<
                 SessionActions.loginUser({
                     token: result.token,
                     userId: result.user.customId,
-                    clientId: result.clientId,
                 })
             );
 

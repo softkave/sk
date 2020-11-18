@@ -1,8 +1,14 @@
-import { INotification } from "../../models/notification/notification";
+import { IBlock } from "../../models/block/block";
+import {
+    CollaborationRequestResponse,
+    CollaborationRequestStatusType,
+    INotification,
+} from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
 import { getDataFromObject } from "../../utils/utils";
 import auth from "../auth";
 import query from "../query";
+import { GetEndpointResult, IEndpointResultBase } from "../types";
 import {
     changePasswordMutation,
     changePasswordWithTokenMutation,
@@ -17,106 +23,167 @@ import {
     userSignupMutation,
 } from "./schema";
 
-// TODO: Define types for the parameters
+export type IUserLoginResult = GetEndpointResult<{
+    user: IUser;
+    token: string;
+}>;
 
-export interface ISignupEnpointProps {
-    name: string;
-    password: string;
-    email: string;
-    color: string;
+export interface ISignupAPIProps {
+    user: {
+        name: string;
+        password: string;
+        email: string;
+        color: string;
+    };
 }
 
-async function signup(user: ISignupEnpointProps) {
-    const userFields = ["name", "password", "email", "color"];
+async function signup(props: ISignupAPIProps): Promise<IUserLoginResult> {
     const result = await query(
         null,
         userSignupMutation,
-        { user: getDataFromObject(user, userFields) },
+        props,
         "data.user.signup"
     );
 
     return result;
 }
 
-async function login(email: string, password: string) {
+export interface ILoginAPIProps {
+    email: string;
+    password: string;
+}
+
+async function login(props: ILoginAPIProps): Promise<IUserLoginResult> {
     const result = await query(
         null,
         userLoginMutation,
-        { email, password },
+        props,
         "data.user.login"
     );
 
     return result;
 }
 
-function updateUser(user: IUser) {
-    const updateUserFields = ["name", "notificationsLastCheckedAt", "color"];
-    return auth(
-        null,
-        updateUserMutation,
-        { user: getDataFromObject(user, updateUserFields) },
-        "data.user.updateUser"
-    );
+export interface IUpdateUserAPIProps {
+    user: {
+        name?: string;
+        notificationsLastCheckedAt?: Date;
+        color?: string;
+    };
 }
 
-async function changePassword(password: string, token: string) {
+async function updateUser(
+    props: IUpdateUserAPIProps
+): Promise<IEndpointResultBase> {
+    return auth(null, updateUserMutation, props, "data.user.updateUser");
+}
+
+export interface IChangePasswordAPIProps {
+    password: string;
+    token: string;
+}
+
+async function changePassword(
+    props: IChangePasswordAPIProps
+): Promise<IUserLoginResult> {
     const result = await auth(
         null,
         changePasswordMutation,
-        { password },
+        { password: props.password },
         "data.user.changePassword",
-        token
+        props.token
     );
 
     return result;
 }
 
-function forgotPassword(email: string) {
+export interface IForgotPasswordAPIProps {
+    email: string;
+}
+
+async function forgotPassword(
+    props: IForgotPasswordAPIProps
+): Promise<IEndpointResultBase> {
     return query(
         null,
         forgotPasswordMutation,
-        { email },
+        props,
         "data.user.forgotPassword"
     );
 }
 
-function userExists(email: string) {
-    return query(null, userExistsQuery, { email }, "data.user.userExists");
+export interface IUserExistsAPIParams {
+    email: string;
 }
 
-function markNotificationRead(notification: INotification, readAt: string) {
+export type IUserExistsAPIResult = GetEndpointResult<{
+    exists: boolean;
+}>;
+
+async function userExists(
+    props: IUserExistsAPIParams
+): Promise<IUserExistsAPIResult> {
+    return query(null, userExistsQuery, props, "data.user.userExists");
+}
+
+export interface IMarkNotificationReadAPIParams {
+    notificationId: string;
+    readAt: string;
+}
+
+async function markNotificationRead(
+    props: IMarkNotificationReadAPIParams
+): Promise<IEndpointResultBase> {
     return auth(
         null,
         markNotificationReadMutation,
-        {
-            notificationId: notification.customId,
-            readAt,
-        },
+        props,
         "data.user.markNotificationRead"
     );
 }
 
-function changePasswordWithToken(password: string, token: string) {
+export interface IChangePasswordWithTokenAPIParams {
+    password: string;
+    token: string;
+}
+
+async function changePasswordWithToken(
+    props: IChangePasswordWithTokenAPIParams
+): Promise<IUserLoginResult> {
     return auth(
         null,
         changePasswordWithTokenMutation,
-        { password },
+        { password: props.password },
         "data.user.changePasswordWithToken",
-        token
+        props.token
     );
 }
 
-// TODO: define response's type
-function respondToCollaborationRequest(request: INotification, response: any) {
+export interface IRespondToCollaborationRequestAPIParams {
+    requestId: string;
+    response: CollaborationRequestResponse;
+}
+
+export type IRespondToCollaborationRequestAPIResult = GetEndpointResult<{
+    block?: IBlock;
+}>;
+
+async function respondToCollaborationRequest(
+    params: IRespondToCollaborationRequestAPIParams
+): Promise<IRespondToCollaborationRequestAPIResult> {
     return auth(
         null,
         respondToCollaborationRequestMutation,
-        { response, requestId: request.customId },
+        params,
         "data.user.respondToCollaborationRequest"
     );
 }
 
-function getUserNotifications() {
+export interface IGetUserNotificationsAPIResult {
+    notifications: INotification[];
+}
+
+async function getUserNotifications(): Promise<IGetUserNotificationsAPIResult> {
     return auth(
         null,
         getUserNotificationsQuery,
@@ -125,8 +192,20 @@ function getUserNotifications() {
     );
 }
 
-function getUserData(token: string) {
-    return auth(null, getUserDataQuery, {}, "data.user.getUserData", token);
+export interface IGetUserDataAPIParams {
+    token: string;
+}
+
+async function getUserData(
+    props: IGetUserDataAPIParams
+): Promise<IUserLoginResult> {
+    return auth(
+        null,
+        getUserDataQuery,
+        {},
+        "data.user.getUserData",
+        props.token
+    );
 }
 
 export default class UserAPI {

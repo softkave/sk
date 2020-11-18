@@ -9,7 +9,6 @@ const sessionReducer = createReducer<ISessionState>(
             state.sessionType = SessionType.App;
             state.token = action.payload.token;
             state.userId = action.payload.userId;
-            state.clientId = action.payload.clientId;
             state.isDemo = action.payload.isDemo;
         });
 

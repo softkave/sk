@@ -1,28 +1,27 @@
 import { completeStartSprint } from "../../../redux/operations/sprint/startSprint";
 import SprintActions from "../../../redux/sprints/actions";
 import SprintSelectors from "../../../redux/sprints/selectors";
-import store from "../../../redux/store";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingStartSprintPacket } from "../incomingEventTypes";
 
 export default function handleStartSprintEvent(
+    store: IStoreLikeObject,
     data: IIncomingStartSprintPacket
 ) {
-    if (data.data) {
-        const innerData = data.data;
-
+    if (!data.errors) {
         store.dispatch(
             SprintActions.updateSprint({
-                id: innerData.sprintId,
+                id: data.sprintId,
                 data: {
-                    startDate: innerData.startedAt,
-                    startedBy: innerData.startedBy,
+                    startDate: data.startedAt,
+                    startedBy: data.startedBy,
                 },
             })
         );
 
         const sprint = SprintSelectors.getSprint(
             store.getState(),
-            innerData.sprintId
+            data.sprintId
         );
 
         completeStartSprint(sprint);
