@@ -1,11 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import moment from "moment";
-import { addCustomIdToSubTasks } from "../../../components/block/getNewBlock";
+import merge from "lodash/merge";
 import {
     BlockType,
+    getUpdateBlockInput,
     IBlock,
     IBoardTaskResolution,
+    IFormBlock,
 } from "../../../models/block/block";
+import { seedBlock } from "../../../models/seedDemoData";
 import BlockAPI from "../../../net/block/block";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
@@ -18,18 +20,133 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
-import {
-    hasBlockParentChanged,
-    transferBlockHelperAction,
-} from "./transferBlock";
+import { hasBlockParentChanged, storeTransferBlock } from "./transferBlock";
 
 export interface IUpdateBlockOperationActionArgs {
-    block: IBlock;
-    data: Partial<IBlock>;
+    blockId: string;
+    data: Partial<IFormBlock>;
+}
+
+export const updateBlockOpAction = createAsyncThunk<
+    IOperation<IBlock> | undefined,
+    GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
+    IAppAsyncThunkConfig
+>("op/block/updateBlock", async (arg, thunkAPI) => {
+    const opId = arg.opId || getNewId();
+
+    const operation = OperationSelectors.getOperationWithId(
+        thunkAPI.getState(),
+        opId
+    );
+
+    if (isOperationStarted(operation)) {
+        return;
+    }
+
+    thunkAPI.dispatch(
+        dispatchOperationStarted(opId, OperationType.UPDATE_BLOCK)
+    );
+
+    try {
+        const block = BlockSelectors.getBlock(thunkAPI.getState(), arg.blockId);
+
+        assignUserToTaskOnUpdateStatus(thunkAPI, block, arg.data);
+
+        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+        const updateBlockInput = getUpdateBlockInput(block, arg.data);
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        let updatedBlock: IBlock | null = null;
+
+        if (!isDemoMode) {
+            const result = await BlockAPI.updateBlock({
+                blockId: arg.blockId,
+                data: updateBlockInput,
+            });
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
+
+            updatedBlock = result.block;
+        } else {
+            updatedBlock = {
+                ...block,
+                ...seedBlock(user, merge(block, arg.data)),
+            };
+        }
+
+        storeUpdateBlock(thunkAPI, block, updatedBlock);
+        thunkAPI.dispatch(
+            dispatchOperationCompleted(
+                opId,
+                OperationType.UPDATE_BLOCK,
+                null,
+                updatedBlock
+            )
+        );
+    } catch (error) {
+        thunkAPI.dispatch(
+            dispatchOperationError(opId, OperationType.UPDATE_BLOCK, error)
+        );
+    }
+
+    return wrapUpOpAction(thunkAPI, opId, arg);
+});
+
+export const storeUpdateBlock = (
+    store: IStoreLikeObject,
+    block: IBlock,
+    data: Partial<IBlock>
+) => {
+    const forTransferBlockOnly = { ...block, ...data };
+
+    if (hasBlockParentChanged(block, forTransferBlockOnly)) {
+        storeTransferBlock(store, {
+            draggedBlockId: forTransferBlockOnly.customId,
+            destinationBlockId: data.parent!,
+        });
+    }
+
+    store.dispatch(
+        BlockActions.updateBlock({
+            data,
+            id: block.customId,
+            meta: {
+                arrayUpdateStrategy: "replace",
+            },
+        })
+    );
+
+    updateTasksIfHasDeletedStatusesOrLabels(store, block, data);
+};
+
+function assignUserToTaskOnUpdateStatus(
+    store: IStoreLikeObject,
+    block: IBlock,
+    data: Partial<IFormBlock>
+) {
+    if (block.type !== BlockType.Task) {
+        return;
+    }
+
+    if (data.status && data.status !== block.status) {
+        const assignees = data.assignees || block.assignees || [];
+
+        if (assignees.length === 0) {
+            const user = SessionSelectors.assertGetUser(store.getState());
+
+            data.assignees = [
+                {
+                    userId: user.customId,
+                },
+            ];
+        }
+    }
 }
 
 /**
@@ -72,22 +189,23 @@ function getDeletedStatuses(
 }
 
 const updateTasksIfHasDeletedStatusesOrLabels = (
-    args: IUpdateBlockOperationActionArgs,
-    thunkAPI: IStoreLikeObject
+    store: IStoreLikeObject,
+    block: IBlock,
+    data: Partial<IBlock>
 ) => {
     const deletedStatuses = getDeletedStatuses(
-        args.block.boardStatuses,
-        args.data.boardStatuses
+        block.boardStatuses,
+        data.boardStatuses
     );
 
     const deletedLabels = getDeletedStatuses(
-        args.block.boardLabels,
-        args.data.boardLabels
+        block.boardLabels,
+        data.boardLabels
     );
 
     const deletedResolutions = getDeletedStatuses(
-        args.block.boardResolutions,
-        args.data.boardResolutions
+        block.boardResolutions,
+        data.boardResolutions
     );
 
     const hasDeletedStatus = Object.keys(deletedStatuses).length > 0;
@@ -99,8 +217,8 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
     }
 
     const tasks = BlockSelectors.getBlockChildren(
-        thunkAPI.getState(),
-        args.block,
+        store.getState(),
+        block.customId,
         BlockType.Task
     );
 
@@ -109,7 +227,7 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
     }
 
     const updates: IUpdateBlockActionArgs[] = [];
-    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(store.getState());
 
     tasks.forEach((task) => {
         const taskUpdates: Partial<IBlock> = {};
@@ -159,128 +277,5 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
         return;
     }
 
-    thunkAPI.dispatch(BlockActions.bulkUpdateBlocks(updates));
+    store.dispatch(BlockActions.bulkUpdateBlocks(updates));
 };
-
-export const updateBlockOpAction = createAsyncThunk<
-    IOperation | undefined,
-    GetOperationActionArgs<IUpdateBlockOperationActionArgs>,
-    IAppAsyncThunkConfig
->("op/block/updateBlock", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
-
-    const operation = OperationSelectors.getOperationWithId(
-        thunkAPI.getState(),
-        id
-    );
-
-    if (isOperationStarted(operation)) {
-        return;
-    }
-
-    thunkAPI.dispatch(
-        dispatchOperationStarted(
-            id,
-            OperationType.UPDATE_BLOCK,
-            arg.block.customId
-        )
-    );
-
-    try {
-        if (arg.data.dueAt) {
-            arg.data.dueAt = moment(arg.data.dueAt).toString();
-        } else if (arg.data.type === BlockType.Task) {
-            arg.data.subTasks = addCustomIdToSubTasks(arg.data.subTasks);
-        }
-
-        assignUserToTaskOnUpdateStatus(thunkAPI, arg.block, arg.data);
-
-        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-
-        if (!isDemoMode) {
-            const result = await BlockAPI.updateBlock(arg.block, arg.data);
-
-            if (result && result.errors) {
-                throw result.errors;
-            }
-        }
-
-        // dispatch-type-error
-        thunkAPI.dispatch(completeUpdateBlock(arg) as any);
-        thunkAPI.dispatch(
-            dispatchOperationCompleted(
-                id,
-                OperationType.UPDATE_BLOCK,
-                arg.block.customId
-            )
-        );
-    } catch (error) {
-        thunkAPI.dispatch(
-            dispatchOperationError(
-                id,
-                OperationType.UPDATE_BLOCK,
-                error,
-                arg.block.customId
-            )
-        );
-    }
-
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
-});
-
-export const completeUpdateBlock = createAsyncThunk<
-    void,
-    IUpdateBlockOperationActionArgs,
-    IAppAsyncThunkConfig
->("op/block/completeUpdateBlock", async (arg, thunkAPI) => {
-    const forTransferBlockOnly = { ...arg.block, ...arg.data };
-
-    if (hasBlockParentChanged(arg.block, forTransferBlockOnly)) {
-        thunkAPI.dispatch(
-            transferBlockHelperAction({
-                data: {
-                    draggedBlockId: forTransferBlockOnly.customId,
-                    destinationBlockId: arg.data.parent!,
-                },
-            }) as any
-        );
-    }
-
-    thunkAPI.dispatch(
-        BlockActions.updateBlock({
-            id: arg.block.customId,
-            data: arg.data,
-            meta: {
-                arrayUpdateStrategy: "replace",
-            },
-        })
-    );
-
-    updateTasksIfHasDeletedStatusesOrLabels(arg, thunkAPI);
-});
-
-function assignUserToTaskOnUpdateStatus(
-    store: IStoreLikeObject,
-    block: IBlock,
-    data: Partial<IBlock>
-) {
-    if (block.type !== BlockType.Task) {
-        return;
-    }
-
-    if (data.status && data.status !== block.status) {
-        const assignees = data.assignees || block.assignees || [];
-
-        if (assignees.length === 0) {
-            const user = SessionSelectors.assertGetUser(store.getState());
-
-            data.assignees = [
-                {
-                    userId: user.customId,
-                    assignedAt: getDateString(),
-                    assignedBy: user.customId,
-                },
-            ];
-        }
-    }
-}

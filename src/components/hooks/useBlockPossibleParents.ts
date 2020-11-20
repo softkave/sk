@@ -4,9 +4,9 @@ import { filterValidParentsForBlockType } from "../../models/block/utils";
 import BlockSelectors from "../../redux/blocks/selectors";
 import useBlockParents from "./useBlockParents";
 
-const useBlockPossibleParents = (block: IBlock) => {
+const useBlockPossibleParents = (type: BlockType, parentId?: string) => {
     const store = useStore();
-    const parents = useBlockParents(block);
+    const parents = useBlockParents(parentId);
     const org = parents[0];
     const cache: any = {};
     let possibleParents: IBlock[] = [];
@@ -14,11 +14,11 @@ const useBlockPossibleParents = (block: IBlock) => {
     parents.reverse().forEach((parent) => {
         let extra: IBlock[] = [];
 
-        if (org && block.type !== BlockType.Board) {
+        if (org && type !== BlockType.Board) {
             // TODO: improve, cause it loops through all blocks parents.length number of times
             extra = BlockSelectors.getBlockChildren(
                 store.getState(),
-                org,
+                org.customId,
                 BlockType.Board
             );
         }
@@ -27,7 +27,7 @@ const useBlockPossibleParents = (block: IBlock) => {
     });
 
     possibleParents.forEach((parent) => {
-        if (parent.type === block.type || !!cache[parent.customId]) {
+        if (parent.type === type || !!cache[parent.customId]) {
             return;
         }
 
@@ -36,7 +36,7 @@ const useBlockPossibleParents = (block: IBlock) => {
 
     possibleParents = Object.keys(cache).map((id) => cache[id]);
 
-    return filterValidParentsForBlockType(possibleParents, block.type);
+    return filterValidParentsForBlockType(possibleParents, type);
 };
 
 export default useBlockPossibleParents;

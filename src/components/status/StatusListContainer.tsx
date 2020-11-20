@@ -6,11 +6,8 @@ import { IBlock, IBlockStatus } from "../../models/block/block";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
-import {
-    flattenErrorListWithDepthInfinite,
-    getDateString,
-} from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList, getDateString } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import StatusList from "./StatusList";
 
 export interface IStatusListContainerProps {
@@ -25,7 +22,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     const operationStatus = useOperation();
 
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     if (errors && errors.data && errors.data.boardStatuses) {
@@ -55,7 +52,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isError) {
             message.error("Error saving changes");

@@ -51,7 +51,7 @@ export const endSprintOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            endDate = result.data!.endDate;
+            endDate = result.endDate;
         }
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());

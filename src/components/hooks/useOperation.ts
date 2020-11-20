@@ -42,7 +42,7 @@ type UseOperation = (
     options?: IUseOperationOptions
 ) => IOperationDerivedData;
 
-export const getOpStats = (operation: IOperation): IOperationDerivedData => {
+export const getOpData = (operation: IOperation): IOperationDerivedData => {
     const isLoading = isOperationStartedOrPending(operation);
     const isCompleted = isOperationCompleted(operation);
     const error = operation.status.error;
@@ -152,7 +152,7 @@ const useOperation: UseOperation = (
 
     const statusData: IOperationDerivedData = React.useMemo(() => {
         const data = operation
-            ? getOpStats(operation)
+            ? getOpData(operation)
             : {
                   isCompleted: false,
                   isError: false,

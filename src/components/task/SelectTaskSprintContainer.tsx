@@ -8,8 +8,7 @@ import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
-import { getDateString } from "../../utils/utils";
-import { getOpStats } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 import SelectTaskSprint, { BACKLOG } from "./SelectTaskSprint";
 
 export interface ISelectTaskSprintContainerProps {
@@ -44,33 +43,32 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
 
             const result = await dispatch(
                 updateBlockOpAction({
-                    block: task,
+                    blockId: task.customId,
                     data: {
                         taskSprint:
                             val === BACKLOG
                                 ? null
                                 : {
                                       sprintId: val,
-                                      assignedAt: getDateString(),
-                                      assignedBy: user.customId,
                                   },
                     },
+                    deleteOpOnComplete: true,
                 })
             );
 
             const op = unwrapResult(result);
 
             if (op) {
-                const opStat = getOpStats(op);
+                const opData = getOpData(op);
 
-                if (opStat.isError) {
+                if (opData.isError) {
                     message.error(ERROR_UPDATING_TASK_SPRINT);
                 }
             }
 
             toggleLoading();
         },
-        [demo, dispatch, task, toggleLoading, user.customId]
+        [demo, dispatch, task.customId, toggleLoading, user.customId]
     );
 
     if (isLoading) {

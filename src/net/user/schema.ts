@@ -162,6 +162,7 @@ export const respondToCollaborationRequestMutation = `
                 block {
                     ...blockFragment
                 }
+                respondedAt
             }
         }
     }

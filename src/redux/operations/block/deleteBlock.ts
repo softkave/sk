@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { BlockType, IBlock } from "../../../models/block/block";
+import { BlockType } from "../../../models/block/block";
 import BlockAPI from "../../../net/block/block";
 import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
@@ -13,13 +13,14 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
 export interface IDeleteBlockOperationActionArgs {
-    block: IBlock;
+    blockId: string;
 }
 
 export const deleteBlockOperationAction = createAsyncThunk<
@@ -27,11 +28,11 @@ export const deleteBlockOperationAction = createAsyncThunk<
     GetOperationActionArgs<IDeleteBlockOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/block/deleteBlock", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -39,81 +40,63 @@ export const deleteBlockOperationAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(
-            id,
-            OperationType.DELETE_BLOCK,
-            arg.block.customId
-        )
+        dispatchOperationStarted(opId, OperationType.DELETE_BLOCK)
     );
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
-            const result = await BlockAPI.deleteBlock(arg.block);
+            const result = await BlockAPI.deleteBlock({ blockId: arg.blockId });
 
             if (result && result.errors) {
                 throw result.errors;
             }
         }
 
-        // dispatch-type-error
-        thunkAPI.dispatch(completeDeleteBlock(arg) as any);
+        storeDeleteBlock(thunkAPI, arg.blockId);
         thunkAPI.dispatch(
-            dispatchOperationCompleted(
-                id,
-                OperationType.DELETE_BLOCK,
-                arg.block.customId
-            )
+            dispatchOperationCompleted(opId, OperationType.DELETE_BLOCK)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(
-                id,
-                OperationType.DELETE_BLOCK,
-                error,
-                arg.block.customId
-            )
+            dispatchOperationError(opId, OperationType.DELETE_BLOCK, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export const completeDeleteBlock = createAsyncThunk<
-    void,
-    IDeleteBlockOperationActionArgs,
-    IAppAsyncThunkConfig
->("block/completeDeleteBlock", async (arg, thunkAPI) => {
+export const storeDeleteBlock = (store: IStoreLikeObject, blockId: string) => {
+    const block = BlockSelectors.getBlock(store.getState(), blockId);
+
     // TODO: find a more efficient way to do this
     const blockChildren = BlockSelectors.getBlockChildren(
-        thunkAPI.getState(),
-        arg.block
+        store.getState(),
+        block.customId
     );
 
     if (blockChildren.length > 0) {
-        await thunkAPI.dispatch(
+        store.dispatch(
             BlockActions.bulkDeleteBlocks(
                 blockChildren.map((child) => child.customId)
             )
         );
     }
 
-    const parentId = arg.block.parent;
+    const parentId = block.parent;
 
-    if (parentId && arg.block.type === BlockType.Board) {
-        const parent = BlockSelectors.getBlock(thunkAPI.getState(), parentId);
+    if (parentId && block.type === BlockType.Board) {
+        const parent = BlockSelectors.getBlock(store.getState(), parentId);
 
         if (parent) {
-            const pluralType = `${arg.block.type}s`;
+            const pluralType = `${block.type}s`;
             const container = parent[pluralType] || [];
             const parentUpdate = {
-                [pluralType]: container.filter(
-                    (id) => id !== arg.block.customId
-                ),
+                [pluralType]: container.filter((id) => id !== block.customId),
             };
 
-            await thunkAPI.dispatch(
+            store.dispatch(
                 BlockActions.updateBlock({
                     id: parent.customId,
                     data: parentUpdate,
@@ -125,16 +108,17 @@ export const completeDeleteBlock = createAsyncThunk<
         }
     }
 
-    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+    const user = SessionSelectors.assertGetUser(store.getState());
 
-    if (arg.block.type === "org") {
+    if (block.type === BlockType.Org) {
         const orgIndex = user.orgs.findIndex(
-            (org) => org.customId === arg.block.customId
+            (org) => org.customId === block.customId
         );
+
         const orgs = [...user.orgs];
         orgs.splice(orgIndex, 1);
 
-        await thunkAPI.dispatch(
+        store.dispatch(
             UserActions.updateUser({
                 id: user.customId,
                 data: { orgs },
@@ -143,5 +127,5 @@ export const completeDeleteBlock = createAsyncThunk<
         );
     }
 
-    await thunkAPI.dispatch(BlockActions.deleteBlock(arg.block.customId));
-});
+    store.dispatch(BlockActions.deleteBlock(block.customId));
+};

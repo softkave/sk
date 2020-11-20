@@ -6,8 +6,8 @@ import { sendFeedbackOpAction } from "../../redux/operations/system/sendFeedback
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import cast from "../../utils/cast";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import FeedbackForm, { IFeedbackFormValues } from "./FeedbackForm";
 
 export interface IFeedbackFormContainerProps {
@@ -31,7 +31,7 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
 
     const operationStatus = useOperation();
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     const onSubmit = async (values: IFeedbackFormValues) => {
@@ -51,7 +51,7 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             message.success("Feedback sent successfully");

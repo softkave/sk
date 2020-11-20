@@ -6,12 +6,16 @@ import moment from "moment";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import {
+    IAssigneeInput,
     IBlock,
     IBlockAssignedLabel,
+    IBlockAssignedLabelInput,
     IBlockLabel,
     IBlockStatus,
     IBoardTaskResolution,
+    IFormBlock,
     ISubTask,
+    ISubTaskInput,
     ITaskAssignee,
     ITaskSprint,
 } from "../../models/block/block";
@@ -38,12 +42,12 @@ import InputWithControls from "../utilities/InputWithControls";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
 import SelectTaskSprint from "./SelectTaskSprint";
-import SubTaskList from "./SubTaskList";
+import SubTaskFormList from "./SubTaskFormList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import TaskLabels from "./TaskLabels";
 import TaskStatus from "./TaskStatus";
 
-export interface ITaskFormValues extends Partial<IBlock> {}
+export type ITaskFormValues = IFormBlock;
 
 type TaskFormFormikProps = FormikProps<ITaskFormValues>;
 export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
@@ -137,8 +141,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             formik.setValues({
                 ...formik.values,
                 status: statusList[0].customId,
-                statusAssignedAt: getDateString(),
-                statusAssignedBy: user.customId,
             });
         }
     }, [statusList, status, formik, user.customId]);
@@ -154,8 +156,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 parent: parentId,
                 labels: task.labels,
                 status: task.status,
-                statusAssignedAt: task.statusAssignedAt,
-                statusAssignedBy: task.statusAssignedBy,
             });
 
             return;
@@ -165,18 +165,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 parent: parentId,
                 labels: [],
                 status: undefined,
-                statusAssignedAt: undefined,
-                statusAssignedBy: undefined,
             });
         }
 
-        formikChangedFieldsHelpers.pushFields([
-            "parent",
-            "labels",
-            "status",
-            "statusAssignedAt",
-            "statusAssignedBy",
-        ]);
+        formikChangedFieldsHelpers.pushFields(["parent", "labels", "status"]);
     };
 
     const renderParentInput = (formikProps: TaskFormFormikProps) => {
@@ -331,23 +323,15 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 formik.setValues({
                     ...formik.values,
                     status: task.status,
-                    statusAssignedAt: task.statusAssignedAt,
-                    statusAssignedBy: task.statusAssignedBy,
                 });
             } else {
                 formik.setValues({
                     ...formik.values,
                     status: val,
-                    statusAssignedAt: getDateString(),
-                    statusAssignedBy: user.customId,
                 });
             }
 
-            formikChangedFieldsHelpers.pushFields([
-                "status",
-                "statusAssignedAt",
-                "statusAssignedBy",
-            ]);
+            formikChangedFieldsHelpers.pushFields(["status"]);
 
             return true;
         },
@@ -402,7 +386,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const onChangeTaskLabels = React.useCallback(
-        (val: IBlockAssignedLabel[]) => {
+        (val: IBlockAssignedLabelInput[]) => {
             formik.setFieldValue("labels", val);
             formikChangedFieldsHelpers.addField("labels");
         },
@@ -469,8 +453,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const unassignCollaborator = (
-        collaboratorData: ITaskAssignee,
-        assignees: ITaskAssignee[] = []
+        collaboratorData: IAssigneeInput,
+        assignees: IAssigneeInput[] = []
     ) => {
         const index = assignees.findIndex((next) => {
             return next.userId === collaboratorData.userId;
@@ -487,8 +471,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
     const assignCollaborator = (
         collaborator: IUser,
-        assignees: ITaskAssignee[] = []
-    ): ITaskAssignee[] => {
+        assignees: IAssigneeInput[] = []
+    ): IAssigneeInput[] => {
         const collaboratorExists = !!assignees.find((next) => {
             return collaborator.customId === next.userId;
         });
@@ -497,17 +481,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         });
 
         if (!collaboratorExists) {
-            const assignedAt = existsBefore
-                ? existsBefore.assignedAt
-                : getDateString();
-            const assignedBy = existsBefore
-                ? existsBefore.assignedBy
-                : user.customId;
             return [
                 ...assignees,
                 {
-                    assignedAt,
-                    assignedBy,
                     userId: collaborator.customId,
                 },
             ];
@@ -620,7 +596,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     };
 
     const onChangeSubTasks = (
-        subTasks: ISubTask[],
+        subTasks: ISubTaskInput[],
         formikProps: TaskFormFormikProps
     ) => {
         const { values, setValues } = formikProps;
@@ -651,7 +627,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     marginBottom: "24px",
                 }}
             >
-                <SubTaskList
+                <SubTaskFormList
                     user={user}
                     subTasks={values.subTasks || []}
                     errors={errors.subTasks as any}

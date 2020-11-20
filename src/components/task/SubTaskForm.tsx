@@ -4,16 +4,16 @@ import { Button, Checkbox, Form, Input, Space } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
 import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
-import { ISubTask } from "../../models/block/block";
+import { ISubTaskInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
-export type ISubTaskErrors = FormikErrors<ISubTask>;
+export type ISubTaskErrors = FormikErrors<ISubTaskInput>;
 
-export interface ISubTaskProps {
-    subTask: ISubTask;
-    onChange: (subTask: ISubTask) => void;
+export interface ISubTaskFormProps {
+    subTask: ISubTaskInput;
+    onChange: (subTask: ISubTaskInput) => void;
     onDelete: () => void;
     onToggle: () => void;
     onEdit: () => void;
@@ -26,7 +26,7 @@ export interface ISubTaskProps {
     onCancelEdit?: () => void;
 }
 
-const SubTask: React.SFC<ISubTaskProps> = (props) => {
+const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
     const {
         subTask,
         onChange,
@@ -142,7 +142,7 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
                 }}
             >
                 <Checkbox
-                    checked={!!subTask.completedAt}
+                    checked={!!subTask.completedBy}
                     onChange={onToggle}
                     disabled={disabled}
                 />
@@ -164,4 +164,4 @@ const SubTask: React.SFC<ISubTaskProps> = (props) => {
     return renderLabel();
 };
 
-export default SubTask;
+export default SubTaskForm;

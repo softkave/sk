@@ -53,7 +53,7 @@ export const addSprintOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            sprint = result.data!;
+            sprint = result.sprint;
         } else {
             const user = SessionSelectors.assertGetUser(thunkAPI.getState());
             let sprintIndex: number;

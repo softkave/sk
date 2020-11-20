@@ -1,4 +1,16 @@
+import randomColor from "randomcolor";
+import {
+    extractFields,
+    getFields,
+    makeExtract,
+    makeListExtract,
+} from "../../utils/extract";
+import { IUpdateComplexTypeArrayInput } from "../../utils/types";
+import { getMsForwardFrom } from "../../utils/utils";
 import { IBoardSprintOptions } from "../sprint/types";
+import { IUser } from "../user/user";
+import { getComplexFieldInput } from "../utils";
+import { getDefaultStatuses } from "./utils";
 
 export const blockSchemaVersion = 3; // increment when you make changes that are not backward compatible
 
@@ -26,7 +38,7 @@ export interface ISubTask {
     description: string;
     createdAt: string;
     createdBy: string;
-    completedBy?: string;
+    completedBy?: string | null;
     completedAt?: string;
     updatedAt?: string;
     updatedBy?: string;
@@ -76,12 +88,12 @@ export interface ITaskSprint {
     assignedBy: string;
 }
 
-export interface IBlock {
+export interface IPersistedBlock {
     customId: string;
     createdBy: string;
     createdAt: string;
     type: BlockType;
-    name?: string;
+    name: string;
     description?: string;
     dueAt?: string;
     color?: string;
@@ -104,7 +116,9 @@ export interface IBlock {
     sprintOptions?: IBoardSprintOptions;
     taskSprint?: ITaskSprint | null;
     lastSprintId?: string;
+}
 
+export interface IBlock extends IPersistedBlock {
     boards?: string[];
     collaborators?: string[];
     notifications?: string[];
@@ -113,54 +127,324 @@ export interface IBlock {
     missingBroadcastsLastFetchedAt?: number;
 }
 
-// const blockFieldsToBlockTypes: {
-//     [key in keyof IBlock]: BlockType[];
-// } = {
-//     customId: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     createdBy: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     createdAt: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     type: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     name: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     description: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     dueAt: [BlockType.Task],
-//     color: [BlockType.Org, BlockType.Board],
-//     updatedAt: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     updatedBy: [BlockType.Org, BlockType.Board, BlockType.Task],
-//     parent: [BlockType.Board, BlockType.Task],
-//     rootBlockId: [BlockType.Board, BlockType.Task],
-//     assignees: [BlockType.Task],
-//     priority: [BlockType.Task],
-//     subTasks: [BlockType.Task],
-//     boardStatuses: [BlockType.Board],
-//     boardLabels: [BlockType.Board],
-//     boardResolutions: [BlockType.Board],
-//     status: [BlockType.Task],
-//     statusAssignedBy: [BlockType.Task],
-//     statusAssignedAt: [BlockType.Task],
-//     taskResolution: [BlockType.Task],
-//     labels: [BlockType.Task],
-//     currentSprintId: [BlockType.Board],
-//     sprintOptions: [BlockType.Board],
-//     taskSprint: [BlockType.Task],
+export interface IAssigneeInput {
+    userId: string;
+}
 
-//     boards: [BlockType.Org],
-//     collaborators: [BlockType.Org],
-//     notifications: [BlockType.Org],
-// };
+export interface ISubTaskInput {
+    customId: string;
+    description: string;
+    completedBy?: string | null;
+}
 
-// function getFieldNames(type: BlockType) {
-//     return Object.keys(blockFieldsToBlockTypes).filter((field) => {
-//         const inBlockTypes: BlockType[] = blockFieldsToBlockTypes[field];
-//         return inBlockTypes.includes(type);
-//     });
-// }
+export interface IBlockStatusInput {
+    customId: string;
+    name: string;
+    color: string;
+    description?: string;
+}
 
-// export const orgFields = getFieldNames(BlockType.Org);
-// export const boardFields = getFieldNames(BlockType.Board);
-// export const taskFields = getFieldNames(BlockType.Task);
+export interface IBlockLabelInput {
+    customId: string;
+    name: string;
+    color: string;
+    description?: string;
+}
+
+export interface IBoardStatusResolutionInput {
+    customId: string;
+    name: string;
+    description?: string;
+}
+
+export interface IBlockAssignedLabelInput {
+    customId: string;
+}
+
+export interface ITaskSprintInput {
+    sprintId: string;
+}
+
+export interface INewBlockInput {
+    type: BlockType;
+    name: string;
+    description?: string;
+    dueAt?: number;
+    color?: string;
+    parent?: string;
+    rootBlockId?: string;
+    assignees?: IAssigneeInput[];
+    priority?: string;
+    subTasks?: ISubTaskInput[];
+    boardStatuses?: IBlockStatusInput[];
+    boardLabels?: IBlockLabelInput[];
+    boardResolutions?: IBoardStatusResolutionInput[];
+    status?: string;
+    labels?: IBlockAssignedLabelInput[];
+    taskResolution?: string | null;
+    taskSprint?: ITaskSprintInput | null;
+}
+
+export interface IFormBlock extends Omit<INewBlockInput, "dueAt"> {
+    dueAt?: string;
+    subTasks?: ISubTaskInput[];
+    boardStatuses?: IBlockStatusInput[];
+    boardLabels?: IBlockLabelInput[];
+    boardResolutions?: IBoardStatusResolutionInput[];
+}
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {
     return blocks.find((block) => {
         return block.customId === id;
     });
+}
+
+const assigneeInputFields = getFields<IAssigneeInput>({
+    userId: true,
+});
+
+const subTaskInputFields = getFields<ISubTaskInput>({
+    completedBy: true,
+    description: true,
+    customId: true,
+});
+
+const statusInputFields = getFields<IBlockStatusInput>({
+    color: true,
+    description: true,
+    name: true,
+    customId: true,
+});
+
+const labelInputFields = getFields<IBlockLabelInput>({
+    color: true,
+    description: true,
+    name: true,
+    customId: true,
+});
+
+const resolutionInputFields = getFields<IBoardStatusResolutionInput>({
+    description: true,
+    name: true,
+    customId: true,
+});
+
+const taskLabelInputFields = getFields<IBlockAssignedLabelInput>({
+    customId: true,
+});
+
+const taskSprintInputFields = getFields<ITaskSprintInput>({
+    sprintId: true,
+});
+
+export const assigneeInputExtractor = makeExtract(assigneeInputFields);
+export const assigneeInputListExtractor = makeListExtract(assigneeInputFields);
+export const subTaskInputExtractor = makeExtract(subTaskInputFields);
+export const subTaskInputListExtractor = makeListExtract(subTaskInputFields);
+export const statusInputExtractor = makeExtract(statusInputFields);
+export const statusInputListExtractor = makeListExtract(statusInputFields);
+export const labelInputExtractor = makeExtract(labelInputFields);
+export const labelInputListExtractor = makeListExtract(labelInputFields);
+export const resolutionInputExtractor = makeExtract(resolutionInputFields);
+export const resolutionInputListExtractor = makeListExtract(
+    resolutionInputFields
+);
+export const taskLabelInputExtractor = makeExtract(taskLabelInputFields);
+export const taskLabelInputListExtractor = makeListExtract(
+    taskLabelInputFields
+);
+export const taskSprintInputExtractor = makeExtract(taskSprintInputFields);
+
+const newBlockInputFields = getFields<IFormBlock, INewBlockInput>({
+    type: true,
+    name: true,
+    description: true,
+    dueAt: getMsForwardFrom,
+    color: true,
+    parent: true,
+    rootBlockId: true,
+    assignees: assigneeInputListExtractor,
+    priority: true,
+    subTasks: subTaskInputListExtractor,
+    boardStatuses: statusInputListExtractor,
+    boardLabels: labelInputListExtractor,
+    boardResolutions: resolutionInputListExtractor,
+    status: true,
+    taskResolution: true,
+    labels: taskLabelInputListExtractor,
+    taskSprint: taskSprintInputExtractor,
+});
+
+export const newBlockInputExtractor = makeExtract(newBlockInputFields);
+
+export interface IUpdateBlockInput {
+    name?: string;
+    description?: string;
+    color?: string;
+    priority?: string;
+    parent?: string;
+    subTasks?: IUpdateComplexTypeArrayInput<ISubTaskInput>;
+    dueAt?: number;
+    assignees?: IUpdateComplexTypeArrayInput<IAssigneeInput>;
+    boardStatuses?: IUpdateComplexTypeArrayInput<IBlockStatusInput>;
+    boardLabels?: IUpdateComplexTypeArrayInput<IBlockLabelInput>;
+    boardResolutions?: IUpdateComplexTypeArrayInput<
+        IBoardStatusResolutionInput
+    >;
+    status?: string;
+    taskResolution?: string;
+    labels?: IUpdateComplexTypeArrayInput<IBlockAssignedLabelInput>;
+    taskSprint?: ITaskSprintInput;
+}
+
+const updateBlockFields = getFields<
+    IFormBlock,
+    IUpdateBlockInput,
+    { block: IBlock }
+>({
+    type: true,
+    name: true,
+    description: true,
+    dueAt: getMsForwardFrom,
+    color: true,
+    parent: true,
+    rootBlockId: true,
+    assignees: (data, args) => {
+        return getComplexFieldInput(
+            args.block.assignees || [],
+            data,
+            "userId",
+            (d) => d,
+            (d0, d1) => false
+        );
+    },
+    priority: true,
+    subTasks: (data, args) => {
+        return getComplexFieldInput(
+            args.block.subTasks || [],
+            data,
+            "customId",
+            (d) => ({
+                ...d,
+                description: d.description.toLowerCase(),
+            }),
+            (d0, d1) =>
+                d1.description.toLowerCase() !== d0.description ||
+                d1.completedBy !== d0.completedBy
+        );
+    },
+    boardStatuses: (data, args) => {
+        return getComplexFieldInput(
+            args.block.boardStatuses || [],
+            data,
+            "customId",
+            (d) => ({
+                ...d,
+                name: d.name.toLowerCase(),
+                description: d.description?.toLowerCase(),
+            }),
+            (d0, d1) =>
+                d1.name.toLowerCase() !== d0.name ||
+                d1.color !== d1.color ||
+                d1.description?.toLowerCase() !== d0.description
+        );
+    },
+    boardLabels: (data, args) => {
+        return getComplexFieldInput(
+            args.block.boardStatuses || [],
+            data,
+            "customId",
+            (d) => ({
+                ...d,
+                name: d.name.toLowerCase(),
+                description: d.description?.toLowerCase(),
+            }),
+            (d0, d1) =>
+                d1.name.toLowerCase() !== d0.name ||
+                d1.color !== d1.color ||
+                d1.description?.toLowerCase() !== d0.description
+        );
+    },
+    boardResolutions: (data, args) => {
+        return getComplexFieldInput(
+            args.block.boardLabels || [],
+            data,
+            "customId",
+            (d) => ({
+                ...d,
+                name: d.name.toLowerCase(),
+                description: d.description?.toLowerCase(),
+            }),
+            (d0, d1) =>
+                d1.name.toLowerCase() !== d0.name ||
+                d1.description?.toLowerCase() !== d0.description
+        );
+    },
+    status: true,
+    taskResolution: true,
+    labels: (data, args) => {
+        return getComplexFieldInput(
+            args.block.labels || [],
+            data,
+            "customId",
+            (d) => d,
+            (d0, d1) => false
+        );
+    },
+    taskSprint: taskSprintInputExtractor,
+});
+
+export function getUpdateBlockInput(
+    block: IBlock,
+    formBlock: Partial<IFormBlock>
+) {
+    return extractFields(formBlock, updateBlockFields, { block });
+}
+
+export function persistedBlockToBlock(pBlock: IPersistedBlock): IBlock {
+    return {
+        ...pBlock,
+        boards: [],
+        collaborators: [],
+        notifications: [],
+    };
+}
+
+export function newFormBlock(user: IUser, type: BlockType, parent?: IBlock) {
+    const isTask = type === BlockType.Task;
+    const isBoard = type === BlockType.Board;
+
+    if ((isTask || isBoard) && !parent) {
+        throw new Error("Block parent not provided");
+    }
+
+    const newBlock: IFormBlock = {
+        type,
+        color: randomColor(),
+        parent: parent ? parent.customId : undefined,
+        rootBlockId: parent
+            ? parent.type === BlockType.Org
+                ? parent.customId
+                : parent.rootBlockId
+            : undefined,
+        assignees: [],
+        name: "",
+        description: undefined,
+        dueAt: undefined,
+        priority: isTask ? BlockPriority.Important : undefined,
+        boardLabels: [],
+        boardStatuses: isBoard ? getDefaultStatuses(user) : [],
+        boardResolutions: [],
+        subTasks: [],
+        status:
+            isTask &&
+            parent &&
+            parent.boardStatuses &&
+            parent?.boardStatuses?.length > 0
+                ? parent?.boardStatuses[0].customId
+                : undefined,
+        labels: [],
+    };
+
+    return newBlock;
 }

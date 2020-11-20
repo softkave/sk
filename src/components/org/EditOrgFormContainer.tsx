@@ -3,19 +3,25 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import { BlockType, IBlock } from "../../models/block/block";
+import {
+    BlockType,
+    IBlock,
+    IFormBlock,
+    newFormBlock,
+} from "../../models/block/block";
+import { IAddBlockEndpointErrors } from "../../net/block/types";
+import OperationActions from "../../redux/operations/actions";
 import { addBlockOpAction } from "../../redux/operations/block/addBlock";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import getNewBlock from "../block/getNewBlock";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import { getOpData } from "../hooks/useOperation";
+import { IFormError } from "../utilities/types";
 import EditOrgForm, { IEditOrgFormValues } from "./EditOrgForm";
 
 export interface IEditOrgFormContainerProps {
     onClose: () => void;
-
     block?: IBlock;
 }
 
@@ -24,71 +30,78 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
     const user = useSelector(SessionSelectors.assertGetUser);
-    const [block, setBlock] = React.useState<IBlock>(
-        props.block || getNewBlock(user, BlockType.Org)
+    const [blockData, setBlock] = React.useState<IFormBlock>(
+        () => props.block || newFormBlock(user, BlockType.Org)
     );
 
-    const operationStatus = useOperation({ resourceId: block.customId });
-
-    const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
-        : undefined;
-
-    React.useEffect(() => {
-        if (operationStatus.isCompleted && !props.block) {
-            onClose();
-        }
-    });
+    const [loading, setLoading] = React.useState(false);
+    const [errors, setErrors] = React.useState<
+        IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    >();
 
     const onSubmit = async (values: IEditOrgFormValues) => {
-        const data = { ...block, ...values };
+        const data = { ...blockData, ...values };
+
+        setLoading(true);
         setBlock(data);
 
         const result = props.block
             ? await dispatch(
                   updateBlockOpAction({
-                      block,
+                      blockId: props.block.customId,
                       data,
-                      opId: operationStatus.opId,
                   })
               )
             : await dispatch(
                   addBlockOpAction({
                       block: data,
-                      opId: operationStatus.opId,
                   })
               );
+
         const op = unwrapResult(result);
 
         if (!op) {
             return;
         }
 
-        const createOrgOpStat = getOpStats(op);
+        const opData = getOpData(op);
+        const block = op.status.data;
 
-        if (!props.block) {
-            if (createOrgOpStat.isCompleted) {
-                message.success("Org created successfully");
-                history.push(`/app/orgs/${data.customId}`);
+        setLoading(false);
+
+        if (opData.error) {
+            if (props.block) {
+                message.error("Error updating organization");
+            } else {
+                message.error("Error creating organization");
+            }
+
+            const flattenedErrors = flattenErrorList(opData.error);
+            setErrors({
+                errors: flattenedErrors,
+                errorList: opData.error,
+            });
+        } else {
+            if (props.block) {
+                message.success("Organization updated successfully");
+            } else {
+                message.success("Organization created successfully");
+                history.push(`/app/orgs/${block!.customId}`);
                 onClose();
             }
-        } else {
-            if (createOrgOpStat.isCompleted) {
-                message.success("Org updated successfully");
-            } else if (createOrgOpStat.isError) {
-                message.error("Error updating org");
-            }
+
+            dispatch(OperationActions.deleteOperation(opData.opId));
         }
     };
 
     return (
         <EditOrgForm
-            org={props.block} // props.block not block, because it's used to determine if it's a new block or not
-            value={block as any}
+            org={props.block}
+            value={blockData as any}
             onClose={onClose}
             onSubmit={onSubmit}
-            isSubmitting={operationStatus.isLoading}
-            errors={errors}
+            isSubmitting={loading}
+            errors={errors?.errors}
         />
     );
 };

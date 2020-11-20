@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { changePasswordOpAction } from "../../redux/operations/session/changePassword";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
 
 // TODO: Implement an endpoint to get user email from token ( forgot password and session token )
@@ -21,7 +21,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
     const operationStatus = useOperation();
 
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     const onSubmit = async (data: IChangePasswordFormData) => {
@@ -54,7 +54,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             message.success(changePasswordSuccessMessage);

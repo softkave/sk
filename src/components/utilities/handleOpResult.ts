@@ -2,7 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import OperationActions from "../../redux/operations/actions";
 import store from "../../redux/store";
-import { getOpStats } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 
 const handleOpResult = async ({
     result,
@@ -19,7 +19,7 @@ const handleOpResult = async ({
         return;
     }
 
-    const opStat = getOpStats(op);
+    const opStat = getOpData(op);
 
     if (opStat.isCompleted) {
         message.success(successMessage);

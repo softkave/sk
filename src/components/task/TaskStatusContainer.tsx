@@ -7,12 +7,12 @@ import {
     IBlock,
     IBlockStatus,
     IBoardTaskResolution,
+    IFormBlock,
 } from "../../models/block/block";
 import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
-import { getDateString } from "../../utils/utils";
-import { getOpStats } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
@@ -49,10 +49,8 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const lastStatus = statusList[statusList.length - 1];
             const isLastStatus = statusId === lastStatus.customId;
-            const update: Partial<IBlock> = {
+            const update: Partial<IFormBlock> = {
                 status: statusId,
-                statusAssignedAt: getDateString(),
-                statusAssignedBy: user.customId,
             };
 
             if (!isLastStatus && task.taskResolution) {
@@ -65,15 +63,16 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const result = await dispatch(
                 updateBlockOpAction({
-                    block: task,
+                    blockId: task.customId,
                     data: update,
+                    deleteOpOnComplete: true,
                 })
             );
 
             const op = unwrapResult(result);
 
             if (op) {
-                const opStat = getOpStats(op);
+                const opStat = getOpData(op);
 
                 if (opStat.isError) {
                     message.error("Error updating task status");
@@ -82,7 +81,14 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             toggleLoading();
         },
-        [demo, dispatch, statusList, task, user.customId, toggleLoading]
+        [
+            demo,
+            dispatch,
+            statusList,
+            task.customId,
+            user.customId,
+            toggleLoading,
+        ]
     );
 
     const onChangeResolution = React.useCallback(
@@ -95,17 +101,18 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             const result = await dispatch(
                 updateBlockOpAction({
-                    block: task,
+                    blockId: task.customId,
                     data: {
                         taskResolution: value,
                     },
+                    deleteOpOnComplete: true,
                 })
             );
 
             const op = unwrapResult(result);
 
             if (op) {
-                const opStat = getOpStats(op);
+                const opStat = getOpData(op);
 
                 if (opStat.isError) {
                     message.error("Error updating task resolution");
@@ -114,7 +121,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
 
             toggleLoading();
         },
-        [demo, dispatch, task, toggleLoading]
+        [demo, dispatch, task.customId, toggleLoading]
     );
 
     if (isLoading) {

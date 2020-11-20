@@ -10,8 +10,8 @@ import NotificationSelectors from "../../redux/notifications/selectors";
 import { addCollaboratorsOperationAction } from "../../redux/operations/block/addCollaborators";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import AddCollaboratorForm, {
     IAddCollaboratorFormValues,
 } from "./AddCollaboratorForm";
@@ -56,7 +56,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
     const operationStatus = useOperation();
 
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     const onSubmit = async (values: IAddCollaboratorFormValues) => {
@@ -76,7 +76,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             onClose();

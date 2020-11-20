@@ -2,20 +2,20 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Tag, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
-import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
-import { getDateString } from "../../utils/utils";
+import {
+    IBlockAssignedLabelInput,
+    IBlockLabel,
+} from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskLabelsProps {
-    user: IUser;
     labelList: IBlockLabel[];
     labelsMap: { [key: string]: IBlockLabel };
-    onChange: (ids: IBlockAssignedLabel[]) => void;
+    onChange: (ids: IBlockAssignedLabelInput[]) => void;
     onSelectAddNewLabel: () => void;
 
     disabled?: boolean;
-    labels?: IBlockAssignedLabel[];
+    labels?: IBlockAssignedLabelInput[];
 }
 
 const ADD_NEW_LABEL_KEY = "add-new-label";
@@ -25,7 +25,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         onChange,
         onSelectAddNewLabel,
         disabled,
-        user,
         labelList,
         labelsMap,
     } = props;
@@ -40,8 +39,6 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                 ...labels,
                 {
                     customId: id,
-                    assignedAt: getDateString(),
-                    assignedBy: user.customId,
                 },
             ]);
         }

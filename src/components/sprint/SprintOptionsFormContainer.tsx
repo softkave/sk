@@ -6,8 +6,8 @@ import { IBlock } from "../../models/block/block";
 import { setupSprintsOpAction } from "../../redux/operations/sprint/setupSprints";
 import { updateSprintOptionsOpAction } from "../../redux/operations/sprint/updateSprintOptions";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import SprintOptionsForm, {
     ISprintOptionsFormValues,
 } from "./SprintOptionsForm";
@@ -30,7 +30,7 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
 
     const saveOpStatus = useOperation();
     const errors = saveOpStatus.error
-        ? flattenErrorListWithDepthInfinite(saveOpStatus.error)
+        ? flattenErrorList(saveOpStatus.error)
         : undefined;
 
     const onSubmit = async (values: ISprintOptionsFormValues) => {
@@ -60,7 +60,7 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (!board.sprintOptions) {
             if (opStat.isCompleted) {

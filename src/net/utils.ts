@@ -31,22 +31,22 @@ export const toAppErrorsArray = (err: any) => {
     }
 };
 
-export interface IGraphQLAPICallParams {
+export interface IInvokeGraphQLParams {
     query: string;
     variables: any;
     paths: string[];
     headers?: OutgoingHttpHeaders;
 }
 
-export interface IGraphQLAPICallResult {
+export interface IInvokeGraphQLResult {
     errors?: IAppError[];
     result?: any;
     data: { [key: string]: any };
 }
 
-export async function graphQLAPICall(
-    props: IGraphQLAPICallParams
-): Promise<IGraphQLAPICallResult> {
+export async function invokeGraphQL(
+    props: IInvokeGraphQLParams
+): Promise<IInvokeGraphQLResult> {
     const { query, variables, paths } = props;
 
     try {
@@ -132,12 +132,12 @@ function getToken() {
     return SessionSelectors.getUserToken(store.getState());
 }
 
-export interface IGraphQLAPICallWithAuthParams extends IGraphQLAPICallParams {
+export interface IInvokeGraphQLWithAuthParams extends IInvokeGraphQLParams {
     token?: string;
 }
 
-export async function graphQLAPICallWithAuth(
-    props: IGraphQLAPICallWithAuthParams
+export async function invokeGraphQLWithAuth(
+    props: IInvokeGraphQLWithAuthParams
 ) {
     const requestToken = props.token || getToken();
 
@@ -145,7 +145,7 @@ export async function graphQLAPICallWithAuth(
         throw new Error("Invalid credentials");
     }
 
-    return graphQLAPICall({
+    return invokeGraphQL({
         ...props,
         headers: {
             Authorization: `Bearer ${requestToken}`,

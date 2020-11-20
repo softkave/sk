@@ -1,4 +1,4 @@
-import { IBlock } from "../../models/block/block";
+import { IBlock, IPersistedBlock } from "../../models/block/block";
 import { IChat, IRoomMemberWithReadCounter } from "../../models/chat/types";
 import {
     CollaborationRequestStatusType,
@@ -32,7 +32,7 @@ export type IIncomingBlockUpdatePacket = GetEndpointResult<{
     isNew?: boolean;
     isUpdate?: boolean;
     isDelete?: boolean;
-    block?: Partial<IBlock>;
+    block?: Partial<IPersistedBlock>;
 }>;
 
 export type IIncomingBroadcastHistoryPacket = GetEndpointResult<{

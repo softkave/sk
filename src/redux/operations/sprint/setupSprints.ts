@@ -52,7 +52,7 @@ export const setupSprintsOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            sprintOptions.createdAt = result.data!.createdAt;
+            sprintOptions.createdAt = result.sprintOptions.createdAt;
         }
 
         thunkAPI.dispatch(

@@ -49,10 +49,10 @@ export const markNotificationReadOpAction = createAsyncThunk<
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
-            const result = await UserAPI.markNotificationRead(
-                arg.notification,
-                readAt
-            );
+            const result = await UserAPI.markNotificationRead({
+                readAt,
+                notificationId: arg.notification.customId,
+            });
 
             if (result && result.errors) {
                 throw result.errors;

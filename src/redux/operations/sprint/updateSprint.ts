@@ -52,7 +52,7 @@ export const updateSprintOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            updatedAt = result.data!.updatedAt;
+            updatedAt = result.sprint.updatedAt;
         }
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());

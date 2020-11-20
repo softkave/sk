@@ -2,28 +2,28 @@ import { Button, Divider } from "antd";
 import { FormikTouched } from "formik";
 import React from "react";
 import { Plus } from "react-feather";
-import { ISubTask } from "../../models/block/block";
+import { ISubTaskInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { getDateString, getNewId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 import StyledContainer from "../styled/Container";
-import SubTask, { ISubTaskErrors } from "./SubTask";
+import SubTaskForm, { ISubTaskErrors } from "./SubTaskForm";
 
-export interface ISubTaskListProps {
-    subTasks: ISubTask[];
+export interface ISubTaskFormListProps {
+    subTasks: ISubTaskInput[];
     user: IUser;
-    onChange: (value: ISubTask[]) => void;
-    onAddSubTask: (value: ISubTask) => void;
+    onChange: (value: ISubTaskInput[]) => void;
+    onAddSubTask: (value: ISubTaskInput) => void;
     onDeleteSubTask: (index: number) => void;
     onDiscardSubTaskChanges: (index: number) => void;
 
     disabled?: boolean;
     errors?: ISubTaskErrors[];
-    touched?: FormikTouched<ISubTask[]>;
+    touched?: FormikTouched<ISubTaskInput[]>;
 }
 
-const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
+const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
     const {
         subTasks: value,
         onChange,
@@ -41,11 +41,9 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     const errors = subTaskErrors || [];
 
     const internalOnAdd = () => {
-        const subTask: ISubTask = {
+        const subTask: ISubTaskInput = {
             customId: getNewId(),
             description: "",
-            createdAt: getDateString(),
-            createdBy: user.customId,
         };
 
         onAddSubTask(subTask);
@@ -53,12 +51,13 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
         newSubTasksIdList.add(subTask.customId);
     };
 
-    const internalOnEditSubTask = (index: number, data: Partial<ISubTask>) => {
-        const subTask: ISubTask = {
+    const internalOnEditSubTask = (
+        index: number,
+        data: Partial<ISubTaskInput>
+    ) => {
+        const subTask: ISubTaskInput = {
             ...subTasks[index],
             ...data,
-            updatedAt: getDateString(),
-            updatedBy: user.customId,
         };
         const newSubTasks = [...subTasks];
         newSubTasks[index] = subTask;
@@ -67,10 +66,9 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
 
     const onToggleSubTask = (index: number) => {
         const subTask = subTasks[index];
-        const isCompleted = !!subTask.completedAt;
+        const isCompleted = !!subTask.completedBy;
 
         internalOnEditSubTask(index, {
-            completedAt: isCompleted ? undefined : getDateString(),
             completedBy: isCompleted ? undefined : user.customId,
         });
     };
@@ -90,20 +88,16 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     const internalOnCommitSubTaskChanges = (index: number) => {
         const subTask = subTasks[index];
         editingSubTasksList.remove(subTask.customId);
-        internalOnEditSubTask(index, {
-            updatedAt: getDateString(),
-            updatedBy: user.customId,
-        });
     };
 
     const renderSubTask = (
-        subTask: ISubTask,
+        subTask: ISubTaskInput,
         error: ISubTaskErrors = {},
-        subTaskTouched: FormikTouched<ISubTask> = {},
+        subTaskTouched: FormikTouched<ISubTaskInput> = {},
         index: number
     ) => {
         return (
-            <SubTask
+            <SubTaskForm
                 isEditing={editingSubTasksList.exists(subTask.customId)}
                 errorMessage={
                     subTaskTouched.description ? error.description : undefined
@@ -180,4 +174,4 @@ const SubTaskList: React.SFC<ISubTaskListProps> = (props) => {
     );
 };
 
-export default SubTaskList;
+export default SubTaskFormList;

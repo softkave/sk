@@ -1,4 +1,5 @@
 import forEach from "lodash/forEach";
+import { pid } from "process";
 import { BlockType, IBlock } from "../../models/block/block";
 import { IAppState } from "../types";
 
@@ -33,7 +34,11 @@ function getOrgTasks(state: IAppState, org: IBlock) {
     return blocks;
 }
 
-function getBlockChildren(state: IAppState, parent: IBlock, type?: BlockType) {
+function getBlockChildren(
+    state: IAppState,
+    parentId: string,
+    type?: BlockType
+) {
     const blocks: IBlock[] = [];
 
     Object.keys(state.blocks).forEach((id) => {
@@ -43,7 +48,7 @@ function getBlockChildren(state: IAppState, parent: IBlock, type?: BlockType) {
             return;
         }
 
-        if (parent.customId === block.parent) {
+        if (parentId === block.parent) {
             blocks.push(block);
         }
     });
@@ -51,15 +56,22 @@ function getBlockChildren(state: IAppState, parent: IBlock, type?: BlockType) {
     return blocks;
 }
 
-function getBlockParents(state: IAppState, block: IBlock) {
-    let b: IBlock = block;
+function getBlockParents(state: IAppState, parentId?: string) {
     const parents: IBlock[] = [];
+    let pId = parentId;
 
-    while (b && b.type !== BlockType.Org) {
-        // TODO: currently assumes that the parent exists
-        const parent = getBlock(state, b.parent!)!;
-        parents.unshift(parent);
-        b = parent;
+    while (pId) {
+        const parent = getBlock(state, pId);
+
+        if (parent) {
+            parents.unshift(parent);
+        }
+
+        if (!parent.parent || parent.type === BlockType.Org) {
+            break;
+        }
+
+        pId = parent.parent;
     }
 
     return parents;

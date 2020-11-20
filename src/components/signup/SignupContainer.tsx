@@ -4,17 +4,15 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { signupUserOpAction } from "../../redux/operations/session/signupUser";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import Signup, { ISignupFormData } from "./Signup";
 
 const SignupContainer: React.FC<{}> = () => {
     const dispatch: AppDispatch = useDispatch();
     const op = useOperation();
 
-    const errors = op.error
-        ? flattenErrorListWithDepthInfinite(op.error)
-        : undefined;
+    const errors = op.error ? flattenErrorList(op.error) : undefined;
 
     if (errors) {
         if (errors.errors) {
@@ -52,7 +50,7 @@ const SignupContainer: React.FC<{}> = () => {
             return;
         }
 
-        const singupOpStat = getOpStats(signupOp);
+        const singupOpStat = getOpData(signupOp);
 
         if (singupOpStat.isError) {
             message.error("Error creating user");

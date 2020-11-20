@@ -11,8 +11,8 @@ import {
     updateBlockMutation,
 } from "./schema";
 import {
-    IAddBlockAPIParams,
-    IAddBlockAPIResult,
+    IAddBlockEndpointParams,
+    IAddBlockEndpointResult,
     IAddCollaboratorAPIParams,
     IAddCollaboratorAPIResult,
     IDeleteBlockAPIParams,
@@ -26,8 +26,8 @@ import {
 } from "./types";
 
 async function addBlock(
-    props: IAddBlockAPIParams
-): Promise<IAddBlockAPIResult> {
+    props: IAddBlockEndpointParams
+): Promise<IAddBlockEndpointResult> {
     return auth(null, addBlockMutation, props, "data.block.addBlock");
 }
 

@@ -166,6 +166,7 @@ export interface IRespondToCollaborationRequestAPIParams {
 
 export type IRespondToCollaborationRequestAPIResult = GetEndpointResult<{
     block?: IBlock;
+    respondedAt: string;
 }>;
 
 async function respondToCollaborationRequest(
@@ -179,9 +180,9 @@ async function respondToCollaborationRequest(
     );
 }
 
-export interface IGetUserNotificationsAPIResult {
+export type IGetUserNotificationsAPIResult = GetEndpointResult<{
     notifications: INotification[];
-}
+}>;
 
 async function getUserNotifications(): Promise<IGetUserNotificationsAPIResult> {
     return auth(

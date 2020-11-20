@@ -1,11 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IBlock } from "../../../models/block/block";
 import { getRoomId } from "../../../models/rooms/utils";
-import {
-    fetchMissingBroadcasts,
-    handleFetchMissingBroadcastsResponse,
-} from "../../../net/socket/socket";
+import handleFetchMissingBroadcastsEvent from "../../../net/socket/incoming/handleFetchMissingBroadcastsEvent";
+import fetchMissingBroadcastsEvent from "../../../net/socket/outgoing/fetchMissingBroadcastsEvent";
 import { getNewId } from "../../../utils/utils";
+import BlockSelectors from "../../blocks/selectors";
 import { ResourceType } from "../../key-value/types";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -21,7 +19,7 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
 export interface IFetchBlockMissingBroadcastsOpActionArgs {
-    block: IBlock;
+    blockId: string;
 }
 
 export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
@@ -42,7 +40,9 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         return;
     }
 
-    if (!arg.block.userLeftBlockAt) {
+    const block = BlockSelectors.getBlock(thunkAPI.getState(), arg.blockId);
+
+    if (!block.userLeftBlockAt) {
         return;
     }
 
@@ -50,7 +50,7 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         dispatchOperationStarted(
             id,
             OperationType.FETCH_BLOCK_BROADCASTS,
-            arg.block.customId
+            block.customId
         )
     );
 
@@ -58,38 +58,32 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
 
         if (!isDemoMode) {
-            const result = await fetchMissingBroadcasts(
-                arg.block.userLeftBlockAt,
+            const result = await fetchMissingBroadcastsEvent(
+                block.userLeftBlockAt,
                 [
                     getRoomId({
-                        type: arg.block.type as ResourceType,
-                        customId: arg.block.customId,
+                        type: block.type as ResourceType,
+                        customId: block.customId,
                     }),
                 ]
             );
 
-            // TODO: handle errors
-            // if (result && result.errors) {
-            //     throw result.errors;
-            // }
+            if (result && result.errors) {
+                throw result.errors;
+            }
 
-            handleFetchMissingBroadcastsResponse(result);
+            handleFetchMissingBroadcastsEvent(thunkAPI, result);
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(
-                id,
-                OperationType.FETCH_BLOCK_BROADCASTS,
-                arg.block.customId
-            )
+            dispatchOperationCompleted(id, OperationType.FETCH_BLOCK_BROADCASTS)
         );
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
                 id,
                 OperationType.FETCH_BLOCK_BROADCASTS,
-                error,
-                arg.block.customId
+                error
             )
         );
     }

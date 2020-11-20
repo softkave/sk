@@ -67,7 +67,9 @@ export interface ISetupSprintsAPIParams {
 }
 
 export type ISetupSprintsResult = GetEndpointResult<{
-    createdAt: string;
+    sprintOptions: {
+        createdAt: string;
+    };
 }>;
 
 async function setupSprint(
@@ -85,7 +87,9 @@ export interface IUpdateSprintAPIParams {
 }
 
 export type IUpdateSprintAPIResult = GetEndpointResult<{
-    updatedAt: string;
+    sprint: {
+        updatedAt: string;
+    };
 }>;
 
 async function updateSprint(
@@ -102,7 +106,9 @@ export interface IUpdateSprintOptionsAPIParams {
 }
 
 export type IUpdateSprintOptionsAPIResult = GetEndpointResult<{
-    updatedAt: string;
+    sprintOptions: {
+        updatedAt: string;
+    };
 }>;
 
 async function updateSprintOptions(
@@ -116,7 +122,7 @@ async function updateSprintOptions(
     );
 }
 
-export type IGetSprintsAPIResult = GetEndpointResult<ISprint[]>;
+export type IGetSprintsAPIResult = GetEndpointResult<{ sprints: ISprint[] }>;
 
 async function getSprints(boardId: string): Promise<IGetSprintsAPIResult> {
     return auth(null, getSprintsQuery, { boardId }, "data.sprint.getSprints");

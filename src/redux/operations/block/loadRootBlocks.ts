@@ -41,9 +41,7 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
             throw result.errors;
         }
 
-        const { blocks: rootBlocks } = result;
-
-        thunkAPI.dispatch(BlockActions.bulkAddBlocks(rootBlocks));
+        thunkAPI.dispatch(BlockActions.bulkAddBlocks(result.blocks));
         thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LOAD_ROOT_BLOCKS)
         );

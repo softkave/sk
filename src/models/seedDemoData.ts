@@ -1,3 +1,4 @@
+import isNumber from "lodash/isNumber";
 import moment from "moment";
 import randomColor from "randomcolor";
 import { IOperation, OperationStatus } from "../redux/operations/operation";
@@ -6,12 +7,21 @@ import { getDateString, getNewId, getNewTempId } from "../utils/utils";
 import {
     BlockPriority,
     BlockType,
+    IAssigneeInput,
     IBlock,
     IBlockAssignedLabel,
+    IBlockAssignedLabelInput,
     IBlockLabel,
+    IBlockLabelInput,
     IBlockStatus,
+    IBlockStatusInput,
+    IBoardStatusResolutionInput,
     IBoardTaskResolution,
     ISubTask,
+    ISubTaskInput,
+    ITaskAssignee,
+    ITaskSprint,
+    ITaskSprintInput,
 } from "./block/block";
 import { getDefaultStatuses } from "./block/utils";
 import { IRoom } from "./chat/types";
@@ -55,7 +65,7 @@ function updateUserData(
     );
 }
 
-const requestDatesAndStatus = {
+const seedRequestDatesAndStatus = {
     [CollaborationRequestStatusType.Expired]: {
         createdAt: moment().subtract("2", "weeks").toISOString(),
         expires: moment().subtract("1", "week").toISOString(),
@@ -106,32 +116,32 @@ const requestDatesAndStatus = {
     },
 };
 
-function seedRequest({
+export function seedRequest({
     from,
-    to,
+    toEmail,
     fromOrg,
     status,
     message,
 }: {
     from: IUser;
-    to: IUser;
+    toEmail: string;
     fromOrg: IBlock;
     status: CollaborationRequestStatusType;
     message?: string;
 }) {
-    const r = requestDatesAndStatus[status];
+    const d = seedRequestDatesAndStatus[status];
 
     const request: INotification = {
         body:
             message ||
             "Join us, we have tuna! No we don't, *rolls eyes. But join us?",
-        createdAt: r.createdAt,
+        createdAt: d.createdAt,
         customId: getNewId(),
         to: {
-            email: to.email,
+            email: toEmail,
         },
         type: NotificationType.CollaborationRequest,
-        expiresAt: r.expires,
+        expiresAt: d.expires,
         from: {
             blockId: fromOrg.customId,
             blockName: fromOrg.name!,
@@ -139,72 +149,69 @@ function seedRequest({
             name: from.name,
             userId: from.customId,
         },
-        statusHistory: r.statusHistoryFn(r.createdAt),
+        statusHistory: d.statusHistoryFn(d.createdAt),
     };
 
     return request;
 }
 
-function seedBlock({
-    user,
-    name,
-    description,
-    parent,
-    type,
-    dueAt,
-    priority,
-    assignees,
-    subTasks,
-    resolutions,
-    status,
-    statusAssignedBy,
-    statusAssignedAt,
-    taskResolution,
-    labels,
-    boardStatuses,
-    boardLabels,
-}: {
-    user: IUser;
-    type: BlockType;
-    name: string;
-    description?: string;
-    parent?: IBlock;
-    dueAt?: string;
-    priority?: string;
-    assignees?: IUser[];
-    subTasks?: ISubTask[];
-    resolutions?: IBoardTaskResolution[];
-    status?: string;
-    statusAssignedBy?: string;
-    statusAssignedAt?: string;
-    taskResolution?: string | null;
-    labels?: IBlockAssignedLabel[];
-    boardStatuses?: IBlockStatus[];
-    boardLabels?: IBlockLabel[];
-}) {
-    const seedStatus =
-        status ||
-        (parent && type === BlockType.Task
-            ? parent.boardStatuses![0].customId
-            : undefined);
-
+export function seedBlock(
+    user: IUser,
+    {
+        name,
+        description,
+        parent,
+        type,
+        dueAt,
+        priority,
+        assignees,
+        subTasks,
+        resolutions,
+        status,
+        statusAssignedBy,
+        statusAssignedAt,
+        taskResolution,
+        labels,
+        boardStatuses,
+        boardLabels,
+        rootBlockId,
+    }: {
+        type: BlockType;
+        name: string;
+        description?: string;
+        parent?: string;
+        dueAt?: string | number;
+        priority?: string;
+        assignees?: IAssigneeInput[];
+        subTasks?: ISubTaskInput[];
+        resolutions?: IBoardStatusResolutionInput[];
+        status?: string;
+        statusAssignedBy?: string;
+        statusAssignedAt?: string;
+        taskResolution?: string | null;
+        labels?: IBlockAssignedLabelInput[];
+        boardStatuses?: IBlockStatusInput[];
+        boardLabels?: IBlockLabelInput[];
+        rootBlockId?: string;
+    }
+) {
     const org: IBlock = {
         name,
         description,
         type,
-        status: status || seedStatus,
-        statusAssignedBy:
-            statusAssignedBy || (seedStatus ? user.customId : undefined),
-        statusAssignedAt:
-            statusAssignedAt || (seedStatus ? getDateString() : undefined),
+        status,
+        statusAssignedBy: statusAssignedBy || (status && user.customId),
+        statusAssignedAt: statusAssignedAt || (status && getDateString()),
         taskResolution,
-        labels,
+        labels: labels && seedTaskLabels(user, labels),
         priority:
             priority ||
             (type === BlockType.Task ? BlockPriority.NotImportant : undefined),
-        subTasks,
-        dueAt,
-        rootBlockId: parent ? parent.rootBlockId || parent.customId : undefined,
+        subTasks: subTasks && seedSubTasks(user, subTasks),
+        dueAt: isNumber(dueAt)
+            ? moment().add(dueAt, "milliseconds").toISOString()
+            : dueAt,
+        rootBlockId,
         customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
@@ -213,16 +220,14 @@ function seedBlock({
         notifications: [],
         collaborators: [],
         boardStatuses:
-            boardStatuses ||
+            (boardStatuses && seedStatuses(user, boardStatuses)) ||
             (type !== BlockType.Task ? getDefaultStatuses(user) : undefined),
-        boardLabels: boardLabels || (type !== BlockType.Task ? [] : undefined),
-        parent: parent ? parent.customId : undefined,
-        boardResolutions: resolutions,
-        assignees: assignees?.map((a) => ({
-            userId: a.customId,
-            assignedAt: getDateString(),
-            assignedBy: user.customId,
-        })),
+        boardLabels:
+            (boardLabels && seedLabels(user, boardLabels)) ||
+            (type !== BlockType.Task ? [] : undefined),
+        parent,
+        boardResolutions: resolutions && seedResolutions(user, resolutions),
+        assignees: assignees && seedTaskAssignees(user, assignees),
     };
 
     return org;
@@ -357,54 +362,85 @@ function seedBoardOps(board: IBlock) {
 
 function seedResolutions(
     user: IUser,
-    resolutions: Array<{ name: string; description?: string }>
+    resolutions: IBoardStatusResolutionInput[]
 ): IBoardTaskResolution[] {
-    return resolutions.map((r) => ({
+    return resolutions.map((resolution) => ({
         customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
-        name: r.name,
-        description: r.description,
+        name: resolution.name,
+        description: resolution.description,
     }));
 }
 
-function seedLabels(
-    user: IUser,
-    labels: Array<{ name: string; color?: string; description?: string }>
-): IBlockLabel[] {
-    return labels.map((r) => ({
+function seedLabels(user: IUser, labels: IBlockLabelInput[]): IBlockLabel[] {
+    return labels.map((label) => ({
         customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
-        name: r.name,
-        color: r.color || randomColor(),
-        description: r.description,
+        name: label.name,
+        color: label.color || randomColor(),
+        description: label.description,
     }));
 }
 
 function seedStatuses(
     user: IUser,
-    statuses: Array<{ name: string; color?: string; description?: string }>
+    statuses: IBlockStatusInput[]
 ): IBlockStatus[] {
-    return statuses.map((r) => ({
+    return statuses.map((status) => ({
         customId: getNewId(),
         createdAt: getDateString(),
         createdBy: user.customId,
-        name: r.name,
-        color: r.color || randomColor(),
-        description: r.description,
+        name: status.name,
+        color: status.color || randomColor(),
+        description: status.description,
     }));
 }
 
-function seedTaskLabels(
+export function seedTaskLabels(
     user: IUser,
-    labels: IBlockLabel[]
+    labels: IBlockAssignedLabelInput[]
 ): IBlockAssignedLabel[] {
-    return labels.map((l) => ({
-        customId: l.customId,
+    return labels.map((label) => ({
+        customId: label.customId,
         assignedBy: user.customId,
         assignedAt: getDateString(),
     }));
+}
+
+export function seedTaskAssignees(
+    user: IUser,
+    assignees: IAssigneeInput[]
+): ITaskAssignee[] {
+    return assignees.map((assignee) => ({
+        userId: assignee.userId,
+        assignedBy: user.customId,
+        assignedAt: getDateString(),
+    }));
+}
+
+export function seedSubTasks(
+    user: IUser,
+    subTasks: ISubTaskInput[]
+): ISubTask[] {
+    return subTasks.map((subTask) => ({
+        customId: getNewId(),
+        description: subTask.description,
+        createdAt: getDateString(),
+        createdBy: user.customId,
+    }));
+}
+
+export function seedTaskSprint(
+    user: IUser,
+    taskSprint: ITaskSprintInput
+): ITaskSprint {
+    return {
+        sprintId: taskSprint.sprintId,
+        assignedAt: getDateString(),
+        assignedBy: user.customId,
+    };
 }
 
 export default function seedDemoData({ name }: { name?: string } = {}) {
@@ -423,32 +459,28 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         email: "demo-user-3@softkave.com",
     });
 
-    const org1 = seedBlock({
-        user,
+    const org1 = seedBlock(user, {
         name: "Softkave",
         type: BlockType.Org,
         description:
             "We make startup productivity tools, from chat, to task management.",
     });
 
-    const org2 = seedBlock({
-        user,
+    const org2 = seedBlock(user, {
         name: "Our Awesome Company",
         type: BlockType.Org,
         description:
             "We are just very awesome individuals that do what we love.",
     });
 
-    const org3 = seedBlock({
-        user,
+    const org3 = seedBlock(user, {
         name: "The Can Factory",
         type: BlockType.Org,
         description:
             "Simple and efficient can factory. We strive to be the best!",
     });
 
-    const org4 = seedBlock({
-        user,
+    const org4 = seedBlock(user, {
         name: "Pot of Beans",
         type: BlockType.Org,
         description: "We make comic books.",
@@ -466,51 +498,58 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         collaborators: [demoUser3],
     });
 
-    const board1 = seedBlock({
-        user,
+    const board1 = seedBlock(user, {
         name: "App Engineering Efforts",
         type: BlockType.Board,
         description: "Our apps engineering efforts",
-        parent: org1,
-        boardStatuses: seedStatuses(user, [
+        parent: org1.customId,
+        rootBlockId: org1.customId,
+        boardStatuses: [
             {
                 name: "Todo",
                 description: "Available tasks.",
+                color: randomColor(),
             },
             {
                 name: "In Progress",
                 description: "Currently being worked on.",
+                color: randomColor(),
             },
             {
                 name: "Test",
                 description: "Work is done, and is in testing.",
+                color: randomColor(),
             },
             {
                 name: "Staging",
                 description:
                     "Testing is completed, and is deployed to staging, and pending review.",
+                color: randomColor(),
             },
             {
                 name: "Done",
                 description: "Completed, and reviewed.",
+                color: randomColor(),
             },
-        ]),
-        boardLabels: seedLabels(user, [
+        ],
+        boardLabels: [
             {
                 name: "Frontend",
                 description: "Frontend tasks.",
+                color: randomColor(),
             },
             {
                 name: "Backend",
                 description: "Server-side tasks.",
+                color: randomColor(),
             },
             {
                 name: "Bug",
                 description: "Bugs.",
                 color: "rgb(244, 117, 54)",
             },
-        ]),
-        resolutions: seedResolutions(user, [
+        ],
+        resolutions: [
             {
                 name: "Deployed",
                 description: "Deployed to production.",
@@ -519,27 +558,29 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 name: "Won't Do",
                 description: "Task no longer necessary.",
             },
-        ]),
+        ],
     });
 
-    const board2 = seedBlock({
-        user,
+    const board2 = seedBlock(user, {
         name: "Marketing 101",
         type: BlockType.Board,
-        parent: org1,
+        parent: org1.customId,
+        rootBlockId: org1.customId,
         description: "Just some marketing efforts here and there.",
-        boardLabels: seedLabels(user, [
+        boardLabels: [
             {
                 name: "Organic advertisement",
                 description: "For efforts to gain traction organically.",
+                color: randomColor(),
             },
             {
                 name: "Paid advertisement",
                 description:
                     "For efforts to gain traction by paid advertisements.",
+                color: randomColor(),
             },
-        ]),
-        resolutions: seedResolutions(user, [
+        ],
+        resolutions: [
             {
                 name: "Completed",
                 description: "Task is done done!",
@@ -548,52 +589,46 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 name: "Won't Do",
                 description: "Task no longer deemed necessary.",
             },
-        ]),
+        ],
     });
 
-    const task1 = seedBlock({
-        user,
+    const task1 = seedBlock(user, {
         name: "Build Softkave, a super-awesome chat and task management app.",
         type: BlockType.Task,
         description:
             "We are currently light on details, but we'll update the task as we receive more information from the higher up. -- Classic Product Manager tact. LoL.",
-        assignees: [user, demoUser2],
+        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1,
-        labels: seedTaskLabels(user, [
-            board1.boardLabels![0],
-            board1.boardLabels![2],
-        ]),
+        parent: board1.customId,
+        rootBlockId: board1.rootBlockId,
+        labels: [board1.boardLabels![0], board1.boardLabels![2]],
         priority: BlockPriority.Important,
         status: board1.boardStatuses![0].customId,
     });
 
-    const task2 = seedBlock({
-        user,
+    const task2 = seedBlock(user, {
         name: "Avengers Assemble!",
         type: BlockType.Task,
         description:
             "Hired skill workers for the task ahead, it's not for the faint of heart.",
-        assignees: [user, demoUser2],
+        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1,
-        labels: seedTaskLabels(user, [
-            board1.boardLabels![1],
-            board1.boardLabels![2],
-        ]),
+        parent: board1.customId,
+        rootBlockId: board1.rootBlockId,
+        labels: [board1.boardLabels![1], board1.boardLabels![2]],
         priority: BlockPriority.Important,
         status: board1.boardStatuses![1].customId,
     });
 
-    const task3 = seedBlock({
-        user,
+    const task3 = seedBlock(user, {
         name: "Rule the world, muah ha ha!!",
         type: BlockType.Task,
         description:
             "Just casually displaying Darth Vader traits! Long live the Sith!!",
-        assignees: [user, demoUser2],
+        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1,
+        parent: board1.customId,
+        rootBlockId: board1.rootBlockId,
         labels: seedTaskLabels(user, [board1.boardLabels![2]]),
         priority: BlockPriority.VeryImportant,
         status: board1.boardStatuses![board1.boardStatuses!.length - 1]
@@ -604,14 +639,14 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
     const userOrg4PendingRequest = seedRequest({
         from: demoUser3,
         fromOrg: org4,
-        to: user,
+        toEmail: user.email,
         status: CollaborationRequestStatusType.Pending,
     });
 
     const org1AcceptedRequest = seedRequest({
         from: user,
         fromOrg: org1,
-        to: demoUser2,
+        toEmail: demoUser2.email,
         status: CollaborationRequestStatusType.Accepted,
     });
 

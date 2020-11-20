@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { canRespondToNotification } from "../../../components/notification/utils";
 import { IBlock } from "../../../models/block/block";
 import {
+    CollaborationRequestResponse,
     CollaborationRequestStatusType,
     INotification,
 } from "../../../models/notification/notification";
@@ -26,7 +27,7 @@ import { GetOperationActionArgs } from "../types";
 
 export interface IRespondToNotificationOperationActionArgs {
     request: INotification;
-    response: CollaborationRequestStatusType;
+    response: CollaborationRequestResponse;
 }
 
 export const respondToNotificationOpAction = createAsyncThunk<
@@ -59,39 +60,36 @@ export const respondToNotificationOpAction = createAsyncThunk<
         }
 
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-        let responseData: IUpdateCollaborationRequestResponseProps
+        let org: IBlock | undefined;
+        let respondedAt: string = getDateString();
 
         if (!isDemoMode) {
-            const result = await UserAPI.respondToCollaborationRequest(
-                arg.request,
-                arg.response
-            );
+            const result = await UserAPI.respondToCollaborationRequest({
+                requestId: arg.request.customId,
+                response: arg.response,
+            });
 
             if (result && result.errors) {
                 throw result.errors;
             }
 
-            responseData = result.block;
+            org = result.block;
+            respondedAt = result.respondedAt;
         } else {
             const blockId = arg.request.from?.blockId;
-            let block: IBlock | undefined;
 
             if (arg.response === CollaborationRequestStatusType.Accepted) {
-                block = BlockSelectors.getBlock(thunkAPI.getState(), blockId);
-            }
-
-            responseData = {
-                customId: arg.request.customId,
-                response: arg.response,
-                respondedAt: getDateString(),
-                org: block
+                org = BlockSelectors.getBlock(thunkAPI.getState(), blockId);
             }
         }
 
-        completeUserNotificationResponse(thunkAPI, {
-            customId: arg.request.customId,
-
-        })
+        completeUserNotificationResponse(
+            thunkAPI,
+            arg.request.customId,
+            arg.response,
+            respondedAt,
+            org
+        );
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
@@ -114,25 +112,20 @@ export const respondToNotificationOpAction = createAsyncThunk<
     return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
 });
 
-export interface IUpdateCollaborationRequestResponseProps {
-    customId: string;
-    response: CollaborationRequestStatusType;
-    respondedAt: string;
-    org?: IBlock;
-}
-
 export const updateNotificationStatus = (
-    thunkAPI: IStoreLikeObject,
-    arg: IUpdateCollaborationRequestResponseProps
+    store: IStoreLikeObject,
+    requestId: string,
+    response: CollaborationRequestStatusType,
+    respondedAt: string
 ) => {
-    thunkAPI.dispatch(
+    store.dispatch(
         NotificationActions.updateNotification({
-            id: arg.customId,
+            id: requestId,
             data: {
                 statusHistory: [
                     {
-                        status: arg.response,
-                        date: arg.respondedAt,
+                        status: response,
+                        date: respondedAt,
                     },
                 ],
             },
@@ -142,18 +135,26 @@ export const updateNotificationStatus = (
         })
     );
 };
-export const completeUserNotificationResponse = (thunkAPI: IStoreLikeObject, arg: IUpdateCollaborationRequestResponseProps) => {
-    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
-    updateNotificationStatus(thunkAPI, arg)
+export const completeUserNotificationResponse = (
+    store: IStoreLikeObject,
+    requestId: string,
+    response: CollaborationRequestStatusType,
+    respondedAt: string,
+    org?: IBlock
+) => {
+    const user = SessionSelectors.assertGetUser(store.getState());
 
-    if (arg.response === CollaborationRequestStatusType.Accepted && arg.org) {
-        thunkAPI.dispatch(BlockActions.addBlock(arg.org));
-        thunkAPI.dispatch(
+    updateNotificationStatus(store, requestId, response, respondedAt);
+
+    if (response === CollaborationRequestStatusType.Accepted && org) {
+        store.dispatch(BlockActions.addBlock(org));
+        store.dispatch(
             UserActions.updateUser({
                 id: user.customId,
-                data: { orgs: [{ customId: arg.org.customId }] },
+                data: { orgs: [{ customId: org.customId }] },
                 meta: { arrayUpdateStrategy: "concat" },
             })
         );
     }
+};

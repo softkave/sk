@@ -17,7 +17,7 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
 export interface ILoadBlockChildrenOpActionArgs {
-    block: IBlock;
+    blockId: string;
     typeList?: BlockType[];
 }
 
@@ -45,7 +45,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         dispatchOperationStarted(
             id,
             OperationType.LOAD_BLOCK_CHILDREN,
-            arg.block.customId,
+            arg.blockId,
             null,
             { typeList: arg.typeList }
         )
@@ -56,10 +56,10 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         let blocks: IBlock[] = [];
 
         if (!isDemoMode) {
-            const result = await BlockAPI.getBlockChildren(
-                arg.block,
-                arg.typeList
-            );
+            const result = await BlockAPI.getBlockChildren({
+                blockId: arg.blockId,
+                typeList: arg.typeList,
+            });
 
             if (result && result.errors) {
                 throw result.errors;
@@ -80,7 +80,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         if (boards.length > 0) {
             thunkAPI.dispatch(
                 BlockActions.updateBlock({
-                    id: arg.block.customId,
+                    id: arg.blockId,
                     data: { boards },
                     meta: {
                         arrayUpdateStrategy: "replace",
@@ -93,7 +93,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
             dispatchOperationCompleted(
                 id,
                 OperationType.LOAD_BLOCK_CHILDREN,
-                arg.block.customId
+                arg.blockId
             )
         );
     } catch (error) {
@@ -102,7 +102,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
                 id,
                 OperationType.LOAD_BLOCK_CHILDREN,
                 error,
-                arg.block.customId
+                arg.blockId
             )
         );
     }

@@ -1,8 +1,11 @@
-import { IBlock } from "../../../models/block/block";
+import {
+    IPersistedBlock,
+    persistedBlockToBlock,
+} from "../../../models/block/block";
 import BlockSelectors from "../../../redux/blocks/selectors";
-import { completeAddBlock } from "../../../redux/operations/block/addBlock";
-import { completeDeleteBlock } from "../../../redux/operations/block/deleteBlock";
-import { completeUpdateBlock } from "../../../redux/operations/block/updateBlock";
+import { storeNewBlock } from "../../../redux/operations/block/addBlock";
+import { storeDeleteBlock } from "../../../redux/operations/block/deleteBlock";
+import { storeUpdateBlock } from "../../../redux/operations/block/updateBlock";
 import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingBlockUpdatePacket } from "../incomingEventTypes";
 
@@ -11,28 +14,25 @@ export default function handleBlockUpdateEvent(
     data: IIncomingBlockUpdatePacket
 ) {
     if (data && !data.errors) {
-        const innerData = data;
-
-        if (innerData.isNew && innerData.block) {
-            store.dispatch(
-                completeAddBlock({ block: innerData.block as IBlock }) as any
+        if (data.isNew && data.block) {
+            storeNewBlock(
+                store,
+                persistedBlockToBlock(data.block as IPersistedBlock)
             );
-        } else if (innerData.isUpdate) {
+        } else if (data.isUpdate && data.block) {
             const block = BlockSelectors.getBlock(
                 store.getState(),
-                innerData.customId
+                data.customId
             );
 
-            store.dispatch(
-                completeUpdateBlock({ block, data: innerData.block! })
-            );
-        } else if (innerData.isDelete) {
+            storeUpdateBlock(store, block, data.block);
+        } else if (data.isDelete) {
             const block = BlockSelectors.getBlock(
                 store.getState(),
-                innerData.customId
+                data.customId
             );
 
-            store.dispatch(completeDeleteBlock({ block }));
+            storeDeleteBlock(store, data.customId);
         }
     }
 }

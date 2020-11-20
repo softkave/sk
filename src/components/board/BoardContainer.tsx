@@ -18,7 +18,7 @@ import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import GeneralErrorList from "../GeneralErrorList";
 import useOperation, {
-    getOpStats,
+    getOpData,
     IOperationDerivedData,
     mergeOps,
 } from "../hooks/useOperation";
@@ -135,7 +135,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             // TODO: duplicated in Board

@@ -8,7 +8,7 @@ import {
     errorFragment,
     notificationFragment,
 } from "../../../net/fragments";
-import { graphQLAPICallWithAuth } from "../../../net/utils";
+import { invokeGraphQLWithAuth } from "../../../net/utils";
 import { getNewId, getNewTempId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import KeyValueActions from "../../key-value/actions";
@@ -63,7 +63,7 @@ const notificationsPath = "block.getBlockNotifications";
 const paths = [collaboratorsPath, notificationsPath];
 
 async function getData(block: IBlock) {
-    return graphQLAPICallWithAuth({
+    return invokeGraphQLWithAuth({
         query,
         paths,
         variables: { blockId: block.customId },

@@ -4,8 +4,8 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { loginUserOpAction } from "../../redux/operations/session/loginUser";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import Login, { ILoginFormValues } from "./Login";
 
 const LoginContainer: React.FC<{}> = () => {
@@ -13,7 +13,7 @@ const LoginContainer: React.FC<{}> = () => {
     const operationStatus = useOperation();
 
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     const onSubmit = async (user: ILoginFormValues) => {
@@ -31,7 +31,7 @@ const LoginContainer: React.FC<{}> = () => {
             return;
         }
 
-        const loginOpStat = getOpStats(loginOp);
+        const loginOpStat = getOpData(loginOp);
 
         if (loginOpStat.isError) {
             message.error("Error login you in");

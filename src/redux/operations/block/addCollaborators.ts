@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import moment from "moment";
 import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
-import { BlockType, IBlock } from "../../../models/block/block";
+import { BlockType } from "../../../models/block/block";
 import {
     CollaborationRequestStatusType,
     INotification,
@@ -10,6 +10,7 @@ import {
 import BlockAPI from "../../../net/block/block";
 import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
+import BlockSelectors from "../../blocks/selectors";
 import NotificationActions from "../../notifications/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -25,9 +26,7 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 
 export interface IAddCollaboratorsOperationActionArgs {
-    block: IBlock;
-
-    // TODO: better declare type, don't rely on form values
+    blockId: string;
     collaborators: IAddCollaboratorFormItemValues[];
     message?: string;
     expiresAt?: number | Date;
@@ -50,11 +49,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(
-            id,
-            OperationType.ADD_COLLABORATORS,
-            arg.block.customId
-        )
+        dispatchOperationStarted(id, OperationType.ADD_COLLABORATORS)
     );
 
     try {
@@ -76,17 +71,22 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         let requests: INotification[] = [];
 
         if (!isDemoMode) {
-            const result = await BlockAPI.addCollaborators(
-                arg.block,
-                proccessedRequests
-            );
+            const result = await BlockAPI.addCollaborators({
+                blockId: arg.blockId,
+                collaborators: arg.collaborators,
+            });
 
             if (result && result.errors) {
                 throw result.errors;
             }
 
-            requests = result.data;
+            requests = result.requests;
         } else {
+            const block = BlockSelectors.getBlock(
+                thunkAPI.getState(),
+                arg.blockId
+            );
+
             requests = proccessedRequests.map((req) => {
                 return {
                     body: req.body,
@@ -100,8 +100,8 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                         ? getDateString(req.expiresAt)
                         : undefined,
                     from: {
-                        blockId: arg.block.customId,
-                        blockName: arg.block.name!,
+                        blockId: block.customId,
+                        blockName: block.name,
                         blockType: BlockType.Org,
                         name: user.name,
                         userId: user.customId,
@@ -120,7 +120,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             BlockActions.updateBlock({
-                id: arg.block.customId,
+                id: arg.blockId,
                 data: {
                     notifications: requests.map((req) => req.customId),
                 },
@@ -132,7 +132,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
             dispatchOperationCompleted(
                 id,
                 OperationType.ADD_COLLABORATORS,
-                arg.block.customId
+                arg.blockId
             )
         );
     } catch (error) {
@@ -141,7 +141,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                 id,
                 OperationType.ADD_COLLABORATORS,
                 error,
-                arg.block.customId
+                arg.blockId
             )
         );
     }

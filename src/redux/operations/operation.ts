@@ -1,5 +1,8 @@
+import { IStoreLikeObject } from "../types";
 import OperationActions from "./actions";
 import OperationType from "./OperationType";
+import OperationSelectors from "./selectors";
+import { IOperationActionBaseArgs } from "./types";
 
 export enum OperationStatus {
     Started = "started",
@@ -10,17 +13,17 @@ export enum OperationStatus {
 }
 
 export type OperationStatusScopeId = string | number;
-export interface IOperationStatus {
+export interface IOperationStatus<T = any, E = any> {
     status: OperationStatus;
     timestamp: number;
-    data?: any;
-    error?: any;
+    data?: T;
+    error?: E;
 }
 
-export interface IOperation<Meta = any> {
+export interface IOperation<T = any, E = any, Meta = any> {
     id: string;
     operationType: OperationType;
-    status: IOperationStatus;
+    status: IOperationStatus<T, E>;
     meta?: Meta;
     resourceId?: string | null;
 }
@@ -129,4 +132,18 @@ export function dispatchOperationError(
             timestamp: Date.now(),
         },
     });
+}
+
+export function wrapUpOpAction(
+    store: IStoreLikeObject,
+    opId: string,
+    args: IOperationActionBaseArgs
+) {
+    const op = OperationSelectors.getOperationWithId(store.getState(), opId);
+
+    if (args.deleteOpOnComplete) {
+        store.dispatch(OperationActions.deleteOperation(opId));
+    }
+
+    return op;
 }

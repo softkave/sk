@@ -15,13 +15,12 @@ import {
 import { isTaskInLastStatus } from "../../models/block/utils";
 import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
-import OperationActions from "../../redux/operations/actions";
 import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch } from "../../redux/types";
 import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
-import { getOpStats } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
@@ -29,11 +28,14 @@ import SelectTaskSprintContainer from "./SelectTaskSprintContainer";
 import TaskLabels from "./TaskLabels";
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskStatusContainer from "./TaskStatusContainer";
+import TaskSubTasksContainer from "./TaskSubTasksContainer";
 import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
 import TaskThumbnailDueDate from "./TaskThumbnailDueDate";
-import TaskThumbnailSubTasks from "./TaskThumbnailSubTasks";
 
-const ignoreClassNames = ["ant-typography-expand", "task-menu-dropdown"];
+const clickIgnoreElemsWithClassNames = [
+    "ant-typography-expand",
+    "task-menu-dropdown",
+];
 
 export interface ITaskProps {
     task: IBlock;
@@ -110,7 +112,10 @@ const Task: React.FC<ITaskProps> = (props) => {
             okButtonProps: { danger: true },
             onOk: async () => {
                 const result = await dispatch(
-                    deleteBlockOperationAction({ block: task })
+                    deleteBlockOperationAction({
+                        blockId: task.customId,
+                        deleteOpOnComplete: true,
+                    })
                 );
                 const op = unwrapResult(result);
 
@@ -118,15 +123,13 @@ const Task: React.FC<ITaskProps> = (props) => {
                     return;
                 }
 
-                const opStat = getOpStats(op);
+                const opData = getOpData(op);
 
-                if (opStat.isCompleted) {
+                if (opData.isCompleted) {
                     message.success("Task deleted successfully");
-                } else if (opStat.isError) {
+                } else if (opData.isError) {
                     message.error("Error deleting task");
                 }
-
-                dispatch(OperationActions.deleteOperation(op.id));
             },
             onCancel() {
                 // do nothing
@@ -187,7 +190,7 @@ const Task: React.FC<ITaskProps> = (props) => {
     const onClick = (evt: React.MouseEvent<HTMLDivElement>) => {
         const target = evt.target as HTMLElement;
         const shouldIgnore =
-            ignoreClassNames.findIndex((className) => {
+            clickIgnoreElemsWithClassNames.findIndex((className) => {
                 if (target.classList.contains(className)) {
                     return true;
                 }
@@ -290,7 +293,6 @@ const Task: React.FC<ITaskProps> = (props) => {
                 key="labels"
                 labelList={labelList}
                 labelsMap={labelsMap}
-                user={user}
                 labels={task.labels}
                 onChange={noop}
                 onSelectAddNewLabel={noop}
@@ -299,7 +301,9 @@ const Task: React.FC<ITaskProps> = (props) => {
     }
 
     if (hasSubTasks) {
-        contentElem.push(<TaskThumbnailSubTasks key="subtasks" task={task} />);
+        contentElem.push(
+            <TaskSubTasksContainer key="subtasks" user={user} task={task} />
+        );
     }
 
     return (

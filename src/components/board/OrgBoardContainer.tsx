@@ -20,7 +20,7 @@ import confirmBlockDelete from "../block/confirmBlockDelete";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import GeneralErrorList from "../GeneralErrorList";
 import useBlockParents from "../hooks/useBlockParents";
-import { getOpStats } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
@@ -141,7 +141,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             message.success(`${blockToDelete.type} deleted successfully`);

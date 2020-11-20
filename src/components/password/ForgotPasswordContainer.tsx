@@ -4,8 +4,8 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { requestForgotPasswordOpAction } from "../../redux/operations/session/requestForgotPassword";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorListWithDepthInfinite } from "../../utils/utils";
-import useOperation, { getOpStats } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import useOperation, { getOpData } from "../hooks/useOperation";
 import ForgotPassword, { IForgotPasswordFormData } from "./ForgotPassword";
 
 const successMessage = `
@@ -18,7 +18,7 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
     const operationStatus = useOperation();
 
     const errors = operationStatus.error
-        ? flattenErrorListWithDepthInfinite(operationStatus.error)
+        ? flattenErrorList(operationStatus.error)
         : undefined;
 
     const onSubmit = async (data: IForgotPasswordFormData) => {
@@ -35,7 +35,7 @@ const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
             return;
         }
 
-        const opStat = getOpStats(op);
+        const opStat = getOpData(op);
 
         if (opStat.isCompleted) {
             notification.success({

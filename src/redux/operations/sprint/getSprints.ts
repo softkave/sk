@@ -47,7 +47,7 @@ export const getSprintsOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            sprints = result.data || [];
+            sprints = result.sprints || [];
         }
 
         thunkAPI.dispatch(SprintActions.bulkAddSprints(sprints));
