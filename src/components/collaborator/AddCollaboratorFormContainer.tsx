@@ -64,7 +64,7 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
 
         const result = await dispatch(
             addCollaboratorsOperationAction({
-                block: organization,
+                blockId: organization.customId,
                 ...values,
                 opId: operationStatus.opId,
             })

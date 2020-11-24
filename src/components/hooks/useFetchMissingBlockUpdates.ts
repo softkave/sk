@@ -40,7 +40,7 @@ const useFetchMissingBlockUpdates: UseFetchMissingBlockUpdates = (props) => {
 
                 dispatch(
                     fetchBlockMissingBroadcastsOpAction({
-                        block,
+                        blockId: block.customId,
                         opId: loadProps.opId,
                     })
                 );

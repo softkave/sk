@@ -2,12 +2,14 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IBlock, IBoardTaskResolution } from "../../models/block/block";
+import { IBlock, IBoardStatusResolutionInput } from "../../models/block/block";
+import { IAddBlockEndpointErrors } from "../../net/block/types";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorList, getDateString } from "../../utils/utils";
-import useOperation, { getOpData } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import { getOpData } from "../hooks/useOperation";
+import { IFormError } from "../utilities/types";
 import ResolutionsList from "./ResolutionsList";
 
 export interface IResolutionsListContainerProps {
@@ -18,33 +20,27 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
     props
 ) => {
     const { block } = props;
+
+    const [loading, setLoading] = React.useState(false);
+    const [errors, setErrors] = React.useState<
+        IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    >();
+
     const dispatch: AppDispatch = useDispatch();
     const user = useSelector(SessionSelectors.assertGetUser);
     const resolutions = block.boardResolutions || [];
-    const operationStatus = useOperation();
 
-    const errors = operationStatus.error
-        ? flattenErrorList(operationStatus.error)
-        : undefined;
+    const onSaveChanges = async (values: IBoardStatusResolutionInput[]) => {
+        setLoading(true);
 
-    if (errors && errors.data && errors.data.boardResolutions) {
-        errors.statusList = errors.data.boardResolutions;
-        delete errors.data;
-    }
-
-    const onSaveChanges = async (values: IBoardTaskResolution[]) => {
         const result = await dispatch(
             updateBlockOpAction({
-                opId: operationStatus.opId,
-                block,
+                blockId: block.customId,
                 data: {
                     // TODO: find a better way to only update the ones that changed
-                    boardResolutions: values.map((value) => ({
-                        ...value,
-                        updatedAt: getDateString(),
-                        updatedBy: user.customId,
-                    })),
+                    boardResolutions: values,
                 },
+                deleteOpOnComplete: true,
             })
         );
 
@@ -54,13 +50,21 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
             return;
         }
 
-        const opStat = getOpData(op);
+        const opData = getOpData(op);
 
-        if (opStat.isError) {
+        if (opData.isError) {
+            const flattenedErrors = flattenErrorList(opData.error);
+            setErrors({
+                errors: flattenedErrors,
+                errorList: opData.error,
+            });
+
             message.error("Error saving changes");
-        } else if (opStat.isCompleted) {
+        } else if (opData.isCompleted) {
             message.success("Changes saved successfully");
         }
+
+        setLoading(false);
     };
 
     return (
@@ -68,8 +72,12 @@ const ResolutionsListContainer: React.FC<IResolutionsListContainerProps> = (
             user={user}
             resolutionsList={resolutions}
             saveChanges={onSaveChanges}
-            isSubmitting={operationStatus.isLoading}
-            errors={errors}
+            isSubmitting={loading}
+            errors={
+                errors?.errors.boardResolutions
+                    ? { resolutionsList: errors.errors.boardResolutions }
+                    : undefined
+            }
         />
     );
 };

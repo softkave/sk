@@ -12,10 +12,10 @@ import {
 } from "react-beautiful-dnd";
 import { Plus } from "react-feather";
 import * as yup from "yup";
-import { IBlockStatus } from "../../models/block/block";
+import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, getNewId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 import { IFormikFormErrors } from "../forms/formik-utils";
 import { StyledForm } from "../forms/FormStyledComponents";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
@@ -28,10 +28,10 @@ import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
     user: IUser;
-    statusList: IBlockStatus[];
-    saveChanges: (statusList: IBlockStatus[]) => Promise<void>;
+    statusList: IBlockStatusInput[];
+    saveChanges: (statusList: IBlockStatusInput[]) => Promise<void>;
 
-    errors?: IFormikFormErrors<{ statusList: IBlockStatus[] }>;
+    errors?: IFormikFormErrors<{ statusList: IBlockStatusInput[] }>;
     isSubmitting?: boolean;
 }
 
@@ -40,7 +40,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const editingStatusList = useArray<string>();
     const newStatusList = useArray<string>();
 
-    const onSubmit = (values: { statusList: IBlockStatus[] }) => {
+    const onSubmit = (values: { statusList: IBlockStatusInput[] }) => {
         // TODO: should we alert the user before saving if they have editing statuses?
 
         editingStatusList.reset();
@@ -92,7 +92,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         newStatusList.remove(status.customId);
     };
 
-    const onCommitChanges = (status: IBlockStatus, index: number) => {
+    const onCommitChanges = (status: IBlockStatusInput, index: number) => {
         const err = validateWithYupSchema(
             labelValidationSchemas.label,
             formik.values.statusList[index]
@@ -112,7 +112,10 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         editingStatusList.remove(status.customId);
     };
 
-    const onDiscardChanges = (index: number, initialValue?: IBlockStatus) => {
+    const onDiscardChanges = (
+        index: number,
+        initialValue?: IBlockStatusInput
+    ) => {
         if (initialValue) {
             formik.setFieldValue(`statusList.[${index}]`, initialValue);
             editingStatusList.remove(initialValue.customId);
@@ -123,7 +126,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         editingStatusList.add(id);
     };
 
-    const onChange = (index: number, data: Partial<IBlockStatus>) => {
+    const onChange = (index: number, data: Partial<IBlockStatusInput>) => {
         const nameField = `statusList.[${index}].name`;
         const descField = `statusList.[${index}].description`;
         const colorField = `statusList.[${index}].color`;
@@ -167,7 +170,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     );
 
     const renderStatusItem = (
-        status: IBlockStatus,
+        status: IBlockStatusInput,
         index: number,
         provided: DraggableProvided,
         snapshot: DraggableStateSnapshot
@@ -298,12 +301,10 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     };
 
     const onAddNewStatus = () => {
-        const status: IBlockStatus = {
+        const status: IBlockStatusInput = {
             name: "",
             description: "",
             color: randomColor(),
-            createdAt: getDateString(),
-            createdBy: user.customId,
             customId: getNewId(),
         };
 

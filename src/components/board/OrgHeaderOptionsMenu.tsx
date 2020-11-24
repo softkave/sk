@@ -1,6 +1,6 @@
 import { Button, Menu, Space } from "antd";
 import React from "react";
-import { Edit3, Settings } from "react-feather";
+import { Edit3, MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
@@ -30,10 +30,10 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
                     }}
                     onClick={renderTriggerProps.openMenu}
                 >
-                    {/* <MoreHorizontal /> */}
-                    <Button className="icon-btn">
+                    <MoreHorizontal />
+                    {/* <Button className="icon-btn">
                         <Settings />
-                    </Button>
+                    </Button> */}
                 </StyledContainer>
             );
         },

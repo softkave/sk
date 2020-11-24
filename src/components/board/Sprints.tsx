@@ -9,16 +9,15 @@ import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/utils";
 import RenderForDevice from "../RenderForDevice";
+import { IAntDMenuEvent } from "../types";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
 import GroupedTasksMobile from "./GroupedTasksMobile";
+import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 import groupBySprints, { BACKLOG } from "./utils/groupBySprints";
 
-export interface ISprintsProps {
-    board: IBlock;
+export interface ISprintsProps extends ITasksContainerRenderFnProps {
     sprints: ISprint[];
-    tasks: IBlock[];
-    collaborators: IUser[];
     onUpdateSprint: (sprintId: string) => void;
     onDeleteSprint: (sprintId: string) => void;
     onStartSprint: (sprintId: string) => void;
@@ -61,7 +60,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
             return null;
         }
 
-        const menuOnClick = (evt) => {
+        const menuOnClick = (evt: IAntDMenuEvent) => {
             switch (evt.key) {
                 case SprintMenuOptions.EDIT:
                     onUpdateSprint(group.id);
@@ -151,9 +150,8 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
     const renderGroupedTasksDesktop = () => {
         return (
             <GroupedTasksDesktop
-                board={board}
+                {...props}
                 groupedTasks={groups}
-                users={collaborators}
                 onClickUpdateBlock={onClickUpdateBlock}
                 renderColumnHeaderOptions={renderDesktopColumnHeaderOptions}
                 emptyMessage={"Add sprints to begin"}
@@ -164,9 +162,8 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
     const renderGroupedTasksMobile = () => {
         return (
             <GroupedTasksMobile
-                board={board}
+                {...props}
                 groupedTasks={groups}
-                users={collaborators}
                 onClickUpdateBlock={onClickUpdateBlock}
                 emptyMessage={"Add sprints to begin"}
             />

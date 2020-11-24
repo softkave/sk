@@ -1,5 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import SystemAPI, { ISendFeedbackAPIProps } from "../../../net/system/api";
+import SystemAPI, {
+    ISendFeedbackEndpointParams,
+} from "../../../net/system/api";
 import { getNewId } from "../../../utils/utils";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -9,6 +11,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -16,21 +19,23 @@ import { GetOperationActionArgs } from "../types";
 
 export const sendFeedbackOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<ISendFeedbackAPIProps>,
+    GetOperationActionArgs<ISendFeedbackEndpointParams>,
     IAppAsyncThunkConfig
 >("op/system/sendFeedback", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.SendFeedback));
+    thunkAPI.dispatch(
+        dispatchOperationStarted(opId, OperationType.SendFeedback)
+    );
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
@@ -48,13 +53,13 @@ export const sendFeedbackOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.SendFeedback)
+            dispatchOperationCompleted(opId, OperationType.SendFeedback)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.SendFeedback, error)
+            dispatchOperationError(opId, OperationType.SendFeedback, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

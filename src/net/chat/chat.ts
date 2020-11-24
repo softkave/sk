@@ -1,5 +1,6 @@
 import { IChat, IRoomMemberWithReadCounter } from "../../models/chat/types";
-import { OutgoingSocketEvents, promisifiedEmit } from "../socket/socket";
+import { OutgoingSocketEvents } from "../socket/outgoingEventTypes";
+import SocketAPI from "../socket/socket";
 import { IEndpointResultBase } from "../types";
 
 export interface IPersistedRoom {
@@ -19,7 +20,7 @@ export interface IGetUserRoomsAndChatsAPIResult extends IEndpointResultBase {
 }
 
 async function getUserRoomsAndChats() {
-    return await promisifiedEmit<IGetUserRoomsAndChatsAPIResult>(
+    return await SocketAPI.promisifiedEmit<IGetUserRoomsAndChatsAPIResult>(
         OutgoingSocketEvents.GetUserRoomsAndChats
     );
 }
@@ -41,7 +42,7 @@ export interface ISendMessageAPIResult extends IEndpointResultBase {
 }
 
 async function sendMessage(props: ISendMessageAPIParameters) {
-    return promisifiedEmit<ISendMessageAPIResult>(
+    return SocketAPI.promisifiedEmit<ISendMessageAPIResult>(
         OutgoingSocketEvents.SendMessage,
         props
     );
@@ -56,7 +57,7 @@ export interface IUpdateRoomReadCounterAPIParameters {
 async function updateRoomReadCounter(
     props: IUpdateRoomReadCounterAPIParameters
 ) {
-    return promisifiedEmit<IEndpointResultBase>(
+    return SocketAPI.promisifiedEmit<IEndpointResultBase>(
         OutgoingSocketEvents.UpdateRoomReadCounter,
         props
     );

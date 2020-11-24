@@ -21,7 +21,7 @@ const BlockParentSelection: React.FC<IBlockParentSelectionProps> = (props) => {
         return possibleParents.reduce((accumulator, p) => {
             accumulator[p.customId] = p;
             return accumulator;
-        }, {});
+        }, {} as { [key: string]: IBlock });
     });
 
     React.useEffect(() => {
@@ -47,7 +47,11 @@ const BlockParentSelection: React.FC<IBlockParentSelectionProps> = (props) => {
                 <Menu.Item key={parent.customId}>
                     <BlockThumbnail
                         block={parent}
-                        parent={parent.parent && parentsMap[parent.parent]}
+                        parent={
+                            parent.parent
+                                ? parentsMap[parent.parent]
+                                : undefined
+                        }
                     />
                 </Menu.Item>
             ))}

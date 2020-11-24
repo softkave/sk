@@ -8,7 +8,7 @@ import StyledContainer from "../components/styled/Container";
 import WebHeader from "../web/web0/WebHeader";
 import Web1 from "../web/web1/Web";
 
-function renderComponent(component) {
+function renderComponent(component: any) {
     return () => {
         const ComponentX = component;
         return (

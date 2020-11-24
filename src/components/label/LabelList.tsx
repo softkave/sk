@@ -4,10 +4,10 @@ import randomColor from "randomcolor";
 import React from "react";
 import { Plus } from "react-feather";
 import * as yup from "yup";
-import { IBlockLabel } from "../../models/block/block";
+import { IBlockLabelInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, getNewId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
@@ -20,10 +20,10 @@ const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface ILabelListProps {
     user: IUser;
-    labelList: IBlockLabel[];
-    saveChanges: (labelList: IBlockLabel[]) => Promise<void>;
+    labelList: IBlockLabelInput[];
+    saveChanges: (labelList: IBlockLabelInput[]) => Promise<void>;
 
-    errors?: FormikErrors<{ labelList: IBlockLabel[] }>;
+    errors?: FormikErrors<{ labelList: IBlockLabelInput[] }>;
     isSubmitting?: boolean;
 }
 
@@ -32,7 +32,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const editingLabelList = useArray<string>();
     const newLabelList = useArray<string>();
 
-    const onSubmit = (values: { labelList: IBlockLabel[] }) => {
+    const onSubmit = (values: { labelList: IBlockLabelInput[] }) => {
         // TODO: should we alert the user before saving if they have editing labels?
 
         editingLabelList.reset();
@@ -78,7 +78,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         processErrors();
     }, [errors, formik.values.labelList, editingLabelList]);
 
-    const onCommitChanges = (label: IBlockLabel, index: number) => {
+    const onCommitChanges = (label: IBlockLabelInput, index: number) => {
         const err = validateWithYupSchema(
             labelValidationSchemas.label,
             formik.values.labelList[index]
@@ -98,7 +98,10 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         editingLabelList.remove(label.customId);
     };
 
-    const onDiscardChanges = (index: number, initialValue?: IBlockLabel) => {
+    const onDiscardChanges = (
+        index: number,
+        initialValue?: IBlockLabelInput
+    ) => {
         if (initialValue) {
             formik.setFieldValue(`labelList.[${index}]`, initialValue);
             editingLabelList.remove(initialValue.customId);
@@ -109,7 +112,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         editingLabelList.add(id);
     };
 
-    const onChange = (index: number, data: Partial<IBlockLabel>) => {
+    const onChange = (index: number, data: Partial<IBlockLabelInput>) => {
         const changedFields = Object.keys(data);
 
         const nameField = `labelList.[${index}].name`;
@@ -149,7 +152,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         [editingLabelList, formik.values.labelList, formikHelpers]
     );
 
-    const renderLabelItem = (label: IBlockLabel, index: number) => {
+    const renderLabelItem = (label: IBlockLabelInput, index: number) => {
         const isEditing = editingLabelList.exists(label.customId);
         const touched = (formik.touched.labelList || [])[index];
         const labelErrors: any = (formik.errors.labelList || [])[index] || {};
@@ -218,12 +221,10 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     };
 
     const onAddNewLabel = React.useCallback(() => {
-        const label: IBlockLabel = {
+        const label: IBlockLabelInput = {
             name: "",
             description: "",
             color: randomColor(),
-            createdAt: getDateString(),
-            createdBy: user.customId,
             customId: getNewId(),
         };
 

@@ -44,7 +44,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
     ).reduce((accumulator, field) => {
         accumulator[field] = true;
         return accumulator;
-    }, {});
+    }, {} as { [key: string]: boolean });
 
     const renderParentInfo = () => {
         if (parent) {

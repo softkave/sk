@@ -7,6 +7,7 @@ import { ArrowLeft, X as CloseIcon } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
+    CollaborationRequestResponse,
     CollaborationRequestStatusType,
     INotification,
 } from "../../models/notification/notification";
@@ -27,6 +28,7 @@ export interface INotificationProps {
 
 const Notification: React.FC<INotificationProps> = (props) => {
     const { isMobile } = props;
+
     const history = useHistory();
     const dispatch: AppDispatch = useDispatch();
     const routeMatch = useRouteMatch<INotificationsPathParams>(
@@ -58,7 +60,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
     }
 
     const onRespond = async (
-        selectedResponse: CollaborationRequestStatusType
+        selectedResponse: CollaborationRequestResponse
     ) => {
         const result = await dispatch(
             respondToNotificationOpAction({
@@ -121,71 +123,6 @@ const Notification: React.FC<INotificationProps> = (props) => {
         }
 
         return <CollaborationRequestStatus request={notification!} />;
-
-        // if (response) {
-        //     const hasRespondedToNotification =
-        //         response.status === CollaborationRequestStatusType.Accepted ||
-        //         response.status === CollaborationRequestStatusType.Declined;
-
-        //     const isNotificationRevoked =
-        //         response.status === CollaborationRequestStatusType.Revoked;
-
-        //     return (
-        //         <React.Fragment>
-        //             {hasRespondedToNotification && (
-        //                 <Typography.Paragraph>
-        //                     You -{" "}
-        //                     <Typography.Text strong>
-        //                         {response.status}
-        //                     </Typography.Text>
-        //                 </Typography.Paragraph>
-        //             )}
-        //             {isNotificationRevoked && (
-        //                 <Typography.Paragraph>
-        //                     This request has been revoked
-        //                 </Typography.Paragraph>
-        //             )}
-        //         </React.Fragment>
-        //     );
-        // } else if (notificationExpired) {
-        //     return (
-        //         <Typography.Paragraph>
-        //             This request has expired
-        //         </Typography.Paragraph>
-        //     );
-        // } else {
-        //     const isResponseLoading = opStatus.isLoading;
-        //     const responseError = opStatus.error;
-
-        //     return (
-        //         <React.Fragment>
-        //             {isResponseLoading && <LoadingOutlined />}
-        //             {responseError && <FormError error={responseError} />}
-        //             {!isResponseLoading && (
-        //                 <Button.Group>
-        //                     <Button
-        //                         onClick={() =>
-        //                             onRespond(
-        //                                 CollaborationRequestStatusType.Accepted
-        //                             )
-        //                         }
-        //                     >
-        //                         Accept Request
-        //                     </Button>
-        //                     <Button
-        //                         onClick={() =>
-        //                             onRespond(
-        //                                 CollaborationRequestStatusType.Declined
-        //                             )
-        //                         }
-        //                     >
-        //                         Decline Request
-        //                     </Button>
-        //                 </Button.Group>
-        //             )}
-        //         </React.Fragment>
-        //     );
-        // }
     };
 
     const renderHeaderPrefixButton = () => {

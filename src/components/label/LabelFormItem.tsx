@@ -5,28 +5,28 @@ import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
-import { IBlockLabel } from "../../models/block/block";
+import { IBlockLabelInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface ILabelFormItemProps {
-    value: IBlockLabel;
+    value: IBlockLabelInput;
     onEdit: () => void;
     onDelete: () => void;
-    onChange: (data: Partial<IBlockLabel>) => void;
+    onChange: (data: Partial<IBlockLabelInput>) => void;
     onDiscardChanges: () => void;
     onCommitChanges: () => void;
 
     isNew?: boolean;
     isEditing?: boolean;
     disabled?: boolean;
-    touched?: FormikTouched<IBlockLabel>;
-    errors?: FormikErrors<IBlockLabel>;
+    touched?: FormikTouched<IBlockLabelInput>;
+    errors?: FormikErrors<IBlockLabelInput>;
     style?: React.CSSProperties;
     handleBlur?: (
-        field: keyof IBlockLabel,
+        field: keyof IBlockLabelInput,
         event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
 }

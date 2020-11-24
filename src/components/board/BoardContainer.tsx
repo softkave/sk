@@ -8,7 +8,8 @@ import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
-import { subscribe, unsubcribe } from "../../net/socket/socket";
+import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
+import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
 import OperationActions from "../../redux/operations/actions";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
@@ -72,7 +73,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
             if (shouldLoad) {
                 dispatch(
                     loadBlockChildrenOpAction({
-                        block: board,
+                        blockId: board.customId,
                         typeList: [BlockType.Task],
                         opId: loadProps.opId,
                     })
@@ -180,10 +181,12 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     };
 
     React.useEffect(() => {
-        subscribe([{ type: board.type as any, customId: board.customId }]);
+        subscribeEvent([{ type: board.type as any, customId: board.customId }]);
 
         return () => {
-            unsubcribe([{ type: board.type as any, customId: board.customId }]);
+            unsubcribeEvent([
+                { type: board.type as any, customId: board.customId },
+            ]);
         };
     }, [board.customId, board.type]);
 

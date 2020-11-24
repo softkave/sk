@@ -4,27 +4,27 @@ import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
-import { IBoardTaskResolution } from "../../models/block/block";
+import { IBoardStatusResolutionInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface IResolutionFormItemProps {
-    value: IBoardTaskResolution;
+    value: IBoardStatusResolutionInput;
     onEdit: () => void;
     onDelete: () => void;
-    onChange: (data: Partial<IBoardTaskResolution>) => void;
+    onChange: (data: Partial<IBoardStatusResolutionInput>) => void;
     onDiscardChanges: () => void;
     onCommitChanges: () => void;
 
     isNew?: boolean;
     isEditing?: boolean;
     disabled?: boolean;
-    touched?: FormikTouched<IBoardTaskResolution>;
-    errors?: FormikErrors<IBoardTaskResolution>;
+    touched?: FormikTouched<IBoardStatusResolutionInput>;
+    errors?: FormikErrors<IBoardStatusResolutionInput>;
     style?: React.CSSProperties;
     handleBlur?: (
-        field: keyof IBoardTaskResolution,
+        field: keyof IBoardStatusResolutionInput,
         event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
 }

@@ -37,6 +37,9 @@ const Middle: React.FC<{}> = () => {
                         user={seedData.web.user}
                         sprints={[]} // TODO: seed
                         sprintsMap={{}}
+                        labelsMap={{}}
+                        statusMap={{}}
+                        resolutionsMap={{}}
                     />
                 </CardContainer>
                 <CardContainer style={style}>

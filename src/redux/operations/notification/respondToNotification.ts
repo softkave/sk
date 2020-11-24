@@ -20,6 +20,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -35,11 +36,11 @@ export const respondToNotificationOpAction = createAsyncThunk<
     GetOperationActionArgs<IRespondToNotificationOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/notification/respondToNotification", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -48,7 +49,7 @@ export const respondToNotificationOpAction = createAsyncThunk<
 
     thunkAPI.dispatch(
         dispatchOperationStarted(
-            id,
+            opId,
             OperationType.RespondToNotification,
             arg.request.customId
         )
@@ -93,7 +94,7 @@ export const respondToNotificationOpAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.RespondToNotification,
                 arg.request.customId
             )
@@ -101,7 +102,7 @@ export const respondToNotificationOpAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.RespondToNotification,
                 error,
                 arg.request.customId
@@ -109,7 +110,7 @@ export const respondToNotificationOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
 export const updateNotificationStatus = (

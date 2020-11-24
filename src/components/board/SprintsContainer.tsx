@@ -7,7 +7,6 @@ import {
     getCurrentAndUpcomingSprints,
     getSprintRemainingWorkingDays,
 } from "../../models/sprint/utils";
-import { IUser } from "../../models/user/user";
 import { deleteSprintOpAction } from "../../redux/operations/sprint/deleteSprint";
 import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
 import { startSprintOpAction } from "../../redux/operations/sprint/startSprint";
@@ -15,11 +14,9 @@ import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import handleOpResult from "../utilities/handleOpResult";
 import Sprints from "./Sprints";
+import { ITasksContainerRenderFnProps } from "./TasksContainer";
 
-export interface ISprintsContainerProps {
-    board: IBlock;
-    tasks: IBlock[];
-    collaborators: IUser[];
+export interface ISprintsContainerProps extends ITasksContainerRenderFnProps {
     onUpdateSprint: (sprint: ISprint) => void;
     onClickUpdateBlock: (block: IBlock) => void;
 }
@@ -135,10 +132,8 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
 
     return (
         <Sprints
+            {...props}
             sprints={currentAndUpcomingSprints}
-            tasks={tasks}
-            board={board}
-            collaborators={collaborators}
             onClickUpdateBlock={onClickUpdateBlock}
             onDeleteSprint={promptDeleteSprint}
             onStartSprint={promptStartSprint}

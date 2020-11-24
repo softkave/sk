@@ -102,6 +102,13 @@ export const demoCollaborationRequest: INotification = {
     to: {
         email: "demo-user-1@softkave.com",
     },
+    from: {
+        blockId: "",
+        blockName: "",
+        blockType: BlockType.Org,
+        name: "",
+        userId: "",
+    },
     type: NotificationType.CollaborationRequest,
     statusHistory: [
         {

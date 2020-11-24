@@ -2,12 +2,14 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IBlock, IBlockStatus } from "../../models/block/block";
+import { IBlock, IBlockStatusInput } from "../../models/block/block";
+import { IAddBlockEndpointErrors } from "../../net/block/types";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
-import { flattenErrorList, getDateString } from "../../utils/utils";
-import useOperation, { getOpData } from "../hooks/useOperation";
+import { flattenErrorList } from "../../utils/utils";
+import { getOpData } from "../hooks/useOperation";
+import { IFormError } from "../utilities/types";
 import StatusList from "./StatusList";
 
 export interface IStatusListContainerProps {
@@ -16,33 +18,27 @@ export interface IStatusListContainerProps {
 
 const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     const { block } = props;
+
+    const [loading, setLoading] = React.useState(false);
+    const [errors, setErrors] = React.useState<
+        IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    >();
+
     const dispatch: AppDispatch = useDispatch();
     const user = useSelector(SessionSelectors.assertGetUser);
     const statusList = block.boardStatuses || [];
-    const operationStatus = useOperation();
 
-    const errors = operationStatus.error
-        ? flattenErrorList(operationStatus.error)
-        : undefined;
+    const onSaveChanges = async (values: IBlockStatusInput[]) => {
+        setLoading(true);
 
-    if (errors && errors.data && errors.data.boardStatuses) {
-        errors.statusList = errors.data.boardStatuses;
-        delete errors.data;
-    }
-
-    const onSaveChanges = async (values: IBlockStatus[]) => {
         const result = await dispatch(
             updateBlockOpAction({
-                opId: operationStatus.opId,
-                block,
+                blockId: block.customId,
                 data: {
                     // TODO: find a better way to only update the ones that changed
-                    boardStatuses: values.map((value) => ({
-                        ...value,
-                        updatedAt: getDateString(),
-                        updatedBy: user.customId,
-                    })),
+                    boardStatuses: values,
                 },
+                deleteOpOnComplete: true,
             })
         );
 
@@ -52,13 +48,21 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
             return;
         }
 
-        const opStat = getOpData(op);
+        const opData = getOpData(op);
 
-        if (opStat.isError) {
+        if (opData.isError) {
+            const flattenedErrors = flattenErrorList(opData.error);
+            setErrors({
+                errors: flattenedErrors,
+                errorList: opData.error,
+            });
+
             message.error("Error saving changes");
-        } else if (opStat.isCompleted) {
+        } else if (opData.isCompleted) {
             message.success("Changes saved successfully");
         }
+
+        setLoading(false);
     };
 
     return (
@@ -66,8 +70,12 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
             user={user}
             statusList={statusList}
             saveChanges={onSaveChanges}
-            isSubmitting={operationStatus.isLoading}
-            errors={errors}
+            isSubmitting={loading}
+            errors={
+                errors?.errors.boardStatuses
+                    ? { statusList: errors.errors.boardStatuses }
+                    : undefined
+            }
         />
     );
 };

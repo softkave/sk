@@ -102,7 +102,7 @@ export interface IPersistedBlock {
     parent?: string;
     rootBlockId?: string;
     assignees?: ITaskAssignee[];
-    priority?: string;
+    priority?: BlockPriority;
     subTasks?: ISubTask[]; // should sub-tasks be their own blocks?
     boardStatuses?: IBlockStatus[];
     boardLabels?: IBlockLabel[];
@@ -174,7 +174,7 @@ export interface INewBlockInput {
     parent?: string;
     rootBlockId?: string;
     assignees?: IAssigneeInput[];
-    priority?: string;
+    priority?: BlockPriority;
     subTasks?: ISubTaskInput[];
     boardStatuses?: IBlockStatusInput[];
     boardLabels?: IBlockLabelInput[];
@@ -288,9 +288,7 @@ export interface IUpdateBlockInput {
     assignees?: IUpdateComplexTypeArrayInput<IAssigneeInput>;
     boardStatuses?: IUpdateComplexTypeArrayInput<IBlockStatusInput>;
     boardLabels?: IUpdateComplexTypeArrayInput<IBlockLabelInput>;
-    boardResolutions?: IUpdateComplexTypeArrayInput<
-        IBoardStatusResolutionInput
-    >;
+    boardResolutions?: IUpdateComplexTypeArrayInput<IBoardStatusResolutionInput>;
     status?: string;
     taskResolution?: string;
     labels?: IUpdateComplexTypeArrayInput<IBlockAssignedLabelInput>;

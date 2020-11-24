@@ -13,9 +13,18 @@ export interface IHeaderMobileMenuProps {
 const HeaderMobileMenu: React.FC<IHeaderMobileMenuProps> = (props) => {
     const { user, onSelect } = props;
 
+    const [visible, setVisible] = React.useState(false);
+
+    const internalOnSelect = (key: UserOptionsMenuKeys) => {
+        setVisible(false);
+        onSelect(key);
+    };
+
     return (
         <Dropdown
-            overlay={<UserOptionsMenu onSelect={onSelect} />}
+            visible={visible}
+            onVisibleChange={setVisible}
+            overlay={<UserOptionsMenu onSelect={internalOnSelect} />}
             trigger={["click"]}
         >
             <ItemAvatar

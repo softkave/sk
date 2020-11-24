@@ -14,6 +14,7 @@ import TaskResolution from "./TaskResolution";
 export interface ISelectResolutionModalProps {
     task: IBlock;
     resolutionsList: IBoardTaskResolution[];
+    resolutionsMap: { [key: string]: IBoardTaskResolution };
     onSelectResolution: (value: string) => void;
     onSelectAddNewResolution: () => void;
     onClose: () => void;
@@ -25,6 +26,7 @@ const SelectResolutionModal: React.FC<ISelectResolutionModalProps> = (
     const {
         task,
         resolutionsList,
+        resolutionsMap,
         onSelectResolution,
         onClose,
         onSelectAddNewResolution,
@@ -45,6 +47,7 @@ const SelectResolutionModal: React.FC<ISelectResolutionModalProps> = (
             <TaskNameAndDescription task={task} />
             <StyledContainer>
                 <TaskResolution
+                    resolutionsMap={resolutionsMap}
                     resolutionsList={resolutionsList}
                     onChange={onSelectResolution}
                     onSelectAddNewResolution={onSelectAddNewResolution}

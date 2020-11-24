@@ -34,11 +34,7 @@ function getOrgTasks(state: IAppState, org: IBlock) {
     return blocks;
 }
 
-function getBlockChildren(
-    state: IAppState,
-    parentId: string,
-    type?: BlockType
-) {
+function getBlockChildren(state: IAppState, blockId: string, type?: BlockType) {
     const blocks: IBlock[] = [];
 
     Object.keys(state.blocks).forEach((id) => {
@@ -48,7 +44,7 @@ function getBlockChildren(
             return;
         }
 
-        if (parentId === block.parent) {
+        if (blockId === block.parent) {
             blocks.push(block);
         }
     });

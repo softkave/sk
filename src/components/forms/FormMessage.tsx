@@ -2,12 +2,14 @@ import styled from "@emotion/styled";
 import React from "react";
 import { IAppError } from "../../net/types";
 
+type FormMessageType = "error" | "message";
+
 export interface IFormMessageProps {
     message?: string | string[] | Error | Error[] | IAppError | IAppError[];
-    type?: "error" | "message";
+    type?: FormMessageType;
 }
 
-const FormMessage: React.SFC<IFormMessageProps> = (props) => {
+const FormMessage: React.FC<IFormMessageProps> = (props) => {
     const { children, message, type } = props;
     const messages = Array.isArray(message)
         ? message
@@ -16,7 +18,7 @@ const FormMessage: React.SFC<IFormMessageProps> = (props) => {
         : [];
     const isVisible = React.Children.count(children) > 0 || messages.length > 0;
 
-    const renderMessage = (msg) => {
+    const renderMessage = (msg: string | Error) => {
         if (msg) {
             if (typeof msg === "string") {
                 return msg;
@@ -53,7 +55,7 @@ FormMessage.defaultProps = {
 
 export default FormMessage;
 
-function getFontColor(type) {
+function getFontColor(type: FormMessageType) {
     switch (type) {
         case "error":
             return "red";
@@ -71,7 +73,7 @@ interface IStyledMessageProps {
 }
 
 const StyledFormMessage = styled.div<IStyledMessageProps>((props) => ({
-    color: getFontColor(props.type),
+    color: getFontColor(props.type as FormMessageType),
     lineHeight: "24px",
     padding: "4px 0",
 }));

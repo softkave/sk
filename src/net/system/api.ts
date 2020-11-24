@@ -1,14 +1,22 @@
 import queryWithAuth, { isUserSignedIn } from "../auth";
 import query from "../query";
+import { GetEndpointResultError, IEndpointResultBase } from "../types";
 import { sendFeedbackMutation } from "./schema";
 
-export interface ISendFeedbackAPIProps {
+export interface ISendFeedbackEndpointParams {
     feedback: string;
     description?: string;
     notifyEmail?: string;
 }
 
-function sendFeedback(props: ISendFeedbackAPIProps) {
+export type ISendFeedbackEndpointResult = IEndpointResultBase;
+export type ISendFeedbackEndpointErrors = GetEndpointResultError<
+    ISendFeedbackEndpointParams
+>;
+
+async function sendFeedback(
+    props: ISendFeedbackEndpointParams
+): Promise<ISendFeedbackEndpointResult> {
     if (isUserSignedIn()) {
         return queryWithAuth(
             null,

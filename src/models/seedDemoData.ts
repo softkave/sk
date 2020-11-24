@@ -181,7 +181,7 @@ export function seedBlock(
         description?: string;
         parent?: string;
         dueAt?: string | number;
-        priority?: string;
+        priority?: BlockPriority;
         assignees?: IAssigneeInput[];
         subTasks?: ISubTaskInput[];
         resolutions?: IBoardStatusResolutionInput[];
@@ -506,27 +506,32 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         rootBlockId: org1.customId,
         boardStatuses: [
             {
+                customId: getNewId(),
                 name: "Todo",
                 description: "Available tasks.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "In Progress",
                 description: "Currently being worked on.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Test",
                 description: "Work is done, and is in testing.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Staging",
                 description:
                     "Testing is completed, and is deployed to staging, and pending review.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Done",
                 description: "Completed, and reviewed.",
                 color: randomColor(),
@@ -534,16 +539,19 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ],
         boardLabels: [
             {
+                customId: getNewId(),
                 name: "Frontend",
                 description: "Frontend tasks.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Backend",
                 description: "Server-side tasks.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Bug",
                 description: "Bugs.",
                 color: "rgb(244, 117, 54)",
@@ -551,10 +559,12 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ],
         resolutions: [
             {
+                customId: getNewId(),
                 name: "Deployed",
                 description: "Deployed to production.",
             },
             {
+                customId: getNewId(),
                 name: "Won't Do",
                 description: "Task no longer necessary.",
             },
@@ -569,11 +579,13 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         description: "Just some marketing efforts here and there.",
         boardLabels: [
             {
+                customId: getNewId(),
                 name: "Organic advertisement",
                 description: "For efforts to gain traction organically.",
                 color: randomColor(),
             },
             {
+                customId: getNewId(),
                 name: "Paid advertisement",
                 description:
                     "For efforts to gain traction by paid advertisements.",
@@ -582,10 +594,12 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ],
         resolutions: [
             {
+                customId: getNewId(),
                 name: "Completed",
                 description: "Task is done done!",
             },
             {
+                customId: getNewId(),
                 name: "Won't Do",
                 description: "Task no longer deemed necessary.",
             },

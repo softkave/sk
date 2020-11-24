@@ -5,7 +5,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { BlockType, IBlock } from "../../models/block/block";
-import { subscribe, unsubcribe } from "../../net/socket/socket";
+import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
+import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
 import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
@@ -96,14 +97,14 @@ const OrgBoardContainer: React.FC<{}> = () => {
         );
     }, [showOrgMenu, dispatch]);
 
-    const parents = useBlockParents(block);
+    const parents = useBlockParents(block.parent);
     const parentPath = getBlocksPath(parents);
 
     // TODO: we need to rebuild the path when the user transfers the block
     const blockPath = getBlockPath(block, parentPath);
     const orgDataOp = useLoadOrgData(block);
 
-    const pushRoute = (route) => {
+    const pushRoute = (route: string) => {
         const search = new URLSearchParams(window.location.search);
         const routeURL = new URL(
             `${window.location.protocol}${window.location.host}${route}`
@@ -132,7 +133,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
 
     const onDeleteBlock = async (blockToDelete: IBlock) => {
         const result = await dispatch(
-            deleteBlockOperationAction({ block: blockToDelete })
+            deleteBlockOperationAction({ blockId: blockToDelete.customId })
         );
 
         const op = unwrapResult(result);
@@ -240,10 +241,12 @@ const OrgBoardContainer: React.FC<{}> = () => {
     };
 
     React.useEffect(() => {
-        subscribe([{ type: block.type as any, customId: block.customId }]);
+        subscribeEvent([{ type: block.type as any, customId: block.customId }]);
 
         return () => {
-            unsubcribe([{ type: block.type as any, customId: block.customId }]);
+            unsubcribeEvent([
+                { type: block.type as any, customId: block.customId },
+            ]);
         };
     }, [block.customId, block.type]);
 

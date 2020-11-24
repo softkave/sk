@@ -3,7 +3,7 @@ import { FormikErrors } from "formik";
 import React from "react";
 import { Plus } from "react-feather";
 import * as yup from "yup";
-import { IBoardTaskResolution } from "../../models/block/block";
+import { IBoardStatusResolutionInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import { getDateString, getNewId } from "../../utils/utils";
@@ -19,10 +19,12 @@ const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface IResolutionsListProps {
     user: IUser;
-    resolutionsList: IBoardTaskResolution[];
-    saveChanges: (resolutionsList: IBoardTaskResolution[]) => Promise<void>;
+    resolutionsList: IBoardStatusResolutionInput[];
+    saveChanges: (
+        resolutionsList: IBoardStatusResolutionInput[]
+    ) => Promise<void>;
 
-    errors?: FormikErrors<{ resolutionsList: IBoardTaskResolution[] }>;
+    errors?: FormikErrors<{ resolutionsList: IBoardStatusResolutionInput[] }>;
     isSubmitting?: boolean;
 }
 
@@ -31,7 +33,9 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     const editingResolutionsList = useArray<string>();
     const newResolutionsList = useArray<string>();
 
-    const onSubmit = (values: { resolutionsList: IBoardTaskResolution[] }) => {
+    const onSubmit = (values: {
+        resolutionsList: IBoardStatusResolutionInput[];
+    }) => {
         // TODO: should we alert the user before saving if they have editing items?
         editingResolutionsList.reset();
         saveChanges(values.resolutionsList);
@@ -79,7 +83,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     }, [errors, formik.values.resolutionsList, editingResolutionsList]);
 
     const onCommitChanges = (
-        resolution: IBoardTaskResolution,
+        resolution: IBoardStatusResolutionInput,
         index: number
     ) => {
         const err = validateWithYupSchema(
@@ -103,7 +107,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
 
     const onDiscardChanges = (
         index: number,
-        initialValue?: IBoardTaskResolution
+        initialValue?: IBoardStatusResolutionInput
     ) => {
         if (initialValue) {
             formik.setFieldValue(`resolutionsList.[${index}]`, initialValue);
@@ -115,7 +119,10 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         editingResolutionsList.add(id);
     };
 
-    const onChange = (index: number, data: Partial<IBoardTaskResolution>) => {
+    const onChange = (
+        index: number,
+        data: Partial<IBoardStatusResolutionInput>
+    ) => {
         const changedFields = Object.keys(data);
 
         const nameField = `resolutionsList.[${index}].name`;
@@ -151,7 +158,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     );
 
     const renderResolutionItem = (
-        resolution: IBoardTaskResolution,
+        resolution: IBoardStatusResolutionInput,
         index: number
     ) => {
         const isEditing = editingResolutionsList.exists(resolution.customId);
@@ -225,11 +232,9 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     };
 
     const onAddNewResolution = React.useCallback(() => {
-        const resolution: IBoardTaskResolution = {
+        const resolution: IBoardStatusResolutionInput = {
             name: "",
             description: "",
-            createdAt: getDateString(),
-            createdBy: user.customId,
             customId: getNewId(),
         };
 

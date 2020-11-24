@@ -12,21 +12,21 @@ import {
     Trash2,
     X as CloseIcon,
 } from "react-feather";
-import { IBlockStatus } from "../../models/block/block";
+import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
 
 export interface IStatusFormItemProps {
-    value: IBlockStatus;
+    value: IBlockStatusInput;
     canMoveUp: boolean;
     canMoveDown: boolean;
     provided: DraggableProvided;
     snapshot: DraggableStateSnapshot;
     onEdit: () => void;
     onDelete: () => void;
-    onChange: (data: Partial<IBlockStatus>) => void;
+    onChange: (data: Partial<IBlockStatusInput>) => void;
     onDiscardChanges: () => void;
     onCommitChanges: () => void;
     onChangePosition: (up: boolean) => void;
@@ -35,11 +35,11 @@ export interface IStatusFormItemProps {
     isNew?: boolean;
     isEditing?: boolean;
     disabled?: boolean;
-    touched?: FormikTouched<IBlockStatus>;
-    errors?: FormikErrors<IBlockStatus>;
+    touched?: FormikTouched<IBlockStatusInput>;
+    errors?: FormikErrors<IBlockStatusInput>;
     style?: React.CSSProperties;
     handleBlur?: (
-        field: keyof IBlockStatus,
+        field: keyof IBlockStatusInput,
         event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => void;
 }

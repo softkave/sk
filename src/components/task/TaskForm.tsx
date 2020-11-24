@@ -411,7 +411,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 <TaskLabels
                     labelList={labelList}
                     labelsMap={labelsMap}
-                    user={user}
                     onChange={onChangeTaskLabels}
                     labels={values.labels}
                     disabled={isSubmitting}

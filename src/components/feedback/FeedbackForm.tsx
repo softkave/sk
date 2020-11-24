@@ -116,7 +116,6 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
 
         return (
             <Form.Item
-                label="Board Color Avatar"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
                 style={{ width: "100%" }}
@@ -124,12 +123,12 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
                 <Checkbox
                     checked={values.notifyUserOnResolution}
                     onChange={(evt) => {
-                        const checked = evt.target.value;
+                        const checked = !values.notifyUserOnResolution;
 
-                        formik.setFieldValue(
-                            "notifyUserOnResolution",
-                            evt.target.value
-                        );
+                        console.log(checked);
+
+                        formik.setFieldValue("notifyUserOnResolution", checked);
+
                         formikChangedFieldsHelpers.addField(
                             "notifyUserOnResolution"
                         );
@@ -166,7 +165,7 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
                 }
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                extra="Enter your email address if you want us to notify you when we resolve your feedback"
+                extra="Enter the email address where you want us to notify you when we resolve your feedback"
             >
                 <Input
                     autoComplete="email"
@@ -193,6 +192,18 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
         }
     };
 
+    const enableSubmitBtn = () => {
+        if (
+            formikChangedFieldsHelpers.hasChanges() &&
+            !!formik.values.feedback &&
+            !formik.errors.feedback
+        ) {
+            return false;
+        }
+
+        return true;
+    };
+
     const renderControls = () => {
         return (
             <StyledContainer>
@@ -201,7 +212,7 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
                     type="primary"
                     htmlType="submit"
                     loading={isSubmitting}
-                    disabled={!formikChangedFieldsHelpers.hasChanges()}
+                    disabled={enableSubmitBtn()}
                 >
                     {getSubmitLabel()}
                 </Button>
@@ -215,9 +226,14 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
 
         return (
             <StyledForm onSubmit={formik.handleSubmit}>
-                <StyledContainer s={formContentWrapperStyle}>
+                <StyledContainer
+                    s={{
+                        ...formContentWrapperStyle,
+                        padding: 0,
+                    }}
+                >
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ paddingBottom: "16px" }}>
+                        {/* <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}
@@ -225,7 +241,7 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
                             >
                                 <ArrowLeft />
                             </Button>
-                        </StyledContainer>
+                        </StyledContainer> */}
                         {globalError && (
                             <Form.Item>
                                 <FormError error={globalError} />

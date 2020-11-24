@@ -171,6 +171,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                 <SelectResolutionModal
                     task={task}
                     resolutionsList={resolutionsList}
+                    resolutionsMap={resolutionsMap}
                     onClose={closeResolutionModal}
                     onSelectResolution={handleResolutionModalChange}
                     onSelectAddNewResolution={onSelectAddNewResolution}

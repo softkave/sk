@@ -48,7 +48,7 @@ const handleHidden = () => {
         window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
     }
 
-    function onchange(evt) {
+    function onchange(evt: Event) {
         let state;
         const v = "visible";
         const h = "hidden";
@@ -63,6 +63,7 @@ const handleHidden = () => {
 
         evt = evt || window.event;
         if (evt.type in evtMap) {
+            // @ts-ignore
             state = evtMap[evt.type];
         } else {
             // @ts-ignore
@@ -92,10 +93,12 @@ const handleHidden = () => {
     }
 
     // set the initial state (but only if browser supports the Page Visibility API)
+    // @ts-ignore
     if (document[hidden] !== undefined) {
         // TODO: wouldn't it be better if we don't connect at all
         //   if the page is hidden
 
+        // @ts-ignore
         onchange({ type: document[hidden] ? "blur" : "focus" });
     }
 };

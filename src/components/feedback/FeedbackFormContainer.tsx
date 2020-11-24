@@ -2,12 +2,14 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ISendFeedbackEndpointErrors } from "../../net/system/api";
 import { sendFeedbackOpAction } from "../../redux/operations/system/sendFeedback";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import cast from "../../utils/cast";
 import { flattenErrorList } from "../../utils/utils";
-import useOperation, { getOpData } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
+import { IFormError } from "../utilities/types";
 import FeedbackForm, { IFeedbackFormValues } from "./FeedbackForm";
 
 export interface IFeedbackFormContainerProps {
@@ -19,6 +21,11 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
 ) => {
     const { onClose } = props;
 
+    const [loading, setLoading] = React.useState(false);
+    const [errors, setErrors] = React.useState<
+        IFormError<ISendFeedbackEndpointErrors> | undefined
+    >();
+
     const dispatch: AppDispatch = useDispatch();
 
     const user = useSelector(SessionSelectors.assertGetUser);
@@ -29,19 +36,16 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
         })
     );
 
-    const operationStatus = useOperation();
-    const errors = operationStatus.error
-        ? flattenErrorList(operationStatus.error)
-        : undefined;
-
     const onSubmit = async (values: IFeedbackFormValues) => {
         const data = { ...feedback, ...values };
+
+        setLoading(true);
         setFeedback(data);
 
         const result = await dispatch(
             sendFeedbackOpAction({
                 ...values,
-                opId: operationStatus.opId,
+                deleteOpOnComplete: true,
             })
         );
 
@@ -51,23 +55,31 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
             return;
         }
 
-        const opStat = getOpData(op);
+        const opData = getOpData(op);
 
-        if (opStat.isCompleted) {
+        if (opData.isCompleted) {
             message.success("Feedback sent successfully");
-        } else if (opStat.isError) {
+        } else if (opData.isError) {
+            const flattenedErrors = flattenErrorList(opData.error);
+            setErrors({
+                errors: flattenedErrors,
+                errorList: opData.error,
+            });
+
             message.error("Error sending feedback");
         }
+
+        setLoading(false);
     };
 
     return (
         <FeedbackForm
             user={user}
             value={feedback}
-            errors={errors}
+            errors={errors?.errors}
             onClose={onClose}
             onSubmit={onSubmit}
-            isSubmitting={operationStatus.isLoading}
+            isSubmitting={loading}
         />
     );
 };

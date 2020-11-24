@@ -22,7 +22,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
     const { parent, render, type } = props;
     const dispatch: AppDispatch = useDispatch();
     const blocks = useSelector<IAppState, IBlock[]>((state) =>
-        BlockSelectors.getBlockChildren(state, parent, type)
+        BlockSelectors.getBlockChildren(state, parent.customId, type)
     );
 
     const loadChildren = React.useCallback(
@@ -31,7 +31,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
                 console.log({ loadProps });
                 dispatch(
                     loadBlockChildrenOpAction({
-                        block: parent,
+                        blockId: parent.customId,
                         typeList: [type],
                         opId: loadProps.opId,
                     })

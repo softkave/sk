@@ -9,10 +9,10 @@ import "./styles.css";
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <Main />
-    </Provider>
-  </BrowserRouter>,
-  rootElement
+    <BrowserRouter>
+        <Provider store={store}>
+            <Main />
+        </Provider>
+    </BrowserRouter>,
+    rootElement
 );
