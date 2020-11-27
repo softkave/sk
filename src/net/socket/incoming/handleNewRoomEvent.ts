@@ -11,7 +11,7 @@ export default function handleNewRoomEvent(
     store: IStoreLikeObject,
     data: IIncomingNewRoomPacket
 ) {
-    if (data.errors) {
+    if (data && data.errors) {
         return;
     }
 

@@ -164,7 +164,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 ...formik.values,
                 parent: parentId,
                 labels: [],
-                status: undefined,
+                status: null,
+                taskSprint: null,
+                taskResolution: null,
             });
         }
 
@@ -473,9 +475,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         assignees: IAssigneeInput[] = []
     ): IAssigneeInput[] => {
         const collaboratorExists = !!assignees.find((next) => {
-            return collaborator.customId === next.userId;
-        });
-        const existsBefore = (task?.assignees || []).find((next) => {
             return collaborator.customId === next.userId;
         });
 

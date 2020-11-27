@@ -6,7 +6,7 @@ export default function handleUserCollaborationRequestsEvent(
     store: IStoreLikeObject,
     data: IIncomingNewNotificationsPacket
 ) {
-    if (data.errors) {
+    if (data && data.errors) {
         return;
     }
 

@@ -175,6 +175,7 @@ export function seedBlock(
         boardStatuses,
         boardLabels,
         rootBlockId,
+        taskSprint,
     }: {
         type: BlockType;
         name: string;
@@ -185,7 +186,7 @@ export function seedBlock(
         assignees?: IAssigneeInput[];
         subTasks?: ISubTaskInput[];
         resolutions?: IBoardStatusResolutionInput[];
-        status?: string;
+        status?: string | null;
         statusAssignedBy?: string;
         statusAssignedAt?: string;
         taskResolution?: string | null;
@@ -193,6 +194,7 @@ export function seedBlock(
         boardStatuses?: IBlockStatusInput[];
         boardLabels?: IBlockLabelInput[];
         rootBlockId?: string;
+        taskSprint?: ITaskSprintInput | null;
     }
 ) {
     const org: IBlock = {
@@ -200,8 +202,10 @@ export function seedBlock(
         description,
         type,
         status,
-        statusAssignedBy: statusAssignedBy || (status && user.customId),
-        statusAssignedAt: statusAssignedAt || (status && getDateString()),
+        statusAssignedBy:
+            statusAssignedBy || (status ? user.customId : undefined),
+        statusAssignedAt:
+            statusAssignedAt || (status ? getDateString() : undefined),
         taskResolution,
         labels: labels && seedTaskLabels(user, labels),
         priority:
@@ -228,6 +232,11 @@ export function seedBlock(
         parent,
         boardResolutions: resolutions && seedResolutions(user, resolutions),
         assignees: assignees && seedTaskAssignees(user, assignees),
+        taskSprint: taskSprint && {
+            sprintId: taskSprint.sprintId,
+            assignedAt: getDateString(),
+            assignedBy: user.customId,
+        },
     };
 
     return org;

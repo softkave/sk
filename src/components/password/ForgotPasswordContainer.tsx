@@ -9,8 +9,7 @@ import useOperation, { getOpData } from "../hooks/useOperation";
 import ForgotPassword, { IForgotPasswordFormData } from "./ForgotPassword";
 
 const successMessage = `
-  Request successful,
-  a change password link will been sent to your email address shortly`;
+  A change password link will be sent to your email address shortly`;
 
 const ForgotPasswordWithTokenContainer: React.FC<{}> = () => {
     const dispatch: AppDispatch = useDispatch();

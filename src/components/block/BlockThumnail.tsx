@@ -1,5 +1,6 @@
+import { MessageFilled } from "@ant-design/icons";
 import MessageOutlined from "@ant-design/icons/MessageOutlined";
-import { Badge, Tag, Typography } from "antd";
+import { Badge, Space, Tag, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
@@ -116,10 +117,17 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
     const renderUnseenChatsCount = () => {
         if (unseenChatsCount) {
             return (
-                <StyledContainer s={{ marginTop: "4px" }}>
+                <StyledContainer s={{ marginTop: "8px" }}>
                     <Tag icon={<MessageOutlined />} color="red" style={{}}>
                         {unseenChatsCount}
                     </Tag>
+                    {/* <Space style={{ color: "rgb(255, 77, 79)" }}>
+                        <MessageOutlined
+                        // style={{ color: "rgb(255, 77, 79)" }}
+                        />
+                        <MessageFilled style={{ fontSize: "16px" }} />
+                        {unseenChatsCount}
+                    </Space> */}
                 </StyledContainer>
             );
         }

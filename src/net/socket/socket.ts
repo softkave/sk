@@ -1,4 +1,5 @@
 import io, { Socket } from "socket.io-client";
+import SessionSelectors from "../../redux/session/selectors";
 import store from "../../redux/store";
 import { getSockAddr } from "../addr";
 import handleBlockUpdateEvent from "./incoming/handleBlockUpdateEvent";
@@ -17,6 +18,7 @@ import handleUpdateNotificationsEvent from "./incoming/handleUpdateNotifications
 import handleUpdateSprintEvent from "./incoming/handleUpdateSprintEvent";
 import handleUserUpdateEvent from "./incoming/handleUserUpdateEvent";
 import { IncomingSocketEvents } from "./incomingEventTypes";
+import { IOutgoingEventPacket } from "./outgoingEventTypes";
 
 class SocketNotConnectedError extends Error {
     public name = "SocketNotConnectedError";
@@ -34,10 +36,10 @@ export default class SocketAPI {
     public static authCompleted = false;
     public static waitQueue: Array<(sock: typeof Socket | null) => void> = [];
 
-    public static flushWaitQueue(sock: typeof Socket | null) {
+    public static flushWaitQueue() {
         if (SocketAPI.waitQueue.length > 0) {
             SocketAPI.waitQueue.forEach((cb) => {
-                cb(sock);
+                cb(SocketAPI.socket);
             });
         }
     }
@@ -74,8 +76,12 @@ export default class SocketAPI {
         return new Promise<Ack>(async (resolve, reject) => {
             try {
                 const sock = await SocketAPI.waitGetSocket();
+                const packet: IOutgoingEventPacket = {
+                    data,
+                    token: SessionSelectors.assertGetToken(store.getState()),
+                };
 
-                sock.emit(eventName, data, (ackData: Ack) => {
+                sock.emit(eventName, packet, (ackData: Ack) => {
                     resolve(ackData);
                 });
             } catch (error) {
@@ -96,6 +102,8 @@ export default class SocketAPI {
         const socket = io(addr.url, {
             path: addr.path,
         });
+
+        SocketAPI.socket = socket;
 
         socket.on(IncomingSocketEvents.Connect, () =>
             handleConnectEvent(store, props.token)
@@ -126,8 +134,6 @@ export default class SocketAPI {
         socket.on(IncomingSocketEvents.StartSprint, handleStartSprintEvent);
         socket.on(IncomingSocketEvents.EndSprint, handleEndSprintEvent);
         socket.on(IncomingSocketEvents.DeleteSprint, handleDeleteSprintEvent);
-
-        SocketAPI.socket = socket;
     }
 
     public static disconnectSocket() {
@@ -135,5 +141,9 @@ export default class SocketAPI {
             SocketAPI.socket.disconnect();
             SocketAPI.socket = null;
         }
+    }
+
+    public static isConnected() {
+        return !!SocketAPI.socket;
     }
 }

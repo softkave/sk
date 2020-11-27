@@ -17,21 +17,21 @@ export default async function handleAuthEvent(
     store: IStoreLikeObject,
     data: GetEndpointResult<{}>
 ) {
-    if (data.errors) {
+    if (data && data.errors) {
         SocketAPI.connFailedBefore = true;
 
         // TODO: maybe show notification
         const tenSecsInMs = 10000;
         delay(() => {
             SocketAPI.disconnectSocket();
+            SocketAPI.flushWaitQueue();
         }, tenSecsInMs);
 
-        SocketAPI.flushWaitQueue(null);
         return;
     }
 
     SocketAPI.authCompleted = true;
-    SocketAPI.flushWaitQueue(SocketAPI.socket);
+    SocketAPI.flushWaitQueue();
 
     const rooms =
         KeyValueSelectors.getKey(

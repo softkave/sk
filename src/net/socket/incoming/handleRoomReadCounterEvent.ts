@@ -8,7 +8,7 @@ export default function handleUpdateRoomReadCounterEvent(
     store: IStoreLikeObject,
     data: IIncomingUpdateRoomReadCounterPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         const user = SessionSelectors.assertGetUser(store.getState());
         const room = RoomSelectors.getRoom(store.getState(), data.roomId);
 

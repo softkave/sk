@@ -2,10 +2,12 @@ import isFunction from "lodash/isFunction";
 import pick from "lodash/pick";
 import cast from "./cast";
 
-export type ExtractFieldTransformer<T, Result = any, ExtraArgs = any> = (
-    val: T,
-    extraArgs: ExtraArgs
-) => Result;
+export type ExtractFieldTransformer<
+    T,
+    Result = any,
+    ExtraArgs = any,
+    T1 = object
+> = (val: T, extraArgs: ExtraArgs, data: T1) => Result;
 
 export type ExtractFieldsDefaultScalarTypes =
     | undefined
@@ -29,12 +31,14 @@ export type ExtractFieldsFrom<
               | ExtractFieldTransformer<
                     NonNullable<Required<T>[Key]>,
                     Required<Result>[Key],
-                    ExtraArgs
+                    ExtraArgs,
+                    T
                 >
         : ExtractFieldTransformer<
               NonNullable<Required<T>[Key]>,
               Required<Result>[Key],
-              ExtraArgs
+              ExtraArgs,
+              T
           >;
 };
 
@@ -107,7 +111,7 @@ export function extractFields<
             return;
         }
 
-        result[property] = transformer(propValue, extraArgs);
+        result[property] = transformer(propValue, extraArgs, data);
     });
 
     return (result as unknown) as ObjectPaths["result"];

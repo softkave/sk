@@ -8,7 +8,7 @@ export default function handleStartSprintEvent(
     store: IStoreLikeObject,
     data: IIncomingStartSprintPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         store.dispatch(
             SprintActions.updateSprint({
                 id: data.sprintId,

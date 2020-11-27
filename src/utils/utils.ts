@@ -143,10 +143,10 @@ export function getDataFromObject(
 
 function defaultIndexer(data: any, path: any) {
     if (path) {
-        return JSON.stringify(get(data, path));
+        return get(data, path);
     }
 
-    return JSON.stringify(data);
+    return data;
 }
 
 function defaultReducer(data: any) {
@@ -250,7 +250,7 @@ function mapItemIndexer<T extends object, IndexLabel extends string = string>(
     paths: MultipleIndexerObjectPaths<T, IndexLabel>
 ): MultipleIndexerFnResult {
     return paths.map((path) => ({
-        key: JSON.stringify(get(data, path.path)),
+        key: cast<string>(get(data, path.path)),
         label: path.label,
     }));
 }

@@ -107,7 +107,7 @@ export interface IPersistedBlock {
     boardStatuses?: IBlockStatus[];
     boardLabels?: IBlockLabel[];
     boardResolutions?: IBoardTaskResolution[];
-    status?: string;
+    status?: string | null;
     statusAssignedBy?: string;
     statusAssignedAt?: string;
     taskResolution?: string | null;
@@ -179,7 +179,7 @@ export interface INewBlockInput {
     boardStatuses?: IBlockStatusInput[];
     boardLabels?: IBlockLabelInput[];
     boardResolutions?: IBoardStatusResolutionInput[];
-    status?: string;
+    status?: string | null;
     labels?: IBlockAssignedLabelInput[];
     taskResolution?: string | null;
     taskSprint?: ITaskSprintInput | null;
@@ -296,24 +296,23 @@ export interface IUpdateBlockInput {
 }
 
 const updateBlockFields = getFields<
-    IFormBlock,
+    Omit<IFormBlock, "type" | "rootBlockId">,
     IUpdateBlockInput,
     { block: IBlock }
 >({
-    type: true,
     name: true,
     description: true,
     dueAt: getMsForwardFrom,
     color: true,
     parent: true,
-    rootBlockId: true,
     assignees: (data, args) => {
         return getComplexFieldInput(
             args.block.assignees || [],
             data,
             "userId",
             (d) => d,
-            (d0, d1) => false
+            (d0, d1) => false,
+            assigneeInputExtractor
         );
     },
     priority: true,
@@ -328,7 +327,8 @@ const updateBlockFields = getFields<
             }),
             (d0, d1) =>
                 d1.description.toLowerCase() !== d0.description ||
-                d1.completedBy !== d0.completedBy
+                d1.completedBy !== d0.completedBy,
+            subTaskInputExtractor
         );
     },
     boardStatuses: (data, args) => {
@@ -344,12 +344,13 @@ const updateBlockFields = getFields<
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
                 d1.color !== d1.color ||
-                d1.description?.toLowerCase() !== d0.description
+                d1.description?.toLowerCase() !== d0.description,
+            statusInputExtractor
         );
     },
     boardLabels: (data, args) => {
         return getComplexFieldInput(
-            args.block.boardStatuses || [],
+            args.block.boardLabels || [],
             data,
             "customId",
             (d) => ({
@@ -360,7 +361,8 @@ const updateBlockFields = getFields<
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
                 d1.color !== d1.color ||
-                d1.description?.toLowerCase() !== d0.description
+                d1.description?.toLowerCase() !== d0.description,
+            labelInputExtractor
         );
     },
     boardResolutions: (data, args) => {
@@ -375,7 +377,8 @@ const updateBlockFields = getFields<
             }),
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
-                d1.description?.toLowerCase() !== d0.description
+                d1.description?.toLowerCase() !== d0.description,
+            resolutionInputExtractor
         );
     },
     status: true,
@@ -386,7 +389,8 @@ const updateBlockFields = getFields<
             data,
             "customId",
             (d) => d,
-            (d0, d1) => false
+            (d0, d1) => false,
+            taskLabelInputExtractor
         );
     },
     taskSprint: taskSprintInputExtractor,

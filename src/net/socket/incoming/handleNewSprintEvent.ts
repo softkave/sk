@@ -8,7 +8,7 @@ export default function handleNewSprintEvent(
     store: IStoreLikeObject,
     data: IIncomingNewSprintPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         const board = BlockSelectors.getBlock(
             store.getState(),
             data.sprint.boardId

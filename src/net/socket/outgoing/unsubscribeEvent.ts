@@ -1,3 +1,4 @@
+import { getRoomId, getRoomLikeResource } from "../../../models/rooms/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import KeyValueSelectors from "../../../redux/key-value/selectors";
 import {
@@ -11,26 +12,52 @@ import {
 } from "../outgoingEventTypes";
 import SocketAPI from "../socket";
 
-export default function unsubcribeEvent(items: ClientSubscribedResources) {
-    if (SocketAPI.socket && items.length > 0) {
-        const data: IOutgoingSubscribePacket = { items };
-        const roomsToRemove: string[] = [];
-        SocketAPI.socket.emit(OutgoingSocketEvents.Unsubscribe, data);
+export default async function unsubcribeEvent(
+    items?: ClientSubscribedResources
+) {
+    const roomsToRemove: string[] = [];
+    const rooms =
+        KeyValueSelectors.getKey(
+            store.getState(),
+            KeyValueKeys.RoomsSubscribedTo
+        ) || {};
 
-        const rooms =
-            KeyValueSelectors.getKey(
-                store.getState(),
-                KeyValueKeys.RoomsSubscribedTo
-            ) || {};
-
-        items.forEach((item) => {
-            const roomId = `${item.type}-${item.customId}`;
-
-            if (rooms[roomId]) {
-                roomsToRemove.push(roomId);
-            }
+    if (!items) {
+        // Unsubscribe from all the rooms if no argument is provided
+        const roomSignatures = Object.keys(rooms);
+        items = roomSignatures.map((signature) =>
+            getRoomLikeResource(signature)
+        ) as ClientSubscribedResources;
+    } else {
+        // Filter out rooms not found in the store
+        // This prevents double "un-subscription" on logout.
+        // The logout action unsubscribes all resources, and individual
+        // components do too. This makes sure we don't unsubscribe twice.
+        items = items.filter((item) => {
+            const roomId = getRoomId(item);
+            return !!rooms[roomId];
         });
-
-        store.dispatch(KeyValueActions.removeRooms(roomsToRemove));
     }
+
+    if (items.length === 0) {
+        return;
+    }
+
+    const data: IOutgoingSubscribePacket = { items };
+
+    const promise = SocketAPI.promisifiedEmit(
+        OutgoingSocketEvents.Unsubscribe,
+        data
+    );
+
+    items.forEach((item) => {
+        const roomId = getRoomId(item);
+
+        if (rooms[roomId]) {
+            roomsToRemove.push(roomId);
+        }
+    });
+
+    store.dispatch(KeyValueActions.removeRooms(roomsToRemove));
+    return promise;
 }

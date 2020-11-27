@@ -105,11 +105,10 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
 
 export function isTaskInLastStatus(task: IBlock, statusList: IBlockStatus[]) {
     const lastStatus = statusList[statusList.length - 1];
-    const isInLastStatus = task.status === lastStatus.customId;
-
-    if (isInLastStatus) {
-        return true;
+    
+    if (lastStatus) {
+        return task.status === lastStatus.customId;
     }
 
-    return false;
+    return true;
 }

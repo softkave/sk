@@ -38,7 +38,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
     });
 
     const [blockData, setBlock] = React.useState<IFormBlock>(
-        () => props.block || newFormBlock(user, BlockType.Org)
+        () => props.block || newFormBlock(user, BlockType.Board, org)
     );
 
     const [loading, setLoading] = React.useState(false);

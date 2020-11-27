@@ -13,26 +13,28 @@ import {
 import SocketAPI from "../socket";
 
 export default function subscribeEvent(items: ClientSubscribedResources) {
-    if (SocketAPI.socket && items.length > 0) {
+    if (items.length > 0) {
         const data: IOutgoingSubscribePacket = { items };
         const roomsToPush: string[] = [];
 
-        SocketAPI.socket.emit(OutgoingSocketEvents.Subscribe, data);
+        SocketAPI.promisifiedEmit(OutgoingSocketEvents.Subscribe, data).then(
+            () => {
+                const rooms =
+                    KeyValueSelectors.getKey<ClientSubscribedResources>(
+                        store.getState(),
+                        KeyValueKeys.RoomsSubscribedTo
+                    ) || {};
 
-        const rooms =
-            KeyValueSelectors.getKey<ClientSubscribedResources>(
-                store.getState(),
-                KeyValueKeys.RoomsSubscribedTo
-            ) || {};
+                items.forEach((item) => {
+                    const roomSignature = getRoomId(item);
 
-        items.forEach((item) => {
-            const roomSignature = getRoomId(item);
+                    if (!rooms[roomSignature]) {
+                        roomsToPush.push(roomSignature);
+                    }
+                });
 
-            if (!rooms[roomSignature]) {
-                roomsToPush.push(roomSignature);
+                store.dispatch(KeyValueActions.pushRooms(roomsToPush));
             }
-        });
-
-        store.dispatch(KeyValueActions.pushRooms(roomsToPush));
+        );
     }
 }

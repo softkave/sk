@@ -21,7 +21,7 @@ export default function handleFetchMissingBroadcastsEvent(
     store: IStoreLikeObject,
     data: IIncomingBroadcastHistoryPacket
 ) {
-    if (data.errors) {
+    if (data && data.errors) {
         return;
     }
 

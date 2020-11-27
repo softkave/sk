@@ -10,6 +10,11 @@ export enum OutgoingSocketEvents {
     UpdateRoomReadCounter = "updateRoomReadCounter",
 }
 
+export interface IOutgoingEventPacket<T = any> {
+    token: string;
+    data?: T;
+}
+
 export interface IOutgoingSubscribePacket {
     items: ClientSubscribedResources;
 }

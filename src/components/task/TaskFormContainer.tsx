@@ -56,6 +56,10 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
         }
     });
 
+    if (!parentBlock || parentBlock?.type !== BlockType.Board) {
+        throw new Error("Parent is not a board");
+    }
+
     const sprints = useSelector<IAppState, ISprint[]>((state) => {
         const totalSprints = SprintSelectors.getBoardSprints(
             state,
@@ -97,7 +101,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     >(() => props.block);
 
     const [blockData, setBlock] = React.useState<IFormBlock>(
-        () => props.block || newFormBlock(user, BlockType.Task)
+        () => props.block || newFormBlock(user, BlockType.Task, parentBlock)
     );
 
     const [loading, setLoading] = React.useState(false);
@@ -142,9 +146,9 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
         if (opData.error) {
             if (existingBlock) {
-                message.error("Error updating board");
+                message.error("Error updating task");
             } else {
-                message.error("Error creating board");
+                message.error("Error creating task");
             }
 
             const flattenedErrors = flattenErrorList(opData.error);
@@ -154,9 +158,9 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             });
         } else {
             if (existingBlock) {
-                message.success("Board updated successfully");
+                message.success("Task updated successfully");
             } else {
-                message.success("Board created successfully");
+                message.success("Task created successfully");
             }
 
             setExistingBlock(block);

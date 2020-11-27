@@ -6,7 +6,7 @@ export default function handleOrgCollaborationRequestsEvent(
     store: IStoreLikeObject,
     data: IIncomingNewNotificationsPacket
 ) {
-    if (!data.errors) {
+    if (data && data.errors) {
         return;
     }
 

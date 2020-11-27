@@ -27,11 +27,6 @@ export default function handleBlockUpdateEvent(
 
             storeUpdateBlock(store, block, data.block);
         } else if (data.isDelete) {
-            const block = BlockSelectors.getBlock(
-                store.getState(),
-                data.customId
-            );
-
             storeDeleteBlock(store, data.customId);
         }
     }

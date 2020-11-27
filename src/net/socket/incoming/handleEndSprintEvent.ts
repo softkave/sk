@@ -8,7 +8,7 @@ export default function handleEndSprintEvent(
     store: IStoreLikeObject,
     data: IIncomingEndSprintPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         const sprint = SprintSelectors.getSprint(
             store.getState(),
             data.sprintId

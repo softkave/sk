@@ -170,7 +170,11 @@ function getDeletedStatuses(
     existingStatuses: IBoardTaskResolution[] = [],
     statuses: IBoardTaskResolution[] = []
 ) {
-    if (statuses.length === 0 && existingStatuses.length === 0) {
+    if (
+        !statuses ||
+        !existingStatuses ||
+        (statuses.length === 0 && existingStatuses.length === 0)
+    ) {
         return {};
     }
 

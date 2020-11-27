@@ -11,7 +11,7 @@ export default function handleNewMessageEvent(
     store: IStoreLikeObject,
     data: IIncomingSendMessagePacket
 ) {
-    if (data.errors) {
+    if (data && data.errors) {
         return;
     }
 

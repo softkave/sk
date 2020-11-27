@@ -6,7 +6,7 @@ export default function handleUpdateSprintEvent(
     store: IStoreLikeObject,
     data: IIncomingUpdateSprintPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         store.dispatch(
             SprintActions.updateSprint({
                 id: data.sprintId,

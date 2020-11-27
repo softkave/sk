@@ -35,6 +35,11 @@ function assertGetUser(state: IAppState) {
     return user;
 }
 
+function assertGetToken(state: IAppState) {
+    assertUserSignedIn(state);
+    return getUserToken(state)!;
+}
+
 function getSessionType(state: IAppState) {
     return state.session.sessionType;
 }
@@ -50,4 +55,5 @@ export default class SessionSelectors {
     public static assertGetUser = assertGetUser;
     public static getSessionType = getSessionType;
     public static isDemoMode = isDemoMode;
+    public static assertGetToken = assertGetToken;
 }

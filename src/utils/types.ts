@@ -13,5 +13,5 @@ export interface IUpdateItemById<T> {
 export interface IUpdateComplexTypeArrayInput<T> {
     add?: T[];
     remove?: string[];
-    update?: Array<IUpdateItemById<T>>;
+    update?: T[];
 }

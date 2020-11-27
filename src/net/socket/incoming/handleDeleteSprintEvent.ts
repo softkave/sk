@@ -9,7 +9,7 @@ export default function handleDeleteSprintEvent(
     store: IStoreLikeObject,
     data: IIncomingDeleteSprintPacket
 ) {
-    if (!data.errors) {
+    if (data && !data.errors) {
         const innerData = data;
         const sprint = SprintSelectors.getSprint(
             store.getState(),
