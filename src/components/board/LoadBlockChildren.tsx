@@ -28,7 +28,6 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
     const loadChildren = React.useCallback(
         (loadProps: IOperationDerivedData) => {
             if (!loadProps.operation) {
-                console.log({ loadProps });
                 dispatch(
                     loadBlockChildrenOpAction({
                         blockId: parent.customId,

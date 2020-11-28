@@ -66,9 +66,7 @@ export interface IAddCollaboratorFormValues {
     collaborators: IAddCollaboratorFormItemValues[];
 }
 
-export type AddCollaboratorFormErrors = IFormikFormErrors<
-    IAddCollaboratorFormValues
->;
+export type AddCollaboratorFormErrors = IFormikFormErrors<IAddCollaboratorFormValues>;
 
 export interface IAddCollaboratorFormProps {
     existingCollaborators: IUser[];
@@ -151,11 +149,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         onSubmit({
             expiresAt: values.expiresAt,
             message: values.message,
-            collaborators: values.collaborators.map((collaborator) => ({
-                email: collaborator.email,
-                body: collaborator.body,
-                expiresAt: collaborator.expiresAt,
-            })),
+            collaborators: values.collaborators,
         });
     };
 
@@ -258,7 +252,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     };
 
     const onAddNewStatus = () => {
-        const status: IAddCollaboratorFormItemValues & { customId: string } = {
+        const status: IAddCollaboratorFormItemValues = {
             email: "",
             body: "",
             customId: getNewId(),
@@ -315,7 +309,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                             value={collaborator}
                             disabled={isSubmitting}
                             errors={(errors.collaborators || [])[i] as any}
-                            key={(collaborator as any).customId}
+                            key={collaborator.customId}
                             touched={(touched.collaborators || [])[i]}
                             style={{
                                 borderBottom:

@@ -5,13 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
+import { IAddCollaboratorEndpointErrors } from "../../net/block/types";
 import BlockSelectors from "../../redux/blocks/selectors";
 import NotificationSelectors from "../../redux/notifications/selectors";
 import { addCollaboratorsOperationAction } from "../../redux/operations/block/addCollaborators";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import { flattenErrorList } from "../../utils/utils";
-import useOperation, { getOpData } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
+import { IFormError } from "../utilities/types";
 import AddCollaboratorForm, {
     IAddCollaboratorFormValues,
 } from "./AddCollaboratorForm";
@@ -53,20 +55,20 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
         collaborators: [],
     });
 
-    const operationStatus = useOperation();
-
-    const errors = operationStatus.error
-        ? flattenErrorList(operationStatus.error)
-        : undefined;
+    const [loading, setLoading] = React.useState(false);
+    const [errors, setErrors] = React.useState<
+        IFormError<IAddCollaboratorEndpointErrors> | undefined
+    >();
 
     const onSubmit = async (values: IAddCollaboratorFormValues) => {
+        setLoading(true);
         setData(data);
 
         const result = await dispatch(
             addCollaboratorsOperationAction({
+                deleteOpOnComplete: true,
                 blockId: organization.customId,
                 ...values,
-                opId: operationStatus.opId,
             })
         );
 
@@ -76,24 +78,28 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
             return;
         }
 
-        const opStat = getOpData(op);
+        const opData = getOpData(op);
 
-        if (opStat.isCompleted) {
+        setLoading(false);
+
+        if (opData.isCompleted) {
             onClose();
             message.success(
                 `Request${
                     values.collaborators.length > 1 ? "s" : ""
-                } sent successfully`
+                } sent successfully.`
             );
+        } else if (opData.isError) {
+            const flattenedErrors = flattenErrorList(opData.error);
+            setErrors({
+                errors: flattenedErrors,
+                errorList: opData.error,
+            });
 
-            // TODO: we need a loadBlockNotifications func
-            // TODO: most likely not needed anymore with new sockets implementation
-            // dispatch(loadBoardDataOperationAction({ block: organization }));
-        } else if (opStat.isError) {
             message.error(
                 `Error sending request${
                     values.collaborators.length > 1 ? "s" : ""
-                }`
+                }.`
             );
         }
     };
@@ -105,8 +111,8 @@ const AddCollaboratorFormContainer: React.FC<IAddCollaboratorFormContainerProps>
             value={data}
             onClose={onClose}
             onSubmit={onSubmit}
-            isSubmitting={operationStatus.isLoading}
-            errors={errors}
+            isSubmitting={loading}
+            errors={errors?.errors}
         />
     );
 };

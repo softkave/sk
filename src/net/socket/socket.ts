@@ -1,6 +1,7 @@
 import io, { Socket } from "socket.io-client";
 import SessionSelectors from "../../redux/session/selectors";
 import store from "../../redux/store";
+import { IStoreLikeObject } from "../../redux/types";
 import { getSockAddr } from "../addr";
 import handleBlockUpdateEvent from "./incoming/handleBlockUpdateEvent";
 import handleConnectEvent from "./incoming/handleConnectEvent";
@@ -27,6 +28,10 @@ class SocketNotConnectedError extends Error {
 
 export interface ISocketConnectionProps {
     token: string;
+}
+
+function makeSocketEventHandler(str: IStoreLikeObject, fn) {
+    return (data) => fn(store, data);
 }
 
 // tslint:disable-next-line: max-classes-per-file
@@ -108,32 +113,66 @@ export default class SocketAPI {
         socket.on(IncomingSocketEvents.Connect, () =>
             handleConnectEvent(store, props.token)
         );
-        socket.on(IncomingSocketEvents.Disconnect, handleDisconnectEvent);
-        socket.on(IncomingSocketEvents.BlockUpdate, handleBlockUpdateEvent);
+        socket.on(
+            IncomingSocketEvents.Disconnect,
+            makeSocketEventHandler(store, handleDisconnectEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.BlockUpdate,
+            makeSocketEventHandler(store, handleBlockUpdateEvent)
+        );
         socket.on(
             IncomingSocketEvents.OrgNewCollaborationRequests,
-            handleOrgCollaborationRequestsEvent
+
+            makeSocketEventHandler(store, handleOrgCollaborationRequestsEvent)
         );
         socket.on(
             IncomingSocketEvents.UpdateCollaborationRequests,
-            handleUpdateNotificationsEvent
+
+            makeSocketEventHandler(store, handleUpdateNotificationsEvent)
         );
         socket.on(
-            IncomingSocketEvents.UpdateCollaborationRequests,
-            handleUserCollaborationRequestsEvent
+            IncomingSocketEvents.UserNewCollaborationRequest,
+
+            makeSocketEventHandler(store, handleUserCollaborationRequestsEvent)
         );
-        socket.on(IncomingSocketEvents.UserUpdate, handleUserUpdateEvent);
+        socket.on(
+            IncomingSocketEvents.UserUpdate,
+            makeSocketEventHandler(store, handleUserUpdateEvent)
+        );
         socket.on(
             IncomingSocketEvents.UpdateRoomReadCounter,
-            handleUpdateRoomReadCounterEvent
+
+            makeSocketEventHandler(store, handleUpdateRoomReadCounterEvent)
         );
-        socket.on(IncomingSocketEvents.NewRoom, handleNewRoomEvent);
-        socket.on(IncomingSocketEvents.NewMessage, handleNewMessageEvent);
-        socket.on(IncomingSocketEvents.NewSprint, handleNewSprintEvent);
-        socket.on(IncomingSocketEvents.UpdateSprint, handleUpdateSprintEvent);
-        socket.on(IncomingSocketEvents.StartSprint, handleStartSprintEvent);
-        socket.on(IncomingSocketEvents.EndSprint, handleEndSprintEvent);
-        socket.on(IncomingSocketEvents.DeleteSprint, handleDeleteSprintEvent);
+        socket.on(
+            IncomingSocketEvents.NewRoom,
+            makeSocketEventHandler(store, handleNewRoomEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.NewMessage,
+            makeSocketEventHandler(store, handleNewMessageEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.NewSprint,
+            makeSocketEventHandler(store, handleNewSprintEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.UpdateSprint,
+            makeSocketEventHandler(store, handleUpdateSprintEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.StartSprint,
+            makeSocketEventHandler(store, handleStartSprintEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.EndSprint,
+            makeSocketEventHandler(store, handleEndSprintEvent)
+        );
+        socket.on(
+            IncomingSocketEvents.DeleteSprint,
+            makeSocketEventHandler(store, handleDeleteSprintEvent)
+        );
     }
 
     public static disconnectSocket() {

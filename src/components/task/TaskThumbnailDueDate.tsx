@@ -42,7 +42,7 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
                         style={{
                             width: "12px",
                             height: "12px",
-                            color: "#999",
+                            color: "#323b49",
                         }}
                     />
                 </span>

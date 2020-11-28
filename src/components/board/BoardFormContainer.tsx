@@ -93,7 +93,7 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
                 message.success("Board updated successfully");
             } else {
                 message.success("Board created successfully");
-                history.push(`/app/orgs/${block!.customId}`);
+                history.push(`/app/orgs/${orgId}/boards/${block!.customId}`);
                 onClose();
             }
 

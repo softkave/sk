@@ -34,7 +34,9 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
     const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
 
-    const toggleFeedbackForm = () => setShowFeedbackForm(!showFeedbackForm);
+    const toggleFeedbackForm = React.useCallback(() => {
+        setShowFeedbackForm(!showFeedbackForm);
+    }, [showFeedbackForm]);
 
     const renderNotification = (isMobile: boolean) => (
         <Notification isMobile={isMobile} />
@@ -125,7 +127,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
     return (
         <React.Fragment>
             {showFeedbackForm && (
-                <FeedbackFormModal visible onClose={toggleFeedbackForm} />
+                <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
             )}
             <RenderForDevice
                 renderForDesktop={desktop}

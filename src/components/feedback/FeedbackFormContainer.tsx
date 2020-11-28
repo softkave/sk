@@ -6,35 +6,44 @@ import { ISendFeedbackEndpointErrors } from "../../net/system/api";
 import { sendFeedbackOpAction } from "../../redux/operations/system/sendFeedback";
 import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
-import cast from "../../utils/cast";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
 import FeedbackForm, { IFeedbackFormValues } from "./FeedbackForm";
+import FeedbackSentMessage from "./FeedbackSentMessage";
 
 export interface IFeedbackFormContainerProps {
-    onClose: () => void;
+    onCancel: () => void;
 }
 
 const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
     props
 ) => {
-    const { onClose } = props;
+    const { onCancel } = props;
 
     const [loading, setLoading] = React.useState(false);
     const [errors, setErrors] = React.useState<
         IFormError<ISendFeedbackEndpointErrors> | undefined
     >();
 
+    const [
+        showFeedbackSendMessage,
+        setShowFeedbackSendMessage,
+    ] = React.useState(false);
+
+    const toggleFeedbackSentMessage = React.useCallback(
+        () => setShowFeedbackSendMessage(!showFeedbackSendMessage),
+        [showFeedbackSendMessage]
+    );
+
     const dispatch: AppDispatch = useDispatch();
 
     const user = useSelector(SessionSelectors.assertGetUser);
-    const [feedback, setFeedback] = React.useState<IFeedbackFormValues>(
-        cast<IFeedbackFormValues>({
-            notifyUserOnResolution: !!user,
-            notifyUserEmail: user?.email,
-        })
-    );
+    const [feedback, setFeedback] = React.useState<IFeedbackFormValues>({
+        notifyUserOnResolution: !!user,
+        notifyEmail: user?.email,
+        feedback: "",
+    });
 
     const onSubmit = async (values: IFeedbackFormValues) => {
         const data = { ...feedback, ...values };
@@ -58,6 +67,7 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
         const opData = getOpData(op);
 
         if (opData.isCompleted) {
+            toggleFeedbackSentMessage();
             message.success("Feedback sent successfully");
         } else if (opData.isError) {
             const flattenedErrors = flattenErrorList(opData.error);
@@ -72,12 +82,24 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
         setLoading(false);
     };
 
+    if (showFeedbackSendMessage) {
+        return (
+            <FeedbackSentMessage
+                visible
+                onOk={toggleFeedbackSentMessage}
+                onCancel={() => {
+                    onCancel();
+                }}
+            />
+        );
+    }
+
     return (
         <FeedbackForm
             user={user}
             value={feedback}
             errors={errors?.errors}
-            onClose={onClose}
+            onClose={onCancel}
             onSubmit={onSubmit}
             isSubmitting={loading}
         />

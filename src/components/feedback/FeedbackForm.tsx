@@ -1,6 +1,5 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import React from "react";
-import { ArrowLeft } from "react-feather";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
 import FormError from "../forms/FormError";
@@ -18,7 +17,7 @@ export interface IFeedbackFormValues {
     feedback: string;
     description?: string;
     notifyUserOnResolution?: boolean;
-    notifyUserEmail?: string;
+    notifyEmail?: string;
 }
 
 export type IFeedbackFormErrors = IFormikFormErrors<IFeedbackFormValues>;
@@ -38,7 +37,6 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
         value,
         user,
         onSubmit,
-        onClose,
         errors: externalErrors,
     } = props;
 
@@ -119,30 +117,24 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
                 style={{ width: "100%" }}
+                label="Notify Me"
             >
                 <Checkbox
                     checked={values.notifyUserOnResolution}
-                    onChange={(evt) => {
+                    onChange={() => {
                         const checked = !values.notifyUserOnResolution;
 
-                        console.log(checked);
-
                         formik.setFieldValue("notifyUserOnResolution", checked);
-
                         formikChangedFieldsHelpers.addField(
                             "notifyUserOnResolution"
                         );
 
                         if (!checked) {
-                            formik.setFieldValue("notifyUserEmail", "");
-                            formikChangedFieldsHelpers.addField(
-                                "notifyUserEmail"
-                            );
+                            formik.setFieldValue("notifyEmail", null);
+                            formikChangedFieldsHelpers.addField("notifyEmail");
                         } else if (checked && user) {
-                            formik.setFieldValue("notifyUserEmail", user.email);
-                            formikChangedFieldsHelpers.addField(
-                                "notifyUserEmail"
-                            );
+                            formik.setFieldValue("notifyEmail", user.email);
+                            formikChangedFieldsHelpers.addField("notifyEmail");
                         }
                     }}
                 >
@@ -159,24 +151,21 @@ const FeedbackForm: React.FC<IFeedbackFormProps> = (props) => {
             <Form.Item
                 label="Email Address"
                 help={
-                    touched.notifyUserEmail && (
-                        <FormError error={errors.notifyUserEmail} />
+                    touched.notifyEmail && (
+                        <FormError error={errors.notifyEmail} />
                     )
                 }
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
-                extra="Enter the email address where you want us to notify you when we resolve your feedback"
+                extra="Enter the email address you want us to notify you at, when we resolve your feedback."
             >
                 <Input
                     autoComplete="email"
                     onChange={(evt) => {
-                        formik.setFieldValue(
-                            "notifyUserEmail",
-                            evt.target.value
-                        );
-                        formikChangedFieldsHelpers.addField("notifyUserEmail");
+                        formik.setFieldValue("notifyEmail", evt.target.value);
+                        formikChangedFieldsHelpers.addField("notifyEmail");
                     }}
-                    value={values.notifyUserEmail}
+                    value={values.notifyEmail}
                     placeholder="You email address"
                     disabled={!!user && !values.notifyUserOnResolution}
                 />

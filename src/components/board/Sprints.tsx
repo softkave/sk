@@ -37,7 +37,6 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
         board,
         sprints,
         tasks,
-        collaborators,
         onUpdateSprint,
         onDeleteSprint,
         onStartSprint,
@@ -55,8 +54,9 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
         }
 
         const sprint = sprintsMap[group.id];
+        const isSprintCompleted = !!sprint.endDate;
 
-        if (sprint.endDate) {
+        if (isSprintCompleted) {
             return null;
         }
 
@@ -81,8 +81,9 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
         };
 
         const items: React.ReactNode[] = [];
+        const isCurrentSprint = board.currentSprintId === group.id;
 
-        if (board.currentSprintId === group.id) {
+        if (isCurrentSprint) {
             items.push(
                 <Menu.Item key={SprintMenuOptions.END}>
                     <ClockCircleOutlined />
@@ -108,11 +109,17 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
         }
 
         items.push(
-            <Menu.Item key={SprintMenuOptions.EDIT}>
+            <Menu.Item
+                key={SprintMenuOptions.EDIT}
+                disabled={isSprintCompleted}
+            >
                 <EditOutlined />
                 Edit Sprint
             </Menu.Item>,
-            <Menu.Item key={SprintMenuOptions.DELETE}>
+            <Menu.Item
+                key={SprintMenuOptions.DELETE}
+                disabled={isCurrentSprint || isSprintCompleted}
+            >
                 <DeleteOutlined />
                 Delete Sprint
             </Menu.Item>

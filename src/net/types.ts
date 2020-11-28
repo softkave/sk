@@ -12,8 +12,8 @@ export type GetEndpointResult<T extends object = object> = T &
 
 export type GetEndpointResultError<T extends object = object> = {
     [K in keyof T]?: T[K] extends any[]
-        ? T[K][0] extends object
-            ? GetEndpointResultError<T[K][0]>
+        ? T[K][number] extends object
+            ? Array<GetEndpointResultError<T[K][number]>>
             : string
         : T[K] extends object
         ? GetEndpointResultError<T[K]>

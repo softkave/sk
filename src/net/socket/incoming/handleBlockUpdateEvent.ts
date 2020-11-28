@@ -14,7 +14,9 @@ export default function handleBlockUpdateEvent(
     data: IIncomingBlockUpdatePacket
 ) {
     if (data && !data.errors) {
+        console.log(data);
         if (data.isNew && data.block) {
+            console.log("is new");
             storeNewBlock(
                 store,
                 persistedBlockToBlock(data.block as IPersistedBlock)

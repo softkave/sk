@@ -11,6 +11,7 @@ import ExpiresAt from "./ExpiresAt";
 import Message from "./Message";
 
 export interface IAddCollaboratorFormItemValues {
+    customId: string;
     email: string;
     body?: string;
     expiresAt?: number;

@@ -3,7 +3,7 @@ import { userErrorMessages } from "../../models/user/userErrorMessages";
 import blockValidationSchemas from "../block/validation";
 
 export const feedbackFormValidationSchema = yup.object().shape({
-    name: blockValidationSchemas.name,
+    feedback: blockValidationSchemas.name,
     description: blockValidationSchemas.descriptionOptional,
-    notifyUserEmail: yup.string().email(userErrorMessages.invalidEmail),
+    notifyEmail: yup.string().email(userErrorMessages.invalidEmail).nullable(),
 });

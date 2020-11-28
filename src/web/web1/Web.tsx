@@ -19,5 +19,5 @@ export default Web1;
 const StyledWeb = styled.div`
     min-height: 100%;
     height: 100%;
-    background-color: #fafafa;
+    // background-color: #fafafa;
 `;

@@ -276,7 +276,10 @@ const Task: React.FC<ITaskProps> = (props) => {
             <StyledContainer key="assignees-and-dueAt">
                 {task.dueAt && !isInLastStatus ? (
                     <StyledContainer s={{ flex: 1, paddingRight: "16px" }}>
-                        <TaskThumbnailDueDate isInLastStatus task={task} />
+                        <TaskThumbnailDueDate
+                            isInLastStatus={isInLastStatus}
+                            task={task}
+                        />
                     </StyledContainer>
                 ) : null}
                 {hasAssignees && (

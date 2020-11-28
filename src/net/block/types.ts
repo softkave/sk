@@ -13,9 +13,7 @@ export interface IAddBlockEndpointParams {
 }
 
 export type IAddBlockEndpointResult = GetEndpointResult<{ block: IBlock }>;
-export type IAddBlockEndpointErrors = GetEndpointResultError<
-    IAddBlockEndpointParams
->;
+export type IAddBlockEndpointErrors = GetEndpointResultError<IAddBlockEndpointParams>;
 
 export interface IUpdateBlockAPIParams {
     blockId: string;
@@ -41,6 +39,8 @@ export interface IAddCollaboratorAPIParams {
     blockId: string;
     collaborators: IAddCollaboratorFormItemValues[];
 }
+
+export type IAddCollaboratorEndpointErrors = GetEndpointResultError<IAddCollaboratorAPIParams>;
 
 export type IAddCollaboratorAPIResult = GetEndpointResult<{
     requests: INotification[];

@@ -1,4 +1,6 @@
 import { Drawer, Modal } from "antd";
+import { DrawerProps } from "antd/lib/drawer";
+import { ModalProps } from "antd/lib/modal";
 import throttle from "lodash/throttle";
 import React from "react";
 import cast from "../utils/cast";
@@ -11,27 +13,16 @@ export enum WithDrawerType {
 
 const windowResizeThrottleSpeedMs = 300;
 
-export interface IDrawerWrapperProps {
-    visible: boolean;
-    title?: React.ReactNode;
-    closeable?: boolean;
-    footer?: React.ReactNode;
+export interface IDrawerWrapperProps extends Partial<DrawerProps & ModalProps> {
     type?: WithDrawerType;
-    className?: string;
-    wrapperClassName?: string;
-    onClose?: () => void;
 }
 
 interface IDrawerWrapperState {
     currentDeviceWidth: number;
 }
 
-export interface IWithDrawerProps {
-    wrapperClassName?: string;
+export interface IWithDrawerProps extends Partial<DrawerProps & ModalProps> {
     type?: WithDrawerType;
-    title?: React.ReactNode;
-    closeable?: boolean;
-    footer?: React.ReactNode;
 }
 
 export default function withDrawer<
@@ -42,7 +33,7 @@ export default function withDrawer<
     component: ComponentType,
     options: IWithDrawerProps = {
         type: WithDrawerType.Drawer,
-        closeable: false,
+        closable: false,
         footer: null,
     }
 ) {
@@ -125,14 +116,6 @@ export default function withDrawer<
         }
 
         private renderDrawer() {
-            const {
-                visible,
-                title,
-                closeable,
-                footer,
-                wrapperClassName,
-                onClose,
-            } = this.props;
             const { currentDeviceWidth } = this.state;
             const windowWidth = currentDeviceWidth;
             const divider =
@@ -144,41 +127,15 @@ export default function withDrawer<
                 drawerWidth > maxDrawerWidth ? maxDrawerWidth : drawerWidth;
 
             return (
-                <Drawer
-                    closable={closeable}
-                    className={wrapperClassName}
-                    visible={visible}
-                    onClose={onClose}
-                    width={drawerWidth}
-                    title={title}
-                    footer={footer}
-                >
+                <Drawer {...this.props} width={drawerWidth}>
                     {this.renderWrappedComponent()}
                 </Drawer>
             );
         }
 
         private renderModal() {
-            const {
-                visible,
-                title,
-                closeable,
-                footer,
-                wrapperClassName,
-                onClose,
-            } = this.props;
-
             return (
-                <Modal
-                    visible={visible}
-                    footer={footer}
-                    title={title}
-                    closable={closeable}
-                    className={wrapperClassName}
-                    onCancel={onClose}
-                >
-                    {this.renderWrappedComponent()}
-                </Modal>
+                <Modal {...this.props}>{this.renderWrappedComponent()}</Modal>
             );
         }
     }

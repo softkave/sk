@@ -84,6 +84,7 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
             </StyledContainer>
             {subTasks.map((subTask, i) => (
                 <TaskSubTask
+                    key={subTask.customId}
                     subTask={subTask}
                     onToggleSubTask={() => onToggleSubTask(i)}
                 />

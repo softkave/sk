@@ -2,6 +2,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import OperationActions from "../../redux/operations/actions";
 import store from "../../redux/store";
+import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 
 const handleOpResult = async ({
@@ -19,12 +20,13 @@ const handleOpResult = async ({
         return;
     }
 
-    const opStat = getOpData(op);
+    const opData = getOpData(op);
 
-    if (opStat.isCompleted) {
+    if (opData.isCompleted) {
         message.success(successMessage);
-    } else if (opStat.isError) {
-        message.error(errorMessage);
+    } else if (opData.isError) {
+        const flattenedError = flattenErrorList(opData.error);
+        message.error(flattenedError.error || errorMessage);
     }
 
     store.dispatch(OperationActions.deleteOperation(op.id));

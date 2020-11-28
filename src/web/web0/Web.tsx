@@ -22,7 +22,7 @@ const StyledWeb = styled.div`
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    background-color: #fafafa;
+    // background-color: #fafafa;
 `;
 
 const StyledWebBody = styled.div`
