@@ -54,10 +54,15 @@ export interface IUpdateRoomReadCounterAPIParameters {
     readCounter: string;
 }
 
+export interface IUpdateRoomReadCounterEndpointResult
+    extends IEndpointResultBase {
+    readCounter: string;
+}
+
 async function updateRoomReadCounter(
     props: IUpdateRoomReadCounterAPIParameters
 ) {
-    return SocketAPI.promisifiedEmit<IEndpointResultBase>(
+    return SocketAPI.promisifiedEmit<IUpdateRoomReadCounterEndpointResult>(
         OutgoingSocketEvents.UpdateRoomReadCounter,
         props
     );

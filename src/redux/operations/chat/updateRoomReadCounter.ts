@@ -49,8 +49,7 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-        // const isDemoMode = true;
-        arg.readCounter = arg.readCounter || getDateString();
+        let readCounter = arg.readCounter || getDateString();
 
         if (!isDemoMode) {
             const result = await ChatAPI.updateRoomReadCounter(arg);
@@ -58,6 +57,8 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
             if (result && result.errors) {
                 throw result.errors;
             }
+
+            readCounter = result.readCounter;
         }
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
@@ -69,7 +70,7 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
 
         const { unseenChatsCount } = getRoomUserUnseenChatsCountAndStartIndex(
             room,
-            moment(arg.readCounter)
+            moment(readCounter)
         );
 
         const orgUnseenChatsCount = unseenChatsCountMapByOrg[room.orgId] || 0;
@@ -90,11 +91,16 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
             );
         }
 
+        console.log({
+            readCounter,
+            unseenChatsCount,
+        });
+
         thunkAPI.dispatch(
             RoomActions.updateRoomReadCounter({
+                readCounter,
                 roomId: arg.roomId,
                 userId: user.customId,
-                readCounter: arg.readCounter,
                 isSignedInUser: true,
             })
         );

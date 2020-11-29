@@ -169,7 +169,7 @@ export interface INewBlockInput {
     type: BlockType;
     name: string;
     description?: string;
-    dueAt?: number;
+    dueAt?: string;
     color?: string;
     parent?: string;
     rootBlockId?: string;
@@ -185,8 +185,7 @@ export interface INewBlockInput {
     taskSprint?: ITaskSprintInput | null;
 }
 
-export interface IFormBlock extends Omit<INewBlockInput, "dueAt"> {
-    dueAt?: string;
+export interface IFormBlock extends INewBlockInput {
     subTasks?: ISubTaskInput[];
     boardStatuses?: IBlockStatusInput[];
     boardLabels?: IBlockLabelInput[];
@@ -259,7 +258,7 @@ const newBlockInputFields = getFields<IFormBlock, INewBlockInput>({
     type: true,
     name: true,
     description: true,
-    dueAt: getMsForwardFrom,
+    dueAt: true,
     color: true,
     parent: true,
     rootBlockId: true,
@@ -284,7 +283,7 @@ export interface IUpdateBlockInput {
     priority?: string;
     parent?: string;
     subTasks?: IUpdateComplexTypeArrayInput<ISubTaskInput>;
-    dueAt?: number;
+    dueAt?: string;
     assignees?: IUpdateComplexTypeArrayInput<IAssigneeInput>;
     boardStatuses?: IUpdateComplexTypeArrayInput<IBlockStatusInput>;
     boardLabels?: IUpdateComplexTypeArrayInput<IBlockLabelInput>;
@@ -302,7 +301,7 @@ const updateBlockFields = getFields<
 >({
     name: true,
     description: true,
-    dueAt: getMsForwardFrom,
+    dueAt: true,
     color: true,
     parent: true,
     assignees: (data, args) => {

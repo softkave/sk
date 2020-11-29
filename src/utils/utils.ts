@@ -37,8 +37,8 @@ export function getDateString(initial?: Date | string | number | Moment) {
     return new Date().toISOString();
 }
 
-export const pluralize = (str: string) => {
-    return `${str}s`;
+export const pluralize = (str: string, count: number = 2) => {
+    return `${str}${count === 1 ? "" : "s"}`;
 };
 
 const defaultFormErrorFieldName = "error";

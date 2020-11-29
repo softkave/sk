@@ -8,18 +8,20 @@ import StyledContainer from "../styled/Container";
 export interface IOrgCollaborationRequestThumbnailProps {
     collabRequest: INotification;
     style?: React.CSSProperties;
+    className?: string;
     onClick?: () => void;
 }
 
 const OrgCollaborationRequestThumbnail: React.SFC<IOrgCollaborationRequestThumbnailProps> = (
     props
 ) => {
-    const { collabRequest, onClick, style } = props;
+    const { collabRequest, onClick, style, className } = props;
 
     // TODO: do line clamping on the texts
     return (
         <StyledContainer
             s={{ flex: 1, cursor: "pointer", ...style }}
+            className={className}
             onClick={onClick}
         >
             <StyledContainer>

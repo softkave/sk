@@ -1,3 +1,4 @@
+import { Space, Typography } from "antd";
 import path from "path";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
@@ -18,6 +19,7 @@ import {
 import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "./BoardStatusResolutionAndLabelsForm";
+import CurrentSprintHeader from "./CurrentSprintHeader";
 import GroupedTasks from "./GroupedTasks";
 import SprintsContainer from "./SprintsContainer";
 import TasksContainer from "./TasksContainer";
@@ -245,6 +247,39 @@ const Board: React.FC<IBoardProps> = (props) => {
         }
     };
 
+    const renderTasksPathView = () => {
+        const content = (
+            <TasksContainer
+                board={board}
+                searchText={searchText}
+                useCurrentSprint={view === BoardCurrentView.CURRENT_SPRINT}
+                render={(args) => (
+                    <GroupedTasks
+                        {...args}
+                        block={board}
+                        groupType={groupBy}
+                        onClickUpdateBlock={updateTask}
+                    />
+                )}
+            />
+        );
+
+        if (!board.currentSprintId) {
+            return content;
+        }
+
+        return (
+            <StyledContainer
+                s={{ flexDirection: "column", width: "100%", flex: 1 }}
+            >
+                <StyledContainer s={{ margin: "16px 16px 0px 16px" }}>
+                    <CurrentSprintHeader board={board} />
+                </StyledContainer>
+                {content}
+            </StyledContainer>
+        );
+    };
+
     // TODO: should we move what TaskContainer does higher up so that it only happens once
     return (
         <StyledContainer
@@ -267,47 +302,30 @@ const Board: React.FC<IBoardProps> = (props) => {
                 onToggleFoldAppMenu={onToggleFoldAppMenu}
             />
             <Switch>
-                <Route
-                    path={TASKS_PATH}
-                    render={() => (
-                        <TasksContainer
-                            board={board}
-                            searchText={searchText}
-                            useCurrentSprint={
-                                view === BoardCurrentView.CURRENT_SPRINT
-                            }
-                            render={(args) => (
-                                <GroupedTasks
-                                    {...args}
-                                    block={board}
-                                    groupType={groupBy}
-                                    onClickUpdateBlock={updateTask}
-                                />
-                            )}
-                        />
-                    )}
-                />
+                <Route path={TASKS_PATH} render={renderTasksPathView} />
                 <Route
                     path={SPRINTS_PATH}
-                    render={() => (
-                        <TasksContainer
-                            board={board}
-                            searchText={searchText}
-                            useCurrentSprint={
-                                view === BoardCurrentView.CURRENT_SPRINT
-                            }
-                            render={(args) => (
-                                <SprintsContainer
-                                    {...args}
-                                    board={board}
-                                    onUpdateSprint={(sprint) =>
-                                        setSprintForm({ sprint })
-                                    }
-                                    onClickUpdateBlock={updateTask}
-                                />
-                            )}
-                        />
-                    )}
+                    render={() => {
+                        return (
+                            <TasksContainer
+                                board={board}
+                                searchText={searchText}
+                                useCurrentSprint={
+                                    view === BoardCurrentView.CURRENT_SPRINT
+                                }
+                                render={(args) => (
+                                    <SprintsContainer
+                                        {...args}
+                                        board={board}
+                                        onUpdateSprint={(sprint) =>
+                                            setSprintForm({ sprint })
+                                        }
+                                        onClickUpdateBlock={updateTask}
+                                    />
+                                )}
+                            />
+                        );
+                    }}
                 />
             </Switch>
         </StyledContainer>

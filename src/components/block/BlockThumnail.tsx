@@ -9,7 +9,6 @@ export type BlockThumbnailShowField = "name" | "type" | "description";
 
 export interface IBlockThumbnailProps {
     block: IBlock;
-
     showFields?: BlockThumbnailShowField[];
     className?: string;
     avatarSize?: IItemAvatarProps["size"];
@@ -118,11 +117,13 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
             return (
                 <StyledContainer s={{ marginTop: "8px" }}>
                     <Tag
-                        icon={<CommentOutlined style={{ color: "#323b49" }} />}
+                        icon={<CommentOutlined />}
                         color="red"
-                        style={{}}
+                        style={{ color: "#323b49" }}
                     >
-                        <Typography.Text>5</Typography.Text>
+                        <Typography.Text style={{ color: "#323b49" }}>
+                            {unseenChatsCount}
+                        </Typography.Text>
                     </Tag>
                 </StyledContainer>
             );

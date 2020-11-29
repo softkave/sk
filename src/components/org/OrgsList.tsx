@@ -21,6 +21,8 @@ export interface IOrgsListProps {
     onClickRequest: (request: INotification) => void;
 }
 
+const kMakeTextBlueClassName = "sk-orgslist-make-text-blue";
+
 const OrgsList: React.FC<IOrgsListProps> = (props) => {
     const {
         orgs,
@@ -92,7 +94,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         cursor: "pointer",
                     },
 
-                    "& .ant-typography": {
+                    [`& .${kMakeTextBlueClassName} .ant-typography`]: {
                         color,
                     },
                 }}
@@ -152,6 +154,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         org.customId,
                         <BlockThumbnail
                             block={org}
+                            className={kMakeTextBlueClassName}
                             showFields={["name"]}
                             unseenChatsCount={
                                 unseenChatsCountMapByOrg[org.customId]

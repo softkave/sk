@@ -22,13 +22,7 @@ export interface ISprintsContainerProps extends ITasksContainerRenderFnProps {
 }
 
 const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
-    const {
-        board,
-        tasks,
-        collaborators,
-        onUpdateSprint,
-        onClickUpdateBlock,
-    } = props;
+    const { board, onUpdateSprint, onClickUpdateBlock } = props;
 
     const dispatch: AppDispatch = useDispatch();
 

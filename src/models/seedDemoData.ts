@@ -181,7 +181,7 @@ export function seedBlock(
         name: string;
         description?: string;
         parent?: string;
-        dueAt?: string | number;
+        dueAt?: string;
         priority?: BlockPriority;
         assignees?: IAssigneeInput[];
         subTasks?: ISubTaskInput[];
@@ -212,9 +212,7 @@ export function seedBlock(
             priority ||
             (type === BlockType.Task ? BlockPriority.NotImportant : undefined),
         subTasks: subTasks && seedSubTasks(user, subTasks),
-        dueAt: isNumber(dueAt)
-            ? moment().add(dueAt, "milliseconds").toISOString()
-            : dueAt,
+        dueAt,
         rootBlockId,
         customId: getNewId(),
         createdAt: getDateString(),
