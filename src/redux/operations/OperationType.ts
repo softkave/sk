@@ -44,6 +44,16 @@ enum OperationType {
 
     // system
     SendFeedback = "SendFeedback",
+
+    // access control
+    SetPermissions = "SetPermissions",
+    AddPermissionGroups = "AddPermissionGroups",
+    UpdatePermissionGroups = "UpdatePermissionGroups",
+    DeletePermissionGroups = "DeletePermissionGroups",
+    GetResourcePermissions = "GetResourcePermissions",
+    GetResourcePermissionGroups = "GetResourcePermissionGroups",
+    PermissionExists = "PermissionExists",
+    GetUserPermissions = "GetUserPermissions",
 }
 
 export default OperationType;

@@ -1,13 +1,15 @@
 import { AnyAction, Dispatch, ThunkDispatch } from "@reduxjs/toolkit";
 import { IMergeDataMeta } from "../utils/utils";
 import { IBlocksState } from "./blocks/types";
-
 import { IKeyValueState } from "./key-value/types";
 import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
+import { IPermissionGroupsState } from "./permissionGroups/types";
+import { IPermissionsState } from "./permissions/types";
 import { IRoomsMap } from "./rooms/types";
 import { ISessionState } from "./session/types";
 import { ISprintsState } from "./sprints/types";
+import { IUserAssignedPermissionGroupsState } from "./userAssignedPermissionGroups/types";
 import { IUsersState } from "./users/types";
 
 export interface IAppState {
@@ -19,6 +21,9 @@ export interface IAppState {
     keyValue: IKeyValueState;
     rooms: IRoomsMap;
     sprints: ISprintsState;
+    permissions: IPermissionsState;
+    permissionGroups: IPermissionGroupsState;
+    userAssignedPermissionGroups: IUserAssignedPermissionGroupsState;
 }
 
 export interface IAppAsyncThunkConfig {
