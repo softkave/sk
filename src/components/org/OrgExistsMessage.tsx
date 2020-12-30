@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import FormError from "../forms/FormError";
 
-const complaintEmailAddress = "ywordk@gmail.com";
+const complaintEmailAddress = "abayomi@softkave.com";
 
 export interface IOrgExistsMessageProps {
     message?: string;
