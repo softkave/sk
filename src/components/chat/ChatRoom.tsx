@@ -15,12 +15,19 @@ import ChatRoomHeader from "./ChatRoomHeader";
 export interface IChatRoomProps {
     room: IRoom;
     recipientsMap: { [key: string]: IUser };
+    user: IUser;
     updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
     onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
 }
 
 const ChatRoom: React.FC<IChatRoomProps> = (props) => {
-    const { room, recipientsMap, updateRoomReadCounter, onSendMessage } = props;
+    const {
+        room,
+        user,
+        recipientsMap,
+        updateRoomReadCounter,
+        onSendMessage,
+    } = props;
 
     const history = useHistory();
 
@@ -61,7 +68,11 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
                 onBack={onBack}
             />
             <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
-                <ChatList chats={room.chats} recipientsMap={recipientsMap} />
+                <ChatList
+                    user={user}
+                    chats={room.chats}
+                    recipientsMap={recipientsMap}
+                />
             </StyledContainer>
             <ChatInput onSendMessage={sendMessage} />
         </StyledContainer>

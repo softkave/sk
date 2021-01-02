@@ -3,8 +3,6 @@ body,
 #root {
     height: 100%;
     font-weight: 500;
-    /* background-color: #fafafa; */
-    /* letter-spacing: 0.25px; TODO: Remember */
 }
 
 .ant-drawer-body {
@@ -29,15 +27,18 @@ body,
 
 .icon-btn.ant-btn {
     line-height: 16px;
-    background-color: #f1f1f3;
-    height: auto;
-    padding: 0px 4px;
+    background-color: #eee;
+    height: 30px;
+    width: 32px;
+    padding: 4px 8px;
     color: #3f3f44;
+    border-radius: 50%;
+    border: none;
 }
 
 .icon-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     margin-top: 3px;
 }
 

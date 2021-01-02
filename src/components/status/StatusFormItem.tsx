@@ -1,5 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
@@ -8,7 +9,6 @@ import {
     Check,
     ChevronDown,
     ChevronUp,
-    Edit3,
     Trash2,
     X as CloseIcon,
 } from "react-feather";
@@ -146,7 +146,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 </StyledContainer>
                 <Typography.Paragraph
                     type="secondary"
-                    style={{ margin: 0, marginTop: "4px" }}
+                    style={{ margin: 0, marginTop: "8px" }}
                 >
                     {value.description}
                 </Typography.Paragraph>
@@ -178,9 +178,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 {!isEditing && (
                     <Button
                         disabled={disabled}
-                        icon={
-                            <Edit3 style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<EditOutlined />}
                         onClick={onEdit}
                         htmlType="button"
                         className="icon-btn"
@@ -206,7 +204,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 )}
                 <Button
                     disabled={disabled}
-                    icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
+                    icon={<Trash2 />}
                     onClick={() => onDelete()}
                     htmlType="button"
                     className="icon-btn"
@@ -222,11 +220,6 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                     width: "100%",
                     padding: "16px",
                     flexDirection: "column",
-
-                    ["& button"]: {
-                        width: "26px !important",
-                        height: "24.2px !important",
-                    },
 
                     ...(style || {}),
                 }}

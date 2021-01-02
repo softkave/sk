@@ -1,10 +1,11 @@
 /*eslint no-useless-computed-key: "off"*/
 
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Tag, Typography } from "antd";
 import { Form } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
-import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
+import { Check, Trash2, X as CloseIcon } from "react-feather";
 import { IBlockLabelInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../forms/ColorPicker";
@@ -142,9 +143,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
             <Space>
                 {isEditing && (
                     <Button
-                        icon={
-                            <Check style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<Check />}
                         onClick={onCommitChanges}
                         htmlType="button"
                         disabled={disabled || value.name.length === 0}
@@ -154,11 +153,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                 {isEditing && (
                     <Button
                         onClick={onDiscardChanges}
-                        icon={
-                            <CloseIcon
-                                style={{ width: "14px", height: "14px" }}
-                            />
-                        }
+                        icon={<CloseIcon />}
                         disabled={isNew || value.name.length === 0}
                         htmlType="button"
                         className="icon-btn"
@@ -167,9 +162,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                 {!isEditing && (
                     <Button
                         disabled={disabled}
-                        icon={
-                            <Edit3 style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<EditOutlined />}
                         onClick={onEdit}
                         htmlType="button"
                         className="icon-btn"
@@ -177,7 +170,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                 )}
                 <Button
                     disabled={disabled}
-                    icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
+                    icon={<Trash2 />}
                     onClick={() => onDelete()}
                     htmlType="button"
                     className="icon-btn"
@@ -193,11 +186,6 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                     width: "100%",
                     padding: "16px",
                     flexDirection: "column",
-
-                    ["& button"]: {
-                        width: "26px !important",
-                        height: "24.2px !important",
-                    },
 
                     ...(style || {}),
                 }}

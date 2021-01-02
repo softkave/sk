@@ -70,19 +70,26 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     });
 
     const memoizedSprintsMap = indexArray(sprints, { path: "customId" });
-    const statusList = parentBlock?.boardStatuses || [];
+    const statusList = React.useMemo(() => parentBlock?.boardStatuses || [], [
+        parentBlock?.boardStatuses,
+    ]);
     const statusMap = React.useMemo(
         () => indexArray(statusList, { path: "customId" }),
         [statusList]
     );
 
-    const labelList = parentBlock?.boardLabels || [];
+    const labelList = React.useMemo(() => parentBlock?.boardLabels || [], [
+        parentBlock?.boardLabels,
+    ]);
     const labelsMap = React.useMemo(
         () => indexArray(labelList, { path: "customId" }),
         [labelList]
     );
 
-    const resolutionsList = parentBlock?.boardResolutions || [];
+    const resolutionsList = React.useMemo(
+        () => parentBlock?.boardResolutions || [],
+        [parentBlock?.boardResolutions]
+    );
     const resolutionsMap = React.useMemo(
         () => indexArray(resolutionsList, { path: "customId" }),
         [resolutionsList]

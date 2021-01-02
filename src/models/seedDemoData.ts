@@ -1,4 +1,3 @@
-import isNumber from "lodash/isNumber";
 import moment from "moment";
 import randomColor from "randomcolor";
 import { IOperation, OperationStatus } from "../redux/operations/operation";
@@ -121,7 +120,6 @@ export function seedRequest({
     toEmail,
     fromOrg,
     status,
-    message,
 }: {
     from: IUser;
     toEmail: string;
@@ -132,16 +130,12 @@ export function seedRequest({
     const d = seedRequestDatesAndStatus[status];
 
     const request: INotification = {
-        body:
-            message ||
-            "Join us, we have tuna! No we don't, *rolls eyes. But join us?",
         createdAt: d.createdAt,
         customId: getNewId(),
         to: {
             email: toEmail,
         },
         type: NotificationType.CollaborationRequest,
-        expiresAt: d.expires,
         from: {
             blockId: fromOrg.customId,
             blockName: fromOrg.name!,
@@ -273,7 +267,9 @@ function seedRooms({
     collaborators: IUser[];
 }): IRoom[] {
     const rooms = collaborators.map((collaborator) => {
-        const tempRoomId = getNewTempId(collaborator.customId);
+        const tempRoomId = getNewTempId(
+            org.customId + "-" + collaborator.customId
+        );
         const tempRoom: IRoom = {
             orgId: org.customId,
             customId: tempRoomId,
@@ -456,61 +452,72 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         email: "demo-user-1@softkave.com",
     });
 
-    const demoUser2 = seedUser({
+    const user_Solomon = seedUser({
         name: "Solomon Temitope",
         email: "demo-user-2@softkave.com",
     });
 
-    const demoUser3 = seedUser({
+    const user_YomiIsaac = seedUser({
         name: "Yomi Isaac",
         email: "demo-user-3@softkave.com",
     });
 
-    const org1 = seedBlock(user, {
+    const org_Softkave = seedBlock(user, {
         name: "Softkave",
         type: BlockType.Org,
         description:
             "We make startup productivity tools, from chat, to task management.",
     });
 
-    const org2 = seedBlock(user, {
-        name: "Our Awesome Company",
+    const org_AwesomeCollections = seedBlock(user, {
+        name: "Awesome Collections",
         type: BlockType.Org,
-        description:
-            "We are just very awesome individuals that do what we love.",
+        description: "Just some awesome collections.",
     });
 
-    const org3 = seedBlock(user, {
+    const org_CanFactory = seedBlock(user, {
         name: "The Can Factory",
         type: BlockType.Org,
         description:
             "Simple and efficient can factory. We strive to be the best!",
     });
 
-    const org4 = seedBlock(user, {
+    const org_PotOfBeans = seedBlock(user, {
         name: "Pot of Beans",
         type: BlockType.Org,
         description: "We make comic books.",
     });
 
-    const org1Rooms = seedRooms({
+    const room_Softkave_withSolomon = seedRooms({
         user,
-        org: org1,
-        collaborators: [demoUser2],
+        org: org_Softkave,
+        collaborators: [user_Solomon],
     });
 
-    const org4Rooms = seedRooms({
+    const room_Beans_withYomiIsaac = seedRooms({
         user,
-        org: org4,
-        collaborators: [demoUser3],
+        org: org_PotOfBeans,
+        collaborators: [user_YomiIsaac],
     });
 
-    const board1 = seedBlock(user, {
+    const room_Can_withYomiIsaac = seedRooms({
+        user,
+        org: org_CanFactory,
+        collaborators: [user_YomiIsaac],
+    });
+
+    const room_Awesome_withYomiIsaac = seedRooms({
+        user,
+        org: org_AwesomeCollections,
+        collaborators: [user_YomiIsaac],
+    });
+
+    const board_Softkave_Engineering = seedBlock(user, {
         name: "App Engineering Efforts",
         type: BlockType.Board,
         description: "Our apps engineering efforts",
-        parent: org1.customId,
-        rootBlockId: org1.customId,
+        parent: org_Softkave.customId,
+        rootBlockId: org_Softkave.customId,
         boardStatuses: [
             {
                 customId: getNewId(),
@@ -578,11 +585,11 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ],
     });
 
-    const board2 = seedBlock(user, {
+    const board_Softkave_Marketing = seedBlock(user, {
         name: "Marketing 101",
         type: BlockType.Board,
-        parent: org1.customId,
-        rootBlockId: org1.customId,
+        parent: org_Softkave.customId,
+        rootBlockId: org_Softkave.customId,
         description: "Just some marketing efforts here and there.",
         boardLabels: [
             {
@@ -613,130 +620,171 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         ],
     });
 
-    const task1 = seedBlock(user, {
+    const task_Softkave_Engineering_1 = seedBlock(user, {
         name: "Build Softkave, a super-awesome chat and task management app.",
         type: BlockType.Task,
         description:
             "We are currently light on details, but we'll update the task as we receive more information from the higher up. -- Classic Product Manager tact. LoL.",
-        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
+        assignees: [user, user_Solomon].map((data) => ({
+            userId: data.customId,
+        })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1.customId,
-        rootBlockId: board1.rootBlockId,
-        labels: [board1.boardLabels![0], board1.boardLabels![2]],
+        parent: board_Softkave_Engineering.customId,
+        rootBlockId: board_Softkave_Engineering.rootBlockId,
+        labels: [
+            board_Softkave_Engineering.boardLabels![0],
+            board_Softkave_Engineering.boardLabels![2],
+        ],
         priority: BlockPriority.Important,
-        status: board1.boardStatuses![0].customId,
+        status: board_Softkave_Engineering.boardStatuses![0].customId,
     });
 
-    const task2 = seedBlock(user, {
+    const task_Softkave_Engineering_2 = seedBlock(user, {
         name: "Avengers Assemble!",
         type: BlockType.Task,
         description:
             "Hired skill workers for the task ahead, it's not for the faint of heart.",
-        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
+        assignees: [user, user_Solomon].map((data) => ({
+            userId: data.customId,
+        })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1.customId,
-        rootBlockId: board1.rootBlockId,
-        labels: [board1.boardLabels![1], board1.boardLabels![2]],
+        parent: board_Softkave_Engineering.customId,
+        rootBlockId: board_Softkave_Engineering.rootBlockId,
+        labels: [
+            board_Softkave_Engineering.boardLabels![1],
+            board_Softkave_Engineering.boardLabels![2],
+        ],
         priority: BlockPriority.Important,
-        status: board1.boardStatuses![1].customId,
+        status: board_Softkave_Engineering.boardStatuses![1].customId,
     });
 
-    const task3 = seedBlock(user, {
+    const task_Softkave_Engineering_3 = seedBlock(user, {
         name: "Rule the world, muah ha ha!!",
         type: BlockType.Task,
         description:
             "Just casually displaying Darth Vader traits! Long live the Sith!!",
-        assignees: [user, demoUser2].map((data) => ({ userId: data.customId })),
+        assignees: [user, user_Solomon].map((data) => ({
+            userId: data.customId,
+        })),
         dueAt: moment().add(2, "weeks").toISOString(),
-        parent: board1.customId,
-        rootBlockId: board1.rootBlockId,
-        labels: seedTaskLabels(user, [board1.boardLabels![2]]),
+        parent: board_Softkave_Engineering.customId,
+        rootBlockId: board_Softkave_Engineering.rootBlockId,
+        labels: seedTaskLabels(user, [
+            board_Softkave_Engineering.boardLabels![2],
+        ]),
         priority: BlockPriority.VeryImportant,
-        status: board1.boardStatuses![board1.boardStatuses!.length - 1]
+        status: board_Softkave_Engineering.boardStatuses![
+            board_Softkave_Engineering.boardStatuses!.length - 1
+        ].customId,
+        taskResolution: board_Softkave_Engineering.boardResolutions![0]
             .customId,
-        taskResolution: board1.boardResolutions![0].customId,
     });
 
-    const userOrg4PendingRequest = seedRequest({
-        from: demoUser3,
-        fromOrg: org4,
+    const request_fromBeans_toUser = seedRequest({
+        from: user_YomiIsaac,
+        fromOrg: org_PotOfBeans,
         toEmail: user.email,
         status: CollaborationRequestStatusType.Pending,
     });
 
-    const org1AcceptedRequest = seedRequest({
-        from: user,
-        fromOrg: org1,
-        toEmail: demoUser2.email,
-        status: CollaborationRequestStatusType.Accepted,
-    });
-
     const userOps = seedUserOps();
-    const org1Ops = seedOrgOps(org1);
-    const org4Ops = seedOrgOps(org4);
-    const board1Ops = seedBoardOps(board1);
-    const board2Ops = seedBoardOps(board2);
+    const softkaveOps = seedOrgOps(org_Softkave);
+    const awesomeOps = seedOrgOps(org_AwesomeCollections);
+    const beansOps = seedOrgOps(org_PotOfBeans);
+    const canOps = seedOrgOps(org_CanFactory);
+    const softkave_EngineeringOps = seedBoardOps(board_Softkave_Engineering);
+    const softkave_MarketingOps = seedBoardOps(board_Softkave_Marketing);
 
     updateUserData(user, {
-        notifications: [userOrg4PendingRequest],
-        orgs: [org1],
+        notifications: [request_fromBeans_toUser],
+        orgs: [org_Softkave, org_AwesomeCollections, org_CanFactory],
     });
 
-    updateUserData(demoUser2, {
-        notifications: [org1AcceptedRequest],
-        orgs: [org1],
-    });
-
-    updateUserData(demoUser3, {
+    updateUserData(user_Solomon, {
         notifications: [],
-        orgs: [org2, org3, org4],
+        orgs: [org_Softkave],
     });
 
-    updateBlockData(org1, {
-        boards: [board1, board2],
-        collaborators: [user, demoUser2],
-        notifications: [org1AcceptedRequest],
+    updateUserData(user_YomiIsaac, {
+        notifications: [],
+        orgs: [org_AwesomeCollections, org_CanFactory, org_PotOfBeans],
     });
 
-    updateBlockData(org2, {
-        boards: [],
-        collaborators: [demoUser3],
+    updateBlockData(org_Softkave, {
+        boards: [board_Softkave_Engineering, board_Softkave_Marketing],
+        collaborators: [user, user_Solomon],
         notifications: [],
     });
 
-    updateBlockData(org3, {
+    updateBlockData(org_AwesomeCollections, {
         boards: [],
-        collaborators: [demoUser3],
+        collaborators: [user_YomiIsaac, user],
         notifications: [],
     });
 
-    updateBlockData(org4, {
+    updateBlockData(org_CanFactory, {
         boards: [],
-        collaborators: [demoUser3, user],
-        notifications: [userOrg4PendingRequest],
+        collaborators: [user_YomiIsaac, user],
+        notifications: [],
+    });
+
+    updateBlockData(org_PotOfBeans, {
+        boards: [],
+        collaborators: [user_YomiIsaac, user],
+        notifications: [request_fromBeans_toUser],
     });
 
     return {
-        users: [user, demoUser2, demoUser3],
-        orgs: [org1, org2, org3, org4],
-        boards: [board1, board2],
-        tasks: [task1, task2, task3],
-        blocks: [org1, org2, org3, org4, board1, board2, task1, task2, task3],
-        requests: [userOrg4PendingRequest, org1AcceptedRequest],
-        rooms: org1Rooms.concat(org4Rooms),
-        ops: userOps.concat(org1Ops, org4Ops, board1Ops, board2Ops),
+        users: [user, user_Solomon, user_YomiIsaac],
+        orgs: [
+            org_Softkave,
+            org_AwesomeCollections,
+            org_CanFactory,
+            org_PotOfBeans,
+        ],
+        boards: [board_Softkave_Engineering, board_Softkave_Marketing],
+        tasks: [
+            task_Softkave_Engineering_1,
+            task_Softkave_Engineering_2,
+            task_Softkave_Engineering_3,
+        ],
+        blocks: [
+            org_Softkave,
+            org_AwesomeCollections,
+            org_CanFactory,
+            org_PotOfBeans,
+            board_Softkave_Engineering,
+            board_Softkave_Marketing,
+            task_Softkave_Engineering_1,
+            task_Softkave_Engineering_2,
+            task_Softkave_Engineering_3,
+        ],
+        requests: [request_fromBeans_toUser],
+        rooms: room_Softkave_withSolomon.concat(
+            room_Beans_withYomiIsaac,
+            room_Awesome_withYomiIsaac,
+            room_Can_withYomiIsaac
+        ),
+        ops: userOps.concat(
+            softkaveOps,
+            awesomeOps,
+            beansOps,
+            canOps,
+            softkave_EngineeringOps,
+            softkave_MarketingOps
+        ),
         web: {
             user,
-            org: org1,
-            board: board1,
-            room: org1Rooms[0],
-            recipient: demoUser2,
-            request: userOrg4PendingRequest,
-            labelList: board1.boardLabels!,
-            orgUsers: [user, demoUser2],
-            resolutionsList: board1.boardResolutions!,
-            statusList: board1.boardStatuses!,
-            task: task1,
+            org: org_Softkave,
+            board: board_Softkave_Engineering,
+            room: room_Softkave_withSolomon[0],
+            recipient: user_Solomon,
+            request: request_fromBeans_toUser,
+            labelList: board_Softkave_Engineering.boardLabels!,
+            orgUsers: [user, user_Solomon],
+            resolutionsList: board_Softkave_Engineering.boardResolutions!,
+            statusList: board_Softkave_Engineering.boardStatuses!,
+            task: task_Softkave_Engineering_1,
         },
     };
 }

@@ -44,7 +44,7 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
             throw result.errors;
         }
 
-        storeUserNotifications(thunkAPI, result.notifications);
+        storeUserNotifications(thunkAPI, result.requests);
         thunkAPI.dispatch(
             dispatchOperationCompleted(id, OperationType.LoadUserNotifications)
         );

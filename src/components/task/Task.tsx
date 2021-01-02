@@ -247,7 +247,6 @@ const Task: React.FC<ITaskProps> = (props) => {
                     task={task}
                     sprints={sprints}
                     sprintsMap={sprintsMap}
-                    user={user}
                     onAddNewSprint={toggleShowSprintForm}
                 />
             </StyledContainer>
@@ -264,7 +263,6 @@ const Task: React.FC<ITaskProps> = (props) => {
                 resolutionsList={resolutionsList}
                 statusMap={statusMap}
                 resolutionsMap={resolutionsMap}
-                user={user}
                 onSelectAddNewStatus={onSelectAddNewStatus}
                 onSelectAddNewResolution={onSelectAddNewResolution}
             />

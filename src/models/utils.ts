@@ -32,8 +32,6 @@ export function getComplexFieldInput<T1 extends object, T0 extends T1>(
     });
 
     arr.forEach((item) => {
-        const key = item[indexPath] as any;
-
         if (!dataMap[item[indexPath] as any]) {
             remove.push(item[indexPath] as any);
         }
@@ -44,4 +42,13 @@ export function getComplexFieldInput<T1 extends object, T0 extends T1>(
         remove: remove.length > 0 ? remove : undefined,
         update: update.length > 0 ? update : undefined,
     };
+}
+
+export function getNameInitials(name: string) {
+    const nameSplit = name.split(" ");
+    const initials = nameSplit
+        .slice(0, 3)
+        .map((name) => name[0])
+        .join("");
+    return initials.toUpperCase();
 }

@@ -5,7 +5,7 @@ import { Plus } from "react-feather";
 import { ISubTaskInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { IUser } from "../../models/user/user";
-import { getDateString, getNewId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 import StyledContainer from "../styled/Container";
 import SubTaskForm, { ISubTaskErrors } from "./SubTaskForm";
@@ -158,7 +158,6 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
                     onClick={internalOnAdd}
                     htmlType="button"
                     className="icon-btn"
-                    style={{ height: "24px" }}
                 >
                     <Plus />
                 </Button>

@@ -1,6 +1,8 @@
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
+import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
+import UserAvatar from "../collaborator/UserAvatar";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 import theme from "../theme";
@@ -53,14 +55,7 @@ const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
                 content={[
                     {
                         node: (
-                            <ItemAvatar
-                                clickable
-                                size="small"
-                                onClick={() => null}
-                                color={
-                                    user.color || theme.colors.defaults.avatar
-                                }
-                            />
+                            <UserAvatar clickable user={user} onClick={noop} />
                         ),
                     },
                     {

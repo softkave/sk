@@ -5,7 +5,6 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
@@ -13,7 +12,6 @@ import SelectTaskSprint, { BACKLOG } from "./SelectTaskSprint";
 
 export interface ISelectTaskSprintContainerProps {
     task: IBlock;
-    user: IUser;
     sprints: ISprint[];
     sprintsMap: { [key: string]: ISprint };
     disabled?: boolean;
@@ -24,7 +22,7 @@ export interface ISelectTaskSprintContainerProps {
 const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
     props
 ) => {
-    const { task, demo, user } = props;
+    const { task, demo } = props;
 
     const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
@@ -68,7 +66,7 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
 
             toggleLoading();
         },
-        [demo, dispatch, task.customId, toggleLoading, user.customId]
+        [demo, dispatch, task.customId, toggleLoading]
     );
 
     if (isLoading) {

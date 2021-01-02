@@ -1,11 +1,10 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { IBlock, IBlockStatusInput } from "../../models/block/block";
 import { IAddBlockEndpointErrors } from "../../net/block/types";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
-import SessionSelectors from "../../redux/session/selectors";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
@@ -25,7 +24,6 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
     >();
 
     const dispatch: AppDispatch = useDispatch();
-    const user = useSelector(SessionSelectors.assertGetUser);
     const statusList = block.boardStatuses || [];
 
     const onSaveChanges = async (values: IBlockStatusInput[]) => {
@@ -67,7 +65,6 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
 
     return (
         <StatusList
-            user={user}
             statusList={statusList}
             saveChanges={onSaveChanges}
             isSubmitting={loading}

@@ -96,7 +96,6 @@ const label1: IBlockLabel = {
 export const demoLabels = { label1 };
 
 export const demoCollaborationRequest: INotification = {
-    body: "",
     createdAt: getDateString(),
     customId: "demo-collaboration-request-1",
     to: {
@@ -116,5 +115,4 @@ export const demoCollaborationRequest: INotification = {
             date: getDateString(),
         },
     ],
-    expiresAt: getDateString(moment().add(4, "days")),
 };

@@ -14,10 +14,12 @@ import BlockSelectors from "../../redux/blocks/selectors";
 import { sendMessageOpAction } from "../../redux/operations/chat/sendMessage";
 import { updateRoomReadCounterOpAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
+import SessionSelectors from "../../redux/session/selectors";
 import { IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 
 export interface IChatRoomsRenderProps {
+    user: IUser;
     sortedRooms: IRoom[];
     recipientsMap: { [key: string]: IUser };
     selectedRoomRecipientId: string | undefined;
@@ -42,6 +44,10 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     );
 
     const selectedRoomRecipientId = chatRouteMatch?.params.recipientId;
+
+    const user = useSelector<IAppState, IUser>((state) =>
+        SessionSelectors.assertGetUser(state)
+    );
 
     const rooms = useSelector<IAppState, IRoom[]>((state) =>
         RoomSelectors.getOrgRooms(state, orgId)
@@ -129,6 +135,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
         onSendMessage,
         updateRoomReadCounter,
         onSelectRoom,
+        user,
     });
 };
 

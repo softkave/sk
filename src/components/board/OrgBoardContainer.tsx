@@ -19,7 +19,7 @@ import { deleteBlockOperationAction } from "../../redux/operations/block/deleteB
 import { AppDispatch, IAppState } from "../../redux/types";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
-import GeneralErrorList from "../GeneralErrorList";
+import MessageList from "../MessageList";
 import useBlockParents from "../hooks/useBlockParents";
 import { getOpData } from "../hooks/useOperation";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
@@ -254,7 +254,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
         if (orgDataOp.loading) {
             return <LoadingEllipsis />;
         } else if (orgDataOp.errors) {
-            return <GeneralErrorList fill errors={orgDataOp.errors} />;
+            return <MessageList fill messages={orgDataOp.errors} />;
         }
 
         return (

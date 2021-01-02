@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import moment from "moment";
 import { IAddCollaboratorFormItemValues } from "../../../components/collaborator/AddCollaboratorFormItem";
 import { BlockType } from "../../../models/block/block";
 import {
@@ -54,18 +53,6 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-        const proccessedRequests = arg.collaborators.map((request) => {
-            const requestExpiresAt = request.expiresAt || arg.expiresAt;
-
-            return {
-                ...request,
-                body: request.body || arg.message!,
-                expiresAt: requestExpiresAt
-                    ? moment(requestExpiresAt).valueOf()
-                    : undefined,
-                customId: getNewId(),
-            };
-        });
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
         let requests: INotification[] = [];
@@ -87,18 +74,14 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                 arg.blockId
             );
 
-            requests = proccessedRequests.map((req) => {
+            requests = arg.collaborators.map((req) => {
                 return {
-                    body: req.body,
                     createdAt: getDateString(),
                     customId: getNewId(),
                     to: {
                         email: req.email,
                     },
                     type: NotificationType.CollaborationRequest,
-                    expiresAt: req.expiresAt
-                        ? getDateString(req.expiresAt)
-                        : undefined,
                     from: {
                         blockId: block.customId,
                         blockName: block.name,

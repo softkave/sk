@@ -21,7 +21,6 @@ export interface ITaskStatusContainerProps {
     resolutionsList: IBoardTaskResolution[];
     statusMap: { [key: string]: IBlockStatus };
     resolutionsMap: { [key: string]: IBoardTaskResolution };
-    user: IUser;
     onSelectAddNewStatus: () => void;
     onSelectAddNewResolution: () => void;
 
@@ -30,7 +29,7 @@ export interface ITaskStatusContainerProps {
 }
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-    const { task, demo, statusList, user } = props;
+    const { task, demo, statusList } = props;
 
     const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
@@ -86,7 +85,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
             dispatch,
             statusList,
             task.customId,
-            user.customId,
+            task.taskResolution,
             toggleLoading,
         ]
     );

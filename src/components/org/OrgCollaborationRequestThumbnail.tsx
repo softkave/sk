@@ -1,6 +1,7 @@
 import { Space, Typography } from "antd";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
+import { getNameInitials } from "../../models/utils";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
 import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
@@ -25,7 +26,9 @@ const OrgCollaborationRequestThumbnail: React.SFC<IOrgCollaborationRequestThumbn
             onClick={onClick}
         >
             <StyledContainer>
-                <ItemAvatar />
+                <ItemAvatar>
+                    {getNameInitials(collabRequest.from.blockName)}
+                </ItemAvatar>
             </StyledContainer>
             <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
                 <Typography.Text>

@@ -10,6 +10,7 @@ import { BlockType, IBlock } from "../../models/block/block";
 import ChatRoom from "../chat/ChatRoom";
 import ChatRoomsContainer from "../chat/ChatRoomsContainer";
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
+import Message from "../Message";
 import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
@@ -87,23 +88,28 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     const renderResourceType = () => {
         let placeholder = "";
         let noAddBtn = false;
+        let title = "";
 
         switch (resourceType) {
             case "boards":
                 placeholder = "Search boards...";
+                title = "Boards";
                 break;
 
             case "collaboration-requests":
                 placeholder = "Search requests...";
+                title = "Requests";
                 break;
 
             case "collaborators":
                 placeholder = "Search collaborators...";
+                title = "Collaborators";
                 break;
 
             case "chat":
                 placeholder = "Search chats...";
                 noAddBtn = true;
+                title = "Chat";
                 break;
         }
 
@@ -111,34 +117,35 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
             <StyledContainer
                 s={{ height: "100%", width: "100%", flexDirection: "column" }}
             >
-                <OrgsListHeader
-                    onClickCreate={() => {
-                        switch (resourceType) {
-                            case "boards":
-                                onClickAddBlock(block, BlockType.Board);
-                                return;
-
-                            case "collaboration-requests":
-                            case "collaborators":
-                                onAddCollaborator();
-                                return;
-                        }
-                    }}
-                    onSearchTextChange={(val) => {
-                        setSearchQueries({
-                            ...searchQueries,
-                            [resourceType]: val,
-                        });
-                    }}
-                    placeholder={placeholder}
-                    style={{
-                        padding: "0 16px",
-                        marginBottom: "8px",
-                        marginTop: "8px",
-                    }}
-                    noAddBtn={noAddBtn}
-                />
                 <Scrollbar>
+                    <OrgsListHeader
+                        onClickCreate={() => {
+                            switch (resourceType) {
+                                case "boards":
+                                    onClickAddBlock(block, BlockType.Board);
+                                    return;
+
+                                case "collaboration-requests":
+                                case "collaborators":
+                                    onAddCollaborator();
+                                    return;
+                            }
+                        }}
+                        onSearchTextChange={(val) => {
+                            setSearchQueries({
+                                ...searchQueries,
+                                [resourceType]: val,
+                            });
+                        }}
+                        placeholder={placeholder}
+                        style={{
+                            padding: "0 16px",
+                            marginBottom: "8px",
+                            marginTop: "8px",
+                        }}
+                        noAddBtn={noAddBtn}
+                        title={title}
+                    />
                     <BoardTypeList
                         block={block}
                         searchQuery={searchQueries[resourceType]}
@@ -280,6 +287,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     )!;
                     return (
                         <ChatRoom
+                            user={args.user}
                             room={room}
                             recipientsMap={args.recipientsMap}
                             onSendMessage={args.onSendMessage}
@@ -317,6 +325,8 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
         );
     };
 
+    const renderEmpty = () => <Message message={block.name} />;
+
     const renderDesktopView = () => {
         return (
             <StyledContainer
@@ -349,6 +359,10 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                                     routeProps.match.params.recipientId;
                                 return renderChatsView(recipientId);
                             }}
+                        />
+                        <Route
+                            path={`/app/orgs/${block.customId}`}
+                            render={renderEmpty}
                         />
                     </Switch>
                 </StyledContainer>

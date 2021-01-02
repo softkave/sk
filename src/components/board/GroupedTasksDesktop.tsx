@@ -2,7 +2,7 @@ import { Badge, Space, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
+import { getNameInitials } from "../../models/utils";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
@@ -35,11 +35,13 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                         shape="square"
                         size="small"
                         style={{ backgroundColor: group.color }}
-                    />
+                    >
+                        {getNameInitials(group.name)}
+                    </Avatar>
                 )}
                 <Typography.Text
                     style={{
-                        textTransform: "capitalize",
+                        textTransform: "uppercase",
                     }}
                 >
                     {group.name}

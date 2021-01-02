@@ -1,7 +1,7 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, message, Typography } from "antd";
+import { Button, message, Space, Typography } from "antd";
 import React from "react";
 import { ArrowLeft, X as CloseIcon } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,8 +97,9 @@ const Notification: React.FC<INotificationProps> = (props) => {
                     {isResponseLoading && <LoadingOutlined />}
                     {responseError && <FormError error={responseError} />}
                     {!isResponseLoading && (
-                        <Button.Group>
+                        <Space size="large">
                             <Button
+                                type="primary"
                                 onClick={() =>
                                     onRespond(
                                         CollaborationRequestStatusType.Accepted
@@ -108,6 +109,8 @@ const Notification: React.FC<INotificationProps> = (props) => {
                                 Accept Request
                             </Button>
                             <Button
+                                danger
+                                type="primary"
                                 onClick={() =>
                                     onRespond(
                                         CollaborationRequestStatusType.Declined
@@ -116,7 +119,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
                             >
                                 Decline Request
                             </Button>
-                        </Button.Group>
+                        </Space>
                     )}
                 </React.Fragment>
             );
@@ -126,27 +129,16 @@ const Notification: React.FC<INotificationProps> = (props) => {
     };
 
     const renderHeaderPrefixButton = () => {
-        if (isMobile) {
-            return (
-                <StyledContainer s={{ marginRight: "16px", cursor: "pointer" }}>
-                    <Button className="icon-btn" onClick={onBack}>
-                        <ArrowLeft />
-                    </Button>
-                </StyledContainer>
-            );
-        } else {
-            return (
-                <StyledContainer
-                    s={{ marginRight: "16px", cursor: "pointer" }}
-                    onClick={onBack}
-                >
-                    <Button className="icon-btn" onClick={onBack}>
-                        <CloseIcon />
-                    </Button>
-                </StyledContainer>
-            );
-        }
+        return (
+            <StyledContainer s={{ marginRight: "16px", cursor: "pointer" }}>
+                <Button className="icon-btn" onClick={onBack}>
+                    <ArrowLeft />
+                </Button>
+            </StyledContainer>
+        );
     };
+
+    const centerNode = <div></div>;
 
     return (
         <StyledNotificationBody>
@@ -173,8 +165,27 @@ const Notification: React.FC<INotificationProps> = (props) => {
                     </Typography.Text>
                 </StyledContainer>
             </StyledNotificationBodyHead>
-            <StyledMessage>{notification!.body}</StyledMessage>
-            {renderNotificationResponse()}
+            <StyledContainer
+                s={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                }}
+            >
+                <Typography.Paragraph
+                    style={{ fontSize: "16px" }}
+                    type="secondary"
+                >
+                    You have been invited by{" "}
+                    <Typography.Text>{notification?.from.name}</Typography.Text>{" "}
+                    to collaborate in{" "}
+                    <Typography.Text>
+                        {notification?.from.blockName}
+                    </Typography.Text>
+                </Typography.Paragraph>
+                {renderNotificationResponse()}
+            </StyledContainer>
         </StyledNotificationBody>
     );
 };
@@ -185,14 +196,12 @@ const StyledNotificationBody = styled.div({
     padding: "0 16px",
     height: "100%",
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
 });
 
 const StyledNotificationBodyHead = styled.div({
     marginBottom: "32px",
     display: "flex",
     marginTop: "16px",
-});
-
-const StyledMessage = styled.p({
-    marginBottom: "32px",
 });

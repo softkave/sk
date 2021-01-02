@@ -82,7 +82,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             }
         );
 
-        return renderedLabels;
+        return <div>{renderedLabels}</div>;
     };
 
     const renderAddNewLabel = () => {
@@ -139,7 +139,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
     };
 
     return (
-        <StyledContainer>
+        <StyledContainer s={{ alignItems: "center" }}>
             {renderSelectedLabels()}
             {!disabled && renderAddNewLabel()}
         </StyledContainer>

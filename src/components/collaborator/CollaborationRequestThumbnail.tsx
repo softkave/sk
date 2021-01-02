@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Typography } from "antd";
-import moment from "moment";
 import React from "react";
 import { INotification } from "../../models/notification/notification";
 import cloneWithWidth from "../styled/cloneWithWidth";
@@ -18,8 +17,6 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
     props
 ) => {
     const { request, style, onClick, className } = props;
-    const expiresAt = moment(request.expiresAt);
-    const expired = request.expiresAt && moment().isAfter(expiresAt);
 
     return (
         <StyledContainer
@@ -33,12 +30,6 @@ const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailPro
                     <Typography.Text ellipsis>
                         {request.to.email}
                     </Typography.Text>
-                    {request.expiresAt && (
-                        <Typography.Text type="secondary">
-                            {expired ? "Expired" : "Expires"}{" "}
-                            {moment(request.expiresAt).fromNow()}
-                        </Typography.Text>
-                    )}
                     <StyledContainer s={{ marginTop: "4px" }}>
                         <CollaborationRequestStatus request={request} />
                     </StyledContainer>

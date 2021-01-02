@@ -1,12 +1,10 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import styled from "@emotion/styled";
 import { Button, Typography } from "antd";
 import React from "react";
 import { Trash2 } from "react-feather";
 import { SizeMe } from "react-sizeme";
 import { IUser } from "../../models/user/user";
-import ItemAvatar from "../ItemAvatar";
+import UserAvatar from "../collaborator/UserAvatar";
 import StyledContainer from "../styled/Container";
 
 export interface ITaskCollaboratorThumbnailProps {
@@ -25,13 +23,9 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = (
         <StyledContainer
             s={{
                 width: "100%",
-                ["& button"]: {
-                    width: "26px !important",
-                    height: "24.2px !important",
-                },
             }}
         >
-            <ItemAvatar color={collaborator.color} />
+            <UserAvatar user={collaborator} />
             <SizeMe>
                 {({ size }) => (
                     <StyledCollaboratorNameContainer
@@ -46,7 +40,7 @@ const TaskCollaboratorThumbnail: React.SFC<ITaskCollaboratorThumbnailProps> = (
             <StyledContainer s={{ alignItems: "center" }}>
                 <Button
                     disabled={disabled}
-                    icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
+                    icon={<Trash2 />}
                     onClick={onUnassign}
                     htmlType="button"
                     className="icon-btn"

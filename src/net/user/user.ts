@@ -1,11 +1,9 @@
 import { IBlock } from "../../models/block/block";
 import {
     CollaborationRequestResponse,
-    CollaborationRequestStatusType,
     INotification,
 } from "../../models/notification/notification";
 import { IUser } from "../../models/user/user";
-import { getDataFromObject } from "../../utils/utils";
 import auth from "../auth";
 import query from "../query";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
@@ -181,7 +179,7 @@ async function respondToCollaborationRequest(
 }
 
 export type IGetUserNotificationsAPIResult = GetEndpointResult<{
-    notifications: INotification[];
+    requests: INotification[];
 }>;
 
 async function getUserNotifications(): Promise<IGetUserNotificationsAPIResult> {
