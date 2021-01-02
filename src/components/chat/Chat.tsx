@@ -4,6 +4,7 @@ import moment from "moment";
 import React from "react";
 import { IChat } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
+import UserAvatar from "../collaborator/UserAvatar";
 import StyledContainer from "../styled/Container";
 
 export interface IChatProps {
@@ -25,31 +26,24 @@ const Chat: React.FC<IChatProps> = (props) => {
         <StyledContainer
             s={{
                 flex: 1,
-                justifyContent: isUserSender ? "flex-end" : undefined,
-                // flexDirection: isUserSender ? "row-reverse" : undefined,
+                // justifyContent: isUserSender ? "flex-end" : undefined,
+                flexDirection: isUserSender ? "row-reverse" : undefined,
             }}
         >
-            {/* <StyledContainer
+            <StyledContainer
                 s={{
                     width: 24,
                 }}
             >
-                {!hideAvatar && (
-                    <Avatar
-                        size="small"
-                        shape="square"
-                        style={{
-                            backgroundColor: sender.color,
-                        }}
-                    />
-                )}
-            </StyledContainer> */}
+                {!hideAvatar && <UserAvatar user={sender} />}
+            </StyledContainer>
             <StyledContainer
                 s={{
                     flex: 1,
                     maxWidth: "500px",
-                    marginLeft: "16px",
                     flexDirection: "column",
+                    marginLeft: isUserSender ? undefined : "16px",
+                    marginRight: isUserSender ? "16px" : undefined,
                 }}
             >
                 <Typography.Paragraph
