@@ -1,10 +1,9 @@
-/*eslint no-useless-computed-key: "off"*/
-
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Typography } from "antd";
 import { TextAreaProps } from "antd/lib/input";
 import { ParagraphProps } from "antd/lib/typography/Paragraph";
 import React from "react";
-import { Check, Edit3, X as CloseIcon } from "react-feather";
+import { Check, X as CloseIcon } from "react-feather";
 import StyledContainer from "../styled/Container";
 import Editable, { EditableRenderFn } from "./Editable";
 
@@ -38,27 +37,39 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         paragraphProps,
     } = props;
 
-    const input = useTextArea ? (
-        <Input.TextArea
-            autoComplete={autoComplete}
-            onChange={(evt) => {
-                onChange(evt.target.value);
-            }}
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-            autoSize={autoSize}
-        />
-    ) : (
-        <Input
-            autoComplete={autoComplete}
-            onChange={(evt) => {
-                onChange(evt.target.value);
-            }}
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-        />
+    const input = React.useMemo(
+        () =>
+            useTextArea ? (
+                <Input.TextArea
+                    autoComplete={autoComplete}
+                    onChange={(evt) => {
+                        onChange(evt.target.value);
+                    }}
+                    value={value}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    autoSize={autoSize}
+                />
+            ) : (
+                <Input
+                    autoComplete={autoComplete}
+                    onChange={(evt) => {
+                        onChange(evt.target.value);
+                    }}
+                    value={value}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                />
+            ),
+        [
+            useTextArea,
+            autoComplete,
+            value,
+            placeholder,
+            disabled,
+            autoSize,
+            onChange,
+        ]
     );
 
     let content: React.ReactElement = <React.Fragment />;
@@ -72,17 +83,22 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                             {value}
                         </Typography.Paragraph>
                         {!noControls && (
+                            // <div onClick={() => setEditing(true)}>
+                            //     <Typography.Text
+                            //         type="secondary"
+                            //         style={{
+                            //             // color: "rgb(24, 144, 255)",
+                            //             cursor: "pointer",
+                            //             // textDecoration: "underline",
+                            //         }}
+                            //     >
+                            //         Edit
+                            //     </Typography.Text>
+                            // </div>
                             <Space>
                                 <Button
                                     disabled={disabled}
-                                    icon={
-                                        <Edit3
-                                            style={{
-                                                width: "14px",
-                                                height: "14px",
-                                            }}
-                                        />
-                                    }
+                                    icon={<EditOutlined />}
                                     onClick={() => setEditing(true)}
                                     htmlType="button"
                                     className="icon-btn"
@@ -97,16 +113,9 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {input}
                     {!noControls && (
-                        <Space>
+                        <Space size="middle">
                             <Button
-                                icon={
-                                    <Check
-                                        style={{
-                                            width: "14px",
-                                            height: "14px",
-                                        }}
-                                    />
-                                }
+                                icon={<Check />}
                                 onClick={() => setEditing(false)}
                                 htmlType="button"
                                 disabled={disabled}
@@ -117,18 +126,40 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                                     revertChanges();
                                     setEditing(false);
                                 }}
-                                icon={
-                                    <CloseIcon
-                                        style={{
-                                            width: "14px",
-                                            height: "14px",
-                                        }}
-                                    />
-                                }
+                                icon={<CloseIcon />}
                                 disabled={disabled}
                                 htmlType="button"
                                 className="icon-btn"
                             />
+                            {/* <div onClick={() => setEditing(false)}>
+                                <Typography.Text
+                                    type="secondary"
+                                    style={{
+                                        // color: "rgb(24, 144, 255)",
+                                        cursor: "pointer",
+                                        // textDecoration: "underline",
+                                    }}
+                                >
+                                    Save
+                                </Typography.Text>
+                            </div>
+                            <div
+                                onClick={() => {
+                                    revertChanges();
+                                    setEditing(false);
+                                }}
+                            >
+                                <Typography.Text
+                                    type="danger"
+                                    style={{
+                                        // color: "rgb(24, 144, 255)",
+                                        cursor: "pointer",
+                                        // textDecoration: "underline",
+                                    }}
+                                >
+                                    Cancel
+                                </Typography.Text>
+                            </div> */}
                         </Space>
                     )}
                 </Space>
@@ -143,18 +174,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         content = input;
     }
 
-    return (
-        <StyledContainer
-            s={{
-                ["& button"]: {
-                    width: "26px !important",
-                    height: "24.2px !important",
-                },
-            }}
-        >
-            {content}
-        </StyledContainer>
-    );
+    return <StyledContainer>{content}</StyledContainer>;
 };
 
 InputWithControls.defaultProps = { autoSize: { minRows: 4, maxRows: 8 } };

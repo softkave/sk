@@ -69,19 +69,25 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
         return UserSelectors.getUsers(state, collaboratorIds);
     });
 
-    const statusList = board.boardStatuses || [];
+    const statusList = React.useMemo(() => board.boardStatuses || [], [
+        board.boardStatuses,
+    ]);
     const statusMap = React.useMemo(
         () => indexArray(statusList, { path: "customId" }),
         [statusList]
     );
 
-    const labelList = board.boardLabels || [];
+    const labelList = React.useMemo(() => board.boardLabels || [], [
+        board.boardLabels,
+    ]);
     const labelsMap = React.useMemo(
         () => indexArray(labelList, { path: "customId" }),
         [labelList]
     );
 
-    const resolutionsList = board.boardResolutions || [];
+    const resolutionsList = React.useMemo(() => board.boardResolutions || [], [
+        board.boardResolutions,
+    ]);
     const resolutionsMap = React.useMemo(
         () => indexArray(resolutionsList, { path: "customId" }),
         [resolutionsList]

@@ -1,7 +1,8 @@
-import { Avatar, Badge, Typography } from "antd";
+import { Badge, Typography } from "antd";
 import React from "react";
 import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
+import UserAvatar from "../collaborator/UserAvatar";
 import StyledContainer from "../styled/Container";
 
 export interface IRoomsListItemProps {
@@ -14,13 +15,7 @@ const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
 
     return (
         <StyledContainer s={{ width: "100%", alignItems: "center" }}>
-            <Avatar
-                size="small"
-                shape="square"
-                style={{
-                    backgroundColor: recipient.color,
-                }}
-            />
+            <UserAvatar user={recipient} />
             <StyledContainer s={{ flex: 1, margin: "0 16px" }}>
                 <Typography.Text ellipsis>{recipient.name}</Typography.Text>
             </StyledContainer>

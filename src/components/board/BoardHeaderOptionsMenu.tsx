@@ -1,13 +1,7 @@
-import { Button, Checkbox, Menu, Space } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Checkbox, Menu, Space } from "antd";
 import React from "react";
-import {
-    Clock,
-    Edit3,
-    MoreHorizontal,
-    Plus,
-    Search,
-    Trash2,
-} from "react-feather";
+import { Clock, MoreHorizontal, Plus, Search, Trash2 } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
@@ -73,9 +67,6 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                     onClick={renderTriggerProps.openMenu}
                 >
                     <MoreHorizontal />
-                    {/* <Button className="icon-btn">
-                        <Settings />
-                    </Button> */}
                 </StyledContainer>
             );
         },
@@ -249,14 +240,7 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
                 key={BoardHeaderSettingsMenuKey.EDIT}
             >
                 <Space align="center" size={12}>
-                    <Edit3
-                        style={{
-                            width: "14px",
-                            height: "14px",
-                            verticalAlign: "middle",
-                            marginTop: "-3px",
-                        }}
-                    />
+                    <EditOutlined />
                     <span>Edit {block.type}</span>
                 </Space>
             </Menu.Item>,

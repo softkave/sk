@@ -1,6 +1,6 @@
 import { RightCircleTwoTone } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { Button, DatePicker, Form, List, Select } from "antd";
+import { Button, DatePicker, Form, List, Select, Typography } from "antd";
 import { FormikProps } from "formik";
 import moment from "moment";
 import React from "react";
@@ -8,15 +8,12 @@ import { ArrowLeft } from "react-feather";
 import {
     IAssigneeInput,
     IBlock,
-    IBlockAssignedLabel,
     IBlockAssignedLabelInput,
     IBlockLabel,
     IBlockStatus,
     IBoardTaskResolution,
     IFormBlock,
-    ISubTask,
     ISubTaskInput,
-    ITaskAssignee,
     ITaskSprint,
 } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
@@ -337,7 +334,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
             return true;
         },
-        [formik, formikChangedFieldsHelpers, task, user.customId]
+        [formik, formikChangedFieldsHelpers, task]
     );
 
     const onChangeResolution = React.useCallback(
@@ -578,13 +575,23 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         }
                     }}
                     s={{
-                        display: "block",
+                        display: "inline-flex",
+                        alignItems: "center",
                         lineHeight: "32px",
                         cursor: isSubmitting ? "not-allowed" : undefined,
                         color: isSubmitting ? "#f0f0f0" : undefined,
                     }}
                 >
-                    <RightCircleTwoTone /> Assign To Me
+                    <RightCircleTwoTone style={{ fontSize: "16px" }} />
+                    <Typography.Text
+                        style={{
+                            display: "inline-block",
+                            marginLeft: "8px",
+                            color: "inherit",
+                        }}
+                    >
+                        Assign To Me
+                    </Typography.Text>
                 </StyledContainerAsLink>
                 <StyledTaskCollaboaratorsContainer>
                     {renderAssignees(formikProps)}

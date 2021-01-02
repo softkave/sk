@@ -1,4 +1,5 @@
-import { InfoCircleTwoTone } from "@ant-design/icons";
+import { InfoCircleOutlined, InfoCircleTwoTone } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import { Divider, Tag, Tooltip, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -36,25 +37,47 @@ const CurrentSprintHeader: React.FC<ICurrentSprintHeaderProps> = (props) => {
     let remainingDaysNode: React.ReactElement = <span />;
     const tooltip = (
         <Tooltip title={kWorkingDaysExplanation}>
-            <InfoCircleTwoTone style={{ paddingLeft: "4px" }} />
+            <InfoCircleOutlined style={{ paddingLeft: "8px" }} />
         </Tooltip>
     );
 
+    const containerClass = css({
+        display: "inline-flex",
+        alignItems: "center",
+    });
+
+    const nameClass = css({
+        textTransform: "capitalize",
+    });
+
     if (remainingWorkingDays > 0) {
         remainingDaysNode = (
-            <span>
-                <Tag color="green">{sprint.name}</Tag>
-                <Typography.Text>
-                    {remainingDaysAbs} working{" "}
-                    {pluralize("day", remainingDaysAbs)} remaining {tooltip}
+            <span className={containerClass}>
+                <Typography.Text strong className={nameClass}>
+                    {sprint.name}
                 </Typography.Text>
+                <Divider
+                    type="vertical"
+                    style={{ borderLeft: "1px solid rgba(0, 0, 0, 0.6)" }}
+                />
+                <Typography.Text type="success">
+                    {remainingDaysAbs} working{" "}
+                    {pluralize("day", remainingDaysAbs)} remaining
+                </Typography.Text>
+                {tooltip}
             </span>
         );
     } else if (remainingWorkingDays < 0) {
         remainingDaysNode = (
-            <span>
-                <Tag color="red">{sprint.name}</Tag>
-                <Typography.Text>
+            <span className={containerClass}>
+                <Typography.Text strong className={nameClass}>
+                    {sprint.name}
+                </Typography.Text>
+                <Divider
+                    type="vertical"
+                    style={{ borderLeft: "1px solid rgba(0, 0, 0, 0.6)" }}
+                />
+                <Typography.Text type="danger">
                     {remainingDaysAbs} working{" "}
                     {pluralize("day", remainingDaysAbs)} overdue {tooltip}
                 </Typography.Text>
@@ -62,15 +85,15 @@ const CurrentSprintHeader: React.FC<ICurrentSprintHeaderProps> = (props) => {
         );
     } else {
         remainingDaysNode = (
-            <span>
-                <Typography.Text strong>{sprint.name}</Typography.Text>
+            <span className={containerClass}>
+                <Typography.Text strong className={nameClass}>
+                    {sprint.name}
+                </Typography.Text>
                 <Divider
                     type="vertical"
                     style={{ borderLeft: "1px solid rgba(0, 0, 0, 0.6)" }}
                 />
-                <Typography.Text style={{ color: "green" }}>
-                    Due today
-                </Typography.Text>
+                <Typography.Text type="warning">Due today</Typography.Text>
             </span>
         );
     }

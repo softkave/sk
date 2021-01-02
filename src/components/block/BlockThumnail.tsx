@@ -1,7 +1,7 @@
 import { CommentOutlined } from "@ant-design/icons";
 import { Badge, Tag, Typography } from "antd";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { getBlockInitials, IBlock } from "../../models/block/block";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 
@@ -141,7 +141,11 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
             onClick={onClick}
         >
             <StyledContainer>
-                <ItemAvatar size={avatarSize} color={color} />
+                <ItemAvatar size={avatarSize} color={color}>
+                    <span style={{ textTransform: "uppercase" }}>
+                        {getBlockInitials(block)}
+                    </span>
+                </ItemAvatar>
             </StyledContainer>
             <StyledContainer
                 s={{

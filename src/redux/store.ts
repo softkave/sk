@@ -18,6 +18,9 @@ const reducer = combineReducers({
     keyValue: keyValueReducer,
     rooms: roomsReducer,
     sprints: sprintsReducer,
+    permissions: () => ({}),
+    permissionGroups: () => ({}),
+    userAssignedPermissionGroups: () => ({}),
 });
 
 const store = configureStore({

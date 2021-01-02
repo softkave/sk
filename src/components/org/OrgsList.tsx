@@ -1,4 +1,5 @@
-import { Divider } from "antd";
+import { css } from "@emotion/css";
+import { Divider, Space, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import {
@@ -33,38 +34,32 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         onClickRequest,
     } = props;
 
-    const pendingRequests: INotification[] = [];
-    const expiredRequests: INotification[] = [];
-    const declinedRequests: INotification[] = [];
-    const revokedRequests: INotification[] = [];
+    const requestStatusWeight: Record<
+        CollaborationRequestStatusType,
+        number
+    > = {
+        [CollaborationRequestStatusType.Pending]: 0,
+        [CollaborationRequestStatusType.Accepted]: 1,
+        [CollaborationRequestStatusType.Declined]: 2,
+        [CollaborationRequestStatusType.Revoked]: 3,
+        [CollaborationRequestStatusType.Expired]: 4,
+    };
 
-    requests.forEach((request) => {
-        const status = getRequestStatus(request);
-
-        switch (status) {
-            case CollaborationRequestStatusType.Accepted:
-                return;
-
-            case CollaborationRequestStatusType.Pending:
-                pendingRequests.push(request);
-                break;
-
-            case CollaborationRequestStatusType.Expired:
-                expiredRequests.push(request);
-                break;
-
-            case CollaborationRequestStatusType.Declined:
-                declinedRequests.push(request);
-                break;
-
-            case CollaborationRequestStatusType.Revoked:
-                revokedRequests.push(request);
-                break;
-        }
-    });
+    const reqs = requests
+        .sort((r1, r2) => {
+            const s1 = getRequestStatus(r1);
+            const s2 = getRequestStatus(r2);
+            return requestStatusWeight[s1] - requestStatusWeight[s2];
+        })
+        .filter((r1) => {
+            const s1 = getRequestStatus(r1);
+            return s1 === CollaborationRequestStatusType.Pending;
+        });
 
     if (orgs.length === 0 && requests.length === 0) {
-        return <EmptyMessage>Nothing here yet</EmptyMessage>;
+        return (
+            <EmptyMessage>Create an organization to get started</EmptyMessage>
+        );
     }
 
     const wrap = (key: string, node: React.ReactNode, onClick: any) => {
@@ -106,34 +101,8 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
     };
 
     let isPrevGroupRendered = false;
-    const hasPendingRequests = pendingRequests.length > 0;
     const hasOrgs = orgs.length > 0;
-    const hasExpiredRequests = expiredRequests.length > 0;
-    const hasDeclinedRequests = declinedRequests.length > 0;
-    const hasRevokedRequests = revokedRequests.length > 0;
-
-    const renderPendingRequests = () => {
-        if (!hasPendingRequests) {
-            return null;
-        }
-
-        return (
-            <React.Fragment>
-                {/* <Typography.Text style={{ padding: "0 16px" }}>
-                    Pending Requests
-                </Typography.Text> */}
-                {pendingRequests.map((request) =>
-                    wrap(
-                        request.customId,
-                        <OrgCollaborationRequestThumbnail
-                            collabRequest={request}
-                        />,
-                        () => onClickRequest(request)
-                    )
-                )}
-            </React.Fragment>
-        );
-    };
+    const hasRequests = reqs.length > 0;
 
     const renderOrgs = () => {
         if (!hasOrgs) {
@@ -141,14 +110,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         }
 
         return (
-            <React.Fragment>
-                {(isPrevGroupRendered =
-                    isPrevGroupRendered || pendingRequests.length > 0) && (
-                    <Divider />
-                )}
-                {/* <Typography.Text style={{ padding: "0 16px" }}>
-                    Orgs
-                </Typography.Text> */}
+            <div>
                 {orgs.map((org) =>
                     wrap(
                         org.customId,
@@ -163,23 +125,26 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         () => onClickBlock(org)
                     )
                 )}
-            </React.Fragment>
+            </div>
         );
     };
 
-    const renderExpiredRequests = () => {
-        if (!hasExpiredRequests) {
+    const renderRequests = () => {
+        if (!hasRequests) {
             return null;
         }
 
         return (
-            <React.Fragment>
+            <div>
                 {(isPrevGroupRendered =
-                    isPrevGroupRendered || orgs.length > 0) && <Divider />}
-                {/* <Typography.Text style={{ padding: "0 16px" }}>
-                    Expired Requests
-                </Typography.Text> */}
-                {expiredRequests.map((request) =>
+                    isPrevGroupRendered || reqs.length > 0) && <Divider />}
+                <Typography.Text
+                    type="secondary"
+                    style={{ padding: "0 16px", textTransform: "uppercase" }}
+                >
+                    Requests
+                </Typography.Text>
+                {reqs.map((request) =>
                     wrap(
                         request.customId,
                         <OrgCollaborationRequestThumbnail
@@ -188,72 +153,23 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
                         () => onClickRequest(request)
                     )
                 )}
-            </React.Fragment>
-        );
-    };
-
-    const renderDeclinedRequests = () => {
-        if (!hasDeclinedRequests) {
-            return null;
-        }
-
-        return (
-            <React.Fragment>
-                {(isPrevGroupRendered =
-                    isPrevGroupRendered || expiredRequests.length > 0) && (
-                    <Divider />
-                )}
-                {/* <Typography.Text style={{ padding: "0 16px" }}>
-                    Declined Requests
-                </Typography.Text> */}
-                {declinedRequests.map((request) =>
-                    wrap(
-                        request.customId,
-                        <OrgCollaborationRequestThumbnail
-                            collabRequest={request}
-                        />,
-                        () => onClickRequest(request)
-                    )
-                )}
-            </React.Fragment>
-        );
-    };
-
-    const renderRevokedRequests = () => {
-        if (!hasRevokedRequests) {
-            return null;
-        }
-
-        return (
-            <React.Fragment>
-                {(isPrevGroupRendered =
-                    isPrevGroupRendered || declinedRequests.length > 0) && (
-                    <Divider />
-                )}
-                {/* <Typography.Text style={{ padding: "0 16px" }}>
-                    Revoked Requests
-                </Typography.Text> */}
-                {revokedRequests.map((request) =>
-                    wrap(
-                        request.customId,
-                        <OrgCollaborationRequestThumbnail
-                            collabRequest={request}
-                        />,
-                        () => onClickRequest(request)
-                    )
-                )}
-            </React.Fragment>
+            </div>
         );
     };
 
     return (
-        <React.Fragment>
-            {renderPendingRequests()}
+        <div
+            className={css({
+                display: "flex",
+                flex: 1,
+                height: "100%",
+                width: "100%",
+                flexDirection: "column",
+            })}
+        >
             {renderOrgs()}
-            {renderExpiredRequests()}
-            {renderDeclinedRequests()}
-            {renderRevokedRequests()}
-        </React.Fragment>
+            {renderRequests()}
+        </div>
     );
 };
 

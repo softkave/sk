@@ -1,4 +1,5 @@
-import { Button, Space } from "antd";
+import { Button } from "antd";
+import { noop } from "lodash";
 import randomColor from "randomcolor";
 import React from "react";
 import {
@@ -10,11 +11,9 @@ import {
     DropResult,
     ResponderProvided,
 } from "react-beautiful-dnd";
-import { Plus } from "react-feather";
 import * as yup from "yup";
 import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { IUser } from "../../models/user/user";
 import { getNewId } from "../../utils/utils";
 import { IFormikFormErrors } from "../forms/formik-utils";
 import { StyledForm } from "../forms/FormStyledComponents";
@@ -22,12 +21,12 @@ import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
+import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
-    user: IUser;
     statusList: IBlockStatusInput[];
     saveChanges: (statusList: IBlockStatusInput[]) => Promise<void>;
 
@@ -36,7 +35,7 @@ export interface IStatusListProps {
 }
 
 const StatusList: React.FC<IStatusListProps> = (props) => {
-    const { statusList, saveChanges, user, errors, isSubmitting } = props;
+    const { statusList, saveChanges, errors, isSubmitting } = props;
     const editingStatusList = useArray<string>();
     const newStatusList = useArray<string>();
 
@@ -315,24 +314,18 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
 
     const renderAddControls = () => {
         return (
-            <StyledContainer s={{ padding: "16px" }}>
-                <Button
-                    disabled={
-                        isSubmitting ||
-                        formik.values.statusList.length >=
-                            blockConstants.maxAvailableLabels
-                    }
-                    onClick={() => onAddNewStatus()}
-                    htmlType="button"
-                    className="icon-btn"
-                    style={{ padding: "2px 6px", paddingRight: "8px" }}
-                >
-                    <Space>
-                        <Plus />
-                        New Status
-                    </Space>
-                </Button>
-            </StyledContainer>
+            <OrgsListHeader
+                noSearchBtn
+                onClickCreate={() => onAddNewStatus()}
+                onSearchTextChange={noop}
+                title="Status"
+                style={{ padding: "16px", paddingTop: 0 }}
+                disabled={
+                    isSubmitting ||
+                    formik.values.statusList.length >=
+                        blockConstants.maxAvailableLabels
+                }
+            />
         );
     };
 

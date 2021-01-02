@@ -9,10 +9,11 @@ import Chat from "./Chat";
 export interface IChatListProps {
     chats: IChat[];
     recipientsMap: { [key: string]: IUser };
+    user: IUser;
 }
 
 const ChatList: React.FC<IChatListProps> = (props) => {
-    const { chats, recipientsMap } = props;
+    const { chats, recipientsMap, user } = props;
 
     const parentRef = React.useRef<ScrollbarMethods>();
 
@@ -35,6 +36,7 @@ const ChatList: React.FC<IChatListProps> = (props) => {
     return (
         <Scrollbar ref={parentRef}>
             {chats.map((chat, i) => {
+                const sender = recipientsMap[chat.sender];
                 const chatRender = (
                     <StyledContainer
                         key={i}
@@ -45,8 +47,9 @@ const ChatList: React.FC<IChatListProps> = (props) => {
                     >
                         <Chat
                             chat={chat}
-                            sender={recipientsMap[chat.sender]}
+                            sender={sender}
                             hideAvatar={hideAvatarCheck[chat.sender]}
+                            isUserSender={sender.customId === user.customId}
                         />
                     </StyledContainer>
                 );

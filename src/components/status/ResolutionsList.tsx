@@ -1,16 +1,16 @@
-import { Button, Space, Typography } from "antd";
+import { Button, Typography } from "antd";
 import { FormikErrors } from "formik";
+import { noop } from "lodash";
 import React from "react";
-import { Plus } from "react-feather";
 import * as yup from "yup";
 import { IBoardStatusResolutionInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { IUser } from "../../models/user/user";
-import { getDateString, getNewId } from "../../utils/utils";
+import { getNewId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
+import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import ResolutionFormItem from "./ResolutionFormItem";
@@ -18,7 +18,6 @@ import ResolutionFormItem from "./ResolutionFormItem";
 const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface IResolutionsListProps {
-    user: IUser;
     resolutionsList: IBoardStatusResolutionInput[];
     saveChanges: (
         resolutionsList: IBoardStatusResolutionInput[]
@@ -29,7 +28,7 @@ export interface IResolutionsListProps {
 }
 
 const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
-    const { resolutionsList, saveChanges, user, errors, isSubmitting } = props;
+    const { resolutionsList, saveChanges, errors, isSubmitting } = props;
     const editingResolutionsList = useArray<string>();
     const newResolutionsList = useArray<string>();
 
@@ -241,27 +240,22 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         formikHelpers.addToArrayField("resolutionsList", resolution, {}, {});
         editingResolutionsList.add(resolution.customId);
         newResolutionsList.add(resolution.customId);
-    }, [editingResolutionsList, newResolutionsList, user, formikHelpers]);
+    }, [editingResolutionsList, newResolutionsList, formikHelpers]);
 
     const renderAddControls = () => {
         return (
-            <StyledContainer s={{ padding: "16px" }}>
-                <Button
-                    disabled={
-                        isSubmitting ||
-                        formik.values.resolutionsList.length >=
-                            blockConstants.maxAvailableLabels
-                    }
-                    onClick={() => onAddNewResolution()}
-                    className="icon-btn"
-                    style={{ padding: "2px 6px", paddingRight: "8px" }}
-                >
-                    <Space>
-                        <Plus />
-                        New Resolution
-                    </Space>
-                </Button>
-            </StyledContainer>
+            <OrgsListHeader
+                noSearchBtn
+                onClickCreate={onAddNewResolution}
+                onSearchTextChange={noop}
+                title="Resolutions"
+                style={{ padding: "16px", paddingTop: 0 }}
+                disabled={
+                    isSubmitting ||
+                    formik.values.resolutionsList.length >=
+                        blockConstants.maxAvailableLabels
+                }
+            />
         );
     };
 

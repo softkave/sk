@@ -1,17 +1,17 @@
-import { Button, Space } from "antd";
+import { Button } from "antd";
 import { FormikErrors } from "formik";
+import { noop } from "lodash";
 import randomColor from "randomcolor";
 import React from "react";
-import { Plus } from "react-feather";
 import * as yup from "yup";
 import { IBlockLabelInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { IUser } from "../../models/user/user";
 import { getNewId } from "../../utils/utils";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
+import OrgsListHeader from "../org/OrgsListHeader";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import LabelFormItem from "./LabelFormItem";
@@ -19,7 +19,6 @@ import LabelFormItem from "./LabelFormItem";
 const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface ILabelListProps {
-    user: IUser;
     labelList: IBlockLabelInput[];
     saveChanges: (labelList: IBlockLabelInput[]) => Promise<void>;
 
@@ -28,7 +27,7 @@ export interface ILabelListProps {
 }
 
 const LabelList: React.FC<ILabelListProps> = (props) => {
-    const { labelList, saveChanges, user, errors, isSubmitting } = props;
+    const { labelList, saveChanges, errors, isSubmitting } = props;
     const editingLabelList = useArray<string>();
     const newLabelList = useArray<string>();
 
@@ -232,27 +231,22 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
         editingLabelList.add(label.customId);
         newLabelList.add(label.customId);
-    }, [editingLabelList, newLabelList, user, formikHelpers]);
+    }, [editingLabelList, newLabelList, formikHelpers]);
 
     const renderAddControls = () => {
         return (
-            <StyledContainer s={{ padding: "16px" }}>
-                <Button
-                    disabled={
-                        isSubmitting ||
-                        formik.values.labelList.length >=
-                            blockConstants.maxAvailableLabels
-                    }
-                    onClick={() => onAddNewLabel()}
-                    className="icon-btn"
-                    style={{ padding: "2px 6px", paddingRight: "8px" }}
-                >
-                    <Space>
-                        <Plus />
-                        New Label
-                    </Space>
-                </Button>
-            </StyledContainer>
+            <OrgsListHeader
+                noSearchBtn
+                onClickCreate={onAddNewLabel}
+                onSearchTextChange={noop}
+                title="Labels"
+                style={{ padding: "16px", paddingTop: 0 }}
+                disabled={
+                    isSubmitting ||
+                    formik.values.labelList.length >=
+                        blockConstants.maxAvailableLabels
+                }
+            />
         );
     };
 

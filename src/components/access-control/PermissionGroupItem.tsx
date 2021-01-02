@@ -1,7 +1,7 @@
-import { RightCircleTwoTone } from "@ant-design/icons";
+import { EditOutlined, RightCircleTwoTone } from "@ant-design/icons";
 import { Button, Modal, Space, Typography } from "antd";
 import React from "react";
-import { Edit3, Trash2 } from "react-feather";
+import { Trash2 } from "react-feather";
 import {
     IPermission,
     IPermissionGroup,
@@ -74,13 +74,13 @@ const PermissionGroup: React.FC<IPermissionGroupProps> = (props) => {
             </StyledContainer>
             <Space>
                 <Button
-                    icon={<Edit3 style={{ width: "14px", height: "14px" }} />}
+                    icon={<EditOutlined />}
                     onClick={toggleEditForm}
                     htmlType="button"
                     className="icon-btn"
                 />
                 <Button
-                    icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
+                    icon={<Trash2 />}
                     onClick={promptDeletePermissionGroup}
                     htmlType="button"
                     className="icon-btn"

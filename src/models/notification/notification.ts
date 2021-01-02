@@ -44,12 +44,10 @@ export enum NotificationType {
 export interface INotification {
     customId: string;
     to: INotificationTo;
-    body: string;
     from: ICollaborationRequestFrom;
     createdAt: string;
     type: NotificationType;
     readAt?: string;
-    expiresAt?: string;
     statusHistory?: ICollaborationRequestStatus[];
     sentEmailHistory?: INotificationSentEmailHistoryItem[];
 }

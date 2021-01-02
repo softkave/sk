@@ -25,7 +25,7 @@ const Bottom: React.FC<{}> = () => {
         const styles = mobile ? mobileStyles : desktopStyles;
 
         return (
-            <BottomContainer style={styles.bottom as React.CSSProperties}>
+            <BottomContainer style={styles.bottom as any}>
                 {mobile && (
                     <Typography.Text strong style={{ marginBottom: "16px" }}>
                         Contact

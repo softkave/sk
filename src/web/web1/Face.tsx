@@ -1,5 +1,3 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import styled from "@emotion/styled";
 import { Space, Typography } from "antd";
 import React from "react";
@@ -8,9 +6,9 @@ import { Link } from "react-router-dom";
 import RenderForDevice from "../../components/RenderForDevice";
 import webConstants from "./constants";
 
-const desktopStyles = {
+const desktopStyles: Record<string, React.CSSProperties> = {
     p1: { textAlign: "center", fontSize: "32px", margin: "32px 0" },
-    p2: { textAlign: "center", marginBottom: "24px" },
+    p2: { textAlign: "center", marginBottom: "24px", fontSize: "16px" },
     face: {
         justifyContent: "center",
         maxWidth: "520px",
@@ -19,9 +17,9 @@ const desktopStyles = {
     },
 };
 
-const mobileStyles = {
+const mobileStyles: Record<string, React.CSSProperties> = {
     p1: { fontSize: "24px", margin: "24px 0" },
-    p2: { marginBottom: "24px" },
+    p2: { marginBottom: "24px", fontSize: "16px" },
     face: {},
 };
 
@@ -52,7 +50,7 @@ const Face: React.FC<{}> = () => {
                 </Typography.Paragraph>
                 <Typography.Text style={styles.p2}>
                     The best part is, Softkave is free for your first year!
-                    Then, it's a dollar per user per month.
+                    Then, it's a $2 per user per month.
                 </Typography.Text>
                 <StyledButtonsContainer>
                     <StyledTagLikeButton
@@ -115,7 +113,7 @@ const StyledButtonsContainer = styled.div({
 });
 
 const StyledTagLikeButton = styled(Link)({
-    marginRight: "4px",
+    marginRight: "6px",
     color: "white",
     borderRadius: "4px",
     padding: "2px 8px",
@@ -129,22 +127,6 @@ const StyledTagLikeButton = styled(Link)({
         color: "white",
     },
 });
-
-// const StyledTagLikeButtonWithNativeLink = styled.a({
-//     marginRight: "4px",
-//     color: "white",
-//     borderRadius: "4px",
-//     padding: "2px 8px",
-//     marginBottom: "4px",
-
-//     ["&:last-of-type"]: {
-//         marginRight: 0,
-//     },
-
-//     ["&:hover"]: {
-//         color: "white",
-//     },
-// });
 
 const StyledFace = styled.div({
     height: "100%",

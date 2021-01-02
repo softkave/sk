@@ -6,7 +6,6 @@ import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { IUser } from "../../models/user/user";
 import { indexArray } from "../../utils/utils";
 import RenderForDevice from "../RenderForDevice";
 import { IAntDMenuEvent } from "../types";

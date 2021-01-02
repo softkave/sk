@@ -25,7 +25,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
     } = props;
 
     if (sortedRooms.length === 0) {
-        return <EmptyMessage>No collaborators in org yet</EmptyMessage>;
+        return <EmptyMessage>Empty!</EmptyMessage>;
     }
 
     const filterRooms = () => {

@@ -22,7 +22,6 @@ fragment notificationFragment on Notification {
     to {
         email
     }
-    body
     from {
         userId
         name
@@ -33,7 +32,6 @@ fragment notificationFragment on Notification {
     createdAt
     type
     readAt
-    expiresAt
     statusHistory {
         status
         date

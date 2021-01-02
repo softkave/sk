@@ -18,7 +18,7 @@ const TaskSubTask: React.FC<ITaskSubTaskProps> = (props) => {
         setLoading(true);
         await onToggleSubTask();
         setLoading(false);
-    }, [setLoading]);
+    }, [setLoading, onToggleSubTask]);
 
     return (
         <StyledContainer key={subTask.customId}>

@@ -1,11 +1,8 @@
-/*eslint no-useless-computed-key: "off"*/
-
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Empty } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { INotification } from "../../models/notification/notification";
 import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
+import GeneralError from "../Message";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import OrgsList from "./OrgsList";
@@ -45,23 +42,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
         }
 
         if (errorMessage) {
-            return (
-                <StyledContainer
-                    s={{
-                        display: "block",
-
-                        ["& .ant-empty-image"]: {
-                            display: "flex",
-                            justifyContent: "center",
-                        },
-                    }}
-                >
-                    <Empty
-                        image={<ExclamationCircleOutlined />}
-                        description={errorMessage}
-                    ></Empty>
-                </StyledContainer>
-            );
+            return <GeneralError message={errorMessage}></GeneralError>;
         }
 
         let o = orgs;
@@ -99,17 +80,18 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 height: "100%",
                 width: "100%",
                 flexDirection: "column",
-                paddingTop: "16px",
-                paddingBottom: "8px",
             }}
         >
-            <OrgsListHeader
-                onClickCreate={onAddOrg}
-                onSearchTextChange={setSearchQuery}
-                style={{ paddingBottom: "8px" }}
-                placeholder="Search orgs and requests..."
-            />
-            <Scrollbar>{renderContent()}</Scrollbar>
+            <Scrollbar>
+                <OrgsListHeader
+                    onClickCreate={onAddOrg}
+                    onSearchTextChange={setSearchQuery}
+                    style={{ paddingBottom: "8px", paddingTop: "16px" }}
+                    placeholder="Search orgs and requests..."
+                    title="Orgs"
+                />
+                {renderContent()}
+            </Scrollbar>
         </StyledContainer>
     );
 };

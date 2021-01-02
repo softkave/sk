@@ -1,20 +1,13 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import { Button, Form, Input } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
-import moment from "moment";
 import React from "react";
 import { Trash2 } from "react-feather";
 import FormError from "../forms/FormError";
 import StyledContainer from "../styled/Container";
-import ExpiresAt from "./ExpiresAt";
-import Message from "./Message";
 
 export interface IAddCollaboratorFormItemValues {
     customId: string;
     email: string;
-    body?: string;
-    expiresAt?: number;
 }
 
 export interface IAddCollaboratorFormItemProps {
@@ -45,12 +38,6 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
                 s={{
                     width: "100%",
                     flexDirection: "column",
-                    padding: "32px 0",
-
-                    ["& button"]: {
-                        width: "26px !important",
-                        height: "24.2px !important",
-                    },
 
                     ...(style || {}),
                 }}
@@ -74,52 +61,10 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
                         disabled={disabled}
                     />
                 </Form.Item>
-                <Form.Item
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    help={
-                        touched?.body &&
-                        errors?.body && <FormError error={errors?.body} />
-                    }
-                    style={{ marginBottom: 8 }}
-                >
-                    <Message
-                        placeholder="Enter request message"
-                        value={value.body}
-                        onChange={(body) => {
-                            onChange({ body });
-                        }}
-                        disabled={disabled}
-                    />
-                </Form.Item>
-                <Form.Item
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    help={
-                        touched?.expiresAt &&
-                        errors?.expiresAt && (
-                            <FormError error={errors?.expiresAt} />
-                        )
-                    }
-                    style={{ marginBottom: 8 }}
-                >
-                    <ExpiresAt
-                        placeholder="Select request expiration date"
-                        value={value.expiresAt}
-                        minDate={moment().subtract(1, "day").endOf("day")}
-                        onChange={(date) => {
-                            onChange({ expiresAt: date });
-                        }}
-                        disabled={disabled}
-                        style={{ width: "100%" }}
-                    />
-                </Form.Item>
-                <StyledContainer>
+                <StyledContainer s={{ marginTop: "4px" }}>
                     <Button
                         disabled={disabled}
-                        icon={
-                            <Trash2 style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<Trash2 />}
                         onClick={() => onDelete(value)}
                         htmlType="button"
                         className="icon-btn"

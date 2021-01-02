@@ -64,7 +64,7 @@ const TaskSubTasksContainer: React.FC<ITaskSubTasksContainerProps> = (
                 }
             }
         },
-        [demo, dispatch, task.customId, user.customId]
+        [demo, dispatch, task.customId, user.customId, task.subTasks]
     );
 
     return <TaskThumbnailSubTasks task={task} onToggleSubTask={onToggleTask} />;

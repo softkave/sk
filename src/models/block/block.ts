@@ -6,10 +6,9 @@ import {
     makeListExtract,
 } from "../../utils/extract";
 import { IUpdateComplexTypeArrayInput } from "../../utils/types";
-import { getMsForwardFrom } from "../../utils/utils";
 import { IBoardSprintOptions } from "../sprint/types";
 import { IUser } from "../user/user";
-import { getComplexFieldInput } from "../utils";
+import { getComplexFieldInput, getNameInitials } from "../utils";
 import { getDefaultStatuses } from "./utils";
 
 export const blockSchemaVersion = 3; // increment when you make changes that are not backward compatible
@@ -342,7 +341,7 @@ const updateBlockFields = getFields<
             }),
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
-                d1.color !== d1.color ||
+                d1.color !== d0.color ||
                 d1.description?.toLowerCase() !== d0.description,
             statusInputExtractor
         );
@@ -359,7 +358,7 @@ const updateBlockFields = getFields<
             }),
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
-                d1.color !== d1.color ||
+                d1.color !== d0.color ||
                 d1.description?.toLowerCase() !== d0.description,
             labelInputExtractor
         );
@@ -448,4 +447,8 @@ export function newFormBlock(user: IUser, type: BlockType, parent?: IBlock) {
     };
 
     return newBlock;
+}
+
+export function getBlockInitials(block: IBlock) {
+    return getNameInitials(block.name || "");
 }

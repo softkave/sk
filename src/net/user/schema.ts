@@ -114,7 +114,7 @@ export const getUserNotificationsQuery = `
                 errors {
                     ...errorFragment
                 }
-                notifications {
+                requests {
                     ...notificationFragment
                 }
             }

@@ -1,9 +1,10 @@
 /*eslint no-useless-computed-key: "off"*/
 
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Space } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
-import { Check, Edit3, Trash2, X as CloseIcon } from "react-feather";
+import { Check, Trash2, X as CloseIcon } from "react-feather";
 import { ISubTaskInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import FormError from "../forms/FormError";
@@ -82,9 +83,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
             <Space>
                 {isEditing && (
                     <Button
-                        icon={
-                            <Check style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<Check />}
                         onClick={onSave}
                         htmlType="button"
                         disabled={disabled || subTask.description.length === 0}
@@ -94,11 +93,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
                 {isEditing && (
                     <Button
                         onClick={onCancelEdit}
-                        icon={
-                            <CloseIcon
-                                style={{ width: "14px", height: "14px" }}
-                            />
-                        }
+                        icon={<CloseIcon />}
                         disabled={
                             disabled ||
                             isNew ||
@@ -112,9 +107,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
                 {!isEditing && (
                     <Button
                         disabled={disabled}
-                        icon={
-                            <Edit3 style={{ width: "14px", height: "14px" }} />
-                        }
+                        icon={<EditOutlined />}
                         onClick={onEdit}
                         htmlType="button"
                         className="icon-btn"
@@ -122,7 +115,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
                 )}
                 <Button
                     disabled={disabled}
-                    icon={<Trash2 style={{ width: "14px", height: "14px" }} />}
+                    icon={<Trash2 />}
                     onClick={onDelete}
                     htmlType="button"
                     className="icon-btn"
@@ -133,14 +126,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
 
     const renderLabel = () => {
         return (
-            <StyledContainer
-                s={{
-                    ["& button"]: {
-                        width: "26px !important",
-                        height: "24.2px !important",
-                    },
-                }}
-            >
+            <StyledContainer>
                 <Checkbox
                     checked={!!subTask.completedBy}
                     onChange={onToggle}

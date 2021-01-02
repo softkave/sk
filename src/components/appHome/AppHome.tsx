@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import OrgBoardContainer from "../board/OrgBoardContainer";
 import FeedbackFormModal from "../feedback/FeedbackFormModal";
+import Message from "../Message";
 import Notification from "../notification/Notification";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
@@ -94,6 +95,10 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         </StyledContainer>
     );
 
+    const renderEmpty = (str: string = "Select an organization or request") => (
+        <Message message={str} />
+    );
+
     const desktop = () => (
         <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
             {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
@@ -102,8 +107,18 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
             )}
             <Switch>
                 <Route
+                    exact
+                    path="/app/notifications"
+                    render={() => renderEmpty("Select a request")}
+                />
+                <Route
                     path="/app/notifications/*"
                     render={() => renderNotification(false)}
+                />
+                <Route
+                    exact
+                    path="/app/orgs"
+                    render={() => renderEmpty("Select an organization")}
                 />
                 <Route
                     path="/app/orgs/*"

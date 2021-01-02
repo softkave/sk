@@ -1,6 +1,7 @@
-import { Button, Menu, Space } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Menu, Space } from "antd";
 import React from "react";
-import { Edit3, MoreHorizontal } from "react-feather";
+import { MoreHorizontal } from "react-feather";
 import { IBlock } from "../../models/block/block";
 import StyledContainer from "../styled/Container";
 import MenuWithTrigger, {
@@ -31,9 +32,6 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
                     onClick={renderTriggerProps.openMenu}
                 >
                     <MoreHorizontal />
-                    {/* <Button className="icon-btn">
-                        <Settings />
-                    </Button> */}
                 </StyledContainer>
             );
         },
@@ -54,14 +52,7 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
                         key={OrgHeaderSettingsMenuKey.EDIT}
                     >
                         <Space align="center" size={12}>
-                            <Edit3
-                                style={{
-                                    width: "14px",
-                                    height: "14px",
-                                    verticalAlign: "middle",
-                                    marginTop: "-3px",
-                                }}
-                            />
+                            <EditOutlined />
                             <span>Edit {block.type}</span>
                         </Space>
                     </Menu.Item>

@@ -1,9 +1,9 @@
 import { Typography } from "antd";
 import React from "react";
 import { IUser } from "../../models/user/user";
-import ItemAvatar from "../ItemAvatar";
 import cloneWithWidth from "../styled/cloneWithWidth";
 import StyledContainer from "../styled/Container";
+import UserAvatar from "./UserAvatar";
 
 export interface ICollaboratorThumbnailProps {
     collaborator: IUser;
@@ -24,7 +24,7 @@ const CollaboratorThumbnail: React.SFC<ICollaboratorThumbnailProps> = (
             onClick={onClick}
             className={className}
         >
-            <ItemAvatar color={collaborator.color} />
+            <UserAvatar user={collaborator} />
             {cloneWithWidth(
                 <StyledContainer
                     s={{

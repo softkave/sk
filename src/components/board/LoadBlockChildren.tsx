@@ -8,7 +8,7 @@ import {
 } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
 import { AppDispatch, IAppState } from "../../redux/types";
-import GeneralErrorList from "../GeneralErrorList";
+import MessageList from "../MessageList";
 import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
@@ -69,7 +69,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
     if (op.isLoading || !!!op.operation) {
         return <LoadingEllipsis />;
     } else if (op.error) {
-        return <GeneralErrorList errors={op.error} />;
+        return <MessageList messages={op.error} />;
     }
 
     return <React.Fragment>{render(blocks)}</React.Fragment>;

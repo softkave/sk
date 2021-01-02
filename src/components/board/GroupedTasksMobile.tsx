@@ -1,9 +1,6 @@
-/*eslint no-useless-computed-key: "off"*/
-
-import { Badge, Space, Tabs } from "antd";
+import { Badge, Space, Tabs, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
@@ -26,12 +23,17 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 tab={
                     <span
                         style={{
-                            textTransform: "capitalize",
                             padding: "0 16px",
                         }}
                     >
                         <Space>
-                            <span>{group.name}</span>
+                            <Typography.Text
+                                style={{
+                                    textTransform: "uppercase",
+                                }}
+                            >
+                                {group.name}
+                            </Typography.Text>
                             <Badge
                                 count={group.tasks.length}
                                 style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
@@ -63,19 +65,19 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 flex: 1,
                 overflow: "hidden",
 
-                ["& .ant-tabs"]: {
+                "& .ant-tabs": {
                     height: "100%",
                 },
 
-                ["& .ant-tabs-content"]: {
+                "& .ant-tabs-content": {
                     height: "100%",
                 },
 
-                ["& .ant-tabs-content-holder"]: {
+                "& .ant-tabs-content-holder": {
                     overflow: "hidden",
                 },
 
-                ["& .ant-tabs-nav"]: { margin: 0 },
+                "& .ant-tabs-nav": { margin: 0 },
             }}
         >
             <Tabs

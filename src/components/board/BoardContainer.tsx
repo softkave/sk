@@ -17,7 +17,7 @@ import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
 import { getSprintsOpAction } from "../../redux/operations/sprint/getSprints";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
-import GeneralErrorList from "../GeneralErrorList";
+import MessageList from "../MessageList";
 import useOperation, {
     getOpData,
     IOperationDerivedData,
@@ -196,7 +196,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     if (ops.loading) {
         return <LoadingEllipsis />;
     } else if (ops.errors) {
-        return <GeneralErrorList fill errors={ops.errors} />;
+        return <MessageList fill messages={ops.errors} />;
     }
 
     // TODO: should we show error if block type is task ( it should never be task )?

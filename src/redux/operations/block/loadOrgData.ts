@@ -50,7 +50,7 @@ query LoadOrgDataQuery ($blockId: String!) {
             errors {
                 ...errorFragment
             }
-            notifications {
+            requests {
                 ...notificationFragment
             }
         }
@@ -109,7 +109,7 @@ export const loadOrgDataOpAction = createAsyncThunk<
             }
 
             const collaborators = result.data[collaboratorsPath].collaborators;
-            const notifications = result.data[notificationsPath].notifications;
+            const notifications = result.data[notificationsPath].requests;
 
             storeOrgNotifications(thunkAPI, arg.block.customId, notifications);
             storeOrgCollaborators(thunkAPI, arg.block.customId, collaborators);
@@ -210,7 +210,8 @@ function createOrgCollaboratorsTempRooms(
             return;
         }
 
-        const tempRoomId = getNewTempId(collaborator.customId);
+        // Collaborator can share multiple orgs with user
+        const tempRoomId = getNewTempId(orgId + "-" + collaborator.customId);
         const tempRoom: IRoom = {
             orgId,
             customId: tempRoomId,

@@ -2,31 +2,31 @@ import { Divider } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import { IAppError } from "../net/types";
-import GeneralError from "./GeneralError";
+import GeneralError from "./Message";
 import StyledContainer from "./styled/Container";
 
-export interface IGeneralErrorListProps {
-    errors: string | IAppError | Array<string | IAppError>;
+export interface IMessageListProps {
+    messages: string | IAppError | Array<string | IAppError>;
     fill?: boolean;
 }
 
-const GeneralErrorList: React.FC<IGeneralErrorListProps> = (props) => {
-    const { errors, fill } = props;
+const MessageList: React.FC<IMessageListProps> = (props) => {
+    const { messages, fill } = props;
 
     // TODO: should we show a generic error instead of []
     let errorList: IAppError[] = [];
 
-    if (errors) {
-        if (Array.isArray(errors)) {
-            errorList = errors.map((error) =>
+    if (messages) {
+        if (Array.isArray(messages)) {
+            errorList = messages.map((error) =>
                 isString(error) ? new Error(error) : error
             );
-        } else if (isString(errors)) {
-            errorList = [new Error(errors)];
-        } else if ((errors as any).errors) {
-            errorList = (errors as any).errors;
-        } else if ((errors as Error).message) {
-            errorList = [errors];
+        } else if (isString(messages)) {
+            errorList = [new Error(messages)];
+        } else if ((messages as any).errors) {
+            errorList = (messages as any).errors;
+        } else if ((messages as Error).message) {
+            errorList = [messages];
         }
     }
 
@@ -45,7 +45,7 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = (props) => {
                 <React.Fragment
                     key={error.name ? `${error.name}-${index}` : index}
                 >
-                    <GeneralError error={error} />
+                    <GeneralError message={error} listIndex={index} />
                     {index !== errorList.length - 1 && <Divider />}
                 </React.Fragment>
             ))}
@@ -71,4 +71,4 @@ const GeneralErrorList: React.FC<IGeneralErrorListProps> = (props) => {
     return content;
 };
 
-export default GeneralErrorList;
+export default MessageList;

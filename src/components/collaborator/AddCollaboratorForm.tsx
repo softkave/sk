@@ -1,7 +1,6 @@
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form } from "antd";
 import isBoolean from "lodash/isBoolean";
 import isString from "lodash/isString";
-import moment from "moment";
 import React from "react";
 import { ArrowLeft, Plus } from "react-feather";
 import * as yup from "yup";
@@ -26,7 +25,6 @@ import StyledContainer from "../styled/Container";
 import AddCollaboratorFormItem, {
     IAddCollaboratorFormItemValues,
 } from "./AddCollaboratorFormItem";
-import ExpiresAt from "./ExpiresAt";
 
 const emailExistsErrorMessage = "Email addresss has been entered already";
 
@@ -35,15 +33,6 @@ const requestSchema = yup.object().shape({
         .string()
         .email(userErrorMessages.invalidEmail)
         .required(ErrorMessages.EMAIL_ADDRESS_IS_REQUIRED), // TODO: Central place for error messages
-    body: yup
-        .string()
-        .max(notificationConstants.maxAddCollaboratorMessageLength, () => {
-            return getErrorMessageWithMax(
-                notificationConstants.maxAddCollaboratorMessageLength,
-                "string"
-            );
-        }),
-    expiresAt: yup.number(),
 });
 
 const validationSchema = yup.object().shape({
@@ -59,10 +48,7 @@ const validationSchema = yup.object().shape({
         .required(),
 });
 
-// TODO: Test not allowing action on an expired collaboration request
 export interface IAddCollaboratorFormValues {
-    message?: string;
-    expiresAt?: number;
     collaborators: IAddCollaboratorFormItemValues[];
 }
 
@@ -147,8 +133,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         }
 
         onSubmit({
-            expiresAt: values.expiresAt,
-            message: values.message,
             collaborators: values.collaborators,
         });
     };
@@ -166,62 +150,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         },
     });
 
-    const renderDefaultMessageInput = () => {
-        const { touched, errors, values, handleBlur } = formik;
-
-        return (
-            <Form.Item
-                label="Default Message"
-                help={touched.message && <FormError error={errors.message} />}
-                extra="This message is added to every request without a message"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <Input.TextArea
-                    autoSize={{ minRows: 2, maxRows: 6 }}
-                    autoComplete="off"
-                    name="message"
-                    value={values.message}
-                    onChange={(evt) => {
-                        formik.setFieldValue("message", evt.target.value);
-                        formikChangedFieldsHelpers.addField("message");
-                    }}
-                    onBlur={handleBlur}
-                    placeholder="Enter default message"
-                    disabled={isSubmitting}
-                />
-            </Form.Item>
-        );
-    };
-
-    const renderDefaultExpirationInput = () => {
-        const { touched, errors, values, setFieldValue } = formik;
-
-        return (
-            <Form.Item
-                label="Default Expiration Date"
-                help={
-                    touched.expiresAt && <FormError error={errors.expiresAt} />
-                }
-                extra="This date is added to every request without one"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <ExpiresAt
-                    minDate={moment().subtract(1, "day").endOf("day")}
-                    onChange={(val) => {
-                        setFieldValue("expiresAt", val);
-                        formikChangedFieldsHelpers.addField("expiresAt");
-                    }}
-                    value={values.expiresAt}
-                    placeholder="Select default expiration date"
-                    disabled={isSubmitting}
-                    style={{ width: "100%" }}
-                />
-            </Form.Item>
-        );
-    };
-
     const onDelete = (index: number) => {
         formikHelpers.deleteInArrayField("collaborators", index);
         formikChangedFieldsHelpers.addField("collaborators");
@@ -232,20 +160,10 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         data: Partial<IAddCollaboratorFormItemValues>
     ) => {
         const emailPath = `collaborators.[${index}].email`;
-        const bodyPath = `collaborators.[${index}].body`;
-        const expiresAtPath = `collaborators.[${index}].expiresAt`;
         const changedFields = Object.keys(data);
 
         if (changedFields.includes("email")) {
             formik.setFieldValue(emailPath, data.email);
-        }
-
-        if (changedFields.includes("body")) {
-            formik.setFieldValue(bodyPath, data.body);
-        }
-
-        if (changedFields.includes("expiresAt")) {
-            formik.setFieldValue(expiresAtPath, data.expiresAt);
         }
 
         formikChangedFieldsHelpers.addField("collaborators");
@@ -254,7 +172,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     const onAddNewStatus = () => {
         const status: IAddCollaboratorFormItemValues = {
             email: "",
-            body: "",
             customId: getNewId(),
         };
 
@@ -262,9 +179,17 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         formikChangedFieldsHelpers.addField("collaborators");
     };
 
-    const renderAddControls = () => {
+    const renderLabel = () => {
         return (
-            <StyledContainer>
+            <StyledContainer
+                s={{
+                    width: "100%",
+                    lineHeight: "40px",
+                    fontWeight: 600,
+                    alignItems: "center",
+                }}
+            >
+                <StyledContainer s={{ flex: 1 }}>Requests</StyledContainer>
                 <Button
                     disabled={
                         isSubmitting ||
@@ -274,12 +199,8 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                     onClick={() => onAddNewStatus()}
                     htmlType="button"
                     className="icon-btn"
-                    style={{ padding: "2px 6px", paddingRight: "8px" }}
                 >
-                    <Space>
-                        <Plus />
-                        Add Request
-                    </Space>
+                    <Plus />
                 </Button>
             </StyledContainer>
         );
@@ -290,7 +211,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
         return (
             <Form.Item
-                label="Requests"
                 help={
                     isBoolean(touched.collaborators) &&
                     isString(errors.collaborators) && (
@@ -300,7 +220,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
             >
-                {renderAddControls()}
+                {renderLabel()}
                 {values.collaborators.map((collaborator, i) => {
                     return (
                         <AddCollaboratorFormItem
@@ -312,6 +232,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                             key={collaborator.customId}
                             touched={(touched.collaborators || [])[i]}
                             style={{
+                                padding: "24px 0px",
                                 borderBottom:
                                     i < formik.values.collaborators.length - 1
                                         ? "1px solid #f0f0f0"
@@ -348,7 +269,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
             <StyledForm onSubmit={handleSubmit}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer>
+                        <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}
@@ -362,8 +283,6 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
                                 <FormError error={globalError} />
                             </Form.Item>
                         )}
-                        {renderDefaultMessageInput()}
-                        {renderDefaultExpirationInput()}
                         {renderCollaboratorsListInput()}
                     </StyledContainer>
                     {renderControls()}
