@@ -116,7 +116,11 @@ export function completeEndSprint(sprint: ISprint, date: string) {
     );
 
     const incompleteTasks = tasks.filter((task) => {
-        return task.status !== taskCompleteStatus.customId;
+        return (
+            task.taskSprint &&
+            task.taskSprint.sprintId === sprint.customId &&
+            task.status !== taskCompleteStatus.customId
+        );
     });
 
     if (incompleteTasks.length === 0) {
@@ -133,23 +137,18 @@ export function completeEndSprint(sprint: ISprint, date: string) {
     }
 
     const user = SessionSelectors.assertGetUser(store.getState());
+    const incompleteTasksUpdates = incompleteTasks.map((task) => ({
+        id: task.customId,
+        data: {
+            taskSprint: nextSprint
+                ? {
+                      sprintId: nextSprint.customId,
+                      assignedAt: date,
+                      assignedBy: user.customId,
+                  }
+                : null,
+        },
+    }));
 
-    store.dispatch(
-        BlockActions.bulkUpdateBlocks(
-            tasks.map((task) => {
-                return {
-                    id: task.customId,
-                    data: {
-                        taskSprint: nextSprint
-                            ? {
-                                  sprintId: nextSprint.customId,
-                                  assignedAt: date,
-                                  assignedBy: user.customId,
-                              }
-                            : null,
-                    },
-                };
-            })
-        )
-    );
+    store.dispatch(BlockActions.bulkUpdateBlocks(incompleteTasksUpdates));
 }

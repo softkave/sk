@@ -95,6 +95,7 @@ export const updateBlockOpAction = createAsyncThunk<
         );
     }
 
+    console.log(5);
     return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
@@ -103,6 +104,8 @@ export const storeUpdateBlock = (
     block: IBlock,
     data: Partial<IBlock>
 ) => {
+    console.log(1);
+
     const forTransferBlockOnly = { ...block, ...data };
 
     if (hasBlockParentChanged(block, forTransferBlockOnly)) {
@@ -123,6 +126,8 @@ export const storeUpdateBlock = (
     );
 
     updateTasksIfHasDeletedStatusesOrLabels(store, block, data);
+
+    console.log(4);
 };
 
 function assignUserToTaskOnUpdateStatus(
@@ -197,6 +202,8 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
     block: IBlock,
     data: Partial<IBlock>
 ) => {
+    console.log(2);
+
     const deletedStatuses = getDeletedStatuses(
         block.boardStatuses,
         data.boardStatuses
@@ -282,4 +289,6 @@ const updateTasksIfHasDeletedStatusesOrLabels = (
     }
 
     store.dispatch(BlockActions.bulkUpdateBlocks(updates));
+
+    console.log(3);
 };

@@ -11,14 +11,14 @@ export function getComplexFieldInput<T1 extends object, T0 extends T1>(
     const add: T1[] = [];
     const remove: string[] = [];
     const update: T1[] = [];
-    const existingItemsMap = indexArray(arr, {
+    const existingItemsMap = indexArray(arr || [], {
         reducer,
         path: indexPath,
     });
 
-    const dataMap = indexArray(data, { reducer, path: indexPath });
+    const dataMap = indexArray(data || [], { reducer, path: indexPath });
 
-    data.forEach((item) => {
+    (data || []).forEach((item) => {
         const key = item[indexPath] as any;
         const existingItem = existingItemsMap[key];
 
@@ -31,7 +31,7 @@ export function getComplexFieldInput<T1 extends object, T0 extends T1>(
         }
     });
 
-    arr.forEach((item) => {
+    (arr || []).forEach((item) => {
         if (!dataMap[item[indexPath] as any]) {
             remove.push(item[indexPath] as any);
         }

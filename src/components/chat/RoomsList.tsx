@@ -2,6 +2,7 @@ import React from "react";
 import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
 import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import RoomsListItem from "./RoomsListItem";
@@ -25,7 +26,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
     } = props;
 
     if (sortedRooms.length === 0) {
-        return <EmptyMessage>Empty!</EmptyMessage>;
+        return <Message message="Empty!" />;
     }
 
     const filterRooms = () => {
@@ -44,7 +45,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
     const filteredRooms = filterRooms();
 
     if (filteredRooms.length === 0) {
-        return <EmptyMessage>Chat not found</EmptyMessage>;
+        return <Message message="Chat not found!" />;
     }
 
     return (

@@ -1,13 +1,13 @@
 import React from "react";
-import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 
 export interface IListProps<T> {
     dataSource: T[];
     renderItem: (item: T, index: number) => React.ReactNode;
-    emptyDescription?: string | React.ReactNode;
+    emptyDescription?: string;
 }
 
-const defaultEmptyDescription = "No data";
+const defaultEmptyDescription = "Empty!";
 
 class List<T> extends React.Component<IListProps<T>> {
     public static defaultProps: Partial<IListProps<any>> = {
@@ -18,7 +18,7 @@ class List<T> extends React.Component<IListProps<T>> {
         const { dataSource, emptyDescription, renderItem } = this.props;
 
         if (dataSource.length === 0) {
-            return <EmptyMessage>{emptyDescription}</EmptyMessage>;
+            return <Message message={emptyDescription as string}></Message>;
         }
 
         return dataSource.map(renderItem);

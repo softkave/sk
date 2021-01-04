@@ -5,7 +5,7 @@ import BlockThumbnail, {
     BlockThumbnailShowField,
     IBlockThumbnailProps,
 } from "../block/BlockThumnail";
-import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import List from "../styled/List";
 
@@ -15,7 +15,8 @@ export interface IBlockListProps {
     searchQuery?: string;
     blockThumbnailProps?: Partial<IBlockThumbnailProps>;
     showFields?: BlockThumbnailShowField[];
-    emptyDescription?: string | React.ReactNode;
+    emptyDescription?: string;
+    notFoundMessage?: string;
     onClick?: (block: IBlock) => void;
     getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
@@ -27,16 +28,13 @@ class BlockList extends React.PureComponent<IBlockListProps> {
             onClick,
             showFields,
             emptyDescription,
+            notFoundMessage,
             getBlockStyle,
             searchQuery,
         } = this.props;
 
         if (blocks.length === 0) {
-            return (
-                <EmptyMessage>
-                    {emptyDescription || "No blocks yet"}
-                </EmptyMessage>
-            );
+            return <Message message={emptyDescription || "Empty!"} />;
         }
 
         const filterBlocks = () => {
@@ -53,7 +51,7 @@ class BlockList extends React.PureComponent<IBlockListProps> {
         const filteredBlocks = filterBlocks();
 
         if (filteredBlocks.length === 0) {
-            return <EmptyMessage>Blocks not found</EmptyMessage>;
+            return <Message message={notFoundMessage || "Block not found!"} />;
         }
 
         return (

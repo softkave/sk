@@ -15,7 +15,7 @@ const groupBySprints = (
     const backlog: IBlock[] = [];
 
     tasks.forEach((task) => {
-        if (!task.taskSprint) {
+        if (!task.taskSprint?.sprintId) {
             if (completedStatus && task.status === completedStatus.customId) {
                 return;
             }

@@ -3,6 +3,7 @@ import { Dropdown, Menu, Space, Tag } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
+import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import StyledContainer from "../styled/Container";
 
 export interface ISelectTaskSprintProps {
@@ -25,10 +26,13 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
     } = props;
 
     const value = task.taskSprint?.sprintId || BACKLOG;
+    const currentAndUpcomingSprints = getCurrentAndUpcomingSprints(sprints);
 
     const parentsMenu = (
         <Menu
             onClick={(evt) => {
+                console.log(evt);
+
                 if (evt.key === ADD_NEW_SPRINT_KEY) {
                     onAddNewSprint();
                     return;
@@ -48,7 +52,7 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key={BACKLOG}>{BACKLOG}</Menu.Item>
-            {sprints.map((sprint) => (
+            {currentAndUpcomingSprints.map((sprint) => (
                 <Menu.Item key={sprint.customId}>{sprint.name}</Menu.Item>
             ))}
         </Menu>

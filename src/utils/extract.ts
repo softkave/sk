@@ -1,3 +1,4 @@
+import { isObject } from "lodash";
 import isFunction from "lodash/isFunction";
 import pick from "lodash/pick";
 import cast from "./cast";
@@ -102,16 +103,21 @@ export function extractFields<
     paths: ObjectPaths,
     extraArgs?: ObjectPaths["extraArgs"]
 ): ObjectPaths["result"] {
+    if (!data) {
+        return data;
+    }
+
     const result = pick(data, paths.scalarFields);
 
     paths.scalarFieldsWithTransformers.forEach(({ property, transformer }) => {
         const propValue = data[property];
 
-        if (!propValue) {
+        if (propValue === undefined) {
             return;
         }
 
-        result[property] = transformer(propValue, extraArgs, data);
+        result[property] =
+            propValue === null ? null : transformer(propValue, extraArgs, data);
     });
 
     return (result as unknown) as ObjectPaths["result"];

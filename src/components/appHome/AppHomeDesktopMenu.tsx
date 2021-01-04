@@ -3,9 +3,7 @@ import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import UserAvatar from "../collaborator/UserAvatar";
-import ItemAvatar from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
-import theme from "../theme";
 import SpaceOut from "../utilities/SpaceOut";
 import UserOptionsMenu, { UserOptionsMenuKeys } from "./UserOptionsMenu";
 

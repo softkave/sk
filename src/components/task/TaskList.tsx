@@ -52,7 +52,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
         return (
             <List
                 dataSource={tasksToRender}
-                emptyDescription="No tasks available."
+                emptyDescription="Create or add task"
                 renderItem={renderTask}
             />
         );

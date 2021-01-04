@@ -1,6 +1,6 @@
-import { InfoCircleOutlined, InfoCircleTwoTone } from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Divider, Tag, Tooltip, Typography } from "antd";
+import { Divider, Tooltip, Typography } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { IBlock } from "../../models/block/block";

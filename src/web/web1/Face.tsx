@@ -119,11 +119,11 @@ const StyledTagLikeButton = styled(Link)({
     padding: "2px 8px",
     marginBottom: "4px",
 
-    ["&:last-of-type"]: {
+    "&:last-of-type": {
         marginRight: 0,
     },
 
-    ["&:hover"]: {
+    "&:hover": {
         color: "white",
     },
 });

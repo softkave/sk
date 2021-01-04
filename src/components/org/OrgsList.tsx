@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Divider, Space, Typography } from "antd";
+import { Divider, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import {
@@ -9,7 +9,7 @@ import {
 import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import BlockThumbnail from "../block/BlockThumnail";
 import { getRequestStatus } from "../collaborator/utils";
-import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import OrgCollaborationRequestThumbnail from "./OrgCollaborationRequestThumbnail";
 
@@ -57,9 +57,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         });
 
     if (orgs.length === 0 && requests.length === 0) {
-        return (
-            <EmptyMessage>Create an organization to get started</EmptyMessage>
-        );
+        return <Message message="Create an organization to get started" />;
     }
 
     const wrap = (key: string, node: React.ReactNode, onClick: any) => {

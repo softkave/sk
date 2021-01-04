@@ -54,12 +54,12 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
     });
 
     const sprints = useSelector<IAppState, ISprint[]>((state) => {
-        const totalSprints = SprintSelectors.getBoardSprints(
+        const allSprints = SprintSelectors.getBoardSprints(
             state,
             board.customId
         );
 
-        return getCurrentAndUpcomingSprints(totalSprints);
+        return allSprints;
     });
 
     const sprintsMap = indexArray(sprints, { path: "customId" });

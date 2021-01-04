@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, message, Space, Typography } from "antd";
 import React from "react";
-import { ArrowLeft, X as CloseIcon } from "react-feather";
+import { ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import {
@@ -16,19 +16,15 @@ import { respondToNotificationOpAction } from "../../redux/operations/notificati
 import { AppDispatch, IAppState } from "../../redux/types";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
 import { getRequestStatus } from "../collaborator/utils";
-import EmptyMessage from "../EmptyMessage";
 import FormError from "../forms/FormError";
 import useOperation, { getOpData } from "../hooks/useOperation";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import { INotificationsPathParams } from "./utils";
 
-export interface INotificationProps {
-    isMobile: boolean;
-}
+export interface INotificationProps {}
 
 const Notification: React.FC<INotificationProps> = (props) => {
-    const { isMobile } = props;
-
     const history = useHistory();
     const dispatch: AppDispatch = useDispatch();
     const routeMatch = useRouteMatch<INotificationsPathParams>(
@@ -56,7 +52,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
     const isNotificationLoaded = !!notification;
 
     if (!isNotificationLoaded) {
-        return <EmptyMessage>Notification not found</EmptyMessage>;
+        return <Message message="Notification not found!" />;
     }
 
     const onRespond = async (
@@ -137,8 +133,6 @@ const Notification: React.FC<INotificationProps> = (props) => {
             </StyledContainer>
         );
     };
-
-    const centerNode = <div></div>;
 
     return (
         <StyledNotificationBody>

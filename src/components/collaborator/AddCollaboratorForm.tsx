@@ -11,7 +11,6 @@ import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
 import { IUser } from "../../models/user/user";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
-import { getErrorMessageWithMax } from "../../models/validationErrorMessages";
 import { getNewId } from "../../utils/utils";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";

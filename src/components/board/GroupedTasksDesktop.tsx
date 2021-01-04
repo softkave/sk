@@ -3,7 +3,7 @@ import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { getNameInitials } from "../../models/utils";
-import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
@@ -102,7 +102,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     };
 
     if (groupedTasks.length === 0) {
-        return <EmptyMessage>{emptyMessage || "Board is empty!"}</EmptyMessage>;
+        return <Message message={emptyMessage || "Board is empty!"} />;
     }
 
     return (

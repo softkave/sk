@@ -23,7 +23,8 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
             blocks={boards}
             onClick={onClick}
             showFields={["name"]}
-            emptyDescription="No boards yets"
+            emptyDescription="Create a board to get started"
+            notFoundMessage="Board not found!"
             getBlockStyle={(block) => {
                 const selected =
                     block.customId === boardRouteMatch?.params.boardId;

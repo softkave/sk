@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { Avatar, Typography } from "antd";
+import { Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { IChat } from "../../models/chat/types";

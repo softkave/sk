@@ -1,7 +1,7 @@
 import { Badge, Space, Tabs, Typography } from "antd";
 import React from "react";
 import { IBlock } from "../../models/block/block";
-import EmptyMessage from "../EmptyMessage";
+import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
@@ -56,7 +56,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
     };
 
     if (groupedTasks.length === 0) {
-        return <EmptyMessage>{emptyMessage || "Board is empty!"}</EmptyMessage>;
+        return <Message message={emptyMessage || "Board is empty!"} />;
     }
 
     return (

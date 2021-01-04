@@ -9,7 +9,6 @@ import {
     IBoardTaskResolution,
     IFormBlock,
 } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
@@ -34,17 +33,15 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
 
-    const toggleLoading = React.useCallback(() => setIsLoading(!isLoading), [
-        isLoading,
-    ]);
-
     const onChangeStatus = React.useCallback(
         async (statusId: string, resolutionId?: string) => {
             if (demo) {
                 return;
             }
 
-            toggleLoading();
+            console.log({ statusId });
+
+            setIsLoading(true);
 
             const lastStatus = statusList[statusList.length - 1];
             const isLastStatus = statusId === lastStatus.customId;
@@ -68,26 +65,26 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 })
             );
 
+            console.log({ result });
+
             const op = unwrapResult(result);
 
-            if (op) {
-                const opStat = getOpData(op);
+            console.log({ op });
 
-                if (opStat.isError) {
+            if (op) {
+                const opData = getOpData(op);
+
+                console.log({ opData });
+
+                if (opData.isError) {
                     message.error("Error updating task status");
                 }
             }
 
-            toggleLoading();
+            // toggleLoading();
+            setIsLoading(false);
         },
-        [
-            demo,
-            dispatch,
-            statusList,
-            task.customId,
-            task.taskResolution,
-            toggleLoading,
-        ]
+        [demo, dispatch, statusList, task.customId, task.taskResolution]
     );
 
     const onChangeResolution = React.useCallback(
@@ -96,7 +93,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 return;
             }
 
-            toggleLoading();
+            setIsLoading(true);
 
             const result = await dispatch(
                 updateBlockOpAction({
@@ -118,9 +115,9 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 }
             }
 
-            toggleLoading();
+            setIsLoading(false);
         },
-        [demo, dispatch, task.customId, toggleLoading]
+        [demo, dispatch, task.customId]
     );
 
     if (isLoading) {

@@ -1,7 +1,6 @@
-import { Space, Tag, Typography } from "antd";
+import { Tag, Typography } from "antd";
 import moment from "moment";
 import React from "react";
-import { Clock } from "react-feather";
 import { IBlock } from "../../models/block/block";
 
 export interface ITaskThumbnailDueDateProps {
@@ -30,24 +29,9 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
 
     return (
         <Tag color={isDue ? "red" : undefined}>
-            <Space align="center" style={{ height: "100%" }}>
-                <span
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    <Clock
-                        style={{
-                            width: "12px",
-                            height: "12px",
-                            color: "#323b49",
-                        }}
-                    />
-                </span>
-                <Typography.Text>{contentText}</Typography.Text>
-            </Space>
+            <Typography.Text style={{ verticalAlign: "middle" }}>
+                {contentText}
+            </Typography.Text>
         </Tag>
     );
 };

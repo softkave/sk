@@ -1,7 +1,7 @@
 import React from "react";
 import { IChat } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
-import EmptyMessage from "../EmptyMessage";
+import { default as AppMessage } from "../Message";
 import StyledContainer from "../styled/Container";
 import Scrollbar, { ScrollbarMethods } from "../utilities/Scrollbar";
 import Chat from "./Chat";
@@ -25,9 +25,7 @@ const ChatList: React.FC<IChatListProps> = (props) => {
 
     if (chats.length === 0) {
         return (
-            <EmptyMessage>
-                Write a message and press the enter button to send
-            </EmptyMessage>
+            <AppMessage message="Write a message and press the enter button to send" />
         );
     }
 

@@ -39,9 +39,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         setShowFeedbackForm(!showFeedbackForm);
     }, [showFeedbackForm]);
 
-    const renderNotification = (isMobile: boolean) => (
-        <Notification isMobile={isMobile} />
-    );
+    const renderNotification = () => <Notification />;
 
     const onSelect = (key: UserOptionsMenuKeys) => {
         switch (key) {
@@ -62,7 +60,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                 <Switch>
                     <Route
                         path="/app/notifications/*"
-                        render={() => renderNotification(true)}
+                        render={renderNotification}
                     />
                     <Route
                         exact
@@ -113,7 +111,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                 />
                 <Route
                     path="/app/notifications/*"
-                    render={() => renderNotification(false)}
+                    render={renderNotification}
                 />
                 <Route
                     exact

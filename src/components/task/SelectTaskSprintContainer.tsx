@@ -27,17 +27,13 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
     const [isLoading, setIsLoading] = React.useState(false);
     const dispatch: AppDispatch = useDispatch();
 
-    const toggleLoading = React.useCallback(() => setIsLoading(!isLoading), [
-        isLoading,
-    ]);
-
-    const onChangeStatus = React.useCallback(
+    const onChangeSprint = React.useCallback(
         async (val: string) => {
             if (demo) {
                 return false;
             }
 
-            toggleLoading();
+            setIsLoading(true);
 
             const result = await dispatch(
                 updateBlockOpAction({
@@ -64,16 +60,16 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
                 }
             }
 
-            toggleLoading();
+            setIsLoading(false);
         },
-        [demo, dispatch, task.customId, toggleLoading]
+        [demo, dispatch, task.customId]
     );
 
     if (isLoading) {
         return <LoadingOutlined />;
     }
 
-    return <SelectTaskSprint {...props} onChangeSprint={onChangeStatus} />;
+    return <SelectTaskSprint {...props} onChangeSprint={onChangeSprint} />;
 };
 
 export default React.memo(SelectTaskSprintContainer);

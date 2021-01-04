@@ -1,3 +1,4 @@
+import { message } from "antd";
 import path from "path";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
@@ -86,6 +87,19 @@ const Board: React.FC<IBoardProps> = (props) => {
             setView(BoardCurrentView.SPRINTS);
         }
     }, [isSprintsRoute, view]);
+
+    React.useEffect(() => {
+        if (
+            view === BoardCurrentView.CURRENT_SPRINT &&
+            !board.currentSprintId
+        ) {
+            // most likely another collaborator closed the sprint
+            // TODO: should we show a modal and allow the user to click continue
+            // TODO: show the name of the person who closed the sprint
+            message.info("The current sprint has been closed.");
+            history.push(SPRINTS_PATH);
+        }
+    }, [view, SPRINTS_PATH, board.currentSprintId, history]);
 
     const closeBoardForm = () => {
         setBoardForm(undefined);
