@@ -39,8 +39,6 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 return;
             }
 
-            console.log({ statusId });
-
             setIsLoading(true);
 
             const lastStatus = statusList[statusList.length - 1];
@@ -65,16 +63,10 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
                 })
             );
 
-            console.log({ result });
-
             const op = unwrapResult(result);
-
-            console.log({ op });
 
             if (op) {
                 const opData = getOpData(op);
-
-                console.log({ opData });
 
                 if (opData.isError) {
                     message.error("Error updating task status");

@@ -34,7 +34,7 @@ const LoginContainer: React.FC<{}> = () => {
         const loginOpStat = getOpData(loginOp);
 
         if (loginOpStat.isError) {
-            message.error("Error login you in");
+            message.error("Error logging you in");
         }
     };
 

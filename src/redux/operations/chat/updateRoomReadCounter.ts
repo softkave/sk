@@ -91,11 +91,6 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
             );
         }
 
-        console.log({
-            readCounter,
-            unseenChatsCount,
-        });
-
         thunkAPI.dispatch(
             RoomActions.updateRoomReadCounter({
                 readCounter,

@@ -31,8 +31,6 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
     const parentsMenu = (
         <Menu
             onClick={(evt) => {
-                console.log(evt);
-
                 if (evt.key === ADD_NEW_SPRINT_KEY) {
                     onAddNewSprint();
                     return;
