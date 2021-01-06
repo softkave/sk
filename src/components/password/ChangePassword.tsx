@@ -1,9 +1,9 @@
 import { Button, Form, Input } from "antd";
+import { memoize } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
 import { passwordPattern } from "../../models/user/validation";
-import cast from "../../utils/cast";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import { FormBody } from "../forms/FormStyledComponents";
@@ -16,12 +16,14 @@ const passwordMismatchErrorMessage = "Passwords do not match";
 const validationSchema = yup.object().shape({
     password: yup
         .string()
+        .trim()
         .min(userConstants.minPasswordLength)
         .max(userConstants.maxPasswordLength)
         .matches(passwordPattern, invalidPasswordMessage)
         .required(),
     confirmPassword: yup
         .string()
+        .trim()
         .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
         .required(),
 });
@@ -33,6 +35,16 @@ export interface IChangePasswordFormData {
 interface IChangePasswordFormInternalData extends IChangePasswordFormData {
     confirmPassword: string;
 }
+
+const getInitialValues = memoize(
+    (): IChangePasswordFormInternalData => {
+        return {
+            password: "",
+            confirmPassword: "",
+        };
+    },
+    () => "changePassword"
+);
 
 export interface IChangePasswordProps {
     onSubmit: (values: IChangePasswordFormData) => void | Promise<void>;
@@ -47,7 +59,7 @@ const ChangePassword: React.FC<IChangePasswordProps> = (props) => {
     const { formik } = useFormHelpers({
         errors: externalErrors,
         formikProps: {
-            initialValues: cast<IChangePasswordFormInternalData>({}),
+            initialValues: getInitialValues(),
             validationSchema,
             onSubmit: async (data) => {
                 onSubmit({

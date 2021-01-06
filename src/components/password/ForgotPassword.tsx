@@ -1,4 +1,5 @@
 import { Button, Form, Input } from "antd";
+import { memoize } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import cast from "../../utils/cast";
@@ -11,9 +12,10 @@ import useFormHelpers from "../hooks/useFormHelpers";
 const emailMismatchErrorMessage = "Email does not match";
 
 const validationSchema = yup.object().shape({
-    email: yup.string().email().required(),
+    email: yup.string().trim().email().required(),
     confirmEmail: yup
         .string()
+        .trim()
         .oneOf([yup.ref("email")], emailMismatchErrorMessage)
         .required(),
 });
@@ -25,6 +27,16 @@ export interface IForgotPasswordFormData {
 interface IForgotPasswordFormInternalData extends IForgotPasswordFormData {
     confirmEmail: string;
 }
+
+const getInitialValues = memoize(
+    (): IForgotPasswordFormInternalData => {
+        return {
+            email: "",
+            confirmEmail: "",
+        };
+    },
+    () => "forgotPassword"
+);
 
 export interface IForgotPasswordProps {
     onSubmit: (values: IForgotPasswordFormData) => void | Promise<void>;
@@ -40,7 +52,7 @@ const ForgotPassword: React.FC<IForgotPasswordProps> = (props) => {
         errors: externalErrors,
         formikProps: {
             validationSchema,
-            initialValues: cast<IForgotPasswordFormInternalData>({}),
+            initialValues: getInitialValues(),
             onSubmit: (values) => {
                 onSubmit({
                     email: values.email,

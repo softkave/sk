@@ -1,4 +1,5 @@
 import dotProp from "dot-prop-immutable";
+import { isArray } from "lodash";
 import get from "lodash/get";
 import isObject from "lodash/isObject";
 import mergeWith from "lodash/mergeWith";
@@ -344,4 +345,31 @@ export function multipleIndexes<T, R = T, IndexLabel extends string = string>(
     }, cast<Indexes<R, IndexLabel>>({}));
 
     return new IndexesHelper(indexes);
+}
+
+export function formikErrorsToTouched(errors) {
+    if (isArray(errors)) {
+        return errors.map(formikErrorsToTouched);
+    } else if (isObject(errors)) {
+        return Object.keys(errors).reduce((obj, key) => {
+            obj[key] = formikErrorsToTouched(errors[key]);
+            return obj;
+        }, {});
+    } else {
+        return true;
+    }
+}
+
+export function formikHasError(errors) {
+    if (isArray(errors)) {
+        return !!errors.find(formikHasError);
+    } else if (isObject(errors)) {
+        return !!Object.keys(errors).find((key) => {
+            return formikHasError(errors[key]);
+        });
+    } else if (!!errors) {
+        return true;
+    }
+
+    return false;
 }

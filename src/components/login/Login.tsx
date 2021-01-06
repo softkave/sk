@@ -1,16 +1,20 @@
 import { Button, Checkbox, Form, Input } from "antd";
+import { memoize } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import { userConstants } from "../../models/user/constants";
-import cast from "../../utils/cast";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import { FormBody } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 
 const validationSchema = yup.object().shape({
-    email: yup.string().email().required(),
-    password: yup.string().max(userConstants.maxPasswordLength).required(),
+    email: yup.string().trim().email().required(),
+    password: yup
+        .string()
+        .trim()
+        .max(userConstants.maxPasswordLength)
+        .required(),
 });
 
 export interface ILoginFormValues {
@@ -18,6 +22,17 @@ export interface ILoginFormValues {
     password: string;
     remember: boolean;
 }
+
+const getInitialValues = memoize(
+    (): ILoginFormValues => {
+        return {
+            email: "",
+            password: "",
+            remember: false,
+        };
+    },
+    () => "login"
+);
 
 export interface ILoginProps {
     onSubmit: (values: ILoginFormValues) => void | Promise<void>;
@@ -34,7 +49,7 @@ const Login: React.FC<ILoginProps> = (props) => {
         formikProps: {
             onSubmit,
             validationSchema,
-            initialValues: cast<ILoginFormValues>({}),
+            initialValues: getInitialValues(),
         },
     });
 

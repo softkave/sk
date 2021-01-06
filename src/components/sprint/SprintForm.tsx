@@ -38,7 +38,7 @@ export interface ISprintFormProps {
 
 const sprintFormValidationSchema = yup.object().shape({
     name: sprintValidationSchemas.name.required(),
-    duration: yup.string().required(),
+    duration: yup.string().trim().required(),
 });
 
 const SprintForm: React.FC<ISprintFormProps> = (props) => {

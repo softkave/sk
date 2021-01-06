@@ -1,11 +1,11 @@
 import { Button, Form, Input } from "antd";
+import { memoize } from "lodash";
 import React from "react";
 import * as yup from "yup";
 import ErrorMessages from "../../models/errorMessages";
 import { userConstants } from "../../models/user/constants";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { passwordPattern, textPattern } from "../../models/user/validation";
-import cast from "../../utils/cast";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import { FormBody } from "../forms/FormStyledComponents";
@@ -26,25 +26,30 @@ const invalidPasswordMessage = "Password is invalid";
 const validationSchema = yup.object().shape({
     name: yup
         .string()
+        .trim()
         .max(userConstants.maxNameLength)
         .matches(textPattern, invalidNameMessage)
         .required(ErrorMessages.FIELD_IS_REQUIRED),
     email: yup
         .string()
+        .trim()
         .email(userErrorMessages.invalidEmail)
         .required(ErrorMessages.FIELD_IS_REQUIRED),
     confirmEmail: yup
         .string()
+        .trim()
         .oneOf([yup.ref("email")], emailMismatchErrorMessage)
         .required(ErrorMessages.FIELD_IS_REQUIRED),
     password: yup
         .string()
+        .trim()
         .min(userConstants.minPasswordLength)
         .max(userConstants.maxPasswordLength)
         .matches(passwordPattern, invalidPasswordMessage)
         .required(),
     confirmPassword: yup
         .string()
+        .trim()
         .oneOf([yup.ref("password")], passwordMismatchErrorMessage)
         .required(ErrorMessages.FIELD_IS_REQUIRED),
 });
@@ -59,6 +64,19 @@ interface ISignupFormInternalData extends ISignupFormData {
     confirmEmail: string;
     confirmPassword: string;
 }
+
+const getSignupInitialValues = memoize(
+    (): ISignupFormInternalData => {
+        return {
+            confirmEmail: "",
+            confirmPassword: "",
+            email: "",
+            name: "",
+            password: "",
+        };
+    },
+    () => "signup"
+);
 
 export interface ISignupProps {
     onSubmit: (values: ISignupFormData) => void | Promise<void>;
@@ -75,7 +93,7 @@ const Signup: React.FC<ISignupProps> = (props) => {
         errors: externalErrors,
         formikProps: {
             validationSchema,
-            initialValues: cast<ISignupFormInternalData>({}),
+            initialValues: getSignupInitialValues(),
             onSubmit: (data) => {
                 onSubmit({
                     email: data.email,

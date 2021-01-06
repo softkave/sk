@@ -17,9 +17,7 @@ export interface ISprintOptionsFormValues {
     duration: SprintDuration;
 }
 
-export type ISprintOptionsFormErrors = IFormikFormErrors<
-    ISprintOptionsFormValues
->;
+export type ISprintOptionsFormErrors = IFormikFormErrors<ISprintOptionsFormValues>;
 
 export interface ISprintOptionsFormProps {
     value: ISprintOptionsFormValues;
@@ -31,7 +29,7 @@ export interface ISprintOptionsFormProps {
 }
 
 const sprintOptionsFormValidationSchema = yup.object().shape({
-    duration: yup.string().required(),
+    duration: yup.string().trim().required(),
 });
 
 const SprintOptionsForm: React.FC<ISprintOptionsFormProps> = (props) => {

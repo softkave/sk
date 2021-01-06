@@ -7,6 +7,7 @@ const BACKLOG = "Backlog";
 // TODO: add error messages and help to form items, like the max strings, and if they are required
 const name = yup
     .string()
+    .trim()
     .max(sprintConstants.maxNameLength)
     .matches(textPattern)
     .notOneOf(
@@ -16,6 +17,7 @@ const name = yup
 
 const duration = yup
     .string()
+    .trim()
     .matches(new RegExp(`(${sprintConstants.durationOptions.join("|")})`));
 
 const sprintValidationSchemas = {

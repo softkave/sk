@@ -5,5 +5,9 @@ import blockValidationSchemas from "../block/validation";
 export const feedbackFormValidationSchema = yup.object().shape({
     feedback: blockValidationSchemas.name,
     description: blockValidationSchemas.descriptionOptional,
-    notifyEmail: yup.string().email(userErrorMessages.invalidEmail).nullable(),
+    notifyEmail: yup
+        .string()
+        .trim()
+        .email(userErrorMessages.invalidEmail)
+        .nullable(),
 });

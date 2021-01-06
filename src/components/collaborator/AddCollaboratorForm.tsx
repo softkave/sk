@@ -30,6 +30,7 @@ const emailExistsErrorMessage = "Email addresss has been entered already";
 const requestSchema = yup.object().shape({
     email: yup
         .string()
+        .trim()
         .email(userErrorMessages.invalidEmail)
         .required(ErrorMessages.EMAIL_ADDRESS_IS_REQUIRED), // TODO: Central place for error messages
 });
@@ -37,6 +38,7 @@ const requestSchema = yup.object().shape({
 const validationSchema = yup.object().shape({
     message: yup
         .string()
+        .trim()
         .max(notificationConstants.maxAddCollaboratorMessageLength),
     expiresAt: yup.number(),
     collaborators: yup
