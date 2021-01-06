@@ -151,26 +151,7 @@ export function seedRequest({
 
 export function seedBlock(
     user: IUser,
-    {
-        name,
-        description,
-        parent,
-        type,
-        dueAt,
-        priority,
-        assignees,
-        subTasks,
-        resolutions,
-        status,
-        statusAssignedBy,
-        statusAssignedAt,
-        taskResolution,
-        labels,
-        boardStatuses,
-        boardLabels,
-        rootBlockId,
-        taskSprint,
-    }: {
+    p: {
         type: BlockType;
         name: string;
         description?: string;
@@ -179,7 +160,7 @@ export function seedBlock(
         priority?: BlockPriority;
         assignees?: IAssigneeInput[];
         subTasks?: ISubTaskInput[];
-        resolutions?: IBoardStatusResolutionInput[];
+        boardResolutions?: IBoardStatusResolutionInput[];
         status?: string | null;
         statusAssignedBy?: string;
         statusAssignedAt?: string;
@@ -189,49 +170,53 @@ export function seedBlock(
         boardLabels?: IBlockLabelInput[];
         rootBlockId?: string;
         taskSprint?: ITaskSprintInput | null;
+        customId?: string;
+        createdAt?: string;
+        createdBy?: string;
+        color?: string;
+        boards?: string[];
+        notifications?: string[];
+        collaborators?: string[];
     }
 ) {
-    const org: IBlock = {
-        name,
-        description,
-        type,
-        status,
+    const isTask = p.type === BlockType.Task;
+    const block: IBlock = {
+        name: p.name,
+        description: p.description,
+        type: p.type,
+        status: p.status,
         statusAssignedBy:
-            statusAssignedBy || (status ? user.customId : undefined),
+            p.statusAssignedBy || (p.status ? user.customId : undefined),
         statusAssignedAt:
-            statusAssignedAt || (status ? getDateString() : undefined),
-        taskResolution,
-        labels: labels && seedTaskLabels(user, labels),
+            p.statusAssignedAt || (p.status ? getDateString() : undefined),
+        taskResolution: p.taskResolution,
+        labels: p.labels && seedTaskLabels(user, p.labels),
         priority:
-            priority ||
-            (type === BlockType.Task ? BlockPriority.NotImportant : undefined),
-        subTasks: subTasks && seedSubTasks(user, subTasks),
-        dueAt,
-        rootBlockId,
-        customId: getNewId(),
-        createdAt: getDateString(),
-        createdBy: user.customId,
-        color: randomColor(),
-        boards: [],
-        notifications: [],
-        collaborators: [],
+            p.priority || (isTask ? BlockPriority.NotImportant : undefined),
+        subTasks: p.subTasks && seedSubTasks(user, p.subTasks),
+        dueAt: p.dueAt,
+        rootBlockId: p.rootBlockId,
+        customId: p.customId || getNewId(),
+        createdAt: p.createdAt || getDateString(),
+        createdBy: p.createdBy || user.customId,
+        color: p.color || !isTask ? randomColor() : undefined,
+        boards: p.boards || [],
+        notifications: p.notifications || [],
+        collaborators: p.collaborators || [],
         boardStatuses:
-            (boardStatuses && seedStatuses(user, boardStatuses)) ||
-            (type !== BlockType.Task ? getDefaultStatuses(user) : undefined),
+            (p.boardStatuses && seedStatuses(user, p.boardStatuses)) ||
+            (!isTask ? getDefaultStatuses(user) : undefined),
         boardLabels:
-            (boardLabels && seedLabels(user, boardLabels)) ||
-            (type !== BlockType.Task ? [] : undefined),
-        parent,
-        boardResolutions: resolutions && seedResolutions(user, resolutions),
-        assignees: assignees && seedTaskAssignees(user, assignees),
-        taskSprint: taskSprint && {
-            sprintId: taskSprint.sprintId,
-            assignedAt: getDateString(),
-            assignedBy: user.customId,
-        },
+            (p.boardLabels && seedLabels(user, p.boardLabels)) ||
+            (!isTask ? [] : undefined),
+        parent: p.parent,
+        boardResolutions:
+            p.boardResolutions && seedResolutions(user, p.boardResolutions),
+        assignees: p.assignees && seedTaskAssignees(user, p.assignees),
+        taskSprint: p.taskSprint && seedTaskSprint(user, p.taskSprint),
     };
 
-    return org;
+    return block;
 }
 
 function updateBlockData(
@@ -365,22 +350,25 @@ function seedBoardOps(board: IBlock) {
 
 function seedResolutions(
     user: IUser,
-    resolutions: IBoardStatusResolutionInput[]
+    resolutions: (Partial<IBoardTaskResolution> & IBoardStatusResolutionInput)[]
 ): IBoardTaskResolution[] {
     return resolutions.map((resolution) => ({
-        customId: getNewId(),
-        createdAt: getDateString(),
-        createdBy: user.customId,
+        customId: resolution.customId || getNewId(),
+        createdAt: resolution.createdAt || getDateString(),
+        createdBy: resolution.createdBy || user.customId,
         name: resolution.name,
         description: resolution.description,
     }));
 }
 
-function seedLabels(user: IUser, labels: IBlockLabelInput[]): IBlockLabel[] {
+function seedLabels(
+    user: IUser,
+    labels: (Partial<IBlockLabel> & IBlockLabelInput)[]
+): IBlockLabel[] {
     return labels.map((label) => ({
-        customId: getNewId(),
-        createdAt: getDateString(),
-        createdBy: user.customId,
+        customId: label.customId || getNewId(),
+        createdAt: label.createdAt || getDateString(),
+        createdBy: label.createdBy || user.customId,
         name: label.name,
         color: label.color || randomColor(),
         description: label.description,
@@ -389,12 +377,12 @@ function seedLabels(user: IUser, labels: IBlockLabelInput[]): IBlockLabel[] {
 
 function seedStatuses(
     user: IUser,
-    statuses: IBlockStatusInput[]
+    statuses: (Partial<IBlockStatus> & IBlockStatusInput)[]
 ): IBlockStatus[] {
     return statuses.map((status) => ({
-        customId: getNewId(),
-        createdAt: getDateString(),
-        createdBy: user.customId,
+        customId: status.customId || getNewId(),
+        createdAt: status.createdAt || getDateString(),
+        createdBy: status.createdBy || user.customId,
         name: status.name,
         color: status.color || randomColor(),
         description: status.description,
@@ -403,46 +391,46 @@ function seedStatuses(
 
 export function seedTaskLabels(
     user: IUser,
-    labels: IBlockAssignedLabelInput[]
+    labels: (IBlockAssignedLabelInput & Partial<IBlockAssignedLabel>)[]
 ): IBlockAssignedLabel[] {
     return labels.map((label) => ({
         customId: label.customId,
         assignedBy: user.customId,
-        assignedAt: getDateString(),
+        assignedAt: label.assignedAt || getDateString(),
     }));
 }
 
 export function seedTaskAssignees(
     user: IUser,
-    assignees: IAssigneeInput[]
+    assignees: (Partial<ITaskAssignee> & IAssigneeInput)[]
 ): ITaskAssignee[] {
     return assignees.map((assignee) => ({
         userId: assignee.userId,
-        assignedBy: user.customId,
-        assignedAt: getDateString(),
+        assignedBy: assignee.assignedBy || user.customId,
+        assignedAt: assignee.assignedAt || getDateString(),
     }));
 }
 
 export function seedSubTasks(
     user: IUser,
-    subTasks: ISubTaskInput[]
+    subTasks: (Partial<ISubTask> & ISubTaskInput)[]
 ): ISubTask[] {
     return subTasks.map((subTask) => ({
-        customId: getNewId(),
+        customId: subTask.customId || getNewId(),
         description: subTask.description,
-        createdAt: getDateString(),
-        createdBy: user.customId,
+        createdAt: subTask.createdAt || getDateString(),
+        createdBy: subTask.createdBy || user.customId,
     }));
 }
 
 export function seedTaskSprint(
     user: IUser,
-    taskSprint: ITaskSprintInput
+    taskSprint: Partial<ITaskSprint> & ITaskSprintInput
 ): ITaskSprint {
     return {
         sprintId: taskSprint.sprintId,
-        assignedAt: getDateString(),
-        assignedBy: user.customId,
+        assignedAt: taskSprint.assignedAt || getDateString(),
+        assignedBy: taskSprint.assignedBy || user.customId,
     };
 }
 
@@ -571,7 +559,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 color: "rgb(244, 117, 54)",
             },
         ],
-        resolutions: [
+        boardResolutions: [
             {
                 customId: getNewId(),
                 name: "Deployed",
@@ -606,7 +594,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 color: randomColor(),
             },
         ],
-        resolutions: [
+        boardResolutions: [
             {
                 customId: getNewId(),
                 name: "Completed",

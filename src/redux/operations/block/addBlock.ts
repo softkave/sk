@@ -7,7 +7,7 @@ import {
 } from "../../../models/block/block";
 import { seedBlock } from "../../../models/seedDemoData";
 import BlockAPI from "../../../net/block/block";
-import { getNewId } from "../../../utils/utils";
+import { getNewId, stripEmpty } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -56,7 +56,7 @@ export const addBlockOpAction = createAsyncThunk<
 
         if (!isDemoMode) {
             const result = await BlockAPI.addBlock({
-                block: newBlockInputExtractor(arg.block),
+                block: stripEmpty(newBlockInputExtractor(arg.block)),
             });
 
             if (result && result.errors) {

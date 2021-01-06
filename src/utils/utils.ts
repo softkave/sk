@@ -373,3 +373,43 @@ export function formikHasError(errors) {
 
     return false;
 }
+
+export function topLevelDiff(o1: object, o2: object) {
+    const k1 = Object.keys(o1);
+    const o4 = k1.reduce((o3, key) => {
+        const v1 = o1[key];
+        const v2 = o2[key];
+        const t1 = typeof v1;
+        const t2 = typeof v2;
+
+        if (t1 !== t2) {
+            o3[key] = v1;
+        } else if (t1 === "object" && Object.keys(v1).length > 0) {
+            o3[key] = v1;
+        } else if (v1 !== v2) {
+            o3[key] = v1;
+        }
+
+        return o3;
+    }, {});
+
+    return o4;
+}
+
+export function stripEmpty<T extends object>(o1: T) {
+    const k1 = Object.keys(o1);
+    const o4 = k1.reduce((o3, key) => {
+        const v1 = o1[key];
+        const t1 = typeof v1;
+
+        if (t1 === "object" && Object.keys(v1).length > 0) {
+            o3[key] = v1;
+        } else if (!!v1) {
+            o3[key] = v1;
+        }
+
+        return o3;
+    }, {} as T);
+
+    return o4;
+}

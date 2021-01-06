@@ -54,7 +54,7 @@ export const updateBlockOpAction = createAsyncThunk<
 
     try {
         const block = BlockSelectors.getBlock(thunkAPI.getState(), arg.blockId);
-
+        console.log({ arg, block });
         assignUserToTaskOnUpdateStatus(thunkAPI, block, arg.data);
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());

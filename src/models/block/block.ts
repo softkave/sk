@@ -6,6 +6,7 @@ import {
     makeListExtract,
 } from "../../utils/extract";
 import { IUpdateComplexTypeArrayInput } from "../../utils/types";
+import { topLevelDiff } from "../../utils/utils";
 import { IBoardSprintOptions } from "../sprint/types";
 import { IUser } from "../user/user";
 import { getComplexFieldInput, getNameInitials } from "../utils";
@@ -398,7 +399,8 @@ export function getUpdateBlockInput(
     block: IBlock,
     formBlock: Partial<IFormBlock>
 ) {
-    return extractFields(formBlock, updateBlockFields, { block });
+    const b1 = topLevelDiff(formBlock, block);
+    return extractFields(b1, updateBlockFields, { block });
 }
 
 export function persistedBlockToBlock(pBlock: IPersistedBlock): IBlock {
