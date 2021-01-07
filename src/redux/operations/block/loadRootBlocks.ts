@@ -9,6 +9,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -19,11 +20,11 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
 >("op/block/loadRootBlocks", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -31,7 +32,7 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.LOAD_ROOT_BLOCKS)
+        dispatchOperationStarted(opId, OperationType.LOAD_ROOT_BLOCKS)
     );
 
     try {
@@ -43,13 +44,13 @@ export const loadRootBlocksOperationAction = createAsyncThunk<
 
         thunkAPI.dispatch(BlockActions.bulkAddBlocks(result.blocks));
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.LOAD_ROOT_BLOCKS)
+            dispatchOperationCompleted(opId, OperationType.LOAD_ROOT_BLOCKS)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.LOAD_ROOT_BLOCKS, error)
+            dispatchOperationError(opId, OperationType.LOAD_ROOT_BLOCKS, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

@@ -127,6 +127,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         const result = await dispatch(
             endSprintOpAction({
                 sprintId,
+                deleteOpOnComplete: true,
             })
         );
 
@@ -146,8 +147,6 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         } else if (opStat.isError) {
             message.error(ERROR_CLOSING_SPRINT);
         }
-
-        dispatch(OperationActions.deleteOperation(op.id));
     };
 
     const promptCloseSprint = () => {

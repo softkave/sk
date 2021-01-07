@@ -366,7 +366,7 @@ const updateBlockFields = getFields<
     },
     boardResolutions: (data, args) => {
         return getComplexFieldInput(
-            args.block.boardLabels || [],
+            args.block.boardResolutions || [],
             data,
             "customId",
             (d) => ({
@@ -400,6 +400,7 @@ export function getUpdateBlockInput(
     formBlock: Partial<IFormBlock>
 ) {
     const b1 = topLevelDiff(formBlock, block);
+    console.log({ b1, block, formBlock });
     return extractFields(b1, updateBlockFields, { block });
 }
 

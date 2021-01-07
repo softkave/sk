@@ -11,6 +11,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -21,11 +22,11 @@ export const initializeAppSessionOpAction = createAsyncThunk<
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
 >("op/session/initializeAppSession", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -33,7 +34,7 @@ export const initializeAppSessionOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.InitializeAppSession)
+        dispatchOperationStarted(opId, OperationType.InitializeAppSession)
     );
 
     try {
@@ -60,18 +61,18 @@ export const initializeAppSessionOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.InitializeAppSession)
+            dispatchOperationCompleted(opId, OperationType.InitializeAppSession)
         );
     } catch (error) {
         thunkAPI.dispatch(SessionActions.setSessionToWeb());
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.InitializeAppSession,
                 error
             )
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

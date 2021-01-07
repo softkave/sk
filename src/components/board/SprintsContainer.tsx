@@ -36,6 +36,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
         const result = await dispatch(
             deleteSprintOpAction({
                 sprintId,
+                deleteOpOnComplete: true,
             })
         );
 
@@ -64,6 +65,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
         const result = await dispatch(
             startSprintOpAction({
                 sprintId,
+                deleteOpOnComplete: true,
             })
         );
 
@@ -91,6 +93,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
         const result = await dispatch(
             endSprintOpAction({
                 sprintId,
+                deleteOpOnComplete: true,
             })
         );
 

@@ -11,6 +11,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -30,11 +31,11 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
     GetOperationActionArgs<ILoadBlockChildrenOpActionArgs>,
     IAppAsyncThunkConfig
 >("op/block/loadBlockChildren", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -43,7 +44,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
 
     thunkAPI.dispatch(
         dispatchOperationStarted(
-            id,
+            opId,
             OperationType.LOAD_BLOCK_CHILDREN,
             arg.blockId,
             null,
@@ -91,7 +92,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.LOAD_BLOCK_CHILDREN,
                 arg.blockId
             )
@@ -99,7 +100,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.LOAD_BLOCK_CHILDREN,
                 error,
                 arg.blockId
@@ -107,5 +108,5 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

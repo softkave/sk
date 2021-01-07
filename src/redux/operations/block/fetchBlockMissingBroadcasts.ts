@@ -13,6 +13,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -27,11 +28,11 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
     GetOperationActionArgs<IFetchBlockMissingBroadcastsOpActionArgs>,
     IAppAsyncThunkConfig
 >("op/block/fetchBlockMissingBroadcasts", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     // TODO: should we return if client is currently fetching missing broadcasts
@@ -48,7 +49,7 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
 
     thunkAPI.dispatch(
         dispatchOperationStarted(
-            id,
+            opId,
             OperationType.FETCH_BLOCK_BROADCASTS,
             block.customId
         )
@@ -76,17 +77,20 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.FETCH_BLOCK_BROADCASTS)
+            dispatchOperationCompleted(
+                opId,
+                OperationType.FETCH_BLOCK_BROADCASTS
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.FETCH_BLOCK_BROADCASTS,
                 error
             )
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

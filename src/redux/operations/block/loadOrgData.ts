@@ -27,6 +27,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -79,11 +80,11 @@ export const loadOrgDataOpAction = createAsyncThunk<
     GetOperationActionArgs<ILoadOrgDataOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/block/loadBoardData", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -92,7 +93,7 @@ export const loadOrgDataOpAction = createAsyncThunk<
 
     thunkAPI.dispatch(
         dispatchOperationStarted(
-            id,
+            opId,
             OperationType.LoadOrgUsersAndRequests,
             arg.block.customId
         )
@@ -162,7 +163,7 @@ export const loadOrgDataOpAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.LoadOrgUsersAndRequests,
                 arg.block.customId
             )
@@ -170,7 +171,7 @@ export const loadOrgDataOpAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.LoadOrgUsersAndRequests,
                 error,
                 arg.block.customId
@@ -178,7 +179,7 @@ export const loadOrgDataOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
 function createOrgCollaboratorsTempRooms(

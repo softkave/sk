@@ -12,6 +12,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -28,11 +29,11 @@ export const changePasswordOpAction = createAsyncThunk<
     GetOperationActionArgs<IChangePasswordOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/session/changePassword", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -40,7 +41,7 @@ export const changePasswordOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.ChangePassword)
+        dispatchOperationStarted(opId, OperationType.ChangePassword)
     );
 
     try {
@@ -66,13 +67,13 @@ export const changePasswordOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.ChangePassword)
+            dispatchOperationCompleted(opId, OperationType.ChangePassword)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.ChangePassword, error)
+            dispatchOperationError(opId, OperationType.ChangePassword, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

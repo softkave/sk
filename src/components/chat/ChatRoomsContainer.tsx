@@ -111,7 +111,12 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
 
     const updateRoomReadCounter = React.useCallback(
         (args: IUpdateRoomReadCounterAPIParameters) => {
-            dispatch(updateRoomReadCounterOpAction(args));
+            dispatch(
+                updateRoomReadCounterOpAction({
+                    ...args,
+                    deleteOpOnComplete: true,
+                })
+            );
         },
         [dispatch]
     );

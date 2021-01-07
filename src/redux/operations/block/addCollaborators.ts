@@ -19,6 +19,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -36,11 +37,11 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     GetOperationActionArgs<IAddCollaboratorsOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/block/addCollaborators", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -48,7 +49,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.ADD_COLLABORATORS)
+        dispatchOperationStarted(opId, OperationType.ADD_COLLABORATORS)
     );
 
     try {
@@ -113,7 +114,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.ADD_COLLABORATORS,
                 arg.blockId
             )
@@ -121,7 +122,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.ADD_COLLABORATORS,
                 error,
                 arg.blockId
@@ -129,5 +130,5 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

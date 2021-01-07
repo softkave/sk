@@ -15,6 +15,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -25,11 +26,11 @@ export const endSprintOpAction = createAsyncThunk<
     GetOperationActionArgs<{ sprintId: string }>,
     IAppAsyncThunkConfig
 >("op/sprint/endSprint", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -37,7 +38,7 @@ export const endSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.END_SPRINT, arg.sprintId)
+        dispatchOperationStarted(opId, OperationType.END_SPRINT, arg.sprintId)
     );
 
     try {
@@ -73,7 +74,7 @@ export const endSprintOpAction = createAsyncThunk<
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.END_SPRINT,
                 arg.sprintId
             )
@@ -81,7 +82,7 @@ export const endSprintOpAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.END_SPRINT,
                 error,
                 arg.sprintId
@@ -89,7 +90,7 @@ export const endSprintOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
 export function completeEndSprint(sprint: ISprint, date: string) {

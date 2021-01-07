@@ -44,6 +44,7 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
                       data,
                       boardId: board.customId,
                       opId: saveOpStatus.opId,
+                      deleteOpOnComplete: true,
                   })
               )
             : await dispatch(
@@ -51,6 +52,7 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
                       data,
                       boardId: board.customId,
                       opId: saveOpStatus.opId,
+                      deleteOpOnComplete: true,
                   })
               );
 

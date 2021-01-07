@@ -113,7 +113,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {input}
                     {!noControls && (
-                        <Space size="middle">
+                        <Space>
                             <Button
                                 icon={<Check />}
                                 onClick={() => setEditing(false)}

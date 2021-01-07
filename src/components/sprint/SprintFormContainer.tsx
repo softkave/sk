@@ -97,6 +97,7 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
                       data: values,
                       sprintId: props.sprint.customId,
                       opId: saveOpStatus.opId,
+                      deleteOpOnComplete: true,
                   })
               )
             : await dispatch(
@@ -104,6 +105,7 @@ const SprintFormContainer: React.FC<ISprintFormContainerProps> = (props) => {
                       data: values,
                       boardId: board.customId,
                       opId: saveOpStatus.opId,
+                      deleteOpOnComplete: true,
                   })
               );
 

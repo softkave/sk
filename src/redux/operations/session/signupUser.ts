@@ -12,6 +12,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -28,18 +29,18 @@ export const signupUserOpAction = createAsyncThunk<
     GetOperationActionArgs<ISignupUserOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/session/signupUser", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.SignupUser));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.SignupUser));
 
     try {
         const data = { ...arg, color: randomColor() };
@@ -70,13 +71,13 @@ export const signupUserOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.SignupUser)
+            dispatchOperationCompleted(opId, OperationType.SignupUser)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.SignupUser, error)
+            dispatchOperationError(opId, OperationType.SignupUser, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

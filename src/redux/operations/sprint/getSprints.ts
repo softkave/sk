@@ -11,6 +11,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -21,11 +22,11 @@ export const getSprintsOpAction = createAsyncThunk<
     GetOperationActionArgs<{ boardId: string }>,
     IAppAsyncThunkConfig
 >("op/sprint/getSprints", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -33,7 +34,7 @@ export const getSprintsOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.GET_SPRINTS, arg.boardId)
+        dispatchOperationStarted(opId, OperationType.GET_SPRINTS, arg.boardId)
     );
 
     try {
@@ -53,7 +54,7 @@ export const getSprintsOpAction = createAsyncThunk<
         thunkAPI.dispatch(SprintActions.bulkAddSprints(sprints));
         thunkAPI.dispatch(
             dispatchOperationCompleted(
-                id,
+                opId,
                 OperationType.GET_SPRINTS,
                 arg.boardId
             )
@@ -61,7 +62,7 @@ export const getSprintsOpAction = createAsyncThunk<
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.GET_SPRINTS,
                 error,
                 arg.boardId
@@ -69,5 +70,5 @@ export const getSprintsOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

@@ -11,6 +11,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -27,18 +28,18 @@ export const loginUserOpAction = createAsyncThunk<
     GetOperationActionArgs<ILoginUserOperationActionArgs>,
     IAppAsyncThunkConfig
 >("op/session/loginUser", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(id, OperationType.LoginUser));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.LoginUser));
 
     try {
         const result = await UserAPI.login({
@@ -65,13 +66,13 @@ export const loginUserOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.LoginUser)
+            dispatchOperationCompleted(opId, OperationType.LoginUser)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(id, OperationType.LoginUser, error)
+            dispatchOperationError(opId, OperationType.LoginUser, error)
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });

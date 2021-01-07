@@ -12,6 +12,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -22,11 +23,11 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
     IOperationActionBaseArgs,
     IAppAsyncThunkConfig
 >("op/notification/loadUserNotifications", async (arg, thunkAPI) => {
-    const id = arg.opId || getNewId();
+    const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
         thunkAPI.getState(),
-        id
+        opId
     );
 
     if (isOperationStarted(operation)) {
@@ -34,7 +35,7 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(id, OperationType.LoadUserNotifications)
+        dispatchOperationStarted(opId, OperationType.LoadUserNotifications)
     );
 
     try {
@@ -46,19 +47,22 @@ export const loadUserNotificationsOpAction = createAsyncThunk<
 
         storeUserNotifications(thunkAPI, result.requests);
         thunkAPI.dispatch(
-            dispatchOperationCompleted(id, OperationType.LoadUserNotifications)
+            dispatchOperationCompleted(
+                opId,
+                OperationType.LoadUserNotifications
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
-                id,
+                opId,
                 OperationType.LoadUserNotifications,
                 error
             )
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), id);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
 export const storeUserNotifications = (

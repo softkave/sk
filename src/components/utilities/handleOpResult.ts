@@ -28,8 +28,6 @@ const handleOpResult = async ({
         const flattenedError = flattenErrorList(opData.error);
         message.error(flattenedError.error || errorMessage);
     }
-
-    store.dispatch(OperationActions.deleteOperation(op.id));
 };
 
 export default handleOpResult;

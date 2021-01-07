@@ -66,6 +66,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
                     <Typography.Text
                         strong={makeNameBold}
                         style={{ marginRight: "8px" }}
+                        ellipsis
                     >
                         {block.name}
                     </Typography.Text>

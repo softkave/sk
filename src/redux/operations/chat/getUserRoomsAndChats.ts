@@ -18,6 +18,7 @@ import {
     dispatchOperationStarted,
     IOperation,
     isOperationStarted,
+    wrapUpOpAction,
 } from "../operation";
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
@@ -85,7 +86,7 @@ export const getUserRoomsAndChatsOpAction = createAsyncThunk<
         );
     }
 
-    return OperationSelectors.getOperationWithId(thunkAPI.getState(), opId);
+    return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
 interface IPrepareChatsResult {

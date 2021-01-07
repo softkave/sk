@@ -132,11 +132,13 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
                   updateBlockOpAction({
                       data,
                       blockId: existingBlock.customId,
+                      deleteOpOnComplete: true,
                   })
               )
             : await dispatch(
                   addBlockOpAction({
                       block: data,
+                      deleteOpOnComplete: true,
                   })
               );
 
@@ -171,7 +173,6 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
             }
 
             setExistingBlock(block);
-            dispatch(OperationActions.deleteOperation(opData.opId));
         }
     };
 
