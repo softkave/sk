@@ -1,4 +1,3 @@
-import { isObject } from "lodash";
 import isFunction from "lodash/isFunction";
 import pick from "lodash/pick";
 import cast from "./cast";

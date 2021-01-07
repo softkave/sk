@@ -384,7 +384,11 @@ export function topLevelDiff(o1: object, o2: object) {
 
         if (t1 !== t2) {
             o3[key] = v1;
-        } else if (t1 === "object" && Object.keys(v1).length > 0) {
+        } else if (
+            t1 === "object" &&
+            v1 !== null &&
+            Object.keys(v1).length > 0
+        ) {
             o3[key] = v1;
         } else if (v1 !== v2) {
             o3[key] = v1;

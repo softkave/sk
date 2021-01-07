@@ -13,7 +13,6 @@ import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import { IAddBlockEndpointErrors } from "../../net/block/types";
 import BlockSelectors from "../../redux/blocks/selectors";
-import OperationActions from "../../redux/operations/actions";
 import { addBlockOpAction } from "../../redux/operations/block/addBlock";
 import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
 import SessionSelectors from "../../redux/session/selectors";

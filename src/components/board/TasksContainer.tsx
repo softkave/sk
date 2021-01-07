@@ -8,7 +8,6 @@ import {
     IBoardTaskResolution,
 } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
 import SessionSelectors from "../../redux/session/selectors";

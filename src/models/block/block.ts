@@ -399,9 +399,7 @@ export function getUpdateBlockInput(
     block: IBlock,
     formBlock: Partial<IFormBlock>
 ) {
-    console.log({ block, formBlock });
     const b1 = topLevelDiff(formBlock, block);
-    console.log({ b1 });
     return extractFields(b1, updateBlockFields, { block });
 }
 

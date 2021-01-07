@@ -10,7 +10,6 @@ import { ISprint } from "../../models/sprint/types";
 import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
 import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
 import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
-import OperationActions from "../../redux/operations/actions";
 import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import OperationType from "../../redux/operations/OperationType";
 import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
