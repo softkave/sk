@@ -219,6 +219,47 @@ export function seedBlock(
     return block;
 }
 
+export function seedUpdateBlock(
+    user: IUser,
+    p: {
+        type: BlockType;
+        assignees?: IAssigneeInput[];
+        subTasks?: ISubTaskInput[];
+        boardResolutions?: IBoardStatusResolutionInput[];
+        status?: string | null;
+        statusAssignedBy?: string;
+        statusAssignedAt?: string;
+        taskResolution?: string | null;
+        labels?: IBlockAssignedLabelInput[];
+        boardStatuses?: IBlockStatusInput[];
+        boardLabels?: IBlockLabelInput[];
+        taskSprint?: ITaskSprintInput | null;
+    }
+) {
+    const isTask = p.type === BlockType.Task;
+    const block: Partial<IBlock> = {
+        status: p.status,
+        statusAssignedBy:
+            p.statusAssignedBy || (p.status ? user.customId : undefined),
+        statusAssignedAt:
+            p.statusAssignedAt || (p.status ? getDateString() : undefined),
+        labels: p.labels && seedTaskLabels(user, p.labels),
+        subTasks: p.subTasks && seedSubTasks(user, p.subTasks),
+        boardStatuses:
+            (p.boardStatuses && seedStatuses(user, p.boardStatuses)) ||
+            (!isTask ? getDefaultStatuses(user) : undefined),
+        boardLabels:
+            (p.boardLabels && seedLabels(user, p.boardLabels)) ||
+            (!isTask ? [] : undefined),
+        boardResolutions:
+            p.boardResolutions && seedResolutions(user, p.boardResolutions),
+        assignees: p.assignees && seedTaskAssignees(user, p.assignees),
+        taskSprint: p.taskSprint && seedTaskSprint(user, p.taskSprint),
+    };
+
+    return block;
+}
+
 function updateBlockData(
     block: IBlock,
     {

@@ -7,9 +7,9 @@ import {
     IBoardTaskResolution,
     IFormBlock,
 } from "../../../models/block/block";
-import { seedBlock } from "../../../models/seedDemoData";
+import { seedBlock, seedUpdateBlock } from "../../../models/seedDemoData";
 import BlockAPI from "../../../net/block/block";
-import { getDateString, getNewId } from "../../../utils/utils";
+import { getDateString, getNewId, mergeData } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -57,11 +57,11 @@ export const updateBlockOpAction = createAsyncThunk<
         assignUserToTaskOnUpdateStatus(thunkAPI, block, arg.data);
 
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-        const updateBlockInput = getUpdateBlockInput(block, arg.data);
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
         let updatedBlock: IBlock | null = null;
 
         if (!isDemoMode) {
+            const updateBlockInput = getUpdateBlockInput(block, arg.data);
             const result = await BlockAPI.updateBlock({
                 blockId: arg.blockId,
                 data: updateBlockInput,
@@ -75,7 +75,7 @@ export const updateBlockOpAction = createAsyncThunk<
         } else {
             updatedBlock = {
                 ...block,
-                ...seedBlock(user, merge(block, arg.data)),
+                ...seedUpdateBlock(user, { type: block.type, ...arg.data }),
             };
         }
 

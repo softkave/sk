@@ -52,9 +52,10 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         noResolutionModal,
     } = props;
 
-    const [resolutionModalState, setResolutionModalState] = React.useState<
-        IResolutionModalState
-    >({});
+    const [
+        resolutionModalState,
+        setResolutionModalState,
+    ] = React.useState<IResolutionModalState>({});
 
     const statusId = task.status;
     const resolutionId = task.taskResolution;
@@ -74,8 +75,12 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         [resolutionModalState, onChangeStatus]
     );
 
-    const closeResolutionModal = React.useCallback(() => {
+    const onContinueWithoutResolution = React.useCallback(() => {
         handleResolutionModalChange();
+    }, [handleResolutionModalChange]);
+
+    const onCancel = React.useCallback(() => {
+        setResolutionModalState({});
     }, [handleResolutionModalChange]);
 
     const handleStatusChange = React.useCallback(
@@ -172,7 +177,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                     task={task}
                     resolutionsList={resolutionsList}
                     resolutionsMap={resolutionsMap}
-                    onClose={closeResolutionModal}
+                    onContinue={onContinueWithoutResolution}
+                    onCancel={onCancel}
                     onSelectResolution={handleResolutionModalChange}
                     onSelectAddNewResolution={onSelectAddNewResolution}
                 />
