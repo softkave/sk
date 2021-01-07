@@ -47,7 +47,7 @@ export const addBlockOpAction = createAsyncThunk<
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.ADD_BLOCK));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.AddBlock));
 
     try {
         const user = SessionSelectors.assertGetUser(thunkAPI.getState());
@@ -72,14 +72,14 @@ export const addBlockOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.ADD_BLOCK,
+                OperationType.AddBlock,
                 null,
                 block
             )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.ADD_BLOCK, error)
+            dispatchOperationError(opId, OperationType.AddBlock, error)
         );
     }
 
@@ -127,7 +127,7 @@ export const storeNewBlock = (store: IStoreLikeObject, block: IBlock) => {
         // To avoid loading the block children, cause there isn't any yet, it's a new block
         loadOps.push({
             id: getNewId(),
-            operationType: OperationType.LOAD_BLOCK_CHILDREN,
+            operationType: OperationType.LoadBlockChildren,
             resourceId: block.customId,
             status: {
                 status: OperationStatus.Completed,

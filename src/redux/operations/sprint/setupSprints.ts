@@ -34,7 +34,7 @@ export const setupSprintsOpAction = createAsyncThunk<
     }
 
     await thunkAPI.dispatch(
-        dispatchOperationStarted(opId, OperationType.SETUP_SPRINTS, arg.boardId)
+        dispatchOperationStarted(opId, OperationType.SetupSprints, arg.boardId)
     );
 
     try {
@@ -68,7 +68,7 @@ export const setupSprintsOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.SETUP_SPRINTS,
+                OperationType.SetupSprints,
                 arg.boardId
             )
         );
@@ -76,7 +76,7 @@ export const setupSprintsOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.SETUP_SPRINTS,
+                OperationType.SetupSprints,
                 error,
                 arg.boardId
             )

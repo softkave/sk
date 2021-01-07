@@ -34,7 +34,7 @@ export const permissionGroupExistsOpAction = createAsyncThunk<
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.ADD_BLOCK));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.AddBlock));
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
@@ -57,14 +57,14 @@ export const permissionGroupExistsOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.ADD_BLOCK,
+                OperationType.AddBlock,
                 null,
                 exists
             )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.ADD_BLOCK, error)
+            dispatchOperationError(opId, OperationType.AddBlock, error)
         );
     }
 

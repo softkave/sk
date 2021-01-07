@@ -45,7 +45,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
     thunkAPI.dispatch(
         dispatchOperationStarted(
             opId,
-            OperationType.LOAD_BLOCK_CHILDREN,
+            OperationType.LoadBlockChildren,
             arg.blockId,
             null,
             { typeList: arg.typeList }
@@ -93,7 +93,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.LOAD_BLOCK_CHILDREN,
+                OperationType.LoadBlockChildren,
                 arg.blockId
             )
         );
@@ -101,7 +101,7 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.LOAD_BLOCK_CHILDREN,
+                OperationType.LoadBlockChildren,
                 error,
                 arg.blockId
             )

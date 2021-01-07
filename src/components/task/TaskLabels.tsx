@@ -62,7 +62,11 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                         onRemove(label.customId);
                     }
                 }}
-                style={{ display: "inline-flex", alignItems: "center" }}
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    marginBottom: "4px",
+                }}
             >
                 {label.name}
             </Tag>

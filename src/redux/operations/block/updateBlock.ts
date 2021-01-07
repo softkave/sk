@@ -49,7 +49,7 @@ export const updateBlockOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(opId, OperationType.UPDATE_BLOCK)
+        dispatchOperationStarted(opId, OperationType.UpdateBlock)
     );
 
     try {
@@ -83,14 +83,14 @@ export const updateBlockOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.UPDATE_BLOCK,
+                OperationType.UpdateBlock,
                 null,
                 updatedBlock
             )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.UPDATE_BLOCK, error)
+            dispatchOperationError(opId, OperationType.UpdateBlock, error)
         );
     }
 

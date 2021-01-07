@@ -37,7 +37,7 @@ export const updateSprintOptionsOpAction = createAsyncThunk<
     thunkAPI.dispatch(
         dispatchOperationStarted(
             opId,
-            OperationType.UPDATE_SPRINT_OPTIONS,
+            OperationType.UpdateSprintOptions,
             arg.boardId
         )
     );
@@ -72,7 +72,7 @@ export const updateSprintOptionsOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.UPDATE_SPRINT_OPTIONS,
+                OperationType.UpdateSprintOptions,
                 arg.boardId
             )
         );
@@ -80,7 +80,7 @@ export const updateSprintOptionsOpAction = createAsyncThunk<
         await thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.UPDATE_SPRINT_OPTIONS,
+                OperationType.UpdateSprintOptions,
                 error,
                 arg.boardId
             )

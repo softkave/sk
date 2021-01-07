@@ -52,7 +52,7 @@ const useFetchMissingBlockUpdates: UseFetchMissingBlockUpdates = (props) => {
     const fetchMissingOp = useOperation(
         {
             resourceId: block.customId,
-            type: OperationType.FETCH_BLOCK_BROADCASTS,
+            type: OperationType.FetchBlockBroadcasts,
         },
         fetchMissingUpdates,
         { deleteManagedOperationOnUnmount: true }

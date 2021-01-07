@@ -1,12 +1,12 @@
 enum OperationType {
     // block
-    LOAD_ROOT_BLOCKS = "LOAD_ROOT_BLOCKS",
-    ADD_BLOCK = "ADD_BLOCK",
-    UPDATE_BLOCK = "UPDATE_BLOCK",
-    DELETE_BLOCK = "DELETE_BLOCK",
-    LOAD_BLOCK_CHILDREN = "LOAD_BLOCK_CHILDREN",
-    ADD_COLLABORATORS = "ADD_COLLABORATORS",
-    FETCH_BLOCK_BROADCASTS = "FETCH_BLOCK_BROADCASTS",
+    LoadRootBlocks = "LoadRootBlocks",
+    AddBlock = "AddBlock",
+    UpdateBlock = "UpdateBlock",
+    DeleteBlock = "DeleteBlock",
+    LoadBlockChildren = "LoadBlockChildren",
+    AddCollaborators = "AddCollaborators",
+    FetchBlockBroadcasts = "FetchBlockBroadcasts",
 
     // notification
     LoadUserNotifications = "LoadUserNotifications",
@@ -32,15 +32,15 @@ enum OperationType {
     UpdateRoomReadCounter = "UpdateRoomReadCounter",
 
     // sprint
-    ADD_SPRINT = "ADD_SPRINT",
-    DELETE_SPRINT = "DELETE_SPRINT",
-    END_SPRINT = "END_SPRINT",
-    GET_SPRINTS = "GET_SPRINTS",
-    SETUP_SPRINTS = "SETUP_SPRINTS",
-    SPRINT_EXISTS = "SPRINT_EXISTS",
-    START_SPRINT = "START_SPRINT",
-    UPDATE_SPRINT = "UPDATE_SPRINT",
-    UPDATE_SPRINT_OPTIONS = "UPDATE_SPRINT_OPTIONS",
+    AddSprint = "AddSprint",
+    DeleteSprint = "DeleteSprint",
+    EndSprint = "EndSprint",
+    GetSprints = "GetSprints",
+    SetupSprints = "SetupSprints",
+    SprintExists = "SprintExists",
+    StartSprint = "StartSprint",
+    UpdateSprint = "UpdateSprint",
+    UpdateSprintOptions = "UpdateSprintOptions",
 
     // system
     SendFeedback = "SendFeedback",

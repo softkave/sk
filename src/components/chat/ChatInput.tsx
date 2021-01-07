@@ -30,6 +30,7 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
                 })}
             >
                 <Input.TextArea
+                    // autoFocus
                     bordered={false}
                     value={message}
                     autoSize={{ minRows: 1, maxRows: 3 }}

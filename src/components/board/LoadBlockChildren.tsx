@@ -53,7 +53,7 @@ const LoadBlockChildren: React.FC<ILoadBlockChildrenProps> = (props) => {
                 return (
                     operation.resourceId === parent.customId &&
                     operation.operationType ===
-                        OperationType.LOAD_BLOCK_CHILDREN &&
+                        OperationType.LoadBlockChildren &&
                     opMeta.includes(type)
                 );
             },

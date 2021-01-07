@@ -39,11 +39,7 @@ export const deleteSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(
-            opId,
-            OperationType.DELETE_SPRINT,
-            arg.sprintId
-        )
+        dispatchOperationStarted(opId, OperationType.DeleteSprint, arg.sprintId)
     );
 
     try {
@@ -72,7 +68,7 @@ export const deleteSprintOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.DELETE_SPRINT,
+                OperationType.DeleteSprint,
                 arg.sprintId
             )
         );
@@ -80,7 +76,7 @@ export const deleteSprintOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.DELETE_SPRINT,
+                OperationType.DeleteSprint,
                 error,
                 arg.sprintId
             )

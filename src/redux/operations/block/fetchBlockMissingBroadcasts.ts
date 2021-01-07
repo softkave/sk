@@ -50,7 +50,7 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
     thunkAPI.dispatch(
         dispatchOperationStarted(
             opId,
-            OperationType.FETCH_BLOCK_BROADCASTS,
+            OperationType.FetchBlockBroadcasts,
             block.customId
         )
     );
@@ -77,16 +77,13 @@ export const fetchBlockMissingBroadcastsOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(
-                opId,
-                OperationType.FETCH_BLOCK_BROADCASTS
-            )
+            dispatchOperationCompleted(opId, OperationType.FetchBlockBroadcasts)
         );
     } catch (error) {
         thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.FETCH_BLOCK_BROADCASTS,
+                OperationType.FetchBlockBroadcasts,
                 error
             )
         );

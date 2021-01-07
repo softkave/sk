@@ -94,7 +94,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
     );
 
     const orgsOp = useOperation(
-        { type: OperationType.LOAD_ROOT_BLOCKS },
+        { type: OperationType.LoadRootBlocks },
         loadOrgs,
         {
             deleteManagedOperationOnUnmount: false,

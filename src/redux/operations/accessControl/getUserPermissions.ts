@@ -34,7 +34,7 @@ export const getUserPermissionsOpAction = createAsyncThunk<
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.ADD_BLOCK));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.AddBlock));
 
     try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
@@ -58,11 +58,11 @@ export const getUserPermissionsOpAction = createAsyncThunk<
         );
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(opId, OperationType.ADD_BLOCK, null)
+            dispatchOperationCompleted(opId, OperationType.AddBlock, null)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.ADD_BLOCK, error)
+            dispatchOperationError(opId, OperationType.AddBlock, error)
         );
     }
 

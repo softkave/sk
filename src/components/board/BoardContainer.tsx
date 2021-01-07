@@ -101,7 +101,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     const sprintsOp = useOperation(
         {
             resourceId: board.customId,
-            type: OperationType.GET_SPRINTS,
+            type: OperationType.GetSprints,
         },
         loadSprints,
         { deleteManagedOperationOnUnmount: false }
@@ -110,7 +110,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     const tasksOp = useOperation(
         {
             resourceId: board.customId,
-            type: OperationType.LOAD_BLOCK_CHILDREN,
+            type: OperationType.LoadBlockChildren,
         },
         loadTasks,
         { deleteManagedOperationOnUnmount: false }

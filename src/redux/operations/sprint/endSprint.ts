@@ -38,7 +38,7 @@ export const endSprintOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(opId, OperationType.END_SPRINT, arg.sprintId)
+        dispatchOperationStarted(opId, OperationType.EndSprint, arg.sprintId)
     );
 
     try {
@@ -75,7 +75,7 @@ export const endSprintOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationCompleted(
                 opId,
-                OperationType.END_SPRINT,
+                OperationType.EndSprint,
                 arg.sprintId
             )
         );
@@ -83,7 +83,7 @@ export const endSprintOpAction = createAsyncThunk<
         thunkAPI.dispatch(
             dispatchOperationError(
                 opId,
-                OperationType.END_SPRINT,
+                OperationType.EndSprint,
                 error,
                 arg.sprintId
             )
