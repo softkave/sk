@@ -2,21 +2,21 @@ import { SendOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Button, Input } from "antd";
 import React from "react";
-import { chatConstants } from "../../models/chat/constants";
+import { commentConstants } from "../../models/comment/constants";
 import StyledContainer from "../styled/Container";
 
-export interface IChatInputProps {
-    onSendMessage: (message: string) => void;
+export interface ICommentInputProps {
+    onSendComment: (message: string) => void;
 }
 
-const ChatInput: React.FC<IChatInputProps> = (props) => {
-    const { onSendMessage } = props;
+const CommentInput: React.FC<ICommentInputProps> = (props) => {
+    const { onSendComment } = props;
 
-    const [message, setMessage] = React.useState("");
-    const sendMessage = () => {
-        if (message) {
-            onSendMessage(message);
-            setMessage("");
+    const [comment, setComment] = React.useState("");
+    const sendComment = () => {
+        if (comment) {
+            onSendComment(comment);
+            setComment("");
         }
     };
 
@@ -31,35 +31,34 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
                 })}
             >
                 <Input.TextArea
-                    // autoFocus
                     bordered={false}
-                    value={message}
+                    value={comment}
                     autoSize={{ minRows: 1, maxRows: 3 }}
-                    maxLength={chatConstants.maxMessageLength}
+                    maxLength={commentConstants.maxCommentLength}
                     onPressEnter={(evt) => {
                         evt.preventDefault();
-                        sendMessage();
+                        sendComment();
                     }}
                     style={{ resize: "none" }}
-                    placeholder="Write a message..."
+                    placeholder="Enter your comment"
                     onChange={(evt) => {
-                        setMessage(evt.target.value);
+                        setComment(evt.target.value);
                     }}
                 />
             </div>
             <Button
                 icon={<SendOutlined />}
-                disabled={message.length === 0}
-                onClick={sendMessage}
+                disabled={comment.length === 0}
+                onClick={sendComment}
                 style={{
                     border: "none",
                     backgroundColor: "inherit",
                     boxShadow: "none",
-                    color: message.length > 0 ? "#1890ff" : undefined,
+                    color: comment.length > 0 ? "#1890ff" : undefined,
                 }}
             ></Button>
         </StyledContainer>
     );
 };
 
-export default ChatInput;
+export default CommentInput;

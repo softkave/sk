@@ -26,6 +26,9 @@ enum OperationType {
     // board
     LoadOrgUsersAndRequests = "LoadOrgUsersAndRequests",
 
+    // task
+    LoadTaskComments = "LoadTaskComments",
+
     // chat
     GetUserRoomsAndChats = "getUserRoomsAndChats",
     SendMessage = "SendMessage",

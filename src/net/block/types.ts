@@ -5,6 +5,7 @@ import {
     INewBlockInput,
     IUpdateBlockInput,
 } from "../../models/block/block";
+import { IComment } from "../../models/comment/types";
 import { INotification } from "../../models/notification/notification";
 import { GetEndpointResult, GetEndpointResultError } from "../types";
 
@@ -33,6 +34,14 @@ export interface IGetBlockChildrenAPIParams {
 
 export type IGetBlockChildrenAPIResult = GetEndpointResult<{
     blocks: IBlock[];
+}>;
+
+export interface IGetTaskCommentsAPIParams {
+    taskId: string;
+}
+
+export type IGetTaskCommentsAPIResult = GetEndpointResult<{
+    comments: IComment[];
 }>;
 
 export interface IAddCollaboratorAPIParams {

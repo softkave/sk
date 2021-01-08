@@ -1,5 +1,6 @@
 import {
     blockFragment,
+    commentFragment,
     errorFragment,
     notificationFragment,
 } from "../fragments";
@@ -51,7 +52,7 @@ const deleteBlockMutation = `
     }
 `;
 
-const getUserRootBlocksQuery = `
+const getRootBlocksQuery = `
     ${blockFragment}
     ${errorFragment}
     query GetUserRootBlocksQuery {
@@ -79,6 +80,25 @@ const getBlockChildrenQuery = `
                 }
                 blocks {
                     ...blockFragment
+                }
+            }
+        }
+    }
+`;
+
+const getTaskCommentsQuery = `
+    ${commentFragment}
+    ${errorFragment}
+    query GetTaskCommentsQuery (
+        $taskId: String!, 
+    ) {
+        comment {
+            getComments (taskId: $taskId) {
+                errors {
+                    ...errorFragment
+                }
+                comments {
+                    ...commentFragment
                 }
             }
         }
@@ -138,7 +158,8 @@ export {
     getBlockChildrenQuery,
     blockFragment,
     addCollaboratorsMutation,
-    getUserRootBlocksQuery as getRootBlocksQuery,
+    getRootBlocksQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
+    getTaskCommentsQuery,
 };

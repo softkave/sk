@@ -6,6 +6,7 @@ import {
     deleteBlockMutation,
     getBlockChildrenQuery,
     getRootBlocksQuery,
+    getTaskCommentsQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
     updateBlockMutation,
@@ -18,6 +19,8 @@ import {
     IDeleteBlockAPIParams,
     IGetBlockChildrenAPIParams,
     IGetBlockChildrenAPIResult,
+    IGetTaskCommentsAPIParams,
+    IGetTaskCommentsAPIResult,
     IGetUserRootBlocksAPIResult,
     IRemoveCollaboratorAPIParams,
     IRevokeRequestAPIParams,
@@ -52,6 +55,12 @@ async function getBlockChildren(
         props,
         "data.block.getBlockChildren"
     );
+}
+
+async function getTaskComments(
+    props: IGetTaskCommentsAPIParams
+): Promise<IGetTaskCommentsAPIResult> {
+    return auth(null, getTaskCommentsQuery, props, "data.comment.getComments");
 }
 
 async function addCollaborators(
@@ -96,6 +105,7 @@ export default class BlockAPI {
     public static updateBlock = updateBlock;
     public static deleteBlock = deleteBlock;
     public static getBlockChildren = getBlockChildren;
+    public static getTaskComments = getTaskComments;
     public static addCollaborators = addCollaborators;
     public static removeCollaborator = removeCollaborator;
     public static getUserRootBlocks = getUserRootBlocks;

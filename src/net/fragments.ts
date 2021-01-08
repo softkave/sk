@@ -57,6 +57,18 @@ fragment userFragment on User {
 }
 `;
 
+export const commentFragment = `
+fragment commentFragment on Comment {
+    customId
+    taskId
+    comment
+    createdBy
+    createdAt
+    updatedAt
+    updatedBy
+}
+`;
+
 export const blockFragment = `
 fragment blockFragment on Block {
     customId

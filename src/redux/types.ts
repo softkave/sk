@@ -1,6 +1,7 @@
 import { AnyAction, Dispatch, ThunkDispatch } from "@reduxjs/toolkit";
 import { IMergeDataMeta } from "../utils/utils";
 import { IBlocksState } from "./blocks/types";
+import { ICommentsState } from "./comments/types";
 import { IKeyValueState } from "./key-value/types";
 import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
@@ -24,6 +25,7 @@ export interface IAppState {
     permissions: IPermissionsState;
     permissionGroups: IPermissionGroupsState;
     userAssignedPermissionGroups: IUserAssignedPermissionGroupsState;
+    comments: ICommentsState;
 }
 
 export interface IAppAsyncThunkConfig {

@@ -582,11 +582,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         color: isSubmitting ? "#f0f0f0" : undefined,
                     }}
                 >
-                    <RightCircleTwoTone style={{ fontSize: "16px" }} />
+                    {!isSubmitting && (
+                        <RightCircleTwoTone style={{ fontSize: "16px" }} />
+                    )}
                     <Typography.Text
                         style={{
                             display: "inline-block",
-                            marginLeft: "8px",
+                            marginLeft: isSubmitting ? "0px" : "8px",
                             color: "inherit",
                         }}
                     >

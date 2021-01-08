@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import blocksReducer from "./blocks/reducer";
+import commentsReducer from "./comments/reducer";
 import keyValueReducer from "./key-value/reducer";
 import notificationsReducer from "./notifications/reducer";
 import operationsReducer from "./operations/reducer";
@@ -21,6 +22,7 @@ const reducer = combineReducers({
     permissions: () => ({}),
     permissionGroups: () => ({}),
     userAssignedPermissionGroups: () => ({}),
+    comments: commentsReducer,
 });
 
 const store = configureStore({
