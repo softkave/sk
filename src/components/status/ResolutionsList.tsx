@@ -209,7 +209,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                     overflowY: "auto",
                 }}
             >
-                <Scrollbar>{resolutions}</Scrollbar>
+                {resolutions}
             </StyledContainer>
         );
     };
@@ -267,17 +267,19 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
                     formik.handleSubmit(e);
                 }}
             >
-                {renderAddControls()}
-                <Typography.Paragraph
-                    type="secondary"
-                    style={{ padding: "0 16px" }}
-                >
-                    Resolutions describe the state of a completed task, like
-                    "won't do" or in the case of a tech product, "deployed"
-                    meaning the task/feature has been deployed.
-                </Typography.Paragraph>
-                {renderList()}
-                {renderSubmitControls()}
+                <Scrollbar>
+                    {renderAddControls()}
+                    <Typography.Paragraph
+                        type="secondary"
+                        style={{ padding: "0 16px" }}
+                    >
+                        Resolutions describe the state of a completed task, like
+                        "won't do" or in the case of a tech product, "deployed"
+                        meaning the task/feature has been deployed.
+                    </Typography.Paragraph>
+                    {renderList()}
+                    {renderSubmitControls()}
+                </Scrollbar>
             </StyledContainerAsForm>
         );
     };
