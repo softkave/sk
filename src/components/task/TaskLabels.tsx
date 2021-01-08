@@ -100,6 +100,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
 
         const labelListMenu = (
             <Menu
+                multiple
                 onClick={(evt) => {
                     if (evt.key === ADD_NEW_LABEL_KEY) {
                         onSelectAddNewLabel();
