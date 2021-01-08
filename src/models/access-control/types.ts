@@ -40,6 +40,14 @@ export interface IPermission {
     available: boolean;
 }
 
+export interface IPermissionGroupInput {
+    name: string;
+    users?: string[];
+    description?: string;
+    prevId?: string;
+    nextId?: string;
+}
+
 export const orgResourceTypes: SystemResourceType[] = [
     SystemResourceType.Collaborator,
     SystemResourceType.Org,

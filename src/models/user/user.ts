@@ -19,6 +19,15 @@ export interface IUser {
     notifications?: string[];
 }
 
-export function getUserInitials(user: IUser) {
+export type ICollaborator = {
+    customId: string;
+    name: string;
+    email: string;
+    orgs: IUserOrg[];
+    imageURL?: string;
+    color: string;
+};
+
+export function getUserInitials(user: ICollaborator) {
     return getNameInitials(user.name);
 }

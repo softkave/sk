@@ -1,9 +1,9 @@
 import React from "react";
-import { getUserInitials, IUser } from "../../models/user/user";
+import { getUserInitials, ICollaborator } from "../../models/user/user";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 
 export interface IUserAvatarProps extends IItemAvatarProps {
-    user: IUser;
+    user: ICollaborator;
 }
 
 const UserAvatar: React.FC<IUserAvatarProps> = (props) => {

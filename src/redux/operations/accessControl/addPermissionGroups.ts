@@ -84,5 +84,9 @@ export const storeNewPermissionGroups = (
     store: IStoreLikeObject,
     pgs: IPermissionGroup[]
 ) => {
-    store.dispatch(PermissionGroupActions.bulkAddPermissionGroups(pgs));
+    store.dispatch(
+        PermissionGroupActions.bulkAdd(
+            pgs.map((pg) => ({ id: pg.customId, data: pg }))
+        )
+    );
 };

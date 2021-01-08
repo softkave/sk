@@ -1,223 +1,302 @@
-/*eslint no-useless-computed-key: "off"*/
-
-import { EditOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Tag, Typography } from "antd";
-import { Form } from "antd";
-import { FormikErrors, FormikTouched } from "formik";
+import { css } from "@emotion/css";
+import { Button, Form, Input, List, Select } from "antd";
 import React from "react";
-import { Check, Trash2, X as CloseIcon } from "react-feather";
-import { IBlockLabelInput } from "../../models/block/block";
-import { blockConstants } from "../../models/block/constants";
-import ColorPicker from "../forms/ColorPicker";
+import { ArrowLeft } from "react-feather";
+import {
+    IPermissionGroup,
+    IPermissionGroupInput,
+} from "../../models/access-control/types";
+import { ICollaborator } from "../../models/user/user";
+import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../forms/FormError";
+import { IFormikFormErrors } from "../forms/formik-utils";
+import {
+    formContentWrapperStyle,
+    formInputContentWrapperStyle,
+    StyledForm,
+} from "../forms/FormStyledComponents";
+import useFormHelpers from "../hooks/useFormHelpers";
 import StyledContainer from "../styled/Container";
+import PermissionGroupUser from "./PermissionGroupUser";
+import { permissionGroupValidationSchemas } from "./validation";
 
-export interface ILabelFormItemProps {
-    value: IBlockLabelInput;
-    onEdit: () => void;
-    onDelete: () => void;
-    onChange: (data: Partial<IBlockLabelInput>) => void;
-    onDiscardChanges: () => void;
-    onCommitChanges: () => void;
+export type PermissionGroupFormErrors = IFormikFormErrors<IPermissionGroupInput>;
 
-    isNew?: boolean;
-    isEditing?: boolean;
-    disabled?: boolean;
-    touched?: FormikTouched<IBlockLabelInput>;
-    errors?: FormikErrors<IBlockLabelInput>;
-    style?: React.CSSProperties;
-    handleBlur?: (
-        field: keyof IBlockLabelInput,
-        event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => void;
+export interface IPermissionGroupFormProps {
+    value: IPermissionGroupInput;
+    existingGroups: IPermissionGroup[];
+    collaborators: ICollaborator[];
+    collaboratorsMap: Record<string, ICollaborator>;
+    onClose: () => void;
+    onSubmit: (values: IPermissionGroupInput) => void;
+    isSubmitting?: boolean;
+    permissionGroup?: IPermissionGroup;
+    errors?: PermissionGroupFormErrors;
 }
 
-// TODO: preview the colors on change so that the user can see what it'll look like
-// TODO: add a get random color button that uses randomColor to get a new random color
+const kPermissionGroupExists = "Permission group exists";
 
-const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
+const PermissionGroupForm: React.FC<IPermissionGroupFormProps> = (props) => {
     const {
-        touched,
-        errors,
+        isSubmitting,
+        onClose,
         value,
-        handleBlur,
-        onCommitChanges,
-        onDiscardChanges,
-        onChange,
-        disabled,
-        onDelete,
-        isEditing,
-        isNew,
-        onEdit,
-        style,
+        onSubmit,
+        permissionGroup,
+        existingGroups,
+        collaborators,
+        collaboratorsMap,
+        errors: externalErrors,
     } = props;
 
-    const renderInputs = () => {
-        return (
-            <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
-                {value.name && (
-                    <Form.Item style={{ marginBottom: 8 }}>
-                        <Tag color={value.color}>{value.name}</Tag>
-                    </Form.Item>
-                )}
-                <Form.Item
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    help={
-                        touched?.name &&
-                        errors?.name && <FormError error={errors?.name} />
-                    }
-                    style={{ marginBottom: 8 }}
-                >
-                    <Input
-                        autoComplete="off"
-                        onBlur={(evt) => handleBlur && handleBlur("name", evt)}
-                        onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                            const val = event.target.value;
-                            onChange({ name: val });
-                        }}
-                        value={value.name}
-                        placeholder="Enter label name"
-                        disabled={disabled}
-                        maxLength={blockConstants.maxLabelNameLength}
-                    />
-                </Form.Item>
-                <Form.Item
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    help={
-                        touched?.description &&
-                        errors?.description && (
-                            <FormError error={errors.description} />
-                        )
-                    }
-                    style={{ marginBottom: 8 }}
-                >
-                    <Input.TextArea
-                        autoSize={{ minRows: 2, maxRows: 6 }}
-                        autoComplete="off"
-                        onBlur={(evt) =>
-                            handleBlur && handleBlur("description", evt)
-                        }
-                        onChange={(
-                            event: React.ChangeEvent<HTMLTextAreaElement>
-                        ) => {
-                            const val = event.target.value;
-                            onChange({ description: val });
-                        }}
-                        value={value.description}
-                        placeholder="Enter label description"
-                        maxLength={blockConstants.maxLabelNameLength}
-                    />
-                </Form.Item>
-            </StyledContainer>
-        );
+    const {
+        formik,
+        formikHelpers,
+        formikChangedFieldsHelpers,
+    } = useFormHelpers({
+        errors: externalErrors,
+        formikProps: {
+            onSubmit,
+            initialValues: value,
+            validationSchema: permissionGroupValidationSchemas.permissionGroup,
+        },
+    });
+
+    const getGroupExistsError = (name: string) => {
+        if (name && name.length > 0) {
+            name = name.toLowerCase();
+            const existingGroup = existingGroups.find(
+                (group) => group.name?.toLowerCase() === name
+            );
+
+            if (
+                permissionGroup &&
+                existingGroup &&
+                existingGroup.customId === permissionGroup.customId
+            ) {
+                return;
+            }
+
+            return kPermissionGroupExists;
+        }
     };
 
-    const renderRegularLabel = () => {
+    const renderNameInput = () => {
+        // TODO: can this be more efficient?
+        const nameError =
+            formik.errors.name || getGroupExistsError(formik.values.name);
+
         return (
-            <StyledContainer
-                s={{
-                    flexDirection: "column",
-                    width: "100%",
-                    marginBottom: "8px",
-                }}
+            <Form.Item
+                label="Group Name"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                help={formik.touched.name && <FormError error={nameError} />}
+                style={{ width: "100%" }}
             >
-                <StyledContainer>
-                    <Tag color={value.color}>{value.name}</Tag>
-                </StyledContainer>
-                <Typography.Paragraph
-                    type="secondary"
-                    style={{ margin: 0, marginTop: "4px" }}
-                >
-                    {value.description}
-                </Typography.Paragraph>
-            </StyledContainer>
-        );
-    };
-
-    const renderLabelButtons = () => {
-        return (
-            <Space>
-                {isEditing && (
-                    <Button
-                        icon={<Check />}
-                        onClick={onCommitChanges}
-                        htmlType="button"
-                        disabled={disabled || value.name.length === 0}
-                        className="icon-btn"
-                    />
-                )}
-                {isEditing && (
-                    <Button
-                        onClick={onDiscardChanges}
-                        icon={<CloseIcon />}
-                        disabled={isNew || value.name.length === 0}
-                        htmlType="button"
-                        className="icon-btn"
-                    />
-                )}
-                {!isEditing && (
-                    <Button
-                        disabled={disabled}
-                        icon={<EditOutlined />}
-                        onClick={onEdit}
-                        htmlType="button"
-                        className="icon-btn"
-                    />
-                )}
-                <Button
-                    disabled={disabled}
-                    icon={<Trash2 />}
-                    onClick={() => onDelete()}
-                    htmlType="button"
-                    className="icon-btn"
+                <Input
+                    value={formik.values.name}
+                    onChange={(val) => {
+                        formik.setFieldValue("name", val);
+                        formikChangedFieldsHelpers.addField("name");
+                    }}
+                    autoComplete="off"
+                    disabled={isSubmitting}
+                    placeholder="Permission group name"
                 />
-            </Space>
+            </Form.Item>
         );
     };
 
-    const renderLabel = () => {
+    const renderDesc = () => {
         return (
-            <StyledContainer
-                s={{
-                    width: "100%",
-                    padding: "16px",
-                    flexDirection: "column",
-
-                    ...(style || {}),
-                }}
+            <Form.Item
+                label="Description"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                help={
+                    formik.touched.description && (
+                        <FormError>{formik.errors.description}</FormError>
+                    )
+                }
             >
-                <StyledContainer s={{ alignItems: "flex-start" }}>
-                    <StyledContainer
-                        s={{
-                            flexDirection: "column",
-                            flex: 1,
-                            marginRight: "8px",
-                        }}
-                    >
-                        {isEditing ? renderInputs() : renderRegularLabel()}
-                    </StyledContainer>
-                    <StyledContainer
-                        s={{ flexDirection: "column", height: "100%" }}
-                    >
-                        <ColorPicker
-                            value={value.color}
-                            disabled={disabled ? true : !isEditing}
-                            onChange={(val) => {
-                                onChange({ color: val });
-                            }}
-                        />
-                    </StyledContainer>
-                </StyledContainer>
-                <StyledContainer>{renderLabelButtons()}</StyledContainer>
+                <Input.TextArea
+                    value={formik.values.description}
+                    onChange={(val) => {
+                        formik.setFieldValue("description", val);
+                        formikChangedFieldsHelpers.addField("description");
+                    }}
+                    autoComplete="off"
+                    disabled={isSubmitting}
+                    placeholder="Description"
+                />
+            </Form.Item>
+        );
+    };
+
+    const removeUser = (userId: string, assignees: string[] = []) => {
+        const index = assignees.indexOf(userId);
+
+        if (index !== -1) {
+            const updated = [...assignees];
+            updated.splice(index, 1);
+            return updated;
+        }
+
+        return assignees;
+    };
+
+    const addUser = (collaborator: ICollaborator, assignees: string[] = []) => {
+        const exists = !!assignees.find((next) => {
+            return collaborator.customId === next;
+        });
+
+        if (!exists) {
+            return [...assignees, collaborator.customId];
+        }
+
+        return assignees;
+    };
+
+    const renderPermissionGroupUser = (userId: string) => (
+        <List.Item>
+            <PermissionGroupUser
+                key={userId}
+                collaborator={collaboratorsMap[userId]}
+                onRemove={() => {
+                    formik.setFieldValue(
+                        "users",
+                        removeUser(userId, formik.values.users)
+                    );
+
+                    formikChangedFieldsHelpers.addField("users");
+                }}
+                disabled={isSubmitting}
+            />
+        </List.Item>
+    );
+
+    const renderUserList = () => {
+        if (!Array.isArray(formik.values.users)) {
+            return null;
+        }
+
+        if (formik.values.users.length === 0) {
+            return "Not assigned to anybody yet";
+        }
+
+        return (
+            <List
+                dataSource={formik.values.users}
+                renderItem={renderPermissionGroupUser}
+            />
+        );
+    };
+
+    const renderUsersInput = () => {
+        return (
+            <Form.Item
+                label="Users"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+            >
+                <Select
+                    placeholder="Select user"
+                    value={undefined}
+                    onChange={(index) => {
+                        formik.setFieldValue(
+                            "users",
+                            addUser(
+                                collaborators[Number(index)],
+                                formik.values.users
+                            )
+                        );
+                        formikChangedFieldsHelpers.addField("users");
+                    }}
+                    disabled={isSubmitting}
+                    optionLabelProp="label"
+                >
+                    {collaborators.map((collaborator, index) => {
+                        return (
+                            <Select.Option
+                                value={index}
+                                key={collaborator.customId}
+                                label={collaborator.name}
+                            >
+                                <CollaboratorThumbnail
+                                    collaborator={collaborator}
+                                />
+                            </Select.Option>
+                        );
+                    })}
+                </Select>
+                <div className={css({ marginBottom: "16px" })}>
+                    {renderUserList()}
+                </div>
+            </Form.Item>
+        );
+    };
+
+    const getSubmitLabel = () => {
+        if (isSubmitting) {
+            if (permissionGroup) {
+                return "Saving Changes";
+            } else {
+                return "Creating Permission Group";
+            }
+        } else {
+            if (permissionGroup) {
+                return "Save Changes";
+            } else {
+                return "Create Permission Group";
+            }
+        }
+    };
+
+    const renderControls = () => {
+        return (
+            <StyledContainer>
+                <Button
+                    block
+                    type="primary"
+                    htmlType="submit"
+                    loading={isSubmitting}
+                    disabled={!formikChangedFieldsHelpers.hasChanges()}
+                >
+                    {getSubmitLabel()}
+                </Button>
             </StyledContainer>
         );
     };
 
-    return renderLabel();
+    const renderForm = () => {
+        const { handleSubmit } = formik;
+        const errors = (formik.errors as any) as PermissionGroupFormErrors;
+
+        return (
+            <StyledForm onSubmit={handleSubmit}>
+                <StyledContainer s={formContentWrapperStyle}>
+                    <StyledContainer s={formInputContentWrapperStyle}>
+                        <StyledContainer s={{ paddingBottom: "16px" }}>
+                            <Button
+                                style={{ cursor: "pointer" }}
+                                onClick={onClose}
+                                className="icon-btn"
+                            >
+                                <ArrowLeft />
+                            </Button>
+                        </StyledContainer>
+                        {errors.error && <FormError error={errors.error} />}
+                        {renderNameInput()}
+                        {renderDesc()}
+                    </StyledContainer>
+                    {renderControls()}
+                </StyledContainer>
+            </StyledForm>
+        );
+    };
+
+    return renderForm();
 };
 
-export default React.memo(LabelFormItem);
+export default React.memo(PermissionGroupForm);

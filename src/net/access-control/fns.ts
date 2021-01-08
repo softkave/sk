@@ -4,7 +4,7 @@ import {
     IUserAssignedPermissionGroup,
 } from "../../models/access-control/types";
 import auth from "../auth";
-import { GetEndpointResult } from "../types";
+import { GetEndpointResult, GetEndpointResultError } from "../types";
 import {
     addPermissionGroupsMutation,
     deletePermissionGroupsMutation,
@@ -67,6 +67,8 @@ export interface IAddPermissionGroupsAPIParams {
         data: IAddPermissionGroupsPermissionGroupInput;
     }>;
 }
+
+export type IAddPermissionGroupsAPIErrors = GetEndpointResultError<IAddPermissionGroupsAPIParams>;
 
 export type IAddPermissionGroupsAPIResult = GetEndpointResult<{
     permissionGroups: Array<{

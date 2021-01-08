@@ -1,27 +1,31 @@
 import * as yup from "yup";
-import { blockConstants } from "../../models/block/constants";
+import { accessControlConstants } from "../../models/access-control/constants";
 
 const name = yup
     .string()
     .trim()
-    .max(blockConstants.maxLabelNameLength, "Input is too long")
+    .max(
+        accessControlConstants.maxPermissionGroupNameLength,
+        "Input is too long"
+    )
     .required("Field is required");
+
 const description = yup
     .string()
     .trim()
-    .max(blockConstants.maxLabelDescriptionLength, "Input is too long")
+    .max(
+        accessControlConstants.maxPermissionGroupDescriptionLength,
+        "Input is too long"
+    )
     .nullable();
 
-const label = yup.object().shape({
+const permissionGroup = yup.object().shape({
     name,
     description,
 });
 
-const labelList = yup.array().of(label).max(blockConstants.maxAvailableLabels);
-
-export const labelValidationSchemas = {
+export const permissionGroupValidationSchemas = {
     name,
     description,
-    label,
-    labelList,
+    permissionGroup,
 };
