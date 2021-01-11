@@ -53,7 +53,11 @@ export const updateRoomReadCounterOpAction = createAsyncThunk<
         let readCounter = arg.readCounter || getDateString();
 
         if (!isDemoMode) {
-            const result = await ChatAPI.updateRoomReadCounter(arg);
+            const result = await ChatAPI.updateRoomReadCounter({
+                orgId: arg.orgId,
+                readCounter: arg.readCounter,
+                roomId: arg.roomId,
+            });
 
             if (result && result.errors) {
                 throw result.errors;
