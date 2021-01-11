@@ -108,7 +108,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                     }}
                     autoComplete="off"
                     disabled={isSubmitting}
-                    noEditable={!board}
+                    inputOnly={!board}
                     placeholder="Board name"
                 />
             </Form.Item>
@@ -141,7 +141,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                     }}
                     autoComplete="off"
                     disabled={isSubmitting}
-                    noEditable={!board}
+                    inputOnly={!board}
                     placeholder="Board description"
                 />
             </Form.Item>

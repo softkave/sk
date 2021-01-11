@@ -7,6 +7,7 @@ import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
 import { IPermissionGroupsState } from "./permissionGroups/types";
 import { IPermissionsState } from "./permissions/types";
+import { IProgramAccessTokensState } from "./programAccessTokens/types";
 import { IRoomsMap } from "./rooms/types";
 import { ISessionState } from "./session/types";
 import { ISprintsState } from "./sprints/types";
@@ -26,6 +27,7 @@ export interface IAppState {
     permissionGroups: IPermissionGroupsState;
     userAssignedPermissionGroups: IUserAssignedPermissionGroupsState;
     comments: ICommentsState;
+    programAccessTokens: IProgramAccessTokensState;
 }
 
 export interface IAppAsyncThunkConfig {

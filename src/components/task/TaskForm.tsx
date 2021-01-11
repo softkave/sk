@@ -214,7 +214,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     }}
                     autoComplete="off"
                     disabled={isSubmitting}
-                    noEditable={!task}
+                    inputOnly={!task}
                     placeholder="Task"
                 />
             </Form.Item>
@@ -247,7 +247,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     }}
                     autoComplete="off"
                     disabled={isSubmitting}
-                    noEditable={!task}
+                    inputOnly={!task}
                     placeholder="Description"
                     paragraphProps={{ type: "secondary" }}
                 />

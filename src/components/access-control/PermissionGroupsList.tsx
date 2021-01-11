@@ -85,26 +85,28 @@ const BoardList: React.FC<IPermissionGroupsListProps> = (props) => {
         );
     }
 
-    return (
-        <Space direction="vertical" size="middle">
-            <ListHeader
-                onClickCreate={openForm}
-                onSearchTextChange={setSearchText}
-                title="Permission groups"
-                searchPlaceholder="Search groups..."
-            />
-            <List
-                dataSource={filteredGroups}
-                renderItem={(pg) => (
-                    <PermissionGroupItem
-                        deletePermissionGroup={}
-                        permissionGroup={}
-                        users={}
-                    />
-                )}
-            />
-        </Space>
-    );
+    return null;
+
+    // return (
+    //     <Space direction="vertical" size="middle">
+    //         <ListHeader
+    //             onClickCreate={openForm}
+    //             onSearchTextChange={setSearchText}
+    //             title="Permission groups"
+    //             searchPlaceholder="Search groups..."
+    //         />
+    //         <List
+    //             dataSource={filteredGroups}
+    //             renderItem={(pg) => (
+    //                 <PermissionGroupItem
+    //                     deletePermissionGroup={}
+    //                     permissionGroup={}
+    //                     users={}
+    //                 />
+    //             )}
+    //         />
+    //     </Space>
+    // );
 };
 
 export default BoardList;

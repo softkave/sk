@@ -94,7 +94,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
                 }}
                 autoComplete="off"
                 disabled={isSubmitting}
-                noEditable={!org}
+                inputOnly={!org}
                 placeholder="Org name"
             />
         );
@@ -153,7 +153,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
                 }}
                 autoComplete="off"
                 disabled={isSubmitting}
-                noEditable={!org}
+                inputOnly={!org}
                 placeholder="Org description"
             />
         );

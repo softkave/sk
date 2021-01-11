@@ -111,7 +111,7 @@ const SprintForm: React.FC<ISprintFormProps> = (props) => {
                     }}
                     autoComplete="off"
                     disabled={isSubmitting}
-                    noEditable={!sprint}
+                    inputOnly={!sprint}
                     placeholder="Sprint name"
                 />
             </Form.Item>

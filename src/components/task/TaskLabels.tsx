@@ -65,7 +65,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                 style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    marginBottom: "4px",
+                    marginBottom: "2px",
                 }}
             >
                 {label.name}

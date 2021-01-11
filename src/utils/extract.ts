@@ -1,5 +1,4 @@
-import isFunction from "lodash/isFunction";
-import pick from "lodash/pick";
+import { pick, isFunction } from "lodash";
 import cast from "./cast";
 
 export type ExtractFieldTransformer<
@@ -25,7 +24,7 @@ export type ExtractFieldsFrom<
     ExtraArgs = undefined,
     ScalarTypes = ExtractFieldsDefaultScalarTypes
 > = {
-    [Key in keyof Required<T>]: T[Key] extends ScalarTypes
+    [Key in keyof Required<T>]: T[Key] extends ScalarTypes | ScalarTypes[]
         ?
               | boolean
               | ExtractFieldTransformer<
@@ -55,6 +54,7 @@ export interface IObjectPaths<
         property: string;
         transformer: ExtractFieldTransformer<any>;
     }>;
+    finalize?: (data: T, currentResult: Result, extraArgs: ExtraArgs) => Result;
 }
 
 export function getFields<
@@ -63,12 +63,18 @@ export function getFields<
     ExtraArgs = any,
     ScalarTypes = ExtractFieldsDefaultScalarTypes
 >(
-    data: ExtractFieldsFrom<T, Result, ExtraArgs, ScalarTypes>
+    data: ExtractFieldsFrom<T, Result, ExtraArgs, ScalarTypes>,
+    finalizeFn?: (
+        data: T,
+        currentResult: Result,
+        extraArgs: ExtraArgs
+    ) => Result
 ): IObjectPaths<T, Result, ExtraArgs> {
     const keys = Object.keys(data);
 
     return keys.reduce(
         (paths, key) => {
+            // @ts-ignore
             const value = data[key];
 
             if (isFunction(value)) {
@@ -88,6 +94,7 @@ export function getFields<
             object: cast<T>({}),
             extraArgs: cast<ExtraArgs>({}),
             result: cast<Result>({}),
+            finalize: finalizeFn,
         } as IObjectPaths<T, Result, ExtraArgs>
     );
 }
@@ -102,11 +109,7 @@ export function extractFields<
     paths: ObjectPaths,
     extraArgs?: ObjectPaths["extraArgs"]
 ): ObjectPaths["result"] {
-    if (!data) {
-        return data;
-    }
-
-    const result = pick(data, paths.scalarFields);
+    let result = pick(data, paths.scalarFields);
 
     paths.scalarFieldsWithTransformers.forEach(({ property, transformer }) => {
         const propValue = data[property];
@@ -119,11 +122,15 @@ export function extractFields<
             propValue === null ? null : transformer(propValue, extraArgs, data);
     });
 
+    if (paths.finalize) {
+        result = paths.finalize(data, result, extraArgs);
+    }
+
     return (result as unknown) as ObjectPaths["result"];
 }
 
 export function makeExtract<T extends IObjectPaths<any>>(fields: T) {
-    const fn = <T1 extends T["object"]>(data: T1) => {
+    const fn = <T1 extends T["object"]>(data: Partial<T1>) => {
         return extractFields(data, fields);
     };
 
@@ -131,7 +138,7 @@ export function makeExtract<T extends IObjectPaths<any>>(fields: T) {
 }
 
 export function makeListExtract<T extends IObjectPaths<any>>(fields: T) {
-    const fn = <T1 extends T["object"]>(data: T1[]) => {
+    const fn = <T1 extends T["object"]>(data: Partial<T1>[]) => {
         return data.map((datum) => extractFields(datum, fields));
     };
 

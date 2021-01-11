@@ -5,6 +5,7 @@ import commentsReducer from "./comments/reducer";
 import keyValueReducer from "./key-value/reducer";
 import notificationsReducer from "./notifications/reducer";
 import operationsReducer from "./operations/reducer";
+import programAccessTokensReducer from "./programAccessTokens/reducer";
 import roomsReducer from "./rooms/reducer";
 import sessionReducer from "./session/reducer";
 import sprintsReducer from "./sprints/reducer";
@@ -23,6 +24,7 @@ const reducer = combineReducers({
     permissionGroups: () => ({}),
     userAssignedPermissionGroups: () => ({}),
     comments: commentsReducer,
+    programAccessTokens: programAccessTokensReducer,
 });
 
 const store = configureStore({

@@ -15,8 +15,9 @@ export interface IInputWithControlsProps {
     placeholder?: string;
     disabled?: boolean;
     useTextArea?: boolean;
-    noControls?: boolean;
-    noEditable?: boolean;
+    hideControls?: boolean;
+    inputOnly?: boolean;
+    bordered?: boolean;
     autoComplete?: string;
     autoSize?: TextAreaProps["autoSize"];
     paragraphProps?: Partial<ParagraphProps>;
@@ -28,8 +29,9 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         placeholder,
         disabled,
         useTextArea,
-        noEditable,
-        noControls,
+        inputOnly,
+        hideControls,
+        bordered,
         autoComplete,
         onChange,
         revertChanges,
@@ -41,6 +43,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
         () =>
             useTextArea ? (
                 <Input.TextArea
+                    bordered={bordered}
                     autoComplete={autoComplete}
                     onChange={(evt) => {
                         onChange(evt.target.value);
@@ -52,6 +55,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 />
             ) : (
                 <Input
+                    bordered={bordered}
                     autoComplete={autoComplete}
                     onChange={(evt) => {
                         onChange(evt.target.value);
@@ -69,6 +73,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
             disabled,
             autoSize,
             onChange,
+            bordered,
         ]
     );
 
@@ -76,35 +81,21 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
 
     const renderFn: EditableRenderFn = React.useCallback(
         (isEditing, setEditing) => {
-            if (!isEditing) {
+            if (!isEditing && !hideControls) {
                 return (
                     <Space direction="vertical" style={{ width: "100%" }}>
                         <Typography.Paragraph {...paragraphProps}>
                             {value}
                         </Typography.Paragraph>
-                        {!noControls && (
-                            // <div onClick={() => setEditing(true)}>
-                            //     <Typography.Text
-                            //         type="secondary"
-                            //         style={{
-                            //             // color: "rgb(24, 144, 255)",
-                            //             cursor: "pointer",
-                            //             // textDecoration: "underline",
-                            //         }}
-                            //     >
-                            //         Edit
-                            //     </Typography.Text>
-                            // </div>
-                            <Space>
-                                <Button
-                                    disabled={disabled}
-                                    icon={<EditOutlined />}
-                                    onClick={() => setEditing(true)}
-                                    htmlType="button"
-                                    className="icon-btn"
-                                />
-                            </Space>
-                        )}
+                        <div>
+                            <Button
+                                disabled={disabled}
+                                icon={<EditOutlined />}
+                                onClick={() => setEditing(true)}
+                                htmlType="button"
+                                className="icon-btn"
+                            />
+                        </div>
                     </Space>
                 );
             }
@@ -112,7 +103,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
             return (
                 <Space direction="vertical" style={{ width: "100%" }}>
                     {input}
-                    {!noControls && (
+                    {!hideControls && (
                         <Space>
                             <Button
                                 icon={<Check />}
@@ -131,44 +122,15 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                                 htmlType="button"
                                 className="icon-btn"
                             />
-                            {/* <div onClick={() => setEditing(false)}>
-                                <Typography.Text
-                                    type="secondary"
-                                    style={{
-                                        // color: "rgb(24, 144, 255)",
-                                        cursor: "pointer",
-                                        // textDecoration: "underline",
-                                    }}
-                                >
-                                    Save
-                                </Typography.Text>
-                            </div>
-                            <div
-                                onClick={() => {
-                                    revertChanges();
-                                    setEditing(false);
-                                }}
-                            >
-                                <Typography.Text
-                                    type="danger"
-                                    style={{
-                                        // color: "rgb(24, 144, 255)",
-                                        cursor: "pointer",
-                                        // textDecoration: "underline",
-                                    }}
-                                >
-                                    Cancel
-                                </Typography.Text>
-                            </div> */}
                         </Space>
                     )}
                 </Space>
             );
         },
-        [disabled, noControls, revertChanges, value, input, paragraphProps]
+        [disabled, hideControls, revertChanges, value, input, paragraphProps]
     );
 
-    if (!noEditable) {
+    if (!inputOnly) {
         content = <Editable disabled={disabled} render={renderFn} />;
     } else {
         content = input;
@@ -177,6 +139,9 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
     return <StyledContainer>{content}</StyledContainer>;
 };
 
-InputWithControls.defaultProps = { autoSize: { minRows: 4, maxRows: 8 } };
+InputWithControls.defaultProps = {
+    bordered: true,
+    autoSize: { minRows: 4, maxRows: 8 },
+};
 
 export default React.memo(InputWithControls);
