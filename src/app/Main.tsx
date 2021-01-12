@@ -27,6 +27,7 @@ import Routes from "./Routes";
 let timeoutHandle: number;
 const demoKey = "demo";
 
+// Disconnects the socket after 5 minutes of the user leaving the tab
 const handleHidden = () => {
     let hidden = "hidden";
 
@@ -167,7 +168,7 @@ const Main: React.FC<{}> = () => {
                 token: token!,
             });
 
-            handleHidden();
+            // handleHidden();
             routeToApp();
         } else if (sessionType === SessionType.Web) {
             SocketAPI.disconnectSocket();
