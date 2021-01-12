@@ -78,5 +78,5 @@ export const storeDeletePermissionGroups = (
     store: IStoreLikeObject,
     ids: string[]
 ) => {
-    store.dispatch(PermissionGroupActions.bulkDeletePermissionGroups(ids));
+    // store.dispatch(PermissionGroupActions.bulkDeletePermissionGroups(ids));
 };

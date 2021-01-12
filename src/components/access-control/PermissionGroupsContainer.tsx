@@ -10,7 +10,6 @@ import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
-import LabelList from "./PermissionGroups";
 
 export interface ILabelListContainerProps {
     block: IBlock;
@@ -65,19 +64,7 @@ const LabelListContainer: React.FC<ILabelListContainerProps> = (props) => {
         setLoading(false);
     };
 
-    return (
-        <LabelList
-            user={user}
-            labelList={labelList}
-            saveChanges={onSaveChanges}
-            isSubmitting={loading}
-            errors={
-                errors?.errors.boardLabels
-                    ? { labelList: errors.errors.boardLabels }
-                    : undefined
-            }
-        />
-    );
+    return null;
 };
 
 export default React.memo(LabelListContainer);

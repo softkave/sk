@@ -59,9 +59,9 @@ export const getResourcePermissionGroupsOpAction = createAsyncThunk<
         } else {
         }
 
-        thunkAPI.dispatch(
-            PermissionGroupActions.bulkAddPermissionGroups(permissionGroups)
-        );
+        // thunkAPI.dispatch(
+        //     PermissionGroupActions.bulkAddPermissionGroups(permissionGroups)
+        // );
 
         thunkAPI.dispatch(
             dispatchOperationCompleted(

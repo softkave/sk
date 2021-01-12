@@ -88,57 +88,57 @@ const EditOrgFormContainer: React.FC<IPermissionGroupFormContainerProps> = (
         setLoading(true);
         setData(d);
 
-        const result = props.permissionGroup
-            ? await dispatch(
-                  updatePermissionGroupsOpAction({
-                      blockId,
-                      permissionGroups: [
-                          { customId: props.permissionGroup.customId, data: d },
-                      ],
-                      deleteOpOnComplete: true,
-                  })
-              )
-            : await dispatch(
-                  addPermissionGroupsOpAction({
-                      blockId,
-                      // TODO: tempId
-                      permissionGroups: [{ tempId: "", data: d }],
-                      deleteOpOnComplete: true,
-                  })
-              );
+        // const result = props.permissionGroup
+        //     ? await dispatch(
+        //           updatePermissionGroupsOpAction({
+        //               blockId,
+        //               permissionGroups: [
+        //                   { customId: props.permissionGroup.customId, data: d },
+        //               ],
+        //               deleteOpOnComplete: true,
+        //           })
+        //       )
+        //     : await dispatch(
+        //           addPermissionGroupsOpAction({
+        //               blockId,
+        //               // TODO: tempId
+        //               permissionGroups: [{ tempId: "", data: d }],
+        //               deleteOpOnComplete: true,
+        //           })
+        //       );
 
-        const op = unwrapResult(result);
+        // const op = unwrapResult(result);
 
-        if (!op) {
-            return;
-        }
+        // if (!op) {
+        //     return;
+        // }
 
-        const opData = getOpData(op);
+        // const opData = getOpData(op);
 
-        setLoading(false);
+        // setLoading(false);
 
-        if (opData.error) {
-            if (props.permissionGroup) {
-                message.error("Error updating permission group");
-            } else {
-                message.error("Error creating permission group");
-            }
+        // if (opData.error) {
+        //     if (props.permissionGroup) {
+        //         message.error("Error updating permission group");
+        //     } else {
+        //         message.error("Error creating permission group");
+        //     }
 
-            const flattenedErrors = flattenErrorList(opData.error);
-            setErrors({
-                errors: flattenedErrors,
-                errorList: opData.error,
-            });
-        } else {
-            if (props.permissionGroup) {
-                message.success("Permission group updated successfully");
-            } else {
-                message.success("Permission group created successfully");
-                // onClose();
-            }
+        //     const flattenedErrors = flattenErrorList(opData.error);
+        //     setErrors({
+        //         errors: flattenedErrors,
+        //         errorList: opData.error,
+        //     });
+        // } else {
+        //     if (props.permissionGroup) {
+        //         message.success("Permission group updated successfully");
+        //     } else {
+        //         message.success("Permission group created successfully");
+        //         // onClose();
+        //     }
 
-            dispatch(OperationActions.deleteOperation(opData.opId));
-        }
+        //     dispatch(OperationActions.deleteOperation(opData.opId));
+        // }
     };
 
     return (

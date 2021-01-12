@@ -79,8 +79,9 @@ const CurrentSprintHeader: React.FC<ICurrentSprintHeaderProps> = (props) => {
                 />
                 <Typography.Text type="danger">
                     {remainingDaysAbs} working{" "}
-                    {pluralize("day", remainingDaysAbs)} overdue {tooltip}
+                    {pluralize("day", remainingDaysAbs)} overdue
                 </Typography.Text>
+                {tooltip}
             </span>
         );
     } else {
@@ -94,6 +95,7 @@ const CurrentSprintHeader: React.FC<ICurrentSprintHeaderProps> = (props) => {
                     style={{ borderLeft: "1px solid rgba(0, 0, 0, 0.6)" }}
                 />
                 <Typography.Text type="warning">Due today</Typography.Text>
+                {tooltip}
             </span>
         );
     }
