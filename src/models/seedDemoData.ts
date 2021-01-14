@@ -2,7 +2,7 @@ import moment from "moment";
 import randomColor from "randomcolor";
 import { IOperation, OperationStatus } from "../redux/operations/operation";
 import OperationType from "../redux/operations/OperationType";
-import { getDateString, getNewId, getNewTempId } from "../utils/utils";
+import { getDateString, getNewId } from "../utils/utils";
 import {
     BlockPriority,
     BlockType,
@@ -24,6 +24,7 @@ import {
 } from "./block/block";
 import { getDefaultStatuses } from "./block/utils";
 import { IRoom } from "./chat/types";
+import { getTempRoomId } from "./chat/utils";
 import {
     CollaborationRequestStatusType,
     INotification,
@@ -293,9 +294,7 @@ function seedRooms({
     collaborators: IUser[];
 }): IRoom[] {
     const rooms = collaborators.map((collaborator) => {
-        const tempRoomId = getNewTempId(
-            org.customId + "-" + collaborator.customId
-        );
+        const tempRoomId = getTempRoomId(org.customId, collaborator.customId);
         const tempRoom: IRoom = {
             orgId: org.customId,
             customId: tempRoomId,

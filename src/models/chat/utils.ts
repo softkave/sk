@@ -1,4 +1,5 @@
 import { IPersistedRoom } from "../../net/chat/chat";
+import { getNewTempId } from "../../utils/utils";
 import { IRoom } from "./types";
 
 export function getRoomFromPersistedRoom(
@@ -16,4 +17,9 @@ export function getRoomFromPersistedRoom(
     };
 
     return room;
+}
+
+export function getTempRoomId(orgId: string, recipientId: string) {
+    // The user and the current user may also belong to another org
+    return getNewTempId(orgId + "_" + recipientId);
 }

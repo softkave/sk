@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBlock } from "../../../models/block/block";
 import { IRoom } from "../../../models/chat/types";
+import { getTempRoomId } from "../../../models/chat/utils";
 import { INotification } from "../../../models/notification/notification";
 import { IUser } from "../../../models/user/user";
 import {
@@ -9,7 +10,7 @@ import {
     notificationFragment,
 } from "../../../net/fragments";
 import { invokeGraphQLWithAuth } from "../../../net/utils";
-import { getNewId, getNewTempId } from "../../../utils/utils";
+import { getNewId } from "../../../utils/utils";
 import BlockActions from "../../blocks/actions";
 import KeyValueActions from "../../key-value/actions";
 import KeyValueSelectors from "../../key-value/selectors";
@@ -212,7 +213,7 @@ function createOrgCollaboratorsTempRooms(
         }
 
         // Collaborator can share multiple orgs with user
-        const tempRoomId = getNewTempId(orgId + "-" + collaborator.customId);
+        const tempRoomId = getTempRoomId(orgId, collaborator.customId);
         const tempRoom: IRoom = {
             orgId,
             customId: tempRoomId,

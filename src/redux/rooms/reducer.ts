@@ -81,10 +81,18 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
 
         if (!room) {
             const rmId = Object.keys(state).find((id) => {
-                return state[id].recipientId === action.payload.recipientId;
+                const rm = state[id];
+                return (
+                    rm.orgId === action.payload.orgId &&
+                    rm.recipientId === action.payload.recipientId
+                );
             })!;
 
             room = state[rmId];
+        }
+
+        if (!room) {
+            return;
         }
 
         room.chats.push(action.payload.chat);

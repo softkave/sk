@@ -38,6 +38,7 @@ export interface IAddChatActionArgs {
     chat: IChat;
     recipientId: string;
     roomId: string;
+    orgId: string;
     markAsUnseen?: boolean;
 }
 

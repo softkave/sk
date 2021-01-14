@@ -36,6 +36,7 @@ export default function handleNewMessageEvent(
             roomId: room.customId,
             recipientId: room.recipientId,
             markAsUnseen: !isUserInRoom,
+            orgId: room.orgId,
         })
     );
 

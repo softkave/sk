@@ -1,10 +1,12 @@
-import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
+import {
+    getRoomFromPersistedRoom,
+    getTempRoomId,
+} from "../../../models/chat/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import RoomActions from "../../../redux/rooms/actions";
 import RoomSelectors from "../../../redux/rooms/selectors";
 import SessionSelectors from "../../../redux/session/selectors";
 import { IStoreLikeObject } from "../../../redux/types";
-import { getNewTempId } from "../../../utils/utils";
 import { IIncomingNewRoomPacket } from "../incomingEventTypes";
 
 export default function handleNewRoomEvent(
@@ -22,7 +24,7 @@ export default function handleNewRoomEvent(
     )!;
 
     const recipientId = recipientMemberData.userId;
-    const tempRoomId = getNewTempId(recipientId);
+    const tempRoomId = getTempRoomId(data.room.orgId, recipientId);
     const tempRoom = RoomSelectors.getRoom(store.getState(), tempRoomId);
 
     if (tempRoom) {

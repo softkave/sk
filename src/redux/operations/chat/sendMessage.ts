@@ -40,7 +40,6 @@ export const sendMessageOpAction = createAsyncThunk<
     IAppAsyncThunkConfig
 >("op/chat/sendMessage", async (arg, thunkAPI) => {
     const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-    // const isDemoMode = true;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     const isTempRoom = isTempId(arg.roomId);
     const chatTempId = getNewTempId();
@@ -59,6 +58,7 @@ export const sendMessageOpAction = createAsyncThunk<
         thunkAPI.getState(),
         {
             type: OperationType.SendMessage,
+            resourceId: arg.roomId,
         }
     );
 
@@ -105,6 +105,7 @@ export const sendMessageOpAction = createAsyncThunk<
                 chat,
                 recipientId: arg.recipientId,
                 roomId: arg.roomId,
+                orgId: arg.orgId,
             })
         );
 
@@ -119,8 +120,9 @@ export const sendMessageOpAction = createAsyncThunk<
                 status: OperationStatus.Pending,
                 timestamp: Date.now(),
             },
-            resourceId: chat.customId,
+            resourceId: arg.roomId,
         };
+
         thunkAPI.dispatch(OperationActions.pushOperation(firstChatOp));
     }
 
@@ -130,6 +132,7 @@ export const sendMessageOpAction = createAsyncThunk<
                 chat,
                 recipientId: arg.recipientId,
                 roomId: arg.roomId,
+                orgId: arg.orgId,
             })
         );
 
@@ -158,6 +161,12 @@ export const sendMessageOpAction = createAsyncThunk<
                     roomId: chat.roomId,
                 })
             );
+
+            // Changing the room id from temp to the real thing happens underneath, i.e,
+            // when the room is created on the server, it sends the room to all parties,
+            // including the originating client, and the it then replaces the temp room id
+            // with real thing. Not super maybe good, I know. If you have a better design,
+            // let me know.
         } else {
             thunkAPI.dispatch(
                 RoomActions.updateChat({
