@@ -3,7 +3,6 @@ import React from "react";
 import { IComment } from "../../models/comment/types";
 import { IUser } from "../../models/user/user";
 import Message from "../Message";
-import Scrollbar from "../utilities/Scrollbar";
 import Comment from "./Comment";
 
 export interface ICommentListProps {
@@ -15,13 +14,22 @@ const CommentList: React.FC<ICommentListProps> = (props) => {
     const { comments, usersMap } = props;
 
     if (comments.length === 0) {
-        return <Message message="No comments!" />;
+        return (
+            <div
+                className={css({
+                    margin: "24px 0",
+                    width: "100%",
+                })}
+            >
+                <Message message="Comments" />
+            </div>
+        );
     }
 
     let hideAvatarCheck: { [key: string]: boolean } = {};
 
     return (
-        <Scrollbar>
+        <div>
             {comments.map((comment, i) => {
                 const sender = usersMap[comment.createdBy];
                 const commentNode = (
@@ -31,8 +39,8 @@ const CommentList: React.FC<ICommentListProps> = (props) => {
                         sender={sender}
                         hideAvatar={hideAvatarCheck[comment.createdBy]}
                         className={css({
-                            margin: "16px",
-                            marginTop: i === 0 ? "16px" : 0,
+                            margin: "16px 0px",
+                            marginTop: i === 0 ? "0px" : "16px",
                         })}
                     />
                 );
@@ -40,7 +48,7 @@ const CommentList: React.FC<ICommentListProps> = (props) => {
                 hideAvatarCheck = { [comment.createdBy]: true };
                 return commentNode;
             })}
-        </Scrollbar>
+        </div>
     );
 };
 

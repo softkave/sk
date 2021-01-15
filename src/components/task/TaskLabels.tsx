@@ -29,6 +29,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         labelsMap,
     } = props;
 
+    const [visible, setVisible] = React.useState(false);
     const labels = props.labels || [];
 
     const onAdd = (id: string) => {
@@ -131,7 +132,12 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
         );
 
         return (
-            <Dropdown overlay={labelListMenu} trigger={["click"]}>
+            <Dropdown
+                overlay={labelListMenu}
+                trigger={["click"]}
+                visible={visible}
+                onVisibleChange={setVisible}
+            >
                 <Button
                     disabled={disabled}
                     htmlType="button"

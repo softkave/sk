@@ -11,6 +11,12 @@ export const priorityToColorMap = {
     [BlockPriority.VeryImportant]: "rgb(255, 77, 79)",
 };
 
+// const levelMap: Record<TaskPriority, string> = {
+//     [BlockPriority.Important]: "medium",
+//     [BlockPriority.VeryImportant]: "high",
+//     [BlockPriority.NotImportant]: "low",
+// };
+
 interface IPriorityProps {
     level: TaskPriority;
     className?: string;
@@ -20,12 +26,14 @@ interface IPriorityProps {
 const Priority: React.FC<IPriorityProps> = (props) => {
     const { level, className, withSelectIcon } = props;
 
-    let content: React.ReactNode = level;
+    // let label = levelMap[level];
+    const label = level;
+    let content: React.ReactNode = label;
 
     if (withSelectIcon) {
         content = (
             <Space>
-                {level}
+                {label}
                 <CaretDownOutlined style={{ fontSize: "10px" }} />
             </Space>
         );

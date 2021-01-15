@@ -22,7 +22,11 @@ const CommentInput: React.FC<ICommentInputProps> = (props) => {
 
     return (
         <StyledContainer
-            s={{ borderTop: "1px solid #d9d9d9", padding: "8px 5px" }}
+            s={{
+                // borderTop: "1px solid #f0f0f0",
+                borderBottom: "1px solid #f0f0f0",
+                padding: "8px 0px",
+            }}
         >
             <div
                 className={css({
@@ -39,8 +43,8 @@ const CommentInput: React.FC<ICommentInputProps> = (props) => {
                         evt.preventDefault();
                         sendComment();
                     }}
-                    style={{ resize: "none" }}
-                    placeholder="Enter your comment"
+                    style={{ resize: "none", paddingLeft: 0, paddingRight: 0 }}
+                    placeholder="Add comment"
                     onChange={(evt) => {
                         setComment(evt.target.value);
                     }}

@@ -633,6 +633,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                     flexDirection: "column",
                     width: "100%",
                     marginBottom: "24px",
+                    borderTop: "1px solid #f0f0f0",
+                    borderBottom: "1px solid #f0f0f0",
+                    padding: "8px 0px",
                 }}
             >
                 <SubTaskFormList
@@ -670,9 +673,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
         return (
             <Form.Item
-                label="Comments"
+                // label="Comments"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
+                // style={{ margin: "24px 0" }}
             >
                 <CommentsContainer taskId={task.customId} />
             </Form.Item>
