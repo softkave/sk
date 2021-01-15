@@ -277,7 +277,10 @@ const Board: React.FC<IBoardProps> = (props) => {
             />
         );
 
-        if (!board.currentSprintId) {
+        if (
+            !board.currentSprintId ||
+            view !== BoardCurrentView.CURRENT_SPRINT
+        ) {
             return content;
         }
 
