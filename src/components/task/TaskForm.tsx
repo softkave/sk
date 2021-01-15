@@ -25,6 +25,7 @@ import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
+import CommentsContainer from "../comments/CommentsContainer";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
@@ -662,6 +663,22 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         );
     };
 
+    const renderComments = () => {
+        if (!task) {
+            return null;
+        }
+
+        return (
+            <Form.Item
+                label="Comments"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+            >
+                <CommentsContainer taskId={task.customId} />
+            </Form.Item>
+        );
+    };
+
     const getSubmitLabel = () => {
         if (isSubmitting) {
             if (task) {
@@ -741,6 +758,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         {renderDueDateInput(formikProps)}
                         {renderAssignedToInput(formikProps)}
                         {renderSubTasks(formikProps)}
+                        {renderComments()}
                     </StyledContainer>
                     {renderControls()}
                 </StyledContainer>

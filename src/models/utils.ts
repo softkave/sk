@@ -1,4 +1,8 @@
 import { indexArray } from "../utils/utils";
+import { IBlock } from "./block/block";
+import { INotification } from "./notification/notification";
+import { IProgramAccessToken } from "./programAccessTokens/programAccessToken";
+import { ICollaborator } from "./user/user";
 
 export function getComplexFieldInput<T1 extends object, T0 extends T1>(
     arr: T0[],
@@ -51,4 +55,52 @@ export function getNameInitials(name: string) {
         .map((name) => name[0])
         .join("");
     return initials.toUpperCase();
+}
+
+export function getOrganizationPath(org: IBlock) {
+    return `/app/orgs/${org.customId}`;
+}
+
+export function getOrgBoardsPath(org: IBlock) {
+    return `${getOrganizationPath(org)}/boards`;
+}
+
+export function getBoardPath(org: IBlock, board: IBlock) {
+    return `${getOrganizationPath(org)}/boards/${board.customId}`;
+}
+
+export function getOrgTokensPath(org: IBlock) {
+    return `${getOrganizationPath(org)}/programAccessTokens`;
+}
+
+export function getTokenPath(org: IBlock, token: IProgramAccessToken) {
+    return `${getOrganizationPath(org)}/programAccessTokens/${
+        token.programAccessTokenId
+    }`;
+}
+
+export function getOrgRequestsPath(org: IBlock) {
+    return `${getOrganizationPath(org)}/collaborationRequests`;
+}
+
+export function getRequestPath(org: IBlock, request: INotification) {
+    return `${getOrganizationPath(org)}/collaborationRequests/${
+        request.customId
+    }`;
+}
+
+export function getOrgCollaboratorsPath(org: IBlock) {
+    return `${getOrganizationPath(org)}/collaborators`;
+}
+
+export function getCollaboratorPath(org: IBlock, user: ICollaborator) {
+    return `${getOrganizationPath(org)}/collaborators/${user.customId}`;
+}
+
+export function getUserNotificationPath(notification: INotification) {
+    return `/app/notifications/${notification.customId}`;
+}
+
+export function getUserRequestPath(request: INotification) {
+    return `/app/collaborationRequests/${request.customId}`;
 }

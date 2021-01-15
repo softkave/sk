@@ -8,18 +8,18 @@ import { IComment } from "../../models/comment/types";
 export interface ITaskCommentsProps {
     comments: IComment[];
     usersMap: { [key: string]: IUser };
-    onSendComment: (comment: string) => void;
+    onAddComment: (comment: string) => void;
 }
 
 const TaskComments: React.FC<ITaskCommentsProps> = (props) => {
-    const { usersMap, comments, onSendComment } = props;
+    const { usersMap, comments, onAddComment } = props;
 
     return (
         <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
             <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
                 <CommentList comments={comments} usersMap={usersMap} />
             </StyledContainer>
-            <CommentInput onSendComment={onSendComment} />
+            <CommentInput onSendComment={onAddComment} />
         </StyledContainer>
     );
 };

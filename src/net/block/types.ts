@@ -36,14 +36,6 @@ export type IGetBlockChildrenAPIResult = GetEndpointResult<{
     blocks: IBlock[];
 }>;
 
-export interface IGetTaskCommentsAPIParams {
-    taskId: string;
-}
-
-export type IGetTaskCommentsAPIResult = GetEndpointResult<{
-    comments: IComment[];
-}>;
-
 export interface IAddCollaboratorAPIParams {
     blockId: string;
     collaborators: IAddCollaboratorFormItemValues[];

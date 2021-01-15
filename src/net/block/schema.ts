@@ -86,25 +86,6 @@ const getBlockChildrenQuery = `
     }
 `;
 
-const getTaskCommentsQuery = `
-    ${commentFragment}
-    ${errorFragment}
-    query GetTaskCommentsQuery (
-        $taskId: String!, 
-    ) {
-        comment {
-            getComments (taskId: $taskId) {
-                errors {
-                    ...errorFragment
-                }
-                comments {
-                    ...commentFragment
-                }
-            }
-        }
-    }
-`;
-
 const addCollaboratorsMutation = `
     ${errorFragment}
     ${notificationFragment}
@@ -161,5 +142,4 @@ export {
     getRootBlocksQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
-    getTaskCommentsQuery,
 };

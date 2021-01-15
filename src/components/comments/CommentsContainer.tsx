@@ -5,58 +5,46 @@ import { IComment } from "../../models/comment/types";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
 import CommentSelectors from "../../redux/comments/selectors";
-import { loadTaskCommentsOpAction } from "../../redux/operations/block/loadTaskComments";
-import OperationType from "../../redux/operations/OperationType";
+import { addCommentOpAction } from "../../redux/operations/comments/addComment";
+import { loadTaskCommentsOpAction } from "../../redux/operations/comments/loadTaskComments";
 import { IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
-import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
+import { getOpData } from "../hooks/useOperation";
 import MessageList from "../MessageList";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import TaskComments from "./TaskComments";
 
 export interface ICommentsContainerProps {
-    task: IBlock;
+    taskId: string;
 }
 
-const ChatRoomsContainer: React.FC<ICommentsContainerProps> = (props) => {
-    const { task } = props;
-
+const CommentsContainer: React.FC<ICommentsContainerProps> = (props) => {
+    const { taskId } = props;
     const dispatch = useDispatch();
 
-    const loadComments = React.useCallback(
-        async (loadProps: IOperationDerivedData) => {
-            const operation = loadProps.operation;
-            const shouldLoad = !operation;
-
-            if (shouldLoad) {
-                await dispatch(
-                    loadTaskCommentsOpAction({
-                        taskId: task.customId,
-                        opId: loadProps.opId,
-                    })
-                );
-            }
-        },
-        [dispatch]
+    const task = useSelector<IAppState, IBlock>((state) =>
+        BlockSelectors.getBlock(state, taskId)
     );
 
-    // TODO: can we save whether the comments are loaded or not
-    // in the task so that we don't keep more operations than needed
-    // in state
-    const commentsOp = useOperation(
-        { type: OperationType.LoadTaskComments },
-        loadComments,
-        {
-            deleteManagedOperationOnUnmount: false,
+    const op = task.taskCommentOp;
+    const opData = op && getOpData(op);
+
+    React.useEffect(() => {
+        if (!op) {
+            dispatch(
+                loadTaskCommentsOpAction({
+                    taskId: task.customId,
+                })
+            );
         }
-    );
+    }, [op]);
 
     const org = useSelector<IAppState, IBlock>((state) =>
         BlockSelectors.getBlock(state, task.rootBlockId!)
     );
 
     const collaborators = useSelector<IAppState, IUser[]>((state) => {
-        if (commentsOp.isCompleted) {
+        if (opData && opData.isCompleted) {
             return UserSelectors.getUsers(state, org.collaborators!);
         }
 
@@ -69,7 +57,7 @@ const ChatRoomsContainer: React.FC<ICommentsContainerProps> = (props) => {
     }, {} as { [key: string]: IUser });
 
     const comments = useSelector<IAppState, IComment[]>((state) => {
-        if (commentsOp.isCompleted) {
+        if (opData && opData.isCompleted) {
             return CommentSelectors.filter(
                 state,
                 (comment) => comment.taskId === task.customId
@@ -85,23 +73,31 @@ const ChatRoomsContainer: React.FC<ICommentsContainerProps> = (props) => {
         return [];
     });
 
-    const onSendComment = React.useCallback((comment: string) => {}, [
-        dispatch,
-    ]);
+    const onAddComment = React.useCallback(
+        async (comment: string) => {
+            dispatch(
+                addCommentOpAction({
+                    comment,
+                    taskId: task.customId,
+                })
+            );
+        },
+        [dispatch]
+    );
 
-    if (commentsOp.isLoading) {
+    if (opData && opData.isLoading) {
         return <LoadingEllipsis />;
-    } else if (commentsOp.error) {
-        return <MessageList fill messages={commentsOp.error} />;
+    } else if (opData && opData.error) {
+        return <MessageList fill messages={opData.error} />;
     }
 
     return (
         <TaskComments
             comments={comments}
             usersMap={usersMap}
-            onSendComment={onSendComment}
+            onAddComment={onAddComment}
         />
     );
 };
 
-export default ChatRoomsContainer;
+export default CommentsContainer;

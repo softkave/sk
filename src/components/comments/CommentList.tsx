@@ -1,8 +1,8 @@
+import { css } from "@emotion/css";
 import React from "react";
 import { IComment } from "../../models/comment/types";
 import { IUser } from "../../models/user/user";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import Comment from "./Comment";
 
@@ -25,19 +25,16 @@ const CommentList: React.FC<ICommentListProps> = (props) => {
             {comments.map((comment, i) => {
                 const sender = usersMap[comment.createdBy];
                 const commentNode = (
-                    <StyledContainer
+                    <Comment
                         key={i}
-                        s={{
+                        comment={comment}
+                        sender={sender}
+                        hideAvatar={hideAvatarCheck[comment.createdBy]}
+                        className={css({
                             margin: "16px",
                             marginTop: i === 0 ? "16px" : 0,
-                        }}
-                    >
-                        <Comment
-                            comment={comment}
-                            sender={sender}
-                            hideAvatar={hideAvatarCheck[comment.createdBy]}
-                        />
-                    </StyledContainer>
+                        })}
+                    />
                 );
 
                 hideAvatarCheck = { [comment.createdBy]: true };

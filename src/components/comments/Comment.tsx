@@ -10,15 +10,18 @@ export interface ICommentProps {
     comment: IComment;
     sender: IUser;
     hideAvatar?: boolean;
+    style?: React.CSSProperties;
+    className?: string;
 }
 
 const Comment: React.FC<ICommentProps> = (props) => {
-    const { comment, sender, hideAvatar } = props;
-
+    const { comment, sender, hideAvatar, style, className } = props;
     const createdAt = moment(comment.createdAt);
 
     return (
         <StyledContainer
+            style={style}
+            className={className}
             s={{
                 flex: 1,
             }}
@@ -41,7 +44,7 @@ const Comment: React.FC<ICommentProps> = (props) => {
                 <Typography.Paragraph style={{ margin: 0 }}>
                     {comment.comment}
                 </Typography.Paragraph>
-                {/* {comment.queued ? (
+                {comment.queued ? (
                     <Typography.Text type="secondary">
                         Queued for sending
                     </Typography.Text>
@@ -57,7 +60,7 @@ const Comment: React.FC<ICommentProps> = (props) => {
                     <Typography.Text type="secondary">
                         {createdAt.format("h:mm A, ddd MMM D YYYY")}
                     </Typography.Text>
-                )} */}
+                )}
             </StyledContainer>
         </StyledContainer>
     );

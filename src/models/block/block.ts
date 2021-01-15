@@ -1,4 +1,5 @@
 import randomColor from "randomcolor";
+import { IOperation } from "../../redux/operations/operation";
 import {
     extractFields,
     getFields,
@@ -125,6 +126,8 @@ export interface IBlock extends IPersistedBlock {
 
     userLeftBlockAt?: number;
     missingBroadcastsLastFetchedAt?: number;
+
+    taskCommentOp?: IOperation;
 }
 
 export interface IAssigneeInput {
