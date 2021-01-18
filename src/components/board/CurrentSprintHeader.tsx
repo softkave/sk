@@ -94,7 +94,7 @@ const CurrentSprintHeader: React.FC<ICurrentSprintHeaderProps> = (props) => {
                     type="vertical"
                     style={{ borderLeft: "1px solid rgba(0, 0, 0, 0.6)" }}
                 />
-                <Typography.Text type="warning">Due today</Typography.Text>
+                <Typography.Text type="warning">Sprint is due</Typography.Text>
                 {tooltip}
             </span>
         );

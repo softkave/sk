@@ -431,7 +431,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                 labelAlign="left"
             >
                 <DatePicker
-                    showTime
+                    // showTime
                     format="YYYY-MM-DD HH:mm:ss"
                     placeholder="Due date"
                     onChange={(val) => {
@@ -762,7 +762,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                         {renderDueDateInput(formikProps)}
                         {renderAssignedToInput(formikProps)}
                         {renderSubTasks(formikProps)}
-                        {renderComments()}
+                        {/* {renderComments()} */}
                     </StyledContainer>
                     {renderControls()}
                 </StyledContainer>
