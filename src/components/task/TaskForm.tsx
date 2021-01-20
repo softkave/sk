@@ -432,13 +432,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             >
                 <DatePicker
                     // showTime
-                    format="YYYY-MM-DD HH:mm:ss"
+                    format="ddd, MMM DD YYYY"
                     placeholder="Due date"
                     onChange={(val) => {
                         setFieldValue(
                             "dueAt",
                             val
-                                ? val.hour(23).minute(59).second(0).valueOf()
+                                ? val.hour(23).minute(59).second(59).valueOf()
                                 : null
                         );
                         formikChangedFieldsHelpers.addField("dueAt");
