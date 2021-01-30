@@ -88,6 +88,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
             if (
                 !noResolutionModal &&
                 resolutionsList.length > 0 &&
+                lastStatus &&
                 value === lastStatus.customId
             ) {
                 setResolutionModalState({ statusId: value, showModal: true });
@@ -96,7 +97,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
             }
         },
         [
-            lastStatus.customId,
+            lastStatus?.customId,
             noResolutionModal,
             onChangeStatus,
             resolutionsList.length,
