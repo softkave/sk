@@ -1,5 +1,3 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
@@ -140,9 +138,14 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                         color: "rgba(0,0,0,0.85)",
                     }}
                 >
-                    <span style={{ borderBottom: `2px solid ${value.color}` }}>
+                    <Typography.Text
+                        style={{
+                            textDecoration: "capitalize",
+                            borderBottom: `2px solid ${value.color}`,
+                        }}
+                    >
                         {value.name}
-                    </span>
+                    </Typography.Text>
                 </StyledContainer>
                 <Typography.Paragraph
                     type="secondary"

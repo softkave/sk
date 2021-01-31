@@ -109,6 +109,7 @@ fragment blockFragment on Block {
         customId
         name
         color
+        position
         createdBy
         createdAt
         description

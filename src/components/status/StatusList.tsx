@@ -155,18 +155,30 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         );
     };
 
-    const onChangePosition = React.useCallback(
-        (index: number, up: boolean, max: number) => {
-            const newIndex = up ? index - 1 : index + 1;
+    const changePostion = (srcIndex: number, destIndex: number) => {
+        let statuses = [...formik.values.statusList];
+        const s0 = statuses.splice(srcIndex, 1)[0];
 
-            if (newIndex < 0 || newIndex >= max) {
-                return;
-            }
+        if (!s0) {
+            return;
+        }
 
-            formikHelpers.moveInArrayField("statusList", index, newIndex);
-        },
-        [formikHelpers]
-    );
+        statuses = statuses
+            .slice(0, destIndex)
+            .concat(s0, statuses.slice(destIndex + 1));
+
+        formik.setFieldValue("statusList", statuses);
+    };
+
+    const onChangePosition = (index: number, up: boolean, max: number) => {
+        const newIndex = up ? index - 1 : index + 1;
+
+        if (newIndex < 0 || newIndex >= max) {
+            return;
+        }
+
+        changePostion(index, newIndex);
+    };
 
     const renderStatusItem = (
         status: IBlockStatusInput,
@@ -227,9 +239,9 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         }
 
         const srcIndex = result.source.index;
-        const destIndex = result.destination?.index;
+        const destIndex = result.destination.index;
 
-        formikHelpers.moveInArrayField("statusList", srcIndex, destIndex);
+        changePostion(srcIndex, destIndex);
     };
 
     const renderList = () => {
@@ -305,6 +317,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
             description: "",
             color: randomColor(),
             customId: getNewId(),
+            position: formik.values.statusList.length,
         };
 
         formikHelpers.addToArrayField("statusList", status, { name: "" }, {});

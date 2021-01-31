@@ -1,5 +1,3 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Tag, Typography } from "antd";
 import { Form } from "antd";
@@ -125,9 +123,11 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                     marginBottom: "8px",
                 }}
             >
-                <StyledContainer>
-                    <Tag color={value.color}>{value.name}</Tag>
-                </StyledContainer>
+                <Tag color={value.color}>
+                    <Typography.Text style={{ textDecoration: "capitalize" }}>
+                        {value.name}
+                    </Typography.Text>
+                </Tag>
                 <Typography.Paragraph
                     type="secondary"
                     style={{ margin: 0, marginTop: "8px" }}

@@ -75,6 +75,14 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
         blocks.forEach((nextBlock) => {
             if (nextBlock.type === BlockType.Board) {
                 boards.push(nextBlock.customId);
+
+                // sort statuses by position
+                let statuses = nextBlock.boardStatuses || [];
+                statuses = statuses.sort((s0, s1) => {
+                    return s0.position - s1.position;
+                });
+
+                nextBlock.boardStatuses = statuses;
             }
         });
 

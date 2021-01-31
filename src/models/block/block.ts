@@ -60,6 +60,7 @@ export interface IBlockStatus {
     customId: string;
     name: string;
     color: string;
+    position: number;
     createdBy: string;
     createdAt: string;
     description?: string;
@@ -144,6 +145,7 @@ export interface IBlockStatusInput {
     customId: string;
     name: string;
     color: string;
+    position: number;
     description?: string;
 }
 
@@ -216,6 +218,7 @@ const statusInputFields = getFields<IBlockStatusInput>({
     description: true,
     name: true,
     customId: true,
+    position: true,
 });
 
 const labelInputFields = getFields<IBlockLabelInput>({

@@ -1,5 +1,3 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
@@ -115,13 +113,14 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
                     marginBottom: "8px",
                 }}
             >
-                <StyledContainer
+                <Typography.Text
                     style={{
                         color: "rgba(0,0,0,0.85)",
+                        textDecoration: "capitalize",
                     }}
                 >
                     {value.name}
-                </StyledContainer>
+                </Typography.Text>
                 <Typography.Paragraph
                     type="secondary"
                     style={{ margin: 0, marginTop: "8px" }}
