@@ -165,7 +165,11 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
 
         statuses = statuses
             .slice(0, destIndex)
-            .concat(s0, statuses.slice(destIndex + 1));
+            .concat(s0, statuses.slice(destIndex))
+            .map((item, i) => ({
+                ...item,
+                position: i,
+            }));
 
         formik.setFieldValue("statusList", statuses);
     };

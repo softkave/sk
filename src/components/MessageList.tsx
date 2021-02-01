@@ -2,7 +2,7 @@ import { Divider } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import { IAppError } from "../net/types";
-import GeneralError from "./Message";
+import Message from "./Message";
 import StyledContainer from "./styled/Container";
 
 export interface IMessageListProps {
@@ -39,13 +39,14 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
                 maxWidth: "400px",
                 width: "100%",
                 padding: "0 16px",
+                height: "100%",
             }}
         >
             {errorList.map((error, index) => (
                 <React.Fragment
                     key={error.name ? `${error.name}-${index}` : index}
                 >
-                    <GeneralError message={error} listIndex={index} />
+                    <Message message={error} listIndex={index} />
                     {index !== errorList.length - 1 && <Divider />}
                 </React.Fragment>
             ))}

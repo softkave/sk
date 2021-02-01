@@ -426,6 +426,7 @@ function seedStatuses(
         name: status.name,
         color: status.color || randomColor(),
         description: status.description,
+        position: status.position,
     }));
 }
 
@@ -552,18 +553,21 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 name: "Todo",
                 description: "Available tasks.",
                 color: randomColor(),
+                position: 0,
             },
             {
                 customId: getNewId(),
                 name: "In Progress",
                 description: "Currently being worked on.",
                 color: randomColor(),
+                position: 1,
             },
             {
                 customId: getNewId(),
                 name: "Test",
                 description: "Work is done, and is in testing.",
                 color: randomColor(),
+                position: 2,
             },
             {
                 customId: getNewId(),
@@ -571,12 +575,14 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
                 description:
                     "Testing is completed, and is deployed to staging, and pending review.",
                 color: randomColor(),
+                position: 3,
             },
             {
                 customId: getNewId(),
                 name: "Done",
                 description: "Completed, and reviewed.",
                 color: randomColor(),
+                position: 4,
             },
         ],
         boardLabels: [

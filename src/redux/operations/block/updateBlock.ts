@@ -111,6 +111,12 @@ export const storeUpdateBlock = (
         });
     }
 
+    if (data.boardStatuses) {
+        data.boardStatuses.sort((s0, s1) => {
+            return s0.position - s1.position;
+        });
+    }
+
     store.dispatch(
         BlockActions.updateBlock({
             data,

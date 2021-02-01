@@ -75,6 +75,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             createdBy: user.customId,
             customId: getNewId(),
             color: "#f28b79",
+            position: 0,
         },
         {
             name: "In progress",
@@ -83,6 +84,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             createdBy: user.customId,
             customId: getNewId(),
             color: "#aa2244",
+            position: 1,
         },
         {
             name: "Pending review",
@@ -91,6 +93,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             createdBy: user.customId,
             customId: getNewId(),
             color: "#ffd3c6",
+            position: 2,
         },
         {
             name: "Done",
@@ -99,6 +102,7 @@ export const getDefaultStatuses = (user: IUser): IBlockStatus[] => {
             createdBy: user.customId,
             customId: getNewId(),
             color: "#25b71b",
+            position: 3,
         },
     ];
 };

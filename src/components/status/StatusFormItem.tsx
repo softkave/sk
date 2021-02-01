@@ -140,7 +140,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 >
                     <Typography.Text
                         style={{
-                            textDecoration: "capitalize",
+                            textTransform: "capitalize",
                             borderBottom: `2px solid ${value.color}`,
                         }}
                     >

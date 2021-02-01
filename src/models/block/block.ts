@@ -337,7 +337,7 @@ const updateBlockFields = getFields<
         );
     },
     boardStatuses: (data, args) => {
-        return getComplexFieldInput(
+        const d0 = getComplexFieldInput(
             args.block.boardStatuses || [],
             data,
             "customId",
@@ -349,9 +349,13 @@ const updateBlockFields = getFields<
             (d0, d1) =>
                 d1.name.toLowerCase() !== d0.name ||
                 d1.color !== d0.color ||
+                d1.position !== d0.position ||
                 d1.description?.toLowerCase() !== d0.description,
             statusInputExtractor
         );
+
+        console.log({ d0, d1: args.block.boardStatuses, d2: data });
+        return d0;
     },
     boardLabels: (data, args) => {
         return getComplexFieldInput(

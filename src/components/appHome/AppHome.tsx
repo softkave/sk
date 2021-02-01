@@ -55,6 +55,9 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
     const mobile = () => (
         <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+            {showOrgForm && (
+                <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
+            )}
             <HeaderMobile user={user} onSelect={onSelect} />
             <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
                 <Switch>

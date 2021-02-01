@@ -71,11 +71,8 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
 
         const boards: string[] = [];
 
-        thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));
         blocks.forEach((nextBlock) => {
             if (nextBlock.type === BlockType.Board) {
-                boards.push(nextBlock.customId);
-
                 // sort statuses by position
                 let statuses = nextBlock.boardStatuses || [];
                 statuses = statuses.sort((s0, s1) => {
@@ -83,6 +80,13 @@ export const loadBlockChildrenOpAction = createAsyncThunk<
                 });
 
                 nextBlock.boardStatuses = statuses;
+            }
+        });
+
+        thunkAPI.dispatch(BlockActions.bulkAddBlocks(blocks));
+        blocks.forEach((nextBlock) => {
+            if (nextBlock.type === BlockType.Board) {
+                boards.push(nextBlock.customId);
             }
         });
 
