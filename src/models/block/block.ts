@@ -354,7 +354,6 @@ const updateBlockFields = getFields<
             statusInputExtractor
         );
 
-        console.log({ d0, d1: args.block.boardStatuses, d2: data });
         return d0;
     },
     boardLabels: (data, args) => {
