@@ -123,11 +123,15 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
                     marginBottom: "8px",
                 }}
             >
-                <Tag color={value.color}>
-                    <Typography.Text style={{ textDecoration: "capitalize" }}>
-                        {value.name}
-                    </Typography.Text>
-                </Tag>
+                <div>
+                    <Tag color={value.color}>
+                        <Typography.Text
+                            style={{ textTransform: "capitalize" }}
+                        >
+                            {value.name}
+                        </Typography.Text>
+                    </Tag>
+                </div>
                 <Typography.Paragraph
                     type="secondary"
                     style={{ margin: 0, marginTop: "8px" }}

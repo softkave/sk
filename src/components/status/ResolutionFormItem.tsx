@@ -116,7 +116,7 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
                 <Typography.Text
                     style={{
                         color: "rgba(0,0,0,0.85)",
-                        textDecoration: "capitalize",
+                        textTransform: "capitalize",
                     }}
                 >
                     {value.name}

@@ -105,6 +105,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                 onClick={(evt) => {
                     if (evt.key === ADD_NEW_LABEL_KEY) {
                         onSelectAddNewLabel();
+                        setVisible(false);
                         return;
                     }
 
