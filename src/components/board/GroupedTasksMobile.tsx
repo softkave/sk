@@ -43,14 +43,12 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 }
                 key={group.name}
             >
-                <Scrollbar style={{ height: "100%" }}>
-                    <TaskList
-                        {...props}
-                        tasks={group.tasks}
-                        toggleForm={onClickUpdateBlock}
-                        getBlockStyle={() => ({ padding: "0 16px" })}
-                    />
-                </Scrollbar>
+                <TaskList
+                    {...props}
+                    tasks={group.tasks}
+                    toggleForm={onClickUpdateBlock}
+                    getBlockStyle={() => ({ padding: "0 16px" })}
+                />
             </Tabs.TabPane>
         );
     };
