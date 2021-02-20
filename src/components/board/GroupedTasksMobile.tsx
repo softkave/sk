@@ -1,10 +1,10 @@
 import { Badge, Space, Tabs, Typography } from "antd";
 import React from "react";
+import Scrollbars from "react-custom-scrollbars";
 import { IBlock } from "../../models/block/block";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
-import Scrollbar from "../utilities/Scrollbar";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 
@@ -43,12 +43,14 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 }
                 key={group.name}
             >
-                <TaskList
-                    {...props}
-                    tasks={group.tasks}
-                    toggleForm={onClickUpdateBlock}
-                    getBlockStyle={() => ({ padding: "0 16px" })}
-                />
+                <Scrollbars>
+                    <TaskList
+                        {...props}
+                        tasks={group.tasks}
+                        toggleForm={onClickUpdateBlock}
+                        getBlockStyle={() => ({ padding: "0 16px" })}
+                    />
+                </Scrollbars>
             </Tabs.TabPane>
         );
     };

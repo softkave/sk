@@ -15,9 +15,9 @@ export const validateWithYupSchema = (yupSchema: Schema<any>, values: any) => {
             Array.isArray(validationError.inner) &&
             validationError.inner.length > 0
         ) {
-            validationError.inner.forEach((err: ValidationError) => {
-                if (!err[err.path]) {
-                    err[err.path] = err.message;
+            validationError.inner.forEach((item: ValidationError) => {
+                if (!err[item.path]) {
+                    err[item.path] = item.message;
                 }
             });
         } else {
