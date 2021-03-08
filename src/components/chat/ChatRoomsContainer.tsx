@@ -124,9 +124,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     const onSelectRoom = React.useCallback(
         (room: IRoom) => {
             if (room.recipientId !== selectedRoomRecipientId) {
-                const url = path.normalize(
-                    `${window.location.pathname}/${room.recipientId}`
-                );
+                const url = `/app/orgs/${room.orgId}/chat/${room.recipientId}`;
                 history.push(url);
             }
         },
