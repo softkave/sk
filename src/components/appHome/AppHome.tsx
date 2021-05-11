@@ -11,6 +11,7 @@ import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
 import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
+import NotificationsPermissionContainer from "./NotificationsPermissionContainer";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeProps {
@@ -142,6 +143,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
     return (
         <React.Fragment>
+            <NotificationsPermissionContainer />
             {showFeedbackForm && (
                 <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
             )}

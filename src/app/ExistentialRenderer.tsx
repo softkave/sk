@@ -9,13 +9,21 @@ import { IAppState } from "../redux/types";
 // There is nothing existential about this component, but just for drammatic reasons it's named so.
 // Feel free to change the name :)
 
-const SECS_15 = 15;
+const fifteenSeconds = 15;
 
 const ExistentialRenderer: React.FC<{}> = () => {
     const dispatch = useDispatch();
 
     const loginAgain = useSelector<IAppState, boolean>((state) =>
-        KeyValueSelectors.getKey(state, KeyValueKeys.LOGIN_AGAIN)
+        KeyValueSelectors.getKey(state, KeyValueKeys.LoginAgain)
+    );
+
+    const subscribeToPushNotifications = useSelector<IAppState, boolean>(
+        (state) =>
+            KeyValueSelectors.getKey(
+                state,
+                KeyValueKeys.SubscribeToPushNotifications
+            )
     );
 
     React.useEffect(() => {
@@ -24,17 +32,23 @@ const ExistentialRenderer: React.FC<{}> = () => {
                 message: "Please login again",
                 description:
                     "Error processing your request, please login again.",
-                duration: SECS_15,
+                duration: fifteenSeconds,
             });
 
             dispatch(
                 KeyValueActions.setKey({
-                    key: KeyValueKeys.LOGIN_AGAIN,
+                    key: KeyValueKeys.LoginAgain,
                     value: false,
                 })
             );
         }
     }, [loginAgain, dispatch]);
+
+    React.useEffect(() => {
+        if (subscribeToPushNotifications) {
+            // TODO: implement
+        }
+    }, [subscribeToPushNotifications, dispatch]);
 
     return null;
 };

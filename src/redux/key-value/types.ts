@@ -14,7 +14,8 @@ export enum KeyValueKeys {
     FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
     UnseenChatsCountByOrg = "unseenChatsCountByOrg",
     QueuedChats = "queuedChats",
-    LOGIN_AGAIN = "loginAgain",
+    LoginAgain = "loginAgain",
+    SubscribeToPushNotifications = "SubscribeToPushNotifications",
 }
 
 export interface IUnseenChatsCountByOrg {

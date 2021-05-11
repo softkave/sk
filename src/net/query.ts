@@ -1,6 +1,9 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import { getAppErrorOrAppErrorList } from "../redux/utils";
+import UserSessionStorageFuncs, {
+    sessionVariables,
+} from "../storage/userSession";
 import { devLog } from "../utils/log";
 import { IAnyObject } from "../utils/types";
 import { handleLoginAgainError } from "./serverRecommendedActions";
@@ -45,13 +48,20 @@ export default async function query(
     process: NetResultProcessor
 ) {
     try {
-        const hd = {
+        const clientId = UserSessionStorageFuncs.getItem(
+            sessionVariables.clientId
+        );
+        const callHeaders = {
             "Content-Type": "application/json",
             ...headers,
         };
 
+        if (clientId) {
+            callHeaders["x-client-id"] = clientId;
+        }
+
         const result = await fetch(serverAddr, {
-            headers: hd,
+            headers: callHeaders,
             body: JSON.stringify({
                 query: netQuery,
                 variables,
