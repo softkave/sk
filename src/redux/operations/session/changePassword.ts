@@ -17,6 +17,7 @@ import {
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
+import { completeUserLogin } from "./signupUser";
 
 export interface IChangePasswordOperationActionArgs {
     password: string;
@@ -53,15 +54,7 @@ export const changePasswordOpAction = createAsyncThunk<
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            thunkAPI.dispatch(UserActions.addUser(result.user));
-            thunkAPI.dispatch(
-                SessionActions.loginUser({
-                    token: result.token,
-                    userId: result.user.customId,
-                })
-            );
-
-            UserSessionStorageFuncs.saveTokenIfExists(result.token);
+            completeUserLogin(thunkAPI, result, false, true);
         } else {
             throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }

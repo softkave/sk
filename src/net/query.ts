@@ -51,6 +51,7 @@ export default async function query(
         const clientId = UserSessionStorageFuncs.getItem(
             sessionVariables.clientId
         );
+
         const callHeaders = {
             "Content-Type": "application/json",
             ...headers,

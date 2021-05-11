@@ -11,29 +11,29 @@ export function supportsServiceWorkers() {
     }
 }
 
-export async function registerServiceWorker() {
-    if (!supportsServiceWorkers()) {
-        return null;
-    }
-
-    try {
-        const registration = await navigator.serviceWorker.register(
-            "./service-worker.js"
-        );
-
-        return registration;
-    } catch (error) {
-        // TODO: should we persist to server
-        devError(error);
-    }
-}
-
 export async function getServiceWorker(scope?: string) {
     if (!supportsServiceWorkers()) {
         return null;
     }
 
     return navigator.serviceWorker.getRegistration(scope);
+}
+
+export async function registerServiceWorker() {
+    if (!supportsServiceWorkers()) {
+        return null;
+    }
+
+    try {
+        const registration =
+            (await getServiceWorker()) ||
+            (await navigator.serviceWorker.register("./service-worker.js"));
+
+        return registration;
+    } catch (error) {
+        // TODO: should we persist to server
+        devError(error);
+    }
 }
 
 export async function registerPushNotification() {
@@ -90,4 +90,9 @@ export async function registerPushNotification() {
         devError(error);
         return null;
     }
+}
+
+export async function serviceWorkerInit() {
+    await registerServiceWorker();
+    await registerPushNotification();
 }

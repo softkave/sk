@@ -1,3 +1,5 @@
+import { IClient } from "../../models/user/user";
+
 export enum SessionType {
     Initializing = "initializing",
     Web = "web",
@@ -10,4 +12,5 @@ export interface ISessionState {
     isDemo?: boolean;
     token?: string;
     userId?: string;
+    client?: IClient;
 }

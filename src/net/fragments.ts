@@ -154,3 +154,13 @@ fragment blockFragment on Block {
     }
 }
 `;
+
+export const clientFragment = `
+fragment clientFragment on Client {
+    clientId: String
+    hasUserSeenNotificationsPermissionDialog: Boolean
+    muteChatNotifications: Boolean
+    isSubcribedToPushNotifications: Boolean
+    isLoggedIn: Boolean
+}
+`;

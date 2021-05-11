@@ -3,7 +3,7 @@ import {
     CollaborationRequestResponse,
     INotification,
 } from "../../models/notification/notification";
-import { IUser } from "../../models/user/user";
+import { IClient, IUser } from "../../models/user/user";
 import auth from "../auth";
 import query from "../query";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
@@ -15,6 +15,7 @@ import {
     getUserNotificationsQuery,
     markNotificationReadMutation,
     respondToCollaborationRequestMutation,
+    updateClientMutation,
     updateUserMutation,
     userExistsQuery,
     userLoginMutation,
@@ -23,6 +24,7 @@ import {
 
 export type IUserLoginResult = GetEndpointResult<{
     user: IUser;
+    client: IClient;
     token: string;
 }>;
 
@@ -178,6 +180,25 @@ async function respondToCollaborationRequest(
     );
 }
 
+export interface IUpdateClientEndpointParams {
+    data: {
+        hasUserSeenNotificationsPermissionDialog?: boolean;
+        muteChatNotifications?: boolean;
+        isSubcribedToPushNotifications?: boolean;
+        isLoggedIn?: boolean;
+    };
+}
+
+export type IUpdateClientEndpointResult = GetEndpointResult<{
+    client?: IClient;
+}>;
+
+async function updateClient(
+    params: IUpdateClientEndpointParams
+): Promise<IUpdateClientEndpointResult> {
+    return auth(null, updateClientMutation, params, "data.user.updateClient");
+}
+
 export type IGetUserNotificationsAPIResult = GetEndpointResult<{
     requests: INotification[];
 }>;
@@ -219,4 +240,5 @@ export default class UserAPI {
     public static respondToCollaborationRequest = respondToCollaborationRequest;
     public static getUserNotifications = getUserNotifications;
     public static getUserData = getUserData;
+    public static updateClient = updateClient;
 }

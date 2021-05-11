@@ -44,6 +44,10 @@ function getSessionType(state: IAppState) {
     return state.session.sessionType;
 }
 
+function getClient(state: IAppState) {
+    return state.session.client;
+}
+
 function isDemoMode(state: IAppState) {
     return !!state.session.isDemo;
 }
@@ -56,4 +60,5 @@ export default class SessionSelectors {
     public static getSessionType = getSessionType;
     public static isDemoMode = isDemoMode;
     public static assertGetToken = assertGetToken;
+    public static getClient = getClient;
 }

@@ -111,7 +111,9 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                 <Route
                     exact
                     path="/app/notifications"
-                    render={() => renderEmpty("Select a request")}
+                    render={() =>
+                        renderEmpty("Select a request or notification")
+                    }
                 />
                 <Route
                     path="/app/notifications/*"

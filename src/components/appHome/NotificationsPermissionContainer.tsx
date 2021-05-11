@@ -34,8 +34,10 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
     const onClose = () => setShowDialog(false);
 
     const onRequestPermission = async () => {
-        await Notification.requestPermission();
-        onClose();
+        if (Notification.permission === "default") {
+            await Notification.requestPermission();
+            onClose();
+        }
     };
 
     if (user && showDialog) {

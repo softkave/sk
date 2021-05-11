@@ -9,6 +9,8 @@ self.addEventListener("install", (e) => {
 });
 
 // TODO: handle when the server sends multiple push notifications in succession
+// TODO: preferrably only show notifications if the user has token in local storage
+// or has at least one open tab logged in
 self.addEventListener("push", function (event) {
     if (Notification.permission === "granted") {
         const payload = event.data ? event.data.text() : "no payload";

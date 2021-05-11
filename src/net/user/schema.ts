@@ -1,5 +1,6 @@
 import { blockFragment } from "../block/schema";
 import {
+    clientFragment,
     errorFragment,
     notificationFragment,
     userFragment,
@@ -35,12 +36,16 @@ export const updateUserMutation = `
 export const userLoginFragement = `
     ${errorFragment}
     ${userFragment}
+    ${clientFragment}
     fragment userQueryResult on UserQueryResult {
         errors {
             ...errorFragment
         }
         user {
             ...userFragment
+        }
+        client {
+            ...clientFragment
         }
         token
     }
@@ -163,6 +168,25 @@ export const respondToCollaborationRequestMutation = `
                     ...blockFragment
                 }
                 respondedAt
+            }
+        }
+    }
+`;
+
+export const updateClientMutation = `
+    ${clientFragment}
+    ${errorFragment}
+    mutation UpdateClientMutation (
+        $data: UpdateClientDataInput!
+    ) {
+        user {
+            updateClient (data: $data) {
+                errors {
+                    ...errorFragment
+                }
+                client {
+                    ...clientFragment
+                }
             }
         }
     }

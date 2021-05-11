@@ -4,6 +4,9 @@ import isString from "lodash/isString";
 import ErrorMessages from "../models/errorMessages";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
+import UserSessionStorageFuncs, {
+    sessionVariables,
+} from "../storage/userSession";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError } from "./types";
@@ -50,10 +53,18 @@ export async function invokeGraphQL(
     const { query, variables, paths } = props;
 
     try {
+        const clientId = UserSessionStorageFuncs.getItem(
+            sessionVariables.clientId
+        );
+
         const headers = {
             "Content-Type": "application/json",
             ...(props.headers || {}),
         };
+
+        if (clientId) {
+            headers["x-client-id"] = clientId;
+        }
 
         const result = await fetch(getServerAddr(), {
             headers,
