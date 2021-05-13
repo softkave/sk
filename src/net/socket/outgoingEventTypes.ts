@@ -8,6 +8,7 @@ export enum OutgoingSocketEvents {
     SendMessage = "sendMessage",
     GetUserRoomsAndChats = "getUserRoomsAndChats",
     UpdateRoomReadCounter = "updateRoomReadCounter",
+    UpdateSocketEntry = "updateSocketEntry",
 }
 
 export interface IOutgoingEventPacket<T = any> {
@@ -23,4 +24,8 @@ export interface IOutgoingSubscribePacket {
 export interface IOutgoingFetchMissingBroadcastsPacket {
     rooms: string[];
     from: number;
+}
+
+export interface IOutgoingUpdateSocketEntryPacket {
+    isInactive?: boolean;
 }

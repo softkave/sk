@@ -16,6 +16,7 @@ export enum KeyValueKeys {
     QueuedChats = "queuedChats",
     LoginAgain = "loginAgain",
     SubscribeToPushNotifications = "SubscribeToPushNotifications",
+    IsAppHidden = "isAppHidden",
 }
 
 export interface IUnseenChatsCountByOrg {

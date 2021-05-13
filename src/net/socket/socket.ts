@@ -28,6 +28,7 @@ class SocketNotConnectedError extends Error {
 
 export interface ISocketConnectionProps {
     token: string;
+    clientId: string;
 }
 
 function makeSocketEventHandler(str: IStoreLikeObject, fn) {
@@ -113,7 +114,7 @@ export default class SocketAPI {
         SocketAPI.socket = socket;
 
         socket.on(IncomingSocketEvents.Connect, () =>
-            handleConnectEvent(store, props.token)
+            handleConnectEvent(store, props.token, props.clientId)
         );
         socket.on(
             IncomingSocketEvents.Disconnect,

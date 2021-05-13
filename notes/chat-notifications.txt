@@ -4,5 +4,5 @@
 -> settings page, to show if the user has notifications permission granted, and to ask permission if not - done
 -> update client, on logout, on revoke notifications permission - partially done
 -> show notification through service on event - done
--> update isInactive on in active and active ( when the user logs in or comes back to the app )
--> clear/set user settings on login/logout
+-> update isInactive on in active and active ( when the user logs in or comes back to the app ) - done
+-> clear/set user settings on login/logout - done
