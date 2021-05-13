@@ -55,9 +55,13 @@ const defaultStorageType: StorageName = "local";
 
 export function setItem(
     key: string,
-    data: string | boolean | number | null,
+    data: string | boolean | number | null | undefined,
     storageType = defaultStorageType
 ) {
+    if (data === null || data === undefined) {
+        return;
+    }
+
     const storageObject = getStorageType(storageType);
 
     if (storageObject) {
@@ -73,10 +77,31 @@ export function removeItem(key, storageType = defaultStorageType) {
     }
 }
 
-export function getItem(key, storageType = defaultStorageType) {
+export function getItem(
+    key: string,
+    storageType = defaultStorageType,
+    type: "string" | "number" | "boolean" = "string"
+) {
     const storageObject = getStorageType(storageType);
 
-    if (storageObject) {
-        return storageObject.getItem(key);
+    if (!storageObject) {
+        return undefined;
     }
+
+    const data = storageObject.getItem(key);
+
+    if (data) {
+        switch (type) {
+            case "string":
+                return data;
+
+            case "boolean":
+                return data === "true" ? true : false;
+
+            case "number":
+                return Number(data);
+        }
+    }
+
+    return data;
 }

@@ -4,7 +4,6 @@ import UserSessionStorageFuncs from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
 import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
-import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,

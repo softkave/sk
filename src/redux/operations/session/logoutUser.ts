@@ -16,7 +16,11 @@ export const logoutUserOpAction = createAsyncThunk<
     // out and the token is deleted from the store.
     // Socket events require user token to run.
     await unsubcribeEvent();
+
+    // TODO: is there a better way, cause if this call fails,
+    // we would think the user is still logged in
+    // to the server on the server-side
     await UserAPI.updateClient({ data: { isLoggedIn: false } });
-    UserSessionStorageFuncs.deleteUserToken();
+    UserSessionStorageFuncs.deleteUserVariables();
     thunkAPI.dispatch(SessionActions.logoutUser());
 });

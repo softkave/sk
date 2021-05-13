@@ -20,19 +20,6 @@ export const userExistsQuery = `
     }
 `;
 
-export const updateUserMutation = `
-    ${errorFragment}
-    mutation UpdateUserMutation($data: UpdateUserInput!) {
-        user {
-            updateUser(user: $user) {
-                errors {
-                    ...errorFragment
-                }
-            }
-        }
-    }
-`;
-
 export const userLoginFragement = `
     ${errorFragment}
     ${userFragment}
@@ -48,6 +35,18 @@ export const userLoginFragement = `
             ...clientFragment
         }
         token
+    }
+`;
+
+export const updateUserMutation = `
+    ${errorFragment}
+    ${userLoginFragement}
+    mutation UpdateUserMutation($data: UpdateUserInput!) {
+        user {
+            updateUser(user: $user) {
+                ...userQueryResult
+            }
+        }
     }
 `;
 

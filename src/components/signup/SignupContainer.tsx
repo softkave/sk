@@ -50,9 +50,9 @@ const SignupContainer: React.FC<{}> = () => {
             return;
         }
 
-        const singupOpStat = getOpData(signupOp);
+        const signupOpStat = getOpData(signupOp);
 
-        if (singupOpStat.isError) {
+        if (signupOpStat.isError) {
             message.error("Error creating user");
         }
     };

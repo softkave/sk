@@ -13,6 +13,8 @@ self.addEventListener("install", (e) => {
 // or has at least one open tab logged in
 self.addEventListener("push", function (event) {
     if (Notification.permission === "granted") {
+        // TODO: should we update the server if the user has not
+        // granted us notifications permission?
         const payload = event.data ? event.data.text() : "no payload";
         event.waitUntil(
             self.registration.showNotification("Softkave Chat Notification", {

@@ -208,7 +208,7 @@ export function filterObjectList<T extends object = object>(
         const fieldValue = block[field];
 
         if (fieldValue) {
-            return ((fieldValue as unknown) as string)
+            return (fieldValue as unknown as string)
                 .toLowerCase()
                 .includes(lowerCasedSearchQuery);
         }

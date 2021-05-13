@@ -1,4 +1,7 @@
 import PushNotificationAPI from "./net/pushNotification/api";
+import UserAPI from "./net/user/user";
+import { updateClientOpAction } from "./redux/operations/session/updateClient";
+import store from "./redux/store";
 import UserSessionStorageFuncs, {
     sessionVariables,
 } from "./storage/userSession";
@@ -36,6 +39,8 @@ export async function registerServiceWorker() {
     }
 }
 
+// TODO: write code to auto check if operation passes and retry
+// if it failed
 export async function registerPushNotification() {
     try {
         const registration = await getServiceWorker();
@@ -47,7 +52,8 @@ export async function registerPushNotification() {
         let subscription = await registration.pushManager.getSubscription();
 
         if (!subscription) {
-            const response = await PushNotificationAPI.getPushNotificationKeys();
+            const response =
+                await PushNotificationAPI.getPushNotificationKeys();
 
             if (!response.vapidPublicKey) {
                 return;
@@ -62,7 +68,8 @@ export async function registerPushNotification() {
         }
 
         if (subscription) {
-            const isSubscribedToServer = await PushNotificationAPI.pushNotificationExists();
+            const isSubscribedToServer =
+                await PushNotificationAPI.pushNotificationExists();
 
             if (!isSubscribedToServer) {
                 const authKey = await subscription.getKey("auth");
@@ -80,6 +87,13 @@ export async function registerPushNotification() {
                     UserSessionStorageFuncs.setItem(
                         sessionVariables.pushNotificationSubscibed,
                         true
+                    );
+
+                    store.dispatch(
+                        updateClientOpAction({
+                            data: { isSubcribedToPushNotifications: true },
+                            deleteOpOnComplete: true,
+                        })
                     );
                 }
             }

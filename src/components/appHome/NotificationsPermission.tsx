@@ -17,10 +17,10 @@ const NotificationsPermission: React.FC<INotificationsPermissionProps> = (
     return (
         <Modal visible footer={null} closable={false} title={null}>
             <Typography.Paragraph className={css({ textAlign: "center" })}>
-                Hi <em>{user.name}</em>, we at <em>Softkave</em> recently made
-                changes to notify you when you have new messages and you are not
-                logged in, and we would need permission to show notifications
-                through your browser.
+                Hi <em>{user.name}</em>, we recently made changes to the app, to
+                notify you when you have new messages and you are not logged in
+                or not currently viewing our app, but we would need your
+                permission to show notifications through your browser.
             </Typography.Paragraph>
             <div
                 className={css({

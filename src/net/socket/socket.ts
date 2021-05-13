@@ -84,6 +84,8 @@ export default class SocketAPI {
                 const packet: IOutgoingEventPacket = {
                     data,
                     token: SessionSelectors.assertGetToken(store.getState()),
+                    clientId: SessionSelectors.assertGetClient(store.getState())
+                        .clientId,
                 };
 
                 sock.emit(eventName, packet, (ackData: Ack) => {

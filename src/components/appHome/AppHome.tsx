@@ -9,6 +9,7 @@ import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import UserSettings from "../user/UserSettings";
 import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
 import NotificationsPermissionContainer from "./NotificationsPermissionContainer";
@@ -41,6 +42,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
     }, [showFeedbackForm]);
 
     const renderNotification = () => <Notification />;
+    const renderSettings = () => <UserSettings />;
 
     const onSelect = (key: UserOptionsMenuKeys) => {
         switch (key) {
@@ -87,6 +89,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                             );
                         }}
                     />
+                    <Route exact path="/app/settings" render={renderSettings} />
                     <Route
                         exact
                         path="*"
@@ -134,6 +137,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                         return null;
                     }}
                 />
+                <Route exact path="/app/settings" render={renderSettings} />
                 <Route
                     exact
                     path="*"

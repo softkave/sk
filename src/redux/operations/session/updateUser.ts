@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import UserAPI from "../../../net/user/user";
+import { messages } from "../../../models/messages";
+import UserAPI, { IUpdateUserAPIProps } from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -15,17 +16,11 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 import { completeUserLogin } from "./signupUser";
 
-export interface ILoginUserOperationActionArgs {
-    email: string;
-    password: string;
-    remember: boolean;
-}
-
-export const loginUserOpAction = createAsyncThunk<
+export const updateUserOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<ILoginUserOperationActionArgs>,
+    GetOperationActionArgs<IUpdateUserAPIProps>,
     IAppAsyncThunkConfig
->("op/session/loginUser", async (arg, thunkAPI) => {
+>("op/session/updateUser", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -37,28 +32,27 @@ export const loginUserOpAction = createAsyncThunk<
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.LoginUser));
+    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.UpdateUser));
 
     try {
-        const result = await UserAPI.login({
-            email: arg.email,
-            password: arg.password,
+        const result = await UserAPI.updateUser({
+            user: arg.user,
         });
 
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            completeUserLogin(thunkAPI, result, arg.remember);
+            completeUserLogin(thunkAPI, result, false, true);
         } else {
-            throw new Error("An error occurred");
+            throw new Error(messages.anErrorOccurred);
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(opId, OperationType.LoginUser)
+            dispatchOperationCompleted(opId, OperationType.UpdateUser)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.LoginUser, error)
+            dispatchOperationError(opId, OperationType.UpdateUser, error)
         );
     }
 

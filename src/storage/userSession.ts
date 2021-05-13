@@ -15,6 +15,13 @@ export const sessionVariables = {
     pushNotificationSubscibed: getKey("pushNotificationSubscibed"),
 };
 
+// a list of keys to delete from storage when the user logouts
+const userAttachedVariables = [
+    sessionVariables.token,
+    sessionVariables.hasUserSeenNotificationsPermissionDialog,
+    sessionVariables.muteChatNotifications,
+];
+
 function getUserToken() {
     return getItem(sessionVariables.token);
 }
@@ -33,11 +40,16 @@ function saveTokenIfExists(token) {
     }
 }
 
+function deleteUserVariables() {
+    userAttachedVariables.forEach((key) => removeItem(key));
+}
+
 export default class UserSessionStorageFuncs {
     public static getUserToken = getUserToken;
     public static saveUserToken = saveUserToken;
     public static deleteUserToken = deleteUserToken;
     public static saveTokenIfExists = saveTokenIfExists;
+    public static deleteUserVariables = deleteUserVariables;
 
     public static setItem = setItem;
     public static getItem = getItem;

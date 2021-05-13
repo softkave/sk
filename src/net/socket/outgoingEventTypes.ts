@@ -12,6 +12,7 @@ export enum OutgoingSocketEvents {
 
 export interface IOutgoingEventPacket<T = any> {
     token: string;
+    clientId: string;
     data?: T;
 }
 

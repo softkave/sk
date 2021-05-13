@@ -1,7 +1,7 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
-import ErrorMessages from "../models/errorMessages";
+import ErrorMessages from "../models/messages";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import UserSessionStorageFuncs, {
@@ -98,9 +98,8 @@ export async function invokeGraphQL(
 
         if (result.ok) {
             if (errors && errors.length > 0) {
-                const continueProcessing = processServerRecommendedActions(
-                    errors
-                );
+                const continueProcessing =
+                    processServerRecommendedActions(errors);
 
                 if (continueProcessing) {
                     return { errors, data, result: body };
@@ -116,9 +115,8 @@ export async function invokeGraphQL(
             if (result.status === 500 || result.status === 401) {
                 if (errors) {
                     if (isExpectedErrorType(errors)) {
-                        const continueProcessing = processServerRecommendedActions(
-                            errors
-                        );
+                        const continueProcessing =
+                            processServerRecommendedActions(errors);
 
                         if (continueProcessing) {
                             return { errors, data, result: body };

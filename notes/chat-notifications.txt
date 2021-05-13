@@ -1,8 +1,8 @@
 -> setup service workers & subscribe to push notifications - done
 -> on login, ask permission to show notifications if we don't have one - done
--> settings page, that allows the user to mute notifications on device
--> settings page, to show if the user has notifications permission granted, and to ask permission if not
--> update client, on logout, on revoke notifications permission
+-> settings page, that allows the user to mute notifications on device - done
+-> settings page, to show if the user has notifications permission granted, and to ask permission if not - done
+-> update client, on logout, on revoke notifications permission - partially done
 -> show notification through service on event - done
 -> update isInactive on in active and active ( when the user logs in or comes back to the app )
 -> clear/set user settings on login/logout

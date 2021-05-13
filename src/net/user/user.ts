@@ -6,7 +6,11 @@ import {
 import { IClient, IUser } from "../../models/user/user";
 import auth from "../auth";
 import query from "../query";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+    GetEndpointResult,
+    GetEndpointResultError,
+    IEndpointResultBase,
+} from "../types";
 import {
     changePasswordMutation,
     changePasswordWithTokenMutation,
@@ -69,12 +73,17 @@ export interface IUpdateUserAPIProps {
         name?: string;
         notificationsLastCheckedAt?: Date;
         color?: string;
+        email?: string;
+        password?: string;
     };
 }
 
+export type IUpdateUserEndpointErrors =
+    GetEndpointResultError<IUpdateUserAPIProps>;
+
 async function updateUser(
     props: IUpdateUserAPIProps
-): Promise<IEndpointResultBase> {
+): Promise<IUserLoginResult> {
     return auth(null, updateUserMutation, props, "data.user.updateUser");
 }
 
@@ -190,8 +199,11 @@ export interface IUpdateClientEndpointParams {
 }
 
 export type IUpdateClientEndpointResult = GetEndpointResult<{
-    client?: IClient;
+    client: IClient;
 }>;
+
+export type IUpdateClientEndpointErrors =
+    GetEndpointResultError<IUpdateClientEndpointParams>;
 
 async function updateClient(
     params: IUpdateClientEndpointParams

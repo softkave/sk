@@ -1,7 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import ErrorMessages from "../../../models/messages";
-import UserAPI from "../../../net/user/user";
+import UserAPI, { IUpdateClientEndpointParams } from "../../../net/user/user";
+import UserSessionStorageFuncs, {
+    sessionVariables,
+} from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
+import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -14,19 +17,13 @@ import {
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
-import { completeUserLogin } from "./signupUser";
+import { localStoreClientData } from "./signupUser";
 
-export interface IChangePasswordOperationActionArgs {
-    password: string;
-    token: string;
-    opId?: string;
-}
-
-export const changePasswordOpAction = createAsyncThunk<
+export const updateClientOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IChangePasswordOperationActionArgs>,
+    GetOperationActionArgs<IUpdateClientEndpointParams>,
     IAppAsyncThunkConfig
->("op/session/changePassword", async (arg, thunkAPI) => {
+>("op/session/updateClient", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -39,29 +36,31 @@ export const changePasswordOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(opId, OperationType.ChangePassword)
+        dispatchOperationStarted(opId, OperationType.UpdateClient)
     );
 
     try {
-        const result = await UserAPI.changePasswordWithToken({
-            password: arg.password,
-            token: arg.token,
+        const result = await UserAPI.updateClient({
+            data: arg.data,
         });
 
         if (result && result.errors) {
             throw result.errors;
-        } else if (result && result.token && result.user) {
-            completeUserLogin(thunkAPI, result, false, true);
-        } else {
-            throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }
 
+        UserSessionStorageFuncs.setItem(
+            sessionVariables.clientId,
+            result.client.clientId
+        );
+
+        localStoreClientData(result.client);
+        thunkAPI.dispatch(SessionActions.updateClient(result.client));
         thunkAPI.dispatch(
-            dispatchOperationCompleted(opId, OperationType.ChangePassword)
+            dispatchOperationCompleted(opId, OperationType.UpdateClient)
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.ChangePassword, error)
+            dispatchOperationError(opId, OperationType.UpdateClient, error)
         );
     }
 

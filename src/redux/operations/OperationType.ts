@@ -22,6 +22,7 @@ enum OperationType {
     LoginUser = "LoginUser",
     RequestForgotPassword = "RequestForgotPassword",
     ChangePassword = "ChangePassword",
+    UpdateClient = "UpdateClient",
 
     // board
     LoadOrgUsersAndRequests = "LoadOrgUsersAndRequests",

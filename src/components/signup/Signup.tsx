@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import { memoize } from "lodash";
 import React from "react";
 import * as yup from "yup";
-import ErrorMessages from "../../models/errorMessages";
+import ErrorMessages from "../../models/messages";
 import { userConstants } from "../../models/user/constants";
 import { userErrorMessages } from "../../models/user/userErrorMessages";
 import { passwordPattern, textPattern } from "../../models/user/validation";
@@ -104,14 +104,8 @@ const Signup: React.FC<ISignupProps> = (props) => {
         },
     });
 
-    const {
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-    } = formik;
+    const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+        formik;
     const globalError = getFormError(errors);
 
     return (

@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import randomColor from "randomcolor";
+import { IClient } from "../../../models/user/user";
 import UserAPI, { IUserLoginResult } from "../../../net/user/user";
 import UserSessionStorageFuncs, {
     sessionVariables,
@@ -76,6 +77,26 @@ export const signupUserOpAction = createAsyncThunk<
     return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
+export function localStoreClientData(client: IClient) {
+    // TODO: we should ideally send the current client data to the server if set
+    // if the clientIds don't match
+    UserSessionStorageFuncs.setItem(sessionVariables.clientId, client.clientId);
+    UserSessionStorageFuncs.setItem(
+        sessionVariables.hasUserSeenNotificationsPermissionDialog,
+        client.hasUserSeenNotificationsPermissionDialog
+    );
+
+    UserSessionStorageFuncs.setItem(
+        sessionVariables.muteChatNotifications,
+        client.muteChatNotifications
+    );
+
+    UserSessionStorageFuncs.setItem(
+        sessionVariables.pushNotificationSubscibed,
+        client.isSubcribedToPushNotifications
+    );
+}
+
 export function completeUserLogin(
     store: IStoreLikeObject,
     result: IUserLoginResult,
@@ -98,9 +119,6 @@ export function completeUserLogin(
     }
 
     if (result.client) {
-        UserSessionStorageFuncs.setItem(
-            sessionVariables.clientId,
-            result.client.clientId
-        );
+        localStoreClientData(result.client);
     }
 }
