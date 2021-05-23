@@ -6,3 +6,5 @@
 -> show notification through service on event - done
 -> update isInactive on in active and active ( when the user logs in or comes back to the app ) - done
 -> clear/set user settings on login/logout - done
+
+- start subscription to push notifications only after user login

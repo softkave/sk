@@ -37,10 +37,10 @@ function makeSocketEventHandler(str: IStoreLikeObject, fn) {
 
 // tslint:disable-next-line: max-classes-per-file
 export default class SocketAPI {
-    public static socket: typeof Socket | null = null;
+    public static socket: Socket | null = null;
     public static connFailedBefore = false;
     public static authCompleted = false;
-    public static waitQueue: Array<(sock: typeof Socket | null) => void> = [];
+    public static waitQueue: Array<(sock: Socket | null) => void> = [];
 
     public static flushWaitQueue() {
         if (SocketAPI.waitQueue.length > 0) {
@@ -63,7 +63,7 @@ export default class SocketAPI {
             return SocketAPI.socket;
         }
 
-        return new Promise<typeof Socket>((resolve, reject) => {
+        return new Promise<Socket>((resolve, reject) => {
             if (SocketAPI.connFailedBefore) {
                 reject(new SocketNotConnectedError());
             }

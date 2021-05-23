@@ -4,6 +4,11 @@
 export type {};
 declare const self: ServiceWorkerGlobalScope;
 
+// This is required for the compilation process
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ignored = self.__WB_MANIFEST;
+
 self.addEventListener("install", (e) => {
     console.log("[Service Worker] install");
 });

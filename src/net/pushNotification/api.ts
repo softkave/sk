@@ -20,16 +20,18 @@ async function getPushNotificationKeys(): Promise<IGetPushNotificationKeysResult
     );
 }
 
-export interface IPushNotificationExistsResult extends IEndpointResultBase {
+export interface IPushSubscriptionExistsResult extends IEndpointResultBase {
     exists?: boolean;
 }
 
-async function pushNotificationExists(): Promise<IPushNotificationExistsResult> {
+async function pushSubscriptionExists(
+    props: ISubscribePushNotificationEndpointParams
+): Promise<IPushSubscriptionExistsResult> {
     return query(
         null,
         pushSubscriptionExistsQuery,
-        {},
-        "data.pushNotification.pushNotificationExists"
+        props,
+        "data.pushNotification.pushSubscriptionExists"
     );
 }
 
@@ -42,7 +44,8 @@ export interface ISubscribePushNotificationEndpointParams {
 }
 
 export type ISubscribePushNotificationEndpointResult = IEndpointResultBase;
-export type ISubscribePushNotificationEndpointErrors = GetEndpointResultError<ISubscribePushNotificationEndpointParams>;
+export type ISubscribePushNotificationEndpointErrors =
+    GetEndpointResultError<ISubscribePushNotificationEndpointParams>;
 
 async function subscribePushNotification(
     props: ISubscribePushNotificationEndpointParams
@@ -68,5 +71,5 @@ export default class PushNotificationAPI {
     public static getPushNotificationKeys = getPushNotificationKeys;
     public static subscribePushNotification = subscribePushNotification;
     public static unsubscribePushNotification = unsubscribePushNotification;
-    public static pushNotificationExists = pushNotificationExists;
+    public static pushSubscriptionExists = pushSubscriptionExists;
 }

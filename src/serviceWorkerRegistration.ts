@@ -1,5 +1,4 @@
 import PushNotificationAPI from "./net/pushNotification/api";
-import UserAPI from "./net/user/user";
 import { updateClientOpAction } from "./redux/operations/session/updateClient";
 import store from "./redux/store";
 import UserSessionStorageFuncs, {
@@ -28,14 +27,15 @@ export async function registerServiceWorker() {
     }
 
     try {
+        const workerURL = `${process.env.PUBLIC_URL}/service-worker.js`;
         const registration =
             (await getServiceWorker()) ||
-            (await navigator.serviceWorker.register("./service-worker.js"));
+            (await navigator.serviceWorker.register(workerURL));
 
         return registration;
     } catch (error) {
         // TODO: should we persist to server
-        devError(error);
+        console.error(error);
     }
 }
 
@@ -56,7 +56,7 @@ export async function registerPushNotification() {
                 await PushNotificationAPI.getPushNotificationKeys();
 
             if (!response.vapidPublicKey) {
-                return;
+                return null;
             }
 
             const vapidPublicKey = response.vapidPublicKey;
@@ -68,19 +68,28 @@ export async function registerPushNotification() {
         }
 
         if (subscription) {
-            const isSubscribedToServer =
-                await PushNotificationAPI.pushNotificationExists();
+            const authKeyBuf = subscription.getKey("auth");
+            const p256dhKeyBuf = subscription.getKey("p256dh");
 
-            if (!isSubscribedToServer) {
-                const authKey = await subscription.getKey("auth");
-                const p256dhKey = await subscription.getKey("p256dh");
+            if (authKeyBuf && p256dhKeyBuf) {
+                const auth = arrayBufferToString(authKeyBuf);
+                const p256dh = arrayBufferToString(p256dhKeyBuf);
 
-                if (authKey && p256dhKey) {
+                const isSubscribedToServer =
+                    await PushNotificationAPI.pushSubscriptionExists({
+                        endpoint: subscription.endpoint,
+                        keys: {
+                            auth,
+                            p256dh,
+                        },
+                    });
+
+                if (!isSubscribedToServer) {
                     await PushNotificationAPI.subscribePushNotification({
                         endpoint: subscription.endpoint,
                         keys: {
-                            auth: arrayBufferToString(authKey),
-                            p256dh: arrayBufferToString(p256dhKey),
+                            auth,
+                            p256dh,
                         },
                     });
 
@@ -108,5 +117,4 @@ export async function registerPushNotification() {
 
 export async function serviceWorkerInit() {
     await registerServiceWorker();
-    await registerPushNotification();
 }

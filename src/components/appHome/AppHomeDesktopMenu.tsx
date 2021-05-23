@@ -42,7 +42,6 @@ const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
 
                         [kAntMenuSelector]: {
                             width: "100%",
-                            // backgroundColor: "#fafafa",
                         },
                     }}
                     onSelect={onSelect}

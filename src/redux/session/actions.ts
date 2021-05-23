@@ -11,7 +11,7 @@ const loginUser =
 
 const setSessionToWeb = createAction("session/setSessionToWeb");
 const logoutUser = createAction("session/logoutUser");
-const updateClient = createAction<IClient>("session/loginUser");
+const updateClient = createAction<IClient>("session/updateClient");
 
 export default class SessionActions {
     public static loginUser = loginUser;

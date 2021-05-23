@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import OrgBoardContainer from "../board/OrgBoardContainer";
@@ -35,6 +36,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         onLogout,
     } = props;
 
+    const history = useHistory();
     const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
 
     const toggleFeedbackForm = React.useCallback(() => {
@@ -52,6 +54,10 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
             case UserOptionsMenuKeys.SendFeedback:
                 toggleFeedbackForm();
+                break;
+
+            case UserOptionsMenuKeys.UserSettings:
+                history.push("/app/settings");
                 break;
         }
     };

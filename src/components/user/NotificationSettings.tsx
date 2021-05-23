@@ -8,6 +8,7 @@ import UpdateClientFormContainer from "./UpdateClientFormContainer";
 export interface INotificationSettingsProps {
     client: IClient;
     onRequestPermission: () => void;
+    disableRequestPermission?: boolean;
 }
 
 const classes = {
@@ -16,7 +17,7 @@ const classes = {
 };
 
 const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
-    const { client, onRequestPermission } = props;
+    const { client, disableRequestPermission, onRequestPermission } = props;
 
     if (!supportsServiceWorkers()) {
         return (
@@ -50,6 +51,7 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
                     type="primary"
                     onClick={onRequestPermission}
                     className={classes.actionBtn}
+                    disabled={disableRequestPermission}
                 >
                     Request Permission
                 </Button>

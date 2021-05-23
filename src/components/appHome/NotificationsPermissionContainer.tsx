@@ -1,10 +1,13 @@
+import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateClientOpAction } from "../../redux/operations/session/updateClient";
 import SessionSelectors from "../../redux/session/selectors";
+import { registerPushNotification } from "../../serviceWorkerRegistration";
 import UserSessionStorageFuncs, {
     sessionVariables,
 } from "../../storage/userSession";
+import { devError } from "../../utils/log";
 import NotificationsPermission from "./NotificationsPermission";
 
 export interface INotificationsPermissionContainerProps {}
@@ -49,8 +52,18 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
 
         const onRequestPermission = async () => {
             if (Notification.permission === "default") {
-                await Notification.requestPermission();
-                onClose();
+                try {
+                    onClose();
+                    await Notification.requestPermission();
+                    const subscription = await registerPushNotification();
+
+                    if (subscription) {
+                        message.success("Push notification setup successfully");
+                    }
+                } catch (error) {
+                    devError(error);
+                    message.error("Error setting up push notifications");
+                }
             }
         };
 

@@ -31,7 +31,7 @@ enum OperationType {
     LoadTaskComments = "LoadTaskComments",
 
     // chat
-    GetUserRoomsAndChats = "getUserRoomsAndChats",
+    GetUserRoomsAndChats = "GetUserRoomsAndChats",
     SendMessage = "SendMessage",
     UpdateRoomReadCounter = "UpdateRoomReadCounter",
 

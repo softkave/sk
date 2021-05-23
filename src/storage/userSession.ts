@@ -23,7 +23,7 @@ const userAttachedVariables = [
 ];
 
 function getUserToken() {
-    return getItem(sessionVariables.token);
+    return getItem(sessionVariables.token) as string | undefined;
 }
 
 function saveUserToken(token) {

@@ -10,6 +10,10 @@ export const FormBody = styled("div")({
     overflow: "auto",
 });
 
+export const FormSection = styled("div")({
+    maxWidth: "400px",
+});
+
 export const StyledForm = styled("form")`
     display: flex;
     flex: 1;

@@ -8,7 +8,7 @@ import { IUser } from "../../models/user/user";
 import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
-import { FormBody } from "../forms/FormStyledComponents";
+import { FormBody, FormSection } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { userValidationSchemas } from "./validation";
 
@@ -91,14 +91,16 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
         <Form.Item
             required
             label={messages.colorLabel}
-            labelCol={{ span: 12 }}
-            wrapperCol={{ span: 12 }}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
         >
-            <ColorPicker
-                value={formik.values.color}
-                disabled={isSubmitting}
-                onChange={(color) => formik.setFieldValue("color", color)}
-            />
+            <div style={{ marginLeft: "4px" }}>
+                <ColorPicker
+                    value={formik.values.color}
+                    disabled={isSubmitting}
+                    onChange={(color) => formik.setFieldValue("color", color)}
+                />
+            </div>
         </Form.Item>
     );
 
@@ -213,25 +215,25 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
                         <FormError error={globalError} />
                     </Form.Item>
                 )}
-                {nameNode}
+                <FormSection>{nameNode}</FormSection>
                 <Divider />
-                {colorNode}
+                <FormSection>{colorNode}</FormSection>
                 <Divider />
-                {emailNode}
+                <FormSection>{emailNode}</FormSection>
                 <Divider />
-                {passwordNode}
+                <FormSection>{passwordNode}</FormSection>
                 <Form.Item
                     className={css({
                         marginTop: "24px",
                     })}
                 >
                     <Button
-                        block
                         type="primary"
                         htmlType="submit"
                         loading={isSubmitting}
+                        className={css({ marginTop: "32px" })}
                     >
-                        {isSubmitting ? "Updating Data" : "Update Data"}
+                        {isSubmitting ? "Updating Profile" : "Update Profile"}
                     </Button>
                 </Form.Item>
             </form>
