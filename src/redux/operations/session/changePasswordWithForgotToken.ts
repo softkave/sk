@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { messages } from "../../../models/messages";
-import UserAPI, { IUpdateUserAPIProps } from "../../../net/user/user";
+import ErrorMessages from "../../../models/messages";
+import UserAPI from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -16,11 +16,17 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 import { completeUserLogin } from "./signupUser";
 
-export const updateUserOpAction = createAsyncThunk<
+export interface IChangePasswordWithForgotTokenOperationActionArgs {
+    password: string;
+    token: string;
+    opId?: string;
+}
+
+export const changePasswordWithForgotTokenOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IUpdateUserAPIProps>,
+    GetOperationActionArgs<IChangePasswordWithForgotTokenOperationActionArgs>,
     IAppAsyncThunkConfig
->("op/session/updateUser", async (arg, thunkAPI) => {
+>("op/session/changePasswordWithForgotToken", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -32,11 +38,17 @@ export const updateUserOpAction = createAsyncThunk<
         return;
     }
 
-    thunkAPI.dispatch(dispatchOperationStarted(opId, OperationType.UpdateUser));
+    thunkAPI.dispatch(
+        dispatchOperationStarted(
+            opId,
+            OperationType.ChangePasswordWithForgotToken
+        )
+    );
 
     try {
-        const result = await UserAPI.updateUser({
-            data: arg.data,
+        const result = await UserAPI.changePasswordWithToken({
+            password: arg.password,
+            token: arg.token,
         });
 
         if (result && result.errors) {
@@ -44,15 +56,22 @@ export const updateUserOpAction = createAsyncThunk<
         } else if (result && result.token && result.user) {
             completeUserLogin(thunkAPI, result, false, true);
         } else {
-            throw new Error(messages.anErrorOccurred);
+            throw new Error(ErrorMessages.AN_ERROR_OCCURRED);
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(opId, OperationType.UpdateUser)
+            dispatchOperationCompleted(
+                opId,
+                OperationType.ChangePasswordWithForgotToken
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.UpdateUser, error)
+            dispatchOperationError(
+                opId,
+                OperationType.ChangePasswordWithForgotToken,
+                error
+            )
         );
     }
 

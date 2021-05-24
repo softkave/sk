@@ -1,5 +1,4 @@
-import { css } from "@emotion/css";
-import { Button, Divider, Form, Input } from "antd";
+import { Button, Form, Input, Typography } from "antd";
 import React from "react";
 import * as yup from "yup";
 import { messages } from "../../models/messages";
@@ -15,21 +14,12 @@ import { userValidationSchemas } from "./validation";
 const validationSchema = yup.object().shape({
     name: userValidationSchemas.name,
     email: userValidationSchemas.email,
-    confirmEmail: userValidationSchemas.confirmEmail,
-    password: userValidationSchemas.password,
-    confirmPassword: userValidationSchemas.confirmPassword,
 });
 
 export interface IUpdateUserDataFormData {
     name?: string;
     email?: string;
-    password?: string;
     color?: string;
-}
-
-interface IUpdateUserDataFormInternalData extends IUpdateUserDataFormData {
-    confirmEmail?: string;
-    confirmPassword?: string;
 }
 
 export interface IUpdateUserDataFormProps {
@@ -42,7 +32,7 @@ export interface IUpdateUserDataFormProps {
 const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
     const { user, onSubmit, isSubmitting, errors: externalErrors } = props;
 
-    const { formik } = useFormHelpers({
+    const { formik, formikChangedFieldsHelpers } = useFormHelpers({
         errors: externalErrors,
         formikProps: {
             validationSchema,
@@ -50,12 +40,12 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
                 name: user.name,
                 email: user.email,
                 color: user.color,
-            } as IUpdateUserDataFormInternalData,
+            } as IUpdateUserDataFormData,
             onSubmit: (data) => {
                 onSubmit({
                     email: data.email,
                     name: data.name,
-                    password: data.password,
+                    color: data.color,
                 });
             },
         },
@@ -108,7 +98,7 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
         <React.Fragment>
             <Form.Item
                 required
-                label={messages.emailAddressLabel}
+                label={messages.changeEmailLabel}
                 help={
                     formik.touched?.email &&
                     formik.errors?.email && (
@@ -128,110 +118,26 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
                     placeholder={messages.emailAddressPlaceholder}
                 />
             </Form.Item>
-            <Form.Item
-                required
-                label={messages.confirmEmailAddressLabel}
-                help={
-                    formik.touched?.confirmEmail &&
-                    formik.errors?.confirmEmail && (
-                        <FormError error={formik.errors.confirmEmail} />
-                    )
-                }
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <Input
-                    autoComplete="email"
-                    name="confirmEmail"
-                    value={formik.values.confirmEmail}
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    disabled={isSubmitting}
-                    placeholder={messages.confirmEmailAddressPlaceholder}
-                />
-            </Form.Item>
-        </React.Fragment>
-    );
-
-    const passwordNode = (
-        <React.Fragment>
-            <Form.Item
-                required
-                label={messages.passwordLabel}
-                help={
-                    formik.touched?.password && formik.errors?.password ? (
-                        <FormError error={formik.errors?.password} />
-                    ) : (
-                        messages.passwordMinCharacters
-                    )
-                }
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="password"
-                    value={formik.values.password}
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    disabled={isSubmitting}
-                    placeholder={messages.passwordPlaceholder}
-                    maxLength={userConstants.maxPasswordLength}
-                />
-            </Form.Item>
-            <Form.Item
-                required
-                label={messages.confirmPasswordLabel}
-                help={
-                    formik.touched?.confirmPassword &&
-                    formik.errors?.confirmPassword && (
-                        <FormError error={formik.errors.confirmPassword} />
-                    )
-                }
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <Input.Password
-                    visibilityToggle
-                    autoComplete="new-password"
-                    name="confirmPassword"
-                    value={formik.values.confirmPassword}
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    disabled={isSubmitting}
-                    placeholder={messages.confirmPasswordPlaceholder}
-                    maxLength={userConstants.maxPasswordLength}
-                />
-            </Form.Item>
         </React.Fragment>
     );
 
     return (
         <FormBody>
             <form onSubmit={formik.handleSubmit}>
+                <Typography.Title level={4}>Profile</Typography.Title>
                 {globalError && (
                     <Form.Item>
                         <FormError error={globalError} />
                     </Form.Item>
                 )}
                 <FormSection>{nameNode}</FormSection>
-                <Divider />
                 <FormSection>{colorNode}</FormSection>
-                <Divider />
                 <FormSection>{emailNode}</FormSection>
-                <Divider />
-                <FormSection>{passwordNode}</FormSection>
-                <Form.Item
-                    className={css({
-                        marginTop: "24px",
-                    })}
-                >
+                <Form.Item>
                     <Button
                         type="primary"
                         htmlType="submit"
                         loading={isSubmitting}
-                        className={css({ marginTop: "32px" })}
                     >
                         {isSubmitting ? "Updating Profile" : "Update Profile"}
                     </Button>

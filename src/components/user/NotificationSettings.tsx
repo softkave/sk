@@ -50,7 +50,6 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
                 <Button
                     type="primary"
                     onClick={onRequestPermission}
-                    className={classes.actionBtn}
                     disabled={disableRequestPermission}
                 >
                     Request Permission

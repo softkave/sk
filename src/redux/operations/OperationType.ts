@@ -21,7 +21,8 @@ enum OperationType {
     SignupUser = "SignupUser",
     LoginUser = "LoginUser",
     RequestForgotPassword = "RequestForgotPassword",
-    ChangePassword = "ChangePassword",
+    ChangePasswordWithForgotToken = "ChangePasswordWithForgotToken",
+    ChangePasswordWithCurrentPassword = "ChangePasswordWithCurrentPassword",
     UpdateClient = "UpdateClient",
 
     // board

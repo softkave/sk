@@ -1,4 +1,3 @@
-import { css } from "@emotion/css";
 import { Button, Checkbox, Form } from "antd";
 import React from "react";
 import { IClient } from "../../models/user/user";
@@ -69,11 +68,7 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
                     </Form.Item>
                 )}
                 {muteChatNotificationsNode}
-                <Form.Item
-                    className={css({
-                        marginTop: "24px",
-                    })}
-                >
+                <Form.Item>
                     <Button
                         block
                         type="primary"

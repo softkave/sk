@@ -41,8 +41,11 @@ export const messages = {
     // user form labels
     nameLabel: "Your Name",
     emailAddressLabel: "Your Email Address",
+    changeEmailLabel: "Change Your Email Address",
     confirmEmailAddressLabel: "Confirm Your Email Address",
     passwordLabel: "Your Password",
+    newPasswordLabel: "New Password",
+    currentPasswordLabel: "Current Password",
     confirmPasswordLabel: "Confirm Your Password",
     colorLabel: "Select Your Preferred Color Avatar",
 
@@ -51,5 +54,6 @@ export const messages = {
     emailAddressPlaceholder: "Enter your email address",
     confirmEmailAddressPlaceholder: "Re-enter your email address",
     passwordPlaceholder: "Enter your new password",
+    currentPasswordPlaceholder: "Enter your current password",
     confirmPasswordPlaceholder: "Re-enter your new password",
 };

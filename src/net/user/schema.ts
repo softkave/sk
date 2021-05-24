@@ -39,11 +39,10 @@ export const userLoginFragement = `
 `;
 
 export const updateUserMutation = `
-    ${errorFragment}
     ${userLoginFragement}
-    mutation UpdateUserMutation($data: UpdateUserInput!) {
+    mutation UpdateUserMutation($data: UserUpdateInput!) {
         user {
-            updateUser(user: $user) {
+            updateUser(data: $data) {
                 ...userQueryResult
             }
         }
@@ -87,9 +86,15 @@ export const forgotPasswordMutation = `
 
 export const changePasswordMutation = `
     ${userLoginFragement}
-    mutation UserChangePasswordMutation ($password: String!) {
+    mutation UserChangePasswordMutation (
+        $currentPassword: String!, 
+        $password: String!
+    ) {
         user {
-            changePassword (password: $password) {
+            changePassword (
+                currentPassword: $currentPassword, 
+                password: $password
+            ) {
                 ...userQueryResult
             }
         }

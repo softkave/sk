@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
@@ -36,6 +37,7 @@ const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
                 }}
             >
                 <Typography.Title
+                    type="secondary"
                     level={4}
                     style={{
                         margin: 0,
@@ -45,7 +47,19 @@ const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
                         display: "flex",
                     }}
                 >
-                    <StyledLink to="/app">Softkave</StyledLink>
+                    <StyledLink to="/app">
+                        <Typography.Text
+                            type="secondary"
+                            className={css({
+                                fontSize: "12px",
+                                marginBottom: "6px",
+                            })}
+                        >
+                            Boards by
+                        </Typography.Text>
+                        <br />
+                        SOFTKAVE
+                    </StyledLink>
                 </Typography.Title>
             </StyledContainer>
             <StyledContainer

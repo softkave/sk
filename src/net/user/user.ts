@@ -69,12 +69,11 @@ async function login(props: ILoginAPIProps): Promise<IUserLoginResult> {
 }
 
 export interface IUpdateUserAPIProps {
-    user: {
+    data: {
         name?: string;
         notificationsLastCheckedAt?: Date;
         color?: string;
         email?: string;
-        password?: string;
     };
 }
 
@@ -88,8 +87,8 @@ async function updateUser(
 }
 
 export interface IChangePasswordAPIProps {
+    currentPassword: string;
     password: string;
-    token: string;
 }
 
 async function changePassword(
@@ -98,9 +97,8 @@ async function changePassword(
     const result = await auth(
         null,
         changePasswordMutation,
-        { password: props.password },
-        "data.user.changePassword",
-        props.token
+        { password: props.password, currentPassword: props.currentPassword },
+        "data.user.changePassword"
     );
 
     return result;

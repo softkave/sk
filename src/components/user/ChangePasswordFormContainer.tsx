@@ -1,33 +1,31 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { IUpdateUserEndpointErrors } from "../../net/user/user";
-import { updateUserOpAction } from "../../redux/operations/session/updateUser";
-import SessionSelectors from "../../redux/session/selectors";
+import { changePasswordWithCurrentPasswordOpAction } from "../../redux/operations/session/changePasswordWithCurrentPassword";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
-import UpdateUserFormData, {
-    IUpdateUserDataFormData,
-} from "./UpdateUserDataForm";
+import ChangePasswordForm, {
+    IChangePasswordFormData,
+} from "./ChangePasswordForm";
 
-const UpdateUserDataFormContainer: React.FC<{}> = () => {
+const ChangePasswordFormContainer: React.FC<{}> = () => {
     const dispatch: AppDispatch = useDispatch();
 
     const [loading, setLoading] = React.useState(false);
     const [errors, setErrors] =
         React.useState<IFormError<IUpdateUserEndpointErrors> | undefined>();
 
-    const user = useSelector(SessionSelectors.assertGetUser);
-
-    const onSubmit = async (data: IUpdateUserDataFormData) => {
+    const onSubmit = async (data: IChangePasswordFormData) => {
         setLoading(true);
 
         const result = await dispatch(
-            updateUserOpAction({
-                data: data,
+            changePasswordWithCurrentPasswordOpAction({
+                password: data.password,
+                currentPassword: data.currentPassword,
                 deleteOpOnComplete: true,
             })
         );
@@ -41,7 +39,7 @@ const UpdateUserDataFormContainer: React.FC<{}> = () => {
         const opData = getOpData(op);
 
         if (opData.isCompleted) {
-            message.success("Profile updated successfully");
+            message.success("Your password has been updated successfully");
         } else if (opData.isError) {
             const flattenedErrors = flattenErrorList(opData.error);
             setErrors({
@@ -49,15 +47,14 @@ const UpdateUserDataFormContainer: React.FC<{}> = () => {
                 errorList: opData.error,
             });
 
-            message.error("Error updating your profile");
+            message.error("Error updating your password");
         }
 
         setLoading(false);
     };
 
     return (
-        <UpdateUserFormData
-            user={user}
+        <ChangePasswordForm
             onSubmit={onSubmit}
             isSubmitting={loading}
             errors={errors?.errors}
@@ -65,4 +62,4 @@ const UpdateUserDataFormContainer: React.FC<{}> = () => {
     );
 };
 
-export default UpdateUserDataFormContainer;
+export default ChangePasswordFormContainer;

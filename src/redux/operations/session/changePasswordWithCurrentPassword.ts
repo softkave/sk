@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import ErrorMessages from "../../../models/messages";
-import UserAPI from "../../../net/user/user";
+import UserAPI, { IChangePasswordAPIProps } from "../../../net/user/user";
 import { getNewId } from "../../../utils/utils";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -16,17 +16,11 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 import { completeUserLogin } from "./signupUser";
 
-export interface IChangePasswordOperationActionArgs {
-    password: string;
-    token: string;
-    opId?: string;
-}
-
-export const changePasswordOpAction = createAsyncThunk<
+export const changePasswordWithCurrentPasswordOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IChangePasswordOperationActionArgs>,
+    GetOperationActionArgs<IChangePasswordAPIProps>,
     IAppAsyncThunkConfig
->("op/session/changePassword", async (arg, thunkAPI) => {
+>("op/session/changePasswordWithCurrentPassword", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
 
     const operation = OperationSelectors.getOperationWithId(
@@ -39,13 +33,16 @@ export const changePasswordOpAction = createAsyncThunk<
     }
 
     thunkAPI.dispatch(
-        dispatchOperationStarted(opId, OperationType.ChangePassword)
+        dispatchOperationStarted(
+            opId,
+            OperationType.ChangePasswordWithCurrentPassword
+        )
     );
 
     try {
-        const result = await UserAPI.changePasswordWithToken({
+        const result = await UserAPI.changePassword({
             password: arg.password,
-            token: arg.token,
+            currentPassword: arg.currentPassword,
         });
 
         if (result && result.errors) {
@@ -57,11 +54,18 @@ export const changePasswordOpAction = createAsyncThunk<
         }
 
         thunkAPI.dispatch(
-            dispatchOperationCompleted(opId, OperationType.ChangePassword)
+            dispatchOperationCompleted(
+                opId,
+                OperationType.ChangePasswordWithCurrentPassword
+            )
         );
     } catch (error) {
         thunkAPI.dispatch(
-            dispatchOperationError(opId, OperationType.ChangePassword, error)
+            dispatchOperationError(
+                opId,
+                OperationType.ChangePasswordWithCurrentPassword,
+                error
+            )
         );
     }
 
