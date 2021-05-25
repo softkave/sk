@@ -1,10 +1,11 @@
 import { errorFragment } from "../fragments";
 
-export const getPushNotificationKeysQuery = `
+export const getPushSubscriptionKeysQuery = `
     ${errorFragment}
-    query GetPushNotificationKeysQuery () {
-        pushNotification {
-            getKeys () {
+    query GetPushSubscriptionKeysQuery {
+        pushSubscription {
+            getPushSubscriptionKeys {
+                vapidPublicKey
                 errors {
                     ...errorFragment
                 }
@@ -15,9 +16,15 @@ export const getPushNotificationKeysQuery = `
 
 export const pushSubscriptionExistsQuery = `
     ${errorFragment}
-    query PushNotificationExistsQuery () {
-        pushNotification {
-            pushSubscriptionExists () {
+    query PushSubscriptionExistsQuery (
+        $endpoint: String!, 
+        $keys: SubscribePushSubscriptionKeysInput!
+    ) {
+        pushSubscription {
+            pushSubscriptionExists (
+                endpoint: $endpoint, 
+                keys: $keys
+            ) {
                 exists
                 errors {
                     ...errorFragment
@@ -27,14 +34,17 @@ export const pushSubscriptionExistsQuery = `
     }
 `;
 
-export const subscribePushNotificationMutation = `
+export const subscribePushSubscriptionMutation = `
     ${errorFragment}
-    mutation SubscribePushNotificationMutation (
-        $endpoint: String!,
-        $auth: SubscribePushSubscriptionKeysInput!
+    mutation SubscribePushSubscriptionMutation (
+        $endpoint: String!, 
+        $keys: SubscribePushSubscriptionKeysInput!
     ) {
-        pushNotification {
-            subscribePushNotification (endpoint: $endpoint, auth: $auth) {
+        pushSubscription {
+            subscribePushSubscription (
+                endpoint: $endpoint, 
+                keys: $keys
+            ) {
                 errors {
                     ...errorFragment
                 }
@@ -43,11 +53,11 @@ export const subscribePushNotificationMutation = `
     }
 `;
 
-export const unsubscribePushNotificationMutation = `
+export const unsubscribePushSubscriptionMutation = `
     ${errorFragment}
-    mutation UnsubscribePushNotificationMutation () {
-        pushNotification {
-            unsubscribePushNotification () {
+    mutation UnsubscribePushSubscriptionMutation {
+        pushSubscription {
+            unsubscribePushSubscription {
                 errors {
                     ...errorFragment
                 }

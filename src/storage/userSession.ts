@@ -12,7 +12,7 @@ export const sessionVariables = {
     ),
     muteChatNotifications: getKey("muteChatNotifications"),
     clientId: getKey("clientId"),
-    pushNotificationSubscibed: getKey("pushNotificationSubscibed"),
+    isSubcribedToPushNotifications: getKey("isSubcribedToPushNotifications"),
 };
 
 // a list of keys to delete from storage when the user logouts

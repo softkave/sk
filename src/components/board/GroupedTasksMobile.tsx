@@ -1,4 +1,5 @@
 import { Badge, Space, Tabs, Typography } from "antd";
+import { RightOutlined } from "@ant-design/icons";
 import React from "react";
 import Scrollbars from "react-custom-scrollbars";
 import { IBlock } from "../../models/block/block";
@@ -85,6 +86,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                     groupedTasks[0] ? groupedTasks[0].name : undefined
                 }
                 tabBarGutter={0}
+                moreIcon={<RightOutlined />}
             >
                 {groupedTasks.map(renderTab)}
             </Tabs>

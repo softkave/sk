@@ -7,6 +7,7 @@ import { registerPushNotification } from "../../serviceWorkerRegistration";
 import UserSessionStorageFuncs, {
     sessionVariables,
 } from "../../storage/userSession";
+import { UnsurportedBrowserError } from "../../utils/errors";
 import { devError } from "../../utils/log";
 import NotificationsPermission from "./NotificationsPermission";
 
@@ -51,19 +52,29 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
         const onClose = () => setShowDialog(false);
 
         const onRequestPermission = async () => {
-            if (Notification.permission === "default") {
-                try {
-                    onClose();
-                    await Notification.requestPermission();
+            try {
+                onClose();
+                let permission = Notification.permission;
+
+                if (permission !== "granted") {
+                    permission = await Notification.requestPermission();
+                }
+
+                if (permission === "granted") {
                     const subscription = await registerPushNotification();
 
                     if (subscription) {
                         message.success("Push notification setup successfully");
                     }
-                } catch (error) {
-                    devError(error);
-                    message.error("Error setting up push notifications");
                 }
+            } catch (error) {
+                devError(error);
+
+                if (error?.name === UnsurportedBrowserError.name) {
+                    message.error(error.message);
+                }
+
+                message.error("Error setting up push notifications");
             }
         };
 

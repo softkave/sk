@@ -1,5 +1,4 @@
 import moment from "moment";
-import path from "path";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";

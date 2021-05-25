@@ -3,7 +3,7 @@ import React from "react";
 import { IClient } from "../../models/user/user";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
-import { FormBody } from "../forms/FormStyledComponents";
+import { FormBody, FormSection } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
 
 export interface IUpdateClientFormData {
@@ -46,11 +46,11 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
             }
         >
             <Checkbox
-                value={formik.values.muteChatNotifications}
+                checked={formik.values.muteChatNotifications}
                 onChange={(evt) => {
                     formik.setFieldValue(
                         "muteChatNotifications",
-                        evt.target.value
+                        evt.target.checked
                     );
                 }}
             >
@@ -67,10 +67,9 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
                         <FormError error={globalError} />
                     </Form.Item>
                 )}
-                {muteChatNotificationsNode}
+                <FormSection>{muteChatNotificationsNode}</FormSection>
                 <Form.Item>
                     <Button
-                        block
                         type="primary"
                         htmlType="submit"
                         loading={isSubmitting}

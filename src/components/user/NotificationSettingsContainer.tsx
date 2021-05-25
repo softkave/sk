@@ -3,6 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import SessionSelectors from "../../redux/session/selectors";
 import { registerPushNotification } from "../../serviceWorkerRegistration";
+import { UnsurportedBrowserError } from "../../utils/errors";
 import { devError } from "../../utils/log";
 import NotificationSettings from "./NotificationSettings";
 
@@ -17,14 +18,27 @@ const NotificationSettingsContainer: React.FC<INotificationSettingsContainerProp
         const onRequestPermission = async () => {
             try {
                 setRequestingPermission(true);
-                await Notification.requestPermission();
-                const subscription = await registerPushNotification();
 
-                if (subscription) {
-                    message.success("Push notification setup successfully");
+                let permission = Notification.permission;
+
+                if (permission !== "granted") {
+                    permission = await Notification.requestPermission();
+                }
+
+                if (permission === "granted") {
+                    const subscription = await registerPushNotification();
+
+                    if (subscription) {
+                        message.success("Push notification setup successfully");
+                    }
                 }
             } catch (error) {
                 devError(error);
+
+                if (error?.name === UnsurportedBrowserError.name) {
+                    message.error(error.message);
+                }
+
                 message.error("Error setting up push notifications");
             }
 

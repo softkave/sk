@@ -3,7 +3,7 @@ import {
     CollaborationRequestResponse,
     INotification,
 } from "../../models/notification/notification";
-import { IClient, IUser } from "../../models/user/user";
+import { IUser, IPersistedClient } from "../../models/user/user";
 import auth from "../auth";
 import query from "../query";
 import {
@@ -28,7 +28,7 @@ import {
 
 export type IUserLoginResult = GetEndpointResult<{
     user: IUser;
-    client: IClient;
+    client: IPersistedClient;
     token: string;
 }>;
 
@@ -188,16 +188,11 @@ async function respondToCollaborationRequest(
 }
 
 export interface IUpdateClientEndpointParams {
-    data: {
-        hasUserSeenNotificationsPermissionDialog?: boolean;
-        muteChatNotifications?: boolean;
-        isSubcribedToPushNotifications?: boolean;
-        isLoggedIn?: boolean;
-    };
+    data: Omit<IPersistedClient, "clientId">;
 }
 
 export type IUpdateClientEndpointResult = GetEndpointResult<{
-    client: IClient;
+    client: IPersistedClient;
 }>;
 
 export type IUpdateClientEndpointErrors =

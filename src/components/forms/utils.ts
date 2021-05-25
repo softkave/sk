@@ -1,9 +1,12 @@
 import { FormikTouched } from "formik";
 import isArray from "lodash/isArray";
 import isObject from "lodash/isObject";
-import { Schema, ValidationError } from "yup";
+import { AnySchema, ValidationError } from "yup";
 
-export const validateWithYupSchema = (yupSchema: Schema<any>, values: any) => {
+export const validateWithYupSchema = (
+    yupSchema: AnySchema<any>,
+    values: any
+) => {
     try {
         yupSchema.validateSync(values, { abortEarly: false });
 
@@ -16,7 +19,7 @@ export const validateWithYupSchema = (yupSchema: Schema<any>, values: any) => {
             validationError.inner.length > 0
         ) {
             validationError.inner.forEach((item: ValidationError) => {
-                if (!err[item.path]) {
+                if (item.path && !err[item.path]) {
                     err[item.path] = item.message;
                 }
             });

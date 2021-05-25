@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import { Divider, Tabs } from "antd";
+import { RightOutlined } from "@ant-design/icons";
 import React from "react";
 import ChangePasswordFormContainer from "./ChangePasswordFormContainer";
 import NotificationSettingsContainer from "./NotificationSettingsContainer";
@@ -47,6 +48,7 @@ const UserSettings: React.FC<IUserSettingsProps> = (props) => {
                         ></span>
                     ),
                 }}
+                moreIcon={<RightOutlined />}
             >
                 <Tabs.TabPane tab="Profile" key="profile">
                     <UpdateUserDataFormContainer />

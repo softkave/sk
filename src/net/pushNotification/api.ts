@@ -1,10 +1,10 @@
 import query from "../query";
 import { GetEndpointResultError, IEndpointResultBase } from "../types";
 import {
-    getPushNotificationKeysQuery,
+    getPushSubscriptionKeysQuery,
     pushSubscriptionExistsQuery,
-    subscribePushNotificationMutation,
-    unsubscribePushNotificationMutation,
+    subscribePushSubscriptionMutation,
+    unsubscribePushSubscriptionMutation,
 } from "./schema";
 
 export interface IGetPushNotificationKeysResult extends IEndpointResultBase {
@@ -14,9 +14,9 @@ export interface IGetPushNotificationKeysResult extends IEndpointResultBase {
 async function getPushNotificationKeys(): Promise<IGetPushNotificationKeysResult> {
     return query(
         null,
-        getPushNotificationKeysQuery,
+        getPushSubscriptionKeysQuery,
         {},
-        "data.pushNotification.getPushNotificationKeys"
+        "data.pushSubscription.getPushSubscriptionKeys"
     );
 }
 
@@ -31,7 +31,7 @@ async function pushSubscriptionExists(
         null,
         pushSubscriptionExistsQuery,
         props,
-        "data.pushNotification.pushSubscriptionExists"
+        "data.pushSubscription.pushSubscriptionExists"
     );
 }
 
@@ -52,18 +52,18 @@ async function subscribePushNotification(
 ): Promise<ISubscribePushNotificationEndpointResult> {
     return query(
         null,
-        subscribePushNotificationMutation,
+        subscribePushSubscriptionMutation,
         props,
-        "data.pushNotification.subscribePushNotification"
+        "data.pushSubscription.subscribePushSubscription"
     );
 }
 
 async function unsubscribePushNotification(): Promise<IEndpointResultBase> {
     return query(
         null,
-        unsubscribePushNotificationMutation,
+        unsubscribePushSubscriptionMutation,
         {},
-        "data.pushNotification.unsubscribePushNotification"
+        "data.pushSubscription.unsubscribePushSubscription"
     );
 }
 

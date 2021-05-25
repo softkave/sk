@@ -92,7 +92,7 @@ export function localStoreClientData(client: IClient) {
     );
 
     UserSessionStorageFuncs.setItem(
-        sessionVariables.pushNotificationSubscibed,
+        sessionVariables.isSubcribedToPushNotifications,
         client.isSubcribedToPushNotifications
     );
 }

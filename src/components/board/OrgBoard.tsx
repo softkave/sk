@@ -3,7 +3,7 @@
 import { Badge, Tabs } from "antd";
 import path from "path";
 import React from "react";
-import { MoreHorizontal } from "react-feather";
+import { RightOutlined } from "@ant-design/icons";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -170,7 +170,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 activeKey={resourceType!}
                 onChange={(key) => onSelectResourceType(key as any)}
                 tabBarGutter={0}
-                moreIcon={<MoreHorizontal />}
+                moreIcon={<RightOutlined />}
             >
                 {resourceTypes.map((type) => {
                     const text = (

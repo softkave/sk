@@ -4,8 +4,7 @@ import store from "./redux/store";
 import UserSessionStorageFuncs, {
     sessionVariables,
 } from "./storage/userSession";
-import { devError } from "./utils/log";
-import { arrayBufferToString, urlBase64ToUint8Array } from "./utils/utils";
+import { urlBase64ToUint8Array } from "./utils/utils";
 
 export function supportsServiceWorkers() {
     if ("serviceWorker" in navigator) {
@@ -42,77 +41,72 @@ export async function registerServiceWorker() {
 // TODO: write code to auto check if operation passes and retry
 // if it failed
 export async function registerPushNotification() {
-    try {
-        const registration = await getServiceWorker();
+    const registration = await getServiceWorker();
 
-        if (!registration) {
+    if (!registration) {
+        return null;
+    }
+
+    let subscription = await registration.pushManager.getSubscription();
+
+    if (!subscription) {
+        const response = await PushNotificationAPI.getPushNotificationKeys();
+
+        if (!response.vapidPublicKey) {
             return null;
         }
 
-        let subscription = await registration.pushManager.getSubscription();
-
-        if (!subscription) {
-            const response =
-                await PushNotificationAPI.getPushNotificationKeys();
-
-            if (!response.vapidPublicKey) {
-                return null;
-            }
-
-            const vapidPublicKey = response.vapidPublicKey;
-            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-            subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: convertedVapidKey,
-            });
-        }
-
-        if (subscription) {
-            const authKeyBuf = subscription.getKey("auth");
-            const p256dhKeyBuf = subscription.getKey("p256dh");
-
-            if (authKeyBuf && p256dhKeyBuf) {
-                const auth = arrayBufferToString(authKeyBuf);
-                const p256dh = arrayBufferToString(p256dhKeyBuf);
-
-                const isSubscribedToServer =
-                    await PushNotificationAPI.pushSubscriptionExists({
-                        endpoint: subscription.endpoint,
-                        keys: {
-                            auth,
-                            p256dh,
-                        },
-                    });
-
-                if (!isSubscribedToServer) {
-                    await PushNotificationAPI.subscribePushNotification({
-                        endpoint: subscription.endpoint,
-                        keys: {
-                            auth,
-                            p256dh,
-                        },
-                    });
-
-                    UserSessionStorageFuncs.setItem(
-                        sessionVariables.pushNotificationSubscibed,
-                        true
-                    );
-
-                    store.dispatch(
-                        updateClientOpAction({
-                            data: { isSubcribedToPushNotifications: true },
-                            deleteOpOnComplete: true,
-                        })
-                    );
-                }
-            }
-        }
-
-        return subscription;
-    } catch (error) {
-        devError(error);
-        return null;
+        const vapidPublicKey = response.vapidPublicKey;
+        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+        subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: convertedVapidKey,
+        });
     }
+
+    if (subscription) {
+        const subStr = JSON.stringify(subscription);
+        const subData = JSON.parse(subStr);
+        const authKeyBuf = subData.keys.auth;
+        const p256dhKeyBuf = subData.keys.p256dh;
+
+        if (authKeyBuf && p256dhKeyBuf) {
+            const auth = authKeyBuf.toString();
+            const p256dh = p256dhKeyBuf.toString();
+            const existsResult =
+                await PushNotificationAPI.pushSubscriptionExists({
+                    endpoint: subscription.endpoint,
+                    keys: {
+                        auth,
+                        p256dh,
+                    },
+                });
+
+            if (!existsResult.exists) {
+                await PushNotificationAPI.subscribePushNotification({
+                    endpoint: subscription.endpoint,
+                    keys: {
+                        auth,
+                        p256dh,
+                    },
+                });
+
+                UserSessionStorageFuncs.setItem(
+                    sessionVariables.isSubcribedToPushNotifications,
+                    true
+                );
+
+                store.dispatch(
+                    updateClientOpAction({
+                        data: { isSubcribedToPushNotifications: true },
+                        deleteOpOnComplete: true,
+                    })
+                );
+            }
+        }
+    }
+
+    return subscription;
 }
 
 export async function serviceWorkerInit() {

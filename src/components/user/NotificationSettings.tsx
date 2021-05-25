@@ -42,10 +42,9 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
             <div className={classes.root}>
                 <Typography.Paragraph>
                     You currently don't have notifications turned on, so we
-                    won't be able to notify through this browser when you get
-                    messages and you're not currently logged in or not viewing
-                    the app. To change this, click the "Request Permission"
-                    button below.
+                    won't be able to notify you through this browser when you
+                    get messages and you're not currently on the app. To change
+                    this, click the "Request Permission" button below.
                 </Typography.Paragraph>
                 <Button
                     type="primary"
@@ -60,24 +59,22 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
 
     if (permission.isGranted) {
         if (client.isSubcribedToPushNotifications) {
-            return (
-                <div className={classes.root}>
-                    <UpdateClientFormContainer />
-                </div>
-            );
+            return <UpdateClientFormContainer />;
         } else {
             return (
                 <div className={classes.root}>
                     <Typography.Paragraph>
-                        We weren't able to complete your notifications
-                        registrations process. Don't worry though, we will
-                        continue to retry the operation automatically. If after
-                        a span of 4-5 logins/days ( that is, if after 4-5 days
-                        or 4-5 times you've left the app and came back ), it's
-                        not working, please send us a feedback using the
-                        feedback form nicely tucked away in the menu where you
-                        logout from the app
+                        So, you've granted us permission to show notifications,
+                        but we weren't able complete the process. You can retry
+                        the process by clicking the button below.
                     </Typography.Paragraph>
+                    <Button
+                        type="primary"
+                        onClick={onRequestPermission}
+                        disabled={disableRequestPermission}
+                    >
+                        Retry Setting up Notifications
+                    </Button>
                 </div>
             );
         }

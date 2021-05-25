@@ -52,7 +52,7 @@ const ExistentialRenderer: React.FC<{}> = () => {
     React.useEffect(() => {
         if (isLoggedIn) {
             // TODO: we should also disconnect the socket maybe after 15 minutes
-            // of app being hidden
+            // of app being hidden, and reload the window URL when the user returns
             try {
                 const data: IOutgoingUpdateSocketEntryPacket = {
                     isInactive: isAppHidden,

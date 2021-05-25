@@ -1,10 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import UserAPI, { IUpdateClientEndpointParams } from "../../../net/user/user";
+import { IClient, IPersistedClient } from "../../../models/user/user";
+import UserAPI from "../../../net/user/user";
 import UserSessionStorageFuncs, {
     sessionVariables,
 } from "../../../storage/userSession";
-import { getNewId } from "../../../utils/utils";
+import { getFields, makeExtract } from "../../../utils/extract";
+import { getNewId, mergeData } from "../../../utils/utils";
 import SessionActions from "../../session/actions";
+import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
     dispatchOperationCompleted,
@@ -19,9 +22,19 @@ import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
 import { localStoreClientData } from "./signupUser";
 
+const clientInputFields = getFields<Omit<IPersistedClient, "clientId">>({
+    hasUserSeenNotificationsPermissionDialog: true,
+    isLoggedIn: true,
+    muteChatNotifications: true,
+});
+
+export const clientInputExtractor = makeExtract(clientInputFields);
+
 export const updateClientOpAction = createAsyncThunk<
     IOperation | undefined,
-    GetOperationActionArgs<IUpdateClientEndpointParams>,
+    GetOperationActionArgs<{
+        data: Omit<IClient, "clientId">;
+    }>,
     IAppAsyncThunkConfig
 >("op/session/updateClient", async (arg, thunkAPI) => {
     const opId = arg.opId || getNewId();
@@ -40,21 +53,34 @@ export const updateClientOpAction = createAsyncThunk<
     );
 
     try {
-        const result = await UserAPI.updateClient({
-            data: arg.data,
-        });
+        const data = clientInputExtractor(arg.data);
+        const savedClient = SessionSelectors.assertGetClient(
+            thunkAPI.getState()
+        );
 
-        if (result && result.errors) {
-            throw result.errors;
+        let client = mergeData({ ...savedClient }, arg.data);
+        console.log({ data });
+
+        if (Object.keys(data).length > 0) {
+            console.log("updating", data, Object.keys(data));
+            const result = await UserAPI.updateClient({
+                data: arg.data,
+            });
+
+            if (result && result.errors) {
+                throw result.errors;
+            }
+
+            client = mergeData(client, result.client);
         }
 
         UserSessionStorageFuncs.setItem(
             sessionVariables.clientId,
-            result.client.clientId
+            client.clientId
         );
 
-        localStoreClientData(result.client);
-        thunkAPI.dispatch(SessionActions.updateClient(result.client));
+        localStoreClientData(client);
+        thunkAPI.dispatch(SessionActions.updateClient(client));
         thunkAPI.dispatch(
             dispatchOperationCompleted(opId, OperationType.UpdateClient)
         );
