@@ -10,6 +10,8 @@ import {
     IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";
 import BlockSelectors from "../../redux/blocks/selectors";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import { KeyValueKeys } from "../../redux/key-value/types";
 import { sendMessageOpAction } from "../../redux/operations/chat/sendMessage";
 import { updateRoomReadCounterOpAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
@@ -22,6 +24,7 @@ export interface IChatRoomsRenderProps {
     sortedRooms: IRoom[];
     recipientsMap: { [key: string]: IUser };
     selectedRoomRecipientId: string | undefined;
+    isAppHidden: boolean;
     updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
     onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
     onSelectRoom: (room: IRoom) => void;
@@ -58,6 +61,10 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
 
     const collaborators = useSelector<IAppState, IUser[]>((state) =>
         UserSelectors.getUsers(state, org.collaborators!)
+    );
+
+    const isAppHidden = useSelector<IAppState, boolean>((state) =>
+        KeyValueSelectors.getKey(state, KeyValueKeys.IsAppHidden)
     );
 
     const recipientsMap = collaborators.reduce((map, collaborator) => {
@@ -131,6 +138,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     );
 
     return render({
+        isAppHidden,
         sortedRooms,
         recipientsMap,
         selectedRoomRecipientId,

@@ -44,21 +44,39 @@ self.addEventListener("notificationclick", (e) => {
     e.waitUntil(
         // eslint-disable-next-line no-undef
         clients.matchAll({ type: "window" }).then((clientsArr) => {
+            try {
+                if (clientsArr.length === 0) {
+                    // open a new window if there isn't one currently open
+                    // eslint-disable-next-line no-undef
+                    clients
+                        .openWindow(e.notification.data.url)
+                        .then((windowClient) =>
+                            windowClient ? windowClient.focus() : null
+                        );
+                } else {
+                    // focus on the first open window
+                    clientsArr[0].focus();
+                }
+            } catch (error) {
+                // TODO: cleanup after error
+                console.error(error);
+            }
+
             // If a Window tab matching the targeted URL already exists, focus that;
-            const hadWindowToFocus = clientsArr.some((windowClient) =>
-                windowClient.url === e.notification.data.url
-                    ? (windowClient.focus(), true)
-                    : false
-            );
+            // const hadWindowToFocus = clientsArr.some((windowClient) =>
+            //     windowClient.url === e.notification.data.url
+            //         ? (windowClient.focus(), true)
+            //         : false
+            // );
 
             // Otherwise, open a new tab to the applicable URL and focus it.
-            if (!hadWindowToFocus)
-                // eslint-disable-next-line no-undef
-                clients
-                    .openWindow(e.notification.data.url)
-                    .then((windowClient) =>
-                        windowClient ? windowClient.focus() : null
-                    );
+            // if (!hadWindowToFocus)
+            //     // eslint-disable-next-line no-undef
+            //     clients
+            //         .openWindow(e.notification.data.url)
+            //         .then((windowClient) =>
+            //             windowClient ? windowClient.focus() : null
+            //         );
         })
     );
 });

@@ -16,12 +16,14 @@ export interface IChatRoomProps {
     room: IRoom;
     recipientsMap: { [key: string]: IUser };
     user: IUser;
+    isAppHidden: boolean;
     updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
     onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
 }
 
 const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     const {
+        isAppHidden,
         room,
         user,
         recipientsMap,
@@ -32,7 +34,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     const history = useHistory();
 
     React.useEffect(() => {
-        if (room.unseenChatsCount > 0) {
+        if (room.unseenChatsCount > 0 && !isAppHidden) {
             updateRoomReadCounter({
                 orgId: room.orgId,
                 roomId: room.customId,
@@ -45,6 +47,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
         room.orgId,
         room.chats.length,
         room.unseenChatsCount,
+        isAppHidden,
         updateRoomReadCounter,
     ]);
 

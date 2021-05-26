@@ -60,9 +60,6 @@ const handleHidden = (cb: (isHidden: boolean) => void) => {
     // set the initial state (but only if browser supports the Page Visibility API)
     // @ts-ignore
     if (document[hidden] !== undefined) {
-        // TODO: wouldn't it be better if we don't connect at all
-        //   if the page is hidden
-
         // @ts-ignore
         onchange({ type: document[hidden] ? "blur" : "focus" });
     }

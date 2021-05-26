@@ -287,6 +287,7 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     )!;
                     return (
                         <ChatRoom
+                            isAppHidden={args.isAppHidden}
                             user={args.user}
                             room={room}
                             recipientsMap={args.recipientsMap}

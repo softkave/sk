@@ -28,6 +28,10 @@ export default function handleNewMessageEvent(
     const isUserInOrg = window.location.pathname.includes(room.orgId);
     const isUserInRoom =
         isUserInOrg && window.location.pathname.includes(room.recipientId);
+    const isAppHidden = KeyValueSelectors.getKey<boolean>(
+        store.getState(),
+        KeyValueKeys.IsAppHidden
+    );
 
     // Add chat to room
     store.dispatch(
@@ -35,7 +39,7 @@ export default function handleNewMessageEvent(
             chat,
             roomId: room.customId,
             recipientId: room.recipientId,
-            markAsUnseen: !isUserInRoom,
+            markAsUnseen: !isUserInRoom || isAppHidden,
             orgId: room.orgId,
         })
     );
