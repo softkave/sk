@@ -5,7 +5,7 @@ import React from "react";
 import { ArrowLeft, Plus } from "react-feather";
 import * as yup from "yup";
 import { blockConstants } from "../../models/block/constants";
-import ErrorMessages from "../../models/errorMessages";
+import ErrorMessages from "../../models/messages";
 import { notificationConstants } from "../../models/notification/constants";
 import { INotification } from "../../models/notification/notification";
 import { notificationErrorMessages } from "../../models/notification/notificationErrorMessages";
@@ -53,7 +53,8 @@ export interface IAddCollaboratorFormValues {
     collaborators: IAddCollaboratorFormItemValues[];
 }
 
-export type AddCollaboratorFormErrors = IFormikFormErrors<IAddCollaboratorFormValues>;
+export type AddCollaboratorFormErrors =
+    IFormikFormErrors<IAddCollaboratorFormValues>;
 
 export interface IAddCollaboratorFormProps {
     existingCollaborators: IUser[];
@@ -138,18 +139,15 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         });
     };
 
-    const {
-        formik,
-        formikHelpers,
-        formikChangedFieldsHelpers,
-    } = useFormHelpers({
-        errors: externalErrors,
-        formikProps: {
-            initialValues: value,
-            onSubmit: internalOnSubmit,
-            validationSchema,
-        },
-    });
+    const { formik, formikHelpers, formikChangedFieldsHelpers } =
+        useFormHelpers({
+            errors: externalErrors,
+            formikProps: {
+                initialValues: value,
+                onSubmit: internalOnSubmit,
+                validationSchema,
+            },
+        });
 
     const onDelete = (index: number) => {
         formikHelpers.deleteInArrayField("collaborators", index);

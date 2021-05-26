@@ -28,6 +28,17 @@ export type ICollaborator = {
     color: string;
 };
 
+export interface IPersistedClient {
+    clientId: string;
+    hasUserSeenNotificationsPermissionDialog?: boolean;
+    muteChatNotifications?: boolean;
+    isLoggedIn?: boolean;
+}
+
+export interface IClient extends IPersistedClient {
+    isSubcribedToPushNotifications?: boolean;
+}
+
 export function getUserInitials(user: ICollaborator) {
     return getNameInitials(user.name);
 }

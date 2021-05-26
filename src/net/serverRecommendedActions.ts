@@ -30,7 +30,7 @@ export function handleLoginAgainError() {
     store.dispatch(logoutUserOpAction());
     store.dispatch(
         KeyValueActions.setKey({
-            key: KeyValueKeys.LOGIN_AGAIN,
+            key: KeyValueKeys.LoginAgain,
             value: true,
         })
     );

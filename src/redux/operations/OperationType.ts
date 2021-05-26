@@ -21,7 +21,9 @@ enum OperationType {
     SignupUser = "SignupUser",
     LoginUser = "LoginUser",
     RequestForgotPassword = "RequestForgotPassword",
-    ChangePassword = "ChangePassword",
+    ChangePasswordWithForgotToken = "ChangePasswordWithForgotToken",
+    ChangePasswordWithCurrentPassword = "ChangePasswordWithCurrentPassword",
+    UpdateClient = "UpdateClient",
 
     // board
     LoadOrgUsersAndRequests = "LoadOrgUsersAndRequests",
@@ -30,7 +32,7 @@ enum OperationType {
     LoadTaskComments = "LoadTaskComments",
 
     // chat
-    GetUserRoomsAndChats = "getUserRoomsAndChats",
+    GetUserRoomsAndChats = "GetUserRoomsAndChats",
     SendMessage = "SendMessage",
     UpdateRoomReadCounter = "UpdateRoomReadCounter",
 

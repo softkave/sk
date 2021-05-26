@@ -37,7 +37,7 @@ const CommentsContainer: React.FC<ICommentsContainerProps> = (props) => {
                 })
             );
         }
-    }, [op]);
+    }, [op, dispatch, task.customId]);
 
     const org = useSelector<IAppState, IBlock>((state) =>
         BlockSelectors.getBlock(state, task.rootBlockId!)

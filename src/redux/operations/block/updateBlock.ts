@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import merge from "lodash/merge";
 import {
     BlockType,
     getUpdateBlockInput,
@@ -7,9 +6,9 @@ import {
     IBoardTaskResolution,
     IFormBlock,
 } from "../../../models/block/block";
-import { seedBlock, seedUpdateBlock } from "../../../models/seedDemoData";
+import { seedUpdateBlock } from "../../../models/seedDemoData";
 import BlockAPI from "../../../net/block/block";
-import { getDateString, getNewId, mergeData } from "../../../utils/utils";
+import { getDateString, getNewId } from "../../../utils/utils";
 import BlockActions, { IUpdateBlockActionArgs } from "../../blocks/actions";
 import BlockSelectors from "../../blocks/selectors";
 import SessionSelectors from "../../session/selectors";

@@ -7,6 +7,7 @@ export interface IEndpointResultBase {
     errors?: IAppError[];
 }
 
+// TODO: T should be partial in situations when the calls fail
 export type GetEndpointResult<T extends object = object> = T &
     IEndpointResultBase;
 

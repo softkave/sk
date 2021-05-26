@@ -3,10 +3,14 @@ import {
     CollaborationRequestResponse,
     INotification,
 } from "../../models/notification/notification";
-import { IUser } from "../../models/user/user";
+import { IUser, IPersistedClient } from "../../models/user/user";
 import auth from "../auth";
 import query from "../query";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+    GetEndpointResult,
+    GetEndpointResultError,
+    IEndpointResultBase,
+} from "../types";
 import {
     changePasswordMutation,
     changePasswordWithTokenMutation,
@@ -15,6 +19,7 @@ import {
     getUserNotificationsQuery,
     markNotificationReadMutation,
     respondToCollaborationRequestMutation,
+    updateClientMutation,
     updateUserMutation,
     userExistsQuery,
     userLoginMutation,
@@ -23,6 +28,7 @@ import {
 
 export type IUserLoginResult = GetEndpointResult<{
     user: IUser;
+    client: IPersistedClient;
     token: string;
 }>;
 
@@ -63,22 +69,26 @@ async function login(props: ILoginAPIProps): Promise<IUserLoginResult> {
 }
 
 export interface IUpdateUserAPIProps {
-    user: {
+    data: {
         name?: string;
         notificationsLastCheckedAt?: Date;
         color?: string;
+        email?: string;
     };
 }
 
+export type IUpdateUserEndpointErrors =
+    GetEndpointResultError<IUpdateUserAPIProps>;
+
 async function updateUser(
     props: IUpdateUserAPIProps
-): Promise<IEndpointResultBase> {
+): Promise<IUserLoginResult> {
     return auth(null, updateUserMutation, props, "data.user.updateUser");
 }
 
 export interface IChangePasswordAPIProps {
+    currentPassword: string;
     password: string;
-    token: string;
 }
 
 async function changePassword(
@@ -87,9 +97,8 @@ async function changePassword(
     const result = await auth(
         null,
         changePasswordMutation,
-        { password: props.password },
-        "data.user.changePassword",
-        props.token
+        { password: props.password, currentPassword: props.currentPassword },
+        "data.user.changePassword"
     );
 
     return result;
@@ -178,6 +187,23 @@ async function respondToCollaborationRequest(
     );
 }
 
+export interface IUpdateClientEndpointParams {
+    data: Omit<IPersistedClient, "clientId">;
+}
+
+export type IUpdateClientEndpointResult = GetEndpointResult<{
+    client: IPersistedClient;
+}>;
+
+export type IUpdateClientEndpointErrors =
+    GetEndpointResultError<IUpdateClientEndpointParams>;
+
+async function updateClient(
+    params: IUpdateClientEndpointParams
+): Promise<IUpdateClientEndpointResult> {
+    return auth(null, updateClientMutation, params, "data.user.updateClient");
+}
+
 export type IGetUserNotificationsAPIResult = GetEndpointResult<{
     requests: INotification[];
 }>;
@@ -219,4 +245,5 @@ export default class UserAPI {
     public static respondToCollaborationRequest = respondToCollaborationRequest;
     public static getUserNotifications = getUserNotifications;
     public static getUserData = getUserData;
+    public static updateClient = updateClient;
 }

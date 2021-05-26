@@ -5,6 +5,7 @@ import {
     INotification,
 } from "../../models/notification/notification";
 import { ISprint, SprintDuration } from "../../models/sprint/types";
+import { IClient } from "../../models/user/user";
 import { IPersistedRoom } from "../chat/chat";
 import { GetEndpointResult } from "../types";
 
@@ -25,6 +26,7 @@ export enum IncomingSocketEvents {
     EndSprint = "endSprint",
     StartSprint = "startSprint",
     DeleteSprint = "deleteSprint",
+    UpdateClient = "updateClient",
 }
 
 export type IIncomingBlockUpdatePacket = GetEndpointResult<{
@@ -103,4 +105,8 @@ export type IIncomingStartSprintPacket = GetEndpointResult<{
 
 export type IIncomingDeleteSprintPacket = GetEndpointResult<{
     sprintId: string;
+}>;
+
+export type IIncomingUpdateClientPacket = GetEndpointResult<{
+    client: IClient;
 }>;

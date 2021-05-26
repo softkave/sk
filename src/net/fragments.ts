@@ -154,3 +154,13 @@ fragment blockFragment on Block {
     }
 }
 `;
+
+export const clientFragment = `
+fragment clientFragment on Client {
+    clientId
+    hasUserSeenNotificationsPermissionDialog
+    muteChatNotifications
+    isSubcribedToPushNotifications
+    isLoggedIn
+}
+`;

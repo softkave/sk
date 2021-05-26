@@ -144,6 +144,8 @@ export const sendMessageOpAction = createAsyncThunk<
                 roomId: isTempRoom ? undefined : arg.roomId,
             });
 
+            console.log(result);
+
             if (result && result.errors) {
                 throw result.errors;
             }

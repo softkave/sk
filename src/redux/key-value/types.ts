@@ -11,10 +11,13 @@ export enum KeyValueKeys {
     RootBlocksLoaded = "rootBlocksLoaded",
     RoomsSubscribedTo = "roomsSubscribedTo",
     SocketDisconnectedAt = "socketDisconnectedAt",
+    SocketConnected = "socketConnected",
     FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
     UnseenChatsCountByOrg = "unseenChatsCountByOrg",
     QueuedChats = "queuedChats",
-    LOGIN_AGAIN = "loginAgain",
+    LoginAgain = "loginAgain",
+    SubscribeToPushNotifications = "SubscribeToPushNotifications",
+    IsAppHidden = "isAppHidden",
 }
 
 export interface IUnseenChatsCountByOrg {

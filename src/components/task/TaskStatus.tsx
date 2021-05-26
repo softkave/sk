@@ -52,10 +52,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         noResolutionModal,
     } = props;
 
-    const [
-        resolutionModalState,
-        setResolutionModalState,
-    ] = React.useState<IResolutionModalState>({});
+    const [resolutionModalState, setResolutionModalState] =
+        React.useState<IResolutionModalState>({});
 
     const statusId = task.status;
     const resolutionId = task.taskResolution;
@@ -81,7 +79,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
 
     const onCancel = React.useCallback(() => {
         setResolutionModalState({});
-    }, [handleResolutionModalChange]);
+    }, []);
 
     const handleStatusChange = React.useCallback(
         async (value: string) => {
@@ -96,12 +94,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
                 onChangeStatus(value);
             }
         },
-        [
-            lastStatus?.customId,
-            noResolutionModal,
-            onChangeStatus,
-            resolutionsList.length,
-        ]
+        [lastStatus, noResolutionModal, onChangeStatus, resolutionsList.length]
     );
 
     const getSelectedKeys = () => (statusId ? [statusId] : []);

@@ -4,7 +4,6 @@ import UserSessionStorageFuncs from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
 import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
-import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,
@@ -16,6 +15,7 @@ import {
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { IOperationActionBaseArgs } from "../types";
+import { completeUserLogin } from "./signupUser";
 
 export const initializeAppSessionOpAction = createAsyncThunk<
     IOperation | undefined,
@@ -47,15 +47,7 @@ export const initializeAppSessionOpAction = createAsyncThunk<
                 throw result.errors;
             }
 
-            const { user } = result;
-
-            thunkAPI.dispatch(UserActions.addUser(user));
-            thunkAPI.dispatch(
-                SessionActions.loginUser({
-                    token,
-                    userId: user.customId,
-                })
-            );
+            completeUserLogin(thunkAPI, result, true);
         } else {
             thunkAPI.dispatch(SessionActions.setSessionToWeb());
         }

@@ -7,9 +7,15 @@ import {
     KeyValueKeys,
 } from "../../../redux/key-value/types";
 import { IStoreLikeObject } from "../../../redux/types";
+import { devError } from "../../../utils/log";
 import { GetEndpointResult } from "../../types";
 import fetchMissingBroadcastsEvent from "../outgoing/fetchMissingBroadcastsEvent";
 import subscribeEvent from "../outgoing/subscribeEvent";
+import updateSocketEntryEvent from "../outgoing/updateSocketEntryEvent";
+import {
+    IOutgoingUpdateSocketEntryPacket,
+    OutgoingSocketEvents,
+} from "../outgoingEventTypes";
 import SocketAPI from "../socket";
 import handleFetchMissingBroadcastsEvent from "./handleFetchMissingBroadcastsEvent";
 
@@ -22,6 +28,8 @@ export default async function handleAuthEvent(
 
         // TODO: maybe show notification
         const tenSecsInMs = 10000;
+
+        // TODO: why are we delaying the disconnect call?
         delay(() => {
             SocketAPI.disconnectSocket();
             SocketAPI.flushWaitQueue();
@@ -32,6 +40,22 @@ export default async function handleAuthEvent(
 
     SocketAPI.authCompleted = true;
     SocketAPI.flushWaitQueue();
+
+    store.dispatch(
+        KeyValueActions.setKey({
+            key: KeyValueKeys.SocketConnected,
+            value: true,
+        })
+    );
+
+    const isInactive = KeyValueSelectors.getKey(
+        store.getState(),
+        KeyValueKeys.IsAppHidden
+    );
+
+    updateSocketEntryEvent({
+        isInactive,
+    }).catch(devError);
 
     const rooms =
         KeyValueSelectors.getKey(

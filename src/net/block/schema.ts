@@ -1,6 +1,5 @@
 import {
     blockFragment,
-    commentFragment,
     errorFragment,
     notificationFragment,
 } from "../fragments";

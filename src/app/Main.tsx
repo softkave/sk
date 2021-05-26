@@ -21,88 +21,11 @@ import { SessionType } from "../redux/session/types";
 import { AppDispatch, IAppState } from "../redux/types";
 import UserActions from "../redux/users/actions";
 import { getNewId } from "../utils/utils";
+import AppVisibility from "./AppVisibility";
 import ExistentialRenderer from "./ExistentialRenderer";
 import Routes from "./Routes";
 
-let timeoutHandle: number;
 const demoKey = "demo";
-
-// Disconnects the socket after 5 minutes of the user leaving the tab
-const handleHidden = () => {
-    let hidden = "hidden";
-
-    // Standards:
-    if (hidden in document) {
-        document.addEventListener("visibilitychange", onchange);
-    } else if ((hidden = "mozHidden") in document) {
-        document.addEventListener("mozvisibilitychange", onchange);
-    } else if ((hidden = "webkitHidden") in document) {
-        document.addEventListener("webkitvisibilitychange", onchange);
-    } else if ((hidden = "msHidden") in document) {
-        document.addEventListener("msvisibilitychange", onchange);
-    } else if ("onfocusin" in document) {
-        // IE 9 and lower:
-        // @ts-ignore
-        document.onfocusin = document.onfocusout = onchange;
-    } else {
-        // All others:
-        window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
-    }
-
-    function onchange(evt: Event) {
-        let state;
-        const v = "visible";
-        const h = "hidden";
-        const evtMap = {
-            focus: v,
-            focusin: v,
-            pageshow: v,
-            blur: h,
-            focusout: h,
-            pagehide: h,
-        };
-
-        evt = evt || window.event;
-        if (evt.type in evtMap) {
-            // @ts-ignore
-            state = evtMap[evt.type];
-        } else {
-            // @ts-ignore
-            state = this[hidden] ? "hidden" : "visible";
-        }
-
-        function hiddenTimeout() {
-            timeoutHandle = 0;
-
-            // disconnectSocket();
-        }
-
-        if (state === v) {
-            if (timeoutHandle) {
-                window.clearTimeout(timeoutHandle);
-            }
-
-            // const socket = getSocket();
-
-            // if (!socket) {
-            //   connectSocket({token: token!});
-            // }
-        } else {
-            const timeout = 5 * 60 * 1000;
-            timeoutHandle = window.setTimeout(hiddenTimeout, timeout);
-        }
-    }
-
-    // set the initial state (but only if browser supports the Page Visibility API)
-    // @ts-ignore
-    if (document[hidden] !== undefined) {
-        // TODO: wouldn't it be better if we don't connect at all
-        //   if the page is hidden
-
-        // @ts-ignore
-        onchange({ type: document[hidden] ? "blur" : "focus" });
-    }
-};
 
 const Main: React.FC<{}> = () => {
     const history = useHistory();
@@ -110,6 +33,7 @@ const Main: React.FC<{}> = () => {
     const [opId] = React.useState(() => getNewId());
     const sessionType = useSelector(SessionSelectors.getSessionType);
     const token = useSelector(SessionSelectors.getUserToken);
+    const client = useSelector(SessionSelectors.getClient);
     const isFetchingMissingBroadcasts = useSelector<IAppState, boolean>(
         (state) =>
             KeyValueSelectors.getKey(
@@ -166,9 +90,9 @@ const Main: React.FC<{}> = () => {
         if (sessionType === SessionType.App && !isDemoMode) {
             SocketAPI.connectSocket({
                 token: token!,
+                clientId: client!.clientId,
             });
 
-            // handleHidden();
             routeToApp();
         } else if (sessionType === SessionType.Web) {
             SocketAPI.disconnectSocket();
@@ -177,7 +101,7 @@ const Main: React.FC<{}> = () => {
                 history.push("/");
             }
         }
-    }, [sessionType, history, token, isDemoMode, routeToApp]);
+    }, [sessionType, history, token, isDemoMode, client, routeToApp]);
 
     const renderInitializing = () => (
         <StyledContainer
@@ -214,8 +138,9 @@ const Main: React.FC<{}> = () => {
 
     return (
         <React.Fragment>
-            {render()}
+            <AppVisibility />
             <ExistentialRenderer />
+            {render()}
         </React.Fragment>
     );
 };

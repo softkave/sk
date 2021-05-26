@@ -1,7 +1,6 @@
 import React from "react";
 import { IRoom } from "../../models/chat/types";
 import { IUser } from "../../models/user/user";
-import EmptyMessage from "../EmptyMessage";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";

@@ -1,10 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import UserAPI from "../../../net/user/user";
-import UserSessionStorageFuncs from "../../../storage/userSession";
 import { getNewId } from "../../../utils/utils";
-import SessionActions from "../../session/actions";
 import { IAppAsyncThunkConfig } from "../../types";
-import UserActions from "../../users/actions";
 import {
     dispatchOperationCompleted,
     dispatchOperationError,
@@ -16,6 +13,7 @@ import {
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
+import { completeUserLogin } from "./signupUser";
 
 export interface ILoginUserOperationActionArgs {
     email: string;
@@ -50,17 +48,7 @@ export const loginUserOpAction = createAsyncThunk<
         if (result && result.errors) {
             throw result.errors;
         } else if (result && result.token && result.user) {
-            thunkAPI.dispatch(UserActions.addUser(result.user));
-            thunkAPI.dispatch(
-                SessionActions.loginUser({
-                    token: result.token,
-                    userId: result.user.customId,
-                })
-            );
-
-            if (arg.remember) {
-                UserSessionStorageFuncs.saveUserToken(result.token);
-            }
+            completeUserLogin(thunkAPI, result, arg.remember);
         } else {
             throw new Error("An error occurred");
         }

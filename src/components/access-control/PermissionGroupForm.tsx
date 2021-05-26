@@ -20,7 +20,8 @@ import StyledContainer from "../styled/Container";
 import PermissionGroupUser from "./PermissionGroupUser";
 import { permissionGroupValidationSchemas } from "./validation";
 
-export type PermissionGroupFormErrors = IFormikFormErrors<IPermissionGroupInput>;
+export type PermissionGroupFormErrors =
+    IFormikFormErrors<IPermissionGroupInput>;
 
 export interface IPermissionGroupFormProps {
     value: IPermissionGroupInput;
@@ -49,11 +50,7 @@ const PermissionGroupForm: React.FC<IPermissionGroupFormProps> = (props) => {
         errors: externalErrors,
     } = props;
 
-    const {
-        formik,
-        formikHelpers,
-        formikChangedFieldsHelpers,
-    } = useFormHelpers({
+    const { formik, formikChangedFieldsHelpers } = useFormHelpers({
         errors: externalErrors,
         formikProps: {
             onSubmit,
@@ -271,7 +268,7 @@ const PermissionGroupForm: React.FC<IPermissionGroupFormProps> = (props) => {
 
     const renderForm = () => {
         const { handleSubmit } = formik;
-        const errors = (formik.errors as any) as PermissionGroupFormErrors;
+        const errors = formik.errors as any as PermissionGroupFormErrors;
 
         return (
             <StyledForm onSubmit={handleSubmit}>

@@ -1,9 +1,12 @@
 import { OutgoingHttpHeaders } from "http";
 import get from "lodash/get";
 import isString from "lodash/isString";
-import ErrorMessages from "../models/errorMessages";
+import ErrorMessages from "../models/messages";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
+import UserSessionStorageFuncs, {
+    sessionVariables,
+} from "../storage/userSession";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError } from "./types";
@@ -50,10 +53,18 @@ export async function invokeGraphQL(
     const { query, variables, paths } = props;
 
     try {
+        const clientId = UserSessionStorageFuncs.getItem(
+            sessionVariables.clientId
+        );
+
         const headers = {
             "Content-Type": "application/json",
             ...(props.headers || {}),
         };
+
+        if (clientId) {
+            headers["x-client-id"] = clientId;
+        }
 
         const result = await fetch(getServerAddr(), {
             headers,
@@ -87,9 +98,8 @@ export async function invokeGraphQL(
 
         if (result.ok) {
             if (errors && errors.length > 0) {
-                const continueProcessing = processServerRecommendedActions(
-                    errors
-                );
+                const continueProcessing =
+                    processServerRecommendedActions(errors);
 
                 if (continueProcessing) {
                     return { errors, data, result: body };
@@ -105,9 +115,8 @@ export async function invokeGraphQL(
             if (result.status === 500 || result.status === 401) {
                 if (errors) {
                     if (isExpectedErrorType(errors)) {
-                        const continueProcessing = processServerRecommendedActions(
-                            errors
-                        );
+                        const continueProcessing =
+                            processServerRecommendedActions(errors);
 
                         if (continueProcessing) {
                             return { errors, data, result: body };

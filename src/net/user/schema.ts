@@ -1,5 +1,6 @@
 import { blockFragment } from "../block/schema";
 import {
+    clientFragment,
     errorFragment,
     notificationFragment,
     userFragment,
@@ -19,22 +20,10 @@ export const userExistsQuery = `
     }
 `;
 
-export const updateUserMutation = `
-    ${errorFragment}
-    mutation UpdateUserMutation($data: UpdateUserInput!) {
-        user {
-            updateUser(user: $user) {
-                errors {
-                    ...errorFragment
-                }
-            }
-        }
-    }
-`;
-
 export const userLoginFragement = `
     ${errorFragment}
     ${userFragment}
+    ${clientFragment}
     fragment userQueryResult on UserQueryResult {
         errors {
             ...errorFragment
@@ -42,7 +31,21 @@ export const userLoginFragement = `
         user {
             ...userFragment
         }
+        client {
+            ...clientFragment
+        }
         token
+    }
+`;
+
+export const updateUserMutation = `
+    ${userLoginFragement}
+    mutation UpdateUserMutation($data: UserUpdateInput!) {
+        user {
+            updateUser(data: $data) {
+                ...userQueryResult
+            }
+        }
     }
 `;
 
@@ -83,9 +86,15 @@ export const forgotPasswordMutation = `
 
 export const changePasswordMutation = `
     ${userLoginFragement}
-    mutation UserChangePasswordMutation ($password: String!) {
+    mutation UserChangePasswordMutation (
+        $currentPassword: String!, 
+        $password: String!
+    ) {
         user {
-            changePassword (password: $password) {
+            changePassword (
+                currentPassword: $currentPassword, 
+                password: $password
+            ) {
                 ...userQueryResult
             }
         }
@@ -163,6 +172,25 @@ export const respondToCollaborationRequestMutation = `
                     ...blockFragment
                 }
                 respondedAt
+            }
+        }
+    }
+`;
+
+export const updateClientMutation = `
+    ${clientFragment}
+    ${errorFragment}
+    mutation UpdateClientMutation (
+        $data: UpdateClientDataInput!
+    ) {
+        user {
+            updateClient (data: $data) {
+                errors {
+                    ...errorFragment
+                }
+                client {
+                    ...clientFragment
+                }
             }
         }
     }

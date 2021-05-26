@@ -25,7 +25,7 @@ import BoardStatusResolutionAndLabelsForm, {
     BoardStatusResolutionAndLabelsFormType,
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
-import CommentsContainer from "../comments/CommentsContainer";
+// import CommentsContainer from "../comments/CommentsContainer";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
@@ -97,10 +97,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         errors: externalErrors,
     } = props;
 
-    const [
-        subFormType,
-        setSubFormType,
-    ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+    const [subFormType, setSubFormType] =
+        React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
 
     const [showSprintForm, setShowSprintForm] = React.useState<boolean>(false);
 
@@ -116,21 +114,18 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         })
     );
 
-    const {
-        formik,
-        formikHelpers,
-        formikChangedFieldsHelpers,
-    } = useFormHelpers({
-        errors: externalErrors,
-        formikProps: {
-            // TODO: show a message on form submit or close the form
-            onSubmit,
-            initialValues: value,
-            validationSchema: !task
-                ? blockValidationSchemas.newTask
-                : blockValidationSchemas.updateTask,
-        },
-    });
+    const { formik, formikHelpers, formikChangedFieldsHelpers } =
+        useFormHelpers({
+            errors: externalErrors,
+            formikProps: {
+                // TODO: show a message on form submit or close the form
+                onSubmit,
+                initialValues: value,
+                validationSchema: !task
+                    ? blockValidationSchemas.newTask
+                    : blockValidationSchemas.updateTask,
+            },
+        });
 
     const status = formik.values.status;
 
@@ -666,22 +661,22 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         );
     };
 
-    const renderComments = () => {
-        if (!task) {
-            return null;
-        }
+    // const renderComments = () => {
+    //     if (!task) {
+    //         return null;
+    //     }
 
-        return (
-            <Form.Item
-                // label="Comments"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-                // style={{ margin: "24px 0" }}
-            >
-                <CommentsContainer taskId={task.customId} />
-            </Form.Item>
-        );
-    };
+    //     return (
+    //         <Form.Item
+    //             // label="Comments"
+    //             labelCol={{ span: 24 }}
+    //             wrapperCol={{ span: 24 }}
+    //             // style={{ margin: "24px 0" }}
+    //         >
+    //             <CommentsContainer taskId={task.customId} />
+    //         </Form.Item>
+    //     );
+    // };
 
     const getSubmitLabel = () => {
         if (isSubmitting) {

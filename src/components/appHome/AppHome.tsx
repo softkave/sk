@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import OrgBoardContainer from "../board/OrgBoardContainer";
@@ -9,8 +10,10 @@ import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
 import RenderForDevice from "../RenderForDevice";
 import StyledContainer from "../styled/Container";
+import UserSettings from "../user/UserSettings";
 import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
+import NotificationsPermissionContainer from "./NotificationsPermissionContainer";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeProps {
@@ -33,6 +36,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         onLogout,
     } = props;
 
+    const history = useHistory();
     const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
 
     const toggleFeedbackForm = React.useCallback(() => {
@@ -40,6 +44,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
     }, [showFeedbackForm]);
 
     const renderNotification = () => <Notification />;
+    const renderSettings = () => <UserSettings />;
 
     const onSelect = (key: UserOptionsMenuKeys) => {
         switch (key) {
@@ -49,6 +54,10 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
             case UserOptionsMenuKeys.SendFeedback:
                 toggleFeedbackForm();
+                break;
+
+            case UserOptionsMenuKeys.UserSettings:
+                history.push("/app/settings");
                 break;
         }
     };
@@ -86,6 +95,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                             );
                         }}
                     />
+                    <Route exact path="/app/settings" render={renderSettings} />
                     <Route
                         exact
                         path="*"
@@ -110,7 +120,9 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                 <Route
                     exact
                     path="/app/notifications"
-                    render={() => renderEmpty("Select a request")}
+                    render={() =>
+                        renderEmpty("Select a request or notification")
+                    }
                 />
                 <Route
                     path="/app/notifications/*"
@@ -131,6 +143,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
                         return null;
                     }}
                 />
+                <Route exact path="/app/settings" render={renderSettings} />
                 <Route
                     exact
                     path="*"
@@ -142,6 +155,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
     return (
         <React.Fragment>
+            <NotificationsPermissionContainer />
             {showFeedbackForm && (
                 <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
             )}

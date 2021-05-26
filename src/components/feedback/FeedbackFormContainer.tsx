@@ -22,18 +22,15 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
     const { onCancel } = props;
 
     const [loading, setLoading] = React.useState(false);
-    const [errors, setErrors] = React.useState<
-        IFormError<ISendFeedbackEndpointErrors> | undefined
-    >();
+    const [errors, setErrors] =
+        React.useState<IFormError<ISendFeedbackEndpointErrors> | undefined>();
 
-    const [
-        showFeedbackSendMessage,
-        setShowFeedbackSendMessage,
-    ] = React.useState(false);
+    const [showFeedbackSentMessage, setShowFeedbackSentMessage] =
+        React.useState(false);
 
     const toggleFeedbackSentMessage = React.useCallback(
-        () => setShowFeedbackSendMessage(!showFeedbackSendMessage),
-        [showFeedbackSendMessage]
+        () => setShowFeedbackSentMessage(!showFeedbackSentMessage),
+        [showFeedbackSentMessage]
     );
 
     const dispatch: AppDispatch = useDispatch();
@@ -82,7 +79,7 @@ const FeedbackFormContainer: React.FC<IFeedbackFormContainerProps> = (
         setLoading(false);
     };
 
-    if (showFeedbackSendMessage) {
+    if (showFeedbackSentMessage) {
         return (
             <FeedbackSentMessage
                 visible

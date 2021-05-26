@@ -28,6 +28,7 @@ class SocketNotConnectedError extends Error {
 
 export interface ISocketConnectionProps {
     token: string;
+    clientId: string;
 }
 
 function makeSocketEventHandler(str: IStoreLikeObject, fn) {
@@ -36,10 +37,10 @@ function makeSocketEventHandler(str: IStoreLikeObject, fn) {
 
 // tslint:disable-next-line: max-classes-per-file
 export default class SocketAPI {
-    public static socket: typeof Socket | null = null;
+    public static socket: Socket | null = null;
     public static connFailedBefore = false;
     public static authCompleted = false;
-    public static waitQueue: Array<(sock: typeof Socket | null) => void> = [];
+    public static waitQueue: Array<(sock: Socket | null) => void> = [];
 
     public static flushWaitQueue() {
         if (SocketAPI.waitQueue.length > 0) {
@@ -62,7 +63,7 @@ export default class SocketAPI {
             return SocketAPI.socket;
         }
 
-        return new Promise<typeof Socket>((resolve, reject) => {
+        return new Promise<Socket>((resolve, reject) => {
             if (SocketAPI.connFailedBefore) {
                 reject(new SocketNotConnectedError());
             }
@@ -84,6 +85,8 @@ export default class SocketAPI {
                 const packet: IOutgoingEventPacket = {
                     data,
                     token: SessionSelectors.assertGetToken(store.getState()),
+                    clientId: SessionSelectors.assertGetClient(store.getState())
+                        .clientId,
                 };
 
                 sock.emit(eventName, packet, (ackData: Ack) => {
@@ -111,7 +114,7 @@ export default class SocketAPI {
         SocketAPI.socket = socket;
 
         socket.on(IncomingSocketEvents.Connect, () =>
-            handleConnectEvent(store, props.token)
+            handleConnectEvent(store, props.token, props.clientId)
         );
         socket.on(
             IncomingSocketEvents.Disconnect,
