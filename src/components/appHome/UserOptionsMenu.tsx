@@ -3,7 +3,7 @@ import {
     MessageOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, Space } from "antd";
 import React from "react";
 import StyledContainer from "../styled/Container";
 import { ComponentStyle } from "../types";
@@ -43,21 +43,27 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
                 style={{ minWidth: "120px" }}
             >
                 <Menu.Item key={UserOptionsMenuKeys.UserSettings}>
-                    <SettingOutlined />
-                    Settings
+                    <Space align="center" size={12}>
+                        <SettingOutlined />
+                        Settings
+                    </Space>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key={UserOptionsMenuKeys.SendFeedback}>
-                    <MessageOutlined />
-                    Send Feedback
+                    <Space align="center" size={12}>
+                        <MessageOutlined />
+                        Send Feedback
+                    </Space>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item
                     key={UserOptionsMenuKeys.Logout}
                     style={{ color: "rgb(255, 77, 79)" }}
                 >
-                    <LogoutOutlined />
-                    Logout
+                    <Space align="center" size={12}>
+                        <LogoutOutlined />
+                        Logout
+                    </Space>
                 </Menu.Item>
             </Menu>
         </StyledContainer>

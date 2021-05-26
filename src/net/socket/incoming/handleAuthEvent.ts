@@ -12,10 +12,6 @@ import { GetEndpointResult } from "../../types";
 import fetchMissingBroadcastsEvent from "../outgoing/fetchMissingBroadcastsEvent";
 import subscribeEvent from "../outgoing/subscribeEvent";
 import updateSocketEntryEvent from "../outgoing/updateSocketEntryEvent";
-import {
-    IOutgoingUpdateSocketEntryPacket,
-    OutgoingSocketEvents,
-} from "../outgoingEventTypes";
 import SocketAPI from "../socket";
 import handleFetchMissingBroadcastsEvent from "./handleFetchMissingBroadcastsEvent";
 

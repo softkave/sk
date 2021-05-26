@@ -32,7 +32,9 @@ export interface IUpdateUserDataFormProps {
 const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
     const { user, onSubmit, isSubmitting, errors: externalErrors } = props;
 
-    const { formik, formikChangedFieldsHelpers } = useFormHelpers({
+    // TODO: disable submit buttons on profile and password forms
+    // until there are changes
+    const { formik } = useFormHelpers({
         errors: externalErrors,
         formikProps: {
             validationSchema,
