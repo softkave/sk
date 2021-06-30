@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import React from "react";
 import { IBlock } from "../../models/block/block";
 import { sortBlocksByPriority } from "../block/sortBlocks";
@@ -9,9 +10,20 @@ import Task from "./Task";
 export interface ITaskListProps extends ITasksContainerRenderFnProps {
     demo?: boolean;
     style?: React.CSSProperties;
+    disableDragAndDrop?: boolean;
     toggleForm?: (block: IBlock) => void;
     getBlockStyle?: (block: IBlock, index: number) => React.CSSProperties;
 }
+
+const classes = {
+    taskContainer: css({
+        // marginTop: "16px",
+
+        "&:last-of-type": {
+            paddingBottom: "16px",
+        },
+    }),
+};
 
 const TaskList: React.FC<ITaskListProps> = (props) => {
     const { tasks, demo, style, toggleForm, getBlockStyle } = props;
@@ -19,24 +31,18 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
     const tasksToRender = sortBlocksByPriority(tasks);
 
     const renderTask = (task: IBlock, i: number) => {
-        const isNotLastTask = i < tasksToRender.length - 1;
         const taskStyle = getBlockStyle ? getBlockStyle(task, i) : {};
 
         return (
-            <StyledContainer
+            <div
                 key={task.customId}
-                style={{
-                    ...taskStyle,
-                    borderBottom: isNotLastTask
-                        ? "1px solid #f0f0f0"
-                        : undefined,
-                    paddingBottom: "24px",
-                    paddingTop: "24px",
-                }}
+                style={taskStyle}
+                className={classes.taskContainer}
             >
                 <Task
                     {...props}
                     task={task}
+                    index={i}
                     demo={demo}
                     onEdit={
                         toggleForm
@@ -44,7 +50,7 @@ const TaskList: React.FC<ITaskListProps> = (props) => {
                             : undefined
                     }
                 />
-            </StyledContainer>
+            </div>
         );
     };
 

@@ -47,6 +47,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
                 <Scrollbars>
                     <TaskList
                         {...props}
+                        disableDragAndDrop
                         tasks={group.tasks}
                         toggleForm={onClickUpdateBlock}
                         getBlockStyle={() => ({ padding: "0 16px" })}

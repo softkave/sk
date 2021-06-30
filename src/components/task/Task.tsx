@@ -1,8 +1,10 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, Dropdown, Menu, message, Modal, Space } from "antd";
 import { noop } from "lodash";
 import React from "react";
+import { Draggable } from "react-beautiful-dnd";
 import { MoreHorizontal } from "react-feather";
 import { useDispatch } from "react-redux";
 import {
@@ -38,6 +40,7 @@ const clickIgnoreElemsWithClassNames = [
 ];
 
 export interface ITaskProps {
+    index: number;
     task: IBlock;
     board: IBlock;
     collaborators: IUser[];
@@ -52,16 +55,46 @@ export interface ITaskProps {
     resolutionsMap: { [key: string]: IBoardTaskResolution };
 
     demo?: boolean;
+    style?: React.CSSProperties;
+    disableDragAndDrop?: boolean;
     onEdit?: (task: IBlock) => void;
     onDelete?: (task: IBlock) => void; // TODO: we don't use it
 }
 
-// TODO: how do we show thelabels?
+/**
+ * 
+0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+ */
+
+const getItemStyle = (isDragging, draggableStyle, extraStyle = {}) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: "none",
+
+    // change background colour if dragging
+    background: isDragging ? "white" : "inherit",
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+});
+
+const classes = {
+    root: css({
+        marginTop: "16px",
+        minWidth: "280px",
+        width: "100%",
+        borderRadius: "5px",
+        border: "1px solid #d9d9d9",
+        padding: "8px",
+        boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
+        userSelect: "none",
+    }),
+};
 
 const Task: React.FC<ITaskProps> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const {
         task,
+        index,
         board,
         demo,
         statusList,
@@ -75,12 +108,12 @@ const Task: React.FC<ITaskProps> = (props) => {
         statusMap,
         resolutionsMap,
         onEdit,
+        style,
+        disableDragAndDrop,
     } = props;
 
-    const [
-        subFormType,
-        setSubFormType,
-    ] = React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
+    const [subFormType, setSubFormType] =
+        React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
 
     const [showSprintForm, setShowSprintForm] = React.useState<boolean>(false);
 
@@ -307,8 +340,8 @@ const Task: React.FC<ITaskProps> = (props) => {
         );
     }
 
-    return (
-        <StyledContainer s={{ minWidth: "280px", width: "100%" }}>
+    const rootContent = (
+        <React.Fragment>
             {subFormType && (
                 <BoardStatusResolutionAndLabelsForm
                     visible
@@ -327,7 +360,39 @@ const Task: React.FC<ITaskProps> = (props) => {
             <Space direction="vertical" style={{ width: "100%" }}>
                 {contentElem}
             </Space>
-        </StyledContainer>
+        </React.Fragment>
+    );
+
+    if (disableDragAndDrop) {
+        return (
+            <div style={style} className={classes.root}>
+                {rootContent}
+            </div>
+        );
+    }
+
+    return (
+        <Draggable
+            key={task.customId}
+            draggableId={task.customId}
+            index={index}
+        >
+            {(provided, snapshot) => (
+                <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={getItemStyle(
+                        snapshot.isDragging,
+                        provided.draggableProps.style,
+                        style
+                    )}
+                    className={classes.root}
+                >
+                    {rootContent}
+                </div>
+            )}
+        </Draggable>
     );
 };
 

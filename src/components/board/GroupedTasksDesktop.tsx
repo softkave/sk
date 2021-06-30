@@ -1,31 +1,94 @@
+import { css } from "@emotion/css";
 import { Badge, Space, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import {
+    BeforeCapture,
+    DragDropContext,
+    Droppable,
+    DroppableProvided,
+    DroppableStateSnapshot,
+    DropResult,
+} from "react-beautiful-dnd";
+import {
+    IBlock,
+    IBlockAssignedLabel,
+    IFormBlock,
+    ITaskAssignee,
+} from "../../models/block/block";
 import { getNameInitials } from "../../models/utils";
+import { getDateString } from "../../utils/utils";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
-import { IBoardGroupedTasks } from "./types";
+import { BoardGroupableFields, IBoardGroupedTasks } from "./types";
+import { NO_ASSIGNEES_TEXT } from "./utils/groupByAssignees";
+import { NO_LABEL_TEXT } from "./utils/groupByLabels";
+import { BACKLOG } from "./utils/groupBySprints";
+import { NO_STATUS_TEXT } from "./utils/groupByStatus";
 
 export interface IGroupedTasksDesktopProps
     extends ITasksContainerRenderFnProps {
     groupedTasks: IBoardGroupedTasks[];
+    groupFieldName: BoardGroupableFields;
     onClickUpdateBlock: (block: IBlock) => void;
     renderColumnHeaderOptions?: (group: IBoardGroupedTasks) => React.ReactNode;
     emptyMessage?: string;
 }
 
+interface IDragStateInfo {
+    draggableId: string;
+    groupId?: string;
+}
+
+const getListStyle = (
+    isDragging: boolean,
+    isDraggingOver: boolean,
+    isParentGroup: boolean
+): React.CSSProperties => ({
+    // background: isDraggingOver && !isParentGroup ? "#DEEBFF" : undefined,
+    background: isDragging
+        ? isParentGroup
+            ? "#DFE1E6"
+            : isDraggingOver
+            ? "#DEEBFF"
+            : "#E3FCEF"
+        : undefined,
+    flex: 1,
+    overflow: "hidden",
+});
+
+const classes = {
+    dragStateDroppableDiv: css({
+        background: "#E3FCEF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        width: "100%",
+    }),
+    dragStateDroppableContentText: css({
+        fontSize: "16px !important",
+        textTransform: "capitalize",
+    }),
+};
+
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     const {
         groupedTasks,
+        tasksMap,
         emptyMessage,
+        groupFieldName,
         onClickUpdateBlock,
         renderColumnHeaderOptions,
+        user,
+        onUpdateTask,
     } = props;
+
+    const [dragInfo, setDragInfo] = React.useState<IDragStateInfo | null>(null);
 
     const renderColumnHeader = (group: IBoardGroupedTasks) => {
         const defaultContent = (
@@ -40,6 +103,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                     </Avatar>
                 )}
                 <Typography.Text
+                    strong
                     style={{
                         textTransform: "uppercase",
                     }}
@@ -69,20 +133,77 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         return content;
     };
 
+    const renderDroppableContent = (
+        group: IBoardGroupedTasks,
+        provided: DroppableProvided,
+        snapshot: DroppableStateSnapshot
+    ) => {
+        let shouldRenderGroup = false;
+
+        if (dragInfo) {
+            shouldRenderGroup = dragInfo.groupId === group.id;
+        } else {
+            shouldRenderGroup = true;
+        }
+
+        return shouldRenderGroup ? (
+            <div
+                ref={provided.innerRef}
+                style={getListStyle(
+                    !!dragInfo,
+                    snapshot.isDraggingOver,
+                    shouldRenderGroup
+                )}
+                {...provided.droppableProps}
+            >
+                <Scrollbar>
+                    <TaskList
+                        {...props}
+                        tasks={
+                            !!dragInfo
+                                ? [tasksMap[dragInfo.draggableId]]
+                                : group.tasks
+                        }
+                        toggleForm={onClickUpdateBlock}
+                        style={{ height: "100%" }}
+                    />
+                </Scrollbar>
+                {provided.placeholder}
+            </div>
+        ) : (
+            <div
+                ref={provided.innerRef}
+                style={getListStyle(
+                    !!dragInfo,
+                    snapshot.isDraggingOver,
+                    shouldRenderGroup
+                )}
+                className={classes.dragStateDroppableDiv}
+                {...provided.droppableProps}
+            >
+                <Typography.Text
+                    strong
+                    className={classes.dragStateDroppableContentText}
+                >
+                    {group.name}
+                </Typography.Text>
+                {/* <Message message="Drop here!"></Message> */}
+                {provided.placeholder}
+            </div>
+        );
+    };
+
     const renderColumn = (group: IBoardGroupedTasks, i: number) => {
         return (
             <Column
                 key={group.id}
                 header={renderColumnHeader(group)}
                 body={
-                    <Scrollbar style={{ flex: 1 }}>
-                        <TaskList
-                            {...props}
-                            tasks={group.tasks}
-                            toggleForm={onClickUpdateBlock}
-                            style={{ height: "100%" }}
-                        />
-                    </Scrollbar>
+                    <Droppable droppableId={group.id}>
+                        {(provided, snapshot) =>
+                            renderDroppableContent(group, provided, snapshot)
+                        }
+                    </Droppable>
                 }
                 style={{
                     marginLeft: "16px",
@@ -97,6 +218,124 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         );
     };
 
+    const onBeforeCapture = React.useCallback(
+        (before: BeforeCapture) => {
+            const task = tasksMap[before.draggableId];
+            const value = task[groupFieldName];
+            const groupIdentifierMap: Record<string, string> = {};
+            let emptyGroupId = "";
+
+            switch (groupFieldName) {
+                case "assignees": {
+                    const assignees = (value || []) as ITaskAssignee[];
+                    assignees.forEach((assignee) => {
+                        groupIdentifierMap[assignee.userId] = assignee.userId;
+                    });
+
+                    emptyGroupId = NO_ASSIGNEES_TEXT;
+                    break;
+                }
+
+                case "labels": {
+                    const labels = (value || []) as IBlockAssignedLabel[];
+                    labels.forEach((item) => {
+                        groupIdentifierMap[item.customId] = item.customId;
+                    });
+
+                    emptyGroupId = NO_LABEL_TEXT;
+                    break;
+                }
+
+                case "status": {
+                    const status = value as string;
+
+                    if (status) {
+                        groupIdentifierMap[status] = status;
+                    }
+
+                    emptyGroupId = NO_STATUS_TEXT;
+                    break;
+                }
+
+                case "sprint": {
+                    const sprintId = value as string;
+
+                    if (sprintId) {
+                        groupIdentifierMap[sprintId] = sprintId;
+                    }
+
+                    emptyGroupId = BACKLOG;
+                    break;
+                }
+            }
+
+            const group = groupedTasks.find(
+                (item) => groupIdentifierMap[item.id]
+            );
+
+            setDragInfo({
+                draggableId: before.draggableId,
+                groupId: group?.id || emptyGroupId,
+            });
+        },
+        [groupFieldName, groupedTasks, tasksMap]
+    );
+
+    const onDragEnd = React.useCallback(
+        (result: DropResult, provided) => {
+            const taskId = result.draggableId;
+            const task = tasksMap[taskId];
+
+            if (!result.destination) {
+                return;
+            }
+
+            const destinationId = result.destination.droppableId;
+            const update: Partial<IFormBlock> = {};
+
+            switch (groupFieldName) {
+                case "assignees": {
+                    const assignee: ITaskAssignee = {
+                        userId: destinationId,
+                        assignedAt: getDateString(),
+                        assignedBy: user.customId,
+                    };
+
+                    update.assignees = (task.assignees || []).concat(assignee);
+                    break;
+                }
+
+                case "labels": {
+                    const label: IBlockAssignedLabel = {
+                        customId: destinationId,
+                        assignedBy: user.customId,
+                        assignedAt: getDateString(),
+                    };
+
+                    update.labels = (task.labels || []).concat(label);
+                    break;
+                }
+
+                case "status": {
+                    update.status = destinationId;
+                    break;
+                }
+
+                case "sprint": {
+                    update.taskSprint = {
+                        sprintId: destinationId,
+                    };
+
+                    break;
+                }
+            }
+
+            onUpdateTask(taskId, update);
+            setDragInfo(null);
+        },
+        [groupFieldName, onUpdateTask, tasksMap, user.customId]
+    );
+
     const renderGroups = () => {
         return groupedTasks.map((group, i) => renderColumn(group, i));
     };
@@ -106,16 +345,21 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     }
 
     return (
-        <StyledContainer
-            s={{
-                overflowX: "auto",
-                width: "100%",
-                flex: 1,
-                marginTop: "22px",
-            }}
+        <DragDropContext
+            onBeforeCapture={onBeforeCapture}
+            onDragEnd={onDragEnd}
         >
-            {renderGroups()}
-        </StyledContainer>
+            <StyledContainer
+                s={{
+                    overflowX: "auto",
+                    width: "100%",
+                    flex: 1,
+                    marginTop: "22px",
+                }}
+            >
+                {renderGroups()}
+            </StyledContainer>
+        </DragDropContext>
     );
 };
 

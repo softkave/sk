@@ -6,7 +6,6 @@ import userAgent from "../userAgent";
 export interface IScrollbarProps {
     children: React.ReactNode;
     scrollbarProps?: ScrollbarProps;
-    style?: React.CSSProperties;
 }
 
 export type ScrollbarMethods =
@@ -25,10 +24,8 @@ const ScrollbarRenderFn: ForwardRefRenderFunction<
     ScrollbarMethods,
     IScrollbarProps
 > = (props, ref) => {
-    const { children, scrollbarProps, style } = props;
-
+    const { children, scrollbarProps } = props;
     const containerRef = React.useRef<HTMLDivElement | Scrollbars>();
-
     const deviceType = userAgent.getDevice().type;
     const operatingSystemName = userAgent.getOS().name;
 
@@ -52,7 +49,6 @@ const ScrollbarRenderFn: ForwardRefRenderFunction<
             <Scrollbars
                 autoHide
                 {...scrollbarProps}
-                style={{ ...style, ...(scrollbarProps?.style || {}) }}
                 // @ts-ignore
                 ref={containerRef}
             >
@@ -69,7 +65,6 @@ const ScrollbarRenderFn: ForwardRefRenderFunction<
                     overflow: "auto",
                     flexDirection: "column",
                     width: "100%",
-                    ...style,
                 }}
             >
                 {children}
@@ -80,7 +75,7 @@ const ScrollbarRenderFn: ForwardRefRenderFunction<
 
 const Scrollbar = React.forwardRef(ScrollbarRenderFn);
 
-Scrollbar.defaultProps = { scrollbarProps: {}, style: {} };
+Scrollbar.defaultProps = { scrollbarProps: {} };
 
 export default React.memo(Scrollbar);
 
@@ -120,7 +115,9 @@ const getMethods = (
                     return;
                 }
 
-                containerRef.current.scrollTop = (containerRef.current as HTMLDivElement).scrollHeight;
+                containerRef.current.scrollTop = (
+                    containerRef.current as HTMLDivElement
+                ).scrollHeight;
             },
             scrollToLeft: () => {
                 if (!containerRef.current) {
@@ -134,7 +131,9 @@ const getMethods = (
                     return;
                 }
 
-                containerRef.current.scrollLeft = (containerRef.current as HTMLDivElement).scrollWidth;
+                containerRef.current.scrollLeft = (
+                    containerRef.current as HTMLDivElement
+                ).scrollWidth;
             },
             getScrollLeft: () => {
                 if (!containerRef.current) {

@@ -161,6 +161,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
                 onClickUpdateBlock={onClickUpdateBlock}
                 renderColumnHeaderOptions={renderDesktopColumnHeaderOptions}
                 emptyMessage={"Add sprints to begin"}
+                groupFieldName="sprint"
             />
         );
     };

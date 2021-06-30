@@ -1,7 +1,7 @@
 import { IBlock, IBlockLabel } from "../../../models/block/block";
 import { IBoardGroupedTasks } from "../types";
 
-const NO_LABEL_TEXT = "Unlabeled";
+export const NO_LABEL_TEXT = "Unlabeled";
 
 const groupByLabels = (
     labels: IBlockLabel[],

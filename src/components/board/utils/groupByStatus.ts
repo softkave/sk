@@ -1,7 +1,7 @@
 import { IBlock, IBlockStatus } from "../../../models/block/block";
 import { IBoardGroupedTasks } from "../types";
 
-const NO_STATUS_TEXT = "No status";
+export const NO_STATUS_TEXT = "No status";
 
 const groupByStatus = (
     status: IBlockStatus[],

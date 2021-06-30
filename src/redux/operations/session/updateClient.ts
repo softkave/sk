@@ -59,10 +59,8 @@ export const updateClientOpAction = createAsyncThunk<
         );
 
         let client = mergeData({ ...savedClient }, arg.data);
-        console.log({ data });
 
         if (Object.keys(data).length > 0) {
-            console.log("updating", data, Object.keys(data));
             const result = await UserAPI.updateClient({
                 data: arg.data,
             });

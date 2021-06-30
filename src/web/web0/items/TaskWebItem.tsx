@@ -38,6 +38,7 @@ const TasksWebItem: React.FC<{}> = () => {
     const columnBody = (
         <TaskList
             demo
+            disableDragAndDrop
             board={{} as IBlock}
             user={{} as IUser}
             labelList={[]}
@@ -47,10 +48,12 @@ const TasksWebItem: React.FC<{}> = () => {
             resolutionsMap={{}}
             sprintsMap={{}}
             statusMap={{}}
+            tasksMap={{}}
             collaborators={[demoUsers.abayomi, demoUsers.solomon]}
             tasks={demoTasks.reverse()}
             statusList={statuses}
             toggleForm={noop}
+            onUpdateTask={noop as any}
         />
     );
 

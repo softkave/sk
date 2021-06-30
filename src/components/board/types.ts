@@ -25,6 +25,8 @@ export type OnClickAddBlock = (parent: IBlock, type: BlockType) => void;
 export type OnClickAddCollaborator = () => void;
 export type OnClickDeleteBlock = (block: IBlock) => void;
 
+export type BoardGroupableFields = "assignees" | "labels" | "status" | "sprint";
+
 export interface IBoardGroupedTasks {
     id: string;
     name: string;

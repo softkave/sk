@@ -6,7 +6,7 @@ import { BoardGroupBy } from "./BoardHeaderOptionsMenu";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
 import GroupedTasksMobile from "./GroupedTasksMobile";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
-import { IBoardGroupedTasks } from "./types";
+import { BoardGroupableFields, IBoardGroupedTasks } from "./types";
 import groupByAssignees from "./utils/groupByAssignees";
 import groupByLabels from "./utils/groupByLabels";
 import groupByStatus from "./utils/groupByStatus";
@@ -17,6 +17,19 @@ export interface IGroupedTasksProps extends ITasksContainerRenderFnProps {
     collaborators: IUser[];
     groupType: BoardGroupBy;
     onClickUpdateBlock: (block: IBlock) => void;
+}
+
+function getGroupFieldName(groupType: BoardGroupBy): BoardGroupableFields {
+    switch (groupType) {
+        case BoardGroupBy.SPRINT:
+            return "sprint";
+        case BoardGroupBy.ASSIGNEES:
+            return "assignees";
+        case BoardGroupBy.LABELS:
+            return "labels";
+        case BoardGroupBy.STATUS:
+            return "status";
+    }
 }
 
 const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
@@ -47,7 +60,13 @@ const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
     }
 
     const renderGroupedTasksDesktop = () => {
-        return <GroupedTasksDesktop {...props} groupedTasks={groupedTasks} />;
+        return (
+            <GroupedTasksDesktop
+                {...props}
+                groupedTasks={groupedTasks}
+                groupFieldName={getGroupFieldName(groupType)}
+            />
+        );
     };
 
     const renderGroupedTasksMobile = () => {

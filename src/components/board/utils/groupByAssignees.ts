@@ -3,7 +3,7 @@ import { IUser } from "../../../models/user/user";
 import { indexArray } from "../../../utils/utils";
 import { IBoardGroupedTasks } from "../types";
 
-const NO_ASSIGNEES_TEXT = "Unassigned";
+export const NO_ASSIGNEES_TEXT = "Unassigned";
 
 const groupByAssignees = (
     assignees: IUser[],
