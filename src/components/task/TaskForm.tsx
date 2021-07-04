@@ -647,8 +647,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
                             "subTasks",
                             subTask,
                             {},
-                            {},
-                            value.subTasks?.length
+                            {}
                         );
                         formikChangedFieldsHelpers.addField("subTasks");
                     }}

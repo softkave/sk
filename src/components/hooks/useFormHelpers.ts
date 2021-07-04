@@ -3,6 +3,7 @@ import defaultTo from "lodash/defaultTo";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
 import set from "lodash/set";
+import isNumber from "lodash/isNumber";
 import React from "react";
 import useObject from "./useObject";
 
@@ -118,13 +119,20 @@ const useFormHelpers = <T extends object>(
             initialValue: any,
             initialError?: any,
             initialTouched?: any,
-            index: number = 0
+            index?: number
         ) => {
             const { value, touched, errors } = getArrayFieldItems(field);
 
-            value.splice(index, 0, initialValue);
-            touched.splice(index, 0, initialTouched);
-            errors.splice(index, 0, initialError);
+            if (isNumber(index)) {
+                value.splice(index, 0, initialValue);
+                touched.splice(index, 0, initialTouched);
+                errors.splice(index, 0, initialError);
+            } else {
+                value.push(initialValue);
+                touched.push(initialTouched);
+                errors.push(initialError);
+            }
+
             setArrayFieldItems(field, touched, errors, value);
         },
         [setArrayFieldItems, getArrayFieldItems]
