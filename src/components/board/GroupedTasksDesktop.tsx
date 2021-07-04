@@ -50,15 +50,22 @@ const getListStyle = (
     isParentGroup: boolean
 ): React.CSSProperties => ({
     // background: isDraggingOver && !isParentGroup ? "#DEEBFF" : undefined,
+    // background: isDragging
+    //     ? isParentGroup
+    //         ? "#DFE1E6"
+    //         : isDraggingOver
+    //         ? "#DEEBFF"
+    //         : "#E3FCEF"
+    //     : undefined,
     background: isDragging
         ? isParentGroup
-            ? "#DFE1E6"
+            ? "inherit"
             : isDraggingOver
             ? "#DEEBFF"
             : "#E3FCEF"
         : undefined,
     flex: 1,
-    overflow: "hidden",
+    // overflow: "hidden",
 });
 
 const classes = {
@@ -147,29 +154,49 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         }
 
         return shouldRenderGroup ? (
-            <div
-                ref={provided.innerRef}
-                style={getListStyle(
-                    !!dragInfo,
-                    snapshot.isDraggingOver,
-                    shouldRenderGroup
-                )}
-                {...provided.droppableProps}
-            >
-                <Scrollbar>
+            // <div
+            //     ref={provided.innerRef}
+            //     style={getListStyle(
+            //         !!dragInfo,
+            //         snapshot.isDraggingOver,
+            //         shouldRenderGroup
+            //     )}
+            //     {...provided.droppableProps}
+            // >
+            //     <Scrollbar>
+            //         <TaskList
+            //             {...props}
+            //             tasks={
+            //                 !!dragInfo
+            //                     ? [tasksMap[dragInfo.draggableId]]
+            //                     : group.tasks
+            //             }
+            //             toggleForm={onClickUpdateBlock}
+            //             style={{ height: "100%" }}
+            //         />
+            //     </Scrollbar>
+            //     {provided.placeholder}
+            // </div>
+
+            <Scrollbar>
+                <div
+                    ref={provided.innerRef}
+                    style={getListStyle(
+                        !!dragInfo,
+                        snapshot.isDraggingOver,
+                        shouldRenderGroup
+                    )}
+                    {...provided.droppableProps}
+                >
                     <TaskList
                         {...props}
-                        tasks={
-                            !!dragInfo
-                                ? [tasksMap[dragInfo.draggableId]]
-                                : group.tasks
-                        }
+                        tasks={group.tasks}
                         toggleForm={onClickUpdateBlock}
                         style={{ height: "100%" }}
                     />
-                </Scrollbar>
-                {provided.placeholder}
-            </div>
+                    {provided.placeholder}
+                </div>
+            </Scrollbar>
         ) : (
             <div
                 ref={provided.innerRef}
@@ -181,12 +208,12 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                 className={classes.dragStateDroppableDiv}
                 {...provided.droppableProps}
             >
-                <Typography.Text
+                {/* <Typography.Text
                     strong
                     className={classes.dragStateDroppableContentText}
                 >
                     {group.name}
-                </Typography.Text>
+                </Typography.Text> */}
                 {/* <Message message="Drop here!"></Message> */}
                 {provided.placeholder}
             </div>
