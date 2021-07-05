@@ -38,7 +38,7 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
                 }}
             >
                 <Space>
-                    <Typography.Text type="secondary">
+                    <Typography.Text ellipsis type="secondary">
                         Show subtasks ( {completedSubTasksCount} of {count}{" "}
                         completed )
                     </Typography.Text>

@@ -17,7 +17,7 @@ self.addEventListener("install", (e) => {
 // TODO: preferrably only show notifications if the user has token in local storage
 // or has at least one open tab logged in
 self.addEventListener("push", function (event) {
-    if (Notification.permission === "granted") {
+    if (window.Notification.permission === "granted") {
         // TODO: should we update the server if the user has not
         // granted us notifications permission?
         const payload = event.data ? event.data.text() : "no payload";

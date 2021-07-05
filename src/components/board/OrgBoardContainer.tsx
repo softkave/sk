@@ -46,14 +46,12 @@ const OrgBoardContainer: React.FC<{}> = () => {
         IBoardFormData | undefined
     >();
 
-    const [showCollaboratorsForm, setShowCollaboratorsForm] = React.useState(
-        false
-    );
+    const [showCollaboratorsForm, setShowCollaboratorsForm] =
+        React.useState(false);
 
     const organizationPath = "/app/orgs/:organizationId";
-    const selectedOrganizationRouteMatch = useRouteMatch<IRouteMatchParams>(
-        organizationPath
-    );
+    const selectedOrganizationRouteMatch =
+        useRouteMatch<IRouteMatchParams>(organizationPath);
 
     const organizationId =
         selectedOrganizationRouteMatch &&
@@ -105,7 +103,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
     const orgDataOp = useLoadOrgData(block);
 
     const pushRoute = (route: string) => {
-        const search = new URLSearchParams(window.location.search);
+        const search = new window.URLSearchParams(window.location.search);
         const routeURL = new URL(
             `${window.location.protocol}${window.location.host}${route}`
         );

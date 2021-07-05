@@ -32,9 +32,9 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
     }
 
     const permission = {
-        isGranted: Notification.permission === "granted",
-        isDenied: Notification.permission === "denied",
-        isDefault: Notification.permission === "default",
+        isGranted: window.Notification.permission === "granted",
+        isDenied: window.Notification.permission === "denied",
+        isDefault: window.Notification.permission === "default",
     };
 
     if (permission.isDenied || permission.isDefault) {

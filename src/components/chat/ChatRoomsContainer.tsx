@@ -60,7 +60,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     );
 
     const collaborators = useSelector<IAppState, IUser[]>((state) =>
-        UserSelectors.getUsers(state, org.collaborators!)
+        UserSelectors.getUsers(state, org.collaborators || [])
     );
 
     const isAppHidden = useSelector<IAppState, boolean>((state) =>

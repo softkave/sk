@@ -19,10 +19,10 @@ const NotificationSettingsContainer: React.FC<INotificationSettingsContainerProp
             try {
                 setRequestingPermission(true);
 
-                let permission = Notification.permission;
+                let permission = window.Notification.permission;
 
                 if (permission !== "granted") {
-                    permission = await Notification.requestPermission();
+                    permission = await window.Notification.requestPermission();
                 }
 
                 if (permission === "granted") {

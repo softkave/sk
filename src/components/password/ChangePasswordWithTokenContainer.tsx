@@ -25,7 +25,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
         : undefined;
 
     const onSubmit = async (data: IChangePasswordFormData) => {
-        const query = new URLSearchParams(window.location.search);
+        const query = new window.URLSearchParams(window.location.search);
         const token = query.get("t");
 
         if (!token) {

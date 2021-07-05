@@ -43,7 +43,7 @@ const Main: React.FC<{}> = () => {
     );
 
     const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new window.URLSearchParams(location.search);
     const isDemoMode =
         useSelector(SessionSelectors.isDemoMode) || searchParams.has(demoKey);
 
