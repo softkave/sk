@@ -5,6 +5,11 @@ export default class ErrorMessages {
 }
 
 export const messages = {
+    // general
+    unsupportedFeatureTitle: "Unsupported Feature",
+    unsupportedFeatureMessage:
+        "Your browser does not support this feature. Try updating your browser.",
+
     // error
     anErrorOccurred: "An error occurred",
 

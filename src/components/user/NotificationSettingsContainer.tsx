@@ -1,10 +1,12 @@
-import { message } from "antd";
+import { message, notification as appNotification } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
+import { messages } from "../../models/messages";
 import SessionSelectors from "../../redux/session/selectors";
 import { registerPushNotification } from "../../serviceWorkerRegistration";
 import { UnsurportedBrowserError } from "../../utils/errors";
 import { devError } from "../../utils/log";
+import { supportsNotification } from "../../utils/supports";
 import NotificationSettings from "./NotificationSettings";
 
 export interface INotificationSettingsContainerProps {}
@@ -16,6 +18,14 @@ const NotificationSettingsContainer: React.FC<INotificationSettingsContainerProp
             React.useState(false);
 
         const onRequestPermission = async () => {
+            if (!supportsNotification()) {
+                appNotification.warning({
+                    message: messages.unsupportedFeatureTitle,
+                    description: messages.unsupportedFeatureMessage,
+                });
+                return;
+            }
+
             try {
                 setRequestingPermission(true);
 

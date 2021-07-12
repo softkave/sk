@@ -3,6 +3,7 @@ import { Button, Typography } from "antd";
 import React from "react";
 import { IClient } from "../../models/user/user";
 import { supportsServiceWorkers } from "../../serviceWorkerRegistration";
+import { supportsNotification } from "../../utils/supports";
 import UpdateClientFormContainer from "./UpdateClientFormContainer";
 
 export interface INotificationSettingsProps {
@@ -23,9 +24,21 @@ const NotificationSettings: React.FC<INotificationSettingsProps> = (props) => {
         return (
             <div className={classes.root}>
                 <Typography.Paragraph>
-                    Your browser does not support service workers, a necessary
-                    feature we use to implement notifications. Try updating your
-                    browser.
+                    Your browser does not support{" "}
+                    <Typography.Text strong>Service Workers</Typography.Text>, a{" "}
+                    feature we use to implement notifications. To fix this, try{" "}
+                    updating your browser.
+                </Typography.Paragraph>
+            </div>
+        );
+    }
+
+    if (!supportsNotification()) {
+        return (
+            <div className={classes.root}>
+                <Typography.Paragraph>
+                    Your browser does not support notifications. To fix this,{" "}
+                    try updating your browser.
                 </Typography.Paragraph>
             </div>
         );

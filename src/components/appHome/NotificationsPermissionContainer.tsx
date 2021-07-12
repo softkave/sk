@@ -1,6 +1,7 @@
-import { message } from "antd";
+import { message, notification as appNotification } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { messages } from "../../models/messages";
 import { updateClientOpAction } from "../../redux/operations/session/updateClient";
 import SessionSelectors from "../../redux/session/selectors";
 import { registerPushNotification } from "../../serviceWorkerRegistration";
@@ -9,7 +10,8 @@ import UserSessionStorageFuncs, {
 } from "../../storage/userSession";
 import { UnsurportedBrowserError } from "../../utils/errors";
 import { devError } from "../../utils/log";
-import NotificationsPermission from "./NotificationsPermission";
+import { supportsNotification } from "../../utils/supports";
+import NotificationsPermissionRequest from "./NotificationsPermission";
 
 export interface INotificationsPermissionContainerProps {}
 
@@ -24,11 +26,17 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
                 "boolean"
             );
 
-        const [showDialog, setShowDialog] = React.useState(
-            user &&
+        const [showDialog, setShowDialog] = React.useState(() => {
+            if (!supportsNotification()) {
+                return false;
+            }
+
+            return (
+                user &&
                 window.Notification.permission === "default" &&
                 !hasUserSeenNotificationsPermissionDialog
-        );
+            );
+        });
 
         React.useEffect(() => {
             if (!hasUserSeenNotificationsPermissionDialog) {
@@ -52,6 +60,14 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
         const onClose = () => setShowDialog(false);
 
         const onRequestPermission = async () => {
+            if (!supportsNotification()) {
+                appNotification.warning({
+                    message: messages.unsupportedFeatureTitle,
+                    description: messages.unsupportedFeatureMessage,
+                });
+                return;
+            }
+
             try {
                 onClose();
                 let permission = window.Notification.permission;
@@ -80,7 +96,7 @@ const NotificationsPermissionContainer: React.FC<INotificationsPermissionContain
 
         if (user && showDialog) {
             return (
-                <NotificationsPermission
+                <NotificationsPermissionRequest
                     user={user}
                     onClose={onClose}
                     onRequestPermission={onRequestPermission}

@@ -3,15 +3,15 @@ import { Button, Modal, Typography } from "antd";
 import { IUser } from "../../models/user/user";
 import { css } from "@emotion/css";
 
-export interface INotificationsPermissionProps {
+export interface INotificationsPermissionRequestProps {
     user: IUser;
     onClose: () => void;
     onRequestPermission: () => void;
 }
 
-const NotificationsPermission: React.FC<INotificationsPermissionProps> = (
-    props
-) => {
+type ComponentType = React.FC<INotificationsPermissionRequestProps>;
+
+const NotificationsPermissionRequest: ComponentType = (props) => {
     const { user, onClose, onRequestPermission } = props;
 
     return (
@@ -55,4 +55,4 @@ const NotificationsPermission: React.FC<INotificationsPermissionProps> = (
     );
 };
 
-export default NotificationsPermission;
+export default NotificationsPermissionRequest;
