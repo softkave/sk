@@ -16,7 +16,7 @@ const ChatRoomHeader: React.FC<IChatRoomHeaderProps> = (props) => {
         <StyledContainer
             s={{
                 padding: "0 16px",
-                borderBottom: "1px solid #d9d9d9",
+                borderBottom: "1px solid rgb(223, 234, 240)",
                 height: "56px",
                 alignItems: "center",
             }}

@@ -1,8 +1,17 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { Button, Dropdown, Menu, message, Modal, Space } from "antd";
+import {
+    Button,
+    Dropdown,
+    Menu,
+    message,
+    Modal,
+    Space,
+    Typography,
+} from "antd";
 import { noop } from "lodash";
+import moment from "moment";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { MoreHorizontal } from "react-feather";
@@ -79,11 +88,10 @@ const getItemStyle = (isDragging, draggableStyle, extraStyle = {}) => ({
 
 const classes = {
     root: css({
-        marginTop: "16px",
         minWidth: "280px",
         width: "100%",
-        borderRadius: "5px",
-        border: "1px solid #d9d9d9",
+        borderRadius: "12px",
+        border: "1px solid rgb(223, 234, 240)",
         padding: "8px",
         boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
         userSelect: "none",
@@ -250,7 +258,27 @@ const Task: React.FC<ITaskProps> = (props) => {
     const contentElem: React.ReactNode[] = [
         <StyledContainer key="header">
             <StyledContainer s={{ flex: 1 }}>
-                <Priority level={task.priority as BlockPriority} />
+                <Space
+                    split={
+                        <Typography.Text
+                            style={{
+                                // fontSize: "24px",
+                                // lineHeight: "14px",
+                                height: "100%",
+                            }}
+                        >
+                            {/* &#xB7; */}—
+                        </Typography.Text>
+                    }
+                >
+                    <Priority level={task.priority as BlockPriority} />
+                    {/* {task.dueAt && !isInLastStatus ? (
+                        <TaskThumbnailDueDate
+                            isInLastStatus={isInLastStatus}
+                            task={task}
+                        />
+                    ) : null} */}
+                </Space>
             </StyledContainer>
             <StyledContainer
                 onClick={(evt) => {
@@ -273,66 +301,93 @@ const Task: React.FC<ITaskProps> = (props) => {
         </StyledContainer>,
     ];
 
-    if (board.sprintOptions) {
-        contentElem.push(
-            <StyledContainer key="sprint">
-                <SelectTaskSprintContainer
-                    task={task}
-                    sprints={sprints}
-                    sprintsMap={sprintsMap}
-                    onAddNewSprint={toggleShowSprintForm}
-                />
-            </StyledContainer>
-        );
-    }
+    // if (board.sprintOptions) {
+    //     contentElem.push(
+    //         <StyledContainer key="sprint">
+    //             <SelectTaskSprintContainer
+    //                 task={task}
+    //                 sprints={sprints}
+    //                 sprintsMap={sprintsMap}
+    //                 onAddNewSprint={toggleShowSprintForm}
+    //             />
+    //         </StyledContainer>
+    //     );
+    // }
+
+    // contentElem.push(
+    //     <StyledContainer key="status" onClick={stopPropagation}>
+    //         <TaskStatusContainer
+    //             task={task}
+    //             className="task-status"
+    //             demo={demo}
+    //             statusList={statusList}
+    //             resolutionsList={resolutionsList}
+    //             statusMap={statusMap}
+    //             resolutionsMap={resolutionsMap}
+    //             onSelectAddNewStatus={onSelectAddNewStatus}
+    //             onSelectAddNewResolution={onSelectAddNewResolution}
+    //         />
+    //     </StyledContainer>
+    // );
 
     contentElem.push(
-        <StyledContainer key="status" onClick={stopPropagation}>
-            <TaskStatusContainer
-                task={task}
-                className="task-status"
-                demo={demo}
-                statusList={statusList}
-                resolutionsList={resolutionsList}
-                statusMap={statusMap}
-                resolutionsMap={resolutionsMap}
-                onSelectAddNewStatus={onSelectAddNewStatus}
-                onSelectAddNewResolution={onSelectAddNewResolution}
-            />
-        </StyledContainer>
+        <Space key="assignees-and-dueAt" split={<span>&#xB7;</span>}>
+            {!isInLastStatus ? (
+                <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
+                    Created {moment(task.createdAt).fromNow()}
+                </Typography.Text>
+            ) : (
+                <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
+                    Completed {moment(task.statusAssignedAt).fromNow()}
+                </Typography.Text>
+            )}
+            {task.dueAt && !isInLastStatus ? (
+                <TaskThumbnailDueDate
+                    isInLastStatus={isInLastStatus}
+                    task={task}
+                />
+            ) : null}
+        </Space>
     );
 
     if (hasAssignees || task.dueAt) {
         contentElem.push(
             <StyledContainer key="assignees-and-dueAt">
-                {task.dueAt && !isInLastStatus ? (
-                    <StyledContainer s={{ flex: 1, paddingRight: "16px" }}>
+                {hasAssignees && (
+                    <TaskThumbnailAssignees task={task} users={collaborators} />
+                )}
+                {/* {task.dueAt && !isInLastStatus ? (
+                    <StyledContainer
+                        s={{
+                            flex: 1,
+                            paddingLeft: "16px",
+                            alignItems: "flex-end",
+                            justifyContent: "flex-end",
+                        }}
+                    >
                         <TaskThumbnailDueDate
                             isInLastStatus={isInLastStatus}
                             task={task}
                         />
                     </StyledContainer>
-                ) : null}
-                {hasAssignees && (
-                    <TaskThumbnailAssignees task={task} users={collaborators} />
-                )}
+                ) : null} */}
             </StyledContainer>
         );
     }
 
-    if (task.labels && task.labels.length > 0) {
-        contentElem.push(
-            <TaskLabels
-                disabled
-                key="labels"
-                labelList={labelList}
-                labelsMap={labelsMap}
-                labels={task.labels}
-                onChange={noop}
-                onSelectAddNewLabel={noop}
-            />
-        );
-    }
+    // if (task.labels && task.labels.length > 0) {
+    //     contentElem.push(
+    //         <TaskLabels
+    //             disabled
+    //             key="labels"
+    //             labelList={labelList}
+    //             labelsMap={labelsMap}
+    //             labels={task.labels}
+    //             onChange={noop}
+    //             onSelectAddNewLabel={noop}
+    //         />
+    //     );
+    // }
 
     if (hasSubTasks) {
         contentElem.push(

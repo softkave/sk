@@ -77,7 +77,7 @@ const Face: React.FC<{}> = () => {
                     >
                         Pricing
                     </StyledTagLikeButtonWithNativeLink> */}
-                    <StyledTagLikeButton
+                    {/* <StyledTagLikeButton
                         to={webConstants.demoURL}
                         style={{ backgroundColor: "#FF5630" }}
                     >
@@ -91,7 +91,7 @@ const Face: React.FC<{}> = () => {
                                 }}
                             />
                         </Space>
-                    </StyledTagLikeButton>
+                    </StyledTagLikeButton> */}
                 </StyledButtonsContainer>
             </StyledFace>
         );

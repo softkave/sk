@@ -43,14 +43,14 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
                 style={{ minWidth: "120px" }}
             >
                 <Menu.Item key={UserOptionsMenuKeys.UserSettings}>
-                    <Space align="center" size={12}>
+                    <Space align="center" size={27}>
                         <SettingOutlined />
                         Settings
                     </Space>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key={UserOptionsMenuKeys.SendFeedback}>
-                    <Space align="center" size={12}>
+                    <Space align="center" size={27}>
                         <MessageOutlined />
                         Send Feedback
                     </Space>
@@ -60,7 +60,7 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
                     key={UserOptionsMenuKeys.Logout}
                     style={{ color: "rgb(255, 77, 79)" }}
                 >
-                    <Space align="center" size={12}>
+                    <Space align="center" size={27}>
                         <LogoutOutlined />
                         Logout
                     </Space>

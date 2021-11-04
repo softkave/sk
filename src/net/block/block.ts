@@ -4,6 +4,7 @@ import {
     addBlockMutation,
     addCollaboratorsMutation,
     deleteBlockMutation,
+    getAverageTimeToCompleteTasksQuery,
     getBlockChildrenQuery,
     getRootBlocksQuery,
     removeCollaboratorMutation,
@@ -91,7 +92,27 @@ function revokeRequest(
     );
 }
 
-export default class BlockAPI {
+export interface IGetAverageTimeToCompleteTasksEndpointParams {
+    boardId: string;
+}
+
+export interface IGetAverageTimeToCompleteTasksEndpointResponse
+    extends IEndpointResultBase {
+    avg: number;
+}
+
+function getAverageTimeToCompleteTasks(
+    props: IGetAverageTimeToCompleteTasksEndpointParams
+): Promise<IGetAverageTimeToCompleteTasksEndpointResponse> {
+    return auth(
+        null,
+        getAverageTimeToCompleteTasksQuery,
+        props,
+        "data.block.getAverageTimeToCompleteTasks"
+    );
+}
+
+export default abstract class BlockAPI {
     public static addBlock = addBlock;
     public static updateBlock = updateBlock;
     public static deleteBlock = deleteBlock;
@@ -100,4 +121,5 @@ export default class BlockAPI {
     public static removeCollaborator = removeCollaborator;
     public static getUserRootBlocks = getUserRootBlocks;
     public static revokeRequest = revokeRequest;
+    public static getAverageTimeToCompleteTasks = getAverageTimeToCompleteTasks;
 }

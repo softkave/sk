@@ -1,4 +1,5 @@
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
 import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
@@ -17,15 +18,14 @@ const kAntMenuSelector = "& .ant-menu";
 
 const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
     const { user, onSelect } = props;
-
     const [showMenu, setShowMenu] = React.useState(false);
 
     return (
         <StyledContainer
             s={{
-                padding: "16px",
+                padding: "8px 16px",
                 cursor: "pointer",
-                borderTop: "1px solid #d9d9d9",
+                borderTop: "1px solid rgb(223, 234, 240)",
                 flexDirection: "column",
                 width: "100%",
             }}
@@ -34,10 +34,19 @@ const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
             {showMenu && (
                 <UserOptionsMenu
                     style={{
-                        marginBottom: "12px",
+                        marginBottom: "8px",
 
                         [kAntMenuItemSelector]: {
-                            padding: 0,
+                            // padding: 0,
+                            lineHeight: "24px",
+                            height: "auto",
+                            padding: "8px 0px",
+                            margin: 0,
+                            marginBottom: "0px !important",
+                        },
+
+                        "& .ant-menu-item:first-of-type": {
+                            paddingTop: 0,
                         },
 
                         [kAntMenuSelector]: {
@@ -62,10 +71,14 @@ const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
                         },
                     },
                     {
-                        node: showMenu ? (
-                            <CaretUpOutlined />
-                        ) : (
-                            <CaretDownOutlined />
+                        node: (
+                            <Typography.Text type="secondary">
+                                {showMenu ? (
+                                    <CaretUpOutlined />
+                                ) : (
+                                    <CaretDownOutlined />
+                                )}
+                            </Typography.Text>
                         ),
                     },
                 ]}

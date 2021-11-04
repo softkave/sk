@@ -121,13 +121,19 @@ export interface IPersistedBlock {
 }
 
 export interface IBlock extends IPersistedBlock {
+    // organization
     boards?: string[];
     collaborators?: string[];
     notifications?: string[];
 
+    // organization and board
     userLeftBlockAt?: number;
     missingBroadcastsLastFetchedAt?: number;
 
+    // board
+    avgTimeToCompleteTasks?: number;
+
+    // task
     taskCommentOp?: IOperation;
 }
 
@@ -255,9 +261,8 @@ export const resolutionInputListExtractor = makeListExtract(
     resolutionInputFields
 );
 export const taskLabelInputExtractor = makeExtract(taskLabelInputFields);
-export const taskLabelInputListExtractor = makeListExtract(
-    taskLabelInputFields
-);
+export const taskLabelInputListExtractor =
+    makeListExtract(taskLabelInputFields);
 export const taskSprintInputExtractor = makeExtract(taskSprintInputFields);
 
 const newBlockInputFields = getFields<IFormBlock, INewBlockInput>({

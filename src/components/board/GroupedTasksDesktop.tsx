@@ -1,4 +1,4 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Badge, Space, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
@@ -49,14 +49,7 @@ const getListStyle = (
     isDraggingOver: boolean,
     isParentGroup: boolean
 ): React.CSSProperties => ({
-    // background: isDraggingOver && !isParentGroup ? "#DEEBFF" : undefined,
-    // background: isDragging
-    //     ? isParentGroup
-    //         ? "#DFE1E6"
-    //         : isDraggingOver
-    //         ? "#DEEBFF"
-    //         : "#E3FCEF"
-    //     : undefined,
+    height: "100%",
     background: isDragging
         ? isParentGroup
             ? "inherit"
@@ -65,7 +58,6 @@ const getListStyle = (
             : "#E3FCEF"
         : undefined,
     flex: 1,
-    // overflow: "hidden",
 });
 
 const classes = {
@@ -81,6 +73,15 @@ const classes = {
         fontSize: "16px !important",
         textTransform: "capitalize",
     }),
+    column: css({
+        minWidth: "280px ",
+        marginLeft: "16px",
+    }),
+    lastColumn: css({
+        minWidth: `${280 + 16}px !important`,
+        marginLeft: "16px",
+        paddingRight: "16px",
+    }),
 };
 
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
@@ -89,9 +90,9 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         tasksMap,
         emptyMessage,
         groupFieldName,
+        user,
         onClickUpdateBlock,
         renderColumnHeaderOptions,
-        user,
         onUpdateTask,
     } = props;
 
@@ -105,9 +106,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                         shape="square"
                         size="small"
                         style={{ backgroundColor: group.color }}
-                    >
-                        {getNameInitials(group.name)}
-                    </Avatar>
+                    />
                 )}
                 <Typography.Text
                     strong
@@ -154,30 +153,6 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         }
 
         return shouldRenderGroup ? (
-            // <div
-            //     ref={provided.innerRef}
-            //     style={getListStyle(
-            //         !!dragInfo,
-            //         snapshot.isDraggingOver,
-            //         shouldRenderGroup
-            //     )}
-            //     {...provided.droppableProps}
-            // >
-            //     <Scrollbar>
-            //         <TaskList
-            //             {...props}
-            //             tasks={
-            //                 !!dragInfo
-            //                     ? [tasksMap[dragInfo.draggableId]]
-            //                     : group.tasks
-            //             }
-            //             toggleForm={onClickUpdateBlock}
-            //             style={{ height: "100%" }}
-            //         />
-            //     </Scrollbar>
-            //     {provided.placeholder}
-            // </div>
-
             <Scrollbar>
                 <div
                     ref={provided.innerRef}
@@ -208,13 +183,6 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                 className={classes.dragStateDroppableDiv}
                 {...provided.droppableProps}
             >
-                {/* <Typography.Text
-                    strong
-                    className={classes.dragStateDroppableContentText}
-                >
-                    {group.name}
-                </Typography.Text> */}
-                {/* <Message message="Drop here!"></Message> */}
                 {provided.placeholder}
             </div>
         );
@@ -232,15 +200,9 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
                         }
                     </Droppable>
                 }
-                style={{
-                    marginLeft: "16px",
-                    paddingRight:
-                        i === groupedTasks.length - 1 ? "16px" : undefined,
-                    minWidth:
-                        i === groupedTasks.length - 1
-                            ? 280 + 16
-                            : "280px !important",
-                }}
+                className={cx(classes.column, {
+                    [classes.lastColumn]: i === groupedTasks.length - 1,
+                })}
             />
         );
     };

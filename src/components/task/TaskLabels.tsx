@@ -21,13 +21,8 @@ export interface ITaskLabelsProps {
 const ADD_NEW_LABEL_KEY = "add-new-label";
 
 const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
-    const {
-        onChange,
-        onSelectAddNewLabel,
-        disabled,
-        labelList,
-        labelsMap,
-    } = props;
+    const { onChange, onSelectAddNewLabel, disabled, labelList, labelsMap } =
+        props;
 
     const [visible, setVisible] = React.useState(false);
     const labels = props.labels || [];
@@ -57,7 +52,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             <Tag
                 closable={disabled ? false : canRemove}
                 key={label.customId}
-                color={label.color}
+                // color={label.color}
                 onClose={() => {
                     if (!disabled) {
                         onRemove(label.customId);
@@ -67,6 +62,8 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
                     display: "inline-flex",
                     alignItems: "center",
                     marginBottom: "2px",
+                    color: label.color,
+                    textTransform: "capitalize",
                 }}
             >
                 {label.name}

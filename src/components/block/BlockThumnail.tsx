@@ -1,7 +1,7 @@
 import { CommentOutlined } from "@ant-design/icons";
 import { Badge, Tag, Typography } from "antd";
 import React from "react";
-import { getBlockInitials, IBlock } from "../../models/block/block";
+import { IBlock } from "../../models/block/block";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 import StyledContainer from "../styled/Container";
 
@@ -65,7 +65,10 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
                 <StyledContainer s={{ alignItems: "center" }}>
                     <Typography.Text
                         strong={makeNameBold}
-                        style={{ marginRight: "8px" }}
+                        style={{
+                            marginRight: "8px",
+                            textTransform: "capitalize",
+                        }}
                         ellipsis
                     >
                         {block.name}
@@ -142,11 +145,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
             onClick={onClick}
         >
             <StyledContainer>
-                <ItemAvatar size={avatarSize} color={color}>
-                    <span style={{ textTransform: "uppercase" }}>
-                        {getBlockInitials(block)}
-                    </span>
-                </ItemAvatar>
+                <ItemAvatar size={avatarSize} color={color} />
             </StyledContainer>
             <StyledContainer
                 s={{

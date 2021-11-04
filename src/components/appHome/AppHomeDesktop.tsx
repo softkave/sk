@@ -21,8 +21,8 @@ const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
         <StyledContainer
             s={{
                 height: "100%",
-                minWidth: "320px",
-                borderRight: "1px solid #d9d9d9",
+                minWidth: "280px",
+                borderRight: "1px solid rgb(223, 234, 240)",
                 flexDirection: "column",
                 overflowY: "auto",
             }}
@@ -33,7 +33,7 @@ const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
                     alignItems: "center",
                     padding: "0 16px",
                     marginBottom: "4px",
-                    borderBottom: "1px solid #d9d9d9",
+                    borderBottom: "1px solid rgb(223, 234, 240)",
                 }}
             >
                 <Typography.Title

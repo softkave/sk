@@ -16,7 +16,7 @@ export interface ICollaborationRequestStatusProps {
     request: INotification;
 }
 
-const CollaborationRequestStatus: React.SFC<ICollaborationRequestStatusProps> = (
+const CollaborationRequestStatus: React.FC<ICollaborationRequestStatusProps> = (
     props
 ) => {
     const { request } = props;
@@ -24,19 +24,19 @@ const CollaborationRequestStatus: React.SFC<ICollaborationRequestStatusProps> = 
 
     switch (status) {
         case CollaborationRequestStatusType.Expired:
-            return <Tag color={colorMap.declined}>expired</Tag>;
+            return <Tag style={{ color: colorMap.declined }}>Expired</Tag>;
 
         case CollaborationRequestStatusType.Accepted:
-            return <Tag color={colorMap.accepted}>accepted</Tag>;
+            return <Tag style={{ color: colorMap.accepted }}>Accepted</Tag>;
 
         case CollaborationRequestStatusType.Declined:
-            return <Tag color={colorMap.declined}>declined</Tag>;
+            return <Tag style={{ color: colorMap.declined }}>Declined</Tag>;
 
         case CollaborationRequestStatusType.Pending:
-            return <Tag color={colorMap.pending}>pending</Tag>;
+            return <Tag style={{ color: colorMap.pending }}>Pending</Tag>;
 
         case CollaborationRequestStatusType.Revoked:
-            return <Tag color={colorMap.declined}>revoked</Tag>;
+            return <Tag style={{ color: colorMap.declined }}>Revoked</Tag>;
 
         default:
             return null;

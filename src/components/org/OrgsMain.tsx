@@ -86,9 +86,9 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
                 <OrgsListHeader
                     onClickCreate={onAddOrg}
                     onSearchTextChange={setSearchQuery}
-                    style={{ paddingBottom: "8px", paddingTop: "16px" }}
+                    style={{ paddingBottom: "8px", paddingTop: "8px" }}
                     placeholder="Search orgs and requests..."
-                    title="Orgs"
+                    title="Organizations"
                 />
                 {renderContent()}
             </Scrollbar>

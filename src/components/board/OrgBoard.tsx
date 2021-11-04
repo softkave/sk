@@ -1,6 +1,6 @@
 /*eslint no-useless-computed-key: "off"*/
 
-import { Badge, Tabs } from "antd";
+import { Badge, Tabs, Typography } from "antd";
 import path from "path";
 import React from "react";
 import { RightOutlined } from "@ant-design/icons";
@@ -170,7 +170,11 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                 activeKey={resourceType!}
                 onChange={(key) => onSelectResourceType(key as any)}
                 tabBarGutter={0}
-                moreIcon={<RightOutlined />}
+                moreIcon={
+                    <Typography.Text type="secondary">
+                        <RightOutlined />
+                    </Typography.Text>
+                }
             >
                 {resourceTypes.map((type) => {
                     const text = (
@@ -211,12 +215,12 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
                     height: "100%",
                     overflow: "hidden",
                     flexDirection: "column",
-                    maxWidth: isMobile ? "100%" : "320px",
-                    borderRight: "1px solid #d9d9d9",
+                    maxWidth: isMobile ? "100%" : "280px",
+                    borderRight: "1px solid rgb(223, 234, 240)",
 
                     ["& .ant-tabs"]: {
                         height: "100%",
-                        width: isMobile ? "100%" : "320px",
+                        width: isMobile ? "100%" : "280px",
                     },
 
                     ["& .ant-tabs-content"]: {

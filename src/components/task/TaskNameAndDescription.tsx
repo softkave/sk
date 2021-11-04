@@ -17,7 +17,7 @@ const TaskNameAndDescription: React.FC<ITaskNameAndDescriptionProps> = (
                 <Typography.Paragraph style={{ marginBottom: "0" }}>
                     {task.name}
                 </Typography.Paragraph>
-                <Typography.Paragraph
+                {/* <Typography.Paragraph
                     type={"secondary"}
                     ellipsis={{
                         rows: 2,
@@ -26,7 +26,7 @@ const TaskNameAndDescription: React.FC<ITaskNameAndDescriptionProps> = (
                     style={{ marginBottom: "0" }}
                 >
                     {task.description}
-                </Typography.Paragraph>
+                </Typography.Paragraph> */}
             </Space>
         );
     }
@@ -39,20 +39,20 @@ const TaskNameAndDescription: React.FC<ITaskNameAndDescriptionProps> = (
         );
     }
 
-    if (task.description) {
-        return (
-            <Typography.Paragraph
-                type={"secondary"}
-                ellipsis={{
-                    rows: 2,
-                    expandable: true,
-                }}
-                style={{ marginBottom: "0" }}
-            >
-                {task.description}
-            </Typography.Paragraph>
-        );
-    }
+    // if (task.description) {
+    //     return (
+    //         <Typography.Paragraph
+    //             type={"secondary"}
+    //             ellipsis={{
+    //                 rows: 2,
+    //                 expandable: true,
+    //             }}
+    //             style={{ marginBottom: "0" }}
+    //         >
+    //             {task.description}
+    //         </Typography.Paragraph>
+    //     );
+    // }
 
     return null;
 };

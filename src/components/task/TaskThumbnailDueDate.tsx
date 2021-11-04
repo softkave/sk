@@ -28,11 +28,16 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
         : `Due ${dueAt.fromNow()}`;
 
     return (
-        <Tag color={isDue ? "red" : undefined}>
-            <Typography.Text style={{ verticalAlign: "middle" }}>
-                {contentText}
-            </Typography.Text>
-        </Tag>
+        <Typography.Text
+            style={{
+                marginRight: "0px",
+                color: isDue ? "rgb(255, 77, 79)" : undefined,
+                verticalAlign: "middle",
+                fontSize: "13px",
+            }}
+        >
+            {contentText}
+        </Typography.Text>
     );
 };
 

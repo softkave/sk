@@ -7,6 +7,7 @@ enum OperationType {
     LoadBlockChildren = "LoadBlockChildren",
     AddCollaborators = "AddCollaborators",
     FetchBlockBroadcasts = "FetchBlockBroadcasts",
+    GetAverageTimeToCompleteTasks = "GetAverageTimeToCompleteTasks",
 
     // notification
     LoadUserNotifications = "LoadUserNotifications",

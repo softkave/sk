@@ -1,16 +1,16 @@
 const theme = {
-  breakpoints: {
-    xs: 0,
-    sm: 600,
-    md: 960,
-    lg: 1280,
-    xl: 1920
-  },
-  colors: {
-    defaults: {
-      avatar: "#aaa"
-    }
-  }
+    breakpoints: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+    },
+    colors: {
+        defaults: {
+            avatar: "#aaa",
+        },
+    },
 };
 
 export default theme;

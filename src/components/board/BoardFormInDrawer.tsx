@@ -1,4 +1,4 @@
 import withDrawer from "../withDrawer";
-import BoardFormContainer from "./BoardFormContainer";
+import OpenBoard from "./OpenBoard";
 
-export default withDrawer(BoardFormContainer);
+export default withDrawer(OpenBoard);

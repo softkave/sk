@@ -8,13 +8,14 @@ import { IBlock } from "../../models/block/block";
 import LabelListContainer from "../label/LabelListContainer";
 import ResolutionsListContainer from "../status/ResolutionsListContainer";
 import StatusListContainer from "../status/StatusListContainer";
-import StyledContainer from "../styled/Container";
 import withDrawer from "../withDrawer";
+import { appClassNames } from "../classNames";
+import { css, cx } from "@emotion/css";
 
 export enum BoardStatusResolutionAndLabelsFormType {
-    STATUS = "Status",
-    LABELS = "Labels",
-    RESOLUTIONS = "Resolutions",
+    STATUS = "status",
+    LABELS = "labels",
+    RESOLUTIONS = "resolutions",
 }
 
 export interface IBoardStatusResolutionAndLabelsFormProps {
@@ -23,38 +24,30 @@ export interface IBoardStatusResolutionAndLabelsFormProps {
     active?: BoardStatusResolutionAndLabelsFormType;
 }
 
+const classes = {
+    backBtnWrapper: css({ padding: "0 16px", paddingTop: "16px" }),
+    backBtn: css({ cursor: "pointer" }),
+    tabLabel: css({
+        textTransform: "capitalize",
+        padding: "0 16px",
+    }),
+};
+
 const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabelsFormProps> =
     (props) => {
         const { block, onClose, active } = props;
 
         const renderForms = () => {
             return (
-                <StyledContainer
-                    s={{
-                        width: "100%",
-                        height: "100%",
-                        flexDirection: "column",
-
-                        ["& .ant-tabs"]: {
-                            height: "100%",
-                        },
-
-                        ["& .ant-tabs-content"]: {
-                            height: "100%",
-                        },
-                    }}
-                >
-                    <StyledContainer
-                        s={{ padding: "0 16px", paddingTop: "16px" }}
-                    >
+                <div className={appClassNames.tabsWrapper}>
+                    <div className={classes.backBtnWrapper}>
                         <Button
-                            style={{ cursor: "pointer" }}
+                            className={cx(classes.backBtn, "icon-btn")}
                             onClick={onClose}
-                            className="icon-btn"
                         >
                             <ArrowLeft />
                         </Button>
-                    </StyledContainer>
+                    </div>
                     <Tabs
                         defaultActiveKey={active}
                         tabBarGutter={0}
@@ -62,11 +55,7 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                     >
                         <Tabs.TabPane
                             tab={
-                                <span style={tabSpanStyle}>
-                                    {
-                                        BoardStatusResolutionAndLabelsFormType.STATUS
-                                    }
-                                </span>
+                                <span className={classes.tabLabel}>Status</span>
                             }
                             key={BoardStatusResolutionAndLabelsFormType.STATUS}
                         >
@@ -74,10 +63,8 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                         </Tabs.TabPane>
                         <Tabs.TabPane
                             tab={
-                                <span style={tabSpanStyle}>
-                                    {
-                                        BoardStatusResolutionAndLabelsFormType.RESOLUTIONS
-                                    }
+                                <span className={classes.tabLabel}>
+                                    Resolutions
                                 </span>
                             }
                             key={
@@ -88,18 +75,14 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
                         </Tabs.TabPane>
                         <Tabs.TabPane
                             tab={
-                                <span style={tabSpanStyle}>
-                                    {
-                                        BoardStatusResolutionAndLabelsFormType.LABELS
-                                    }
-                                </span>
+                                <span className={classes.tabLabel}>Labels</span>
                             }
                             key={BoardStatusResolutionAndLabelsFormType.LABELS}
                         >
                             <LabelListContainer block={block} />
                         </Tabs.TabPane>
                     </Tabs>
-                </StyledContainer>
+                </div>
             );
         };
 
@@ -107,8 +90,3 @@ const BoardStatusResolutionAndLabelsForm: React.FC<IBoardStatusResolutionAndLabe
     };
 
 export default withDrawer(BoardStatusResolutionAndLabelsForm);
-
-const tabSpanStyle: React.CSSProperties = {
-    textTransform: "capitalize",
-    padding: "0 16px",
-};

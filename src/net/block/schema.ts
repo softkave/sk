@@ -131,6 +131,20 @@ const revokeRequestMutation = `
     }
 `;
 
+const getAverageTimeToCompleteTasksQuery = `
+    ${errorFragment}
+    query GetAverageTimeToCompleteTasksQuery ($boardId: String!) {
+        block {
+            getAverageTimeToCompleteTasks (boardId: $boardId) {
+                errors {
+                    ...errorFragment
+                }
+                avg
+            }
+        }
+    }
+`;
+
 export {
     addBlockMutation,
     updateBlockMutation,
@@ -141,4 +155,5 @@ export {
     getRootBlocksQuery,
     removeCollaboratorMutation,
     revokeRequestMutation,
+    getAverageTimeToCompleteTasksQuery,
 };

@@ -1,6 +1,5 @@
 import { Button, Form } from "antd";
 import React from "react";
-import { ArrowLeft } from "react-feather";
 import { useSelector } from "react-redux";
 import { BlockType, IBlock } from "../../models/block/block";
 import BlockSelectors from "../../redux/blocks/selectors";
@@ -58,18 +57,15 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         BlockSelectors.getBlocks(state, boardIds)
     );
 
-    const {
-        formik,
-        formikChangedFieldsHelpers,
-        formikHelpers,
-    } = useFormHelpers({
-        errors: externalErrors,
-        formikProps: {
-            onSubmit,
-            initialValues: value,
-            validationSchema: blockValidationSchemas.org,
-        },
-    });
+    const { formik, formikChangedFieldsHelpers, formikHelpers } =
+        useFormHelpers({
+            errors: externalErrors,
+            formikProps: {
+                onSubmit,
+                initialValues: value,
+                validationSchema: blockValidationSchemas.org,
+            },
+        });
 
     const getBoardExistsError = (name: string) => {
         if (name && name.length > 0) {
@@ -98,6 +94,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                 wrapperCol={{ span: 24 }}
             >
                 <InputWithControls
+                    bordered={false}
                     value={formik.values.name}
                     onChange={(val) => {
                         formik.setFieldValue("name", val);
@@ -131,6 +128,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             >
                 <InputWithControls
                     useTextArea
+                    bordered={false}
                     value={formik.values.description}
                     onChange={(val) => {
                         formik.setFieldValue("description", val);
@@ -223,7 +221,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             <StyledForm onSubmit={(evt) => preSubmit(evt)}>
                 <StyledContainer s={formContentWrapperStyle}>
                     <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ paddingBottom: "16px" }}>
+                        {/* <StyledContainer s={{ paddingBottom: "16px" }}>
                             <Button
                                 style={{ cursor: "pointer" }}
                                 onClick={onClose}
@@ -231,7 +229,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                             >
                                 <ArrowLeft />
                             </Button>
-                        </StyledContainer>
+                        </StyledContainer> */}
                         {globalError && (
                             <Form.Item>
                                 <FormError error={globalError} />

@@ -43,7 +43,7 @@ const StyledHeaderContainer = styled.div({
     display: "flex",
     width: "100%",
     padding: "16px 16px",
-    borderBottom: "1px solid #d9d9d9",
+    borderBottom: "1px solid rgb(223, 234, 240)",
 });
 
 const StyledLink = styled(Link)({ color: "inherit !important" });

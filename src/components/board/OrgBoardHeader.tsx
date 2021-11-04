@@ -1,6 +1,6 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
-import { Button } from "antd";
+import { Button, Typography } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useHistory } from "react-router";
@@ -84,17 +84,23 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
                     ...style,
                     flex: 1,
                     alignItems: "center",
-                    borderBottom: "1px solid #d9d9d9",
+                    borderBottom: "1px solid rgb(223, 234, 240)",
                     height: "56px",
                 }}
             >
                 {renderHeaderPrefixButton()}
-                <BlockThumbnail
-                    makeNameBold
-                    block={block}
-                    showFields={["name"]}
-                    style={{ flex: 1 }}
-                />
+                <Typography.Title
+                    level={5}
+                    style={{
+                        display: "flex",
+                        flex: 1,
+                        alignItems: "center",
+                        marginBottom: 0,
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {block.name}
+                </Typography.Title>
                 <StyledContainer s={{ alignItems: "center" }}>
                     <OrgHeaderOptionsMenu
                         block={block}

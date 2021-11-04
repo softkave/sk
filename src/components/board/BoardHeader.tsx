@@ -1,6 +1,6 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
-import { Button, Space } from "antd";
+import { Button, Space, Typography } from "antd";
 import React from "react";
 import { ArrowLeft, Plus, Search } from "react-feather";
 import { useHistory } from "react-router";
@@ -133,12 +133,18 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         content = (
             <React.Fragment>
                 {renderBackButton()}
-                <BlockThumbnail
-                    makeNameBold
-                    block={block}
-                    showFields={["name"]}
-                    style={{ flex: 1 }}
-                />
+                <Typography.Title
+                    level={5}
+                    style={{
+                        display: "flex",
+                        flex: 1,
+                        alignItems: "center",
+                        marginBottom: 0,
+                        textTransform: "capitalize",
+                    }}
+                >
+                    {block.name}
+                </Typography.Title>
                 <StyledContainer s={{ alignItems: "center" }}>
                     {desktopContent ? (
                         <Space>
@@ -161,7 +167,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
                 alignItems: "center",
                 padding: "16px",
                 height: layoutOptions.HEADER_HEIGHT,
-                borderBottom: "1px solid #d9d9d9",
+                borderBottom: "1px solid rgb(223, 234, 240)",
             }}
         >
             {content}

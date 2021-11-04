@@ -17,11 +17,7 @@ export interface ITaskListProps extends ITasksContainerRenderFnProps {
 
 const classes = {
     taskContainer: css({
-        // marginTop: "16px",
-
-        "&:last-of-type": {
-            paddingBottom: "16px",
-        },
+        paddingBottom: "16px",
     }),
 };
 

@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { Space, Typography } from "antd";
 import React from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
@@ -57,7 +58,14 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
     }
 
     return (
-        <Space direction="vertical">
+        <Space
+            direction="vertical"
+            // className={css({
+            //     "& *": {
+            //         fontSize: "13px !important",
+            //     },
+            // })}
+        >
             <StyledContainer
                 onClick={() => setShowSubTasks(false)}
                 s={{
