@@ -95,6 +95,11 @@ const classes = {
         padding: "8px",
         boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
         userSelect: "none",
+        // lineHeight: "1.25",
+    }),
+    middledot: css({
+        padding: "0px 8px",
+        fontSize: "16px",
     }),
 };
 
@@ -258,27 +263,7 @@ const Task: React.FC<ITaskProps> = (props) => {
     const contentElem: React.ReactNode[] = [
         <StyledContainer key="header">
             <StyledContainer s={{ flex: 1 }}>
-                <Space
-                    split={
-                        <Typography.Text
-                            style={{
-                                // fontSize: "24px",
-                                // lineHeight: "14px",
-                                height: "100%",
-                            }}
-                        >
-                            {/* &#xB7; */}—
-                        </Typography.Text>
-                    }
-                >
-                    <Priority level={task.priority as BlockPriority} />
-                    {/* {task.dueAt && !isInLastStatus ? (
-                        <TaskThumbnailDueDate
-                            isInLastStatus={isInLastStatus}
-                            task={task}
-                        />
-                    ) : null} */}
-                </Space>
+                <Priority level={task.priority as BlockPriority} />
             </StyledContainer>
             <StyledContainer
                 onClick={(evt) => {
@@ -301,53 +286,30 @@ const Task: React.FC<ITaskProps> = (props) => {
         </StyledContainer>,
     ];
 
-    // if (board.sprintOptions) {
-    //     contentElem.push(
-    //         <StyledContainer key="sprint">
-    //             <SelectTaskSprintContainer
-    //                 task={task}
-    //                 sprints={sprints}
-    //                 sprintsMap={sprintsMap}
-    //                 onAddNewSprint={toggleShowSprintForm}
-    //             />
-    //         </StyledContainer>
-    //     );
-    // }
-
-    // contentElem.push(
-    //     <StyledContainer key="status" onClick={stopPropagation}>
-    //         <TaskStatusContainer
-    //             task={task}
-    //             className="task-status"
-    //             demo={demo}
-    //             statusList={statusList}
-    //             resolutionsList={resolutionsList}
-    //             statusMap={statusMap}
-    //             resolutionsMap={resolutionsMap}
-    //             onSelectAddNewStatus={onSelectAddNewStatus}
-    //             onSelectAddNewResolution={onSelectAddNewResolution}
-    //         />
-    //     </StyledContainer>
-    // );
-
     contentElem.push(
-        <Space key="assignees-and-dueAt" split={<span>&#xB7;</span>}>
-            {!isInLastStatus ? (
+        // separated by middledot
+        <div key="dueAt">
+            {statusList.length > 0 && task.statusAssignedAt && (
                 <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
-                    Created {moment(task.createdAt).fromNow()}
-                </Typography.Text>
-            ) : (
-                <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
-                    Completed {moment(task.statusAssignedAt).fromNow()}
+                    In status since {moment(task.statusAssignedAt).fromNow()}
                 </Typography.Text>
             )}
+            {/* {isInLastStatus && (
+                <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
+                    <span className={classes.middledot}>&#xB7;</span>
+                    Completed {moment(task.createdAt).fromNow()}
+                </Typography.Text>
+            )} */}
             {task.dueAt && !isInLastStatus ? (
-                <TaskThumbnailDueDate
-                    isInLastStatus={isInLastStatus}
-                    task={task}
-                />
+                <div style={{ display: "inline-block" }}>
+                    <span className={classes.middledot}>&#xB7;</span>
+                    <TaskThumbnailDueDate
+                        isInLastStatus={isInLastStatus}
+                        task={task}
+                    />
+                </div>
             ) : null}
-        </Space>
+        </div>
     );
 
     if (hasAssignees || task.dueAt) {
