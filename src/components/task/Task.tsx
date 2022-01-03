@@ -10,7 +10,6 @@ import {
     Space,
     Typography,
 } from "antd";
-import { noop } from "lodash";
 import moment from "moment";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
@@ -35,10 +34,7 @@ import { getOpData } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
 import Priority from "./Priority";
-import SelectTaskSprintContainer from "./SelectTaskSprintContainer";
-import TaskLabels from "./TaskLabels";
 import TaskNameAndDescription from "./TaskNameAndDescription";
-import TaskStatusContainer from "./TaskStatusContainer";
 import TaskSubTasksContainer from "./TaskSubTasksContainer";
 import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
 import TaskThumbnailDueDate from "./TaskThumbnailDueDate";
@@ -70,12 +66,7 @@ export interface ITaskProps {
     onDelete?: (task: IBlock) => void; // TODO: we don't use it
 }
 
-/**
- * 
-0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
- */
-
-const getItemStyle = (isDragging, draggableStyle, extraStyle = {}) => ({
+const getItemStyle = (isDragging, draggableStyle, extraStyle) => ({
     // some basic styles to make the items look a bit nicer
     userSelect: "none",
 
@@ -90,7 +81,7 @@ const classes = {
     root: css({
         minWidth: "280px",
         width: "100%",
-        borderRadius: "12px",
+        borderRadius: "4px",
         border: "1px solid rgb(223, 234, 240)",
         padding: "8px",
         boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
@@ -120,23 +111,15 @@ const Task: React.FC<ITaskProps> = (props) => {
         sprintsMap,
         statusMap,
         resolutionsMap,
-        onEdit,
         style,
         disableDragAndDrop,
+        onEdit,
     } = props;
 
     const [subFormType, setSubFormType] =
         React.useState<BoardStatusResolutionAndLabelsFormType | null>(null);
 
     const [showSprintForm, setShowSprintForm] = React.useState<boolean>(false);
-
-    const onSelectAddNewStatus = React.useCallback(() => {
-        setSubFormType(BoardStatusResolutionAndLabelsFormType.STATUS);
-    }, []);
-
-    const onSelectAddNewResolution = React.useCallback(() => {
-        setSubFormType(BoardStatusResolutionAndLabelsFormType.RESOLUTIONS);
-    }, []);
 
     const toggleShowSprintForm = React.useCallback(() => {
         setShowSprintForm(!showSprintForm);
@@ -253,10 +236,6 @@ const Task: React.FC<ITaskProps> = (props) => {
         }
     };
 
-    const stopPropagation = (evt: React.MouseEvent<HTMLDivElement>) => {
-        evt.stopPropagation();
-    };
-
     const hasAssignees = task.assignees && task.assignees.length > 0;
     const isInLastStatus = isTaskInLastStatus(task, statusList);
     const hasSubTasks = task.subTasks && task.subTasks.length > 0;
@@ -294,12 +273,6 @@ const Task: React.FC<ITaskProps> = (props) => {
                     In status since {moment(task.statusAssignedAt).fromNow()}
                 </Typography.Text>
             )}
-            {/* {isInLastStatus && (
-                <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
-                    <span className={classes.middledot}>&#xB7;</span>
-                    Completed {moment(task.createdAt).fromNow()}
-                </Typography.Text>
-            )} */}
             {task.dueAt && !isInLastStatus ? (
                 <div style={{ display: "inline-block" }}>
                     <span className={classes.middledot}>&#xB7;</span>
@@ -318,38 +291,9 @@ const Task: React.FC<ITaskProps> = (props) => {
                 {hasAssignees && (
                     <TaskThumbnailAssignees task={task} users={collaborators} />
                 )}
-                {/* {task.dueAt && !isInLastStatus ? (
-                    <StyledContainer
-                        s={{
-                            flex: 1,
-                            paddingLeft: "16px",
-                            alignItems: "flex-end",
-                            justifyContent: "flex-end",
-                        }}
-                    >
-                        <TaskThumbnailDueDate
-                            isInLastStatus={isInLastStatus}
-                            task={task}
-                        />
-                    </StyledContainer>
-                ) : null} */}
             </StyledContainer>
         );
     }
-
-    // if (task.labels && task.labels.length > 0) {
-    //     contentElem.push(
-    //         <TaskLabels
-    //             disabled
-    //             key="labels"
-    //             labelList={labelList}
-    //             labelsMap={labelsMap}
-    //             labels={task.labels}
-    //             onChange={noop}
-    //             onSelectAddNewLabel={noop}
-    //         />
-    //     );
-    // }
 
     if (hasSubTasks) {
         contentElem.push(

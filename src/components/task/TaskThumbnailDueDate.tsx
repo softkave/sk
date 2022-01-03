@@ -1,4 +1,4 @@
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { IBlock } from "../../models/block/block";
