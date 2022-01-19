@@ -1,5 +1,6 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message, notification } from "antd";
+import { URLSearchParams } from "url";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
@@ -25,7 +26,7 @@ const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
         : undefined;
 
     const onSubmit = async (data: IChangePasswordFormData) => {
-        const query = new window.URLSearchParams(window.location.search);
+        const query = new URLSearchParams(window.location.search);
         const token = query.get("t");
 
         if (!token) {

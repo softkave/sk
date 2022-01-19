@@ -1,6 +1,7 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import path from "path";
+import { URLSearchParams } from "url";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -103,7 +104,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
     const orgDataOp = useLoadOrgData(block);
 
     const pushRoute = (route: string) => {
-        const search = new window.URLSearchParams(window.location.search);
+        const search = new URLSearchParams(window.location.search);
         const routeURL = new URL(
             `${window.location.protocol}${window.location.host}${route}`
         );

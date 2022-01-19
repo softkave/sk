@@ -1,5 +1,6 @@
 import path from "path";
 import React from "react";
+import { URLSearchParams } from "url";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import AppHomeContainer from "../components/appHome/AppHomeContainer";
@@ -43,7 +44,7 @@ const Main: React.FC<{}> = () => {
     );
 
     const location = useLocation();
-    const searchParams = new window.URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(location.search);
     const isDemoMode =
         useSelector(SessionSelectors.isDemoMode) || searchParams.has(demoKey);
 
