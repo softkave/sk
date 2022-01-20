@@ -31,7 +31,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     const history = useHistory();
     const user = useSelector(SessionSelectors.assertGetUser);
     const [blockData, setBlock] = React.useState<IFormBlock>(
-        () => props.block || newFormBlock(user, BlockType.Org)
+        () => props.block || newFormBlock(user, BlockType.Organization)
     );
 
     const [loading, setLoading] = React.useState(false);

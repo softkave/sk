@@ -23,7 +23,7 @@ export enum BlockPriority {
 
 export enum BlockType {
     Root = "root",
-    Org = "org",
+    Organization = "org",
     Board = "board",
     Task = "task",
 }
@@ -439,7 +439,7 @@ export function newFormBlock(user: IUser, type: BlockType, parent?: IBlock) {
         color: randomColor(),
         parent: parent ? parent.customId : undefined,
         rootBlockId: parent
-            ? parent.type === BlockType.Org
+            ? parent.type === BlockType.Organization
                 ? parent.customId
                 : parent.rootBlockId
             : undefined,

@@ -43,7 +43,7 @@ export const demoOrg: IBlock = {
     createdAt: getDateString(),
     createdBy: "",
     customId: "",
-    type: BlockType.Org,
+    type: BlockType.Organization,
     name: "Softkave",
     color: "#25b71b",
 };
@@ -104,7 +104,7 @@ export const demoCollaborationRequest: INotification = {
     from: {
         blockId: "",
         blockName: "",
-        blockType: BlockType.Org,
+        blockType: BlockType.Organization,
         name: "",
         userId: "",
     },

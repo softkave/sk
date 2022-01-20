@@ -37,7 +37,7 @@ export function getBlockValidParentTypes(type: BlockType): BlockType[] {
     const validParentsMap: BlockTypeToTypesMap = {
         root: [],
         org: [],
-        board: [BlockType.Root, BlockType.Org],
+        board: [BlockType.Root, BlockType.Organization],
         task: [BlockType.Board],
     };
 

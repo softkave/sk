@@ -110,7 +110,7 @@ export const storeDeleteBlock = (store: IStoreLikeObject, blockId: string) => {
 
     const user = SessionSelectors.assertGetUser(store.getState());
 
-    if (block.type === BlockType.Org) {
+    if (block.type === BlockType.Organization) {
         const orgIndex = user.orgs.findIndex(
             (org) => org.customId === block.customId
         );

@@ -167,7 +167,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
         }
 
         switch (boardForm.type) {
-            case BlockType.Org: {
+            case BlockType.Organization: {
                 return (
                     <EditOrgFormInDrawer
                         visible

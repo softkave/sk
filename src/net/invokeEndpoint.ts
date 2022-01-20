@@ -1,13 +1,37 @@
 import { OutgoingHttpHeaders } from "http";
+import isString from "lodash/isString";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
+import UserSessionStorageFns from "../storage/userSession";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError, IEndpointResultBase } from "./types";
-import { toAppErrorsArray } from "./utils";
 
 const isExpectedErrorType = (errors: Error[]) => {
     return Array.isArray(errors) && !!errors.find((e) => !!e.name);
+};
+
+export const toAppError = (err: Error | IAppError | string): IAppError => {
+    const error = isString(err) ? new Error(err) : err;
+
+    return {
+        name: error.name,
+        message: error.message,
+        action: (error as any).action,
+        field: (error as any).field,
+    };
+};
+
+export const toAppErrorsArray = (err: any) => {
+    if (!err) {
+        return [];
+    }
+
+    if (Array.isArray(err)) {
+        return err.map((error) => toAppError(error));
+    } else {
+        return [toAppError(err)];
+    }
 };
 
 export interface IInvokeEndpointParams {
@@ -37,7 +61,7 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
         // TODO: what if the request fails in the middleware space?
         // i.e maybe auth token decoding error or something
         if (!result.headers.get("Content-Type")?.includes("application/json")) {
-            throw new Error("Error completing request!");
+            throw new Error("Error completing request");
         }
 
         const body = (await result.json()) as T;
@@ -49,14 +73,13 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
 
         if (result.ok) {
             if (errors && errors.length > 0) {
-                const continueProcessing = processServerRecommendedActions(
-                    errors
-                );
+                const continueProcessing =
+                    processServerRecommendedActions(errors);
 
                 if (continueProcessing) {
                     return body;
                 } else {
-                    throw new Error("Error completing request!");
+                    throw new Error("Error completing request");
                 }
             }
 
@@ -66,16 +89,15 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
             if (result.status === 500 || result.status === 401) {
                 if (errors) {
                     if (isExpectedErrorType(errors)) {
-                        const continueProcessing = processServerRecommendedActions(
-                            errors
-                        );
+                        const continueProcessing =
+                            processServerRecommendedActions(errors);
 
                         if (continueProcessing) {
                             return body;
                         }
                     }
 
-                    throw new Error("Error completing request!");
+                    throw new Error("Error completing request");
                 }
             }
         }
@@ -87,7 +109,7 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
     }
 }
 
-function getToken() {
+function getTokenFromStore() {
     return SessionSelectors.getUserToken(store.getState());
 }
 
@@ -98,10 +120,13 @@ export interface IInvokeEndpointWithAuthParams extends IInvokeEndpointParams {
 export async function invokeEndpointWithAuth<T extends IEndpointResultBase>(
     props: IInvokeEndpointWithAuthParams
 ) {
-    const requestToken = props.token || getToken();
+    const requestToken =
+        props.token ||
+        getTokenFromStore() ||
+        UserSessionStorageFns.getUserToken();
 
     if (!requestToken) {
-        throw new Error("Invalid credentials!");
+        throw new Error("Invalid credentials");
     }
 
     return invokeEndpoint<T>({

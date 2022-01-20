@@ -111,7 +111,7 @@ export const storeNewBlock = (store: IStoreLikeObject, block: IBlock) => {
         );
     }
 
-    if (block.type === BlockType.Org) {
+    if (block.type === BlockType.Organization) {
         store.dispatch(
             UserActions.updateUser({
                 id: user.customId,
@@ -123,7 +123,10 @@ export const storeNewBlock = (store: IStoreLikeObject, block: IBlock) => {
 
     const loadOps: IOperation[] = [];
 
-    if (block.type === BlockType.Org || block.type === BlockType.Board) {
+    if (
+        block.type === BlockType.Organization ||
+        block.type === BlockType.Board
+    ) {
         // To avoid loading the block children, cause there isn't any yet, it's a new block
         loadOps.push({
             id: getNewId(),
@@ -137,7 +140,7 @@ export const storeNewBlock = (store: IStoreLikeObject, block: IBlock) => {
         });
     }
 
-    if (block.type === BlockType.Org) {
+    if (block.type === BlockType.Organization) {
         // To avoid loading the block data, cause there isn't any yet, it's a new block
         loadOps.push({
             id: getNewId(),

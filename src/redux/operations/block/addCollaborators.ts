@@ -86,7 +86,7 @@ export const addCollaboratorsOperationAction = createAsyncThunk<
                     from: {
                         blockId: block.customId,
                         blockName: block.name,
-                        blockType: BlockType.Org,
+                        blockType: BlockType.Organization,
                         name: user.name,
                         userId: user.customId,
                     },

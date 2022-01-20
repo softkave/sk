@@ -140,7 +140,7 @@ export function seedRequest({
         from: {
             blockId: fromOrg.customId,
             blockName: fromOrg.name!,
-            blockType: BlockType.Org,
+            blockType: BlockType.Organization,
             name: from.name,
             userId: from.customId,
         },
@@ -493,27 +493,27 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
 
     const org_Softkave = seedBlock(user, {
         name: "Softkave",
-        type: BlockType.Org,
+        type: BlockType.Organization,
         description:
             "We make startup productivity tools, from chat, to task management.",
     });
 
     const org_AwesomeCollections = seedBlock(user, {
         name: "Awesome Collections",
-        type: BlockType.Org,
+        type: BlockType.Organization,
         description: "Just some awesome collections.",
     });
 
     const org_CanFactory = seedBlock(user, {
         name: "The Can Factory",
-        type: BlockType.Org,
+        type: BlockType.Organization,
         description:
             "Simple and efficient can factory. We strive to be the best!",
     });
 
     const org_PotOfBeans = seedBlock(user, {
         name: "Pot of Beans",
-        type: BlockType.Org,
+        type: BlockType.Organization,
         description: "We make comic books.",
     });
 
@@ -710,8 +710,8 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
         status: board_Softkave_Engineering.boardStatuses![
             board_Softkave_Engineering.boardStatuses!.length - 1
         ].customId,
-        taskResolution: board_Softkave_Engineering.boardResolutions![0]
-            .customId,
+        taskResolution:
+            board_Softkave_Engineering.boardResolutions![0].customId,
     });
 
     const request_fromBeans_toUser = seedRequest({
