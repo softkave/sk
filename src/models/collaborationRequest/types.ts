@@ -26,7 +26,7 @@ export type CollaborationRequestResponse =
 
 export interface ICollaborationRequestStatus {
     status: CollaborationRequestStatusType;
-    date: Date;
+    date: string;
 }
 
 export enum CollaborationRequestEmailReason {
@@ -46,11 +46,11 @@ export interface ICollaborationRequest {
     title: string;
     body?: string;
     from: ICollaborationRequestFrom;
-    createdAt: Date;
-    expiresAt?: Date;
-    readAt?: Date;
-    statusHistory?: ICollaborationRequestStatus[];
-    sentEmailHistory?: ICollaborationRequestSentEmailHistoryItem[];
+    createdAt: string;
+    expiresAt?: string;
+    readAt?: string;
+    statusHistory: ICollaborationRequestStatus[];
+    sentEmailHistory: ICollaborationRequestSentEmailHistoryItem[];
 }
 
 export interface INewCollaboratorInput {

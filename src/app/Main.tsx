@@ -25,6 +25,7 @@ import { getNewId } from "../utils/utils";
 import AppVisibility from "./AppVisibility";
 import ExistentialRenderer from "./ExistentialRenderer";
 import Routes from "./Routes";
+import { toActionAddList } from "../redux/utils";
 
 const demoKey = "demo";
 
@@ -58,7 +59,9 @@ const Main: React.FC<{}> = () => {
         if (isDemoMode && sessionType !== SessionType.App) {
             const demoData = seedDemoData();
 
-            dispatch(UserActions.bulkAddUsers(demoData.users));
+            dispatch(
+                UserActions.bulkAdd(toActionAddList(demoData.users, "customId"))
+            );
             dispatch(BlockActions.bulkAddBlocks(demoData.blocks));
             dispatch(
                 NotificationActions.bulkAddNotifications(demoData.requests)

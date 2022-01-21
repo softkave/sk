@@ -1,4 +1,8 @@
-import { IOrganization } from "../../models/organization/types";
+import {
+    INewOrganizationInput,
+    IOrganization,
+    IUpdateOrganizationInput,
+} from "../../models/organization/types";
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResult } from "../types";
 
@@ -18,7 +22,7 @@ async function createOrganization(props: ICreateOrganizationEndpointParams) {
 }
 
 export type IGetUserOrganizationsEndpointResult = GetEndpointResult<{
-    organization: IOrganization;
+    organizations: IOrganization[];
 }>;
 
 async function getUserOrganizations() {
@@ -28,11 +32,11 @@ async function getUserOrganizations() {
 }
 
 export interface IOrganizationExistsEndpointParams {
-    organizationId: string;
+    name: string;
 }
 
 export type IOrganizationExistsEndpointResult = GetEndpointResult<{
-    organization: IRequestOrganization;
+    exists: boolean;
 }>;
 
 async function organizationExists(props: IOrganizationExistsEndpointParams) {
@@ -59,10 +63,8 @@ async function updateOrganization(props: IUpdateOrganizationEndpointParams) {
 }
 
 export default class OrganizationAPI {
-    public static addOrganization = addOrganization;
-    public static deleteOrganization = deleteOrganization;
-    public static getOrganization = getOrganization;
-    public static getRequestOrganization = getRequestOrganization;
+    public static organizationExists = organizationExists;
+    public static createOrganization = createOrganization;
     public static getUserOrganizations = getUserOrganizations;
     public static updateOrganization = updateOrganization;
 }

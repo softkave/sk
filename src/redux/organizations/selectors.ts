@@ -1,6 +1,9 @@
-import { IOrganization } from "../../models/organization/types";
+import { messages } from "../../models/messages";
+import { IAppOrganization } from "../../models/organization/types";
 import { getSelectors } from "../utils";
 
-const OrganizationSelectors = getSelectors<IOrganization>("organizations");
+const OrganizationSelectors = getSelectors<IAppOrganization>("organizations", {
+  notFoundMessage: messages.organizationNotFound,
+});
 
 export default OrganizationSelectors;

@@ -9,9 +9,14 @@ export const messages = {
     unsupportedFeatureTitle: "Unsupported Feature",
     unsupportedFeatureMessage:
         "Your browser does not support this feature. Try updating your browser.",
+    resourceNotFound: "Resource does not exist.",
 
     // error
     anErrorOccurred: "An error occurred",
+    internalError:
+        "An internal error occurred. " +
+        "Please try again and file a bug with us, " +
+        "detailing the action you took that led to this error. Thank you!",
 
     // form
     fieldIsRequired: "Enter a value, this field is required",
@@ -61,4 +66,19 @@ export const messages = {
     passwordPlaceholder: "Enter your new password",
     currentPasswordPlaceholder: "Enter your current password",
     confirmPasswordPlaceholder: "Re-enter your new password",
+
+    // organization
+    organizationNotFound: "Organization not found.",
+
+    // board
+    boardNotFound: "Board not found.",
+
+    // task
+    taskNotFound: "Task not found.",
+
+    // collaboration request
+    collaborationRequestNotFound: "Collaboration request not found.",
+
+    // collaborator
+    collaboratorNotFound: "Collaborator not found.",
 };

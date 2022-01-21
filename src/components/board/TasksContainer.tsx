@@ -10,6 +10,7 @@ import {
     IBoardTaskResolution,
     IFormBlock,
 } from "../../models/block/block";
+import { ICollaborator } from "../../models/collaborator/types";
 import { ISprint } from "../../models/sprint/types";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
@@ -74,8 +75,8 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
     const sprintsMap = indexArray(sprints, { path: "customId" });
 
     const collaboratorIds = org.collaborators || [];
-    const collaborators = useSelector<IAppState, IUser[]>((state) => {
-        return UserSelectors.getUsers(state, collaboratorIds);
+    const collaborators = useSelector<IAppState, ICollaborator[]>((state) => {
+        return UserSelectors.getMany(state, collaboratorIds);
     });
 
     const statusList = React.useMemo(

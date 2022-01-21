@@ -3,20 +3,16 @@ import { IMergeDataMeta } from "../utils/utils";
 import { IBlocksState } from "./blocks/types";
 import { IBoardsState } from "./boards/types";
 import { ICollaborationRequestsState } from "./collaborationRequests/types";
-import { ICollaboratorsState } from "./collaborators/types";
 import { ICommentsState } from "./comments/types";
 import { IKeyValueState } from "./key-value/types";
 import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
 import { IOrganizationsState } from "./organizations/types";
-import { IPermissionGroupsState } from "./permissionGroups/types";
-import { IPermissionsState } from "./permissions/types";
 import { IProgramAccessTokensState } from "./programAccessTokens/types";
 import { IRoomsMap } from "./rooms/types";
 import { ISessionState } from "./session/types";
 import { ISprintsState } from "./sprints/types";
 import { ITasksState } from "./tasks/types";
-import { IUserAssignedPermissionGroupsState } from "./userAssignedPermissionGroups/types";
 import { IUsersState } from "./users/types";
 
 export interface IAppState {
@@ -28,16 +24,12 @@ export interface IAppState {
     keyValue: IKeyValueState;
     rooms: IRoomsMap;
     sprints: ISprintsState;
-    permissions: IPermissionsState;
-    permissionGroups: IPermissionGroupsState;
-    userAssignedPermissionGroups: IUserAssignedPermissionGroupsState;
     comments: ICommentsState;
     programAccessTokens: IProgramAccessTokensState;
     organizations: IOrganizationsState;
     boards: IBoardsState;
     tasks: ITasksState;
     collaborationRequests: ICollaborationRequestsState;
-    collaborators: ICollaboratorsState;
 }
 
 export interface IAppAsyncThunkConfig {

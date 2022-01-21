@@ -1,8 +1,8 @@
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { getActions } from "../utils";
 
-const collaborationRequestActions = getActions<ICollaborationRequest>(
+const CollaborationRequestActions = getActions<ICollaborationRequest>(
     "collaborationRequest"
 );
 
-export default collaborationRequestActions;
+export default CollaborationRequestActions;

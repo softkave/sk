@@ -1,19 +1,29 @@
 import { BlockType } from "../block/block";
 
 export interface IOrganization {
-    customId: string;
-    createdBy: string;
-    createdAt: Date;
-    type: BlockType.Organization;
-    name?: string;
-    description?: string;
-    updatedAt?: Date;
-    updatedBy?: string;
-    color?: string;
+  customId: string;
+  createdBy: string;
+  createdAt: string;
+  type: BlockType.Organization;
+  name: string;
+  description?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+  color?: string;
+}
+
+export interface IAppOrganization extends IOrganization {
+  collaboratorIds: string[];
 }
 
 export interface INewOrganizationInput {
-    name: string;
-    description?: string;
-    color: string;
+  name: string;
+  description?: string;
+  color: string;
+}
+
+export interface IUpdateOrganizationInput {
+  name?: string;
+  description?: string;
+  color?: string;
 }

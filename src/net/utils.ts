@@ -9,7 +9,7 @@ import UserSessionStorageFuncs, {
 } from "../storage/userSession";
 import { getServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
-import { IAppError } from "./types";
+import { IAppError, IEndpointResultBase } from "./types";
 
 const isExpectedErrorType = (errors) => {
     return Array.isArray(errors) && !!errors.find((e) => !!e.name);
@@ -161,4 +161,10 @@ export async function invokeGraphQLWithAuth(
             ...props.headers,
         },
     });
+}
+
+export function assertEndpointResult(result: IEndpointResultBase) {
+    if (result && result.errors) {
+        throw result.errors;
+    }
 }

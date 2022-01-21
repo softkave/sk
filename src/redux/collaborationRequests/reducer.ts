@@ -1,6 +1,6 @@
 import { getReducer } from "../utils";
-import collaborationRequestActions from "./actions";
+import CollaborationRequestActions from "./actions";
 
-const collaborationRequestsReducer = getReducer(collaborationRequestActions);
+const collaborationRequestsReducer = getReducer(CollaborationRequestActions);
 
 export default collaborationRequestsReducer;

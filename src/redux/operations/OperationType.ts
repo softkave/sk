@@ -5,7 +5,6 @@ enum OperationType {
     UpdateBlock = "UpdateBlock",
     DeleteBlock = "DeleteBlock",
     LoadBlockChildren = "LoadBlockChildren",
-    AddCollaborators = "AddCollaborators",
     FetchBlockBroadcasts = "FetchBlockBroadcasts",
     GetAverageTimeToCompleteTasks = "GetAverageTimeToCompleteTasks",
 
@@ -26,11 +25,37 @@ enum OperationType {
     ChangePasswordWithCurrentPassword = "ChangePasswordWithCurrentPassword",
     UpdateClient = "UpdateClient",
 
+    // organization
+    OrganizationExists = "OrganizationExists",
+    CreateOrganization = "CreateOrganization",
+    GetUserOrganizations = "GetUserOrganizations",
+    UpdateOrganization = "UpdateOrganization",
+
     // board
-    LoadOrgUsersAndRequests = "LoadOrgUsersAndRequests",
+    CreateBoard = "CreateBoard",
+    BoardExists = "BoardExists",
+    DeleteBoard = "DeleteBoard",
+    GetOrganizationBoards = "GetOrganizationBoards",
+    UpdateBoard = "UpdateBoard",
 
     // task
-    LoadTaskComments = "LoadTaskComments",
+    CreateTask = "CreateTask",
+    DeleteTask = "DeleteTask",
+    GetBoardTasks = "GetBoardTasks",
+    TransferTask = "TransferTask",
+    UpdateTask = "UpdateTask",
+
+    // collaboration request
+    AddCollaborators = "AddCollaborators",
+    RevokeRequest = "RevokeRequest",
+    RespondToRequest = "RespondToRequest",
+    MarkRequestRead = "MarkRequestRead",
+    GetUserRequests = "GetUserRequests",
+    GetOrganizationRequests = "GetOrganizationRequests",
+
+    // collaborator
+    GetOrganizationCollaborators = "GetOrganizationCollaborators",
+    RemoveCollaborator = "RemoveCollaborator",
 
     // chat
     GetUserRoomsAndChats = "GetUserRoomsAndChats",
@@ -50,16 +75,6 @@ enum OperationType {
 
     // system
     SendFeedback = "SendFeedback",
-
-    // access control
-    SetPermissions = "SetPermissions",
-    AddPermissionGroups = "AddPermissionGroups",
-    UpdatePermissionGroups = "UpdatePermissionGroups",
-    DeletePermissionGroups = "DeletePermissionGroups",
-    GetResourcePermissions = "GetResourcePermissions",
-    GetResourcePermissionGroups = "GetResourcePermissionGroups",
-    PermissionExists = "PermissionExists",
-    GetUserPermissions = "GetUserPermissions",
 }
 
 export default OperationType;

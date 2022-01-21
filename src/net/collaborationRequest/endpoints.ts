@@ -9,18 +9,18 @@ import { GetEndpointResult } from "../types";
 
 const baseURL = "/api/collaborationRequests";
 
-export type IAddCollaboratorEndpointParams = {
+export type IAddCollaboratorsEndpointParams = {
     organizationId: string;
     collaborators: INewCollaboratorInput[];
 };
 
-export type IAddCollaboratorEndpointResult = GetEndpointResult<{
-    collaborationrequest: ICollaborationRequest;
+export type IAddCollaboratorsEndpointResult = GetEndpointResult<{
+    requests: ICollaborationRequest[];
 }>;
 
-async function addCollaborator(props: IAddCollaboratorEndpointParams) {
-    return invokeEndpointWithAuth<IAddCollaboratorEndpointResult>({
-        path: `${baseURL}/addCollaborator`,
+async function addCollaborators(props: IAddCollaboratorsEndpointParams) {
+    return invokeEndpointWithAuth<IAddCollaboratorsEndpointResult>({
+        path: `${baseURL}/addCollaborators`,
         data: props,
     });
 }
@@ -57,7 +57,7 @@ export type IMarkRequestReadEndpointParams = {
 };
 
 export type IMarkRequestReadEndpointResult = GetEndpointResult<{
-    collaborationrequest: ICollaborationRequest;
+    request: ICollaborationRequest;
 }>;
 
 async function markRequestRead(props: IMarkRequestReadEndpointParams) {
@@ -101,7 +101,7 @@ async function revokeRequest(props: IRevokeRequestEndpointParams) {
 }
 
 export default class CollaborationRequestAPI {
-    public static addCollaborator = addCollaborator;
+    public static addCollaborators = addCollaborators;
     public static revokeRequest = revokeRequest;
     public static respondToRequest = respondToRequest;
     public static markRequestRead = markRequestRead;

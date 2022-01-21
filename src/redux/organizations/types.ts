@@ -1,5 +1,5 @@
-import { IOrganization } from "../../models/organization/types";
+import { IAppOrganization } from "../../models/organization/types";
 
 export interface IOrganizationsState {
-    [key: string]: IOrganization;
+  [key: string]: IAppOrganization;
 }

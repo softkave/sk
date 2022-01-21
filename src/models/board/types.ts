@@ -7,20 +7,20 @@ export interface IBoardStatusResolution {
     customId: string;
     name: string;
     createdBy: string;
-    createdAt: Date;
+    createdAt: string;
     description?: string;
     updatedBy?: string;
-    updatedAt?: Date;
+    updatedAt?: string;
 }
 
 export interface IBoard {
     customId: string;
     createdBy: string;
-    createdAt: Date;
+    createdAt: string;
     type: BlockType.Board;
     name: string;
     description?: string;
-    updatedAt?: Date;
+    updatedAt?: string;
     updatedBy?: string;
     parent: string;
     rootBlockId: string;

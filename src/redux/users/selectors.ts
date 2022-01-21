@@ -1,21 +1,9 @@
-import { IUser } from "../../models/user/user";
-import { IAppState } from "../types";
+import { ICollaborator } from "../../models/collaborator/types";
+import { messages } from "../../models/messages";
+import { getSelectors } from "../utils";
 
-export function getUser(state: IAppState, id: string) {
-  return state.users[id];
-}
+const UserSelectors = getSelectors<ICollaborator>("users", {
+    notFoundMessage: messages.collaboratorNotFound,
+});
 
-export function getUsers(state: IAppState, ids: string[]) {
-  return ids.reduce((users, id) => {
-    if (state.users[id]) {
-      users.push(state.users[id]);
-    }
-
-    return users;
-  }, [] as IUser[]);
-}
-
-export default class UserSelectors {
-  public static getUser = getUser;
-  public static getUsers = getUsers;
-}
+export default UserSelectors;
