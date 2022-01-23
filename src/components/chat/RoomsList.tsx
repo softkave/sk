@@ -1,69 +1,90 @@
+import { css, cx } from "@emotion/css";
 import React from "react";
 import { IRoom } from "../../models/chat/types";
-import { IUser } from "../../models/user/user";
+import { ICollaborator } from "../../models/collaborator/types";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import Scrollbar from "../utilities/Scrollbar";
 import RoomsListItem from "./RoomsListItem";
 
 export interface IRoomsListProps {
-    sortedRooms: IRoom[];
-    recipientsMap: { [key: string]: IUser };
-    onSelectRoom: (room: IRoom) => void;
-    getRoomStyle: (room: IRoom, i: number) => React.CSSProperties;
-
-    searchQuery?: string;
+  sortedRooms: IRoom[];
+  recipientsMap: { [key: string]: ICollaborator };
+  onSelectRoom: (room: IRoom) => void;
+  searchQuery?: string;
+  selectedRoomRecipientId?: string;
 }
 
+const classes = {
+  roomItem: css({
+    cursor: "pointer",
+    padding: "8px 16px",
+  }),
+  roomItemSelected: css({
+    color: "#1890ff",
+    backgroundColor: "#e6f7ff",
+
+    "&:hover": {
+      backgroundColor: "#e6f7ff",
+    },
+
+    "& .ant-typography": {
+      color: "#1890ff",
+    },
+  }),
+};
+
 const RoomsList: React.FC<IRoomsListProps> = (props) => {
-    const {
-        sortedRooms,
-        recipientsMap,
-        searchQuery,
-        onSelectRoom,
-        getRoomStyle,
-    } = props;
+  const {
+    sortedRooms,
+    recipientsMap,
+    searchQuery,
+    selectedRoomRecipientId,
+    onSelectRoom,
+  } = props;
 
-    if (sortedRooms.length === 0) {
-        return <Message message="Empty!" />;
+  if (sortedRooms.length === 0) {
+    return <Message message="Empty." />;
+  }
+
+  const filterRooms = () => {
+    if (!searchQuery) {
+      return sortedRooms;
     }
 
-    const filterRooms = () => {
-        if (!searchQuery) {
-            return sortedRooms;
-        }
+    const lowerCasedSearchQuery = searchQuery.toLowerCase();
 
-        const lowerCasedSearchQuery = searchQuery.toLowerCase();
+    return sortedRooms.filter((room) => {
+      const recipient = recipientsMap[room.recipientId];
+      return recipient.name.toLowerCase().includes(lowerCasedSearchQuery);
+    });
+  };
 
-        return sortedRooms.filter((room) => {
-            const recipient = recipientsMap[room.recipientId];
-            return recipient.name.toLowerCase().includes(lowerCasedSearchQuery);
-        });
-    };
+  const filteredRooms = filterRooms();
 
-    const filteredRooms = filterRooms();
+  if (filteredRooms.length === 0) {
+    return <Message message="Chat not found." />;
+  }
 
-    if (filteredRooms.length === 0) {
-        return <Message message="Chat not found!" />;
-    }
-
-    return (
-        <Scrollbar>
-            {filteredRooms.map((room, i) => {
-                const recipient = recipientsMap[room.recipientId];
-
-                return (
-                    <StyledContainer
-                        key={room.customId}
-                        s={getRoomStyle(room, i)}
-                        onClick={() => onSelectRoom(room)}
-                    >
-                        <RoomsListItem room={room} recipient={recipient} />
-                    </StyledContainer>
-                );
+  return (
+    <Scrollbar>
+      {filteredRooms.map((room, i) => {
+        const recipient = recipientsMap[room.recipientId];
+        return (
+          <StyledContainer
+            key={room.customId}
+            className={cx(classes.roomItem, {
+              [classes.roomItemSelected]:
+                room.recipientId === selectedRoomRecipientId,
             })}
-        </Scrollbar>
-    );
+            onClick={() => onSelectRoom(room)}
+          >
+            <RoomsListItem room={room} recipient={recipient} />
+          </StyledContainer>
+        );
+      })}
+    </Scrollbar>
+  );
 };
 
 export default RoomsList;

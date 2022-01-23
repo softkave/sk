@@ -5,7 +5,6 @@ import boardsReducer from "./boards/reducer";
 import collaborationRequestsReducer from "./collaborationRequests/reducer";
 import commentsReducer from "./comments/reducer";
 import keyValueReducer from "./key-value/reducer";
-import notificationsReducer from "./notifications/reducer";
 import operationsReducer from "./operations/reducer";
 import organizationsReducer from "./organizations/reducer";
 import programAccessTokensReducer from "./programAccessTokens/reducer";
@@ -16,24 +15,23 @@ import tasksReducer from "./tasks/reducer";
 import usersReducer from "./users/reducer";
 
 const reducer = combineReducers({
-    blocks: blocksReducer,
-    users: usersReducer,
-    notifications: notificationsReducer,
-    session: sessionReducer,
-    operations: operationsReducer,
-    keyValue: keyValueReducer,
-    rooms: roomsReducer,
-    sprints: sprintsReducer,
-    comments: commentsReducer,
-    programAccessTokens: programAccessTokensReducer,
-    organizations: organizationsReducer,
-    boards: boardsReducer,
-    tasks: tasksReducer,
-    collaborationRequests: collaborationRequestsReducer,
+  blocks: blocksReducer,
+  users: usersReducer,
+  session: sessionReducer,
+  operations: operationsReducer,
+  keyValue: keyValueReducer,
+  rooms: roomsReducer,
+  sprints: sprintsReducer,
+  comments: commentsReducer,
+  programAccessTokens: programAccessTokensReducer,
+  organizations: organizationsReducer,
+  boards: boardsReducer,
+  tasks: tasksReducer,
+  collaborationRequests: collaborationRequestsReducer,
 });
 
 const store = configureStore({
-    reducer,
+  reducer,
 });
 
 export default store;

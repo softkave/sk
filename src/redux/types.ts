@@ -5,7 +5,6 @@ import { IBoardsState } from "./boards/types";
 import { ICollaborationRequestsState } from "./collaborationRequests/types";
 import { ICommentsState } from "./comments/types";
 import { IKeyValueState } from "./key-value/types";
-import { INotificationsState } from "./notifications/types";
 import { IOperationState } from "./operations/reducer";
 import { IOrganizationsState } from "./organizations/types";
 import { IProgramAccessTokensState } from "./programAccessTokens/types";
@@ -16,42 +15,41 @@ import { ITasksState } from "./tasks/types";
 import { IUsersState } from "./users/types";
 
 export interface IAppState {
-    blocks: IBlocksState;
-    users: IUsersState;
-    notifications: INotificationsState;
-    session: ISessionState;
-    operations: IOperationState;
-    keyValue: IKeyValueState;
-    rooms: IRoomsMap;
-    sprints: ISprintsState;
-    comments: ICommentsState;
-    programAccessTokens: IProgramAccessTokensState;
-    organizations: IOrganizationsState;
-    boards: IBoardsState;
-    tasks: ITasksState;
-    collaborationRequests: ICollaborationRequestsState;
+  blocks: IBlocksState;
+  users: IUsersState;
+  session: ISessionState;
+  operations: IOperationState;
+  keyValue: IKeyValueState;
+  rooms: IRoomsMap;
+  sprints: ISprintsState;
+  comments: ICommentsState;
+  programAccessTokens: IProgramAccessTokensState;
+  organizations: IOrganizationsState;
+  boards: IBoardsState;
+  tasks: ITasksState;
+  collaborationRequests: ICollaborationRequestsState;
 }
 
 export interface IAppAsyncThunkConfig {
-    state: IAppState;
-    dispatch: Dispatch;
-    extra?: unknown;
-    rejectValue?: unknown;
+  state: IAppState;
+  dispatch: Dispatch;
+  extra?: unknown;
+  rejectValue?: unknown;
 }
 
 export type AppDispatch = ThunkDispatch<IAppState, void, AnyAction>;
 
 export interface IResourcePayload {
-    customId: string;
+  customId: string;
 }
 
 export interface IUpdateResourcePayload<R> {
-    id: string;
-    data: Partial<R>;
-    meta?: IMergeDataMeta;
+  id: string;
+  data: Partial<R>;
+  meta?: IMergeDataMeta;
 }
 
 export interface IStoreLikeObject {
-    getState: () => IAppState;
-    dispatch: (action: any) => void;
+  getState: () => IAppState;
+  dispatch: (action: any) => void;
 }

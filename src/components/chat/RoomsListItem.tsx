@@ -1,30 +1,31 @@
+import { css } from "@emotion/css";
 import { Badge, Typography } from "antd";
 import React from "react";
 import { IRoom } from "../../models/chat/types";
-import { IUser } from "../../models/user/user";
+import { ICollaborator } from "../../models/collaborator/types";
 import UserAvatar from "../collaborator/UserAvatar";
-import StyledContainer from "../styled/Container";
 
 export interface IRoomsListItemProps {
-    room: IRoom;
-    recipient: IUser;
+  room: IRoom;
+  recipient: ICollaborator;
 }
 
-const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
-    const { room, recipient } = props;
+const classes = {
+  root: css({ width: "100%", alignItems: "center" }),
+  nameContainer: css({ flex: 1, margin: "0 16px" }),
+};
 
-    return (
-        <StyledContainer s={{ width: "100%", alignItems: "center" }}>
-            <UserAvatar user={recipient} />
-            <StyledContainer s={{ flex: 1, margin: "0 16px" }}>
-                <Typography.Text ellipsis>{recipient.name}</Typography.Text>
-            </StyledContainer>
-            <Badge
-                count={room.unseenChatsCount}
-                style={{ boxShadow: "none" }}
-            />
-        </StyledContainer>
-    );
+const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
+  const { room, recipient } = props;
+  return (
+    <div className={classes.root}>
+      <UserAvatar user={recipient} />
+      <div className={classes.nameContainer}>
+        <Typography.Text ellipsis>{recipient.name}</Typography.Text>
+      </div>
+      <Badge count={room.unseenChatsCount} style={{ boxShadow: "none" }} />
+    </div>
+  );
 };
 
 export default RoomsListItem;

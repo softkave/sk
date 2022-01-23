@@ -9,7 +9,7 @@ export interface IOrganization {
   description?: string;
   updatedAt?: string;
   updatedBy?: string;
-  color?: string;
+  color: string;
 }
 
 export interface IAppOrganization extends IOrganization {

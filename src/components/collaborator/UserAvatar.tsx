@@ -1,19 +1,19 @@
-import React from "react";
-import { getUserInitials, ICollaborator } from "../../models/user/user";
+import { ICollaborator } from "../../models/collaborator/types";
+import { getUserInitials } from "../../models/collaborator/utils";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
 
 export interface IUserAvatarProps extends IItemAvatarProps {
-    user: ICollaborator;
+  user: ICollaborator;
 }
 
 const UserAvatar: React.FC<IUserAvatarProps> = (props) => {
-    const { user } = props;
+  const { user } = props;
 
-    return (
-        <ItemAvatar {...props} color={user.color}>
-            {getUserInitials(user)}
-        </ItemAvatar>
-    );
+  return (
+    <ItemAvatar {...props} color={user.color}>
+      {getUserInitials(user)}
+    </ItemAvatar>
+  );
 };
 
 export default UserAvatar;

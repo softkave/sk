@@ -23,8 +23,8 @@ const cloneWithWidth = (
       {({ size }) => {
         return React.cloneElement(node, {
           style: {
-            width: size.width ? size.width - total : size.width!
-          }
+            width: size.width ? size.width - total : size.width!,
+          },
         });
       }}
     </SizeMe>
