@@ -5,38 +5,31 @@ import { URLSearchParams } from "url";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { BlockType, IBlock } from "../../models/block/block";
 import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
 import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
-import BlockSelectors from "../../redux/blocks/selectors";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import {
   IUnseenChatsCountByOrg,
   KeyValueKeys,
 } from "../../redux/key-value/types";
-import OperationActions from "../../redux/operations/actions";
-import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
 import { AppDispatch, IAppState } from "../../redux/types";
 import confirmBlockDelete from "../block/confirmBlockDelete";
 import AddCollaboratorFormInDrawer from "../collaborator/AddCollaboratorFormInDrawer";
 import MessageList from "../MessageList";
-import useBlockParents from "../hooks/useBlockParents";
 import { getOpData } from "../hooks/useOperation";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import RenderForDevice from "../RenderForDevice";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardFormInDrawer from "./BoardFormInDrawer";
-import OrgBoard from "./OrgBoard";
-import { IBoardFormData } from "./types";
+import Organization from "./Organization";
 import { useLoadOrgData } from "./useLoadOrgData";
-import { getBlockPath, getBlocksPath } from "./utils";
 import { IBoard } from "../../models/board/types";
-import {
-  IAppOrganization,
-  IOrganization,
-} from "../../models/organization/types";
+import { IAppOrganization } from "../../models/organization/types";
 import OrganizationSelectors from "../../redux/organizations/selectors";
+import { appBoardRoutes } from "../../models/board/utils";
+import { deleteBoardOpAction } from "../../redux/operations/board/deleteBoard";
+import { appLoggedInPaths } from "../../models/app/routes";
 
 interface IRouteMatchParams {
   organizationId?: string;
@@ -45,21 +38,18 @@ interface IRouteMatchParams {
 // TODO: should forms have their own routes?
 // TODO: should form labels be bold?
 
-const OrgBoardContainer: React.FC<{}> = () => {
+const OrganizationContainer: React.FC<{}> = () => {
   const history = useHistory();
   const dispatch: AppDispatch = useDispatch();
   const [boardForm, setBoardForm] = React.useState<
-    { board: IBoard; organization?: IOrganization } | undefined
+    { board?: IBoard } | undefined
   >();
 
-  const [organizationForm, setOrganizationForm] = React.useState<
-    IAppOrganization | undefined
-  >();
-
+  const [organizationForm, setOrganizationForm] = React.useState(false);
   const [showCollaboratorsForm, setShowCollaboratorsForm] =
     React.useState(false);
 
-  const organizationPath = "/app/orgs/:organizationId";
+  const organizationPath = `${appLoggedInPaths.organizations}/:organizationId`;
   const selectedOrganizationRouteMatch =
     useRouteMatch<IRouteMatchParams>(organizationPath);
 
@@ -107,72 +97,91 @@ const OrgBoardContainer: React.FC<{}> = () => {
     );
   }, [showOrgMenu, dispatch]);
 
-  const parents = useBlockParents(organization.parent);
-  const parentPath = getBlocksPath(parents);
-
-  // TODO: we need to rebuild the path when the user transfers the block
-  const blockPath = getBlockPath(organization, parentPath);
   const orgDataOp = useLoadOrgData(organization);
+  const pushRoute = React.useCallback(
+    (route: string) => {
+      const search = new URLSearchParams(window.location.search);
+      const routeURL = new URL(
+        `${window.location.protocol}${window.location.host}${route}`
+      );
 
-  const pushRoute = (route: string) => {
-    const search = new URLSearchParams(window.location.search);
-    const routeURL = new URL(
-      `${window.location.protocol}${window.location.host}${route}`
-    );
+      search.forEach((value, key) => {
+        if (!routeURL.searchParams.get(key)) {
+          routeURL.searchParams.set(key, value);
+        }
+      });
 
-    search.forEach((value, key) => {
-      if (!routeURL.searchParams.get(key)) {
-        routeURL.searchParams.set(key, value);
+      const url = `${routeURL.pathname}${routeURL.search}`;
+      history.push(url);
+    },
+    [history]
+  );
+
+  const onClickBoard = React.useCallback(
+    (board: IBoard) => {
+      const nextPath = path.normalize(
+        appBoardRoutes.tasks(organization.customId, board.customId)
+      );
+
+      pushRoute(nextPath);
+    },
+    [organization.customId, pushRoute]
+  );
+
+  const deleteBoard = React.useCallback(
+    async (board: IBoard) => {
+      const result = await dispatch(
+        deleteBoardOpAction({
+          boardId: board.customId,
+          deleteOpOnComplete: true,
+        })
+      );
+
+      const op = unwrapResult(result);
+
+      if (!op) {
+        return;
       }
-    });
 
-    const url = `${routeURL.pathname}${routeURL.search}`;
-    history.push(url);
-  };
+      const opStat = getOpData(op);
 
-  const onClickBlock = (blocks: IBlock[]) => {
-    const nextPath = path.normalize(
-      blockPath + "/" + blocks.map((b) => getBlockPath(b)).join("") + `/tasks`
-    );
-
-    pushRoute(nextPath);
-  };
-
-  const onDeleteBlock = async (blockToDelete: IBlock) => {
-    const result = await dispatch(
-      deleteBlockOperationAction({ blockId: blockToDelete.customId })
-    );
-
-    const op = unwrapResult(result);
-
-    if (!op) {
-      return;
-    }
-
-    const opStat = getOpData(op);
-
-    if (opStat.isCompleted) {
-      message.success(`${blockToDelete.type} deleted successfully`);
-
-      if (blockToDelete.customId === organization.customId) {
-        pushRoute(parentPath);
+      if (opStat.isCompleted) {
+        message.success("Board deleted.");
+      } else if (opStat.isError) {
+        message.error("Error deleting board.");
       }
-    } else if (opStat.isError) {
-      message.error(`Error deleting ${blockToDelete.type}`);
-    }
+    },
+    [dispatch]
+  );
 
-    dispatch(OperationActions.deleteOperation(op.id));
-  };
+  const onDeleteBoard = React.useCallback(
+    (board: IBoard) => {
+      confirmBlockDelete(board, deleteBoard);
+    },
+    [deleteBoard]
+  );
 
-  const closeBoardForm = () => {
+  const openBoardForm = React.useCallback((board?: IBoard) => {
+    setBoardForm({ board });
+  }, []);
+
+  const openOrganizationForm = React.useCallback(() => {
+    setOrganizationForm(true);
+  }, []);
+
+  const openCollaboratorForm = React.useCallback(() => {
+    setOrganizationForm(true);
+  }, []);
+
+  const closeBoardForm = React.useCallback(() => {
     // TODO: prompt the user if the user has unsaved changes
     setBoardForm(undefined);
-  };
+  }, []);
 
-  const closeOrganizationForm = () => {
+  const closeOrganizationForm = React.useCallback(() => {
     // TODO: prompt the user if the user has unsaved changes
-    setOrganizationForm(undefined);
-  };
+    setOrganizationForm(false);
+  }, []);
 
   const renderBoardForm = () => {
     if (!boardForm) {
@@ -197,7 +206,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
     return (
       <EditOrgFormInDrawer
         visible
-        organization={organizationForm}
+        organization={organization}
         onClose={closeOrganizationForm}
       />
     );
@@ -219,7 +228,7 @@ const OrgBoardContainer: React.FC<{}> = () => {
 
   const renderBoardMain = (isMobile: boolean) => {
     return (
-      <OrgBoard
+      <Organization
         isMobile={isMobile}
         isAppMenuFolded={!showAppMenu}
         isOrgMenuFolded={!showOrgMenu}
@@ -227,22 +236,11 @@ const OrgBoardContainer: React.FC<{}> = () => {
         onToggleFoldOrgMenu={toggleOrgMenu}
         organization={organization}
         unseenChatsCount={unseenChatsCountMapByOrg[organization.customId] || 0}
-        blockPath={blockPath}
-        onClickBoard={onClickBlock}
-        onClickDeleteBoard={(blk) => confirmBlockDelete(blk, onDeleteBlock)}
-        onClickAddBoard={(organization, blockType) => {
-          setBoardForm({
-            organization,
-            type: blockType,
-          });
-        }}
-        onClickUpdateOrganization={(blockToUpdate) => {
-          setBoardForm({
-            type: blockToUpdate.type,
-            block: blockToUpdate,
-          });
-        }}
-        onAddCollaborator={() => setShowCollaboratorsForm(true)}
+        onClickBoard={onClickBoard}
+        onClickDeleteBoard={onDeleteBoard}
+        onClickAddBoard={openBoardForm}
+        onClickUpdateOrganization={openOrganizationForm}
+        onAddCollaborator={openCollaboratorForm}
       />
     );
   };
@@ -259,27 +257,23 @@ const OrgBoardContainer: React.FC<{}> = () => {
     };
   }, [organization.customId, organization.type]);
 
-  const render = () => {
-    if (orgDataOp.loading) {
-      return <LoadingEllipsis />;
-    } else if (orgDataOp.errors) {
-      return <MessageList fill messages={orgDataOp.errors} />;
-    }
+  if (orgDataOp.loading) {
+    return <LoadingEllipsis />;
+  } else if (orgDataOp.errors) {
+    return <MessageList fill messages={orgDataOp.errors} />;
+  }
 
-    return (
-      <React.Fragment>
-        {renderBoardForm()}
-        {renderOrganizationForm()}
-        {renderCollaboratorForm()}
-        <RenderForDevice
-          renderForDesktop={() => renderBoardMain(false)}
-          renderForMobile={() => renderBoardMain(true)}
-        />
-      </React.Fragment>
-    );
-  };
-
-  return render();
+  return (
+    <React.Fragment>
+      {renderBoardForm()}
+      {renderOrganizationForm()}
+      {renderCollaboratorForm()}
+      <RenderForDevice
+        renderForDesktop={() => renderBoardMain(false)}
+        renderForMobile={() => renderBoardMain(true)}
+      />
+    </React.Fragment>
+  );
 };
 
-export default OrgBoardContainer;
+export default OrganizationContainer;

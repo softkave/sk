@@ -34,6 +34,7 @@ import { css, cx } from "@emotion/css";
 import RoomsList from "../chat/RoomsList";
 import { assert } from "console";
 import { messages } from "../../models/messages";
+import BoardExistsContainer from "./BoardExistsContainer";
 
 export interface IOrgBoardProps {
   organization: IAppOrganization;
@@ -45,7 +46,7 @@ export interface IOrgBoardProps {
   onToggleFoldOrgMenu: () => void;
   onClickUpdateOrganization: () => void;
   onClickAddBoard: () => void;
-  onClickBoard: (board: IBoard, searchParamKey?: string) => void;
+  onClickBoard: (board: IBoard) => void;
   onAddCollaborator: OnClickAddCollaborator;
   onClickDeleteBoard: (board: IBoard) => void;
 }
@@ -121,7 +122,7 @@ const classes = {
   }),
 };
 
-const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
+const Organization: React.FC<IOrgBoardProps> = (props) => {
   const {
     organization,
     isMobile,
@@ -349,7 +350,23 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
     );
   };
 
+  const renderBoard03 = React.useCallback(() => {
+    return <BoardExistsContainer />;
+  }, []);
+
+  const renderBoard02 = React.useCallback(() => {
+    return <BoardExistsContainer boardId={} render={renderBoard03} />;
+  }, []);
+
   const ensureBoardsAreLoaded = (boardId: string) => {
+    return (
+      <BoardListContainer
+        organizationId={organization.customId}
+        onClick={noop}
+        render={}
+      />
+    );
+
     return (
       <LoadBlockChildren
         parent={organization}
@@ -462,4 +479,4 @@ const OrgBoard: React.FC<IOrgBoardProps> = (props) => {
   }
 };
 
-export default React.memo(OrgBoard);
+export default React.memo(Organization);

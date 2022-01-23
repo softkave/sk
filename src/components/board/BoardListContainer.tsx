@@ -13,16 +13,17 @@ import BoardList, { IBoardListProps } from "./BoardList";
 export interface IBoardListContainerProps
   extends Omit<IBoardListProps, "boards"> {
   organizationId: string;
+  render?: (boards: IBoard[]) => React.ReactElement;
 }
 
 const BoardListContainer: React.FC<IBoardListContainerProps> = (props) => {
-  const { organizationId } = props;
+  const { organizationId, render } = props;
   const dispatch: AppDispatch = useDispatch();
   const boards = useSelector<IAppState, IBoard[]>((state) =>
     getOrganizationBoards(state, organizationId)
   );
 
-  const loadChildren = React.useCallback(
+  const loadBoards = React.useCallback(
     (loadProps: IOperationDerivedData) => {
       if (!loadProps.operation) {
         dispatch(
@@ -41,7 +42,7 @@ const BoardListContainer: React.FC<IBoardListContainerProps> = (props) => {
       resourceId: organizationId,
       type: OperationType.GetOrganizationBoards,
     },
-    loadChildren,
+    loadBoards,
     { deleteManagedOperationOnUnmount: false }
   );
 
@@ -49,6 +50,10 @@ const BoardListContainer: React.FC<IBoardListContainerProps> = (props) => {
     return <LoadingEllipsis />;
   } else if (op.error) {
     return <MessageList messages={op.error} />;
+  }
+
+  if (render) {
+    return render(boards);
   }
 
   return <BoardList {...props} boards={boards} />;

@@ -24,7 +24,7 @@ import useOperation, {
 } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Board from "./Board";
-import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";
+import { IBoardResourceTypePathMatch } from "./types";
 import { IBoard } from "../../models/board/types";
 
 export interface IBoardContainerProps {
@@ -48,7 +48,6 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
 
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
-
   const currentSprint = useSelector<IAppState, ISprint | undefined>((state) => {
     if (board.currentSprintId) {
       return SprintSelectors.getSprint(state, board.currentSprintId);
@@ -114,11 +113,6 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     loadTasks,
     { deleteManagedOperationOnUnmount: false }
   );
-
-  // const fetchMissingOp = useFetchMissingBlockUpdates({
-  //     block: board,
-  //     isBlockDataLoaded: !!tasksOp && !!sprintsOp,
-  // });
 
   // TODO: this code is duplicated in SprintsContainer
   const closeSprint = async (sprintId: string) => {

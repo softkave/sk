@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { IUser } from "../../models/user/user";
-import OrgBoardContainer from "../board/OrgBoardContainer";
+import OrganizationContainer from "../board/OrganizationContainer";
 import FeedbackFormModal from "../feedback/FeedbackFormModal";
 import Message from "../Message";
 import Notification from "../notification/Notification";
@@ -17,154 +17,127 @@ import NotificationsPermissionContainer from "./NotificationsPermissionContainer
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeProps {
-    user: IUser;
-    showAppMenu: boolean;
-    showOrgForm: boolean;
-    rootBlocksLoaded: boolean;
-    toggleMenu: () => void;
-    closeNewOrgForm: () => void;
-    onLogout: () => void;
+  user: IUser;
+  showAppMenu: boolean;
+  showOrgForm: boolean;
+  rootBlocksLoaded: boolean;
+  toggleMenu: () => void;
+  closeNewOrgForm: () => void;
+  onLogout: () => void;
 }
 
 const AppHome: React.FC<IAppHomeProps> = (props) => {
-    const {
-        user,
-        showAppMenu,
-        showOrgForm,
-        rootBlocksLoaded,
-        closeNewOrgForm,
-        onLogout,
-    } = props;
+  const {
+    user,
+    showAppMenu,
+    showOrgForm,
+    rootBlocksLoaded,
+    closeNewOrgForm,
+    onLogout,
+  } = props;
 
-    const history = useHistory();
-    const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
+  const history = useHistory();
+  const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
 
-    const toggleFeedbackForm = React.useCallback(() => {
-        setShowFeedbackForm(!showFeedbackForm);
-    }, [showFeedbackForm]);
+  const toggleFeedbackForm = React.useCallback(() => {
+    setShowFeedbackForm(!showFeedbackForm);
+  }, [showFeedbackForm]);
 
-    const renderNotification = () => <Notification />;
-    const renderSettings = () => <UserSettings />;
+  const renderNotification = () => <Notification />;
+  const renderSettings = () => <UserSettings />;
 
-    const onSelect = (key: UserOptionsMenuKeys) => {
-        switch (key) {
-            case UserOptionsMenuKeys.Logout:
-                onLogout();
-                break;
+  const onSelect = (key: UserOptionsMenuKeys) => {
+    switch (key) {
+      case UserOptionsMenuKeys.Logout:
+        onLogout();
+        break;
 
-            case UserOptionsMenuKeys.SendFeedback:
-                toggleFeedbackForm();
-                break;
+      case UserOptionsMenuKeys.SendFeedback:
+        toggleFeedbackForm();
+        break;
 
-            case UserOptionsMenuKeys.UserSettings:
-                history.push("/app/settings");
-                break;
-        }
-    };
+      case UserOptionsMenuKeys.UserSettings:
+        history.push("/app/settings");
+        break;
+    }
+  };
 
-    const mobile = () => (
-        <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
-            {showOrgForm && (
-                <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
-            )}
-            <HeaderMobile user={user} onSelect={onSelect} />
-            <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
-                <Switch>
-                    <Route
-                        path="/app/notifications/*"
-                        render={renderNotification}
-                    />
-                    <Route
-                        exact
-                        path="/app/orgs"
-                        component={OrgsListContainer}
-                    />
-                    <Route
-                        path="/app/orgs/*"
-                        render={() => {
-                            return (
-                                <OrgsListContainer
-                                    hijackRender={() => {
-                                        if (rootBlocksLoaded) {
-                                            return <OrgBoardContainer />;
-                                        }
-
-                                        return <React.Fragment />;
-                                    }}
-                                />
-                            );
-                        }}
-                    />
-                    <Route exact path="/app/settings" render={renderSettings} />
-                    <Route
-                        exact
-                        path="*"
-                        render={() => <Redirect to="/app/orgs" />}
-                    />
-                </Switch>
-            </StyledContainer>
-        </StyledContainer>
-    );
-
-    const renderEmpty = (str: string = "Select an organization or request") => (
-        <Message message={str} />
-    );
-
-    const desktop = () => (
-        <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
-            {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
-            {showOrgForm && (
-                <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />
-            )}
-            <Switch>
-                <Route
-                    exact
-                    path="/app/notifications"
-                    render={() =>
-                        renderEmpty("Select a request or notification")
+  const mobile = () => (
+    <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+      {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
+      <HeaderMobile user={user} onSelect={onSelect} />
+      <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
+        <Switch>
+          <Route path="/app/notifications/*" render={renderNotification} />
+          <Route exact path="/app/orgs" component={OrgsListContainer} />
+          <Route
+            path="/app/orgs/*"
+            render={() => {
+              return (
+                <OrgsListContainer
+                  hijackRender={() => {
+                    if (rootBlocksLoaded) {
+                      return <OrganizationContainer />;
                     }
-                />
-                <Route
-                    path="/app/notifications/*"
-                    render={renderNotification}
-                />
-                <Route
-                    exact
-                    path="/app/orgs"
-                    render={() => renderEmpty("Select an organization")}
-                />
-                <Route
-                    path="/app/orgs/*"
-                    render={() => {
-                        if (rootBlocksLoaded) {
-                            return <OrgBoardContainer />;
-                        }
 
-                        return null;
-                    }}
+                    return <React.Fragment />;
+                  }}
                 />
-                <Route exact path="/app/settings" render={renderSettings} />
-                <Route
-                    exact
-                    path="*"
-                    render={() => <Redirect to="/app/orgs" />}
-                />
-            </Switch>
-        </StyledContainer>
-    );
+              );
+            }}
+          />
+          <Route exact path="/app/settings" render={renderSettings} />
+          <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
+        </Switch>
+      </StyledContainer>
+    </StyledContainer>
+  );
 
-    return (
-        <React.Fragment>
-            <NotificationsPermissionContainer />
-            {showFeedbackForm && (
-                <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
-            )}
-            <RenderForDevice
-                renderForDesktop={desktop}
-                renderForMobile={mobile}
-            />
-        </React.Fragment>
-    );
+  const renderEmpty = (str: string = "Select an organization or request") => (
+    <Message message={str} />
+  );
+
+  const desktop = () => (
+    <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
+      {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
+      {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
+      <Switch>
+        <Route
+          exact
+          path="/app/notifications"
+          render={() => renderEmpty("Select a request or notification")}
+        />
+        <Route path="/app/notifications/*" render={renderNotification} />
+        <Route
+          exact
+          path="/app/orgs"
+          render={() => renderEmpty("Select an organization")}
+        />
+        <Route
+          path="/app/orgs/*"
+          render={() => {
+            if (rootBlocksLoaded) {
+              return <OrganizationContainer />;
+            }
+
+            return null;
+          }}
+        />
+        <Route exact path="/app/settings" render={renderSettings} />
+        <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
+      </Switch>
+    </StyledContainer>
+  );
+
+  return (
+    <React.Fragment>
+      <NotificationsPermissionContainer />
+      {showFeedbackForm && (
+        <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
+      )}
+      <RenderForDevice renderForDesktop={desktop} renderForMobile={mobile} />
+    </React.Fragment>
+  );
 };
 
 export default AppHome;
