@@ -20,7 +20,9 @@ export const updateTaskOpAction = makeAsyncOp(
   "op/tasks/updateTask",
   OperationType.UpdateTask,
   async (
-    arg: Omit<IUpdateTaskEndpointParams, "data"> & { data: ITaskFormValues },
+    arg: Omit<IUpdateTaskEndpointParams, "data"> & {
+      data: Partial<ITaskFormValues>;
+    },
     thunkAPI,
     extras
   ) => {

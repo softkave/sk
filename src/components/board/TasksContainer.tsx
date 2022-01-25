@@ -8,7 +8,6 @@ import {
   IBlockLabel,
   IBlockStatus,
   IBoardTaskResolution,
-  IFormBlock,
 } from "../../models/block/block";
 import { IBoard } from "../../models/board/types";
 import { ICollaborator } from "../../models/collaborator/types";
@@ -16,7 +15,7 @@ import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
 import BlockSelectors from "../../redux/blocks/selectors";
-import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
+import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import SessionSelectors from "../../redux/session/selectors";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -148,12 +147,11 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
 
   const dispatch: AppDispatch = useDispatch();
   const onUpdateTask = React.useCallback(
-    async (taskId: string, update: Partial<IFormBlock>) => {
+    async (taskId: string, update: Partial<ITaskFormValues>) => {
       const hide = message.loading("Updating task...", 0);
-
       const result = await dispatch(
-        updateBlockOpAction({
-          blockId: taskId,
+        updateTaskOpAction({
+          taskId,
           data: update,
           deleteOpOnComplete: true,
         })

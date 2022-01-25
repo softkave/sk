@@ -211,7 +211,7 @@ const Board: React.FC<IBoardProps> = (props) => {
     return (
       <BoardStatusResolutionAndLabelsForm
         visible
-        block={board}
+        board={board}
         active={otherResourcesForm}
         onClose={() => setOtherResourcesForm(undefined)}
       />

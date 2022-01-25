@@ -28,7 +28,7 @@ import CollaborationRequestListContainer from "../collaborator/CollaborationRequ
 import { noop } from "lodash";
 import { css, cx } from "@emotion/css";
 import RoomsList from "../chat/RoomsList";
-import { assert } from "console";
+import assert from "assert";
 import { messages } from "../../models/messages";
 
 export interface IOrgBoardProps {

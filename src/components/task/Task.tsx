@@ -27,7 +27,7 @@ import { ICollaborator } from "../../models/collaborator/types";
 import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
-import { deleteBlockOperationAction } from "../../redux/operations/block/deleteBlock";
+import { deleteTaskOpAction } from "../../redux/operations/task/deleteTask";
 import { AppDispatch } from "../../redux/types";
 import BoardStatusResolutionAndLabelsForm, {
   BoardStatusResolutionAndLabelsFormType,
@@ -131,8 +131,8 @@ const Task: React.FC<ITaskProps> = (props) => {
       okButtonProps: { danger: true },
       onOk: async () => {
         const result = await dispatch(
-          deleteBlockOperationAction({
-            blockId: task.customId,
+          deleteTaskOpAction({
+            taskId: task.customId,
             deleteOpOnComplete: true,
           })
         );
@@ -293,7 +293,7 @@ const Task: React.FC<ITaskProps> = (props) => {
       {subFormType && (
         <BoardStatusResolutionAndLabelsForm
           visible
-          block={board}
+          board={board}
           onClose={closeForm}
           active={subFormType}
         />

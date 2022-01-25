@@ -5,12 +5,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
-import { BlockType, IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { getSprintRemainingWorkingDays } from "../../models/sprint/utils";
 import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
 import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
-import { loadBlockChildrenOpAction } from "../../redux/operations/block/loadBlockChildren";
 import { getBoardTasksOpAction } from "../../redux/operations/task/getBoardTasks";
 import OperationType from "../../redux/operations/OperationType";
 import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
@@ -25,7 +23,7 @@ import useOperation, {
 } from "../hooks/useOperation";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Board from "./Board";
-import { IBoardResourceTypePathMatch, OnClickDeleteBlock } from "./types";
+import { IBoardResourceTypePathMatch } from "./types";
 import { IBoard } from "../../models/board/types";
 import { appBoardRoutes } from "../../models/board/utils";
 
@@ -196,8 +194,8 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
 
   return (
     <Board
+      organizationId={board.customId}
       board={board}
-      blockPath={blockPath}
       isAppMenuFolded={isAppMenuFolded}
       isMobile={isMobile}
       onClickDeleteBoard={onClickDeleteBlock}

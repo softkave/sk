@@ -3,13 +3,9 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
-import {
-  BlockType,
-  IBlock,
-  IFormBlock,
-  newFormBlock,
-} from "../../models/block/block";
 import { IBoard } from "../../models/board/types";
+import { newFormBoard } from "../../models/board/utils";
+import { IAppOrganization } from "../../models/organization/types";
 import OperationActions from "../../redux/operations/actions";
 import { createBoardOpAction } from "../../redux/operations/board/createBoard";
 import { updateBoardOpAction } from "../../redux/operations/board/updateBoard";
@@ -32,12 +28,12 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(SessionSelectors.assertGetUser);
-  const org = useSelector<IAppState, IBlock>((state) => {
+  const org = useSelector<IAppState, IAppOrganization>((state) => {
     return OrganizationSelectors.assertGetOne(state, orgId);
   });
 
-  const [boardData, setBoardData] = React.useState<IFormBlock>(
-    () => props.board || newFormBlock(user, BlockType.Board, org)
+  const [boardData, setBoardData] = React.useState<IBoardFormValues>(
+    () => props.board || newFormBoard(org)
   );
 
   const [loading, setLoading] = React.useState(false);

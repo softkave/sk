@@ -7,8 +7,12 @@ import {
   IUpdateBoardInput,
 } from "./types";
 import { extractFields, getFields, makeExtract } from "../../utils/extract";
-import { topLevelDiff } from "../../utils/utils";
+import { getNewId, topLevelDiff } from "../../utils/utils";
 import { getComplexFieldInput } from "../utils";
+import { IBoardFormValues } from "../../components/board/BoardForm";
+import { BlockType } from "../block/block";
+import { IAppOrganization } from "../organization/types";
+import randomColor from "randomcolor";
 
 const board = (organizationId: string, boardId: string) =>
   `${appOrganizationRoutes.boards(organizationId)}/${boardId}`;
@@ -127,4 +131,20 @@ export function getUpdateBoardInput(
 ) {
   const diff = topLevelDiff(update, board);
   return extractFields(diff, updateBlockFields, { board });
+}
+
+export function newFormBoard(organization: IAppOrganization) {
+  const newBoard: IBoardFormValues = {
+    customId: getNewId(),
+    type: BlockType.Board,
+    color: randomColor(),
+    parent: organization.customId,
+    name: "",
+    description: "",
+    boardLabels: [],
+    boardStatuses: [],
+    boardResolutions: [],
+  };
+
+  return newBoard;
 }

@@ -3,75 +3,68 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
-import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
+import { ITask } from "../../models/task/types";
+import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
 import SelectTaskSprint, { BACKLOG } from "./SelectTaskSprint";
 
 export interface ISelectTaskSprintContainerProps {
-    task: IBlock;
-    sprints: ISprint[];
-    sprintsMap: { [key: string]: ISprint };
-    disabled?: boolean;
-    demo?: boolean;
-    onAddNewSprint: () => void;
+  task: ITask;
+  sprints: ISprint[];
+  sprintsMap: { [key: string]: ISprint };
+  disabled?: boolean;
+  demo?: boolean;
+  onAddNewSprint: () => void;
 }
 
 const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
-    props
+  props
 ) => {
-    const { task, demo } = props;
+  const { task, demo } = props;
+  const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch: AppDispatch = useDispatch();
 
-    const [isLoading, setIsLoading] = React.useState(false);
-    const dispatch: AppDispatch = useDispatch();
+  const onChangeSprint = React.useCallback(
+    async (val: string) => {
+      if (demo) {
+        return false;
+      }
 
-    const onChangeSprint = React.useCallback(
-        async (val: string) => {
-            if (demo) {
-                return false;
-            }
+      setIsLoading(true);
+      const result = await dispatch(
+        updateTaskOpAction({
+          taskId: task.customId,
+          data: {
+            taskSprint: val === BACKLOG ? null : { sprintId: val },
+          },
+          deleteOpOnComplete: true,
+        })
+      );
 
-            setIsLoading(true);
+      const op = unwrapResult(result);
 
-            const result = await dispatch(
-                updateBlockOpAction({
-                    blockId: task.customId,
-                    data: {
-                        taskSprint:
-                            val === BACKLOG
-                                ? null
-                                : {
-                                      sprintId: val,
-                                  },
-                    },
-                    deleteOpOnComplete: true,
-                })
-            );
+      if (op) {
+        const opData = getOpData(op);
 
-            const op = unwrapResult(result);
+        if (opData.isError) {
+          message.error(ERROR_UPDATING_TASK_SPRINT);
+        }
+      }
 
-            if (op) {
-                const opData = getOpData(op);
+      setIsLoading(false);
+    },
+    [demo, dispatch, task.customId]
+  );
 
-                if (opData.isError) {
-                    message.error(ERROR_UPDATING_TASK_SPRINT);
-                }
-            }
+  if (isLoading) {
+    return <LoadingOutlined />;
+  }
 
-            setIsLoading(false);
-        },
-        [demo, dispatch, task.customId]
-    );
-
-    if (isLoading) {
-        return <LoadingOutlined />;
-    }
-
-    return <SelectTaskSprint {...props} onChangeSprint={onChangeSprint} />;
+  return <SelectTaskSprint {...props} onChangeSprint={onChangeSprint} />;
 };
 
 export default React.memo(SelectTaskSprintContainer);
 
-const ERROR_UPDATING_TASK_SPRINT = "Error updating task sprint";
+const ERROR_UPDATING_TASK_SPRINT = "Error updating task sprint.";

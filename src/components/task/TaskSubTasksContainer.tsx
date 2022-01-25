@@ -2,72 +2,67 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { ITask } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
-import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
+import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
 import TaskThumbnailSubTasks from "./TaskThumbnailSubTasks";
 
 export interface ITaskSubTasksContainerProps {
-    task: IBlock;
-    user: IUser;
-
-    demo?: boolean;
+  task: ITask;
+  user: IUser;
+  demo?: boolean;
 }
 
 const TaskSubTasksContainer: React.FC<ITaskSubTasksContainerProps> = (
-    props
+  props
 ) => {
-    const { task, demo, user } = props;
+  const { task, demo, user } = props;
+  const dispatch: AppDispatch = useDispatch();
 
-    const dispatch: AppDispatch = useDispatch();
+  // TODO: we can only toggle one at a time for now,
+  // look into removing this restriction
 
-    // TODO: we can only toggle one at a time for now,
-    // look into removing this restriction
+  const onToggleTask = React.useCallback(
+    async (subTaskIndex: number) => {
+      if (demo) {
+        return;
+      }
 
-    const onToggleTask = React.useCallback(
-        async (subTaskIndex: number) => {
-            if (demo) {
-                return;
-            }
+      const subTasks = Array.from(task.subTasks || []);
+      let subTask = subTasks[subTaskIndex];
 
-            const subTasks = Array.from(task.subTasks || []);
-            let subTask = subTasks[subTaskIndex];
+      if (!subTask) {
+        return;
+      }
 
-            if (!subTask) {
-                return;
-            }
+      // TODO: can we only update the sub-task and avoid the unnecessary compute?
+      subTask = { ...subTask };
+      subTask.completedBy = subTask.completedBy ? null : user.customId;
+      subTasks[subTaskIndex] = subTask;
+      const result = await dispatch(
+        updateTaskOpAction({
+          taskId: task.customId,
+          data: { subTasks },
+          deleteOpOnComplete: true,
+        })
+      );
 
-            // TODO: can we only update the sub-task and avoid the unnecessary compute?
-            subTask = { ...subTask };
-            subTask.completedBy = subTask.completedBy ? null : user.customId;
-            subTasks[subTaskIndex] = subTask;
+      const op = unwrapResult(result);
 
-            const result = await dispatch(
-                updateBlockOpAction({
-                    blockId: task.customId,
-                    data: {
-                        subTasks,
-                    },
-                    deleteOpOnComplete: true,
-                })
-            );
+      if (op) {
+        const opData = getOpData(op);
 
-            const op = unwrapResult(result);
+        if (opData.isError) {
+          message.error("Error updating subtasks.");
+        }
+      }
+    },
+    [demo, dispatch, task.customId, user.customId, task.subTasks]
+  );
 
-            if (op) {
-                const opData = getOpData(op);
-
-                if (opData.isError) {
-                    message.error("Error updating sub-task");
-                }
-            }
-        },
-        [demo, dispatch, task.customId, user.customId, task.subTasks]
-    );
-
-    return <TaskThumbnailSubTasks task={task} onToggleSubTask={onToggleTask} />;
+  return <TaskThumbnailSubTasks task={task} onToggleSubTask={onToggleTask} />;
 };
 
 export default React.memo(TaskSubTasksContainer);

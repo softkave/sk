@@ -24,14 +24,16 @@ export const updateBoardOpAction = makeAsyncOp(
   OperationType.UpdateBoard,
   async (
     arg: Omit<IUpdateBoardEndpointParams, "data"> & {
-      data: Omit<
-        IUpdateBoardInput,
-        "boardStatuses" | "boardLabels" | "boardResolutions"
-      > & {
-        boardStatuses: IBlockStatusInput[];
-        boardLabels: IBlockLabelInput[];
-        boardResolutions: IBoardStatusResolutionInput[];
-      };
+      data: Partial<
+        Omit<
+          IUpdateBoardInput,
+          "boardStatuses" | "boardLabels" | "boardResolutions"
+        > & {
+          boardStatuses: IBlockStatusInput[];
+          boardLabels: IBlockLabelInput[];
+          boardResolutions: IBoardStatusResolutionInput[];
+        }
+      >;
     },
     thunkAPI,
     extras

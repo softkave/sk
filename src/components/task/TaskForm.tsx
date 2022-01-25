@@ -663,7 +663,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       {subFormType && (
         <BoardStatusResolutionAndLabelsForm
           visible
-          block={board}
+          board={board}
           onClose={closeForm}
           active={subFormType}
         />
