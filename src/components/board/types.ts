@@ -1,4 +1,5 @@
 import { BlockType, IBlock } from "../../models/block/block";
+import { ITask } from "../../models/task/types";
 
 export type BoardResourceType =
   | "tasks"
@@ -30,6 +31,6 @@ export type BoardGroupableFields = "assignees" | "labels" | "status" | "sprint";
 export interface IBoardGroupedTasks {
   id: string;
   name: string;
-  tasks: IBlock[];
+  tasks: ITask[];
   color?: string;
 }

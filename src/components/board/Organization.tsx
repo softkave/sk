@@ -5,7 +5,6 @@ import React from "react";
 import { RightOutlined } from "@ant-design/icons";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router";
 import { Redirect } from "react-router-dom";
-import { BlockType } from "../../models/block/block";
 import ChatRoom from "../chat/ChatRoom";
 import ChatRoomsContainer, {
   IChatRoomsRenderProps,
@@ -13,13 +12,10 @@ import ChatRoomsContainer, {
 import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import Message from "../Message";
 import OrgsListHeader from "../org/OrgsListHeader";
-import BlockContainer from "./BlockContainer";
 import BoardContainer from "./BoardContainer";
-import LoadBlockChildren from "./LoadBlockChildren";
 import OrgBoardHeader from "./OrgBoardHeader";
 import { IBoardResourceTypePathMatch, OnClickAddCollaborator } from "./types";
 import {
-  getBlockPath,
   getBlockResourceTypes,
   getBoardResourceTypeDisplayName,
 } from "./utils";
@@ -34,7 +30,6 @@ import { css, cx } from "@emotion/css";
 import RoomsList from "../chat/RoomsList";
 import { assert } from "console";
 import { messages } from "../../models/messages";
-import BoardExistsContainer from "./BoardExistsContainer";
 
 export interface IOrgBoardProps {
   organization: IAppOrganization;
@@ -350,43 +345,14 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
     );
   };
 
-  const renderBoard03 = React.useCallback(() => {
-    return <BoardExistsContainer />;
-  }, []);
-
-  const renderBoard02 = React.useCallback(() => {
-    return <BoardExistsContainer boardId={} render={renderBoard03} />;
-  }, []);
-
-  const ensureBoardsAreLoaded = (boardId: string) => {
+  const renderBoard = (boardId: string) => {
     return (
-      <BoardListContainer
-        organizationId={organization.customId}
-        onClick={noop}
-        render={}
-      />
-    );
-
-    return (
-      <LoadBlockChildren
-        parent={organization}
-        type={BlockType.Board}
-        render={() => (
-          <BlockContainer
-            blockId={boardId}
-            notFoundMessage="Board not found."
-            render={(board) => (
-              <BoardContainer
-                isMobile={isMobile}
-                board={board}
-                blockPath={getBlockPath(board, organizationPath)}
-                isAppMenuFolded={isOrgMenuFolded}
-                onToggleFoldAppMenu={onToggleFoldOrgMenu}
-                onClickDeleteBlock={onClickDeleteBoard}
-              />
-            )}
-          />
-        )}
+      <BoardContainer
+        boardId={boardId}
+        isMobile={isMobile}
+        isAppMenuFolded={isOrgMenuFolded}
+        onToggleFoldAppMenu={onToggleFoldOrgMenu}
+        onClickDeleteBlock={onClickDeleteBoard}
       />
     );
   };
@@ -420,7 +386,7 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
         <Route
           path={`/app/orgs/${organization.customId}/boards/:boardId`}
           render={(routeProps) => {
-            return ensureBoardsAreLoaded(routeProps.match.params.boardId);
+            return renderBoard(routeProps.match.params.boardId);
           }}
         />
         <Route
@@ -450,7 +416,7 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
                 organization.customId
               )}/:boardId`}
               render={(routeProps) => {
-                return ensureBoardsAreLoaded(routeProps.match.params.boardId);
+                return renderBoard(routeProps.match.params.boardId);
               }}
             />
             <Route

@@ -16,9 +16,9 @@ import { getDefaultStatuses } from "./utils";
 export const blockSchemaVersion = 3; // increment when you make changes that are not backward compatible
 
 export enum BlockPriority {
-  Important = "important",
-  NotImportant = "not important",
-  VeryImportant = "very important",
+  High = "high",
+  Medium = "medium",
+  Low = "low",
 }
 
 export enum BlockType {
@@ -447,7 +447,7 @@ export function newFormBlock(user: IUser, type: BlockType, parent?: IBlock) {
     name: "",
     description: undefined,
     dueAt: undefined,
-    priority: isTask ? BlockPriority.Important : undefined,
+    priority: isTask ? BlockPriority.High : undefined,
     boardLabels: [],
     boardStatuses: isBoard ? getDefaultStatuses(user) : [],
     boardResolutions: [],

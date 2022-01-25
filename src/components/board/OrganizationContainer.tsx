@@ -192,7 +192,7 @@ const OrganizationContainer: React.FC<{}> = () => {
       <BoardFormInDrawer
         visible
         orgId={organization.customId}
-        block={boardForm.board}
+        board={boardForm.board}
         onClose={closeBoardForm}
       />
     );

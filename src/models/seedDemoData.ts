@@ -192,7 +192,7 @@ export function seedBlock(
       p.statusAssignedAt || (p.status ? getDateString() : undefined),
     taskResolution: p.taskResolution,
     labels: p.labels && seedTaskLabels(user, p.labels),
-    priority: p.priority || (isTask ? BlockPriority.NotImportant : undefined),
+    priority: p.priority || (isTask ? BlockPriority.Medium : undefined),
     subTasks: p.subTasks && seedSubTasks(user, p.subTasks),
     dueAt: p.dueAt,
     rootBlockId: p.rootBlockId,
@@ -666,7 +666,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
       board_Softkave_Engineering.boardLabels![0],
       board_Softkave_Engineering.boardLabels![2],
     ],
-    priority: BlockPriority.Important,
+    priority: BlockPriority.High,
     status: board_Softkave_Engineering.boardStatuses![0].customId,
   });
 
@@ -685,7 +685,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
       board_Softkave_Engineering.boardLabels![1],
       board_Softkave_Engineering.boardLabels![2],
     ],
-    priority: BlockPriority.Important,
+    priority: BlockPriority.High,
     status: board_Softkave_Engineering.boardStatuses![1].customId,
   });
 
@@ -701,7 +701,7 @@ export default function seedDemoData({ name }: { name?: string } = {}) {
     parent: board_Softkave_Engineering.customId,
     rootBlockId: board_Softkave_Engineering.rootBlockId,
     labels: seedTaskLabels(user, [board_Softkave_Engineering.boardLabels![2]]),
-    priority: BlockPriority.VeryImportant,
+    priority: BlockPriority.Low,
     status:
       board_Softkave_Engineering.boardStatuses![
         board_Softkave_Engineering.boardStatuses!.length - 1

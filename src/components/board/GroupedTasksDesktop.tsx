@@ -11,17 +11,15 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import {
-  IBlock,
   IBlockAssignedLabel,
   IFormBlock,
   ITaskAssignee,
 } from "../../models/block/block";
-import { getNameInitials } from "../../models/utils";
+import { ITask } from "../../models/task/types";
 import { getDateString } from "../../utils/utils";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
-import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { BoardGroupableFields, IBoardGroupedTasks } from "./types";
@@ -34,7 +32,7 @@ export interface IGroupedTasksDesktopProps
   extends ITasksContainerRenderFnProps {
   groupedTasks: IBoardGroupedTasks[];
   groupFieldName: BoardGroupableFields;
-  onClickUpdateBlock: (block: IBlock) => void;
+  onClickUpdateTask: (task: ITask) => void;
   renderColumnHeaderOptions?: (group: IBoardGroupedTasks) => React.ReactNode;
   emptyMessage?: string;
 }
@@ -91,7 +89,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     emptyMessage,
     groupFieldName,
     user,
-    onClickUpdateBlock,
+    onClickUpdateTask: onClickUpdateBlock,
     renderColumnHeaderOptions,
     onUpdateTask,
   } = props;
@@ -151,25 +149,23 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     }
 
     return shouldRenderGroup ? (
-      <Scrollbar>
-        <div
-          ref={provided.innerRef}
-          style={getListStyle(
-            !!dragInfo,
-            snapshot.isDraggingOver,
-            shouldRenderGroup
-          )}
-          {...provided.droppableProps}
-        >
-          <TaskList
-            {...props}
-            tasks={group.tasks}
-            toggleForm={onClickUpdateBlock}
-            style={{ height: "100%" }}
-          />
-          {provided.placeholder}
-        </div>
-      </Scrollbar>
+      <div
+        ref={provided.innerRef}
+        style={getListStyle(
+          !!dragInfo,
+          snapshot.isDraggingOver,
+          shouldRenderGroup
+        )}
+        {...provided.droppableProps}
+      >
+        <TaskList
+          {...props}
+          tasks={group.tasks}
+          toggleForm={onClickUpdateBlock}
+          style={{ height: "100%" }}
+        />
+        {provided.placeholder}
+      </div>
     ) : (
       <div
         ref={provided.innerRef}

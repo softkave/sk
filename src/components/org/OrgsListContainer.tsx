@@ -29,7 +29,6 @@ export interface IOrgsListContainerProps {
 
 const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
   const { hijackRender } = props;
-
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
   const unseenChatsCountMapByOrg = useSelector<
@@ -40,7 +39,6 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
   );
 
   const orgRouteMatch = useRouteMatch<{ orgId: string }>("/app/orgs/:orgId");
-
   const requestRouteMatch = useRouteMatch<{ requestId: string }>(
     "/app/notifications/:requestId"
   );
@@ -130,7 +128,6 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
   const loadOpsState = mergeOps([orgsOp, requestsOp, loadRoomsAndChatsOp]);
   const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
   const isLoading = loadOpsState.loading;
-
   const orgs = useSelector<IAppState, IAppOrganization[]>((state) => {
     if (!orgsOp.isCompleted) {
       return [];

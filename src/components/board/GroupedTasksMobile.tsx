@@ -1,22 +1,25 @@
 import { Badge, Space, Tabs, Typography } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import React from "react";
-import Scrollbars from "react-custom-scrollbars";
-import { IBlock } from "../../models/block/block";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
+import { ITask } from "../../models/task/types";
 
 export interface IGroupedTasksMobileProps extends ITasksContainerRenderFnProps {
   groupedTasks: IBoardGroupedTasks[];
-  onClickUpdateBlock: (block: IBlock) => void;
+  onClickUpdateTask: (task: ITask) => void;
   emptyMessage?: string;
 }
 
 const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
-  const { groupedTasks, emptyMessage, onClickUpdateBlock } = props;
+  const {
+    groupedTasks,
+    emptyMessage,
+    onClickUpdateTask: onClickUpdateBlock,
+  } = props;
 
   const renderTab = (group: IBoardGroupedTasks) => {
     return (
@@ -44,15 +47,13 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
         }
         key={group.name}
       >
-        <Scrollbars>
-          <TaskList
-            {...props}
-            disableDragAndDrop
-            tasks={group.tasks}
-            toggleForm={onClickUpdateBlock}
-            getBlockStyle={() => ({ padding: "0 16px" })}
-          />
-        </Scrollbars>
+        <TaskList
+          {...props}
+          disableDragAndDrop
+          tasks={group.tasks}
+          toggleForm={onClickUpdateBlock}
+          getBlockStyle={() => ({ padding: "0 16px" })}
+        />
       </Tabs.TabPane>
     );
   };

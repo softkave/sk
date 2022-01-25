@@ -1,8 +1,15 @@
 import assert from "assert";
 import { defaultTo } from "lodash";
+import {
+  IBlockLabelInput,
+  IBlockStatusInput,
+  IBoardStatusResolutionInput,
+  IUpdateBoardInput,
+} from "../../../models/board/types";
+import { getUpdateBoardInput } from "../../../models/board/utils";
 import { messages } from "../../../models/messages";
 import BoardAPI, {
-    IUpdateBoardEndpointParams,
+  IUpdateBoardEndpointParams,
 } from "../../../net/board/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, processComplexTypeInput } from "../../../utils/utils";
@@ -13,72 +20,89 @@ import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
 export const updateBoardOpAction = makeAsyncOp(
-    "op/boards/updateBoard",
-    OperationType.UpdateBoard,
-    async (arg: IUpdateBoardEndpointParams, thunkAPI, extras) => {
-        const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-        let board = BoardSelectors.assertGetOne(
-            thunkAPI.getState(),
-            arg.boardId
-        );
+  "op/boards/updateBoard",
+  OperationType.UpdateBoard,
+  async (
+    arg: Omit<IUpdateBoardEndpointParams, "data"> & {
+      data: Omit<
+        IUpdateBoardInput,
+        "boardStatuses" | "boardLabels" | "boardResolutions"
+      > & {
+        boardStatuses: IBlockStatusInput[];
+        boardLabels: IBlockLabelInput[];
+        boardResolutions: IBoardStatusResolutionInput[];
+      };
+    },
+    thunkAPI,
+    extras
+  ) => {
+    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+    let board = BoardSelectors.assertGetOne(thunkAPI.getState(), arg.boardId);
+    const updateBoardInput = getUpdateBoardInput(board, arg.data);
 
-        if (extras.isDemoMode) {
-            board = {
-                ...board,
-                updatedBy: user.customId,
-                updatedAt: getDateString(),
-                name: defaultTo(arg.data.name, board.name),
-                description: defaultTo(arg.data.description, board.description),
-                color: defaultTo(arg.data.color, board.color),
-                boardStatuses: arg.data.boardStatuses
-                    ? processComplexTypeInput(
-                          board.boardStatuses,
-                          arg.data.boardStatuses,
-                          "customId",
-                          (item) => ({
-                              ...item,
-                              createdAt: getDateString(),
-                              createdBy: user.customId,
-                          })
-                      )
-                    : board.boardStatuses,
-                boardLabels: arg.data.boardLabels
-                    ? processComplexTypeInput(
-                          board.boardLabels,
-                          arg.data.boardLabels,
-                          "customId",
-                          (item) => ({
-                              ...item,
-                              createdAt: getDateString(),
-                              createdBy: user.customId,
-                          })
-                      )
-                    : board.boardLabels,
-                boardResolutions: arg.data.boardResolutions
-                    ? processComplexTypeInput(
-                          board.boardResolutions,
-                          arg.data.boardResolutions,
-                          "customId",
-                          (item) => ({
-                              ...item,
-                              createdAt: getDateString(),
-                              createdBy: user.customId,
-                          })
-                      )
-                    : board.boardResolutions,
-            };
-        } else {
-            const result = await BoardAPI.updateBoard(arg);
-            assertEndpointResult(result);
-            board = result.board;
-        }
+    if (extras.isDemoMode) {
+      board = {
+        ...board,
+        updatedBy: user.customId,
+        updatedAt: getDateString(),
+        name: defaultTo(updateBoardInput.name, board.name),
+        description: defaultTo(updateBoardInput.description, board.description),
+        color: defaultTo(updateBoardInput.color, board.color),
+        boardStatuses: updateBoardInput.boardStatuses
+          ? processComplexTypeInput(
+              board.boardStatuses,
+              updateBoardInput.boardStatuses,
+              "customId",
+              (item) => ({
+                ...item,
+                createdAt: getDateString(),
+                createdBy: user.customId,
+              })
+            )
+          : board.boardStatuses,
+        boardLabels: updateBoardInput.boardLabels
+          ? processComplexTypeInput(
+              board.boardLabels,
+              updateBoardInput.boardLabels,
+              "customId",
+              (item) => ({
+                ...item,
+                createdAt: getDateString(),
+                createdBy: user.customId,
+              })
+            )
+          : board.boardLabels,
+        boardResolutions: updateBoardInput.boardResolutions
+          ? processComplexTypeInput(
+              board.boardResolutions,
+              updateBoardInput.boardResolutions,
+              "customId",
+              (item) => ({
+                ...item,
+                createdAt: getDateString(),
+                createdBy: user.customId,
+              })
+            )
+          : board.boardResolutions,
+      };
+    } else {
+      const result = await BoardAPI.updateBoard({
+        boardId: arg.boardId,
+        data: updateBoardInput,
+      });
 
-        assert(board, messages.internalError);
-        thunkAPI.dispatch(
-            BoardActions.update({
-                id: board.customId,
-                data: board,
-            })
-        );
+      assertEndpointResult(result);
+      board = result.board;
     }
+
+    assert(board, messages.internalError);
+    thunkAPI.dispatch(
+      BoardActions.update({
+        id: board.customId,
+        data: board,
+      })
+    );
+
+    return board;
+  }
 );
