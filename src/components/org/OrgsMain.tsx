@@ -1,11 +1,9 @@
 import React from "react";
-import { IBlock } from "../../models/block/block";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { IAppOrganization } from "../../models/organization/types";
 import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import GeneralError from "../Message";
 import StyledContainer from "../styled/Container";
-import Scrollbar from "../utilities/Scrollbar";
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
@@ -14,7 +12,7 @@ export interface IOrgsMainProps {
   requests: ICollaborationRequest[];
   unseenChatsCountMapByOrg: IUnseenChatsCountByOrg;
   onAddOrg: () => void;
-  onSelectOrg: (org: IBlock) => void;
+  onSelectOrg: (org: IAppOrganization) => void;
   onSelectRequest: (request: ICollaborationRequest) => void;
 
   isLoading?: boolean;
@@ -36,7 +34,6 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
   } = props;
 
   const [searchQuery, setSearchQuery] = React.useState("");
-
   const renderContent = () => {
     if (isLoading) {
       return null;
@@ -80,16 +77,14 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
         flexDirection: "column",
       }}
     >
-      <Scrollbar>
-        <OrgsListHeader
-          onClickCreate={onAddOrg}
-          onSearchTextChange={setSearchQuery}
-          style={{ paddingBottom: "8px", paddingTop: "8px" }}
-          placeholder="Search orgs and requests..."
-          title="Organizations"
-        />
-        {renderContent()}
-      </Scrollbar>
+      <OrgsListHeader
+        onClickCreate={onAddOrg}
+        onSearchTextChange={setSearchQuery}
+        style={{ paddingBottom: "8px", paddingTop: "8px" }}
+        placeholder="Search orgs and requests..."
+        title="Organizations"
+      />
+      {renderContent()}
     </StyledContainer>
   );
 };

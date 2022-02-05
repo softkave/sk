@@ -4,18 +4,18 @@ import forEach from "lodash/forEach";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  IBlock,
   IBlockLabel,
   IBlockStatus,
   IBoardTaskResolution,
 } from "../../models/block/block";
 import { IBoard } from "../../models/board/types";
 import { ICollaborator } from "../../models/collaborator/types";
+import { IAppOrganization } from "../../models/organization/types";
 import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
-import BlockSelectors from "../../redux/blocks/selectors";
 import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
+import OrganizationSelectors from "../../redux/organizations/selectors";
 import SessionSelectors from "../../redux/session/selectors";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -57,8 +57,11 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
     return SessionSelectors.assertGetUser(state);
   });
 
-  const org = useSelector<IAppState, IBlock>((state) => {
-    return BlockSelectors.getBlock(state, board.rootBlockId || board.customId)!;
+  const org = useSelector<IAppState, IAppOrganization>((state) => {
+    return OrganizationSelectors.assertGetOne(
+      state,
+      board.rootBlockId || board.customId
+    )!;
   });
 
   const sprints = useSelector<IAppState, ISprint[]>((state) => {
@@ -67,7 +70,7 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
   });
 
   const sprintsMap = indexArray(sprints, { path: "customId" });
-  const collaboratorIds = org.collaborators || [];
+  const collaboratorIds = org.collaboratorIds || [];
   const collaborators = useSelector<IAppState, ICollaborator[]>((state) => {
     return UserSelectors.getMany(state, collaboratorIds);
   });
@@ -111,7 +114,6 @@ const TasksContainer: React.FC<ITasksContainerProps> = (props) => {
   >((state) => {
     const taskList: ITask[] = [];
     const tasksMap: Record<string, ITask> = {};
-
     forEach(state.tasks, (task) => {
       let selectTask = task.parent === board.customId;
 

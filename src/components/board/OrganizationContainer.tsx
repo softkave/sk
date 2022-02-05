@@ -1,7 +1,7 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
-import path from "path";
-import { URLSearchParams } from "url";
+import path from "path-browserify";
+import URLSearchParams from "core-js/web/url-search-params";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";

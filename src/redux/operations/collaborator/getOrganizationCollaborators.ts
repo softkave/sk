@@ -22,7 +22,9 @@ export const getOrganizationCollaboratorsOpAction = makeAsyncOp(
 
     if (extras.isDemoMode) {
     } else {
-      const result = await CollaboratorAPI.getOrganizationCollaborators(arg);
+      const result = await CollaboratorAPI.getOrganizationCollaborators({
+        organizationId: arg.organizationId,
+      });
 
       assertEndpointResult(result);
       collaborators = result.collaborators;
@@ -46,5 +48,10 @@ export const getOrganizationCollaboratorsOpAction = makeAsyncOp(
         meta: { arrayUpdateStrategy: "replace" },
       })
     );
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.organizationId,
+    }),
   }
 );

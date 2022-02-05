@@ -4,7 +4,10 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { IAppOrganization } from "../../models/organization/types";
-import { newFormOrganization } from "../../models/organization/utils";
+import {
+  formOrganizationFromExisting,
+  newFormOrganization,
+} from "../../models/organization/utils";
 import { IAddBlockEndpointErrors } from "../../net/block/types";
 import OperationActions from "../../redux/operations/actions";
 import { createOrganizationOpAction } from "../../redux/operations/organization/createOrganization";
@@ -24,8 +27,10 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   const { onClose } = props;
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
-  const [formData, setFormData] = React.useState<IEditOrgFormValues>(
-    () => props.organization || newFormOrganization()
+  const [formData, setFormData] = React.useState<IEditOrgFormValues>(() =>
+    props.organization
+      ? formOrganizationFromExisting(props.organization)
+      : newFormOrganization()
   );
 
   const [loading, setLoading] = React.useState(false);
@@ -41,10 +46,10 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
       ? await dispatch(
           updateOrganizationOpAction({
             organizationId: props.organization.customId,
-            organization: data,
+            data: data,
           })
         )
-      : await dispatch(createOrganizationOpAction(data));
+      : await dispatch(createOrganizationOpAction({ organization: data }));
 
     const op = unwrapResult(result);
 

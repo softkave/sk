@@ -18,6 +18,7 @@ export interface IBlockThumbnailProps {
   className?: string;
   avatarSize?: IItemAvatarProps["size"];
   count?: number;
+  isSelected?: boolean;
   unseenChatsCount?: number;
   parent?: IBlock;
   makeNameBold?: boolean;
@@ -32,14 +33,15 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const {
     block,
     className,
-    onClick,
     showFields,
     avatarSize,
     count,
     unseenChatsCount,
     parent,
     style,
+    isSelected,
     makeNameBold,
+    onClick,
   } = props;
 
   const color = block.color;
@@ -59,6 +61,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
             style={{
               marginRight: "8px",
               textTransform: "capitalize",
+              color: isSelected ? "#1890ff" : undefined,
             }}
             ellipsis
           >
@@ -96,7 +99,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
           <Typography.Paragraph
             type="secondary"
             ellipsis={{ rows: 2 }}
-            style={{ marginBottom: "0px" }}
+            style={{ marginBottom: "0px", fontSize: "13px" }}
           >
             {block.description}
           </Typography.Paragraph>
@@ -131,7 +134,11 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
     <StyledContainer
-      s={{ ...style, flex: 1 }}
+      s={{
+        ...style,
+        flex: 1,
+        backgroundColor: isSelected ? "#e6f7ff" : undefined,
+      }}
       className={className}
       onClick={onClick}
     >

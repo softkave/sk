@@ -1,4 +1,4 @@
-import { last } from "lodash";
+import { first, last } from "lodash";
 import { ITaskFormValues } from "../../components/task/TaskForm";
 import { extractFields, getFields, makeExtract } from "../../utils/extract";
 import { topLevelDiff } from "../../utils/utils";
@@ -16,16 +16,16 @@ import {
 } from "./types";
 
 export function newTaskForm(board: IBoard) {
-  const newTask: INewTaskInput = {
+  const newTask: ITaskFormValues = {
     parent: board.customId,
     rootBlockId: board.rootBlockId,
     assignees: [],
     name: "",
     description: "",
     dueAt: undefined,
-    priority: BlockPriority.High,
+    priority: BlockPriority.Medium,
     subTasks: [],
-    status: last(board.boardStatuses)?.customId,
+    status: first(board.boardStatuses)?.customId,
     labels: [],
   };
 
@@ -55,7 +55,7 @@ const subTaskInputExtractor = makeExtract(subTaskInputFields);
 const taskLabelInputExtractor = makeExtract(taskLabelInputFields);
 const taskSprintInputExtractor = makeExtract(taskSprintInputFields);
 
-const updateBlockFields = getFields<
+const updateTaskFields = getFields<
   ITaskFormValues,
   IUpdateTaskInput,
   { task: ITask }
@@ -111,5 +111,5 @@ export function getUpdateTaskInput(
   data: Partial<ITaskFormValues>
 ) {
   const diff = topLevelDiff(data, task);
-  return extractFields(diff, updateBlockFields, { task });
+  return extractFields(diff, updateTaskFields, { task });
 }

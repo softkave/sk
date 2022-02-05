@@ -128,6 +128,14 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
     });
   };
 
+  // TODO: make this better, cause sprints array most likely
+  // will be created on every render cause of useSelector
+  const wrappedOnUpdateSprint = React.useCallback(
+    (sprintId: string) =>
+      onUpdateSprint(sprints.find((item) => item.customId === sprintId)!),
+    [sprints]
+  );
+
   return (
     <Sprints
       {...props}
@@ -136,10 +144,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
       onDeleteSprint={promptDeleteSprint}
       onStartSprint={promptStartSprint}
       onEndSprint={promptCloseSprint}
-      // TODO: make this better
-      onUpdateSprint={(sprintId) =>
-        onUpdateSprint(sprints.find((s) => s.customId === sprintId)!)
-      }
+      onUpdateSprint={wrappedOnUpdateSprint}
     />
   );
 };

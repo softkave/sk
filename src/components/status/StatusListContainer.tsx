@@ -10,7 +10,7 @@ import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
-import StatusList from "./StatusList";
+import StatusList, { sortStatuses } from "./StatusList";
 
 export interface IStatusListContainerProps {
   board: IBoard;
@@ -24,7 +24,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   >();
 
   const dispatch: AppDispatch = useDispatch();
-  const statusList = board.boardStatuses || [];
+  const statusList = sortStatuses(board.boardStatuses || []);
   const onSaveChanges = async (values: IBlockStatusInput[]) => {
     setLoading(true);
     const result = await dispatch(

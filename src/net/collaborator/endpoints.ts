@@ -2,42 +2,44 @@ import { ICollaborator } from "../../models/collaborator/types";
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResult } from "../types";
 
-const baseURL = "/api/collaborators";
+const baseURL = "/collaborators";
 
 export type IGetOrganizationCollaboratorsEndpointParams = {
-    organizationId: string;
+  organizationId: string;
 };
 
 export type IGetOrganizationCollaboratorsEndpointResult = GetEndpointResult<{
-    collaborators: ICollaborator[];
+  collaborators: ICollaborator[];
 }>;
 
 async function getOrganizationCollaborators(
-    props: IGetOrganizationCollaboratorsEndpointParams
+  props: IGetOrganizationCollaboratorsEndpointParams
 ) {
-    return invokeEndpointWithAuth<IGetOrganizationCollaboratorsEndpointResult>({
-        path: `${baseURL}/getOrganizationCollaborators`,
-        data: props,
-    });
+  return invokeEndpointWithAuth<IGetOrganizationCollaboratorsEndpointResult>({
+    path: `${baseURL}/getOrganizationCollaborators`,
+    data: props,
+    apiType: "REST",
+  });
 }
 
 export interface IRemoveCollaboratorEndpointParams {
-    organizationId: string;
-    collaboratorId: string;
+  organizationId: string;
+  collaboratorId: string;
 }
 
 export type IRemoveCollaboratorEndpointResult = GetEndpointResult<{
-    exists: boolean;
+  exists: boolean;
 }>;
 
 async function removeCollaborator(props: IRemoveCollaboratorEndpointParams) {
-    return await invokeEndpointWithAuth<IRemoveCollaboratorEndpointResult>({
-        path: `${baseURL}/removeCollaborator`,
-        data: props,
-    });
+  return await invokeEndpointWithAuth<IRemoveCollaboratorEndpointResult>({
+    path: `${baseURL}/removeCollaborator`,
+    data: props,
+    apiType: "REST",
+  });
 }
 
 export default class CollaboratorAPI {
-    public static getOrganizationCollaborators = getOrganizationCollaborators;
-    public static removeCollaborator = removeCollaborator;
+  public static getOrganizationCollaborators = getOrganizationCollaborators;
+  public static removeCollaborator = removeCollaborator;
 }

@@ -19,24 +19,12 @@ const classes = {
     cursor: "pointer",
     padding: "8px 16px",
   }),
-  itemSelected: css({
-    color: "#1890ff",
-    backgroundColor: "#e6f7ff",
-
-    "&:hover": {
-      backgroundColor: "#e6f7ff",
-    },
-
-    "& .ant-typography": {
-      color: "#1890ff",
-    },
-  }),
 };
 
 const BoardList: React.FC<IBoardListProps> = (props) => {
   const { onClick, boards, searchQuery, organizationId } = props;
   const boardRouteMatch = useRouteMatch<{ boardId: string }>(
-    appOrganizationRoutes.boards(organizationId)
+    `${appOrganizationRoutes.boards(organizationId)}/:boardId`
   );
 
   const filteredBoards = React.useMemo(() => {
@@ -62,15 +50,13 @@ const BoardList: React.FC<IBoardListProps> = (props) => {
     <List
       dataSource={filteredBoards}
       renderItem={(board, i) => (
-        <div
+        <BoardThumnail
           key={board.customId}
-          className={cx(classes.item, {
-            [classes.itemSelected]:
-              board.customId === boardRouteMatch?.params.boardId,
-          })}
-        >
-          <BoardThumnail board={board} onClick={() => onClick(board)} />
-        </div>
+          className={classes.item}
+          isSelected={board.customId === boardRouteMatch?.params.boardId}
+          board={board}
+          onClick={() => onClick(board)}
+        />
       )}
     />
   );

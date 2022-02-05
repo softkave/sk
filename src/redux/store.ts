@@ -7,7 +7,6 @@ import commentsReducer from "./comments/reducer";
 import keyValueReducer from "./key-value/reducer";
 import operationsReducer from "./operations/reducer";
 import organizationsReducer from "./organizations/reducer";
-import programAccessTokensReducer from "./programAccessTokens/reducer";
 import roomsReducer from "./rooms/reducer";
 import sessionReducer from "./session/reducer";
 import sprintsReducer from "./sprints/reducer";
@@ -23,7 +22,6 @@ const reducer = combineReducers({
   rooms: roomsReducer,
   sprints: sprintsReducer,
   comments: commentsReducer,
-  programAccessTokens: programAccessTokensReducer,
   organizations: organizationsReducer,
   boards: boardsReducer,
   tasks: tasksReducer,

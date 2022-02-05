@@ -3,7 +3,7 @@ import { Col, Row, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IBoard } from "../../models/board/types";
-import BlockSelectors from "../../redux/blocks/selectors";
+import BoardSelectors from "../../redux/boards/selectors";
 import { getAverageTimeToCompleteTasksOpAction } from "../../redux/operations/board/getAverageTimeToCompleteTasks";
 import OperationType from "../../redux/operations/OperationType";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -45,7 +45,7 @@ const BoardStats: React.FC<IBoardStatsProps> = (props) => {
 
   const avgTimeToCompleteTasks = useSelector<IAppState, number | undefined>(
     (state) =>
-      BlockSelectors.getBlock(state, board.customId).avgTimeToCompleteTasks
+      BoardSelectors.assertGetOne(state, board.customId).avgTimeToCompleteTasks
   );
 
   if (op.isLoading) {

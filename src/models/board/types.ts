@@ -31,6 +31,9 @@ export interface IBoard {
   currentSprintId?: string;
   sprintOptions?: IBoardSprintOptions;
   lastSprintId?: string;
+
+  // From app
+  avgTimeToCompleteTasks?: number;
 }
 
 export interface IBlockStatusInput extends IResourceWithId {

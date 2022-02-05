@@ -10,18 +10,22 @@ export interface IOrgCollaborationRequestThumbnailProps {
   collabRequest: ICollaborationRequest;
   style?: React.CSSProperties;
   className?: string;
+  isSelected?: boolean;
   onClick?: () => void;
 }
 
-const OrgCollaborationRequestThumbnail: React.SFC<
+const OrgCollaborationRequestThumbnail: React.FC<
   IOrgCollaborationRequestThumbnailProps
 > = (props) => {
-  const { collabRequest, onClick, style, className } = props;
-
-  // TODO: do line clamping on the texts
+  const { collabRequest, style, className, isSelected, onClick } = props;
   return (
     <StyledContainer
-      s={{ flex: 1, cursor: "pointer", ...style }}
+      s={{
+        flex: 1,
+        cursor: "pointer",
+        backgroundColor: isSelected ? "#e6f7ff" : undefined,
+        ...style,
+      }}
       className={className}
       onClick={onClick}
     >
@@ -29,7 +33,9 @@ const OrgCollaborationRequestThumbnail: React.SFC<
         <ItemAvatar>{getNameInitials(collabRequest.from.blockName)}</ItemAvatar>
       </StyledContainer>
       <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
-        <Typography.Text>{collabRequest.from?.blockName}</Typography.Text>
+        <Typography.Text style={{ color: isSelected ? "#1890ff" : undefined }}>
+          {collabRequest.from?.blockName}
+        </Typography.Text>
         <CollaborationRequestStatus request={collabRequest} />
       </Space>
     </StyledContainer>

@@ -15,6 +15,7 @@ export interface ITaskCollaboratorThumbnailProps {
 const classes = {
   root: css({
     width: "100%",
+    display: "flex",
   }),
   nameContainer: css({
     flex: 1,

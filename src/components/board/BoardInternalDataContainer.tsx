@@ -1,6 +1,6 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message, Modal } from "antd";
-import path from "path";
+import path from "path-browserify";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
@@ -28,7 +28,6 @@ import { IBoard } from "../../models/board/types";
 import { appBoardRoutes } from "../../models/board/utils";
 
 export interface IBoardInternalDataContainerProps {
-  organizationId: string;
   board: IBoard;
   isMobile: boolean;
   isAppMenuFolded: boolean;
@@ -40,7 +39,6 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
   props
 ) => {
   const {
-    organizationId,
     board,
     isMobile,
     isAppMenuFolded,
@@ -58,7 +56,7 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
     return undefined;
   });
 
-  const boardPath = appBoardRoutes.board(organizationId, board.customId);
+  const boardPath = appBoardRoutes.board(board.rootBlockId, board.customId);
   const resourceTypeMatch = useRouteMatch<IBoardResourceTypePathMatch>(
     `${boardPath}/:resourceType`
   );
@@ -110,7 +108,7 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
   const tasksOp = useOperation(
     {
       resourceId: board.customId,
-      type: OperationType.LoadBlockChildren,
+      type: OperationType.GetBoardTasks,
     },
     loadTasks,
     { deleteManagedOperationOnUnmount: false }
@@ -194,7 +192,6 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
 
   return (
     <Board
-      organizationId={board.customId}
       board={board}
       isAppMenuFolded={isAppMenuFolded}
       isMobile={isMobile}

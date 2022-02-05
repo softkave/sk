@@ -20,10 +20,13 @@ export const revokeRequestOpAction = makeAsyncOpWithoutDispatch(
 
     if (extras.isDemoMode) {
       request = { ...request };
-      request.statusHistory.push({
+      const statusHistory = [...request.statusHistory];
+      statusHistory.push({
         date: getDateString(),
         status: CollaborationRequestStatusType.Revoked,
       });
+
+      request.statusHistory = statusHistory;
     } else {
       const result = await CollaborationRequestAPI.revokeRequest(arg);
       assertEndpointResult(result);
@@ -34,6 +37,7 @@ export const revokeRequestOpAction = makeAsyncOpWithoutDispatch(
       CollaborationRequestActions.update({
         id: request.customId,
         data: request,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
   }

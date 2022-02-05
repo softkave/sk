@@ -25,7 +25,7 @@ export const updateOrganizationOpAction = makeAsyncOp(
     if (extras.isDemoMode) {
       organization = {
         ...organization,
-        ...arg.organization,
+        ...arg.data,
         updatedBy: user.customId,
         updatedAt: getDateString(),
       };
@@ -40,9 +40,15 @@ export const updateOrganizationOpAction = makeAsyncOp(
       OrganizationActions.update({
         id: organization.customId,
         data: organization,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
 
     return organization;
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.organizationId,
+    }),
   }
 );

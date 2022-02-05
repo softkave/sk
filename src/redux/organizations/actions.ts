@@ -1,6 +1,6 @@
-import { IOrganization } from "../../models/organization/types";
+import { IAppOrganization } from "../../models/organization/types";
 import { getActions } from "../utils";
 
-const OrganizationActions = getActions<IOrganization>("organization");
+const OrganizationActions = getActions<IAppOrganization>("organization");
 
 export default OrganizationActions;

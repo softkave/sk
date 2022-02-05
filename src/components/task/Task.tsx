@@ -255,22 +255,30 @@ const Task: React.FC<ITaskProps> = (props) => {
     </StyledContainer>,
   ];
 
-  contentElem.push(
-    // separated by middledot
-    <div key="dueAt">
-      {statusList.length > 0 && task.statusAssignedAt && (
-        <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
-          In status since {moment(task.statusAssignedAt).fromNow()}
-        </Typography.Text>
-      )}
-      {task.dueAt && !isInLastStatus ? (
-        <div style={{ display: "inline-block" }}>
-          <span className={classes.middledot}>&#xB7;</span>
+  const hasStatus = statusList.length > 0 && task.statusAssignedAt;
+  const hasDueDate = task.dueAt && !isInLastStatus;
+
+  if (hasStatus || hasDueDate) {
+    contentElem.push(
+      // separated by middledot
+      <Space
+        wrap
+        size={[4, 0]}
+        key="dueAt"
+        split={<span className={classes.middledot}>&#xB7;</span>}
+        style={{ lineHeight: "18px" }}
+      >
+        {hasStatus && (
+          <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
+            In status since {moment(task.statusAssignedAt).fromNow()}
+          </Typography.Text>
+        )}
+        {hasDueDate ? (
           <TaskThumbnailDueDate isInLastStatus={isInLastStatus} task={task} />
-        </div>
-      ) : null}
-    </div>
-  );
+        ) : null}
+      </Space>
+    );
+  }
 
   if (hasAssignees || task.dueAt) {
     contentElem.push(

@@ -12,7 +12,7 @@ export interface ICollaboratorThumbnailProps {
 }
 
 const classes = {
-  root: css({ width: "100%" }),
+  root: css({ width: "100%", display: "flex" }),
   content: css({
     flex: 1,
     marginLeft: 16,

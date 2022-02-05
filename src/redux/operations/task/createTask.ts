@@ -59,7 +59,10 @@ export const createTaskOpAction = makeAsyncOp(
         })),
       };
     } else {
-      const result = await TaskAPI.createTask(arg);
+      const result = await TaskAPI.createTask({
+        task: arg.task,
+      });
+
       assertEndpointResult(result);
       task = result.task;
     }

@@ -1,9 +1,10 @@
 import { OutgoingHttpHeaders } from "http";
+import { defaultTo } from "lodash";
 import isString from "lodash/isString";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
 import UserSessionStorageFns from "../storage/userSession";
-import { getServerAddr } from "./addr";
+import { getGraphQLServerAddr, getRESTServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError, IEndpointResultBase } from "./types";
 
@@ -13,7 +14,6 @@ const isExpectedErrorType = (errors: Error[]) => {
 
 export const toAppError = (err: Error | IAppError | string): IAppError => {
   const error = isString(err) ? new Error(err) : err;
-
   return {
     name: error.name,
     message: error.message,
@@ -38,12 +38,14 @@ export interface IInvokeEndpointParams {
   data?: any;
   path: string;
   headers?: OutgoingHttpHeaders;
+  apiType?: "REST" | "graphQL";
+  basePath?: string;
 }
 
 export async function invokeEndpoint<T extends IEndpointResultBase>(
   props: IInvokeEndpointParams
 ): Promise<T> {
-  const { data, path } = props;
+  const { data, path, basePath, apiType } = props;
 
   try {
     const headers = {
@@ -51,7 +53,13 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
       ...(props.headers || {}),
     };
 
-    const result = await fetch(getServerAddr() + path, {
+    const fullPath =
+      defaultTo(
+        basePath,
+        apiType === "REST" ? getRESTServerAddr() : getGraphQLServerAddr()
+      ) + path;
+
+    const result = await fetch(fullPath, {
       headers,
       body: data ? JSON.stringify(data) : undefined,
       method: "POST",
@@ -61,7 +69,7 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
     // TODO: what if the request fails in the middleware space?
     // i.e maybe auth token decoding error or something
     if (!result.headers.get("Content-Type")?.includes("application/json")) {
-      throw new Error("Error completing request");
+      throw new Error("Error completing request.");
     }
 
     const body = (await result.json()) as T;
@@ -78,7 +86,7 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
         if (continueProcessing) {
           return body;
         } else {
-          throw new Error("Error completing request");
+          throw new Error("Error completing request.");
         }
       }
 
@@ -95,7 +103,7 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
             }
           }
 
-          throw new Error("Error completing request");
+          throw new Error("Error completing request.");
         }
       }
     }
@@ -122,7 +130,7 @@ export async function invokeEndpointWithAuth<T extends IEndpointResultBase>(
     props.token || getTokenFromStore() || UserSessionStorageFns.getUserToken();
 
   if (!requestToken) {
-    throw new Error("Invalid credentials");
+    throw new Error("Invalid credentials.");
   }
 
   return invokeEndpoint<T>({

@@ -39,11 +39,11 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
         );
       }
     },
-    [dispatch]
+    [dispatch, board, boardId]
   );
 
   const loadBoardOp = useOperation(
-    { type: OperationType.GetBoard },
+    { type: OperationType.GetBoard, resourceId: boardId },
     loadBoard,
     {
       deleteManagedOperationOnUnmount: false,
@@ -60,13 +60,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
     return <MessageList fill messages={messages.boardNotFound} />;
   }
 
-  return (
-    <BoardInternalDataContainer
-      {...props}
-      organizationId={board.rootBlockId}
-      board={board}
-    />
-  );
+  return <BoardInternalDataContainer {...props} board={board} />;
 };
 
 export default BoardContainer;

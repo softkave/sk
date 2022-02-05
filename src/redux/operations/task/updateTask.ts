@@ -108,10 +108,16 @@ export const updateTaskOpAction = makeAsyncOp(
       TaskActions.update({
         id: task.customId,
         data: task,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
 
     return task;
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.taskId,
+    }),
   }
 );
 

@@ -20,7 +20,16 @@ export interface IOrgsListProps {
   onClickRequest: (request: ICollaborationRequest) => void;
 }
 
-const kMakeTextBlueClassName = "sk-orgslist-make-text-blue";
+const classes = {
+  item: css({
+    padding: "8px 16px",
+    cursor: "pointer",
+
+    "& .ant-tag": {
+      cursor: "pointer",
+    },
+  }),
+};
 
 const OrgsList: React.FC<IOrgsListProps> = (props) => {
   const {
@@ -52,38 +61,19 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
     });
 
   if (orgs.length === 0 && requests.length === 0) {
-    return <Message message="Create an organization to get started" />;
+    return <Message message="Create an organization to get started." />;
   }
 
   const wrap = (key: string, node: React.ReactNode, onClick: any) => {
-    const selected = selectedId === key;
-    let color: string | undefined;
-    let backgroundColor: string | undefined;
-
-    if (selected) {
-      color = "#1890ff";
-      backgroundColor = "#e6f7ff";
-    }
-
     return (
       <StyledContainer
         key={key}
         s={{
-          color,
-          backgroundColor,
           padding: "8px 16px",
           cursor: "pointer",
 
-          "&:hover": {
-            backgroundColor,
-          },
-
           "& .ant-tag": {
             cursor: "pointer",
-          },
-
-          [`& .${kMakeTextBlueClassName} .ant-typography`]: {
-            color,
           },
         }}
         onClick={onClick}
@@ -99,34 +89,46 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
 
   const renderOrgs = () => {
     if (!hasOrgs) {
-      return null;
+      return (
+        <Message
+          className="flex-1"
+          message={"Create an organization to get started."}
+        />
+      );
     }
 
     return (
-      <div>
-        {orgs.map((org) =>
-          wrap(
-            org.customId,
+      <div className="flex-1">
+        {orgs.map((org) => {
+          return (
             <BlockThumbnail
+              key={org.customId}
+              isSelected={selectedId === org.customId}
               block={org}
-              className={kMakeTextBlueClassName}
-              showFields={["name"]}
+              className={classes.item}
+              onClick={() => onClickOrganization(org)}
+              showFields={["name", "description"]}
               unseenChatsCount={unseenChatsCountMapByOrg[org.customId]}
-            />,
-            () => onClickOrganization(org)
-          )
-        )}
+            />
+          );
+        })}
       </div>
     );
   };
 
   const renderRequests = () => {
     if (!hasRequests) {
-      return null;
+      return (
+        // <Message
+        //   className="flex-1"
+        //   message={"You don't have any requests yet."}
+        // />
+        null
+      );
     }
 
     return (
-      <div>
+      <div className="flex-1">
         {(isPrevGroupRendered = isPrevGroupRendered || reqs.length > 0) && (
           <Divider />
         )}
@@ -136,13 +138,16 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
         >
           Requests
         </Typography.Text>
-        {reqs.map((request) =>
-          wrap(
-            request.customId,
-            <OrgCollaborationRequestThumbnail collabRequest={request} />,
-            () => onClickRequest(request)
-          )
-        )}
+        {reqs.map((request) => {
+          return (
+            <OrgCollaborationRequestThumbnail
+              key={request.customId}
+              onClick={() => onClickRequest(request)}
+              collabRequest={request}
+              isSelected={selectedId === request.customId}
+            />
+          );
+        })}
       </div>
     );
   };

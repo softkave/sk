@@ -1,4 +1,4 @@
-import { IBlock, IBlockStatus } from "../../../models/block/block";
+import { IBlockStatus } from "../../../models/block/block";
 import { ITask } from "../../../models/task/types";
 import { IBoardGroupedTasks } from "../types";
 
@@ -10,7 +10,6 @@ const groupByStatus = (
 ): IBoardGroupedTasks[] => {
   const map: { [key: string]: ITask[] } = {};
   const noStatus: ITask[] = [];
-
   tasks.forEach((task) => {
     if (!task.status) {
       noStatus.push(task);
@@ -22,14 +21,16 @@ const groupByStatus = (
     map[task.status] = statusTasks;
   });
 
-  const groups: IBoardGroupedTasks[] = status.map((s) => {
-    return {
-      id: s.customId,
-      name: s.name,
-      color: s.color,
-      tasks: map[s.customId] || [],
-    };
-  });
+  const groups: IBoardGroupedTasks[] = [...status]
+    .sort((item01, item02) => item01.position - item02.position)
+    .map((s) => {
+      return {
+        id: s.customId,
+        name: s.name,
+        color: s.color,
+        tasks: map[s.customId] || [],
+      };
+    });
 
   if (noStatus.length > 0) {
     groups.unshift({

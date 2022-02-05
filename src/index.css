@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  font-weight: 500;
+}
+
+.ant-drawer-body {
+  flex: 1;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.ant-drawer-wrapper-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-btn .anticon {
+  font-size: 16px;
+}
+
+.ant-form-item-label {
+  padding: 0 !important;
+  font-weight: bold;
+}
+
+.icon-btn.ant-btn {
+  line-height: 16px;
+  background-color: #f0f0f0;
+  height: 30px;
+  width: 32px;
+  padding: 4px 8px;
+  color: #3f3f44;
+  border-radius: 50%;
+  border: none;
+}
+
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.icon-btn.ant-btn[disabled] svg {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.ant-tabs .anticon-ellipsis {
+  font-size: 20px;
+}
+
+.ant-message-custom-content {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.ant-dropdown-menu {
+  min-width: 100px;
+}
+
+.anticon {
+  vertical-align: middle !important;
+}
+
+.ant-dropdown-menu-item-divider {
+  margin: 0px !important;
+}
+
+.ant-tabs-nav {
+  margin-bottom: 0px !important;
+}

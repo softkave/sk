@@ -24,7 +24,6 @@ const kAntMenuSelector = "& .ant-menu";
 
 const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
   const { className, onSelect } = props;
-
   const style = props.style || {};
   const propStyleAntMenuStyle = style[kAntMenuSelector] || {};
   const antMenuStyle = {
@@ -33,7 +32,6 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
   };
 
   style[kAntMenuSelector] = antMenuStyle;
-
   return (
     <StyledContainer className={className} s={style}>
       <Menu
@@ -55,7 +53,7 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
             Send Feedback
           </Space>
         </Menu.Item>
-        <Menu.Divider />
+        <Menu.Divider key="divider" />
         <Menu.Item
           key={UserOptionsMenuKeys.Logout}
           style={{ color: "rgb(255, 77, 79)" }}

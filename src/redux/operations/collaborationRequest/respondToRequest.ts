@@ -1,5 +1,6 @@
 import { CollaborationRequestStatusType } from "../../../models/collaborationRequest/types";
-import { IOrganization } from "../../../models/organization/types";
+import { IAppOrganization } from "../../../models/organization/types";
+import { toAppOrganization } from "../../../models/organization/utils";
 import CollaborationRequestAPI, {
   IRespondToRequestEndpointParams,
 } from "../../../net/collaborationRequest/endpoints";
@@ -16,7 +17,7 @@ export const respondToRequestOpAction = makeAsyncOpWithoutDispatch(
   "op/collaborationRequests/respondToRequest",
   OperationType.RespondToRequest,
   async (arg: IRespondToRequestEndpointParams, thunkAPI, extras) => {
-    let organization: IOrganization | null | undefined = null;
+    let organization: IAppOrganization | null | undefined = null;
     let request = CollaborationRequestSelectors.assertGetOne(
       thunkAPI.getState(),
       arg.requestId
@@ -39,7 +40,9 @@ export const respondToRequestOpAction = makeAsyncOpWithoutDispatch(
     } else {
       const result = await CollaborationRequestAPI.respondToRequest(arg);
       assertEndpointResult(result);
-      organization = result.organization;
+      organization = result.organization
+        ? toAppOrganization(result.organization)
+        : null;
       request = {
         ...request,
         readAt: result.respondedAt,
@@ -50,6 +53,7 @@ export const respondToRequestOpAction = makeAsyncOpWithoutDispatch(
       CollaborationRequestActions.update({
         id: request.customId,
         data: request,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
 

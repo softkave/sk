@@ -7,7 +7,6 @@ import { ICommentsState } from "./comments/types";
 import { IKeyValueState } from "./key-value/types";
 import { IOperationState } from "./operations/reducer";
 import { IOrganizationsState } from "./organizations/types";
-import { IProgramAccessTokensState } from "./programAccessTokens/types";
 import { IRoomsMap } from "./rooms/types";
 import { ISessionState } from "./session/types";
 import { ISprintsState } from "./sprints/types";
@@ -23,7 +22,6 @@ export interface IAppState {
   rooms: IRoomsMap;
   sprints: ISprintsState;
   comments: ICommentsState;
-  programAccessTokens: IProgramAccessTokensState;
   organizations: IOrganizationsState;
   boards: IBoardsState;
   tasks: ITasksState;

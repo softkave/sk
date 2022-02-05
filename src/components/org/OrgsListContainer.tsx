@@ -1,7 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { IBlock } from "../../models/block/block";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { IAppOrganization } from "../../models/organization/types";
 import { getUserRequestsFromStore } from "../../redux/collaborationRequests/selectors";
@@ -154,7 +153,7 @@ const OrgsListContainer: React.FC<IOrgsListContainerProps> = (props) => {
   }, [dispatch]);
 
   const onSelectOrg = React.useCallback(
-    (org: IBlock) => {
+    (org: IAppOrganization) => {
       history.push(`/app/orgs/${org.customId}`);
     },
     [history]

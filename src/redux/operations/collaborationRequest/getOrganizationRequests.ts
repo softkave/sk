@@ -16,7 +16,10 @@ export const getOrganizationRequestsOpAction = makeAsyncOp(
 
     if (extras.isDemoMode) {
     } else {
-      const result = await CollaborationRequestAPI.getOrganizationRequests(arg);
+      const result = await CollaborationRequestAPI.getOrganizationRequests({
+        organizationId: arg.organizationId,
+      });
+
       assertEndpointResult(result);
       requests = result.requests;
     }
@@ -24,5 +27,10 @@ export const getOrganizationRequestsOpAction = makeAsyncOp(
     thunkAPI.dispatch(
       CollaborationRequestActions.bulkAdd(toActionAddList(requests, "customId"))
     );
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.organizationId,
+    }),
   }
 );

@@ -6,63 +6,62 @@ import { chatConstants } from "../../models/chat/constants";
 import StyledContainer from "../styled/Container";
 
 export interface IChatInputProps {
-    onSendMessage: (message: string) => void;
+  onSendMessage: (message: string) => void;
 }
 
 const ChatInput: React.FC<IChatInputProps> = (props) => {
-    const { onSendMessage } = props;
+  const { onSendMessage } = props;
+  const [message, setMessage] = React.useState("");
+  const sendMessage = () => {
+    if (message) {
+      onSendMessage(message);
+      setMessage("");
+    }
+  };
 
-    const [message, setMessage] = React.useState("");
-    const sendMessage = () => {
-        if (message) {
-            onSendMessage(message);
-            setMessage("");
-        }
-    };
-
-    return (
-        <StyledContainer
-            s={{
-                borderTop: "1px solid rgb(223, 234, 240)",
-                padding: "8px 5px",
-            }}
-        >
-            <div
-                className={css({
-                    display: "flex",
-                    flex: 1,
-                })}
-            >
-                <Input.TextArea
-                    // autoFocus
-                    bordered={false}
-                    value={message}
-                    autoSize={{ minRows: 1, maxRows: 3 }}
-                    maxLength={chatConstants.maxMessageLength}
-                    onPressEnter={(evt) => {
-                        evt.preventDefault();
-                        sendMessage();
-                    }}
-                    style={{ resize: "none" }}
-                    placeholder="Write a message..."
-                    onChange={(evt) => {
-                        setMessage(evt.target.value);
-                    }}
-                />
-            </div>
-            <Button
-                icon={<SendOutlined />}
-                disabled={message.length === 0}
-                onClick={sendMessage}
-                style={{
-                    border: "none",
-                    backgroundColor: "inherit",
-                    boxShadow: "none",
-                    color: message.length > 0 ? "#1890ff" : undefined,
-                }}
-            ></Button>
-        </StyledContainer>
-    );
+  return (
+    <StyledContainer
+      s={{
+        borderTop: "1px solid rgb(223, 234, 240)",
+        padding: "8px 5px",
+      }}
+    >
+      <div
+        className={css({
+          display: "flex",
+          flex: 1,
+        })}
+      >
+        <Input.TextArea
+          // autoFocus
+          bordered={false}
+          value={message}
+          autoSize={{ minRows: 1, maxRows: 3 }}
+          maxLength={chatConstants.maxMessageLength}
+          onPressEnter={(evt) => {
+            evt.preventDefault();
+            sendMessage();
+          }}
+          style={{ resize: "none" }}
+          placeholder="Write a message..."
+          onChange={(evt) => {
+            setMessage(evt.target.value);
+          }}
+        />
+      </div>
+      <Button
+        icon={<SendOutlined />}
+        disabled={message.length === 0}
+        onClick={sendMessage}
+        style={{
+          border: "none",
+          backgroundColor: "inherit",
+          boxShadow: "none",
+          color: message.length > 0 ? "#1890ff" : undefined,
+        }}
+      ></Button>
+    </StyledContainer>
+  );
 };
 
 export default ChatInput;

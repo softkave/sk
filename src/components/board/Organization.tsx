@@ -9,7 +9,6 @@ import ChatRoom from "../chat/ChatRoom";
 import ChatRoomsContainer, {
   IChatRoomsRenderProps,
 } from "../chat/ChatRoomsContainer";
-import useBlockChildrenTypes from "../hooks/useBlockChildrenTypes";
 import Message from "../Message";
 import OrgsListHeader from "../org/OrgsListHeader";
 import BoardContainer from "./BoardContainer";
@@ -30,6 +29,7 @@ import { css, cx } from "@emotion/css";
 import RoomsList from "../chat/RoomsList";
 import assert from "assert";
 import { messages } from "../../models/messages";
+import { getBlockValidChildrenTypes } from "../../models/block/utils";
 
 export interface IOrgBoardProps {
   organization: IAppOrganization;
@@ -47,37 +47,34 @@ export interface IOrgBoardProps {
 }
 
 const classes = {
-  resourceType: css({ height: "100%", width: "100%", flexDirection: "column" }),
+  resourceType: css({
+    height: "100%",
+    width: "100%",
+    flexDirection: "column",
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr",
+  }),
   orgListHeader: css({
     padding: "0 16px",
     marginBottom: "8px",
     marginTop: "8px",
   }),
   selectedOrgViewRoot: css({
-    flex: 1,
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr",
     height: "100%",
     overflow: "hidden",
     flexDirection: "column",
     borderRight: "1px solid rgb(223, 234, 240)",
 
-    ["& .ant-tabs"]: {
+    "& .ant-tabs": {
       height: "100%",
     },
 
-    ["& .ant-tabs-content"]: {
+    "& .ant-tabs-content": {
       height: "100%",
-    },
-
-    ["& .ant-tabs-content-holder"]: {
-      overflow: "hidden",
-    },
-
-    ["& .ant-tabs-nav"]: {
-      marginBottom: "4px",
-    },
-
-    ["& .ant-tabs-nav-more > .anticon-ellipsis"]: {
-      verticalAlign: "middle",
     },
   }),
   selectedOrgViewRootMobile: css({
@@ -107,6 +104,7 @@ const classes = {
     width: "320px",
   }),
   rootDesktop: css({
+    display: "flex",
     flex: 1,
     height: "100%",
     overflow: "hidden",
@@ -114,6 +112,7 @@ const classes = {
   rootContentDesktop: css({
     flex: 1,
     overflow: "hidden",
+    display: "flex",
   }),
 };
 
@@ -134,7 +133,7 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
   } = props;
 
   const history = useHistory();
-  const childrenTypes = useBlockChildrenTypes(organization);
+  const childrenTypes = getBlockValidChildrenTypes(organization.type);
   const [searchQueries, setSearchQueries] = React.useState<{
     [key: string]: string;
   }>({});
@@ -297,18 +296,25 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
       <Tabs
         activeKey={resourceType}
         onChange={onSelectResourceType}
-        tabBarGutter={0}
         moreIcon={
           <Typography.Text type="secondary">
             <RightOutlined />
           </Typography.Text>
         }
+        tabBarExtraContent={{
+          left: <div style={{ marginLeft: "16px" }} />,
+        }}
+        // tabBarGutter={16}
       >
         {resourceTypes.map((type) => {
           const text = (
             <Space>
-              {getBoardResourceTypeDisplayName(type)}
-              {type === "chat" && <Badge count={unseenChatsCount}></Badge>}
+              <span style={{ textTransform: "capitalize" }}>
+                {getBoardResourceTypeDisplayName(type)}
+              </span>
+              {type === "chat" && unseenChatsCount ? (
+                <Badge count={unseenChatsCount}></Badge>
+              ) : null}
             </Space>
           );
 

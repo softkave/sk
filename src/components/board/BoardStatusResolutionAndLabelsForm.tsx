@@ -1,5 +1,3 @@
-/*eslint no-useless-computed-key: "off"*/
-
 import { Button, Tabs } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import React from "react";
@@ -31,49 +29,52 @@ const classes = {
     textTransform: "capitalize",
     padding: "0 16px",
   }),
+  root: css({
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr",
+  }),
 };
 
 const BoardStatusResolutionAndLabelsForm: React.FC<
   IBoardStatusResolutionAndLabelsFormProps
 > = (props) => {
-  const { board, onClose, active } = props;
-  const renderForms = () => {
-    return (
-      <div className={appClassNames.tabsWrapper}>
-        <div className={classes.backBtnWrapper}>
-          <Button className={cx(classes.backBtn, "icon-btn")} onClick={onClose}>
-            <ArrowLeft />
-          </Button>
-        </div>
-        <Tabs
-          defaultActiveKey={active}
-          tabBarGutter={0}
-          moreIcon={<RightOutlined />}
-        >
-          <Tabs.TabPane
-            tab={<span className={classes.tabLabel}>Status</span>}
-            key={BoardStatusResolutionAndLabelsFormType.STATUS}
-          >
-            <StatusListContainer board={board} />
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={<span className={classes.tabLabel}>Resolutions</span>}
-            key={BoardStatusResolutionAndLabelsFormType.RESOLUTIONS}
-          >
-            <ResolutionsListContainer board={board} />
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={<span className={classes.tabLabel}>Labels</span>}
-            key={BoardStatusResolutionAndLabelsFormType.LABELS}
-          >
-            <LabelListContainer board={board} />
-          </Tabs.TabPane>
-        </Tabs>
+  const { board, active, onClose } = props;
+  return (
+    <div className={cx(appClassNames.tabsWrapper, classes.root)}>
+      <div className={classes.backBtnWrapper}>
+        <Button className={cx(classes.backBtn, "icon-btn")} onClick={onClose}>
+          <ArrowLeft />
+        </Button>
       </div>
-    );
-  };
-
-  return renderForms();
+      <Tabs
+        defaultActiveKey={active}
+        moreIcon={<RightOutlined />}
+        tabBarExtraContent={{
+          left: <div style={{ marginLeft: "16px" }} />,
+        }}
+      >
+        <Tabs.TabPane
+          tab="Status"
+          key={BoardStatusResolutionAndLabelsFormType.STATUS}
+        >
+          <StatusListContainer board={board} />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab="Resolutions"
+          key={BoardStatusResolutionAndLabelsFormType.RESOLUTIONS}
+        >
+          <ResolutionsListContainer board={board} />
+        </Tabs.TabPane>
+        <Tabs.TabPane
+          tab="Labels"
+          key={BoardStatusResolutionAndLabelsFormType.LABELS}
+        >
+          <LabelListContainer board={board} />
+        </Tabs.TabPane>
+      </Tabs>
+    </div>
+  );
 };
 
 export default withDrawer(BoardStatusResolutionAndLabelsForm);

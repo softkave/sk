@@ -1,8 +1,8 @@
 import { Button, Form } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
-import { IBlock } from "../../models/block/block";
 import { blockErrorMessages } from "../../models/block/blockErrorMessages";
+import { IAppOrganization } from "../../models/organization/types";
 import blockValidationSchemas from "../block/validation";
 import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
@@ -31,7 +31,7 @@ export interface IEditOrgProps {
   onSubmit: (values: IEditOrgFormValues) => void;
 
   isSubmitting?: boolean;
-  org?: IBlock;
+  org?: IAppOrganization;
   errors?: EditOrgFormErrors;
 }
 
@@ -91,13 +91,13 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         autoComplete="off"
         disabled={isSubmitting}
         inputOnly={!org}
-        placeholder="Org name"
+        placeholder="Organization name"
       />
     );
 
     return (
       <Form.Item
-        label="Org Name"
+        label="Organization Name"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         help={
@@ -118,7 +118,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
   const renderColorInput = () => {
     return (
       <Form.Item
-        label="Org Color Avatar"
+        label="Color Avatar"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         style={{ width: "100%" }}
@@ -150,13 +150,13 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         autoComplete="off"
         disabled={isSubmitting}
         inputOnly={!org}
-        placeholder="Org description"
+        placeholder="Description"
       />
     );
 
     return (
       <Form.Item
-        label="Org Description"
+        label="Description"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         help={
@@ -175,13 +175,13 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
       if (org) {
         return "Saving Changes";
       } else {
-        return "Creating Org";
+        return "Creating Organization";
       }
     } else {
       if (org) {
         return "Save Changes";
       } else {
-        return "Create Org";
+        return "Create Organization";
       }
     }
   };

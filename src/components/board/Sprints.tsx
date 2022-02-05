@@ -4,7 +4,6 @@ import EditOutlined from "@ant-design/icons/EditOutlined";
 import { Button, Dropdown, Menu, Tag } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
-import { IBlock } from "../../models/block/block";
 import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { indexArray } from "../../utils/utils";

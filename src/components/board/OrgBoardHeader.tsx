@@ -22,13 +22,20 @@ export interface IOrgBoardHeaderProps {
 }
 
 const classes = {
+  prefixBtnContainer: css({
+    "& .anticon": {
+      verticalAlign: "middle",
+    },
+  }),
   prefixBtnContainerMobile: css({ marginRight: "16px" }),
   prefixBtnContainerDesktop: css({ marginRight: "16px", cursor: "pointer" }),
   header: css({
+    display: "flex",
     flex: 1,
     alignItems: "center",
     borderBottom: "1px solid rgb(223, 234, 240)",
     height: "56px",
+    maxWidth: "100%",
   }),
   menuContainer: css({ alignItems: "center" }),
 };
@@ -63,7 +70,12 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
   const renderHeaderPrefixButton = () => {
     if (isMobile) {
       return (
-        <div className={classes.prefixBtnContainerMobile}>
+        <div
+          className={cx(
+            classes.prefixBtnContainerMobile,
+            classes.prefixBtnContainer
+          )}
+        >
           <Button
             style={{ cursor: "pointer" }}
             onClick={onBack}
@@ -76,7 +88,10 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
     } else {
       return (
         <div
-          className={classes.prefixBtnContainerDesktop}
+          className={cx(
+            classes.prefixBtnContainerDesktop,
+            classes.prefixBtnContainer
+          )}
           onClick={onToggleFoldMenu}
         >
           {isMenuFolded ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

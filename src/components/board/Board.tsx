@@ -1,5 +1,6 @@
 import { message } from "antd";
-import path from "path";
+import { isBoolean } from "lodash";
+import path from "path-browserify";
 import React from "react";
 import { useHistory, useRouteMatch } from "react-router";
 import { Route, Switch } from "react-router-dom";
@@ -24,10 +25,9 @@ import BoardStatusResolutionAndLabelsForm, {
 import CurrentSprintHeader from "./CurrentSprintHeader";
 import GroupedTasks from "./GroupedTasks";
 import SprintsContainer from "./SprintsContainer";
-import TasksContainer from "./TasksContainer";
+import TasksContainer, { ITasksContainerRenderFnProps } from "./TasksContainer";
 
 export interface IBoardProps {
-  organizationId: string;
   board: IBoard;
   isMobile: boolean;
   isAppMenuFolded: boolean;
@@ -36,14 +36,9 @@ export interface IBoardProps {
   onCloseSprint: () => void;
 }
 
-interface ISprintFormData {
-  sprint?: ISprint;
-}
-
 const Board: React.FC<IBoardProps> = (props) => {
   const {
     board,
-    organizationId,
     isMobile,
     isAppMenuFolded,
     onToggleFoldAppMenu,
@@ -52,7 +47,7 @@ const Board: React.FC<IBoardProps> = (props) => {
   } = props;
 
   const history = useHistory();
-  const boardPath = appBoardRoutes.board(organizationId, board.customId);
+  const boardPath = appBoardRoutes.board(board.rootBlockId, board.customId);
   const sprintsPath = path.normalize(`${boardPath}/sprints`);
   const tasksPath = path.normalize(`${boardPath}/tasks`);
   const sprintsRouteMatch = useRouteMatch(sprintsPath);
@@ -69,11 +64,9 @@ const Board: React.FC<IBoardProps> = (props) => {
   const [showSearch, setShowSearch] = React.useState(false);
   const [searchText, setSearchText] = React.useState("");
   const [boardForm, setBoardForm] = React.useState(false);
-  const [taskForm, setTaskForm] = React.useState<{ task?: ITask }>();
+  const [taskForm, setTaskForm] = React.useState<ITask | boolean>();
   const [sprintOptionsForm, setSprintOptionsForm] = React.useState(false);
-  const [sprintForm, setSprintForm] = React.useState<
-    ISprintFormData | undefined
-  >();
+  const [sprintForm, setSprintForm] = React.useState<ISprint | boolean>();
 
   const [otherResourcesForm, setOtherResourcesForm] = React.useState<
     BoardStatusResolutionAndLabelsFormType | undefined
@@ -129,7 +122,7 @@ const Board: React.FC<IBoardProps> = (props) => {
           break;
 
         case BoardHeaderSettingsMenuKey.ADD_TASK:
-          setTaskForm({});
+          setTaskForm(true);
           break;
 
         case BoardHeaderSettingsMenuKey.SEARCH_TASKS:
@@ -141,7 +134,7 @@ const Board: React.FC<IBoardProps> = (props) => {
           break;
 
         case BoardHeaderSettingsMenuKey.ADD_SPRINT:
-          setSprintForm({});
+          setSprintForm(true);
           break;
 
         case BoardHeaderSettingsMenuKey.END_SPRINT:
@@ -149,28 +142,25 @@ const Board: React.FC<IBoardProps> = (props) => {
           break;
       }
     },
-    []
+    [board, onClickDeleteBoard, onCloseSprint]
   );
 
-  const onSelectView = React.useCallback((key: BoardCurrentView) => {
-    setView(key);
-    switch (key) {
-      case BoardCurrentView.SPRINTS: {
-        history.push(sprintsPath);
-        break;
+  const onSelectView = React.useCallback(
+    (key: BoardCurrentView) => {
+      setView(key);
+      switch (key) {
+        case BoardCurrentView.SPRINTS: {
+          history.push(sprintsPath);
+          break;
+        }
+
+        default:
+          history.push(tasksPath);
+          break;
       }
-
-      default:
-        history.push(tasksPath);
-        break;
-    }
-  }, []);
-
-  const updateTask = React.useCallback((task: ITask) => {
-    setTaskForm({
-      task,
-    });
-  }, []);
+    },
+    [history, sprintsPath, tasksPath]
+  );
 
   const renderTaskForm = () => {
     if (!taskForm) {
@@ -181,7 +171,7 @@ const Board: React.FC<IBoardProps> = (props) => {
       <TaskFormInDrawer
         visible
         orgId={board.rootBlockId}
-        task={taskForm.task}
+        task={isBoolean(taskForm) ? undefined : taskForm}
         board={board}
         onClose={closeTaskForm}
       />
@@ -239,27 +229,44 @@ const Board: React.FC<IBoardProps> = (props) => {
           visible
           navigateOnCreate
           board={board}
-          sprint={sprintForm.sprint}
+          sprint={isBoolean(sprintForm) ? undefined : sprintForm}
           onClose={() => setSprintForm(undefined)}
         />
       );
     }
   };
 
-  const renderTasksPathView = () => {
+  const renderGroupedTasks = React.useCallback(
+    (args: ITasksContainerRenderFnProps) => (
+      <GroupedTasks
+        {...args}
+        board={board}
+        groupType={groupBy}
+        onClickUpdateTask={setTaskForm}
+      />
+    ),
+    [board, groupBy]
+  );
+
+  const renderSprintsContainer = React.useCallback(
+    (args: ITasksContainerRenderFnProps) => (
+      <SprintsContainer
+        {...args}
+        board={board}
+        onUpdateSprint={setSprintForm}
+        onClickUpdateTask={setTaskForm}
+      />
+    ),
+    [board]
+  );
+
+  const renderTasksPathView = React.useCallback(() => {
     const content = (
       <TasksContainer
         board={board}
         searchText={searchText}
         useCurrentSprint={view === BoardCurrentView.CURRENT_SPRINT}
-        render={(args) => (
-          <GroupedTasks
-            {...args}
-            board={board}
-            groupType={groupBy}
-            onClickUpdateTask={updateTask}
-          />
-        )}
+        render={renderGroupedTasks}
       />
     );
 
@@ -275,14 +282,28 @@ const Board: React.FC<IBoardProps> = (props) => {
         {content}
       </StyledContainer>
     );
-  };
+  }, [board, searchText, view, renderGroupedTasks]);
+
+  const renderSprintsPathView = React.useCallback(() => {
+    return (
+      <TasksContainer
+        board={board}
+        searchText={searchText}
+        useCurrentSprint={view === BoardCurrentView.CURRENT_SPRINT}
+        render={renderSprintsContainer}
+      />
+    );
+  }, [board, searchText, view, renderSprintsContainer]);
 
   // TODO: should we move what TaskContainer does higher up so that it only happens once
   return (
-    <StyledContainer s={{ flexDirection: "column", flex: 1, width: "100%" }}>
+    <StyledContainer
+      s={{ flexDirection: "column", flex: 1, width: "100%", display: "flex" }}
+    >
       {renderBoardForm()}
       {renderOtherResourcesForm()}
       {renderSprintForms()}
+      {renderTaskForm()}
       <BoardHeader
         block={board}
         groupBy={groupBy}
@@ -298,26 +319,7 @@ const Board: React.FC<IBoardProps> = (props) => {
       />
       <Switch>
         <Route path={tasksPath} render={renderTasksPathView} />
-        <Route
-          path={sprintsPath}
-          render={() => {
-            return (
-              <TasksContainer
-                board={board}
-                searchText={searchText}
-                useCurrentSprint={view === BoardCurrentView.CURRENT_SPRINT}
-                render={(args) => (
-                  <SprintsContainer
-                    {...args}
-                    board={board}
-                    onUpdateSprint={(sprint) => setSprintForm({ sprint })}
-                    onClickUpdateTask={updateTask}
-                  />
-                )}
-              />
-            );
-          }}
-        />
+        <Route path={sprintsPath} render={renderSprintsPathView} />
       </Switch>
     </StyledContainer>
   );

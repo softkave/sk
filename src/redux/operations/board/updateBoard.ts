@@ -102,9 +102,15 @@ export const updateBoardOpAction = makeAsyncOp(
       BoardActions.update({
         id: board.customId,
         data: board,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
 
     return board;
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.boardId,
+    }),
   }
 );

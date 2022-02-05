@@ -29,6 +29,7 @@ export const markRequestReadOpAction = makeAsyncOpWithoutDispatch(
       CollaborationRequestActions.update({
         id: request.customId,
         data: request,
+        meta: { arrayUpdateStrategy: "replace" },
       })
     );
   }

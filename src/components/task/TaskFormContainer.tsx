@@ -113,8 +113,8 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
     () => props.task
   );
 
-  const [taskFormData, setTaskFormData] = React.useState<ITaskFormValues>(
-    () => props.task || newTaskForm(board)
+  const [taskFormData, setTaskFormData] = React.useState<ITaskFormValues>(() =>
+    props.task ? taskToTaskForm(props.task) : newTaskForm(board)
   );
 
   const [loading, setLoading] = React.useState(false);

@@ -1,4 +1,5 @@
 import { RightCircleTwoTone } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import { Button, DatePicker, Form, List, Select, Typography } from "antd";
 import { FormikProps } from "formik";
 import moment from "moment";
@@ -6,7 +7,6 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import {
   IAssigneeInput,
-  IBlock,
   IBlockAssignedLabelInput,
   IBlockLabel,
   IBlockStatus,
@@ -32,6 +32,7 @@ import {
   formInputContentWrapperStyle,
   StyledForm,
 } from "../forms/FormStyledComponents";
+import { formStyles } from "../forms/styles";
 import useFormHelpers from "../hooks/useFormHelpers";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import StyledContainer from "../styled/Container";
@@ -248,6 +249,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         labelAlign="left"
+        className={formStyles.compactFormItem}
       >
         <EditPriority
           onChange={(val: string) => {
@@ -270,7 +272,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
       <SelectTaskSprint
         sprints={sprints}
         sprintsMap={sprintsMap}
-        task={formik.values as IBlock}
+        task={formik.values as ITask}
         disabled={isSubmitting}
         onAddNewSprint={toggleShowSprintForm}
         onChangeSprint={(val) => {
@@ -350,6 +352,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         labelAlign="left"
+        className={formStyles.compactFormItem}
       >
         <TaskStatus
           noResolutionModal
@@ -359,7 +362,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           resolutionsMap={resolutionsMap}
           onChangeStatus={onChangeStatus}
           onChangeResolution={onChangeResolution}
-          task={values as IBlock}
+          task={values as ITask}
           disabled={isSubmitting}
           onSelectAddNewStatus={onSelectAddNewStatus}
           onSelectAddNewResolution={onSelectAddNewResolution}

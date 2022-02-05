@@ -16,8 +16,9 @@ import OperationType from "./OperationType";
 import OperationSelectors from "./selectors";
 import { GetOperationActionArgs } from "./types";
 
-export interface IAsyncOpExtras {
+export interface IAsyncOpExtras<Arg> {
   isDemoMode?: boolean;
+  props: GetOperationActionArgs<Arg>;
 }
 
 export interface IMakeAsyncOpOptions<Arg> {
@@ -30,9 +31,9 @@ export const makeAsyncOp = <Arg, Result>(
   type: string,
   operationType: OperationType,
   fn: (
-    arg: GetOperationActionArgs<Arg>,
+    arg: Arg,
     thunkAPI: IStoreLikeObject,
-    extras: IAsyncOpExtras
+    extras: IAsyncOpExtras<Arg>
   ) => Result | Promise<Result>,
   options: IMakeAsyncOpOptions<Arg> = {}
 ) => {
@@ -58,7 +59,10 @@ export const makeAsyncOp = <Arg, Result>(
 
     try {
       const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-      const result = await fn(arg, thunkAPI, { isDemoMode });
+
+      // TODO: if the workings of GetOperationActionArgs ever changes, update
+      // the types here as required
+      const result = await fn(arg as Arg, thunkAPI, { isDemoMode, props: arg });
       thunkAPI.dispatch(
         dispatchOperationCompleted(
           opId,
@@ -92,9 +96,9 @@ export const makeAsyncOpWithoutDispatch = <Arg, Result>(
   type: string,
   operationType: OperationType,
   fn: (
-    arg: GetOperationActionArgs<Arg>,
+    arg: Arg,
     thunkAPI: IStoreLikeObject,
-    extras: IAsyncOpExtras
+    extras: IAsyncOpExtras<Arg>
   ) => Result | Promise<Result>,
   options: IMakeAsyncOpOptionsWithoutDispatch<Arg> = {}
 ) => {
@@ -113,7 +117,7 @@ export const makeAsyncOpWithoutDispatch = <Arg, Result>(
 
     try {
       const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-      const result = await fn(arg, thunkAPI, { isDemoMode });
+      const result = await fn(arg as Arg, thunkAPI, { isDemoMode, props: arg });
       operation = {
         ...operation,
         status: {

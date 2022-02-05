@@ -9,6 +9,7 @@ export interface IBoardThumbnailProps {
   className?: string;
   avatarSize?: IItemAvatarProps["size"];
   style?: React.CSSProperties;
+  isSelected?: boolean;
   onClick?: () => void;
 }
 
@@ -18,7 +19,7 @@ const classes = {
   descriptionContainer: css({
     marginTop: "4px",
   }),
-  root: css({ flex: 1 }),
+  root: css({ flex: 1, display: "flex" }),
   content: css({
     lineHeight: "16px",
     flex: 1,
@@ -31,7 +32,7 @@ const classes = {
 };
 
 const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
-  const { board, className, onClick, avatarSize, style } = props;
+  const { board, className, avatarSize, style, isSelected, onClick } = props;
   const nameNode = (
     <div className={classes.nameContainer}>
       <Typography.Text
@@ -39,6 +40,7 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
         style={{
           marginRight: "8px",
           textTransform: "capitalize",
+          color: isSelected ? "#1890ff" : undefined,
         }}
         ellipsis
       >
@@ -52,7 +54,7 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
       <Typography.Paragraph
         type="secondary"
         ellipsis={{ rows: 2 }}
-        style={{ marginBottom: "0px" }}
+        style={{ marginBottom: "0px", fontSize: "13px" }}
       >
         {board.description}
       </Typography.Paragraph>
@@ -64,7 +66,11 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
   return (
     <div
       style={style}
-      className={cx(classes.root, className)}
+      className={cx(
+        classes.root,
+        className,
+        css({ backgroundColor: isSelected ? "#e6f7ff" : undefined })
+      )}
       onClick={onClick}
     >
       <div>

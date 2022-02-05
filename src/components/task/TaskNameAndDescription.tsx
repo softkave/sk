@@ -1,21 +1,20 @@
 import { Typography } from "antd";
 import React from "react";
-import { IBlock } from "../../models/block/block";
+import { ITask } from "../../models/task/types";
 
 export interface ITaskNameAndDescriptionProps {
-    task: IBlock;
+  task: ITask;
 }
 
 const TaskNameAndDescription: React.FC<ITaskNameAndDescriptionProps> = (
-    props
+  props
 ) => {
-    const { task } = props;
-
-    return (
-        <Typography.Paragraph style={{ marginBottom: "0" }}>
-            {task.name}
-        </Typography.Paragraph>
-    );
+  const { task } = props;
+  return (
+    <Typography.Paragraph style={{ marginBottom: "0" }}>
+      {task.name}
+    </Typography.Paragraph>
+  );
 };
 
 export default React.memo(TaskNameAndDescription);

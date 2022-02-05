@@ -7,10 +7,9 @@ import {
   IUpdateBoardInput,
 } from "./types";
 import { extractFields, getFields, makeExtract } from "../../utils/extract";
-import { getNewId, topLevelDiff } from "../../utils/utils";
+import { topLevelDiff } from "../../utils/utils";
 import { getComplexFieldInput } from "../utils";
 import { IBoardFormValues } from "../../components/board/BoardForm";
-import { BlockType } from "../block/block";
 import { IAppOrganization } from "../organization/types";
 import randomColor from "randomcolor";
 
@@ -135,8 +134,6 @@ export function getUpdateBoardInput(
 
 export function newFormBoard(organization: IAppOrganization) {
   const newBoard: IBoardFormValues = {
-    customId: getNewId(),
-    type: BlockType.Board,
     color: randomColor(),
     parent: organization.customId,
     name: "",
@@ -144,6 +141,35 @@ export function newFormBoard(organization: IAppOrganization) {
     boardLabels: [],
     boardStatuses: [],
     boardResolutions: [],
+  };
+
+  return newBoard;
+}
+
+export function formBoardFromExisting(board: IBoard) {
+  const newBoard: IBoardFormValues = {
+    color: board.color,
+    parent: board.parent,
+    name: board.name,
+    description: board.description,
+    boardLabels: board.boardLabels.map((item) => ({
+      color: item.color,
+      customId: item.customId,
+      name: item.name,
+      description: item.description,
+    })),
+    boardStatuses: board.boardStatuses.map((item) => ({
+      color: item.color,
+      customId: item.customId,
+      name: item.name,
+      description: item.description,
+      position: item.position,
+    })),
+    boardResolutions: board.boardResolutions.map((item) => ({
+      customId: item.customId,
+      name: item.name,
+      description: item.description,
+    })),
   };
 
   return newBoard;

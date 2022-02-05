@@ -1,5 +1,5 @@
 import BoardAPI, {
-    IDeleteBoardEndpointParams,
+  IDeleteBoardEndpointParams,
 } from "../../../net/board/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import BoardActions from "../../boards/actions";
@@ -10,31 +10,33 @@ import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
 export const deleteBoardOpAction = makeAsyncOp(
-    "op/boards/deleteBoard",
-    OperationType.DeleteBoard,
-    async (arg: IDeleteBoardEndpointParams, thunkAPI, extras) => {
-        if (extras.isDemoMode) {
-        } else {
-            const result = await BoardAPI.deleteBoard(arg);
-            assertEndpointResult(result);
-        }
-
-        thunkAPI.dispatch(BoardActions.remove(arg.boardId));
-        deleteBoardTasks(thunkAPI, arg.boardId);
-        deleteBoardSprints(thunkAPI, arg.boardId);
+  "op/boards/deleteBoard",
+  OperationType.DeleteBoard,
+  async (arg: IDeleteBoardEndpointParams, thunkAPI, extras) => {
+    if (extras.isDemoMode) {
+    } else {
+      const result = await BoardAPI.deleteBoard(arg);
+      assertEndpointResult(result);
     }
+
+    thunkAPI.dispatch(BoardActions.remove(arg.boardId));
+    deleteBoardTasks(thunkAPI, arg.boardId);
+    deleteBoardSprints(thunkAPI, arg.boardId);
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.boardId,
+    }),
+  }
 );
 
 function deleteBoardTasks(thunkAPI: IStoreLikeObject, boardId: string) {
-    const tasks = getBoardTasks(thunkAPI.getState(), boardId);
-    thunkAPI.dispatch(tasks.map((item) => item.customId));
+  const tasks = getBoardTasks(thunkAPI.getState(), boardId);
+  thunkAPI.dispatch(tasks.map((item) => item.customId));
 }
 
 function deleteBoardSprints(thunkAPI: IStoreLikeObject, boardId: string) {
-    const sprints = SprintSelectors.getBoardSprints(
-        thunkAPI.getState(),
-        boardId
-    );
+  const sprints = SprintSelectors.getBoardSprints(thunkAPI.getState(), boardId);
 
-    thunkAPI.dispatch(sprints.map((item) => item.customId));
+  thunkAPI.dispatch(sprints.map((item) => item.customId));
 }

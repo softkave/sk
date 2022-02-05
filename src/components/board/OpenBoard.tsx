@@ -17,7 +17,7 @@ enum OpenBoardTabs {
 
 const OpenBoard: React.FC<IOpenBoardProps> = (props) => {
   const { board: block, onClose } = props;
-  const formContainer = <BoardFormContainer {...props} />;
+  const formContainer = <BoardFormContainer hideBackBtn {...props} />;
 
   if (block) {
     return (

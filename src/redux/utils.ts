@@ -56,7 +56,7 @@ interface IActionAdd<T> {
   data: T;
 }
 
-interface IActionUpdate<T> {
+export interface IActionUpdate<T> {
   id: string;
   data: Partial<T>;
   meta?: IMergeDataMeta;

@@ -1,6 +1,6 @@
 import { unwrapResult } from "@reduxjs/toolkit";
 import { message, notification } from "antd";
-import { URLSearchParams } from "url";
+import URLSearchParams from "core-js/web/url-search-params";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
@@ -17,60 +17,60 @@ import ChangePassword, { IChangePasswordFormData } from "./ChangePassword";
 const changePasswordSuccessMessage = "Password changed successfully";
 
 const ChangePasswordWithTokenContainer: React.FC<{}> = () => {
-    const dispatch: AppDispatch = useDispatch();
-    const history = useHistory();
-    const operationStatus = useOperation();
+  const dispatch: AppDispatch = useDispatch();
+  const history = useHistory();
+  const operationStatus = useOperation();
 
-    const errors = operationStatus.error
-        ? flattenErrorList(operationStatus.error)
-        : undefined;
+  const errors = operationStatus.error
+    ? flattenErrorList(operationStatus.error)
+    : undefined;
 
-    const onSubmit = async (data: IChangePasswordFormData) => {
-        const query = new URLSearchParams(window.location.search);
-        const token = query.get("t");
+  const onSubmit = async (data: IChangePasswordFormData) => {
+    const query = new URLSearchParams(window.location.search);
+    const token = query.get("t");
 
-        if (!token) {
-            message.error("Invalid credentials");
-            notification.error({
-                message: "Invalid credentials",
-                description:
-                    "Please try again from the change password email sent to you.",
-            });
+    if (!token) {
+      message.error("Invalid credentials");
+      notification.error({
+        message: "Invalid credentials",
+        description:
+          "Please try again from the change password email sent to you.",
+      });
 
-            history.push("/");
-            return;
-        }
+      history.push("/");
+      return;
+    }
 
-        const result = await dispatch(
-            changePasswordWithForgotTokenOpAction({
-                token,
-                password: data.password,
-                opId: operationStatus.opId,
-            })
-        );
-
-        const op = unwrapResult(result);
-
-        if (!op) {
-            return;
-        }
-
-        const opStat = getOpData(op);
-
-        if (opStat.isCompleted) {
-            message.success(changePasswordSuccessMessage);
-        } else if (opStat.isError) {
-            message.error("Error changing password");
-        }
-    };
-
-    return (
-        <ChangePassword
-            onSubmit={onSubmit}
-            isSubmitting={operationStatus.isLoading}
-            errors={errors}
-        />
+    const result = await dispatch(
+      changePasswordWithForgotTokenOpAction({
+        token,
+        password: data.password,
+        opId: operationStatus.opId,
+      })
     );
+
+    const op = unwrapResult(result);
+
+    if (!op) {
+      return;
+    }
+
+    const opStat = getOpData(op);
+
+    if (opStat.isCompleted) {
+      message.success(changePasswordSuccessMessage);
+    } else if (opStat.isError) {
+      message.error("Error changing password");
+    }
+  };
+
+  return (
+    <ChangePassword
+      onSubmit={onSubmit}
+      isSubmitting={operationStatus.isLoading}
+      errors={errors}
+    />
+  );
 };
 
 export default React.memo(ChangePasswordWithTokenContainer);

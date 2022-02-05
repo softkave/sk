@@ -6,27 +6,27 @@ import Priority, { TaskPriority } from "./Priority";
 export interface IEditPriorityProps {
   value: TaskPriority;
   onChange: (value: string) => void;
-
   disabled?: boolean;
 }
 
 export default class EditPriority extends React.Component<IEditPriorityProps> {
   public render() {
     const { value, onChange, disabled } = this.props;
-
     const menu = (
       <Menu
         onClick={({ key }) => onChange(key as string)}
         selectedKeys={[value]}
       >
-        <Menu.Item key="very important">
-          <Priority level={BlockPriority.Low} />
+        <Menu.Item key={BlockPriority.High}>
+          <Priority level={BlockPriority.High} />
         </Menu.Item>
-        <Menu.Item key="not important">
+        {/* <Menu.Divider /> */}
+        <Menu.Item key={BlockPriority.Medium}>
           <Priority level={BlockPriority.Medium} />
         </Menu.Item>
-        <Menu.Item key="important">
-          <Priority level={BlockPriority.High} />
+        {/* <Menu.Divider /> */}
+        <Menu.Item key={BlockPriority.Low}>
+          <Priority level={BlockPriority.Low} />
         </Menu.Item>
       </Menu>
     );

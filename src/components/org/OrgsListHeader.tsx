@@ -23,7 +23,7 @@ const classes = {
     flex: 1,
     "& .ant-space-item:first-of-type": { flex: 1 },
   }),
-  controls: css({ flex: 1 }),
+  controls: css({ flex: 1, display: "flex" }),
 };
 
 const OrgsListHeader: React.FC<IOrgsListHeaderProps> = (props) => {

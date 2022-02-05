@@ -35,30 +35,23 @@ function getGroupFieldName(groupType: BoardGroupBy): BoardGroupableFields {
 
 const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
   const { board: block, tasks, collaborators, groupType } = props;
-
-  let groupedTasks: IBoardGroupedTasks[] = [];
-
-  switch (groupType) {
-    case BoardGroupBy.STATUS: {
-      groupedTasks = groupByStatus(block.boardStatuses || [], tasks);
-      break;
+  let groupedTasks: IBoardGroupedTasks[] = React.useMemo(() => {
+    switch (groupType) {
+      case BoardGroupBy.STATUS:
+        return groupByStatus(block.boardStatuses || [], tasks);
+      case BoardGroupBy.LABELS:
+        return groupByLabels(block.boardLabels || [], tasks);
+      case BoardGroupBy.ASSIGNEES:
+        return groupByAssignees(
+          collaborators,
+          tasks,
+          block.boardStatuses || []
+        );
     }
 
-    case BoardGroupBy.LABELS: {
-      groupedTasks = groupByLabels(block.boardLabels || [], tasks);
-      break;
-    }
-
-    case BoardGroupBy.ASSIGNEES: {
-      groupedTasks = groupByAssignees(
-        collaborators,
-        tasks,
-        block.boardStatuses || []
-      );
-
-      break;
-    }
-  }
+    return [];
+    // TODO: debounce fetching tasks and collaborators from redux
+  }, [block.boardStatuses, block.boardLabels, tasks, groupType, collaborators]);
 
   const renderGroupedTasksDesktop = () => {
     return (

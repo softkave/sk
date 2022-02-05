@@ -8,7 +8,6 @@ export interface IUserAvatarProps extends IItemAvatarProps {
 
 const UserAvatar: React.FC<IUserAvatarProps> = (props) => {
   const { user } = props;
-
   return (
     <ItemAvatar {...props} color={user.color}>
       {getUserInitials(user)}

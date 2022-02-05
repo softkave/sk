@@ -1,6 +1,6 @@
 import { IBoard } from "../../../models/board/types";
 import BoardAPI, {
-    IGetOrganizationBoardsEndpointParams,
+  IGetOrganizationBoardsEndpointParams,
 } from "../../../net/board/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import BoardActions from "../../boards/actions";
@@ -9,20 +9,28 @@ import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
 export const getOrganizationBoardsOpAction = makeAsyncOp(
-    "op/boards/getOrganizationBoards",
-    OperationType.GetOrganizationBoards,
-    async (arg: IGetOrganizationBoardsEndpointParams, thunkAPI, extras) => {
-        let boards: IBoard[] = [];
+  "op/boards/getOrganizationBoards",
+  OperationType.GetOrganizationBoards,
+  async (arg: IGetOrganizationBoardsEndpointParams, thunkAPI, extras) => {
+    let boards: IBoard[] = [];
 
-        if (extras.isDemoMode) {
-        } else {
-            const result = await BoardAPI.getOrganizationBoards(arg);
-            assertEndpointResult(result);
-            boards = result.boards;
-        }
+    if (extras.isDemoMode) {
+    } else {
+      const result = await BoardAPI.getOrganizationBoards({
+        organizationId: arg.organizationId,
+      });
 
-        thunkAPI.dispatch(
-            BoardActions.bulkAdd(toActionAddList(boards, "customId"))
-        );
+      assertEndpointResult(result);
+      boards = result.boards;
     }
+
+    thunkAPI.dispatch(
+      BoardActions.bulkAdd(toActionAddList(boards, "customId"))
+    );
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.organizationId,
+    }),
+  }
 );

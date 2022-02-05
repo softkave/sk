@@ -1,6 +1,6 @@
 import { ITask } from "../../../models/task/types";
 import TaskAPI, {
-    IGetBoardTasksEndpointParams,
+  IGetBoardTasksEndpointParams,
 } from "../../../net/task/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import TaskActions from "../../tasks/actions";
@@ -9,20 +9,25 @@ import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
 export const getBoardTasksOpAction = makeAsyncOp(
-    "op/tasks/getBoardTasks",
-    OperationType.GetBoardTasks,
-    async (arg: IGetBoardTasksEndpointParams, thunkAPI, extras) => {
-        let tasks: ITask[] = [];
+  "op/tasks/getBoardTasks",
+  OperationType.GetBoardTasks,
+  async (arg: IGetBoardTasksEndpointParams, thunkAPI, extras) => {
+    let tasks: ITask[] = [];
 
-        if (extras.isDemoMode) {
-        } else {
-            const result = await TaskAPI.getBoardTasks(arg);
-            assertEndpointResult(result);
-            tasks = result.tasks;
-        }
-
-        thunkAPI.dispatch(
-            TaskActions.bulkAdd(toActionAddList(tasks, "customId"))
-        );
+    if (extras.isDemoMode) {
+    } else {
+      const result = await TaskAPI.getBoardTasks({
+        boardId: arg.boardId,
+      });
+      assertEndpointResult(result);
+      tasks = result.tasks;
     }
+
+    thunkAPI.dispatch(TaskActions.bulkAdd(toActionAddList(tasks, "customId")));
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.boardId,
+    }),
+  }
 );

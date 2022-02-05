@@ -5,15 +5,15 @@ import { BlockPriority } from "../../models/block/block";
 
 export type TaskPriority = BlockPriority;
 export const priorityToColorMap = {
-  [BlockPriority.Medium]: "#EACA2C",
-  [BlockPriority.High]: "#7ED321",
-  [BlockPriority.Low]: "rgb(255, 77, 79)",
+  [BlockPriority.Medium]: "#7ED321",
+  [BlockPriority.High]: "rgb(255, 77, 79)",
+  [BlockPriority.Low]: "#EACA2C",
 };
 
 export const priorityToTextMap = {
-  [BlockPriority.Medium]: "Low",
-  [BlockPriority.High]: "Medium",
-  [BlockPriority.Low]: "High",
+  [BlockPriority.Medium]: "Medium",
+  [BlockPriority.High]: "High",
+  [BlockPriority.Low]: "Low",
 };
 
 interface IPriorityProps {

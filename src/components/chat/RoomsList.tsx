@@ -4,7 +4,6 @@ import { IRoom } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
-import Scrollbar from "../utilities/Scrollbar";
 import RoomsListItem from "./RoomsListItem";
 
 export interface IRoomsListProps {
@@ -53,7 +52,6 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
     }
 
     const lowerCasedSearchQuery = searchQuery.toLowerCase();
-
     return sortedRooms.filter((room) => {
       const recipient = recipientsMap[room.recipientId];
       return recipient.name.toLowerCase().includes(lowerCasedSearchQuery);
@@ -67,7 +65,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
   }
 
   return (
-    <Scrollbar>
+    <div>
       {filteredRooms.map((room, i) => {
         const recipient = recipientsMap[room.recipientId];
         return (
@@ -83,7 +81,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
           </StyledContainer>
         );
       })}
-    </Scrollbar>
+    </div>
   );
 };
 

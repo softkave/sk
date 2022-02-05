@@ -105,13 +105,15 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         <Route
           exact
           path="/app/notifications"
-          render={() => renderEmpty("Select a request or notification")}
+          render={() => renderEmpty("Select a request or notification.")}
         />
         <Route path="/app/notifications/*" render={renderNotification} />
         <Route
           exact
           path="/app/orgs"
-          render={() => renderEmpty("Select an organization")}
+          render={() =>
+            renderEmpty("Select or create an organization to get started.")
+          }
         />
         <Route
           path="/app/orgs/*"

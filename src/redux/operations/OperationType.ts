@@ -46,6 +46,7 @@ enum OperationType {
   GetBoardTasks = "GetBoardTasks",
   TransferTask = "TransferTask",
   UpdateTask = "UpdateTask",
+  LoadTaskComments = "LoadTaskComments",
 
   // collaboration request
   AddCollaborators = "AddCollaborators",

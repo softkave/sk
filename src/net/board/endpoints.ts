@@ -6,7 +6,7 @@ import {
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResult, IEndpointResultBase } from "../types";
 
-const baseURL = "/api/boards";
+const baseURL = "/boards";
 
 export type ICreateBoardEndpointParams = {
   board: INewBoardInput;
@@ -20,6 +20,7 @@ async function createBoard(props: ICreateBoardEndpointParams) {
   return invokeEndpointWithAuth<ICreateBoardEndpointResult>({
     path: `${baseURL}/createBoard`,
     data: props,
+    apiType: "REST",
   });
 }
 
@@ -36,6 +37,7 @@ async function boardExists(props: IBoardExistsEndpointParams) {
   return await invokeEndpointWithAuth<IBoardExistsEndpointResult>({
     path: `${baseURL}/boardExists`,
     data: props,
+    apiType: "REST",
   });
 }
 
@@ -52,6 +54,7 @@ async function updateBoard(props: IUpdateBoardEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateBoardEndpointResult>({
     path: `${baseURL}/updateBoard`,
     data: props,
+    apiType: "REST",
   });
 }
 
@@ -63,6 +66,7 @@ async function deleteBoard(props: IDeleteBoardEndpointParams) {
   return await invokeEndpointWithAuth<IEndpointResultBase>({
     path: `${baseURL}/deleteBoard`,
     data: props,
+    apiType: "REST",
   });
 }
 
@@ -80,6 +84,7 @@ async function getOrganizationBoards(
   return await invokeEndpointWithAuth<IGetOrganizationBoardsEndpointResult>({
     path: `${baseURL}/getOrganizationBoards`,
     data: props,
+    apiType: "REST",
   });
 }
 
@@ -95,6 +100,7 @@ async function getBoard(props: IGetBoardEndpointParams) {
   return await invokeEndpointWithAuth<IGetBoardEndpointResult>({
     path: `${baseURL}/getBoard`,
     data: props,
+    apiType: "REST",
   });
 }
 

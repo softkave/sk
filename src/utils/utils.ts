@@ -1,5 +1,5 @@
 import dotProp from "dot-prop-immutable";
-import { defaultTo, isArray, merge } from "lodash";
+import { isArray, merge } from "lodash";
 import get from "lodash/get";
 import isObject from "lodash/isObject";
 import mergeWith from "lodash/mergeWith";
@@ -102,7 +102,7 @@ export const mergeData = <ResourceType = any>(
   data: Partial<ResourceType>,
   meta: IMergeDataMeta = { arrayUpdateStrategy: "concat" }
 ) => {
-  return mergeWith(resource, data, (objValue, srcValue) => {
+  const result = mergeWith(resource, data, (objValue, srcValue) => {
     if (Array.isArray(objValue) && srcValue) {
       if (meta.arrayUpdateStrategy === "concat") {
         return objValue.concat(srcValue);
@@ -114,6 +114,8 @@ export const mergeData = <ResourceType = any>(
       // if nothing is returned
     }
   });
+
+  return result;
 };
 
 export function getDate(initial?: any) {

@@ -2,17 +2,19 @@ import { LoadingOutlined } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, message, Space, Typography } from "antd";
+import assert from "assert";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
+import { ICollaborationRequest } from "../../models/collaborationRequest/types";
+import { messages } from "../../models/messages";
 import {
   CollaborationRequestResponse,
   CollaborationRequestStatusType,
-  INotification,
 } from "../../models/notification/notification";
-import { getNotification } from "../../redux/notifications/selectors";
-import { respondToNotificationOpAction } from "../../redux/operations/notification/respondToNotification";
+import CollaborationRequestSelectors from "../../redux/collaborationRequests/selectors";
+import { respondToRequestOpAction } from "../../redux/operations/collaborationRequest/respondToRequest";
 import { AppDispatch, IAppState } from "../../redux/types";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
 import { getRequestStatus } from "../collaborator/utils";
@@ -34,8 +36,14 @@ const Notification: React.FC<INotificationProps> = (props) => {
     routeMatch && routeMatch.params
       ? routeMatch.params.notificationId
       : undefined;
-  const notification = useSelector<IAppState, INotification | undefined>(
-    (state) => getNotification(state, currentNotificationId!)
+
+  const notification = useSelector<
+    IAppState,
+    ICollaborationRequest | undefined
+  >((state) =>
+    currentNotificationId
+      ? CollaborationRequestSelectors.getOne(state, currentNotificationId)
+      : undefined
   );
 
   const opStatus = useOperation();
@@ -56,10 +64,11 @@ const Notification: React.FC<INotificationProps> = (props) => {
   }
 
   const onRespond = async (selectedResponse: CollaborationRequestResponse) => {
+    assert(notification, messages.collaborationRequestNotFound);
     const result = await dispatch(
-      respondToNotificationOpAction({
+      respondToRequestOpAction({
         response: selectedResponse,
-        request: notification!,
+        requestId: notification.customId,
         opId: opStatus.opId,
       })
     );

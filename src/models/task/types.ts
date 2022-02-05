@@ -1,3 +1,4 @@
+import { IOperation } from "../../redux/operations/operation";
 import { IUpdateComplexTypeArrayInput } from "../../utils/types";
 import {
   BlockPriority,
@@ -41,12 +42,15 @@ export interface ITask {
   assignees: ITaskAssignee[];
   priority: BlockPriority;
   subTasks: ISubTask[]; // should sub-tasks be their own blocks?
-  status?: string;
+  status?: string | null;
   statusAssignedBy?: string;
   statusAssignedAt?: string;
-  taskResolution?: string;
+  taskResolution?: string | null;
   labels: IBlockAssignedLabel[];
-  taskSprint?: ITaskSprint;
+  taskSprint?: ITaskSprint | null;
+
+  // From app
+  taskCommentOp?: IOperation;
 }
 
 export interface INewTaskInput {
