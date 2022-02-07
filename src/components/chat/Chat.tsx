@@ -16,7 +16,6 @@ export interface IChatProps {
 
 const Chat: React.FC<IChatProps> = (props) => {
   const { chat, sender, hideAvatar, isUserSender } = props;
-
   const createdAt = moment(chat.createdAt);
   const textClassName = css({
     textAlign: isUserSender ? "right" : undefined,

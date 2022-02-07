@@ -20,7 +20,9 @@ export const markRequestReadOpAction = makeAsyncOpWithoutDispatch(
     if (extras.isDemoMode) {
       request = { ...request, readAt: getDateString() };
     } else {
-      const result = await CollaborationRequestAPI.markRequestRead(arg);
+      const result = await CollaborationRequestAPI.markRequestRead({
+        requestId: arg.requestId,
+      });
       assertEndpointResult(result);
       request = result.request;
     }

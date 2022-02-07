@@ -1,11 +1,14 @@
 import { css } from "@emotion/css";
 import React from "react";
+import { useRouteMatch } from "react-router";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
+import { appOrganizationRoutes } from "../../models/organization/utils";
 import Message from "../Message";
 import List from "../styled/List";
 import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
 
 export interface ICollaborationRequestListProps {
+  organizationId: string;
   requests: ICollaborationRequest[];
   onClickRequest: (request: ICollaborationRequest) => void;
   searchQuery?: string;
@@ -18,7 +21,11 @@ const classes = {
 const CollaborationRequestList: React.FC<ICollaborationRequestListProps> = (
   props
 ) => {
-  const { requests, searchQuery, onClickRequest } = props;
+  const { requests, searchQuery, organizationId, onClickRequest } = props;
+  const requestRouteMatch = useRouteMatch<{ requestId: string }>(
+    `${appOrganizationRoutes.requests(organizationId)}/:requestId`
+  );
+
   const filteredRequests = React.useMemo(() => {
     if (!searchQuery) {
       return requests;
@@ -40,12 +47,13 @@ const CollaborationRequestList: React.FC<ICollaborationRequestListProps> = (
 
   const renderItem = (request: ICollaborationRequest) => {
     return (
-      <div key={request.customId} className={classes.item}>
-        <CollaborationRequestThumbnail
-          request={request}
-          onClick={onClickRequest}
-        />
-      </div>
+      <CollaborationRequestThumbnail
+        request={request}
+        onClick={onClickRequest}
+        key={request.customId}
+        className={classes.item}
+        isSelected={request.customId === requestRouteMatch?.params.requestId}
+      />
     );
   };
 

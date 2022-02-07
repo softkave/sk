@@ -36,7 +36,7 @@ const ChatList: React.FC<IChatListProps> = (props) => {
   let hideAvatarCheck: { [key: string]: boolean } = {};
   return (
     // @ts-ignore
-    <div ref={parentRef}>
+    <div ref={parentRef} style={{ width: "100%" }}>
       {chats.map((chat, i) => {
         const sender = recipientsMap[chat.sender];
         const chatRender = (

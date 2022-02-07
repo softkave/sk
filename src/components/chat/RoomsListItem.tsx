@@ -11,7 +11,7 @@ export interface IRoomsListItemProps {
 }
 
 const classes = {
-  root: css({ width: "100%", alignItems: "center" }),
+  root: css({ width: "100%", alignItems: "center", display: "flex" }),
   nameContainer: css({ flex: 1, margin: "0 16px" }),
 };
 

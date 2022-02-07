@@ -53,6 +53,11 @@ export const populateOrganizationRoomsOpAction = makeAsyncOp(
         value: unseenChatsCountMapByOrg,
       })
     );
+  },
+  {
+    preFn: (arg) => ({
+      resourceId: arg.organization.customId,
+    }),
   }
 );
 

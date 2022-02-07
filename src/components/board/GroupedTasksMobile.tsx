@@ -7,12 +7,17 @@ import TaskList from "../task/TaskList";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
 import { ITask } from "../../models/task/types";
+import { css } from "@emotion/css";
 
 export interface IGroupedTasksMobileProps extends ITasksContainerRenderFnProps {
   groupedTasks: IBoardGroupedTasks[];
   onClickUpdateTask: (task: ITask) => void;
   emptyMessage?: string;
 }
+
+const classes = {
+  taskList: css({ padding: "0 16px" }),
+};
 
 const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
   const {
@@ -52,7 +57,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
           disableDragAndDrop
           tasks={group.tasks}
           toggleForm={onClickUpdateBlock}
-          getBlockStyle={() => ({ padding: "0 16px" })}
+          className={classes.taskList}
         />
       </Tabs.TabPane>
     );

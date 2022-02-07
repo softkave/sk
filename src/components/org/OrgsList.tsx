@@ -107,7 +107,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
               block={org}
               className={classes.item}
               onClick={() => onClickOrganization(org)}
-              showFields={["name", "description"]}
+              showFields={["name"]}
               unseenChatsCount={unseenChatsCountMapByOrg[org.customId]}
             />
           );
@@ -145,6 +145,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
               onClick={() => onClickRequest(request)}
               collabRequest={request}
               isSelected={selectedId === request.customId}
+              className={classes.item}
             />
           );
         })}

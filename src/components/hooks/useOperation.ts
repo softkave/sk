@@ -1,3 +1,4 @@
+import assert from "assert";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +11,7 @@ import {
   isOperationError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
+import OperationType from "../../redux/operations/OperationType";
 import OperationSelectors, {
   IQueryFilterOperationSelector,
 } from "../../redux/operations/selectors";
@@ -107,19 +109,18 @@ const useOperation: UseOperation = (
     return OperationSelectors.queryFilterOperation(state, selector);
   });
 
+  // TODO (abayomi): many functions here are getting called so many times
+  // find a way to reduce it.
   const shouldWait = useSelector<IAppState, boolean>((state) => {
     if (operation) {
       return false;
     }
 
-    if (
-      !options.waitFor ||
-      options.waitFor.length === 0 ||
-      !options.handleWaitForError
-    ) {
+    if (!options.waitFor?.length) {
       return false;
     }
 
+    const handleWaitForError = options.handleWaitForError || (() => true);
     const waitForOperations = OperationSelectors.queryFilterOperations(
       state,
       options.waitFor
@@ -134,7 +135,7 @@ const useOperation: UseOperation = (
       }
 
       if (isOperationError(op)) {
-        return options.handleWaitForError();
+        return handleWaitForError();
       }
 
       if (!isOperationCompleted(op)) {

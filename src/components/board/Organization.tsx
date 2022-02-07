@@ -85,6 +85,7 @@ const classes = {
     },
   }),
   selectedOrgViewRootDesktop: css({
+    minWidth: "280px",
     maxWidth: "280px",
 
     ["& .ant-tabs"]: {
@@ -108,11 +109,6 @@ const classes = {
     flex: 1,
     height: "100%",
     overflow: "hidden",
-  }),
-  rootContentDesktop: css({
-    flex: 1,
-    overflow: "hidden",
-    display: "flex",
   }),
 };
 
@@ -285,7 +281,7 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
           noAddBtn={noAddBtn}
           title={title}
         />
-        {node}
+        <div>{node}</div>
       </div>
     );
   };
@@ -415,31 +411,29 @@ const Organization: React.FC<IOrgBoardProps> = (props) => {
     return (
       <div className={classes.rootDesktop}>
         {!isOrgMenuFolded && renderSelectedOrgView()}
-        <div className={classes.rootContentDesktop}>
-          <Switch>
-            <Route
-              path={`${appOrganizationRoutes.boards(
-                organization.customId
-              )}/:boardId`}
-              render={(routeProps) => {
-                return renderBoard(routeProps.match.params.boardId);
-              }}
-            />
-            <Route
-              path={`${appOrganizationRoutes.chats(
-                organization.customId
-              )}/:recipientId`}
-              render={(routeProps) => {
-                const recipientId = routeProps.match.params.recipientId;
-                return renderChatsView(recipientId);
-              }}
-            />
-            <Route
-              path={appOrganizationRoutes.organization(organization.customId)}
-              render={renderEmpty}
-            />
-          </Switch>
-        </div>
+        <Switch>
+          <Route
+            path={`${appOrganizationRoutes.boards(
+              organization.customId
+            )}/:boardId`}
+            render={(routeProps) => {
+              return renderBoard(routeProps.match.params.boardId);
+            }}
+          />
+          <Route
+            path={`${appOrganizationRoutes.chats(
+              organization.customId
+            )}/:recipientId`}
+            render={(routeProps) => {
+              const recipientId = routeProps.match.params.recipientId;
+              return renderChatsView(recipientId);
+            }}
+          />
+          <Route
+            path={appOrganizationRoutes.organization(organization.customId)}
+            render={renderEmpty}
+          />
+        </Switch>
       </div>
     );
   };

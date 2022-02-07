@@ -47,7 +47,6 @@ const Notification: React.FC<INotificationProps> = (props) => {
   );
 
   const opStatus = useOperation();
-
   const onBack = React.useCallback(() => {
     history.push("/app/notifications");
   }, [history]);
@@ -82,9 +81,9 @@ const Notification: React.FC<INotificationProps> = (props) => {
     const currentOpStat = getOpData(op);
 
     if (currentOpStat.isCompleted) {
-      message.success("Response sent successfully");
+      message.success("Response sent successfully.");
     } else if (currentOpStat.isError) {
-      message.error("Error sending response");
+      message.error("Error sending response.");
     }
   };
 
@@ -102,14 +101,6 @@ const Notification: React.FC<INotificationProps> = (props) => {
           {!isResponseLoading && (
             <Space size="large">
               <Button
-                type="primary"
-                onClick={() =>
-                  onRespond(CollaborationRequestStatusType.Accepted)
-                }
-              >
-                Accept Request
-              </Button>
-              <Button
                 danger
                 type="primary"
                 onClick={() =>
@@ -117,6 +108,14 @@ const Notification: React.FC<INotificationProps> = (props) => {
                 }
               >
                 Decline Request
+              </Button>
+              <Button
+                type="primary"
+                onClick={() =>
+                  onRespond(CollaborationRequestStatusType.Accepted)
+                }
+              >
+                Accept Request
               </Button>
             </Space>
           )}

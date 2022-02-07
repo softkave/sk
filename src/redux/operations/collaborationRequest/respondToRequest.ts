@@ -38,14 +38,24 @@ export const respondToRequestOpAction = makeAsyncOpWithoutDispatch(
             )
           : null;
     } else {
-      const result = await CollaborationRequestAPI.respondToRequest(arg);
+      const result = await CollaborationRequestAPI.respondToRequest({
+        requestId: arg.requestId,
+        response: arg.response,
+      });
+
       assertEndpointResult(result);
       organization = result.organization
         ? toAppOrganization(result.organization)
         : null;
+
       request = {
         ...request,
-        readAt: result.respondedAt,
+        statusHistory: request.statusHistory.concat([
+          {
+            status: arg.response as CollaborationRequestStatusType,
+            date: result.respondedAt,
+          },
+        ]),
       };
     }
 

@@ -38,16 +38,13 @@ export interface IChatRoomsContainerProps {
 
 const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
   const { orgId, render } = props;
-
   const dispatch = useDispatch();
   const history = useHistory();
-
   const chatRouteMatch = useRouteMatch<{ recipientId: string }>(
     "/app/orgs/:orgId/chat/:recipientId"
   );
 
   const selectedRoomRecipientId = chatRouteMatch?.params.recipientId;
-
   const user = useSelector<IAppState, IUser>((state) =>
     SessionSelectors.assertGetUser(state)
   );

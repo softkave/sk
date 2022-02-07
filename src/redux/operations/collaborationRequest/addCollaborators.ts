@@ -51,7 +51,10 @@ export const addCollaboratorsOpAction = makeAsyncOpWithoutDispatch(
         sentEmailHistory: [],
       }));
     } else {
-      const result = await CollaborationRequestAPI.addCollaborators(arg);
+      const result = await CollaborationRequestAPI.addCollaborators({
+        collaborators: arg.collaborators,
+        organizationId: arg.organizationId,
+      });
       assertEndpointResult(result);
       requests = result.requests;
     }

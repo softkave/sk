@@ -49,17 +49,17 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
     </div>
   );
 
-  const descriptionNode = (
-    <div className={classes.descriptionContainer}>
-      <Typography.Paragraph
-        type="secondary"
-        ellipsis={{ rows: 2 }}
-        style={{ marginBottom: "0px", fontSize: "13px" }}
-      >
-        {board.description}
-      </Typography.Paragraph>
-    </div>
-  );
+  // const descriptionNode = (
+  //   <div className={classes.descriptionContainer}>
+  //     <Typography.Paragraph
+  //       type="secondary"
+  //       ellipsis={{ rows: 2 }}
+  //       style={{ marginBottom: "0px", fontSize: "13px" }}
+  //     >
+  //       {board.description}
+  //     </Typography.Paragraph>
+  //   </div>
+  // );
 
   // TODO: do line clamping on the texts
   // TODO: I should be able to click on the thumbnail to select, not just the name
@@ -78,7 +78,7 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
       </div>
       <div className={classes.content}>
         {nameNode}
-        {descriptionNode}
+        {/* {descriptionNode} */}
       </div>
     </div>
   );

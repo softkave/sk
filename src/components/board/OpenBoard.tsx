@@ -45,9 +45,9 @@ const OpenBoard: React.FC<IOpenBoardProps> = (props) => {
           <Tabs.TabPane tab="Form" key={OpenBoardTabs.Form}>
             {formContainer}
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Stats" key={OpenBoardTabs.Stats}>
+          {/* <Tabs.TabPane tab="Stats" key={OpenBoardTabs.Stats}>
             <BoardStats board={block} />
-          </Tabs.TabPane>
+          </Tabs.TabPane> */}
         </Tabs>
       </div>
     );

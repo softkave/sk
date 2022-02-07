@@ -11,12 +11,13 @@ export interface IColumnProps {
 
 const classes = {
   root: css({
-    display: "flex",
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr",
     height: "100%",
-    flexDirection: "column",
     boxSizing: "border-box",
     flex: 1,
-    maxWidth: "320px",
+    // maxWidth: "320px",
   }),
 };
 

@@ -46,9 +46,7 @@ const OrganizationContainer: React.FC<{}> = () => {
   >();
 
   const [organizationForm, setOrganizationForm] = React.useState(false);
-  const [showCollaboratorsForm, setShowCollaboratorsForm] =
-    React.useState(false);
-
+  const [showRequestForm, setShowRequestForm] = React.useState(false);
   const organizationPath = `${appLoggedInPaths.organizations}/:organizationId`;
   const selectedOrganizationRouteMatch =
     useRouteMatch<IRouteMatchParams>(organizationPath);
@@ -169,8 +167,8 @@ const OrganizationContainer: React.FC<{}> = () => {
     setOrganizationForm(true);
   }, []);
 
-  const openCollaboratorForm = React.useCallback(() => {
-    setOrganizationForm(true);
+  const openRequestForm = React.useCallback(() => {
+    setShowRequestForm(true);
   }, []);
 
   const closeBoardForm = React.useCallback(() => {
@@ -181,6 +179,11 @@ const OrganizationContainer: React.FC<{}> = () => {
   const closeOrganizationForm = React.useCallback(() => {
     // TODO: prompt the user if the user has unsaved changes
     setOrganizationForm(false);
+  }, []);
+
+  const closeRequestForm = React.useCallback(() => {
+    // TODO: prompt the user if the user has unsaved changes
+    setShowRequestForm(false);
   }, []);
 
   const renderBoardForm = () => {
@@ -213,7 +216,7 @@ const OrganizationContainer: React.FC<{}> = () => {
   };
 
   const renderCollaboratorForm = () => {
-    if (!showCollaboratorsForm) {
+    if (!showRequestForm) {
       return null;
     }
 
@@ -221,7 +224,7 @@ const OrganizationContainer: React.FC<{}> = () => {
       <AddCollaboratorFormInDrawer
         visible
         orgId={organization.customId}
-        onClose={() => setShowCollaboratorsForm(false)}
+        onClose={closeRequestForm}
       />
     );
   };
@@ -240,7 +243,7 @@ const OrganizationContainer: React.FC<{}> = () => {
         onClickDeleteBoard={onDeleteBoard}
         onClickAddBoard={openBoardForm}
         onClickUpdateOrganization={openOrganizationForm}
-        onAddCollaborator={openCollaboratorForm}
+        onAddCollaborator={openRequestForm}
       />
     );
   };

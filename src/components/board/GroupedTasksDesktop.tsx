@@ -20,6 +20,7 @@ import { getDateString } from "../../utils/utils";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
 import TaskList from "../task/TaskList";
+import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { BoardGroupableFields, IBoardGroupedTasks } from "./types";
@@ -72,7 +73,7 @@ const classes = {
     textTransform: "capitalize",
   }),
   column: css({
-    minWidth: "280px ",
+    minWidth: "280px",
     marginLeft: "16px",
   }),
   lastColumn: css({
@@ -80,6 +81,8 @@ const classes = {
     marginLeft: "16px",
     paddingRight: "16px",
   }),
+  root: css({ overflowX: "auto", marginTop: "22px", display: "flex" }),
+  taskList: css({ height: "100%" }),
 };
 
 const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
@@ -149,23 +152,25 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     }
 
     return shouldRenderGroup ? (
-      <div
-        ref={provided.innerRef}
-        style={getListStyle(
-          !!dragInfo,
-          snapshot.isDraggingOver,
-          shouldRenderGroup
-        )}
-        {...provided.droppableProps}
-      >
-        <TaskList
-          {...props}
-          tasks={group.tasks}
-          toggleForm={onClickUpdateBlock}
-          style={{ height: "100%" }}
-        />
-        {provided.placeholder}
-      </div>
+      <Scrollbar>
+        <div
+          ref={provided.innerRef}
+          style={getListStyle(
+            !!dragInfo,
+            snapshot.isDraggingOver,
+            shouldRenderGroup
+          )}
+          {...provided.droppableProps}
+        >
+          <TaskList
+            {...props}
+            tasks={group.tasks}
+            toggleForm={onClickUpdateBlock}
+            className={classes.taskList}
+          />
+          {provided.placeholder}
+        </div>
+      </Scrollbar>
     ) : (
       <div
         ref={provided.innerRef}
@@ -327,16 +332,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
 
   return (
     <DragDropContext onBeforeCapture={onBeforeCapture} onDragEnd={onDragEnd}>
-      <StyledContainer
-        s={{
-          overflowX: "auto",
-          width: "100%",
-          flex: 1,
-          marginTop: "22px",
-        }}
-      >
-        {renderGroups()}
-      </StyledContainer>
+      <div className={classes.root}>{renderGroups()}</div>
     </DragDropContext>
   );
 };

@@ -11,7 +11,7 @@ export const appOrganizationRoutes = {
   requests: (organizationId: string) =>
     `${appLoggedInPaths.organizations}/${organizationId}/requests`,
   chats: (organizationId: string) =>
-    `${appLoggedInPaths.organizations}/${organizationId}/chats`,
+    `${appLoggedInPaths.organizations}/${organizationId}/chat`,
 };
 
 export function newFormOrganization() {

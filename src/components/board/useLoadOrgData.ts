@@ -4,6 +4,7 @@ import { IAppOrganization } from "../../models/organization/types";
 import { getOrganizationCollaboratorsOpAction } from "../../redux/operations/collaborator/getOrganizationCollaborators";
 import OperationType from "../../redux/operations/OperationType";
 import { populateOrganizationRoomsOpAction } from "../../redux/operations/organization/populateOrganizationRooms";
+import { IQueryFilterOperationSelector } from "../../redux/operations/selectors";
 import useOperation, {
   IMergedOperationStats,
   IOperationDerivedData,
@@ -27,11 +28,13 @@ export function useLoadOrgData(org: IAppOrganization): IMergedOperationStats {
     [org, dispatch]
   );
 
+  const loadCollaboratorsOpSelector: IQueryFilterOperationSelector = {
+    resourceId: org.customId,
+    type: OperationType.GetOrganizationCollaborators,
+  };
+
   const loadCollaboratorsOp = useOperation(
-    {
-      resourceId: org.customId,
-      type: OperationType.GetOrganizationCollaborators,
-    },
+    loadCollaboratorsOpSelector,
     loadCollaborators
   );
 
@@ -52,9 +55,10 @@ export function useLoadOrgData(org: IAppOrganization): IMergedOperationStats {
   const populateOrgRoomsOp = useOperation(
     {
       resourceId: org.customId,
-      type: OperationType.GetOrganizationCollaborators,
+      type: OperationType.PopulateOrganizationRooms,
     },
-    populateOrgRooms
+    populateOrgRooms,
+    { waitFor: [loadCollaboratorsOpSelector] }
   );
 
   return mergeOps([loadCollaboratorsOp, populateOrgRoomsOp]);

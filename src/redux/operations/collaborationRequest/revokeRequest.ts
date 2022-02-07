@@ -28,7 +28,11 @@ export const revokeRequestOpAction = makeAsyncOpWithoutDispatch(
 
       request.statusHistory = statusHistory;
     } else {
-      const result = await CollaborationRequestAPI.revokeRequest(arg);
+      const result = await CollaborationRequestAPI.revokeRequest({
+        organizationId: arg.organizationId,
+        requestId: arg.requestId,
+      });
+
       assertEndpointResult(result);
       request = result.request;
     }

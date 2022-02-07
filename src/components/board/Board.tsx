@@ -1,3 +1,4 @@
+import { css } from "@emotion/css";
 import { message } from "antd";
 import { isBoolean } from "lodash";
 import path from "path-browserify";
@@ -35,6 +36,16 @@ export interface IBoardProps {
   onClickDeleteBoard: (board: IBoard) => void;
   onCloseSprint: () => void;
 }
+
+const classes = {
+  root: css({
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "auto 1fr",
+    flex: 1,
+    width: "100%",
+  }),
+};
 
 const Board: React.FC<IBoardProps> = (props) => {
   const {
@@ -297,9 +308,7 @@ const Board: React.FC<IBoardProps> = (props) => {
 
   // TODO: should we move what TaskContainer does higher up so that it only happens once
   return (
-    <StyledContainer
-      s={{ flexDirection: "column", flex: 1, width: "100%", display: "flex" }}
-    >
+    <div className={classes.root}>
       {renderBoardForm()}
       {renderOtherResourcesForm()}
       {renderSprintForms()}
@@ -321,7 +330,7 @@ const Board: React.FC<IBoardProps> = (props) => {
         <Route path={tasksPath} render={renderTasksPathView} />
         <Route path={sprintsPath} render={renderSprintsPathView} />
       </Switch>
-    </StyledContainer>
+    </div>
   );
 };
 

@@ -81,15 +81,22 @@ const classes = {
   root: css({
     minWidth: "280px",
     width: "100%",
-    borderRadius: "4px",
-    border: "1px solid rgb(223, 234, 240)",
+    borderRadius: "6px",
+    border: "1px solid #f0f0f0",
     padding: "8px",
-    boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
+    // boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
     userSelect: "none",
+
+    "@media (min-width: 400px)": {
+      width: "280px",
+    },
   }),
   middledot: css({
     padding: "0px 8px",
     fontSize: "16px",
+  }),
+  dueDateWrapper: css({
+    lineHeight: 0,
   }),
 };
 
@@ -266,7 +273,7 @@ const Task: React.FC<ITaskProps> = (props) => {
         size={[4, 0]}
         key="dueAt"
         split={<span className={classes.middledot}>&#xB7;</span>}
-        style={{ lineHeight: "18px" }}
+        style={{ lineHeight: "18px", marginBottom: "6px" }}
       >
         {hasStatus && (
           <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
@@ -282,11 +289,11 @@ const Task: React.FC<ITaskProps> = (props) => {
 
   if (hasAssignees || task.dueAt) {
     contentElem.push(
-      <StyledContainer key="assignees-and-dueAt">
+      <div key="assignees-and-dueAt" className={classes.dueDateWrapper}>
         {hasAssignees && (
           <TaskThumbnailAssignees task={task} users={collaborators} />
         )}
-      </StyledContainer>
+      </div>
     );
   }
 
