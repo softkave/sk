@@ -1,192 +1,188 @@
+import assert from "assert";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IAppError } from "../../net/types";
 import OperationActions from "../../redux/operations/actions";
 import {
-    IOperation,
-    IOperationStatus,
-    isOperationCompleted,
-    isOperationError,
-    isOperationStartedOrPending,
+  IOperation,
+  IOperationStatus,
+  isOperationCompleted,
+  isOperationError,
+  isOperationStartedOrPending,
 } from "../../redux/operations/operation";
+import OperationType from "../../redux/operations/OperationType";
 import OperationSelectors, {
-    IQueryFilterOperationSelector,
+  IQueryFilterOperationSelector,
 } from "../../redux/operations/selectors";
 import { IAppState } from "../../redux/types";
 import { getNewId } from "../../utils/utils";
 
 export interface IOperationDerivedData {
-    isLoading: boolean;
-    isError: boolean;
-    isCompleted: boolean;
-    opId: string;
-    error?: any;
-    operation?: IOperation;
-    status?: IOperationStatus;
+  isLoading: boolean;
+  isError: boolean;
+  isCompleted: boolean;
+  opId: string;
+  error?: any;
+  operation?: IOperation;
+  status?: IOperationStatus;
 }
 
 type LoadOperation = (opData: IOperationDerivedData) => void;
 
 interface IUseOperationOptions {
-    deleteManagedOperationOnUnmount?: boolean;
-    waitFor?: Array<
-        IQueryFilterOperationSelector | IOperation | null | undefined
-    >;
-    handleWaitForError?: () => boolean; // True to cancel the op load, false to fetch
+  deleteManagedOperationOnUnmount?: boolean;
+  waitFor?: Array<
+    IQueryFilterOperationSelector | IOperation | null | undefined
+  >;
+  handleWaitForError?: () => boolean; // True to cancel the op load, false to fetch
 }
 
 type UseOperation = (
-    selector?: IQueryFilterOperationSelector,
-    loadOperation?: LoadOperation | false | null,
-    options?: IUseOperationOptions
+  selector?: IQueryFilterOperationSelector,
+  loadOperation?: LoadOperation | false | null,
+  options?: IUseOperationOptions
 ) => IOperationDerivedData;
 
 export const getOpData = (operation: IOperation): IOperationDerivedData => {
-    const isLoading = isOperationStartedOrPending(operation);
-    const isCompleted = isOperationCompleted(operation);
-    const error = operation.status.error;
+  const isLoading = isOperationStartedOrPending(operation);
+  const isCompleted = isOperationCompleted(operation);
+  const error = operation.status.error;
 
-    return {
-        isLoading,
-        isCompleted,
-        error,
-        operation,
-        opId: operation.id,
-        isError: !!error,
-        status: operation?.status,
-    };
+  return {
+    isLoading,
+    isCompleted,
+    error,
+    operation,
+    opId: operation.id,
+    isError: !!error,
+    status: operation?.status,
+  };
 };
 
 export interface IMergedOperationStats {
-    loading?: boolean;
-    errors?: IAppError | IAppError[];
+  loading?: boolean;
+  errors?: IAppError | IAppError[];
 }
 
 export function mergeOps(ops: IOperationDerivedData[]): IMergedOperationStats {
-    for (const op of ops) {
-        if (op.isCompleted) {
-            continue;
-        }
-
-        if (!op.operation || op.isLoading) {
-            return { loading: true };
-        }
-
-        // TODO: Only returning the first error found
-        if (op.error) {
-            return { errors: op.error };
-        }
+  for (const op of ops) {
+    if (op.isCompleted) {
+      continue;
     }
 
-    return {};
+    if (!op.operation || op.isLoading) {
+      return { loading: true };
+    }
+
+    // TODO: Only returning the first error found
+    if (op.error) {
+      return { errors: op.error };
+    }
+  }
+
+  return {};
 }
 
 interface ISpareIdStore {
-    id: string;
-    isUsingSpareId?: boolean;
+  id: string;
+  isUsingSpareId?: boolean;
 }
 
 const useOperation: UseOperation = (
-    selector = {},
-    loadOperation = null,
-    options = { deleteManagedOperationOnUnmount: true }
+  selector = {},
+  loadOperation = null,
+  options = { deleteManagedOperationOnUnmount: true }
 ) => {
-    const dispatch = useDispatch();
-    const [spareIdStore, setSpareIdData] = React.useState<ISpareIdStore>({
-        id: getNewId(),
-    });
+  const dispatch = useDispatch();
+  const [spareIdStore, setSpareIdData] = React.useState<ISpareIdStore>({
+    id: getNewId(),
+  });
 
-    const isSelectorEmpty = Object.keys(selector).length === 0;
-    const operation = useSelector<IAppState, IOperation | undefined>(
-        (state) => {
-            // TODO: how can we cache previous filters
-            if (isSelectorEmpty) {
-                return OperationSelectors.getOperationWithId(
-                    state,
-                    spareIdStore.id
-                );
-            }
+  const isSelectorEmpty = Object.keys(selector).length === 0;
+  const operation = useSelector<IAppState, IOperation | undefined>((state) => {
+    // TODO: how can we cache previous filters
+    if (isSelectorEmpty) {
+      return OperationSelectors.getOperationWithId(state, spareIdStore.id);
+    }
 
-            return OperationSelectors.queryFilterOperation(state, selector);
-        }
+    return OperationSelectors.queryFilterOperation(state, selector);
+  });
+
+  // TODO (abayomi): many functions here are getting called so many times
+  // find a way to reduce it.
+  const shouldWait = useSelector<IAppState, boolean>((state) => {
+    if (operation) {
+      return false;
+    }
+
+    if (!options.waitFor?.length) {
+      return false;
+    }
+
+    const handleWaitForError = options.handleWaitForError || (() => true);
+    const waitForOperations = OperationSelectors.queryFilterOperations(
+      state,
+      options.waitFor
     );
 
-    const shouldWait = useSelector<IAppState, boolean>((state) => {
-        if (operation) {
-            return false;
-        }
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < waitForOperations.length; i++) {
+      const op = waitForOperations[i];
 
-        if (
-            !options.waitFor ||
-            options.waitFor.length === 0 ||
-            !options.handleWaitForError
-        ) {
-            return false;
-        }
+      if (!op) {
+        return true;
+      }
 
-        const waitForOperations = OperationSelectors.queryFilterOperations(
-            state,
-            options.waitFor
-        );
+      if (isOperationError(op)) {
+        return handleWaitForError();
+      }
 
-        // tslint:disable-next-line: prefer-for-of
-        for (let i = 0; i < waitForOperations.length; i++) {
-            const op = waitForOperations[i];
+      if (!isOperationCompleted(op)) {
+        return true;
+      }
+    }
 
-            if (!op) {
-                return true;
-            }
+    return false;
+  });
 
-            if (isOperationError(op)) {
-                return options.handleWaitForError();
-            }
-
-            if (!isOperationCompleted(op)) {
-                return true;
-            }
-        }
-
-        return false;
-    });
-
-    const statusData: IOperationDerivedData = React.useMemo(() => {
-        const data = operation
-            ? getOpData(operation)
-            : {
-                  isCompleted: false,
-                  isError: false,
-                  isLoading: false,
-                  opId: selector.id || spareIdStore.id,
-              };
-
-        return data;
-    }, [operation, selector.id, spareIdStore.id]);
-
-    React.useEffect(() => {
-        if (isSelectorEmpty) {
-            setSpareIdData({ id: spareIdStore.id, isUsingSpareId: true });
-        }
-    }, [isSelectorEmpty, spareIdStore.id]);
-
-    React.useEffect(() => {
-        if (isFunction(loadOperation) && !shouldWait) {
-            loadOperation(statusData);
-        }
-    }, [statusData, loadOperation, shouldWait]);
-
-    React.useEffect(() => {
-        return () => {
-            if (
-                spareIdStore.isUsingSpareId &&
-                options.deleteManagedOperationOnUnmount
-            ) {
-                dispatch(OperationActions.deleteOperation(spareIdStore.id));
-            }
+  const statusData: IOperationDerivedData = React.useMemo(() => {
+    const data = operation
+      ? getOpData(operation)
+      : {
+          isCompleted: false,
+          isError: false,
+          isLoading: false,
+          opId: selector.id || spareIdStore.id,
         };
-    }, [spareIdStore, dispatch, options.deleteManagedOperationOnUnmount]);
 
-    return statusData;
+    return data;
+  }, [operation, selector.id, spareIdStore.id]);
+
+  React.useEffect(() => {
+    if (isSelectorEmpty) {
+      setSpareIdData({ id: spareIdStore.id, isUsingSpareId: true });
+    }
+  }, [isSelectorEmpty, spareIdStore.id]);
+
+  React.useEffect(() => {
+    if (isFunction(loadOperation) && !shouldWait) {
+      loadOperation(statusData);
+    }
+  }, [statusData, loadOperation, shouldWait]);
+
+  React.useEffect(() => {
+    return () => {
+      if (
+        spareIdStore.isUsingSpareId &&
+        options.deleteManagedOperationOnUnmount
+      ) {
+        dispatch(OperationActions.deleteOperation(spareIdStore.id));
+      }
+    };
+  }, [spareIdStore, dispatch, options.deleteManagedOperationOnUnmount]);
+
+  return statusData;
 };
 
 export default useOperation;

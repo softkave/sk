@@ -103,7 +103,10 @@ export function completeUserLogin(
     remember: boolean,
     rememberOnlyIfTokenExists?: boolean
 ) {
-    store.dispatch(UserActions.addUser(result.user));
+    store.dispatch(
+        UserActions.add({ id: result.user.customId, data: result.user })
+    );
+
     store.dispatch(
         SessionActions.loginUser({
             token: result.token,

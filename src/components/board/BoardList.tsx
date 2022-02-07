@@ -1,60 +1,65 @@
+import { css, cx } from "@emotion/css";
+import { List } from "antd";
 import React from "react";
 import { useRouteMatch } from "react-router";
-import { IBlock } from "../../models/block/block";
-import BlockList from "../block/BlockList";
+import { IBoard } from "../../models/board/types";
+import { appOrganizationRoutes } from "../../models/organization/utils";
+import Message from "../Message";
+import BoardThumnail from "./BoardThumnail";
 
 export interface IBoardListProps {
-    boards: IBlock[];
-
-    searchQuery?: string;
-    onClick?: (board: IBlock) => void;
+  organizationId: string;
+  boards: IBoard[];
+  searchQuery?: string;
+  onClick: (board: IBoard) => void;
 }
 
-const BoardList: React.FC<IBoardListProps> = (props) => {
-    const { onClick, boards, searchQuery } = props;
-
-    const boardRouteMatch = useRouteMatch<{ boardId: string }>(
-        "/app/orgs/:orgId/boards/:boardId"
-    );
-
-    return (
-        <BlockList
-            searchQuery={searchQuery}
-            blocks={boards}
-            onClick={onClick}
-            showFields={["name"]}
-            emptyDescription="Create a board to get started"
-            notFoundMessage="Board not found!"
-            getBlockStyle={(block) => {
-                const selected =
-                    block.customId === boardRouteMatch?.params.boardId;
-
-                let color: string | undefined;
-                let backgroundColor: string | undefined;
-
-                if (selected) {
-                    color = "#1890ff";
-                    backgroundColor = "#e6f7ff";
-                }
-
-                return {
-                    backgroundColor,
-                    color,
-                    cursor: "pointer",
-                    padding: "8px 16px",
-                    // backgroundColor: selected ? "#bae7ff" : undefined,
-
-                    "&:hover": {
-                        backgroundColor,
-                    },
-
-                    "& .ant-typography": {
-                        color,
-                    },
-                };
-            }}
-        />
-    );
+const classes = {
+  item: css({
+    cursor: "pointer",
+    padding: "8px 16px",
+  }),
 };
 
-export default BoardList;
+const BoardList: React.FC<IBoardListProps> = (props) => {
+  const { onClick, boards, searchQuery, organizationId } = props;
+  const boardRouteMatch = useRouteMatch<{ boardId: string }>(
+    `${appOrganizationRoutes.boards(organizationId)}/:boardId`
+  );
+
+  const filteredBoards = React.useMemo(() => {
+    if (!searchQuery) {
+      return boards;
+    }
+
+    const lowerQuery = searchQuery.toLowerCase();
+    return boards.filter((item) =>
+      item.name?.toLowerCase().includes(lowerQuery)
+    );
+  }, [boards, searchQuery]);
+
+  if (boards.length === 0) {
+    return <Message message={"Create a board to get started."} />;
+  }
+
+  if (filteredBoards.length === 0) {
+    return <Message message={"Board not found."} />;
+  }
+
+  return (
+    <List
+      dataSource={filteredBoards}
+      renderItem={(board, i) => (
+        <BoardThumnail
+          key={board.customId}
+          className={classes.item}
+          isSelected={board.customId === boardRouteMatch?.params.boardId}
+          board={board}
+          onClick={() => onClick(board)}
+        />
+      )}
+    />
+  );
+};
+
+export default React.memo(BoardList);

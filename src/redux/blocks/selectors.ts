@@ -62,7 +62,7 @@ function getBlockParents(state: IAppState, parentId?: string) {
             parents.unshift(parent);
         }
 
-        if (!parent.parent || parent.type === BlockType.Org) {
+        if (!parent.parent || parent.type === BlockType.Organization) {
             break;
         }
 

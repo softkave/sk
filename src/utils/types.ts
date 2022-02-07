@@ -10,8 +10,8 @@ export interface IUpdateItemById<T> {
     data: Partial<T>;
 }
 
-export interface IUpdateComplexTypeArrayInput<T> {
-    add?: T[];
+export interface IUpdateComplexTypeArrayInput<Update, Add = Update> {
+    add?: Add[];
     remove?: string[];
-    update?: T[];
+    update?: Update[];
 }

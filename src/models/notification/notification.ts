@@ -1,7 +1,5 @@
 import { BlockType } from "../block/block";
 
-export const notificationSchemaVersion = 1; // increment when you make changes that are not backward compatible
-
 export interface ICollaborationRequestFrom {
     userId: string;
     name: string;

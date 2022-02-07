@@ -1,6 +1,7 @@
 import React from "react";
-import { IBlock } from "../../models/block/block";
-import { IUser } from "../../models/user/user";
+import { IBoard } from "../../models/board/types";
+import { ICollaborator } from "../../models/collaborator/types";
+import { ITask } from "../../models/task/types";
 import RenderForDevice from "../RenderForDevice";
 import { BoardGroupBy } from "./BoardHeaderOptionsMenu";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
@@ -12,73 +13,66 @@ import groupByLabels from "./utils/groupByLabels";
 import groupByStatus from "./utils/groupByStatus";
 
 export interface IGroupedTasksProps extends ITasksContainerRenderFnProps {
-    block: IBlock;
-    tasks: IBlock[];
-    collaborators: IUser[];
-    groupType: BoardGroupBy;
-    onClickUpdateBlock: (block: IBlock) => void;
+  board: IBoard;
+  tasks: ITask[];
+  collaborators: ICollaborator[];
+  groupType: BoardGroupBy;
+  onClickUpdateTask: (task: ITask) => void;
 }
 
 function getGroupFieldName(groupType: BoardGroupBy): BoardGroupableFields {
-    switch (groupType) {
-        case BoardGroupBy.SPRINT:
-            return "sprint";
-        case BoardGroupBy.ASSIGNEES:
-            return "assignees";
-        case BoardGroupBy.LABELS:
-            return "labels";
-        case BoardGroupBy.STATUS:
-            return "status";
-    }
+  switch (groupType) {
+    case BoardGroupBy.SPRINT:
+      return "sprint";
+    case BoardGroupBy.ASSIGNEES:
+      return "assignees";
+    case BoardGroupBy.LABELS:
+      return "labels";
+    case BoardGroupBy.STATUS:
+      return "status";
+  }
 }
 
 const GroupedTasks: React.FC<IGroupedTasksProps> = (props) => {
-    const { block, tasks, collaborators, groupType } = props;
-
-    let groupedTasks: IBoardGroupedTasks[] = [];
-
+  const { board: block, tasks, collaborators, groupType } = props;
+  let groupedTasks: IBoardGroupedTasks[] = React.useMemo(() => {
     switch (groupType) {
-        case BoardGroupBy.STATUS: {
-            groupedTasks = groupByStatus(block.boardStatuses || [], tasks);
-            break;
-        }
-
-        case BoardGroupBy.LABELS: {
-            groupedTasks = groupByLabels(block.boardLabels || [], tasks);
-            break;
-        }
-
-        case BoardGroupBy.ASSIGNEES: {
-            groupedTasks = groupByAssignees(
-                collaborators,
-                tasks,
-                block.boardStatuses || []
-            );
-
-            break;
-        }
+      case BoardGroupBy.STATUS:
+        return groupByStatus(block.boardStatuses || [], tasks);
+      case BoardGroupBy.LABELS:
+        return groupByLabels(block.boardLabels || [], tasks);
+      case BoardGroupBy.ASSIGNEES:
+        return groupByAssignees(
+          collaborators,
+          tasks,
+          block.boardStatuses || []
+        );
     }
 
-    const renderGroupedTasksDesktop = () => {
-        return (
-            <GroupedTasksDesktop
-                {...props}
-                groupedTasks={groupedTasks}
-                groupFieldName={getGroupFieldName(groupType)}
-            />
-        );
-    };
+    return [];
+    // TODO: debounce fetching tasks and collaborators from redux
+  }, [block.boardStatuses, block.boardLabels, tasks, groupType, collaborators]);
 
-    const renderGroupedTasksMobile = () => {
-        return <GroupedTasksMobile {...props} groupedTasks={groupedTasks} />;
-    };
-
+  const renderGroupedTasksDesktop = () => {
     return (
-        <RenderForDevice
-            renderForMobile={renderGroupedTasksMobile}
-            renderForDesktop={renderGroupedTasksDesktop}
-        />
+      <GroupedTasksDesktop
+        {...props}
+        groupedTasks={groupedTasks}
+        groupFieldName={getGroupFieldName(groupType)}
+      />
     );
+  };
+
+  const renderGroupedTasksMobile = () => {
+    return <GroupedTasksMobile {...props} groupedTasks={groupedTasks} />;
+  };
+
+  return (
+    <RenderForDevice
+      renderForMobile={renderGroupedTasksMobile}
+      renderForDesktop={renderGroupedTasksDesktop}
+    />
+  );
 };
 
 export default GroupedTasks;

@@ -1,49 +1,54 @@
-import styled from "@emotion/styled";
+import { cx, css } from "@emotion/css";
 import { Typography } from "antd";
 import React from "react";
-import { INotification } from "../../models/notification/notification";
-import cloneWithWidth from "../styled/cloneWithWidth";
-import StyledContainer from "../styled/Container";
+import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import CollaborationRequestStatus from "./CollaborationRequestStatus";
 
 export interface ICollaborationRequestThumbnailProps {
-    request: INotification;
-    style?: React.CSSProperties;
-    className?: string;
-    onClick?: () => void;
+  request: ICollaborationRequest;
+  onClick: (request: ICollaborationRequest) => void;
+  style?: React.CSSProperties;
+  className?: string;
+  isSelected?: boolean;
 }
 
-const CollaborationRequestThumbnail: React.SFC<ICollaborationRequestThumbnailProps> = (
-    props
-) => {
-    const { request, style, onClick, className } = props;
-
-    return (
-        <StyledContainer
-            s={{ width: "100%" }}
-            style={style}
-            onClick={onClick}
-            className={className}
-        >
-            {cloneWithWidth(
-                <StyledRequestDataContainer>
-                    <Typography.Text ellipsis>
-                        {request.to.email}
-                    </Typography.Text>
-                    <StyledContainer s={{ marginTop: "4px" }}>
-                        <CollaborationRequestStatus request={request} />
-                    </StyledContainer>
-                </StyledRequestDataContainer>,
-                { marginLeft: 16 }
-            )}
-        </StyledContainer>
-    );
-};
-
-export default CollaborationRequestThumbnail;
-
-const StyledRequestDataContainer = styled.div({
+const classes = {
+  root: css({
+    width: "100%",
     flex: 1,
     display: "flex",
     flexDirection: "column",
-});
+  }),
+  statusContainer: css({
+    marginTop: "4px",
+  }),
+};
+
+const CollaborationRequestThumbnail: React.FC<
+  ICollaborationRequestThumbnailProps
+> = (props) => {
+  const { request, style, className, isSelected, onClick } = props;
+  const internalOnClick = React.useCallback(
+    () => onClick(request),
+    [request, onClick]
+  );
+
+  return (
+    <div
+      style={style}
+      onClick={internalOnClick}
+      className={cx(
+        className,
+        classes.root,
+        css({ backgroundColor: isSelected ? "#e6f7ff" : undefined })
+      )}
+    >
+      <Typography.Text ellipsis>{request.to.email}</Typography.Text>
+      <div className={classes.statusContainer}>
+        <CollaborationRequestStatus request={request} />
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(CollaborationRequestThumbnail);

@@ -2,97 +2,92 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IBlock } from "../../models/block/block";
+import { IBoard } from "../../models/board/types";
 import { setupSprintsOpAction } from "../../redux/operations/sprint/setupSprints";
 import { updateSprintOptionsOpAction } from "../../redux/operations/sprint/updateSprintOptions";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import useOperation, { getOpData } from "../hooks/useOperation";
 import SprintOptionsForm, {
-    ISprintOptionsFormValues,
+  ISprintOptionsFormValues,
 } from "./SprintOptionsForm";
 
 export interface ISprintOptionsFormContainerProps {
-    board: IBlock;
-    onClose: () => void;
+  board: IBoard;
+  onClose: () => void;
 }
 
 const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
-    props
+  props
 ) => {
-    const { onClose, board } = props;
+  const { onClose, board } = props;
+  const dispatch: AppDispatch = useDispatch();
+  const [cachedValues, setValues] = React.useState<
+    ISprintOptionsFormValues | undefined
+  >(board.sprintOptions);
 
-    const dispatch: AppDispatch = useDispatch();
+  const saveOpStatus = useOperation();
+  const errors = saveOpStatus.error
+    ? flattenErrorList(saveOpStatus.error)
+    : undefined;
 
-    const [cachedValues, setValues] = React.useState<
-        ISprintOptionsFormValues | undefined
-    >(board.sprintOptions);
+  const onSubmit = async (values: ISprintOptionsFormValues) => {
+    const data = { ...cachedValues, ...values };
+    setValues(data);
+    const result = board.sprintOptions
+      ? await dispatch(
+          updateSprintOptionsOpAction({
+            data,
+            boardId: board.customId,
+            opId: saveOpStatus.opId,
+            deleteOpOnComplete: true,
+          })
+        )
+      : await dispatch(
+          setupSprintsOpAction({
+            data,
+            boardId: board.customId,
+            opId: saveOpStatus.opId,
+            deleteOpOnComplete: true,
+          })
+        );
 
-    const saveOpStatus = useOperation();
-    const errors = saveOpStatus.error
-        ? flattenErrorList(saveOpStatus.error)
-        : undefined;
+    const op = unwrapResult(result);
 
-    const onSubmit = async (values: ISprintOptionsFormValues) => {
-        const data = { ...cachedValues, ...values };
+    if (!op) {
+      return;
+    }
 
-        setValues(data);
+    const opStat = getOpData(op);
 
-        const result = board.sprintOptions
-            ? await dispatch(
-                  updateSprintOptionsOpAction({
-                      data,
-                      boardId: board.customId,
-                      opId: saveOpStatus.opId,
-                      deleteOpOnComplete: true,
-                  })
-              )
-            : await dispatch(
-                  setupSprintsOpAction({
-                      data,
-                      boardId: board.customId,
-                      opId: saveOpStatus.opId,
-                      deleteOpOnComplete: true,
-                  })
-              );
+    if (!board.sprintOptions) {
+      if (opStat.isCompleted) {
+        message.success(SPRINTS_SETUP_SUCCESSFULLY);
 
-        const op = unwrapResult(result);
+        // TODO: route to sprints
+        onClose();
+      } else if (opStat.isError) {
+        message.error(ERROR_SETTING_UP_SPRINTS);
+      }
+    } else {
+      if (opStat.isCompleted) {
+        message.success(SPRINT_OPTIONS_UPDATED_SUCCESSFULLY);
+      } else if (opStat.isError) {
+        message.error(ERROR_UPDATING_SPRINT_OPTIONS);
+      }
+    }
+  };
 
-        if (!op) {
-            return;
-        }
-
-        const opStat = getOpData(op);
-
-        if (!board.sprintOptions) {
-            if (opStat.isCompleted) {
-                message.success(SPRINTS_SETUP_SUCCESSFULLY);
-
-                // TODO: route to sprints
-
-                onClose();
-            } else if (opStat.isError) {
-                message.error(ERROR_SETTING_UP_SPRINTS);
-            }
-        } else {
-            if (opStat.isCompleted) {
-                message.success(SPRINT_OPTIONS_UPDATED_SUCCESSFULLY);
-            } else if (opStat.isError) {
-                message.error(ERROR_UPDATING_SPRINT_OPTIONS);
-            }
-        }
-    };
-
-    return (
-        <SprintOptionsForm
-            value={cachedValues as any}
-            onClose={onClose}
-            sprintOptions={board.sprintOptions}
-            onSubmit={onSubmit}
-            isSubmitting={saveOpStatus.isLoading}
-            errors={errors}
-        />
-    );
+  return (
+    <SprintOptionsForm
+      value={cachedValues as any}
+      onClose={onClose}
+      sprintOptions={board.sprintOptions}
+      onSubmit={onSubmit}
+      isSubmitting={saveOpStatus.isLoading}
+      errors={errors}
+    />
+  );
 };
 
 export default React.memo(SprintOptionsFormContainer);
@@ -100,5 +95,5 @@ export default React.memo(SprintOptionsFormContainer);
 const SPRINTS_SETUP_SUCCESSFULLY = "Sprins setup successfully";
 const ERROR_SETTING_UP_SPRINTS = "Error setting up sprints";
 const SPRINT_OPTIONS_UPDATED_SUCCESSFULLY =
-    "Sprint options updated successfully";
+  "Sprint options updated successfully";
 const ERROR_UPDATING_SPRINT_OPTIONS = "Error updating sprint options";

@@ -9,40 +9,40 @@ import WebHeader from "../web/web0/WebHeader";
 import Web1 from "../web/web1/Web";
 
 function renderComponent(component: any) {
-    return () => {
-        const ComponentX = component;
-        return (
-            <StyledContainer s={{ flexDirection: "column" }}>
-                <WebHeader />
-                <StyledContainer
-                    s={{
-                        width: "100%",
-                        maxWidth: "400px",
-                        justifyContent: "center",
-                        margin: "auto",
-                    }}
-                >
-                    <ComponentX />
-                </StyledContainer>
-            </StyledContainer>
-        );
-    };
+  return () => {
+    const ComponentX = component;
+    return (
+      <StyledContainer s={{ flexDirection: "column" }}>
+        <WebHeader />
+        <StyledContainer
+          s={{
+            width: "100%",
+            maxWidth: "400px",
+            justifyContent: "center",
+            margin: "auto",
+          }}
+        >
+          <ComponentX />
+        </StyledContainer>
+      </StyledContainer>
+    );
+  };
 }
 
 export default function Routes() {
-    return (
-        <Switch>
-            <Route path="/signup" render={renderComponent(SignupContainer)} />
-            <Route path="/login" render={renderComponent(LoginContainer)} />
-            <Route
-                path="/forgot-password"
-                render={renderComponent(ForgotPasswordContainer)}
-            />
-            <Route
-                path="/change-password"
-                render={renderComponent(ChangePasswordWithTokenContainer)}
-            />
-            <Route exact path="/" component={Web1} />
-        </Switch>
-    );
+  return (
+    <Switch>
+      <Route path="/signup" render={renderComponent(SignupContainer)} />
+      <Route path="/login" render={renderComponent(LoginContainer)} />
+      <Route
+        path="/forgot-password"
+        render={renderComponent(ForgotPasswordContainer)}
+      />
+      <Route
+        path="/change-password"
+        render={renderComponent(ChangePasswordWithTokenContainer)}
+      />
+      <Route exact path="/" component={Web1} />
+    </Switch>
+  );
 }

@@ -1,5 +1,5 @@
-import { IUser } from "../../models/user/user";
+import { ICollaborator } from "../../models/collaborator/types";
 
 export interface IUsersState {
-  [key: string]: IUser;
+  [key: string]: ICollaborator;
 }

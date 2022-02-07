@@ -4,125 +4,119 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import {
-    IBlock,
-    IBlockStatus,
-    IBoardTaskResolution,
-    IFormBlock,
+  IBlockStatus,
+  IBoardTaskResolution,
+  IFormBlock,
 } from "../../models/block/block";
-import { updateBlockOpAction } from "../../redux/operations/block/updateBlock";
+import { ITask } from "../../models/task/types";
+import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
-    task: IBlock;
-    statusList: IBlockStatus[];
-    resolutionsList: IBoardTaskResolution[];
-    statusMap: { [key: string]: IBlockStatus };
-    resolutionsMap: { [key: string]: IBoardTaskResolution };
-    onSelectAddNewStatus: () => void;
-    onSelectAddNewResolution: () => void;
-
-    demo?: boolean;
-    className?: string;
+  task: ITask;
+  statusList: IBlockStatus[];
+  resolutionsList: IBoardTaskResolution[];
+  statusMap: { [key: string]: IBlockStatus };
+  resolutionsMap: { [key: string]: IBoardTaskResolution };
+  onSelectAddNewStatus: () => void;
+  onSelectAddNewResolution: () => void;
+  demo?: boolean;
+  className?: string;
 }
 
 const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
-    const { task, demo, statusList } = props;
+  const { task, demo, statusList } = props;
+  const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const onChangeStatus = React.useCallback(
+    async (statusId: string, resolutionId?: string) => {
+      if (demo) {
+        return;
+      }
 
-    const [isLoading, setIsLoading] = React.useState(false);
-    const dispatch: AppDispatch = useDispatch();
+      setIsLoading(true);
+      const lastStatus = statusList[statusList.length - 1];
+      const isLastStatus = statusId === lastStatus.customId;
+      const update: Partial<IFormBlock> = {
+        status: statusId,
+      };
 
-    const onChangeStatus = React.useCallback(
-        async (statusId: string, resolutionId?: string) => {
-            if (demo) {
-                return;
-            }
+      if (!isLastStatus && task.taskResolution) {
+        update.taskResolution = null;
+      }
 
-            setIsLoading(true);
+      if (resolutionId) {
+        update.taskResolution = resolutionId;
+      }
 
-            const lastStatus = statusList[statusList.length - 1];
-            const isLastStatus = statusId === lastStatus.customId;
-            const update: Partial<IFormBlock> = {
-                status: statusId,
-            };
+      const result = await dispatch(
+        updateTaskOpAction({
+          taskId: task.customId,
+          data: update,
+          deleteOpOnComplete: true,
+        })
+      );
 
-            if (!isLastStatus && task.taskResolution) {
-                update.taskResolution = null;
-            }
+      const op = unwrapResult(result);
 
-            if (resolutionId) {
-                update.taskResolution = resolutionId;
-            }
+      if (op) {
+        const opData = getOpData(op);
 
-            const result = await dispatch(
-                updateBlockOpAction({
-                    blockId: task.customId,
-                    data: update,
-                    deleteOpOnComplete: true,
-                })
-            );
+        if (opData.isError) {
+          message.error("Error updating task status.");
+        }
+      }
 
-            const op = unwrapResult(result);
+      setIsLoading(false);
+    },
+    [demo, dispatch, statusList, task.customId, task.taskResolution]
+  );
 
-            if (op) {
-                const opData = getOpData(op);
+  const onChangeResolution = React.useCallback(
+    async (value) => {
+      if (demo) {
+        return;
+      }
 
-                if (opData.isError) {
-                    message.error("Error updating task status");
-                }
-            }
+      setIsLoading(true);
+      const result = await dispatch(
+        updateTaskOpAction({
+          taskId: task.customId,
+          data: {
+            taskResolution: value,
+          },
+          deleteOpOnComplete: true,
+        })
+      );
 
-            // toggleLoading();
-            setIsLoading(false);
-        },
-        [demo, dispatch, statusList, task.customId, task.taskResolution]
-    );
+      const op = unwrapResult(result);
 
-    const onChangeResolution = React.useCallback(
-        async (value) => {
-            if (demo) {
-                return;
-            }
+      if (op) {
+        const opStat = getOpData(op);
 
-            setIsLoading(true);
+        if (opStat.isError) {
+          message.error("Error updating task resolution.");
+        }
+      }
 
-            const result = await dispatch(
-                updateBlockOpAction({
-                    blockId: task.customId,
-                    data: {
-                        taskResolution: value,
-                    },
-                    deleteOpOnComplete: true,
-                })
-            );
+      setIsLoading(false);
+    },
+    [demo, dispatch, task.customId]
+  );
 
-            const op = unwrapResult(result);
+  if (isLoading) {
+    return <LoadingOutlined />;
+  }
 
-            if (op) {
-                const opStat = getOpData(op);
-
-                if (opStat.isError) {
-                    message.error("Error updating task resolution");
-                }
-            }
-
-            setIsLoading(false);
-        },
-        [demo, dispatch, task.customId]
-    );
-
-    if (isLoading) {
-        return <LoadingOutlined />;
-    }
-
-    return (
-        <TaskStatus
-            {...props}
-            onChangeStatus={onChangeStatus}
-            onChangeResolution={onChangeResolution}
-        />
-    );
+  return (
+    <TaskStatus
+      {...props}
+      onChangeStatus={onChangeStatus}
+      onChangeResolution={onChangeResolution}
+    />
+  );
 };
 
 export default React.memo(TaskStatusContainer);
