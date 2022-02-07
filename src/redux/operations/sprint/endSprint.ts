@@ -2,12 +2,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getDateString, getNewId } from "../../../utils/utils";
-import BlockActions from "../../blocks/actions";
+import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
+import TaskActions from "../../tasks/actions";
 import { getSprintTasks } from "../../tasks/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -84,7 +85,7 @@ export const endSprintOpAction = createAsyncThunk<
 
 export function completeEndSprint(sprint: ISprint, date: string) {
   store.dispatch(
-    BlockActions.updateBlock({
+    BoardActions.update({
       id: sprint.boardId,
       data: {
         currentSprintId: null,
@@ -137,5 +138,5 @@ export function completeEndSprint(sprint: ISprint, date: string) {
     },
   }));
 
-  store.dispatch(BlockActions.bulkUpdateBlocks(incompleteTasksUpdates));
+  store.dispatch(TaskActions.bulkUpdate(incompleteTasksUpdates));
 }

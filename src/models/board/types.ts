@@ -28,7 +28,7 @@ export interface IBoard {
   boardStatuses: Array<IBlockStatus>;
   boardLabels: IBlockLabel[];
   boardResolutions: IBoardStatusResolution[];
-  currentSprintId?: string;
+  currentSprintId?: string | null;
   sprintOptions?: IBoardSprintOptions;
   lastSprintId?: string;
 

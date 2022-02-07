@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import blocksReducer from "./blocks/reducer";
 import boardsReducer from "./boards/reducer";
 import collaborationRequestsReducer from "./collaborationRequests/reducer";
 import commentsReducer from "./comments/reducer";
@@ -14,7 +13,6 @@ import tasksReducer from "./tasks/reducer";
 import usersReducer from "./users/reducer";
 
 const reducer = combineReducers({
-  blocks: blocksReducer,
   users: usersReducer,
   session: sessionReducer,
   operations: operationsReducer,

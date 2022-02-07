@@ -3,15 +3,12 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import {
-  IBlockStatus,
-  IBoardTaskResolution,
-  IFormBlock,
-} from "../../models/block/block";
+import { IBlockStatus, IBoardTaskResolution } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
 import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
+import { ITaskFormValues } from "./TaskForm";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {
@@ -39,7 +36,7 @@ const TaskStatusContainer: React.FC<ITaskStatusContainerProps> = (props) => {
       setIsLoading(true);
       const lastStatus = statusList[statusList.length - 1];
       const isLastStatus = statusId === lastStatus.customId;
-      const update: Partial<IFormBlock> = {
+      const update: Partial<ITaskFormValues> = {
         status: statusId,
       };
 

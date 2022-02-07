@@ -536,3 +536,7 @@ export function processComplexTypeInput<T, Update, Add = Update>(
 
   return items;
 }
+
+export function notImplementedYet() {
+  throw new Error("Method not implemented yet!");
+}

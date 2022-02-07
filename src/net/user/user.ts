@@ -1,249 +1,172 @@
-import { IBlock } from "../../models/block/block";
-import {
-    CollaborationRequestResponse,
-    INotification,
-} from "../../models/notification/notification";
 import { IUser, IPersistedClient } from "../../models/user/user";
 import auth from "../auth";
 import query from "../query";
 import {
-    GetEndpointResult,
-    GetEndpointResultError,
-    IEndpointResultBase,
+  GetEndpointResult,
+  GetEndpointResultError,
+  IEndpointResultBase,
 } from "../types";
 import {
-    changePasswordMutation,
-    changePasswordWithTokenMutation,
-    forgotPasswordMutation,
-    getUserDataQuery,
-    getUserNotificationsQuery,
-    markNotificationReadMutation,
-    respondToCollaborationRequestMutation,
-    updateClientMutation,
-    updateUserMutation,
-    userExistsQuery,
-    userLoginMutation,
-    userSignupMutation,
+  changePasswordMutation,
+  changePasswordWithTokenMutation,
+  forgotPasswordMutation,
+  getUserDataQuery,
+  updateClientMutation,
+  updateUserMutation,
+  userExistsQuery,
+  userLoginMutation,
+  userSignupMutation,
 } from "./schema";
 
 export type IUserLoginResult = GetEndpointResult<{
-    user: IUser;
-    client: IPersistedClient;
-    token: string;
+  user: IUser;
+  client: IPersistedClient;
+  token: string;
 }>;
 
 export interface ISignupAPIProps {
-    user: {
-        name: string;
-        password: string;
-        email: string;
-        color: string;
-    };
+  user: {
+    name: string;
+    password: string;
+    email: string;
+    color: string;
+  };
 }
 
 async function signup(props: ISignupAPIProps): Promise<IUserLoginResult> {
-    const result = await query(
-        null,
-        userSignupMutation,
-        props,
-        "data.user.signup"
-    );
+  const result = await query(
+    null,
+    userSignupMutation,
+    props,
+    "data.user.signup"
+  );
 
-    return result;
+  return result;
 }
 
 export interface ILoginAPIProps {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 async function login(props: ILoginAPIProps): Promise<IUserLoginResult> {
-    const result = await query(
-        null,
-        userLoginMutation,
-        props,
-        "data.user.login"
-    );
+  const result = await query(null, userLoginMutation, props, "data.user.login");
 
-    return result;
+  return result;
 }
 
 export interface IUpdateUserAPIProps {
-    data: {
-        name?: string;
-        notificationsLastCheckedAt?: Date;
-        color?: string;
-        email?: string;
-    };
+  data: {
+    name?: string;
+    notificationsLastCheckedAt?: Date;
+    color?: string;
+    email?: string;
+  };
 }
 
 export type IUpdateUserEndpointErrors =
-    GetEndpointResultError<IUpdateUserAPIProps>;
+  GetEndpointResultError<IUpdateUserAPIProps>;
 
 async function updateUser(
-    props: IUpdateUserAPIProps
+  props: IUpdateUserAPIProps
 ): Promise<IUserLoginResult> {
-    return auth(null, updateUserMutation, props, "data.user.updateUser");
+  return auth(null, updateUserMutation, props, "data.user.updateUser");
 }
 
 export interface IChangePasswordAPIProps {
-    currentPassword: string;
-    password: string;
+  currentPassword: string;
+  password: string;
 }
 
 async function changePassword(
-    props: IChangePasswordAPIProps
+  props: IChangePasswordAPIProps
 ): Promise<IUserLoginResult> {
-    const result = await auth(
-        null,
-        changePasswordMutation,
-        { password: props.password, currentPassword: props.currentPassword },
-        "data.user.changePassword"
-    );
+  const result = await auth(
+    null,
+    changePasswordMutation,
+    { password: props.password, currentPassword: props.currentPassword },
+    "data.user.changePassword"
+  );
 
-    return result;
+  return result;
 }
 
 export interface IForgotPasswordAPIProps {
-    email: string;
+  email: string;
 }
 
 async function forgotPassword(
-    props: IForgotPasswordAPIProps
+  props: IForgotPasswordAPIProps
 ): Promise<IEndpointResultBase> {
-    return query(
-        null,
-        forgotPasswordMutation,
-        props,
-        "data.user.forgotPassword"
-    );
+  return query(null, forgotPasswordMutation, props, "data.user.forgotPassword");
 }
 
 export interface IUserExistsAPIParams {
-    email: string;
+  email: string;
 }
 
 export type IUserExistsAPIResult = GetEndpointResult<{
-    exists: boolean;
+  exists: boolean;
 }>;
 
 async function userExists(
-    props: IUserExistsAPIParams
+  props: IUserExistsAPIParams
 ): Promise<IUserExistsAPIResult> {
-    return query(null, userExistsQuery, props, "data.user.userExists");
-}
-
-export interface IMarkNotificationReadAPIParams {
-    notificationId: string;
-    readAt: string;
-}
-
-async function markNotificationRead(
-    props: IMarkNotificationReadAPIParams
-): Promise<IEndpointResultBase> {
-    return auth(
-        null,
-        markNotificationReadMutation,
-        props,
-        "data.user.markNotificationRead"
-    );
+  return query(null, userExistsQuery, props, "data.user.userExists");
 }
 
 export interface IChangePasswordWithTokenAPIParams {
-    password: string;
-    token: string;
+  password: string;
+  token: string;
 }
 
 async function changePasswordWithToken(
-    props: IChangePasswordWithTokenAPIParams
+  props: IChangePasswordWithTokenAPIParams
 ): Promise<IUserLoginResult> {
-    return auth(
-        null,
-        changePasswordWithTokenMutation,
-        { password: props.password },
-        "data.user.changePasswordWithToken",
-        props.token
-    );
-}
-
-export interface IRespondToCollaborationRequestAPIParams {
-    requestId: string;
-    response: CollaborationRequestResponse;
-}
-
-export type IRespondToCollaborationRequestAPIResult = GetEndpointResult<{
-    block?: IBlock;
-    respondedAt: string;
-}>;
-
-async function respondToCollaborationRequest(
-    params: IRespondToCollaborationRequestAPIParams
-): Promise<IRespondToCollaborationRequestAPIResult> {
-    return auth(
-        null,
-        respondToCollaborationRequestMutation,
-        params,
-        "data.user.respondToCollaborationRequest"
-    );
+  return auth(
+    null,
+    changePasswordWithTokenMutation,
+    { password: props.password },
+    "data.user.changePasswordWithToken",
+    props.token
+  );
 }
 
 export interface IUpdateClientEndpointParams {
-    data: Omit<IPersistedClient, "clientId">;
+  data: Omit<IPersistedClient, "clientId">;
 }
 
 export type IUpdateClientEndpointResult = GetEndpointResult<{
-    client: IPersistedClient;
+  client: IPersistedClient;
 }>;
 
 export type IUpdateClientEndpointErrors =
-    GetEndpointResultError<IUpdateClientEndpointParams>;
+  GetEndpointResultError<IUpdateClientEndpointParams>;
 
 async function updateClient(
-    params: IUpdateClientEndpointParams
+  params: IUpdateClientEndpointParams
 ): Promise<IUpdateClientEndpointResult> {
-    return auth(null, updateClientMutation, params, "data.user.updateClient");
-}
-
-export type IGetUserNotificationsAPIResult = GetEndpointResult<{
-    requests: INotification[];
-}>;
-
-async function getUserNotifications(): Promise<IGetUserNotificationsAPIResult> {
-    return auth(
-        null,
-        getUserNotificationsQuery,
-        {},
-        "data.user.getUserNotifications"
-    );
+  return auth(null, updateClientMutation, params, "data.user.updateClient");
 }
 
 export interface IGetUserDataAPIParams {
-    token: string;
+  token: string;
 }
 
 async function getUserData(
-    props: IGetUserDataAPIParams
+  props: IGetUserDataAPIParams
 ): Promise<IUserLoginResult> {
-    return auth(
-        null,
-        getUserDataQuery,
-        {},
-        "data.user.getUserData",
-        props.token
-    );
+  return auth(null, getUserDataQuery, {}, "data.user.getUserData", props.token);
 }
 
 export default class UserAPI {
-    public static signup = signup;
-    public static login = login;
-    public static updateUser = updateUser;
-    public static changePassword = changePassword;
-    public static forgotPassword = forgotPassword;
-    public static userExists = userExists;
-    public static markNotificationRead = markNotificationRead;
-    public static changePasswordWithToken = changePasswordWithToken;
-    public static respondToCollaborationRequest = respondToCollaborationRequest;
-    public static getUserNotifications = getUserNotifications;
-    public static getUserData = getUserData;
-    public static updateClient = updateClient;
+  public static signup = signup;
+  public static login = login;
+  public static updateUser = updateUser;
+  public static changePassword = changePassword;
+  public static forgotPassword = forgotPassword;
+  public static userExists = userExists;
+  public static changePasswordWithToken = changePasswordWithToken;
+  public static getUserData = getUserData;
+  public static updateClient = updateClient;
 }

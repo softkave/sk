@@ -4,7 +4,6 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { IBlockStatusInput } from "../../models/block/block";
 import { IBoard } from "../../models/board/types";
-import { IAddBlockEndpointErrors } from "../../net/block/types";
 import { updateBoardOpAction } from "../../redux/operations/board/updateBoard";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
@@ -20,7 +19,7 @@ const StatusListContainer: React.FC<IStatusListContainerProps> = (props) => {
   const { board } = props;
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<
-    IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    IFormError<Record<string, any>> | undefined
   >();
 
   const dispatch: AppDispatch = useDispatch();

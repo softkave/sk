@@ -68,6 +68,7 @@ export const messages = {
 
   // organization
   organizationNotFound: "Organization not found.",
+  organizationExists: "Organization exists.",
 
   // board
   boardNotFound: "Board not found.",
