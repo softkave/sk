@@ -4,9 +4,9 @@ import CommentAPI, {
   IGetTaskCommentsAPIParams,
 } from "../../../net/comments/comment";
 import { getNewId } from "../../../utils/utils";
-import BlockActions from "../../blocks/actions";
 import CommentActions from "../../comments/actions";
 import SessionSelectors from "../../session/selectors";
+import TaskActions from "../../tasks/actions";
 import TaskSelectors from "../../tasks/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import { IOperation, isOperationStarted, OperationStatus } from "../operation";
@@ -38,7 +38,7 @@ export const loadTaskCommentsOpAction = createAsyncThunk<
   };
 
   thunkAPI.dispatch(
-    BlockActions.updateBlock({
+    TaskActions.update({
       id: task.customId,
       data: {
         taskCommentOp: operation,
@@ -82,7 +82,7 @@ export const loadTaskCommentsOpAction = createAsyncThunk<
     };
 
     thunkAPI.dispatch(
-      BlockActions.updateBlock({
+      TaskActions.update({
         id: task.customId,
         data: {
           taskCommentOp: operation,
@@ -102,7 +102,7 @@ export const loadTaskCommentsOpAction = createAsyncThunk<
     };
 
     thunkAPI.dispatch(
-      BlockActions.updateBlock({
+      TaskActions.update({
         id: task.customId,
         data: {
           taskCommentOp: operation,

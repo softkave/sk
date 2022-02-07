@@ -1,4 +1,3 @@
-import path from "path-browserify";
 import { BlockType, IBlock } from "../../models/block/block";
 import { pluralize } from "../../utils/utils";
 import { BoardResourceType } from "./types";
@@ -31,19 +30,3 @@ export const getBlockResourceTypes = (
 
   return blockResourceTypes;
 };
-
-export const getBlockPath = (b: IBlock, parentPath?: string) => {
-  const type = b.type;
-  const blockPath = `/${pluralize(type)}/${b.customId}`;
-  return path.normalize(`${parentPath ? parentPath : ""}${blockPath}`);
-};
-
-export const getBlocksPath = (blocks: IBlock[]) => {
-  const blocksPath = `/app${blocks
-    .map((block) => getBlockPath(block))
-    .join("")}`;
-
-  return path.normalize(blocksPath);
-};
-
-export const TASK_GROUPS = ["status", "labels"];

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IAppOrganization } from "../../models/organization/types";
-import { IAddCollaboratorEndpointErrors } from "../../net/block/types";
 import CollaborationRequestSelectors from "../../redux/collaborationRequests/selectors";
 import { addCollaboratorsOpAction } from "../../redux/operations/collaborationRequest/addCollaborators";
 import OrganizationSelectors from "../../redux/organizations/selectors";
@@ -51,7 +50,7 @@ const AddCollaboratorFormContainer: React.FC<
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<
-    IFormError<IAddCollaboratorEndpointErrors> | undefined
+    IFormError<Record<string, any>> | undefined
   >();
 
   const onSubmit = async (values: IAddCollaboratorFormValues) => {

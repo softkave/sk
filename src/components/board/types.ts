@@ -1,4 +1,3 @@
-import { BlockType, IBlock } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
 
 export type BoardResourceType =
@@ -15,16 +14,6 @@ export interface IBlockPathMatch {
 export interface IBoardResourceTypePathMatch {
   resourceType: BoardResourceType;
 }
-
-export type OnClickBlock = (blocks: IBlock[]) => void;
-export type OnClickBlockWithSearchParamKey = (
-  blocks: IBlock[],
-  searchParamKey?: string
-) => void;
-export type OnClickUpdateBlock = (block: IBlock) => void;
-export type OnClickAddBlock = (parent: IBlock, type: BlockType) => void;
-export type OnClickAddCollaborator = () => void;
-export type OnClickDeleteBlock = (block: IBlock) => void;
 
 export type BoardGroupableFields = "assignees" | "labels" | "status" | "sprint";
 

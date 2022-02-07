@@ -1,9 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IBlock } from "../../../models/block/block";
+import { IBoard } from "../../../models/board/types";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI, { IAddSprintAPIParams } from "../../../net/sprint/sprint";
 import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
-import BlockActions from "../../blocks/actions";
+import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
@@ -95,7 +95,7 @@ export const addSprintOpAction = createAsyncThunk<
   return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export function completeAddSprint(sprint: ISprint, board: IBlock) {
+export function completeAddSprint(sprint: ISprint, board: IBoard) {
   if (board.lastSprintId) {
     store.dispatch(
       SprintActions.updateSprint({
@@ -108,7 +108,7 @@ export function completeAddSprint(sprint: ISprint, board: IBlock) {
   }
 
   store.dispatch(
-    BlockActions.updateBlock({
+    BoardActions.update({
       id: sprint.boardId,
       data: {
         lastSprintId: sprint.customId,

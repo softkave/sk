@@ -13,7 +13,7 @@ import Message from "../Message";
 import OrgsListHeader from "../org/OrgsListHeader";
 import BoardContainer from "./BoardContainer";
 import OrgBoardHeader from "./OrgBoardHeader";
-import { IBoardResourceTypePathMatch, OnClickAddCollaborator } from "./types";
+import { IBoardResourceTypePathMatch } from "./types";
 import {
   getBlockResourceTypes,
   getBoardResourceTypeDisplayName,
@@ -42,7 +42,7 @@ export interface IOrgBoardProps {
   onClickUpdateOrganization: () => void;
   onClickAddBoard: () => void;
   onClickBoard: (board: IBoard) => void;
-  onAddCollaborator: OnClickAddCollaborator;
+  onAddCollaborator: () => void;
   onClickDeleteBoard: (board: IBoard) => void;
 }
 

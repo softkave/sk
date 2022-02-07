@@ -1,14 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IBlock } from "../../../models/block/block";
+import { IBoard } from "../../../models/board/types";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
-import BlockActions from "../../blocks/actions";
+import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
 import SessionSelectors from "../../session/selectors";
 import SprintActions, { IUpdateSprintActionArgs } from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
+import TaskActions from "../../tasks/actions";
 import { getSprintTasks } from "../../tasks/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
 import {
@@ -80,8 +81,8 @@ export const deleteSprintOpAction = createAsyncThunk<
   return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export function completeDeleteSprint(sprint: ISprint, board: IBlock) {
-  const boardUpdates: Partial<IBlock> = {};
+export function completeDeleteSprint(sprint: ISprint, board: IBoard) {
+  const boardUpdates: Partial<IBoard> = {};
 
   if (sprint.customId === board.lastSprintId) {
     boardUpdates.lastSprintId = sprint.prevSprintId;
@@ -90,7 +91,7 @@ export function completeDeleteSprint(sprint: ISprint, board: IBlock) {
   if (Object.keys(boardUpdates).length > 0) {
     // If has board updates
     store.dispatch(
-      BlockActions.updateBlock({
+      BoardActions.update({
         id: board.customId,
         data: boardUpdates,
       })
@@ -100,7 +101,7 @@ export function completeDeleteSprint(sprint: ISprint, board: IBlock) {
   const tasks = getSprintTasks(store.getState(), sprint.customId);
 
   store.dispatch(
-    BlockActions.bulkUpdateBlocks(
+    TaskActions.bulkUpdate(
       tasks.map((task) => {
         return {
           id: task.customId,

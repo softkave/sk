@@ -1,7 +1,7 @@
 import { Button, Form } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
-import { blockErrorMessages } from "../../models/block/blockErrorMessages";
+import { messages } from "../../models/messages";
 import { IAppOrganization } from "../../models/organization/types";
 import blockValidationSchemas from "../block/validation";
 import ColorPicker from "../forms/ColorPicker";
@@ -60,18 +60,18 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     errorMessages: IFormikFormErrors<IEditOrgFormValues>
   ) => {
     if (errorMessages) {
-      let messages: string[] = [];
+      let funcErrors: string[] = [];
 
       if (errorMessages.error) {
-        messages = messages.concat(errorMessages.error);
+        funcErrors = funcErrors.concat(errorMessages.error);
       }
 
       if (errorMessages.name) {
-        messages = messages.concat(errorMessages.name);
+        funcErrors = funcErrors.concat(errorMessages.name);
       }
 
-      return messages.find((message) => {
-        return message === blockErrorMessages.orgExists;
+      return funcErrors.find((message) => {
+        return message === messages.organizationExists;
       });
     }
   };

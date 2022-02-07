@@ -1,4 +1,3 @@
-import assert from "assert";
 import isFunction from "lodash/isFunction";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ import {
   isOperationError,
   isOperationStartedOrPending,
 } from "../../redux/operations/operation";
-import OperationType from "../../redux/operations/OperationType";
 import OperationSelectors, {
   IQueryFilterOperationSelector,
 } from "../../redux/operations/selectors";

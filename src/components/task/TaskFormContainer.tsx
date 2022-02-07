@@ -11,7 +11,6 @@ import { ISprint } from "../../models/sprint/types";
 import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { ITask } from "../../models/task/types";
 import { newTaskForm } from "../../models/task/utils";
-import { IAddBlockEndpointErrors } from "../../net/block/types";
 import BoardSelectors from "../../redux/boards/selectors";
 import OrganizationSelectors from "../../redux/organizations/selectors";
 import SessionSelectors from "../../redux/session/selectors";
@@ -119,7 +118,7 @@ const TaskFormContainer: React.FC<ITaskFormContainerProps> = (props) => {
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<
-    IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    IFormError<Record<string, any>> | undefined
   >();
 
   const possibleParents = useSelector<IAppState, IBoard[]>((state) => {

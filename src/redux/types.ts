@@ -1,6 +1,5 @@
 import { AnyAction, Dispatch, ThunkDispatch } from "@reduxjs/toolkit";
 import { IMergeDataMeta } from "../utils/utils";
-import { IBlocksState } from "./blocks/types";
 import { IBoardsState } from "./boards/types";
 import { ICollaborationRequestsState } from "./collaborationRequests/types";
 import { ICommentsState } from "./comments/types";
@@ -14,7 +13,6 @@ import { ITasksState } from "./tasks/types";
 import { IUsersState } from "./users/types";
 
 export interface IAppState {
-  blocks: IBlocksState;
   users: IUsersState;
   session: ISessionState;
   operations: IOperationState;

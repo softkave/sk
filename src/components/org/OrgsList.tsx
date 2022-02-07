@@ -8,7 +8,6 @@ import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import BlockThumbnail from "../block/BlockThumnail";
 import { getRequestStatus } from "../collaborator/utils";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
 import OrgCollaborationRequestThumbnail from "./OrgCollaborationRequestThumbnail";
 
 export interface IOrgsListProps {
@@ -63,25 +62,6 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
   if (orgs.length === 0 && requests.length === 0) {
     return <Message message="Create an organization to get started." />;
   }
-
-  const wrap = (key: string, node: React.ReactNode, onClick: any) => {
-    return (
-      <StyledContainer
-        key={key}
-        s={{
-          padding: "8px 16px",
-          cursor: "pointer",
-
-          "& .ant-tag": {
-            cursor: "pointer",
-          },
-        }}
-        onClick={onClick}
-      >
-        {node}
-      </StyledContainer>
-    );
-  };
 
   let isPrevGroupRendered = false;
   const hasOrgs = orgs.length > 0;

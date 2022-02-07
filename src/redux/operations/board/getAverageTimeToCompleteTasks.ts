@@ -1,8 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import BlockAPI, {
-  IGetAverageTimeToCompleteTasksEndpointParams,
-} from "../../../net/block/block";
-import { getNewId } from "../../../utils/utils";
+import { getNewId, notImplementedYet } from "../../../utils/utils";
 import BoardActions from "../../boards/actions";
 import SessionSelectors from "../../session/selectors";
 import { IAppAsyncThunkConfig } from "../../types";
@@ -20,7 +17,7 @@ import { GetOperationActionArgs } from "../types";
 
 export const getAverageTimeToCompleteTasksOpAction = createAsyncThunk<
   IOperation | undefined,
-  GetOperationActionArgs<IGetAverageTimeToCompleteTasksEndpointParams>,
+  GetOperationActionArgs<{ boardId: string }>,
   IAppAsyncThunkConfig
 >("op/block/getAverageTimeToCompleteTasks", async (args, thunkAPI) => {
   const opId = args.opId || getNewId();
@@ -46,15 +43,7 @@ export const getAverageTimeToCompleteTasksOpAction = createAsyncThunk<
     let avg = 0;
 
     if (!isDemoMode) {
-      const result = await BlockAPI.getAverageTimeToCompleteTasks({
-        boardId: args.boardId,
-      });
-
-      if (result && result.errors) {
-        throw result.errors;
-      }
-
-      avg = result.avg;
+      notImplementedYet();
     }
 
     thunkAPI.dispatch(

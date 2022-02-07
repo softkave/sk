@@ -10,15 +10,12 @@ import {
   DroppableStateSnapshot,
   DropResult,
 } from "react-beautiful-dnd";
-import {
-  IBlockAssignedLabel,
-  IFormBlock,
-  ITaskAssignee,
-} from "../../models/block/block";
+import { IBlockAssignedLabel, ITaskAssignee } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
 import { getDateString } from "../../utils/utils";
 import Message from "../Message";
 import StyledContainer from "../styled/Container";
+import { ITaskFormValues } from "../task/TaskForm";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
@@ -277,7 +274,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
       }
 
       const destinationId = result.destination.droppableId;
-      const update: Partial<IFormBlock> = {};
+      const update: Partial<ITaskFormValues> = {};
 
       switch (groupFieldName) {
         case "assignees": {

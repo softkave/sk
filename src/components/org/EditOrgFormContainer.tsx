@@ -8,7 +8,6 @@ import {
   formOrganizationFromExisting,
   newFormOrganization,
 } from "../../models/organization/utils";
-import { IAddBlockEndpointErrors } from "../../net/block/types";
 import OperationActions from "../../redux/operations/actions";
 import { createOrganizationOpAction } from "../../redux/operations/organization/createOrganization";
 import { updateOrganizationOpAction } from "../../redux/operations/organization/updateOrganization";
@@ -35,7 +34,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
 
   const [loading, setLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<
-    IFormError<IAddBlockEndpointErrors["block"]> | undefined
+    IFormError<Record<string, any>> | undefined
   >();
 
   const onSubmit = async (values: IEditOrgFormValues) => {

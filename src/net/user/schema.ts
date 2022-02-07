@@ -1,9 +1,8 @@
-import { blockFragment } from "../block/schema";
 import {
-    clientFragment,
-    errorFragment,
-    notificationFragment,
-    userFragment,
+  clientFragment,
+  errorFragment,
+  notificationFragment,
+  userFragment,
 } from "../fragments";
 
 export const userExistsQuery = `
@@ -152,26 +151,6 @@ export const markNotificationReadMutation = `
                 errors {
                     ...errorFragment
                 }
-            }
-        }
-    }
-`;
-
-export const respondToCollaborationRequestMutation = `
-    ${blockFragment}
-    ${errorFragment}
-    mutation RespondToCollaborationRequestMutation (
-        $requestId: String!, $response: String!
-    ) {
-        user {
-            respondToCollaborationRequest (requestId: $requestId, response: $response) {
-                errors {
-                    ...errorFragment
-                }
-                block {
-                    ...blockFragment
-                }
-                respondedAt
             }
         }
     }
