@@ -1,38 +1,40 @@
+import { SystemResourceType } from "../../models/app/types";
 import { IChat } from "../../models/chat/types";
 
 export interface IKeyValueState {
-    [key: string]: any;
+  [key: string]: any;
 }
 
 export enum KeyValueKeys {
-    ShowAppMenu = "showAppMenu",
-    ShowOrgMenu = "showOrgMenu",
-    ShowNewOrgForm = "showNewOrgForm",
-    RootBlocksLoaded = "rootBlocksLoaded",
-    RoomsSubscribedTo = "roomsSubscribedTo",
-    SocketDisconnectedAt = "socketDisconnectedAt",
-    SocketConnected = "socketConnected",
-    FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
-    UnseenChatsCountByOrg = "unseenChatsCountByOrg",
-    QueuedChats = "queuedChats",
-    LoginAgain = "loginAgain",
-    SubscribeToPushNotifications = "SubscribeToPushNotifications",
-    IsAppHidden = "isAppHidden",
+  ShowAppMenu = "showAppMenu",
+  ShowOrgMenu = "showOrgMenu",
+  ShowNewOrgForm = "showNewOrgForm",
+  RootBlocksLoaded = "rootBlocksLoaded",
+  RoomsSubscribedTo = "roomsSubscribedTo",
+  SocketDisconnectedAt = "socketDisconnectedAt",
+  SocketConnected = "socketConnected",
+  FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
+  UnseenChatsCountByOrg = "unseenChatsCountByOrg",
+  QueuedChats = "queuedChats",
+  LoginAgain = "loginAgain",
+  SubscribeToPushNotifications = "SubscribeToPushNotifications",
+  IsAppHidden = "isAppHidden",
 }
 
 export interface IUnseenChatsCountByOrg {
-    [key: string]: number;
+  [key: string]: number;
 }
 
 export type ResourceType = "board" | "org" | "user" | "room";
 
 export interface IRoomLikeResource {
-    customId: string;
-    type: ResourceType;
+  customId: string;
+  type: ResourceType;
+  subRoom?: SystemResourceType.Sprint | SystemResourceType.Task;
 }
 
 export type ClientSubscribedResources = IRoomLikeResource[];
 
 export interface IQueuedChatsByRoomId {
-    [key: string]: Array<IChat & { chatIndex: number }>;
+  [key: string]: Array<IChat & { chatIndex: number }>;
 }

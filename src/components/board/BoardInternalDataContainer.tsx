@@ -11,7 +11,6 @@ import subscribeEvent from "../../net/socket/outgoing/subscribeEvent";
 import unsubcribeEvent from "../../net/socket/outgoing/unsubscribeEvent";
 import { getBoardTasksOpAction } from "../../redux/operations/task/getBoardTasks";
 import OperationType from "../../redux/operations/OperationType";
-import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
 import { getSprintsOpAction } from "../../redux/operations/sprint/getSprints";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
@@ -26,6 +25,8 @@ import Board from "./Board";
 import { IBoardResourceTypePathMatch } from "./types";
 import { IBoard } from "../../models/board/types";
 import { appBoardRoutes } from "../../models/board/utils";
+import { updateSprintOpAction } from "../../redux/operations/sprint/updateSprint";
+import { getDateString } from "../../utils/utils";
 
 export interface IBoardInternalDataContainerProps {
   board: IBoard;
@@ -117,9 +118,12 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
   // TODO: this code is duplicated in SprintsContainer
   const closeSprint = async (sprintId: string) => {
     const result = await dispatch(
-      endSprintOpAction({
+      updateSprintOpAction({
         sprintId,
         deleteOpOnComplete: true,
+        data: {
+          endDate: getDateString(),
+        },
       })
     );
 
@@ -147,7 +151,6 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
     }
 
     const remainingWorkingDays = getSprintRemainingWorkingDays(currentSprint);
-
     let promptMessage = END_SPRINT_PROMPT_MESSAGE;
 
     if (remainingWorkingDays > 0) {
@@ -170,7 +173,6 @@ const BoardInternalDataContainer: React.FC<IBoardInternalDataContainerProps> = (
 
   React.useEffect(() => {
     subscribeEvent([{ type: board.type as any, customId: board.customId }]);
-
     return () => {
       unsubcribeEvent([{ type: board.type as any, customId: board.customId }]);
     };

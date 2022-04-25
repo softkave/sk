@@ -15,47 +15,44 @@ import { devError } from "../utils/log";
 const fifteenSeconds = 15;
 
 const ExistentialRenderer: React.FC<{}> = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const loginAgain = useSelector<IAppState, boolean>((state) =>
+    KeyValueSelectors.getKey(state, KeyValueKeys.LoginAgain)
+  );
 
-    const loginAgain = useSelector<IAppState, boolean>((state) =>
-        KeyValueSelectors.getKey(state, KeyValueKeys.LoginAgain)
-    );
+  const isAppHidden = useSelector<IAppState, boolean>((state) =>
+    KeyValueSelectors.getKey(state, KeyValueKeys.IsAppHidden)
+  );
 
-    const isAppHidden = useSelector<IAppState, boolean>((state) =>
-        KeyValueSelectors.getKey(state, KeyValueKeys.IsAppHidden)
-    );
+  const isLoggedIn = useSelector(SessionSelectors.isUserSignedIn);
+  React.useEffect(() => {
+    if (loginAgain) {
+      notification.error({
+        message: "Please login again",
+        description: "Error processing your request, please login again.",
+        duration: fifteenSeconds,
+      });
 
-    const isLoggedIn = useSelector(SessionSelectors.isUserSignedIn);
+      dispatch(
+        KeyValueActions.setKey({
+          key: KeyValueKeys.LoginAgain,
+          value: false,
+        })
+      );
+    }
+  }, [loginAgain, dispatch]);
 
-    React.useEffect(() => {
-        if (loginAgain) {
-            notification.error({
-                message: "Please login again",
-                description:
-                    "Error processing your request, please login again.",
-                duration: fifteenSeconds,
-            });
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      // TODO: we should also disconnect the socket maybe after 15 minutes
+      // of app being hidden, and reload the window URL when the user returns
+      updateSocketEntryEvent({
+        isActive: !isAppHidden,
+      }).catch(devError);
+    }
+  }, [isLoggedIn, isAppHidden]);
 
-            dispatch(
-                KeyValueActions.setKey({
-                    key: KeyValueKeys.LoginAgain,
-                    value: false,
-                })
-            );
-        }
-    }, [loginAgain, dispatch]);
-
-    React.useEffect(() => {
-        if (isLoggedIn) {
-            // TODO: we should also disconnect the socket maybe after 15 minutes
-            // of app being hidden, and reload the window URL when the user returns
-            updateSocketEntryEvent({
-                isInactive: isAppHidden,
-            }).catch(devError);
-        }
-    }, [isLoggedIn, isAppHidden]);
-
-    return null;
+  return null;
 };
 
 export default ExistentialRenderer;
