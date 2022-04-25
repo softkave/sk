@@ -1,8 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import assert from "assert";
 import isNumber from "lodash/isNumber";
-import moment, { Moment } from "moment";
+import moment from "moment";
+import { SystemResourceType } from "../../../models/app/types";
 import { IChat, IRoom } from "../../../models/chat/types";
-import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
+import {
+  getRoomFromPersistedRoom,
+  getUserRoomMemberData,
+} from "../../../models/chat/utils";
 import ChatAPI, { IPersistedRoom } from "../../../net/chat/chat";
 import subscribeEvent from "../../../net/socket/outgoing/subscribeEvent";
 import { getNewId } from "../../../utils/utils";
@@ -67,7 +72,10 @@ export const getUserRoomsAndChatsOpAction = createAsyncThunk<
     );
 
     subscribeEvent(
-      roomsList.map((room) => ({ customId: room.customId, type: "room" }))
+      roomsList.map((room) => ({
+        customId: room.customId,
+        type: SystemResourceType.Room,
+      }))
     );
 
     thunkAPI.dispatch(
@@ -122,10 +130,8 @@ function prepareChats(
       }
     });
 
-    const member = room.members.find((m) => m.userId === userId)!;
-    const readCounter = moment(member.readCounter);
     const { unseenChatsCount, unseenChatsStartIndex } =
-      getRoomUserUnseenChatsCountAndStartIndex(room, readCounter);
+      getRoomUserUnseenChatsCountAndStartIndex(room);
 
     room.unseenChatsStartIndex = unseenChatsStartIndex;
     room.unseenChatsCount = unseenChatsCount;
@@ -145,20 +151,33 @@ export interface IRoomUnseenChatsCountAndStartIndex {
 }
 
 export function getRoomUserUnseenChatsCountAndStartIndex(
-  room: IRoom,
-  readCounter: Moment
+  room: IRoom
 ): IRoomUnseenChatsCountAndStartIndex {
-  let unseenChatsStartIndex: number | null = null;
+  const userMemberData = getUserRoomMemberData(room);
+  assert(userMemberData, "userMemberData should be defined");
+  const readCounter = moment(userMemberData.readCounter);
+  let unseenChatsStartIndex: number | null = room.unseenChatsStartIndex;
 
-  for (let i = room.chats.length - 1; i >= 0; i--) {
-    const chat = room.chats[i];
-    const chatCreated = moment(chat.createdAt);
+  if (room.unseenChatsStartIndex) {
+    for (let i = room.unseenChatsStartIndex + 1; i < room.chats.length; i++) {
+      const chat = room.chats[i];
 
-    if (chatCreated.isBefore(readCounter)) {
-      break;
+      if (moment(chat.createdAt).isAfter(readCounter)) {
+        break;
+      }
+
+      unseenChatsStartIndex = i;
     }
+  } else {
+    for (let i = room.chats.length - 1; i >= 0; i--) {
+      const chat = room.chats[i];
 
-    unseenChatsStartIndex = i;
+      if (moment(chat.createdAt).isBefore(readCounter)) {
+        break;
+      }
+
+      unseenChatsStartIndex = i;
+    }
   }
 
   const unseenChatsCount =

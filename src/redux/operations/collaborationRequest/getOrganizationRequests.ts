@@ -14,8 +14,7 @@ export const getOrganizationRequestsOpAction = makeAsyncOp(
   async (arg: IGetOrganizationRequestsEndpointParams, thunkAPI, extras) => {
     let requests: ICollaborationRequest[] = [];
 
-    if (extras.isDemoMode) {
-    } else {
+    if (!extras.isDemoMode) {
       const result = await CollaborationRequestAPI.getOrganizationRequests({
         organizationId: arg.organizationId,
       });

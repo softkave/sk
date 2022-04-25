@@ -1,3 +1,3 @@
 export interface IResourceWithId {
-    customId: string;
+  customId: string;
 }

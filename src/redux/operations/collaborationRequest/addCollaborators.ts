@@ -1,3 +1,4 @@
+import assert from "assert";
 import { BlockType } from "../../../models/block/block";
 import {
   CollaborationRequestStatusType,
@@ -28,6 +29,7 @@ export const addCollaboratorsOpAction = makeAsyncOpWithoutDispatch(
     );
 
     if (extras.isDemoMode) {
+      assert(organization, "organization should exist");
       requests = arg.collaborators.map((item) => ({
         customId: getNewId(),
         to: {
@@ -60,11 +62,11 @@ export const addCollaboratorsOpAction = makeAsyncOpWithoutDispatch(
       requests = result.requests;
     }
 
-    completeAddCollaborators(thunkAPI, requests);
+    completeAddCollaborationRequests(thunkAPI, requests);
   }
 );
 
-export function completeAddCollaborators(
+export function completeAddCollaborationRequests(
   thunkAPI: IStoreLikeObject,
   requests: ICollaborationRequest[]
 ): void {

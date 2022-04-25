@@ -20,8 +20,7 @@ export const getOrganizationCollaboratorsOpAction = makeAsyncOp(
   ) => {
     let collaborators: ICollaborator[] = [];
 
-    if (extras.isDemoMode) {
-    } else {
+    if (!extras.isDemoMode) {
       const result = await CollaboratorAPI.getOrganizationCollaborators({
         organizationId: arg.organizationId,
       });

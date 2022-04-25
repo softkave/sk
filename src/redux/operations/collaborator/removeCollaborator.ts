@@ -14,8 +14,6 @@ export const removeCollaboratorOpAction = makeAsyncOp(
   "op/collaborators/removeCollaborator",
   OperationType.DeleteBoard,
   async (arg: IRemoveCollaboratorEndpointParams, thunkAPI, extras) => {
-    const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-
     if (!extras.isDemoMode) {
       const result = await CollaboratorAPI.removeCollaborator(arg);
       assertEndpointResult(result);
@@ -24,7 +22,6 @@ export const removeCollaboratorOpAction = makeAsyncOp(
     completeRemoveCollaborator(
       thunkAPI,
       arg.organizationId,
-      user.customId,
       arg.collaboratorId
     );
   }
@@ -33,7 +30,6 @@ export const removeCollaboratorOpAction = makeAsyncOp(
 export function completeRemoveCollaborator(
   thunkAPI: IStoreLikeObject,
   organizationId: string,
-  userId: string,
   collaboratorId: string
 ) {
   let organization = OrganizationSelectors.getOne(
@@ -67,7 +63,9 @@ export function completeRemoveCollaborator(
       item.customId !== organizationId
   );
 
-  if (organizations.length === 0 && collaboratorId !== userId) {
+  const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+
+  if (organizations.length === 0 && collaboratorId !== user.customId) {
     thunkAPI.dispatch(UserActions.remove(collaboratorId));
   }
 }

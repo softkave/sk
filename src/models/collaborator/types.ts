@@ -1,6 +1,6 @@
 export type ICollaborator = {
-    customId: string;
-    name: string;
-    email: string;
-    color: string;
+  customId: string;
+  name: string;
+  email: string;
+  color: string;
 };

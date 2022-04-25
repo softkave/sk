@@ -1,7 +1,6 @@
 import assert from "assert";
 import { messages } from "../../../models/messages";
-import { IAppOrganization } from "../../../models/organization/types";
-import { toAppOrganization } from "../../../models/organization/utils";
+import { IOrganization } from "../../../models/organization/types";
 import OrganizationAPI, {
   IUpdateOrganizationEndpointParams,
 } from "../../../net/organization/endpoints";
@@ -19,7 +18,7 @@ export const updateOrganizationOpAction = makeAsyncOp(
   OperationType.UpdateOrganization,
   async (arg: IUpdateOrganizationEndpointParams, thunkAPI, extras) => {
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
-    let organization = OrganizationSelectors.assertGetOne(
+    let organization: IOrganization = OrganizationSelectors.assertGetOne(
       thunkAPI.getState(),
       arg.organizationId
     );
@@ -34,7 +33,7 @@ export const updateOrganizationOpAction = makeAsyncOp(
     } else {
       const result = await OrganizationAPI.updateOrganization(arg);
       assertEndpointResult(result);
-      organization = toAppOrganization(result.organization);
+      organization = result.organization;
     }
 
     assert(organization, messages.internalError);
@@ -50,7 +49,7 @@ export const updateOrganizationOpAction = makeAsyncOp(
 
 export function completeUpdateOrganization(
   thunkAPI: IStoreLikeObject,
-  organization: IAppOrganization
+  organization: IOrganization & { collaboratorIds?: string[] }
 ) {
   thunkAPI.dispatch(
     OrganizationActions.update({

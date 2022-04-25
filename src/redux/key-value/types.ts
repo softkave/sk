@@ -25,12 +25,20 @@ export interface IUnseenChatsCountByOrg {
   [key: string]: number;
 }
 
-export type ResourceType = "board" | "org" | "user" | "room";
+export type RoomResourceType =
+  | SystemResourceType.Org
+  | SystemResourceType.Board
+  | SystemResourceType.User
+  | SystemResourceType.Room;
+
+export type SubRoomResourceType =
+  | SystemResourceType.Task
+  | SystemResourceType.Sprint;
 
 export interface IRoomLikeResource {
   customId: string;
-  type: ResourceType;
-  subRoom?: SystemResourceType.Sprint | SystemResourceType.Task;
+  type: RoomResourceType;
+  subRoom?: SubRoomResourceType;
 }
 
 export type ClientSubscribedResources = IRoomLikeResource[];

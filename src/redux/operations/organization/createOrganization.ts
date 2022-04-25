@@ -1,7 +1,7 @@
 import assert from "assert";
 import { BlockType } from "../../../models/block/block";
 import { messages } from "../../../models/messages";
-import { IAppOrganization } from "../../../models/organization/types";
+import { IOrganization } from "../../../models/organization/types";
 import { toAppOrganization } from "../../../models/organization/utils";
 import OrganizationAPI, {
   ICreateOrganizationEndpointParams,
@@ -18,7 +18,7 @@ export const createOrganizationOpAction = makeAsyncOp(
   "op/organizations/createOrganization",
   OperationType.CreateOrganization,
   async (arg: ICreateOrganizationEndpointParams, thunkAPI, extras) => {
-    let organization: IAppOrganization | null = null;
+    let organization: IOrganization | null = null;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
 
     if (extras.isDemoMode) {
@@ -28,7 +28,6 @@ export const createOrganizationOpAction = makeAsyncOp(
         createdBy: user.customId,
         createdAt: getDateString(),
         type: BlockType.Organization,
-        collaboratorIds: [],
       };
     } else {
       const result = await OrganizationAPI.createOrganization(arg);
@@ -44,12 +43,12 @@ export const createOrganizationOpAction = makeAsyncOp(
 
 export function completeCreateOrganization(
   thunkAPI: IStoreLikeObject,
-  organization: IAppOrganization
+  organization: IOrganization
 ) {
   thunkAPI.dispatch(
     OrganizationActions.add({
       id: organization.customId,
-      data: organization,
+      data: toAppOrganization(organization),
     })
   );
 }

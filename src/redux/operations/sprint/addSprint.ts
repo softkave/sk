@@ -81,7 +81,7 @@ export const addSprintOpAction = createAsyncThunk<
       };
     }
 
-    completeAddSprint(thunkAPI, sprint, board);
+    completeAddSprint(thunkAPI, sprint);
     thunkAPI.dispatch(
       dispatchOperationCompleted(opId, OperationType.AddSprint, arg.boardId)
     );
@@ -94,12 +94,12 @@ export const addSprintOpAction = createAsyncThunk<
   return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export function completeAddSprint(
-  thunkAPI: IStoreLikeObject,
-  sprint: ISprint,
-  board: IBoard
-) {
+export function completeAddSprint(thunkAPI: IStoreLikeObject, sprint: ISprint) {
   thunkAPI.dispatch(SprintActions.addSprint(sprint));
+  const board = BoardSelectors.assertGetOne(
+    thunkAPI.getState(),
+    sprint.boardId
+  );
 
   if (board.lastSprintId) {
     store.dispatch(

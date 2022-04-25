@@ -1,5 +1,4 @@
 import delay from "lodash/delay";
-import { getRoomLikeResource } from "../../../models/rooms/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import KeyValueSelectors from "../../../redux/key-value/selectors";
 import {
@@ -11,6 +10,7 @@ import { devError } from "../../../utils/log";
 import { GetEndpointResult } from "../../types";
 import subscribeEvent from "../outgoing/subscribeEvent";
 import updateSocketEntryEvent from "../outgoing/updateSocketEntryEvent";
+import { getSocketRoomInfo } from "../roomNameHelpers";
 import SocketAPI from "../socket";
 
 export default async function handleAuthEvent(
@@ -58,34 +58,8 @@ export default async function handleAuthEvent(
 
   const roomSignatures = Object.keys(rooms);
   const items = roomSignatures.map((signature) =>
-    getRoomLikeResource(signature)
+    getSocketRoomInfo(signature)
   ) as ClientSubscribedResources;
 
   subscribeEvent(items);
-  // const socketDisconnectedAt = KeyValueSelectors.getKey(
-  //   store.getState(),
-  //   KeyValueKeys.SocketDisconnectedAt
-  // );
-
-  // if (socketDisconnectedAt) {
-  //   store.dispatch(
-  //     KeyValueActions.setKey({
-  //       key: KeyValueKeys.FetchingMissingBroadcasts,
-  //       value: true,
-  //     })
-  //   );
-
-  //   const packet = await fetchMissingBroadcastsEvent(
-  //     socketDisconnectedAt as number,
-  //     roomSignatures
-  //   );
-
-  //   handleFetchMissingBroadcastsEvent(store, packet);
-  //   store.dispatch(
-  //     KeyValueActions.setKey({
-  //       key: KeyValueKeys.FetchingMissingBroadcasts,
-  //       value: false,
-  //     })
-  //   );
-  // }
 }
