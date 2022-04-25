@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBoard } from "../../../models/board/types";
-import { ISprint } from "../../../models/sprint/types";
 import SprintAPI from "../../../net/sprint/sprint";
 import { getNewId } from "../../../utils/utils";
 import BoardActions from "../../boards/actions";
@@ -11,7 +10,7 @@ import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
 import TaskActions from "../../tasks/actions";
 import { getSprintTasks } from "../../tasks/selectors";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import {
   dispatchOperationCompleted,
   dispatchOperationError,
@@ -55,15 +54,7 @@ export const deleteSprintOpAction = createAsyncThunk<
       }
     }
 
-    const sprint = SprintSelectors.getSprint(thunkAPI.getState(), arg.sprintId);
-
-    const board = BoardSelectors.assertGetOne(
-      thunkAPI.getState(),
-      sprint.boardId
-    );
-
-    completeDeleteSprint(sprint, board);
-    thunkAPI.dispatch(SprintActions.deleteSprint(arg.sprintId));
+    completeDeleteSprint(thunkAPI, arg.sprintId);
     thunkAPI.dispatch(
       dispatchOperationCompleted(opId, OperationType.DeleteSprint, arg.sprintId)
     );
@@ -81,8 +72,16 @@ export const deleteSprintOpAction = createAsyncThunk<
   return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export function completeDeleteSprint(sprint: ISprint, board: IBoard) {
+export function completeDeleteSprint(
+  thunkAPI: IStoreLikeObject,
+  sprintId: string
+) {
   const boardUpdates: Partial<IBoard> = {};
+  const sprint = SprintSelectors.getSprint(thunkAPI.getState(), sprintId);
+  const board = BoardSelectors.assertGetOne(
+    thunkAPI.getState(),
+    sprint.boardId
+  );
 
   if (sprint.customId === board.lastSprintId) {
     boardUpdates.lastSprintId = sprint.prevSprintId;
@@ -99,7 +98,6 @@ export function completeDeleteSprint(sprint: ISprint, board: IBoard) {
   }
 
   const tasks = getSprintTasks(store.getState(), sprint.customId);
-
   store.dispatch(
     TaskActions.bulkUpdate(
       tasks.map((task) => {
@@ -134,4 +132,5 @@ export function completeDeleteSprint(sprint: ISprint, board: IBoard) {
   }
 
   store.dispatch(SprintActions.bulkUpdateSprints(bulkSprintUpdates));
+  thunkAPI.dispatch(SprintActions.deleteSprint(sprintId));
 }

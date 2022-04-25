@@ -3,6 +3,7 @@ import TaskAPI, {
 } from "../../../net/task/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import TaskActions from "../../tasks/actions";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
@@ -16,7 +17,7 @@ export const deleteTaskOpAction = makeAsyncOp(
       assertEndpointResult(result);
     }
 
-    thunkAPI.dispatch(TaskActions.remove(arg.taskId));
+    completeDeleteTask(thunkAPI, arg.taskId);
   },
   {
     preFn: (arg) => ({
@@ -24,3 +25,7 @@ export const deleteTaskOpAction = makeAsyncOp(
     }),
   }
 );
+
+export function completeDeleteTask(thunkAPI: IStoreLikeObject, taskId: string) {
+  thunkAPI.dispatch(TaskActions.remove(taskId));
+}

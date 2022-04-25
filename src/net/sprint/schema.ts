@@ -53,52 +53,9 @@ export const deleteSprintMutation = `
     }
 `;
 
-export const startSprintMutation = `
-    ${errorFragment}
-    mutation StartSprintMutation ($sprintId: String!) {
-        sprint {
-            startSprint (sprintId: $sprintId) {
-                errors {
-                    ...errorFragment
-                }
-                startDate
-            }
-        }
-    }
-`;
-
-export const endSprintMutation = `
-    ${errorFragment}
-    mutation EndSprintMutation ($sprintId: String!) {
-        sprint {
-            endSprint (sprintId: $sprintId) {
-                errors {
-                    ...errorFragment
-                }
-                endDate
-            }
-        }
-    }
-`;
-
-export const setupSprintMutation = `
-    ${errorFragment}
-    mutation SetupSprintMutation ($boardId: String!, $data: SprintOptionsInput!) {
-        sprint {
-            setupSprints (boardId: $boardId, data: $data) {
-                errors {
-                    ...errorFragment
-                }
-                sprintOptions {
-                    createdAt
-                }
-            }
-        }
-    }
-`;
-
 export const updateSprintMutation = `
     ${errorFragment}
+    ${sprintFragment}
     mutation UpdateSprintMutation ($sprintId: String!, $data: UpdateSprintInput!) {
         sprint {
             updateSprint (sprintId: $sprintId, data: $data) {
@@ -106,23 +63,7 @@ export const updateSprintMutation = `
                     ...errorFragment
                 }
                 sprint {
-                    updatedAt
-                }
-            }
-        }
-    }
-`;
-
-export const updateSprintOptionsMutation = `
-    ${errorFragment}
-    mutation UpdateSprintOptionsMutation ($boardId: String!, $data: UpdateSprintOptionsInput) {
-        sprint {
-            updateSprintOptions (boardId: $boardId, data: $data) {
-                errors {
-                    ...errorFragment
-                }
-                sprintOptions {
-                    updatedAt
+                    ...sprintFragment
                 }
             }
         }

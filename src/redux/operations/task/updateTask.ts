@@ -1,5 +1,5 @@
 import assert from "assert";
-import { defaultTo } from "lodash";
+import { defaultTo, last, merge } from "lodash";
 import { messages } from "../../../models/messages";
 import TaskAPI, {
   IUpdateTaskEndpointParams,
@@ -15,6 +15,7 @@ import { IStoreLikeObject } from "../../types";
 import { ITask } from "../../../models/task/types";
 import { ITaskFormValues } from "../../../components/task/TaskForm";
 import { getUpdateTaskInput } from "../../../models/task/utils";
+import BoardSelectors from "../../boards/selectors";
 
 export const updateTaskOpAction = makeAsyncOp(
   "op/tasks/updateTask",
@@ -32,7 +33,7 @@ export const updateTaskOpAction = makeAsyncOp(
     const updateTaskInput = getUpdateTaskInput(task, arg.data);
 
     if (extras.isDemoMode) {
-      task = {
+      const updates = {
         ...task,
         updatedBy: user.customId,
         updatedAt: getDateString(),
@@ -93,6 +94,25 @@ export const updateTaskOpAction = makeAsyncOp(
             }
           : task.taskSprint,
       };
+
+      if (arg.data.parent && arg.data.parent !== task.parent) {
+        const board = BoardSelectors.getOne(
+          thunkAPI.getState(),
+          arg.data.parent
+        );
+
+        const status0 = board && last(board.boardStatuses);
+        const transferTaskUpdates: Partial<ITask> = {
+          parent: arg.data.parent,
+          status: status0?.customId,
+          statusAssignedBy: user.customId,
+          statusAssignedAt: getDateString(),
+          labels: [],
+          taskSprint: undefined,
+        };
+
+        task = merge(updates, transferTaskUpdates);
+      }
     } else {
       const result = await TaskAPI.updateTask({
         taskId: arg.taskId,
@@ -104,14 +124,7 @@ export const updateTaskOpAction = makeAsyncOp(
     }
 
     assert(task, messages.internalError);
-    thunkAPI.dispatch(
-      TaskActions.update({
-        id: task.customId,
-        data: task,
-        meta: { arrayUpdateStrategy: "replace" },
-      })
-    );
-
+    completeUpdateTask(thunkAPI, task);
     return task;
   },
   {
@@ -134,4 +147,14 @@ function assignUserToTaskOnUpdateStatus(
       data.assignees = [{ userId: user.customId }];
     }
   }
+}
+
+export function completeUpdateTask(thunkAPI: IStoreLikeObject, task: ITask) {
+  thunkAPI.dispatch(
+    TaskActions.update({
+      id: task.customId,
+      data: task,
+      meta: { arrayUpdateStrategy: "replace" },
+    })
+  );
 }

@@ -19,9 +19,7 @@ export const deleteBoardOpAction = makeAsyncOp(
       assertEndpointResult(result);
     }
 
-    thunkAPI.dispatch(BoardActions.remove(arg.boardId));
-    deleteBoardTasks(thunkAPI, arg.boardId);
-    deleteBoardSprints(thunkAPI, arg.boardId);
+    completeDeleteBoard(thunkAPI, arg.boardId);
   },
   {
     preFn: (arg) => ({
@@ -37,6 +35,14 @@ function deleteBoardTasks(thunkAPI: IStoreLikeObject, boardId: string) {
 
 function deleteBoardSprints(thunkAPI: IStoreLikeObject, boardId: string) {
   const sprints = SprintSelectors.getBoardSprints(thunkAPI.getState(), boardId);
-
   thunkAPI.dispatch(sprints.map((item) => item.customId));
+}
+
+export function completeDeleteBoard(
+  thunkAPI: IStoreLikeObject,
+  boardId: string
+) {
+  thunkAPI.dispatch(BoardActions.remove(boardId));
+  deleteBoardTasks(thunkAPI, boardId);
+  deleteBoardSprints(thunkAPI, boardId);
 }

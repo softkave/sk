@@ -79,6 +79,7 @@ export type IRespondToRequestEndpointParams = {
 export type IRespondToRequestEndpointResult = GetEndpointResult<{
   organization?: IOrganization;
   respondedAt: string;
+  request: ICollaborationRequest;
 }>;
 
 async function respondToRequest(props: IRespondToRequestEndpointParams) {

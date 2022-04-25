@@ -1,5 +1,6 @@
 import assert from "assert";
 import { messages } from "../../../models/messages";
+import { IAppOrganization } from "../../../models/organization/types";
 import { toAppOrganization } from "../../../models/organization/utils";
 import OrganizationAPI, {
   IUpdateOrganizationEndpointParams,
@@ -9,6 +10,7 @@ import { getDateString } from "../../../utils/utils";
 import OrganizationActions from "../../organizations/actions";
 import OrganizationSelectors from "../../organizations/selectors";
 import SessionSelectors from "../../session/selectors";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
@@ -36,14 +38,7 @@ export const updateOrganizationOpAction = makeAsyncOp(
     }
 
     assert(organization, messages.internalError);
-    thunkAPI.dispatch(
-      OrganizationActions.update({
-        id: organization.customId,
-        data: organization,
-        meta: { arrayUpdateStrategy: "replace" },
-      })
-    );
-
+    completeUpdateOrganization(thunkAPI, organization);
     return organization;
   },
   {
@@ -52,3 +47,16 @@ export const updateOrganizationOpAction = makeAsyncOp(
     }),
   }
 );
+
+export function completeUpdateOrganization(
+  thunkAPI: IStoreLikeObject,
+  organization: IAppOrganization
+) {
+  thunkAPI.dispatch(
+    OrganizationActions.update({
+      id: organization.customId,
+      data: organization,
+      meta: { arrayUpdateStrategy: "replace" },
+    })
+  );
+}

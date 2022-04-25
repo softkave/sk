@@ -11,6 +11,7 @@ import { getDateString, getNewId } from "../../../utils/utils";
 import CollaborationRequestActions from "../../collaborationRequests/actions";
 import OrganizationSelectors from "../../organizations/selectors";
 import SessionSelectors from "../../session/selectors";
+import { IStoreLikeObject } from "../../types";
 import { toActionAddList } from "../../utils";
 import OperationType from "../OperationType";
 import { makeAsyncOpWithoutDispatch } from "../utils";
@@ -59,8 +60,15 @@ export const addCollaboratorsOpAction = makeAsyncOpWithoutDispatch(
       requests = result.requests;
     }
 
-    thunkAPI.dispatch(
-      CollaborationRequestActions.bulkAdd(toActionAddList(requests, "customId"))
-    );
+    completeAddCollaborators(thunkAPI, requests);
   }
 );
+
+export function completeAddCollaborators(
+  thunkAPI: IStoreLikeObject,
+  requests: ICollaborationRequest[]
+): void {
+  thunkAPI.dispatch(
+    CollaborationRequestActions.bulkAdd(toActionAddList(requests, "customId"))
+  );
+}

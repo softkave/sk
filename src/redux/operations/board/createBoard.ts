@@ -12,6 +12,7 @@ import SessionSelectors from "../../session/selectors";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 import { defaultTo } from "lodash";
+import { IStoreLikeObject } from "../../types";
 
 export const createBoardOpAction = makeAsyncOp(
   "op/boards/createBoard",
@@ -56,13 +57,16 @@ export const createBoardOpAction = makeAsyncOp(
     }
 
     assert(board, messages.internalError);
-    thunkAPI.dispatch(
-      BoardActions.add({
-        id: board.customId,
-        data: board,
-      })
-    );
-
+    completeCreateBoard(thunkAPI, board);
     return board;
   }
 );
+
+export function completeCreateBoard(thunkAPI: IStoreLikeObject, board: IBoard) {
+  thunkAPI.dispatch(
+    BoardActions.add({
+      id: board.customId,
+      data: board,
+    })
+  );
+}

@@ -13,8 +13,7 @@ export const getUserOrganizationsOpAction = makeAsyncOp(
   async (arg: {}, thunkAPI, extras) => {
     let organizations: IAppOrganization[] = [];
 
-    if (extras.isDemoMode) {
-    } else {
+    if (!extras.isDemoMode) {
       const result = await OrganizationAPI.getUserOrganizations();
       assertEndpointResult(result);
       organizations = result.organizations.map((item) =>

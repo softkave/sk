@@ -1,6 +1,6 @@
 import { IUpdateComplexTypeArrayInput } from "../../utils/types";
 import { BlockType, IBlockLabel, IBlockStatus } from "../block/block";
-import { IBoardSprintOptions } from "../sprint/types";
+import { IBoardSprintOptions, SprintDuration } from "../sprint/types";
 import { IResourceWithId } from "../types";
 
 export interface IBoardStatusResolution {
@@ -71,4 +71,5 @@ export interface IUpdateBoardInput {
   boardStatuses?: IUpdateComplexTypeArrayInput<IBlockStatusInput>;
   boardLabels?: IUpdateComplexTypeArrayInput<IBlockLabelInput>;
   boardResolutions?: IUpdateComplexTypeArrayInput<IBoardStatusResolutionInput>;
+  sprintOptions?: { duration: SprintDuration };
 }

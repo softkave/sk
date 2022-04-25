@@ -10,6 +10,7 @@ import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, getNewId } from "../../../utils/utils";
 import OrganizationActions from "../../organizations/actions";
 import SessionSelectors from "../../session/selectors";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 
@@ -36,13 +37,19 @@ export const createOrganizationOpAction = makeAsyncOp(
     }
 
     assert(organization, messages.internalError);
-    thunkAPI.dispatch(
-      OrganizationActions.add({
-        id: organization.customId,
-        data: organization,
-      })
-    );
-
+    completeCreateOrganization(thunkAPI, organization);
     return organization;
   }
 );
+
+export function completeCreateOrganization(
+  thunkAPI: IStoreLikeObject,
+  organization: IAppOrganization
+) {
+  thunkAPI.dispatch(
+    OrganizationActions.add({
+      id: organization.customId,
+      data: organization,
+    })
+  );
+}

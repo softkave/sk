@@ -3,6 +3,7 @@ import { defaultTo } from "lodash";
 import {
   IBlockLabelInput,
   IBlockStatusInput,
+  IBoard,
   IBoardStatusResolutionInput,
   IUpdateBoardInput,
 } from "../../../models/board/types";
@@ -16,28 +17,27 @@ import { getDateString, processComplexTypeInput } from "../../../utils/utils";
 import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
 import SessionSelectors from "../../session/selectors";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
+
+type ArgType = Omit<IUpdateBoardEndpointParams, "data"> & {
+  data: Partial<
+    Omit<
+      IUpdateBoardInput,
+      "boardStatuses" | "boardLabels" | "boardResolutions"
+    > & {
+      boardStatuses: IBlockStatusInput[];
+      boardLabels: IBlockLabelInput[];
+      boardResolutions: IBoardStatusResolutionInput[];
+    }
+  >;
+};
 
 export const updateBoardOpAction = makeAsyncOp(
   "op/boards/updateBoard",
   OperationType.UpdateBoard,
-  async (
-    arg: Omit<IUpdateBoardEndpointParams, "data"> & {
-      data: Partial<
-        Omit<
-          IUpdateBoardInput,
-          "boardStatuses" | "boardLabels" | "boardResolutions"
-        > & {
-          boardStatuses: IBlockStatusInput[];
-          boardLabels: IBlockLabelInput[];
-          boardResolutions: IBoardStatusResolutionInput[];
-        }
-      >;
-    },
-    thunkAPI,
-    extras
-  ) => {
+  async (arg: ArgType, thunkAPI, extras) => {
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     let board = BoardSelectors.assertGetOne(thunkAPI.getState(), arg.boardId);
     const updateBoardInput = getUpdateBoardInput(board, arg.data);
@@ -87,6 +87,23 @@ export const updateBoardOpAction = makeAsyncOp(
             )
           : board.boardResolutions,
       };
+
+      if (updateBoardInput.sprintOptions) {
+        if (board.sprintOptions) {
+          board.sprintOptions = {
+            ...board.sprintOptions,
+            ...updateBoardInput.sprintOptions,
+            updatedAt: getDateString(),
+            updatedBy: user.customId,
+          };
+        } else {
+          board.sprintOptions = {
+            ...updateBoardInput.sprintOptions,
+            createdAt: getDateString(),
+            createdBy: user.customId,
+          };
+        }
+      }
     } else {
       const result = await BoardAPI.updateBoard({
         boardId: arg.boardId,
@@ -98,14 +115,7 @@ export const updateBoardOpAction = makeAsyncOp(
     }
 
     assert(board, messages.internalError);
-    thunkAPI.dispatch(
-      BoardActions.update({
-        id: board.customId,
-        data: board,
-        meta: { arrayUpdateStrategy: "replace" },
-      })
-    );
-
+    completeUpdateBoard(thunkAPI, board);
     return board;
   },
   {
@@ -114,3 +124,13 @@ export const updateBoardOpAction = makeAsyncOp(
     }),
   }
 );
+
+export function completeUpdateBoard(thunkAPI: IStoreLikeObject, board: IBoard) {
+  thunkAPI.dispatch(
+    BoardActions.update({
+      id: board.customId,
+      data: board,
+      meta: { arrayUpdateStrategy: "replace" },
+    })
+  );
+}

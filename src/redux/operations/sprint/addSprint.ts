@@ -9,7 +9,7 @@ import SessionSelectors from "../../session/selectors";
 import SprintActions from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
 import store from "../../store";
-import { IAppAsyncThunkConfig } from "../../types";
+import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
 import {
   dispatchOperationCompleted,
   dispatchOperationError,
@@ -69,11 +69,11 @@ export const addSprintOpAction = createAsyncThunk<
       }
 
       sprint = {
+        sprintIndex,
         customId: getNewTempId(),
         boardId: arg.boardId,
         orgId: board.rootBlockId!,
         duration: arg.data.duration,
-        sprintIndex,
         name: arg.data.name,
         createdAt: getDateString(),
         createdBy: user.customId,
@@ -81,8 +81,7 @@ export const addSprintOpAction = createAsyncThunk<
       };
     }
 
-    thunkAPI.dispatch(SprintActions.addSprint(sprint));
-    completeAddSprint(sprint, board);
+    completeAddSprint(thunkAPI, sprint, board);
     thunkAPI.dispatch(
       dispatchOperationCompleted(opId, OperationType.AddSprint, arg.boardId)
     );
@@ -95,7 +94,13 @@ export const addSprintOpAction = createAsyncThunk<
   return wrapUpOpAction(thunkAPI, opId, arg);
 });
 
-export function completeAddSprint(sprint: ISprint, board: IBoard) {
+export function completeAddSprint(
+  thunkAPI: IStoreLikeObject,
+  sprint: ISprint,
+  board: IBoard
+) {
+  thunkAPI.dispatch(SprintActions.addSprint(sprint));
+
   if (board.lastSprintId) {
     store.dispatch(
       SprintActions.updateSprint({

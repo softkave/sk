@@ -12,6 +12,7 @@ import SessionSelectors from "../../session/selectors";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
 import { defaultTo } from "lodash";
+import { IStoreLikeObject } from "../../types";
 
 export const createTaskOpAction = makeAsyncOp(
   "op/tasks/createTask",
@@ -68,13 +69,16 @@ export const createTaskOpAction = makeAsyncOp(
     }
 
     assert(task, messages.internalError);
-    thunkAPI.dispatch(
-      TaskActions.add({
-        id: task.customId,
-        data: task,
-      })
-    );
-
+    completeCreateTask(thunkAPI, task);
     return task;
   }
 );
+
+export function completeCreateTask(thunkAPI: IStoreLikeObject, task: ITask) {
+  thunkAPI.dispatch(
+    TaskActions.add({
+      id: task.customId,
+      data: task,
+    })
+  );
+}

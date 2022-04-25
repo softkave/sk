@@ -1,5 +1,6 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import assert from "assert";
+import { WritableDraft } from "immer/dist/internal";
 import { get } from "lodash";
 import isString from "lodash/isString";
 import { messages } from "../models/messages";
@@ -77,6 +78,7 @@ export function getActions<T extends object>(name: string) {
   const bulkAdd = createAction<IActionAdd<T>[]>(`${name}/bulkAdd`);
   const bulkUpdate = createAction<IActionUpdate<T>[]>(`${name}/bulkUpdate`);
   const bulkDelete = createAction<string[]>(`${name}/bulkDelete`);
+  const replace = createAction<IActionAdd<T>[]>(`${name}/replace`);
 
   return class {
     public static add = add;
@@ -85,6 +87,7 @@ export function getActions<T extends object>(name: string) {
     public static bulkAdd = bulkAdd;
     public static bulkUpdate = bulkUpdate;
     public static bulkDelete = bulkDelete;
+    public static replace = replace;
   };
 }
 
@@ -157,6 +160,7 @@ interface IActions<T> {
   bulkAdd: ActionCreatorWithPayload<IActionAdd<T>[], string>;
   bulkUpdate: ActionCreatorWithPayload<IActionUpdate<T>[], string>;
   bulkDelete: ActionCreatorWithPayload<string[], string>;
+  replace: ActionCreatorWithPayload<IActionAdd<T>[], string>;
 }
 
 export function getReducer<T>(
@@ -180,8 +184,19 @@ export function getReducer<T>(
       delete state[action.payload];
     });
 
-    builder.addCase(actions.bulkAdd, (state, action) => {
+    const bulkAddFn = (
+      state: WritableDraft<Record<string, T>>,
+      action: { payload: IActionAdd<T>[] }
+    ) => {
       action.payload.forEach((item) => (state[item.id] = item.data as any));
+    };
+
+    builder.addCase(actions.bulkAdd, (state, action) => {
+      bulkAddFn(state, action);
+    });
+
+    builder.addCase(actions.replace, (state, action) => {
+      bulkAddFn(state, action);
     });
 
     builder.addCase(actions.bulkUpdate, (state, action) => {
@@ -212,12 +227,12 @@ export function getSelectors<T>(
   key: keyof IAppState,
   options: IGetSelectorsFnOptions = {}
 ) {
-  function getOne(state: IAppState, id: string) {
+  function getOne(state: IAppState, id: string): T | undefined {
     const map = state[key] as Record<string, T>;
     return map[id];
   }
 
-  function assertGetOne(state: IAppState, id: string) {
+  function assertGetOne(state: IAppState, id: string): T {
     const item = getOne(state, id);
     assert(item, options.notFoundMessage || messages.resourceNotFound);
     return item;
@@ -225,7 +240,6 @@ export function getSelectors<T>(
 
   function getMany(state: IAppState, ids: string[]) {
     const map = state[key] as Record<string, T>;
-
     return ids.reduce((items, id) => {
       if (map[id]) {
         items.push(map[id]);

@@ -1,3 +1,4 @@
+import { defaultTo } from "lodash";
 import randomColor from "randomcolor";
 import { IEditOrgFormValues } from "../../components/org/EditOrgForm";
 import { appLoggedInPaths } from "../app/routes";
@@ -35,10 +36,10 @@ export function formOrganizationFromExisting(org: IOrganization) {
 }
 
 export function toAppOrganization(
-  organization: IOrganization
+  organization: IOrganization & { collaboratorIds?: string[] }
 ): IAppOrganization {
   return {
     ...organization,
-    collaboratorIds: [],
+    collaboratorIds: defaultTo(organization.collaboratorIds, []),
   };
 }
