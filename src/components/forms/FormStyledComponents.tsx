@@ -1,42 +1,42 @@
-import styled from "@emotion/styled";
-import { ComponentStyle } from "../types";
+import { css } from "@emotion/css";
 
-export const FormBody = styled("div")({
-    padding: "16px 16px",
-    width: "100%",
-    display: "flex",
-    flex: 1,
-    flexDirection: "column",
-    overflow: "auto",
+export const formBodyClassname = css({
+  padding: "16px 16px",
+  width: "100%",
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  overflow: "auto",
 });
 
-export const FormSection = styled("div")({
-    maxWidth: "400px",
+export const formSectionClassname = css({
+  maxWidth: "400px",
 });
 
-export const StyledForm = styled("form")`
-    display: flex;
-    flex: 1;
-    width: 100%;
-    height: 100%;
+export const formClassname = css(`
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  
+  & .ant-typography {
+      margin-bottom: 0;
+  }
+  
+  & .ant-typography-edit-content {
+      left: 0px;
+  }
+`);
 
-    & .ant-typography {
-        margin-bottom: 0;
-    }
-
-    & .ant-typography-edit-content {
-        left: 0px;
-    }
-`;
-
-export const formContentWrapperStyle: ComponentStyle = {
-    width: "100%",
-    padding: "16px ",
-    overflowY: "auto",
-    flexDirection: "column",
+export const formContentWrapperStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "16px ",
+  overflowY: "auto",
+  flexDirection: "column",
 };
 
-export const formInputContentWrapperStyle: ComponentStyle = {
-    width: "100%",
-    flexDirection: "column",
+export const formInputContentWrapperStyle: React.CSSProperties = {
+  width: "100%",
+  flexDirection: "column",
 };

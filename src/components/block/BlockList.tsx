@@ -6,7 +6,7 @@ import BlockThumbnail, {
   IBlockThumbnailProps,
 } from "../block/BlockThumnail";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
+
 import List from "../styled/List";
 
 export interface IBlockListProps {
@@ -58,13 +58,13 @@ class BlockList extends React.PureComponent<IBlockListProps> {
         dataSource={filteredBlocks}
         emptyDescription={emptyDescription}
         renderItem={(block, i) => (
-          <StyledContainer
+          <div
             key={block.customId}
-            s={getBlockStyle ? getBlockStyle(block, i) : undefined}
+            style={getBlockStyle ? getBlockStyle(block, i) : undefined}
             onClick={() => isFunction(onClick) && onClick(block)}
           >
             <BlockThumbnail block={block} showFields={showFields} />
-          </StyledContainer>
+          </div>
         )}
       />
     );

@@ -29,3 +29,15 @@ export function getSocketRoomInfo(name: string): IRoomLikeResource | null {
     subRoom: subRoom as SubRoomResourceType,
   };
 }
+
+export function getSocketRoomName(room: IRoomLikeResource): string {
+  if (room.type === SystemResourceType.Room) {
+    return `${SystemResourceType.Room}-${room.customId}`;
+  }
+
+  if (room.subRoom) {
+    return `${room.type}/${room.customId}/${room.subRoom}`;
+  }
+
+  return `${room.type}/${room.customId}`;
+}

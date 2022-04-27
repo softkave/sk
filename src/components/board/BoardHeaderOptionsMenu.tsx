@@ -1,9 +1,10 @@
 import { EditOutlined } from "@ant-design/icons";
+import { css } from "@emotion/css";
 import { Checkbox, Menu, Space } from "antd";
 import React from "react";
 import { Clock, MoreHorizontal, Plus, Search, Trash2 } from "react-feather";
 import { IBoard } from "../../models/board/types";
-import StyledContainer from "../styled/Container";
+
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
   IMenuWithTriggerRenderTriggerProps,
@@ -59,15 +60,15 @@ const BoardHeaderOptionsMenu: React.FC<IBoardHeaderOptionsMenuProps> = (
   const renderTrigger = React.useCallback(
     (renderTriggerProps: IMenuWithTriggerRenderTriggerProps) => {
       return (
-        <StyledContainer
-          s={{
+        <div
+          className={css({
             cursor: "pointer",
             textTransform: "capitalize",
-          }}
+          })}
           onClick={renderTriggerProps.openMenu}
         >
           <MoreHorizontal />
-        </StyledContainer>
+        </div>
       );
     },
     []

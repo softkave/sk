@@ -1,30 +1,34 @@
+import { css } from "@emotion/css";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 import LoginContainer from "../components/login/LoginContainer";
 import ChangePasswordWithTokenContainer from "../components/password/ChangePasswordWithTokenContainer";
 import ForgotPasswordContainer from "../components/password/ForgotPasswordContainer";
 import SignupContainer from "../components/signup/SignupContainer";
-import StyledContainer from "../components/styled/Container";
 import WebHeader from "../web/web0/WebHeader";
 import Web1 from "../web/web1/Web";
+
+const classes = {
+  componentContent: css({
+    width: "100%",
+    maxWidth: "400px",
+    justifyContent: "center",
+    margin: "auto",
+    marginTop: "48px",
+  }),
+  componentRoot: css({ flexDirection: "column", display: "flex" }),
+};
 
 function renderComponent(component: any) {
   return () => {
     const ComponentX = component;
     return (
-      <StyledContainer s={{ flexDirection: "column" }}>
+      <div className={classes.componentRoot}>
         <WebHeader />
-        <StyledContainer
-          s={{
-            width: "100%",
-            maxWidth: "400px",
-            justifyContent: "center",
-            margin: "auto",
-          }}
-        >
+        <div className={classes.componentContent}>
           <ComponentX />
-        </StyledContainer>
-      </StyledContainer>
+        </div>
+      </div>
     );
   };
 }

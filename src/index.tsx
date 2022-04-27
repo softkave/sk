@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import * as Sentry from "@sentry/react";
@@ -7,8 +6,10 @@ import { Integrations } from "@sentry/tracing";
 import Main from "./app/Main";
 import store from "./redux/store";
 import { serviceWorkerInit } from "./serviceWorkerRegistration";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import "./App.less";
+import assert from "assert";
 
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
@@ -22,14 +23,17 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(
+const container = document.getElementById("app");
+assert(container, "container is not found");
+const root = createRoot(container); // createRoot(container!) if you use TypeScript
+root.render(
+  // @ts-ignore
   <BrowserRouter>
+    {/* @ts-ignore */}
     <Provider store={store}>
       <Main />
     </Provider>
-  </BrowserRouter>,
-  rootElement
+  </BrowserRouter>
 );
 
 serviceWorkerInit();

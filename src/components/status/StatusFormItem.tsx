@@ -14,7 +14,6 @@ import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
-import StyledContainer from "../styled/Container";
 
 export interface IStatusFormItemProps {
   value: IBlockStatusInput;
@@ -65,7 +64,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
 
   const renderEditingStatus = () => {
     return (
-      <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <div style={{ flexDirection: "column", width: "100%" }}>
         <Form.Item
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
@@ -109,20 +108,20 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
             maxLength={blockConstants.maxLabelDescriptionLength}
           />
         </Form.Item>
-      </StyledContainer>
+      </div>
     );
   };
 
   const renderRegularStatus = () => {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           flexDirection: "column",
           width: "100%",
           marginBottom: "8px",
         }}
       >
-        <StyledContainer
+        <div
           style={{
             color: "rgba(0,0,0,0.85)",
           }}
@@ -135,14 +134,14 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
           >
             {value.name}
           </Typography.Text>
-        </StyledContainer>
+        </div>
         <Typography.Paragraph
           type="secondary"
           style={{ margin: 0, marginTop: "8px" }}
         >
           {value.description}
         </Typography.Paragraph>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -207,34 +206,31 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
 
   const renderStatus = () => {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: "100%",
           padding: "16px",
           flexDirection: "column",
-
+          backgroundColor: snapshot.isDragging ? "#eee" : undefined,
+          cursor: snapshot.isDragging ? "grabbing" : undefined,
+          ...provided.draggableProps.style,
           ...(style || {}),
         }}
         ref={provided.innerRef ? provided.innerRef : undefined}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
-        style={{
-          backgroundColor: snapshot.isDragging ? "#eee" : undefined,
-          cursor: snapshot.isDragging ? "grabbing" : undefined,
-          ...provided.draggableProps.style,
-        }}
       >
-        <StyledContainer s={{ alignItems: "flex-start" }}>
-          <StyledContainer
-            s={{
+        <div style={{ alignItems: "flex-start" }}>
+          <div
+            style={{
               flexDirection: "column",
               flex: 1,
               marginRight: "8px",
             }}
           >
             {isEditing ? renderEditingStatus() : renderRegularStatus()}
-          </StyledContainer>
-          <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+          </div>
+          <div style={{ flexDirection: "column", height: "100%" }}>
             <ColorPicker
               value={value.color}
               disabled={disabled ? true : !isEditing}
@@ -242,10 +238,10 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
                 onChange({ color: val });
               }}
             />
-          </StyledContainer>
-        </StyledContainer>
+          </div>
+        </div>
         {renderStatusButtons()}
-      </StyledContainer>
+      </div>
     );
   };
 

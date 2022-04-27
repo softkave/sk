@@ -22,7 +22,7 @@ const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
   const { boardId } = props;
   const dispatch = useDispatch();
   const board = useSelector<IAppState, IBoard>((state) =>
-    BoardSelectors.getOne(state, boardId)
+    BoardSelectors.assertGetOne(state, boardId)
   );
 
   const loadBoard = React.useCallback(

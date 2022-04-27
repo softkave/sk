@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import moment from "moment";
 import ChatAPI, {
   IUpdateRoomReadCounterAPIParameters,
 } from "../../../net/chat/chat";
@@ -100,10 +99,8 @@ export function completeUpdateRoomReadCounter(
   );
 
   const orgUnseenChatsCount = unseenChatsCountMapByOrg[room.orgId] || 0;
-  const { unseenChatsCount } = getRoomUserUnseenChatsCountAndStartIndex(
-    room,
-    moment(readCounter)
-  );
+  const { unseenChatsCount, unseenChatsStartIndex } =
+    getRoomUserUnseenChatsCountAndStartIndex(room);
 
   if (orgUnseenChatsCount && room.unseenChatsCount) {
     const remainingCount =
@@ -121,11 +118,22 @@ export function completeUpdateRoomReadCounter(
   }
 
   thunkAPI.dispatch(
-    RoomActions.updateRoomReadCounter({
-      readCounter,
-      roomId,
-      userId: user.customId,
-      isSignedInUser: true,
+    RoomActions.updateRoom({
+      id: roomId,
+      data: {
+        unseenChatsCount,
+        unseenChatsStartIndex,
+        members: room.members.map((member) => {
+          if (member.userId === user.customId) {
+            return {
+              ...member,
+              readCounter,
+            };
+          }
+
+          return member;
+        }),
+      },
     })
   );
 }

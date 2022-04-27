@@ -2,113 +2,112 @@ import PushNotificationAPI from "./net/pushNotification/api";
 import { updateClientOpAction } from "./redux/operations/session/updateClient";
 import store from "./redux/store";
 import UserSessionStorageFuncs, {
-    sessionVariables,
+  sessionVariables,
 } from "./storage/userSession";
 import { urlBase64ToUint8Array } from "./utils/utils";
 
 export function supportsServiceWorkers() {
-    if ("serviceWorker" in navigator) {
-        return true;
-    }
+  if ("serviceWorker" in navigator) {
+    return true;
+  }
 }
 
 export async function getServiceWorker(scope?: string) {
-    if (!supportsServiceWorkers()) {
-        return null;
-    }
+  if (!supportsServiceWorkers()) {
+    return null;
+  }
 
-    return navigator.serviceWorker.getRegistration(scope);
+  return navigator.serviceWorker.getRegistration(scope);
 }
 
 export async function registerServiceWorker() {
-    if (!supportsServiceWorkers()) {
-        return null;
-    }
+  if (!supportsServiceWorkers()) {
+    return null;
+  }
 
-    try {
-        const workerURL = `${process.env.PUBLIC_URL}/service-worker.js`;
-        const registration =
-            (await getServiceWorker()) ||
-            (await navigator.serviceWorker.register(workerURL));
+  try {
+    const workerURL = `${process.env.PUBLIC_URL}/service-worker.js`;
+    const registration =
+      (await getServiceWorker()) ||
+      (await navigator.serviceWorker.register(workerURL));
 
-        return registration;
-    } catch (error) {
-        // TODO: should we persist to server
-        console.error(error);
-    }
+    return registration;
+  } catch (error) {
+    // TODO: should we persist to server
+    console.error(error);
+  }
 }
 
 // TODO: write code to auto check if operation passes and retry
 // if it failed
 export async function registerPushNotification() {
-    const registration = await getServiceWorker();
+  const registration = await getServiceWorker();
 
-    if (!registration) {
-        return null;
+  if (!registration) {
+    return null;
+  }
+
+  let subscription = await registration.pushManager.getSubscription();
+
+  if (!subscription) {
+    const response = await PushNotificationAPI.getPushNotificationKeys();
+
+    if (!response.vapidPublicKey) {
+      return null;
     }
 
-    let subscription = await registration.pushManager.getSubscription();
+    const vapidPublicKey = response.vapidPublicKey;
+    const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: convertedVapidKey,
+    });
+  }
 
-    if (!subscription) {
-        const response = await PushNotificationAPI.getPushNotificationKeys();
+  if (subscription) {
+    const subStr = JSON.stringify(subscription);
+    const subData = JSON.parse(subStr);
+    const authKeyBuf = subData.keys.auth;
+    const p256dhKeyBuf = subData.keys.p256dh;
 
-        if (!response.vapidPublicKey) {
-            return null;
-        }
+    if (authKeyBuf && p256dhKeyBuf) {
+      const auth = authKeyBuf.toString();
+      const p256dh = p256dhKeyBuf.toString();
+      const existsResult = await PushNotificationAPI.pushSubscriptionExists({
+        endpoint: subscription.endpoint,
+        keys: {
+          auth,
+          p256dh,
+        },
+      });
 
-        const vapidPublicKey = response.vapidPublicKey;
-        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-        subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidKey,
+      if (!existsResult.exists) {
+        await PushNotificationAPI.subscribePushNotification({
+          endpoint: subscription.endpoint,
+          keys: {
+            auth,
+            p256dh,
+          },
         });
+
+        UserSessionStorageFuncs.setItem(
+          sessionVariables.isSubcribedToPushNotifications,
+          true
+        );
+
+        store.dispatch(
+          updateClientOpAction({
+            data: { isSubcribedToPushNotifications: true },
+            deleteOpOnComplete: true,
+          })
+        );
+      }
     }
+  }
 
-    if (subscription) {
-        const subStr = JSON.stringify(subscription);
-        const subData = JSON.parse(subStr);
-        const authKeyBuf = subData.keys.auth;
-        const p256dhKeyBuf = subData.keys.p256dh;
-
-        if (authKeyBuf && p256dhKeyBuf) {
-            const auth = authKeyBuf.toString();
-            const p256dh = p256dhKeyBuf.toString();
-            const existsResult =
-                await PushNotificationAPI.pushSubscriptionExists({
-                    endpoint: subscription.endpoint,
-                    keys: {
-                        auth,
-                        p256dh,
-                    },
-                });
-
-            if (!existsResult.exists) {
-                await PushNotificationAPI.subscribePushNotification({
-                    endpoint: subscription.endpoint,
-                    keys: {
-                        auth,
-                        p256dh,
-                    },
-                });
-
-                UserSessionStorageFuncs.setItem(
-                    sessionVariables.isSubcribedToPushNotifications,
-                    true
-                );
-
-                store.dispatch(
-                    updateClientOpAction({
-                        data: { isSubcribedToPushNotifications: true },
-                        deleteOpOnComplete: true,
-                    })
-                );
-            }
-        }
-    }
-
-    return subscription;
+  return subscription;
 }
 
 export async function serviceWorkerInit() {
-    await registerServiceWorker();
+  await registerServiceWorker();
 }

@@ -1,5 +1,4 @@
 import React from "react";
-import StyledContainer from "../styled/Container";
 
 const wrapWithMargin = (
   content: React.ReactNode,
@@ -9,9 +8,9 @@ const wrapWithMargin = (
   marginBottom = 0
 ) => {
   return (
-    <StyledContainer s={{ marginLeft, marginRight, marginTop, marginBottom }}>
+    <div style={{ marginLeft, marginRight, marginTop, marginBottom }}>
       {content}
-    </StyledContainer>
+    </div>
   );
 };
 

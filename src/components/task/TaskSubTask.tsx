@@ -2,7 +2,6 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Checkbox } from "antd";
 import React from "react";
 import { ISubTask } from "../../models/block/block";
-import StyledContainer from "../styled/Container";
 
 export interface ITaskSubTaskProps {
   subTask: ISubTask;
@@ -21,13 +20,13 @@ const TaskSubTask: React.FC<ITaskSubTaskProps> = (props) => {
   }, [setLoading, onToggleSubTask]);
 
   return (
-    <StyledContainer
+    <div
       key={subTask.customId}
       // className={css({
       //     "& *": { fontSize: "13px !important" },
       // })}
     >
-      <StyledContainer>
+      <div>
         {loading ? (
           <LoadingOutlined />
         ) : (
@@ -36,11 +35,9 @@ const TaskSubTask: React.FC<ITaskSubTaskProps> = (props) => {
             onChange={internalOnToggle}
           />
         )}
-      </StyledContainer>
-      <StyledContainer s={{ marginLeft: "16px", flex: 1 }}>
-        {subTask.description}
-      </StyledContainer>
-    </StyledContainer>
+      </div>
+      <div style={{ marginLeft: "16px", flex: 1 }}>{subTask.description}</div>
+    </div>
   );
 };
 

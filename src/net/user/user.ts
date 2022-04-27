@@ -146,7 +146,7 @@ export type IUpdateClientEndpointErrors =
 async function updateClient(
   params: IUpdateClientEndpointParams
 ): Promise<IUpdateClientEndpointResult> {
-  return auth(null, updateClientMutation, params, "data.user.updateClient");
+  return auth(null, updateClientMutation, params, "data.client.updateClient");
 }
 
 export interface IGetUserDataAPIParams {

@@ -4,7 +4,6 @@ import React from "react";
 import { Minus } from "react-feather";
 import { IBlockStatus, IBoardTaskResolution } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
-import StyledContainer from "../styled/Container";
 import SelectResolutionModal from "./SelectResolutionModal";
 import TaskResolution from "./TaskResolution";
 
@@ -128,8 +127,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   );
 
   const selectedStatusElem = (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         cursor: disabled ? "not-allowed" : "pointer",
         display: "inline-flex",
         flex: 1,
@@ -144,7 +143,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
           }}
         />
       </Space>
-    </StyledContainer>
+    </div>
   );
 
   const resolutionElem = selectedStatusIsLastStatus && (
@@ -159,7 +158,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   );
 
   return (
-    <StyledContainer s={{ flex: 1 }}>
+    <div style={{ flex: 1 }}>
       {resolutionModalState.showModal && (
         <SelectResolutionModal
           task={task}
@@ -171,7 +170,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
           onSelectAddNewResolution={onSelectAddNewResolution}
         />
       )}
-      <StyledContainer s={{ flex: 1, marginRight: "6px" }}>
+      <div style={{ flex: 1, marginRight: "6px" }}>
         <Dropdown
           disabled={disabled}
           overlay={statusListMenu}
@@ -180,7 +179,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         >
           {selectedStatusElem}
         </Dropdown>
-      </StyledContainer>
+      </div>
       {resolutionElem && (
         <React.Fragment>
           <span
@@ -192,17 +191,17 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
           >
             <Minus style={{ width: "12px", height: "12px" }} />
           </span>
-          <StyledContainer
-            s={{
+          <div
+            style={{
               flex: 1,
               marginRight: "6px",
             }}
           >
             {resolutionElem}
-          </StyledContainer>
+          </div>
         </React.Fragment>
       )}
-    </StyledContainer>
+    </div>
   );
 };
 

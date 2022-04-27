@@ -3,7 +3,6 @@ import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { Trash2 } from "react-feather";
 import FormError from "../forms/FormError";
-import StyledContainer from "../styled/Container";
 
 export interface IAddCollaboratorFormItemValues {
   customId: string;
@@ -27,8 +26,8 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
       props;
 
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: "100%",
           flexDirection: "column",
 
@@ -54,7 +53,7 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             disabled={disabled}
           />
         </Form.Item>
-        <StyledContainer s={{ marginTop: "4px" }}>
+        <div style={{ marginTop: "4px" }}>
           <Button
             disabled={disabled}
             icon={<Trash2 />}
@@ -62,8 +61,8 @@ const AddCollaboratorFormItem = React.memo<IAddCollaboratorFormItemProps>(
             htmlType="button"
             className="icon-btn"
           />
-        </StyledContainer>
-      </StyledContainer>
+        </div>
+      </div>
     );
   }
 );

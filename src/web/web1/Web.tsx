@@ -1,23 +1,20 @@
-import styled from "@emotion/styled";
+import { css } from "@emotion/css";
 import React from "react";
 import Bottom from "./Bottom";
 import Face from "./Face";
 
 const Web1: React.FC<{}> = () => {
-    return (
-        <StyledWeb>
-            <Face />
-            {/* <Middle /> */}
-            {/* <Pricing /> */}
-            <Bottom />
-        </StyledWeb>
-    );
+  return (
+    <div
+      className={css({
+        minHeight: "100vh",
+        height: "100%",
+      })}
+    >
+      <Face />
+      <Bottom />
+    </div>
+  );
 };
 
 export default Web1;
-
-const StyledWeb = styled.div`
-    min-height: 100%;
-    height: 100%;
-    // background-color: #fafafa;
-`;

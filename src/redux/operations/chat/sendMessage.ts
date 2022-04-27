@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import assert from "assert";
 import moment from "moment";
 import { IChat } from "../../../models/chat/types";
 import ChatAPI, { ISendMessageAPIParameters } from "../../../net/chat/chat";
@@ -215,8 +216,6 @@ export const sendMessageOpAction = createAsyncThunk<
       );
     }
   } catch (error) {
-    console.error(error);
-
     thunkAPI.dispatch(
       RoomActions.updateChat({
         chatIndex,
@@ -251,7 +250,6 @@ export const sendMessageOpAction = createAsyncThunk<
 
     if (roomQueuedChats && roomQueuedChats.length > 0) {
       const updatedQueuedChats = { ...queuedChats };
-
       delete updatedQueuedChats[arg.roomId];
       thunkAPI.dispatch(
         KeyValueActions.setKey({
@@ -279,14 +277,25 @@ export const sendMessageOpAction = createAsyncThunk<
     }
   }
 
+  const room = RoomSelectors.getRoom(thunkAPI.getState(), arg.roomId);
+  assert(room, "Room not found");
   thunkAPI.dispatch(
-    RoomActions.updateRoomReadCounter({
-      userId: user.customId,
-      roomId: chat.roomId,
-      readCounter: moment(chat.createdAt)
-        .add("1", "milliseconds")
-        .toISOString(),
-      isSignedInUser: true,
+    RoomActions.updateRoom({
+      id: chat.roomId,
+      data: {
+        members: room.members.map((member) => {
+          if (member.userId === user.customId) {
+            return {
+              ...member,
+              readCounter: moment(chat.createdAt)
+                .add("1", "milliseconds")
+                .toISOString(),
+            };
+          }
+
+          return member;
+        }),
+      },
     })
   );
 });

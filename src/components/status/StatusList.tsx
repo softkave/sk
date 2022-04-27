@@ -16,13 +16,12 @@ import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { getNewId } from "../../utils/utils";
 import { IFormikFormErrors } from "../forms/formik-utils";
-import { StyledForm } from "../forms/FormStyledComponents";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import OrgsListHeader from "../org/OrgsListHeader";
-import StyledContainer from "../styled/Container";
+
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -48,7 +47,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
       editingStatusList.reset();
       saveChanges(values.statusList);
     },
-    [saveChanges, editingStatusList.reset]
+    [saveChanges, editingStatusList]
   );
 
   const { formik, formikHelpers } = useFormHelpers({
@@ -301,8 +300,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   const renderSubmitControls = () => {
     // TODO: disable when there aren't changes
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           flexDirection: "column",
           width: "100%",
           padding: "16px",
@@ -317,7 +316,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         >
           {isSubmitting ? "Saving Changes" : "Save Changes"}
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -352,9 +351,9 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   };
 
   return (
-    <StyledForm onSubmit={formik.handleSubmit}>
-      <StyledContainer
-        s={{
+    <form onSubmit={formik.handleSubmit}>
+      <div
+        style={{
           height: "100%",
           width: "100%",
           flexDirection: "column",
@@ -371,8 +370,8 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
           <Typography.Text strong>"done"</Typography.Text>.
         </Typography.Paragraph>
         {renderSubmitControls()}
-      </StyledContainer>
-    </StyledForm>
+      </div>
+    </form>
   );
 };
 

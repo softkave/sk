@@ -8,6 +8,7 @@ export interface IDeleteButtonProps {
   content?: React.ReactNode;
   okText?: string;
   cancelText?: string;
+  children?: React.ReactNode;
 }
 
 const DeleteButtonWithPrompt: React.FC<IDeleteButtonProps> = (props) => {

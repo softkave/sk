@@ -113,6 +113,7 @@ const updateBlockFields = getFields<
       resolutionInputExtractor
     );
   },
+  sprintOptions: (data) => data,
 });
 
 export function getUpdateBoardInput(

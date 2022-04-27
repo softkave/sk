@@ -12,12 +12,11 @@ import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClassname,
   formContentWrapperStyle,
   formInputContentWrapperStyle,
-  StyledForm,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
-import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
 
 export interface IBoardFormValues {
@@ -159,7 +158,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <StyledContainer>
+      <div>
         <Button
           block
           type="primary"
@@ -169,7 +168,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
         >
           {getSubmitLabel()}
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -177,11 +176,11 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
     const { errors } = formik;
     const globalError = getFormError(errors);
     return (
-      <StyledForm onSubmit={formik.handleSubmit}>
-        <StyledContainer s={formContentWrapperStyle}>
-          <StyledContainer s={formInputContentWrapperStyle}>
+      <form onSubmit={formik.handleSubmit} className={formClassname}>
+        <div style={formContentWrapperStyle}>
+          <div style={formInputContentWrapperStyle}>
             {!hideBackBtn && (
-              <StyledContainer s={{ paddingBottom: "16px" }}>
+              <div style={{ paddingBottom: "16px" }}>
                 <Button
                   style={{ cursor: "pointer" }}
                   onClick={onClose}
@@ -189,7 +188,7 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
                 >
                   <ArrowLeft />
                 </Button>
-              </StyledContainer>
+              </div>
             )}
             {globalError && (
               <Form.Item>
@@ -199,10 +198,10 @@ const BoardForm: React.FC<IBoardFormProps> = (props) => {
             {renderNameInput()}
             {renderDescriptionInput()}
             {renderColorInput()}
-          </StyledContainer>
+          </div>
           {renderControls()}
-        </StyledContainer>
-      </StyledForm>
+        </div>
+      </form>
     );
   };
 

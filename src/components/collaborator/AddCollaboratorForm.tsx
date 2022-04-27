@@ -15,12 +15,11 @@ import { getNewId } from "../../utils/utils";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClassname,
   formContentWrapperStyle,
   formInputContentWrapperStyle,
-  StyledForm,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
-import StyledContainer from "../styled/Container";
 import AddCollaboratorFormItem, {
   IAddCollaboratorFormItemValues,
 } from "./AddCollaboratorFormItem";
@@ -177,15 +176,15 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
   const renderLabel = () => {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: "100%",
           lineHeight: "40px",
           fontWeight: 600,
           alignItems: "center",
         }}
       >
-        <StyledContainer s={{ flex: 1 }}>Requests</StyledContainer>
+        <div style={{ flex: 1 }}>Requests</div>
         <Button
           disabled={
             isSubmitting ||
@@ -198,7 +197,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         >
           <Plus />
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -243,7 +242,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <StyledContainer>
+      <div>
         <Button
           block
           type="primary"
@@ -253,7 +252,7 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
         >
           Send Requests
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -262,10 +261,10 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
     const globalError = getFormError(errors);
 
     return (
-      <StyledForm onSubmit={handleSubmit}>
-        <StyledContainer s={formContentWrapperStyle}>
-          <StyledContainer s={formInputContentWrapperStyle}>
-            <StyledContainer s={{ paddingBottom: "16px" }}>
+      <form onSubmit={handleSubmit} className={formClassname}>
+        <div style={formContentWrapperStyle}>
+          <div style={formInputContentWrapperStyle}>
+            <div style={{ paddingBottom: "16px" }}>
               <Button
                 style={{ cursor: "pointer" }}
                 onClick={onClose}
@@ -273,17 +272,17 @@ const AddCollaboratorForm: React.FC<IAddCollaboratorFormProps> = (props) => {
               >
                 <ArrowLeft />
               </Button>
-            </StyledContainer>
+            </div>
             {globalError && (
               <Form.Item>
                 <FormError error={globalError} />
               </Form.Item>
             )}
             {renderCollaboratorsListInput()}
-          </StyledContainer>
+          </div>
           {renderControls()}
-        </StyledContainer>
-      </StyledForm>
+        </div>
+      </form>
     );
   };
 

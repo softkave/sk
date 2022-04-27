@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import { css, cx } from "@emotion/css";
 import { Avatar } from "antd";
 import React from "react";
 
@@ -9,16 +9,36 @@ export interface IItemAvatarProps {
   size?: number | "small" | "default" | "large";
   shape?: "square" | "circle";
   onClick?: () => void;
+  children?: React.ReactNode;
 }
+
+const classes = {
+  active: css({
+    borderBottom: "2px solid rgb(66,133,244)",
+    padding: "2px",
+    borderRadius: "4px",
+  }),
+  clickable: css({
+    cursor: "pointer",
+    boxSizing: "border-box",
+  }),
+};
 
 const ItemAvatar: React.FC<IItemAvatarProps> = (props) => {
   const { size, shape } = props;
   return (
-    <StyledAvatarContainer
-      active={props.active}
+    <div
       onClick={props.onClick}
-      color={props.color!}
-      type={props.clickable && props.onClick ? "thumbnail" : "regular"}
+      className={cx(
+        css({
+          display: "inline-flex",
+          color: props.color,
+        }),
+        {
+          [classes.active]: !!props.active,
+          [classes.clickable]: !!props.onClick,
+        }
+      )}
     >
       <Avatar
         size={size}
@@ -30,7 +50,7 @@ const ItemAvatar: React.FC<IItemAvatarProps> = (props) => {
       >
         {props.children}
       </Avatar>
-    </StyledAvatarContainer>
+    </div>
   );
 };
 
@@ -39,38 +59,5 @@ ItemAvatar.defaultProps = {
   size: "small",
   shape: "square",
 };
-
-interface IAvatarContainerProps {
-  active?: boolean;
-  color: string;
-  type: "regular" | "thumbnail";
-}
-
-const StyledAvatarContainer = styled("span")<IAvatarContainerProps>((props) => {
-  const styles: React.CSSProperties = {
-    display: "inline-flex",
-    color: props.color,
-  };
-
-  switch (props.type) {
-    case "thumbnail": {
-      return {
-        ...styles,
-        borderBottom: props.active ? "2px solid rgb(66,133,244)" : "none",
-        padding: props.active ? "2px" : undefined,
-        borderRadius: props.active ? "4px" : undefined,
-        cursor: "pointer",
-        boxSizing: "border-box",
-      };
-    }
-
-    case "regular":
-    default: {
-      return {
-        ...styles,
-      };
-    }
-  }
-});
 
 export default ItemAvatar;

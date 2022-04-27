@@ -1,11 +1,12 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
+import { css } from "@emotion/css";
 import { Button, Space, Typography } from "antd";
 import React from "react";
 import { ArrowLeft, Plus, Search } from "react-feather";
 import { useHistory } from "react-router";
 import { IBoard } from "../../models/board/types";
-import StyledContainer from "../styled/Container";
+
 import { layoutOptions } from "../utilities/layout";
 import BoardHeaderOptionsMenu, {
   BoardCurrentView,
@@ -68,7 +69,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
   const renderBackButton = () => {
     if (isMobile) {
       return (
-        <StyledContainer s={{ marginRight: "16px" }}>
+        <div style={{ marginRight: "16px" }}>
           <Button
             style={{ cursor: "pointer" }}
             onClick={onBack}
@@ -76,16 +77,16 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
           >
             <ArrowLeft />
           </Button>
-        </StyledContainer>
+        </div>
       );
     } else {
       return (
-        <StyledContainer
-          s={{ marginRight: "16px", cursor: "pointer" }}
+        <div
+          className={css({ marginRight: "16px", cursor: "pointer" })}
           onClick={onToggleFoldMenu}
         >
           {isMenuFolded ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </StyledContainer>
+        </div>
       );
     }
   };
@@ -138,7 +139,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
         >
           {block.name}
         </Typography.Title>
-        <StyledContainer s={{ alignItems: "center" }}>
+        <div style={{ alignItems: "center" }}>
           {desktopContent ? (
             <Space>
               {desktopContent}
@@ -147,14 +148,14 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
           ) : (
             options
           )}
-        </StyledContainer>
+        </div>
       </React.Fragment>
     );
   }
 
   return (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         ...style,
         width: "100%",
         alignItems: "center",
@@ -164,7 +165,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
       }}
     >
       {content}
-    </StyledContainer>
+    </div>
   );
 };
 

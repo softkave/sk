@@ -1,4 +1,4 @@
-import { first, last } from "lodash";
+import { first } from "lodash";
 import { ITaskFormValues } from "../../components/task/TaskForm";
 import { extractFields, getFields, makeExtract } from "../../utils/extract";
 import { topLevelDiff } from "../../utils/utils";
@@ -8,7 +8,6 @@ import { getComplexFieldInput } from "../utils";
 import {
   IAssigneeInput,
   IBlockAssignedLabelInput,
-  INewTaskInput,
   ISubTaskInput,
   ITask,
   ITaskSprintInput,

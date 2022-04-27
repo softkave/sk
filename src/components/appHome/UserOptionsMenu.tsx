@@ -3,10 +3,9 @@ import {
   MessageOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import { css, cx } from "@emotion/css";
 import { Menu, Space } from "antd";
 import React from "react";
-import StyledContainer from "../styled/Container";
-import { ComponentStyle } from "../types";
 
 export enum UserOptionsMenuKeys {
   Logout = "Logout",
@@ -15,25 +14,28 @@ export enum UserOptionsMenuKeys {
 }
 
 export interface IUserOptionsMenuProps {
-  style?: ComponentStyle;
+  style?: React.CSSProperties;
   className?: string;
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
 
-const kAntMenuSelector = "& .ant-menu";
+const classes = {
+  root: css({
+    "& .ant-menu-vertical": {
+      border: "none",
+    },
+
+    "& .ant-menu-item": {
+      padding: "0px !important",
+    },
+  }),
+};
 
 const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
-  const { className, onSelect } = props;
-  const style = props.style || {};
-  const propStyleAntMenuStyle = style[kAntMenuSelector] || {};
-  const antMenuStyle = {
-    borderRight: "none",
-    ...propStyleAntMenuStyle,
-  };
+  const { className, style, onSelect } = props;
 
-  style[kAntMenuSelector] = antMenuStyle;
   return (
-    <StyledContainer className={className} s={style}>
+    <div className={cx(className, classes.root)} style={style}>
       <Menu
         onClick={(evt) => {
           onSelect(evt.key as UserOptionsMenuKeys);
@@ -64,7 +66,7 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
           </Space>
         </Menu.Item>
       </Menu>
-    </StyledContainer>
+    </div>
   );
 };
 

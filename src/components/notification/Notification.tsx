@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import styled from "@emotion/styled";
+import { css } from "@emotion/css";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Button, message, Space, Typography } from "antd";
 import assert from "assert";
@@ -21,7 +21,7 @@ import { getRequestStatus } from "../collaborator/utils";
 import FormError from "../forms/FormError";
 import useOperation, { getOpData } from "../hooks/useOperation";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
+
 import { INotificationsPathParams } from "./utils";
 
 export interface INotificationProps {}
@@ -128,27 +128,41 @@ const Notification: React.FC<INotificationProps> = (props) => {
 
   const renderHeaderPrefixButton = () => {
     return (
-      <StyledContainer s={{ marginRight: "16px", cursor: "pointer" }}>
+      <div style={{ marginRight: "16px", cursor: "pointer" }}>
         <Button className="icon-btn" onClick={onBack}>
           <ArrowLeft />
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
   return (
-    <StyledNotificationBody>
-      <StyledNotificationBodyHead>
-        <StyledContainer
-          s={{
+    <div
+      className={css({
+        padding: "0 16px",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+      })}
+    >
+      <div
+        className={css({
+          marginBottom: "32px",
+          display: "flex",
+          marginTop: "16px",
+        })}
+      >
+        <div
+          style={{
             marginRight: "16px",
             cursor: "pointer",
             alignItems: "center",
           }}
         >
           {renderHeaderPrefixButton()}
-        </StyledContainer>
-        <StyledContainer s={{ flex: 1, flexDirection: "column" }}>
+        </div>
+        <div style={{ flex: 1, flexDirection: "column" }}>
           <Typography.Title
             level={1}
             style={{ fontSize: "16px", marginBottom: "4px" }}
@@ -158,10 +172,10 @@ const Notification: React.FC<INotificationProps> = (props) => {
           <Typography.Text>
             {new Date(notification!.createdAt).toDateString()}
           </Typography.Text>
-        </StyledContainer>
-      </StyledNotificationBodyHead>
-      <StyledContainer
-        s={{
+        </div>
+      </div>
+      <div
+        style={{
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
@@ -175,23 +189,9 @@ const Notification: React.FC<INotificationProps> = (props) => {
           <Typography.Text>{notification?.from.blockName}</Typography.Text>
         </Typography.Paragraph>
         {renderNotificationResponse()}
-      </StyledContainer>
-    </StyledNotificationBody>
+      </div>
+    </div>
   );
 };
 
 export default Notification;
-
-const StyledNotificationBody = styled.div({
-  padding: "0 16px",
-  height: "100%",
-  width: "100%",
-  display: "flex",
-  flexDirection: "column",
-});
-
-const StyledNotificationBodyHead = styled.div({
-  marginBottom: "32px",
-  display: "flex",
-  marginTop: "16px",
-});

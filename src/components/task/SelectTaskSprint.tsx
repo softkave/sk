@@ -4,7 +4,6 @@ import React from "react";
 import { ISprint } from "../../models/sprint/types";
 import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
 import { ITask } from "../../models/task/types";
-import StyledContainer from "../styled/Container";
 
 export interface ISelectTaskSprintProps {
   task: ITask;
@@ -67,8 +66,8 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
     }
 
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           cursor: disabled ? "not-allowed" : "pointer",
           width: "100%",
         }}
@@ -79,7 +78,7 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
             <CaretDownOutlined style={{ fontSize: "10px", color: "#999" }} />
           </Space>
         </Tag>
-      </StyledContainer>
+      </div>
     );
   };
 

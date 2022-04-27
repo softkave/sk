@@ -14,7 +14,7 @@ import { IBlockAssignedLabel, ITaskAssignee } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
 import { getDateString } from "../../utils/utils";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
+
 import { ITaskFormValues } from "../task/TaskForm";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
@@ -126,7 +126,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
     if (renderColumnHeaderOptions) {
       content = (
         <React.Fragment>
-          <StyledContainer s={{ flex: 1 }}>{defaultContent}</StyledContainer>
+          <div style={{ flex: 1 }}>{defaultContent}</div>
           {renderColumnHeaderOptions(group)}
         </React.Fragment>
       );

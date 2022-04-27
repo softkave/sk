@@ -3,7 +3,7 @@ import { Menu, Space } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { IAppOrganization } from "../../models/organization/types";
-import StyledContainer from "../styled/Container";
+
 import MenuWithTrigger, {
   IMenuWithTriggerRenderMenuProps,
   IMenuWithTriggerRenderTriggerProps,
@@ -24,15 +24,15 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
   const renderTrigger = React.useCallback(
     (renderTriggerProps: IMenuWithTriggerRenderTriggerProps) => {
       return (
-        <StyledContainer
-          s={{
+        <div
+          style={{
             cursor: "pointer",
             textTransform: "capitalize",
           }}
           onClick={renderTriggerProps.openMenu}
         >
           <MoreHorizontal />
-        </StyledContainer>
+        </div>
       );
     },
     []

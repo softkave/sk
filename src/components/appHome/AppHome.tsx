@@ -9,7 +9,6 @@ import Notification from "../notification/Notification";
 import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
 import OrgsListContainer from "../org/OrgsListContainer";
 import RenderForDevice from "../RenderForDevice";
-import StyledContainer from "../styled/Container";
 import UserSettings from "../user/UserSettings";
 import AppHomeDesktop from "./AppHomeDesktop";
 import HeaderMobile from "./HeaderMobile";
@@ -38,14 +37,12 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
 
   const history = useHistory();
   const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
-
   const toggleFeedbackForm = React.useCallback(() => {
     setShowFeedbackForm(!showFeedbackForm);
   }, [showFeedbackForm]);
 
   const renderNotification = () => <Notification />;
   const renderSettings = () => <UserSettings />;
-
   const onSelect = (key: UserOptionsMenuKeys) => {
     switch (key) {
       case UserOptionsMenuKeys.Logout:
@@ -63,10 +60,10 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
   };
 
   const mobile = () => (
-    <StyledContainer s={{ flexDirection: "column", height: "100%" }}>
+    <div style={{ flexDirection: "column", height: "100%" }}>
       {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
       <HeaderMobile user={user} onSelect={onSelect} />
-      <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
+      <div style={{ flex: 1, overflow: "hidden" }}>
         <Switch>
           <Route path="/app/notifications/*" render={renderNotification} />
           <Route exact path="/app/orgs" component={OrgsListContainer} />
@@ -89,8 +86,8 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
           <Route exact path="/app/settings" render={renderSettings} />
           <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
         </Switch>
-      </StyledContainer>
-    </StyledContainer>
+      </div>
+    </div>
   );
 
   const renderEmpty = (str: string = "Select an organization or request") => (
@@ -98,7 +95,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
   );
 
   const desktop = () => (
-    <StyledContainer s={{ height: "100%", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
       {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
       {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
       <Switch>
@@ -128,7 +125,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
         <Route exact path="/app/settings" render={renderSettings} />
         <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
       </Switch>
-    </StyledContainer>
+    </div>
   );
 
   return (

@@ -7,12 +7,10 @@ import { indexArray } from "../../utils/utils";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
-    formContentWrapperStyle,
-    formInputContentWrapperStyle,
-    StyledForm,
+  formContentWrapperStyle,
+  formInputContentWrapperStyle,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
-import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
 import sprintValidationSchemas from "./utils";
 
@@ -20,218 +18,207 @@ import sprintValidationSchemas from "./utils";
 const SPRINT_EXISTS_MESSAGE = "A sprint with the same name exists";
 
 export interface ISprintFormValues {
-    name: string;
-    duration: SprintDuration;
+  name: string;
+  duration: SprintDuration;
 }
 
 export type ISprintFormErrors = IFormikFormErrors<ISprintFormValues>;
 
 export interface ISprintFormProps {
-    value: ISprintFormValues;
-    existingSprints: ISprint[];
-    onClose: () => void;
-    onSubmit: (values: ISprintFormValues) => void;
-    sprint?: ISprint;
-    isSubmitting?: boolean;
-    errors?: ISprintFormErrors;
+  value: ISprintFormValues;
+  existingSprints: ISprint[];
+  onClose: () => void;
+  onSubmit: (values: ISprintFormValues) => void;
+  sprint?: ISprint;
+  isSubmitting?: boolean;
+  errors?: ISprintFormErrors;
 }
 
 const sprintFormValidationSchema = yup.object().shape({
-    name: sprintValidationSchemas.name.required(),
-    duration: yup.string().trim().required(),
+  name: sprintValidationSchemas.name.required(),
+  duration: yup.string().trim().required(),
 });
 
 const SprintForm: React.FC<ISprintFormProps> = (props) => {
-    const {
-        value,
-        existingSprints,
-        isSubmitting,
-        sprint,
-        onClose,
-        onSubmit,
-        errors: externalErrors,
-    } = props;
+  const {
+    value,
+    existingSprints,
+    isSubmitting,
+    sprint,
+    onClose,
+    onSubmit,
+    errors: externalErrors,
+  } = props;
 
-    const existingSprintsMap = React.useMemo(() => {
-        return indexArray(existingSprints, {
-            path: "name",
-            indexer: (data) => data.name?.toLowerCase(),
-        });
-    }, [existingSprints]);
-
-    const {
-        formik,
-        formikChangedFieldsHelpers,
-        formikHelpers,
-    } = useFormHelpers({
-        errors: externalErrors,
-        formikProps: {
-            onSubmit,
-            initialValues: value || {},
-            validationSchema: sprintFormValidationSchema,
-        },
+  const existingSprintsMap = React.useMemo(() => {
+    return indexArray(existingSprints, {
+      path: "name",
+      indexer: (data) => data.name?.toLowerCase(),
     });
+  }, [existingSprints]);
 
-    const getSprintExistsError = (name: string) => {
-        if (name && name.length > 0) {
-            name = name.toLowerCase();
-            const existingSprint = existingSprintsMap[name];
+  const { formik, formikChangedFieldsHelpers, formikHelpers } = useFormHelpers({
+    errors: externalErrors,
+    formikProps: {
+      onSubmit,
+      initialValues: value || {},
+      validationSchema: sprintFormValidationSchema,
+    },
+  });
 
-            if (existingSprint) {
-                if (sprint && sprint.customId === existingSprint.customId) {
-                    return;
-                }
+  const getSprintExistsError = (name: string) => {
+    if (name && name.length > 0) {
+      name = name.toLowerCase();
+      const existingSprint = existingSprintsMap[name];
 
-                return SPRINT_EXISTS_MESSAGE;
-            }
+      if (existingSprint) {
+        if (sprint && sprint.customId === existingSprint.customId) {
+          return;
         }
-    };
 
-    const renderNameInput = () => {
-        const sprintNameError =
-            formik.errors.name || getSprintExistsError(formik.values.name);
+        return SPRINT_EXISTS_MESSAGE;
+      }
+    }
+  };
 
-        return (
-            <Form.Item
-                label="Sprint Name"
-                help={
-                    formik.touched.name && <FormError error={sprintNameError} />
-                }
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <InputWithControls
-                    value={formik.values.name}
-                    onChange={(val) => {
-                        formik.setFieldValue("name", val);
-                        formikChangedFieldsHelpers.addField("name");
-                    }}
-                    revertChanges={() => {
-                        formikHelpers.revertChanges("name");
-                    }}
-                    autoComplete="off"
-                    disabled={isSubmitting}
-                    inputOnly={!sprint}
-                    placeholder="Sprint name"
-                />
-            </Form.Item>
-        );
-    };
+  const renderNameInput = () => {
+    const sprintNameError =
+      formik.errors.name || getSprintExistsError(formik.values.name);
 
-    const renderDurationInput = () => {
-        return (
-            <Form.Item
-                label="Sprint Duration"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-            >
-                <Select
-                    defaultValue={formik.values.duration}
-                    onChange={(val) => {
-                        formik.setFieldValue("duration", val);
-                        formikChangedFieldsHelpers.addField("duration");
-                    }}
-                    placeholder="Choose duration"
-                    disabled={isSubmitting}
-                >
-                    <Select.Option value={SprintDuration.ONE_WEEK}>
-                        {SprintDuration.ONE_WEEK}
-                    </Select.Option>
-                    <Select.Option value={SprintDuration.TWO_WEEKS}>
-                        {SprintDuration.TWO_WEEKS}
-                    </Select.Option>
-                    <Select.Option value={SprintDuration.ONE_MONTH}>
-                        {SprintDuration.ONE_MONTH}
-                    </Select.Option>
-                </Select>
-            </Form.Item>
-        );
-    };
+    return (
+      <Form.Item
+        label="Sprint Name"
+        help={formik.touched.name && <FormError error={sprintNameError} />}
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <InputWithControls
+          value={formik.values.name}
+          onChange={(val) => {
+            formik.setFieldValue("name", val);
+            formikChangedFieldsHelpers.addField("name");
+          }}
+          revertChanges={() => {
+            formikHelpers.revertChanges("name");
+          }}
+          autoComplete="off"
+          disabled={isSubmitting}
+          inputOnly={!sprint}
+          placeholder="Sprint name"
+        />
+      </Form.Item>
+    );
+  };
 
-    const getSubmitLabel = () => {
-        if (isSubmitting) {
-            if (sprint) {
-                return "Saving Changes";
-            } else {
-                return "Adding Sprint";
-            }
-        } else {
-            if (sprint) {
-                return "Save Changes";
-            } else {
-                return "Add Sprint";
-            }
-        }
-    };
+  const renderDurationInput = () => {
+    return (
+      <Form.Item
+        label="Sprint Duration"
+        labelCol={{ span: 24 }}
+        wrapperCol={{ span: 24 }}
+      >
+        <Select
+          defaultValue={formik.values.duration}
+          onChange={(val) => {
+            formik.setFieldValue("duration", val);
+            formikChangedFieldsHelpers.addField("duration");
+          }}
+          placeholder="Choose duration"
+          disabled={isSubmitting}
+        >
+          <Select.Option value={SprintDuration.ONE_WEEK}>
+            {SprintDuration.ONE_WEEK}
+          </Select.Option>
+          <Select.Option value={SprintDuration.TWO_WEEKS}>
+            {SprintDuration.TWO_WEEKS}
+          </Select.Option>
+          <Select.Option value={SprintDuration.ONE_MONTH}>
+            {SprintDuration.ONE_MONTH}
+          </Select.Option>
+        </Select>
+      </Form.Item>
+    );
+  };
 
-    const renderControls = () => {
-        return (
-            <StyledContainer>
-                <Button
-                    block
-                    type="primary"
-                    htmlType="submit"
-                    loading={isSubmitting}
-                    disabled={
-                        sprint
-                            ? !formikChangedFieldsHelpers.hasChanges()
-                            : false
-                    }
-                >
-                    {getSubmitLabel()}
-                </Button>
-            </StyledContainer>
-        );
-    };
+  const getSubmitLabel = () => {
+    if (isSubmitting) {
+      if (sprint) {
+        return "Saving Changes";
+      } else {
+        return "Adding Sprint";
+      }
+    } else {
+      if (sprint) {
+        return "Save Changes";
+      } else {
+        return "Add Sprint";
+      }
+    }
+  };
 
-    const preSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+  const renderControls = () => {
+    return (
+      <div>
+        <Button
+          block
+          type="primary"
+          htmlType="submit"
+          loading={isSubmitting}
+          disabled={sprint ? !formikChangedFieldsHelpers.hasChanges() : false}
+        >
+          {getSubmitLabel()}
+        </Button>
+      </div>
+    );
+  };
 
-        const { errors, values, handleSubmit } = formik;
+  const preSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-        // TODO: can this be more efficient?
-        const sprintNameError =
-            errors.name || getSprintExistsError(values.name);
+    const { errors, values, handleSubmit } = formik;
 
-        if (!sprintNameError) {
-            handleSubmit(event);
-        } else {
-            formik.setFieldTouched("name");
-        }
-    };
+    // TODO: can this be more efficient?
+    const sprintNameError = errors.name || getSprintExistsError(values.name);
 
-    const renderForm = () => {
-        const { errors } = formik;
-        const globalError = getFormError(errors);
+    if (!sprintNameError) {
+      handleSubmit(event);
+    } else {
+      formik.setFieldTouched("name");
+    }
+  };
 
-        return (
-            <StyledForm onSubmit={(evt) => preSubmit(evt)}>
-                <StyledContainer s={formContentWrapperStyle}>
-                    <StyledContainer s={formInputContentWrapperStyle}>
-                        <StyledContainer s={{ paddingBottom: "16px" }}>
-                            <Button
-                                style={{ cursor: "pointer" }}
-                                onClick={onClose}
-                                className="icon-btn"
-                            >
-                                <ArrowLeft />
-                            </Button>
-                        </StyledContainer>
-                        {globalError && (
-                            <Form.Item>
-                                <FormError error={globalError} />
-                            </Form.Item>
-                        )}
-                        {renderNameInput()}
-                        {renderDurationInput()}
-                    </StyledContainer>
-                    {renderControls()}
-                </StyledContainer>
-            </StyledForm>
-        );
-    };
+  const renderForm = () => {
+    const { errors } = formik;
+    const globalError = getFormError(errors);
 
-    return renderForm();
+    return (
+      <form onSubmit={(evt) => preSubmit(evt)}>
+        <div style={formContentWrapperStyle}>
+          <div style={formInputContentWrapperStyle}>
+            <div style={{ paddingBottom: "16px" }}>
+              <Button
+                style={{ cursor: "pointer" }}
+                onClick={onClose}
+                className="icon-btn"
+              >
+                <ArrowLeft />
+              </Button>
+            </div>
+            {globalError && (
+              <Form.Item>
+                <FormError error={globalError} />
+              </Form.Item>
+            )}
+            {renderNameInput()}
+            {renderDurationInput()}
+          </div>
+          {renderControls()}
+        </div>
+      </form>
+    );
+  };
+
+  return renderForm();
 };
 
 export default React.memo(SprintForm);

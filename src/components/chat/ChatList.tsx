@@ -3,7 +3,7 @@ import { IChat } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IUser } from "../../models/user/user";
 import { default as AppMessage } from "../Message";
-import StyledContainer from "../styled/Container";
+
 import Chat from "./Chat";
 
 export interface IChatListProps {
@@ -40,9 +40,9 @@ const ChatList: React.FC<IChatListProps> = (props) => {
       {chats.map((chat, i) => {
         const sender = recipientsMap[chat.sender];
         const chatRender = (
-          <StyledContainer
+          <div
             key={i}
-            s={{
+            style={{
               margin: "16px",
               marginTop: i === 0 ? "16px" : 0,
             }}
@@ -53,7 +53,7 @@ const ChatList: React.FC<IChatListProps> = (props) => {
               hideAvatar={hideAvatarCheck[chat.sender]}
               isUserSender={sender.customId === user.customId}
             />
-          </StyledContainer>
+          </div>
         );
 
         hideAvatarCheck = { [chat.sender]: true };

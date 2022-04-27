@@ -1,4 +1,3 @@
-import { getRoomId, getRoomLikeResource } from "../../../models/rooms/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import KeyValueSelectors from "../../../redux/key-value/selectors";
 import {
@@ -10,6 +9,7 @@ import {
   IOutgoingSubscribePacket,
   OutgoingSocketEvents,
 } from "../outgoingEventTypes";
+import { getSocketRoomInfo, getSocketRoomName } from "../roomNameHelpers";
 import SocketAPI from "../socket";
 
 export default async function unsubcribeEvent(
@@ -26,7 +26,7 @@ export default async function unsubcribeEvent(
     // Unsubscribe from all the rooms if no argument is provided
     const roomSignatures = Object.keys(rooms);
     items = roomSignatures.map((signature) =>
-      getRoomLikeResource(signature)
+      getSocketRoomInfo(signature)
     ) as ClientSubscribedResources;
   } else {
     // Filter out rooms not found in the store
@@ -34,7 +34,7 @@ export default async function unsubcribeEvent(
     // The logout action unsubscribes all resources, and individual
     // components do too. This makes sure we don't unsubscribe twice.
     items = items.filter((item) => {
-      const roomId = getRoomId(item);
+      const roomId = getSocketRoomName(item);
       return !!rooms[roomId];
     });
   }
@@ -50,7 +50,7 @@ export default async function unsubcribeEvent(
   );
 
   items.forEach((item) => {
-    const roomId = getRoomId(item);
+    const roomId = getSocketRoomName(item);
 
     if (rooms[roomId]) {
       roomsToRemove.push(roomId);

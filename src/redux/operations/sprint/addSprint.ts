@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { IBoard } from "../../../models/board/types";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI, { IAddSprintAPIParams } from "../../../net/sprint/sprint";
 import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";

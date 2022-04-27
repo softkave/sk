@@ -34,7 +34,7 @@ import BoardStatusResolutionAndLabelsForm, {
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import { getOpData } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
-import StyledContainer from "../styled/Container";
+
 import Priority from "./Priority";
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskSubTasksContainer from "./TaskSubTasksContainer";
@@ -237,29 +237,29 @@ const Task: React.FC<ITaskProps> = (props) => {
   const isInLastStatus = isTaskInLastStatus(task, statusList);
   const hasSubTasks = task.subTasks && task.subTasks.length > 0;
   const contentElem: React.ReactNode[] = [
-    <StyledContainer key="header">
-      <StyledContainer s={{ flex: 1 }}>
+    <div key="header">
+      <div style={{ flex: 1 }}>
         <Priority level={task.priority as BlockPriority} />
-      </StyledContainer>
-      <StyledContainer
+      </div>
+      <div
         onClick={(evt) => {
           evt.stopPropagation();
         }}
       >
         {options}
-      </StyledContainer>
-    </StyledContainer>,
-    <StyledContainer
+      </div>
+    </div>,
+    <div
       key="name-and-desc"
       onClick={onClick}
-      s={{
+      style={{
         cursor: "pointer",
         flexDirection: "column",
         width: "100%",
       }}
     >
       <TaskNameAndDescription task={task} />
-    </StyledContainer>,
+    </div>,
   ];
 
   const hasStatus = statusList.length > 0 && task.statusAssignedAt;

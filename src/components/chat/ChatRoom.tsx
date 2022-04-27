@@ -8,7 +8,7 @@ import {
   IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";
 import { getDateString } from "../../utils/utils";
-import StyledContainer from "../styled/Container";
+
 import ChatInput from "./ChatInput";
 import ChatList from "./ChatList";
 import ChatRoomHeader from "./ChatRoomHeader";
@@ -66,20 +66,20 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
   };
 
   return (
-    <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+    <div style={{ flexDirection: "column", width: "100%" }}>
       <ChatRoomHeader
         recipient={recipientsMap[room.recipientId]}
         onBack={onBack}
       />
-      <StyledContainer s={{ flex: 1, overflow: "hidden" }}>
+      <div style={{ flex: 1, overflow: "hidden" }}>
         <ChatList
           user={user}
           chats={room.chats}
           recipientsMap={recipientsMap}
         />
-      </StyledContainer>
+      </div>
       <ChatInput onSendMessage={sendMessage} />
-    </StyledContainer>
+    </div>
   );
 };
 

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router";
 import AppHomeContainer from "../components/appHome/AppHomeContainer";
 import { isPath0App, paths } from "../components/appHome/path";
-import StyledContainer from "../components/styled/Container";
 import SocketAPI from "../net/socket/socket";
 import KeyValueSelectors from "../redux/key-value/selectors";
 import { KeyValueKeys } from "../redux/key-value/types";
@@ -49,32 +48,6 @@ const Main: React.FC<{}> = () => {
   React.useEffect(() => {
     if (isDemoMode && sessionType !== SessionType.App) {
       throw new Error("Not implemented yet!");
-      // const demoData = seedDemoData();
-
-      // dispatch(
-      //     UserActions.bulkAdd(toActionAddList(demoData.users, "customId"))
-      // );
-      // dispatch(BlockActions.bulkAddBlocks(demoData.blocks));
-      // dispatch(
-      //     NotificationActions.bulkAddNotifications(demoData.requests)
-      // );
-      // dispatch(RoomActions.bulkAddRooms(demoData.rooms));
-      // dispatch(OperationActions.bulkAddOperations(demoData.ops));
-      // dispatch(
-      //     KeyValueActions.setKey({
-      //         key: KeyValueKeys.RootBlocksLoaded,
-      //         value: true,
-      //     })
-      // );
-      // dispatch(
-      //     SessionActions.loginUser({
-      //         token: "demo-token",
-      //         userId: demoData.web.user.customId,
-      //         isDemo: true,
-      //     })
-      // );
-
-      // routeToApp();
     } else if (sessionType === SessionType.Uninitialized) {
       dispatch(initializeAppSessionOpAction({ opId }));
     }
@@ -98,8 +71,8 @@ const Main: React.FC<{}> = () => {
   }, [sessionType, history, token, isDemoMode, client, routeToApp]);
 
   const renderInitializing = () => (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         width: "100%",
         height: "100%",
         alignItems: "center",
@@ -108,17 +81,18 @@ const Main: React.FC<{}> = () => {
       }}
     >
       ...
-    </StyledContainer>
+    </div>
   );
 
   const render = () => {
     switch (sessionType) {
-      case SessionType.App:
+      case SessionType.App: {
         if (isFetchingMissingBroadcasts) {
           return renderInitializing();
         }
 
         return <AppHomeContainer />;
+      }
 
       case SessionType.Web:
         return <Routes />;

@@ -3,7 +3,7 @@ import React from "react";
 import { IRoom } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
+
 import RoomsListItem from "./RoomsListItem";
 
 export interface IRoomsListProps {
@@ -69,7 +69,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
       {filteredRooms.map((room, i) => {
         const recipient = recipientsMap[room.recipientId];
         return (
-          <StyledContainer
+          <div
             key={room.customId}
             className={cx(classes.roomItem, {
               [classes.roomItemSelected]:
@@ -78,7 +78,7 @@ const RoomsList: React.FC<IRoomsListProps> = (props) => {
             onClick={() => onSelectRoom(room)}
           >
             <RoomsListItem room={room} recipient={recipient} />
-          </StyledContainer>
+          </div>
         );
       })}
     </div>

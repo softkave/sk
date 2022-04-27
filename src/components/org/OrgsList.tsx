@@ -66,7 +66,6 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
   let isPrevGroupRendered = false;
   const hasOrgs = orgs.length > 0;
   const hasRequests = reqs.length > 0;
-
   const renderOrgs = () => {
     if (!hasOrgs) {
       return (
@@ -98,13 +97,7 @@ const OrgsList: React.FC<IOrgsListProps> = (props) => {
 
   const renderRequests = () => {
     if (!hasRequests) {
-      return (
-        // <Message
-        //   className="flex-1"
-        //   message={"You don't have any requests yet."}
-        // />
-        null
-      );
+      return null;
     }
 
     return (

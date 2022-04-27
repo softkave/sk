@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import React from "react";
 import FormError from "../forms/FormError";
 
@@ -8,16 +7,16 @@ export interface IOrgExistsMessageProps {
   message?: string;
 }
 
-const OrgExistsMessage: React.SFC<IOrgExistsMessageProps> = (props) => {
+const OrgExistsMessage: React.FC<IOrgExistsMessageProps> = (props) => {
   const { message } = props;
 
   return (
     <div>
       <FormError error={message} />
-      <StyledComplaintMessage>
+      <div>
         If this organization legally belongs to you, you can send a complaint to{" "}
         <a href={`mailto://${complaintEmailAddress}`}>abayomi@softkave.com</a>.
-      </StyledComplaintMessage>
+      </div>
     </div>
   );
 };
@@ -27,7 +26,3 @@ OrgExistsMessage.defaultProps = {
 };
 
 export default OrgExistsMessage;
-
-const StyledComplaintMessage = styled.div({
-  // color: "black"
-});

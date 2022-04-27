@@ -5,7 +5,6 @@ import React from "react";
 import { IChat } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import UserAvatar from "../collaborator/UserAvatar";
-import StyledContainer from "../styled/Container";
 
 export interface IChatProps {
   chat: IChat;
@@ -22,22 +21,22 @@ const Chat: React.FC<IChatProps> = (props) => {
   });
 
   return (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         flex: 1,
         // justifyContent: isUserSender ? "flex-end" : undefined,
         flexDirection: isUserSender ? "row-reverse" : undefined,
       }}
     >
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: 24,
         }}
       >
         {!hideAvatar && <UserAvatar user={sender} />}
-      </StyledContainer>
-      <StyledContainer
-        s={{
+      </div>
+      <div
+        style={{
           flex: 1,
           maxWidth: "500px",
           flexDirection: "column",
@@ -66,8 +65,8 @@ const Chat: React.FC<IChatProps> = (props) => {
             {createdAt.format("h:mm A, ddd MMM D YYYY")}
           </Typography.Text>
         )}
-      </StyledContainer>
-    </StyledContainer>
+      </div>
+    </div>
   );
 };
 

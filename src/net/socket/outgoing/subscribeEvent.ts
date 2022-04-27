@@ -1,4 +1,3 @@
-import { getRoomId } from "../../../models/rooms/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import KeyValueSelectors from "../../../redux/key-value/selectors";
 import {
@@ -10,6 +9,7 @@ import {
   IOutgoingSubscribePacket,
   OutgoingSocketEvents,
 } from "../outgoingEventTypes";
+import { getSocketRoomName } from "../roomNameHelpers";
 import SocketAPI from "../socket";
 
 export default function subscribeEvent(items: ClientSubscribedResources) {
@@ -24,7 +24,7 @@ export default function subscribeEvent(items: ClientSubscribedResources) {
         ) || {};
 
       items.forEach((item) => {
-        const roomSignature = getRoomId(item);
+        const roomSignature = getSocketRoomName(item);
 
         if (!rooms[roomSignature]) {
           roomsToPush.push(roomSignature);

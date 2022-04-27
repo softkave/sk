@@ -8,10 +8,10 @@ import {
 } from "../../models/sprint/utils";
 import { ITask } from "../../models/task/types";
 import { deleteSprintOpAction } from "../../redux/operations/sprint/deleteSprint";
-import { endSprintOpAction } from "../../redux/operations/sprint/endSprint";
-import { startSprintOpAction } from "../../redux/operations/sprint/startSprint";
+import { updateSprintOpAction } from "../../redux/operations/sprint/updateSprint";
 import SprintSelectors from "../../redux/sprints/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
+import { getDateString } from "../../utils/utils";
 import handleOpResult from "../utilities/handleOpResult";
 import Sprints from "./Sprints";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
@@ -65,9 +65,12 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
 
   const startSprint = async (sprintId: string) => {
     const result = await dispatch(
-      startSprintOpAction({
+      updateSprintOpAction({
         sprintId,
         deleteOpOnComplete: true,
+        data: {
+          startDate: getDateString(),
+        },
       })
     );
 
@@ -93,9 +96,12 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
 
   const closeSprint = async (sprintId: string) => {
     const result = await dispatch(
-      endSprintOpAction({
+      updateSprintOpAction({
         sprintId,
         deleteOpOnComplete: true,
+        data: {
+          endDate: getDateString(),
+        },
       })
     );
 
@@ -133,7 +139,7 @@ const SprintsContainer: React.FC<ISprintsContainerProps> = (props) => {
   const wrappedOnUpdateSprint = React.useCallback(
     (sprintId: string) =>
       onUpdateSprint(sprints.find((item) => item.customId === sprintId)!),
-    [sprints]
+    [sprints, onUpdateSprint]
   );
 
   return (

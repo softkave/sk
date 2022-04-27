@@ -8,7 +8,6 @@ import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { indexArray } from "../../utils/utils";
 import RenderForDevice from "../RenderForDevice";
-import { IAntDMenuEvent } from "../types";
 import GroupedTasksDesktop from "./GroupedTasksDesktop";
 import GroupedTasksMobile from "./GroupedTasksMobile";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
@@ -58,7 +57,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
       return null;
     }
 
-    const menuOnClick = (evt: IAntDMenuEvent) => {
+    const menuOnClick = (evt: { key: string }) => {
       switch (evt.key) {
         case SprintMenuOptions.EDIT:
           onUpdateSprint(group.id);

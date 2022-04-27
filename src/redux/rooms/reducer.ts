@@ -24,10 +24,16 @@ const roomsReducer = createReducer<IRoomsMap>({}, (builder) => {
       state[room.customId] = room;
     }
 
-    const { unseenChatsStartIndex, unseenChatsCount } =
-      getRoomUserUnseenChatsCountAndStartIndex(room);
-    room.unseenChatsStartIndex = unseenChatsStartIndex;
-    room.unseenChatsCount = unseenChatsCount;
+    if (
+      action.payload.data.members &&
+      !action.payload.data.unseenChatsStartIndex &&
+      !action.payload.data.unseenChatsCount
+    ) {
+      const { unseenChatsStartIndex, unseenChatsCount } =
+        getRoomUserUnseenChatsCountAndStartIndex(room);
+      room.unseenChatsStartIndex = unseenChatsStartIndex;
+      room.unseenChatsCount = unseenChatsCount;
+    }
   });
 
   builder.addCase(RoomActions.deleteRoom, (state, action) => {

@@ -2,7 +2,6 @@ import { Button, Typography } from "antd";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { ICollaborator } from "../../models/collaborator/types";
-import StyledContainer from "../styled/Container";
 
 export interface IChatRoomHeaderProps {
   recipient: ICollaborator;
@@ -13,15 +12,15 @@ const ChatRoomHeader: React.FC<IChatRoomHeaderProps> = (props) => {
   const { recipient, onBack } = props;
 
   return (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         padding: "0 16px",
         borderBottom: "1px solid rgb(223, 234, 240)",
         height: "56px",
         alignItems: "center",
       }}
     >
-      <StyledContainer s={{ marginRight: "16px" }}>
+      <div style={{ marginRight: "16px" }}>
         <Button
           style={{ cursor: "pointer" }}
           onClick={onBack}
@@ -29,11 +28,11 @@ const ChatRoomHeader: React.FC<IChatRoomHeaderProps> = (props) => {
         >
           <ArrowLeft />
         </Button>
-      </StyledContainer>
+      </div>
       <Typography.Title style={{ fontSize: "14px", margin: 0 }}>
         {recipient.name}
       </Typography.Title>
-    </StyledContainer>
+    </div>
   );
 };
 

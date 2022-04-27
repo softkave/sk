@@ -7,7 +7,7 @@ import { ISubTaskInput } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
 import { getNewId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
-import StyledContainer from "../styled/Container";
+
 import SubTaskForm, { ISubTaskErrors } from "./SubTaskForm";
 
 export interface ISubTaskFormListProps {
@@ -132,17 +132,17 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
 
   const renderLabel = () => {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: "100%",
           lineHeight: "40px",
           fontWeight: 600,
           alignItems: "center",
         }}
       >
-        <StyledContainer s={{ flex: 1 }}>
+        <div style={{ flex: 1 }}>
           Sub-tasks ({subTasks.length} of {blockConstants.maxSubTasks})
-        </StyledContainer>
+        </div>
         <Button
           disabled={disabled || subTasks.length >= blockConstants.maxSubTasks}
           onClick={internalOnAdd}
@@ -151,7 +151,7 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
         >
           <Plus />
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 

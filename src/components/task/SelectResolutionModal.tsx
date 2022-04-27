@@ -3,7 +3,7 @@ import React from "react";
 import { X as CloseIcon, ArrowRight } from "react-feather";
 import { IBoardTaskResolution } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
-import StyledContainer from "../styled/Container";
+
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskResolution from "./TaskResolution";
 
@@ -32,15 +32,15 @@ const SelectResolutionModal: React.FC<ISelectResolutionModalProps> = (
 
   const content = (
     <Space direction="vertical" size={12} style={{ width: "100%" }}>
-      <StyledContainer>
-        <StyledContainer s={{ flex: 1, marginRight: "16px" }}>
+      <div>
+        <div style={{ flex: 1, marginRight: "16px" }}>
           <TaskNameAndDescription task={task} />
-        </StyledContainer>
+        </div>
         <Button onClick={onCancel} className="icon-btn">
           <CloseIcon />
         </Button>
-      </StyledContainer>
-      <StyledContainer s={{ justifyContent: "flex-end" }}>
+      </div>
+      <div style={{ justifyContent: "flex-end" }}>
         <Space size="large">
           <TaskResolution
             resolutionsMap={resolutionsMap}
@@ -52,7 +52,7 @@ const SelectResolutionModal: React.FC<ISelectResolutionModalProps> = (
             <ArrowRight />
           </Button>
         </Space>
-      </StyledContainer>
+      </div>
     </Space>
   );
 

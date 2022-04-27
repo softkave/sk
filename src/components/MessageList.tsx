@@ -3,7 +3,6 @@ import isString from "lodash/isString";
 import React from "react";
 import { IAppError } from "../net/types";
 import Message from "./Message";
-import StyledContainer from "./styled/Container";
 
 export interface IMessageListProps {
   messages: string | IAppError | Array<string | IAppError>;
@@ -32,8 +31,8 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
 
   // TODO: implement a better key for the items
   const content = (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         flexDirection: "column",
         justifyContent: "flex-start",
         maxWidth: "400px",
@@ -48,13 +47,13 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
           {index !== errorList.length - 1 && <Divider />}
         </React.Fragment>
       ))}
-    </StyledContainer>
+    </div>
   );
 
   if (fill) {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: "100%",
           height: "100%",
           alignItems: "center",
@@ -63,7 +62,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
         }}
       >
         {content}
-      </StyledContainer>
+      </div>
     );
   }
 

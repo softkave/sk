@@ -3,7 +3,7 @@ import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { IAppOrganization } from "../../models/organization/types";
 import { IUnseenChatsCountByOrg } from "../../redux/key-value/types";
 import GeneralError from "../Message";
-import StyledContainer from "../styled/Container";
+
 import OrgsList from "./OrgsList";
 import OrgsListHeader from "./OrgsListHeader";
 
@@ -70,8 +70,9 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
   };
 
   return (
-    <StyledContainer
-      s={{
+    <div
+      style={{
+        display: "flex",
         height: "100%",
         width: "100%",
         flexDirection: "column",
@@ -85,7 +86,7 @@ const OrgsMain: React.FC<IOrgsMainProps> = (props) => {
         title="Organizations"
       />
       {renderContent()}
-    </StyledContainer>
+    </div>
   );
 };
 

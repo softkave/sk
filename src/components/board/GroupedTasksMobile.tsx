@@ -2,7 +2,7 @@ import { Badge, Space, Tabs, Typography } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import React from "react";
 import Message from "../Message";
-import StyledContainer from "../styled/Container";
+
 import TaskList from "../task/TaskList";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
@@ -68,8 +68,9 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
   }
 
   return (
-    <StyledContainer
-      s={{
+    <div
+      className={css({
+        display: "flex",
         flex: 1,
         overflow: "hidden",
 
@@ -86,7 +87,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
         },
 
         "& .ant-tabs-nav": { margin: 0 },
-      }}
+      })}
     >
       <Tabs
         defaultActiveKey={groupedTasks[0] ? groupedTasks[0].name : undefined}
@@ -95,7 +96,7 @@ const GroupedTasksMobile: React.FC<IGroupedTasksMobileProps> = (props) => {
       >
         {groupedTasks.map(renderTab)}
       </Tabs>
-    </StyledContainer>
+    </div>
   );
 };
 

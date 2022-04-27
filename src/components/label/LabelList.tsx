@@ -12,10 +12,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import OrgsListHeader from "../org/OrgsListHeader";
-import StyledContainer from "../styled/Container";
 import LabelFormItem from "./LabelFormItem";
-
-const StyledContainerAsForm = StyledContainer.withComponent("form");
 
 export interface ILabelListProps {
   labelList: IBlockLabelInput[];
@@ -186,7 +183,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     });
 
     return (
-      <StyledContainer
+      <div
         style={{
           flexDirection: "column",
           width: "100%",
@@ -195,14 +192,14 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         }}
       >
         <div>{labels}</div>
-      </StyledContainer>
+      </div>
     );
   };
 
   const renderSubmitControls = () => {
     return (
-      <StyledContainer
-        s={{
+      <div
+        style={{
           flexDirection: "column",
           width: "100%",
           padding: "16px",
@@ -211,7 +208,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         <Button loading={isSubmitting} type="primary" htmlType="submit">
           Save Changes
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -247,14 +244,14 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
   const renderMain = () => {
     return (
-      <StyledContainerAsForm
-        s={{ width: "100%", height: "100%", flexDirection: "column" }}
+      <form
+        style={{ width: "100%", height: "100%", flexDirection: "column" }}
         onSubmit={formik.handleSubmit}
       >
         {renderAddControls()}
         {renderList()}
         {renderSubmitControls()}
-      </StyledContainerAsForm>
+      </form>
     );
   };
 

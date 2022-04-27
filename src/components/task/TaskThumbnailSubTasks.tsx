@@ -1,8 +1,8 @@
+import { css } from "@emotion/css";
 import { Space, Typography } from "antd";
 import React from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 import { ITask } from "../../models/task/types";
-import StyledContainer from "../styled/Container";
 import TaskSubTask from "./TaskSubTask";
 
 export interface ITaskThumbnailSubTasksProps {
@@ -28,20 +28,20 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
 
   if (!showSubTasks) {
     return (
-      <StyledContainer
+      <div
         onClick={() => setShowSubTasks(true)}
-        s={{
+        className={css({
           cursor: "pointer",
           "&:hover": {
             "& *": { color: "rgb(66,133,244) !important" },
           },
-        }}
+        })}
       >
         <Space>
           <Typography.Text ellipsis type="secondary">
             Show subtasks ( {completedSubTasksCount} of {count} completed )
           </Typography.Text>
-          <StyledContainer>
+          <div>
             <ChevronDown
               style={{
                 width: "18px",
@@ -49,9 +49,9 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
                 color: "rgba(0, 0, 0, 0.65)",
               }}
             />
-          </StyledContainer>
+          </div>
         </Space>
-      </StyledContainer>
+      </div>
     );
   }
 
@@ -64,18 +64,18 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
       //     },
       // })}
     >
-      <StyledContainer
+      <div
         onClick={() => setShowSubTasks(false)}
-        s={{
+        className={css({
           cursor: "pointer",
           "&:hover": {
             "& *": { color: "rgb(66,133,244) !important" },
           },
-        }}
+        })}
       >
         <Space>
           <Typography.Text type="secondary">Hide subtasks</Typography.Text>
-          <StyledContainer>
+          <div>
             <ChevronUp
               style={{
                 width: "18px",
@@ -83,9 +83,9 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
                 color: "rgba(0, 0, 0, 0.65)",
               }}
             />
-          </StyledContainer>
+          </div>
         </Space>
-      </StyledContainer>
+      </div>
       {subTasks.map((subTask, i) => (
         <TaskSubTask
           key={subTask.customId}

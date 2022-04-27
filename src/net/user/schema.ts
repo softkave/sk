@@ -162,7 +162,7 @@ export const updateClientMutation = `
     mutation UpdateClientMutation (
         $data: UpdateClientDataInput!
     ) {
-        user {
+        client {
             updateClient (data: $data) {
                 errors {
                     ...errorFragment

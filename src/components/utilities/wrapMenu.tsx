@@ -1,10 +1,8 @@
+import { css } from "@emotion/css";
 import React from "react";
-import StyledContainer from "../styled/Container";
 
 const wrapMenu = (menu: React.ReactNode) => {
-  return (
-    <StyledContainer s={{ "& ul": { borderRight: 0 } }}>{menu}</StyledContainer>
-  );
+  return <div className={css({ "& ul": { borderRight: 0 } })}>{menu}</div>;
 };
 
 export default wrapMenu;

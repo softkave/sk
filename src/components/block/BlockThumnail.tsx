@@ -3,7 +3,6 @@ import { Badge, Tag, Typography } from "antd";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
 import ItemAvatar, { IItemAvatarProps } from "../ItemAvatar";
-import StyledContainer from "../styled/Container";
 
 export type BlockThumbnailShowField = "name" | "type" | "description";
 
@@ -55,7 +54,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const renderName = () => {
     if (fieldsToShow.name) {
       return (
-        <StyledContainer s={{ alignItems: "center" }}>
+        <div style={{ alignItems: "center" }}>
           <Typography.Text
             strong={makeNameBold}
             style={{
@@ -73,7 +72,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
               style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
             />
           ) : null}
-        </StyledContainer>
+        </div>
       );
     }
 
@@ -82,7 +81,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
 
   const renderType = () => {
     if (fieldsToShow.type && !parent) {
-      return <StyledContainer>{block.type}</StyledContainer>;
+      return <div>{block.type}</div>;
     }
 
     return null;
@@ -91,8 +90,8 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const renderDesc = () => {
     if (fieldsToShow.description) {
       return (
-        <StyledContainer
-          s={{
+        <div
+          style={{
             marginTop: "4px",
           }}
         >
@@ -103,7 +102,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
           >
             {block.description}
           </Typography.Paragraph>
-        </StyledContainer>
+        </div>
       );
     }
 
@@ -113,7 +112,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const renderUnseenChatsCount = () => {
     if (unseenChatsCount) {
       return (
-        <StyledContainer s={{ marginTop: "8px" }}>
+        <div style={{ marginTop: "8px" }}>
           <Tag
             icon={<CommentOutlined />}
             color="red"
@@ -123,7 +122,7 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
               {unseenChatsCount}
             </Typography.Text>
           </Tag>
-        </StyledContainer>
+        </div>
       );
     }
 
@@ -133,20 +132,19 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   // TODO: do line clamping on the texts
   // TODO: I should be able to click on the thumbnail to select, not just the name
   return (
-    <StyledContainer
-      s={{
+    <div
+      style={{
         ...style,
+        display: "flex",
         flex: 1,
         backgroundColor: isSelected ? "#e6f7ff" : undefined,
       }}
       className={className}
       onClick={onClick}
     >
-      <StyledContainer>
-        <ItemAvatar size={avatarSize} color={color} />
-      </StyledContainer>
-      <StyledContainer
-        s={{
+      <ItemAvatar size={avatarSize} color={color} />
+      <div
+        style={{
           lineHeight: "16px",
           flex: 1,
           marginLeft: blockDescriptionMarginWidth,
@@ -160,8 +158,8 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
         {renderType()}
         {renderDesc()}
         {renderUnseenChatsCount()}
-      </StyledContainer>
-    </StyledContainer>
+      </div>
+    </div>
   );
 };
 

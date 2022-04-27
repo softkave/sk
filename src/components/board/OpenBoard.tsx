@@ -6,7 +6,6 @@ import { appClassNames } from "../classNames";
 import BoardFormContainer, {
   IBoardFormContainerProps,
 } from "./BoardFormContainer";
-import BoardStats from "./BoardStats";
 
 export interface IOpenBoardProps extends IBoardFormContainerProps {}
 

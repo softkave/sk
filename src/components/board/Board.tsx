@@ -11,7 +11,7 @@ import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import SprintOptionsFormInDrawer from "../sprint/SprintOptionsFormInDrawer";
-import StyledContainer from "../styled/Container";
+
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
 import BoardFormInDrawer from "./BoardFormInDrawer";
 import BoardHeader from "./BoardHeader";
@@ -286,12 +286,12 @@ const Board: React.FC<IBoardProps> = (props) => {
     }
 
     return (
-      <StyledContainer s={{ flexDirection: "column", width: "100%", flex: 1 }}>
-        <StyledContainer s={{ margin: "16px 16px 0px 16px" }}>
+      <div style={{ flexDirection: "column", width: "100%", flex: 1 }}>
+        <div style={{ margin: "16px 16px 0px 16px" }}>
           <CurrentSprintHeader board={board} />
-        </StyledContainer>
+        </div>
         {content}
-      </StyledContainer>
+      </div>
     );
   }, [board, searchText, view, renderGroupedTasks]);
 

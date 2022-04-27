@@ -3,8 +3,7 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { IBoard } from "../../models/board/types";
-import { setupSprintsOpAction } from "../../redux/operations/sprint/setupSprints";
-import { updateSprintOptionsOpAction } from "../../redux/operations/sprint/updateSprintOptions";
+import { updateBoardOpAction } from "../../redux/operations/board/updateBoard";
 import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import useOperation, { getOpData } from "../hooks/useOperation";
@@ -34,23 +33,16 @@ const SprintOptionsFormContainer: React.FC<ISprintOptionsFormContainerProps> = (
   const onSubmit = async (values: ISprintOptionsFormValues) => {
     const data = { ...cachedValues, ...values };
     setValues(data);
-    const result = board.sprintOptions
-      ? await dispatch(
-          updateSprintOptionsOpAction({
-            data,
-            boardId: board.customId,
-            opId: saveOpStatus.opId,
-            deleteOpOnComplete: true,
-          })
-        )
-      : await dispatch(
-          setupSprintsOpAction({
-            data,
-            boardId: board.customId,
-            opId: saveOpStatus.opId,
-            deleteOpOnComplete: true,
-          })
-        );
+    const result = await dispatch(
+      updateBoardOpAction({
+        boardId: board.customId,
+        opId: saveOpStatus.opId,
+        deleteOpOnComplete: true,
+        data: {
+          sprintOptions: data,
+        },
+      })
+    );
 
     const op = unwrapResult(result);
 

@@ -8,7 +8,6 @@ import { Check, Trash2, X as CloseIcon } from "react-feather";
 import { blockConstants } from "../../models/block/constants";
 import { ISubTaskInput } from "../../models/task/types";
 import FormError from "../forms/FormError";
-import StyledContainer from "../styled/Container";
 
 export type ISubTaskErrors = FormikErrors<ISubTaskInput>;
 
@@ -43,7 +42,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
 
   const renderInputs = () => {
     return (
-      <StyledContainer s={{ flexDirection: "column", width: "100%" }}>
+      <div style={{ flexDirection: "column", width: "100%" }}>
         <Form.Item
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
@@ -63,16 +62,12 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
             maxLength={blockConstants.maxDescriptionLength}
           />
         </Form.Item>
-      </StyledContainer>
+      </div>
     );
   };
 
   const renderRegularLabel = () => {
-    return (
-      <StyledContainer s={{ marginBottom: "8px" }}>
-        {subTask.description}
-      </StyledContainer>
-    );
+    return <div style={{ marginBottom: "8px" }}>{subTask.description}</div>;
   };
 
   const renderLabelButtons = () => {
@@ -123,14 +118,14 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
 
   const renderLabel = () => {
     return (
-      <StyledContainer>
+      <div>
         <Checkbox
           checked={!!subTask.completedBy}
           onChange={onToggle}
           disabled={disabled}
         />
-        <StyledContainer
-          s={{
+        <div
+          style={{
             width: "100%",
             flexDirection: "column",
             marginLeft: "16px",
@@ -138,9 +133,9 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
           }}
         >
           {isEditing ? renderInputs() : renderRegularLabel()}
-          <StyledContainer>{renderLabelButtons()}</StyledContainer>
-        </StyledContainer>
-      </StyledContainer>
+          <div>{renderLabelButtons()}</div>
+        </div>
+      </div>
     );
   };
 

@@ -1,10 +1,10 @@
+import { css, cx } from "@emotion/css";
 import { Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IComment } from "../../models/comment/types";
 import UserAvatar from "../collaborator/UserAvatar";
-import StyledContainer from "../styled/Container";
 
 export interface ICommentProps {
   comment: IComment;
@@ -19,22 +19,19 @@ const Comment: React.FC<ICommentProps> = (props) => {
   const createdAt = moment(comment.createdAt);
 
   return (
-    <StyledContainer
+    <div
       style={style}
-      className={className}
-      s={{
-        flex: 1,
-      }}
+      className={cx(className, css({ display: "flex", flex: 1 }))}
     >
-      <StyledContainer
-        s={{
+      <div
+        style={{
           width: 24,
         }}
       >
         {!hideAvatar && <UserAvatar user={sender} />}
-      </StyledContainer>
-      <StyledContainer
-        s={{
+      </div>
+      <div
+        style={{
           flex: 1,
           maxWidth: "500px",
           flexDirection: "column",
@@ -57,8 +54,8 @@ const Comment: React.FC<ICommentProps> = (props) => {
             {createdAt.format("h:mm A, ddd MMM D YYYY")}
           </Typography.Text>
         )}
-      </StyledContainer>
-    </StyledContainer>
+      </div>
+    </div>
   );
 };
 

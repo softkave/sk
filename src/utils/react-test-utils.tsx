@@ -4,9 +4,11 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 
-const AllTheProviders: FC = ({ children }) => {
+const AllTheProviders: FC = ({ children }: { children?: React.ReactNode }) => {
   return (
+    // @ts-ignore
     <BrowserRouter>
+      {/* @ts-ignore */}
       <Provider store={store}>{children}</Provider>
     </BrowserRouter>
   );

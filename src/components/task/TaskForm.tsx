@@ -28,14 +28,13 @@ import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClassname,
   formContentWrapperStyle,
   formInputContentWrapperStyle,
-  StyledForm,
 } from "../forms/FormStyledComponents";
 import { formStyles } from "../forms/styles";
 import useFormHelpers from "../hooks/useFormHelpers";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
-import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
 import EditPriority from "./EditPriority";
 import { TaskPriority } from "./Priority";
@@ -71,7 +70,6 @@ export interface ITaskFormProps {
   errors?: TaskFormErrors;
 }
 
-const StyledContainerAsLink = StyledContainer.withComponent("a");
 const TaskForm: React.FC<ITaskFormProps> = (props) => {
   const {
     task,
@@ -536,7 +534,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             );
           })}
         </Select>
-        <StyledContainerAsLink
+        <a
           role="button"
           onClick={() => {
             if (!isSubmitting) {
@@ -547,13 +545,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
               formikChangedFieldsHelpers.addField("assignees");
             }
           }}
-          s={{
+          className={css({
             display: "inline-flex",
             alignItems: "center",
             lineHeight: "32px",
             cursor: isSubmitting ? "not-allowed" : undefined,
             color: isSubmitting ? "#f0f0f0" : undefined,
-          }}
+          })}
         >
           {!isSubmitting && <RightCircleTwoTone style={{ fontSize: "16px" }} />}
           <Typography.Text
@@ -565,7 +563,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           >
             Assign To Me
           </Typography.Text>
-        </StyledContainerAsLink>
+        </a>
         <div style={{ marginBottom: 16 }}>{renderAssignees(formikProps)}</div>
       </Form.Item>
     );
@@ -596,15 +594,15 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     const { values, touched, errors } = formikProps;
 
     return (
-      <StyledContainer
-        s={{
+      <div
+        className={css({
           flexDirection: "column",
           width: "100%",
           marginBottom: "24px",
           borderTop: "1px solid #f0f0f0",
           borderBottom: "1px solid #f0f0f0",
           padding: "8px 0px",
-        }}
+        })}
       >
         <SubTaskFormList
           user={user}
@@ -622,7 +620,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           }}
           onDiscardSubTaskChanges={onDiscardSubTaskChanges}
         />
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -644,7 +642,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <StyledContainer>
+      <div>
         <Button
           block
           type="primary"
@@ -654,7 +652,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         >
           {getSubmitLabel()}
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -662,7 +660,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   const globalError = getFormError(errors);
 
   return (
-    <StyledForm onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={formClassname}>
       {subFormType && (
         <BoardStatusResolutionAndLabelsForm
           visible
@@ -678,9 +676,9 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           onClose={toggleShowSprintForm}
         />
       )}
-      <StyledContainer s={formContentWrapperStyle}>
-        <StyledContainer s={formInputContentWrapperStyle}>
-          <StyledContainer s={{ paddingBottom: "16px" }}>
+      <div style={formContentWrapperStyle}>
+        <div style={formInputContentWrapperStyle}>
+          <div style={{ paddingBottom: "16px" }}>
             <Button
               style={{ cursor: "pointer" }}
               onClick={onClose}
@@ -688,7 +686,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             >
               <ArrowLeft />
             </Button>
-          </StyledContainer>
+          </div>
           {globalError && (
             <Form.Item>
               <FormError error={globalError} />
@@ -704,10 +702,10 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           {renderDueDateInput(formik)}
           {renderAssignedToInput(formik)}
           {renderSubTasks(formik)}
-        </StyledContainer>
+        </div>
         {renderControls()}
-      </StyledContainer>
-    </StyledForm>
+      </div>
+    </form>
   );
 };
 

@@ -1,11 +1,9 @@
 import { css } from "@emotion/css";
-import styled from "@emotion/styled";
 import { Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { IUser } from "../../models/user/user";
 import OrgsListContainer from "../org/OrgsListContainer";
-import StyledContainer from "../styled/Container";
 import AppHomeDesktopMenu from "./AppHomeDesktopMenu";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
@@ -14,66 +12,64 @@ export interface IAppHomeDesktopProps {
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
 
+const classes = {
+  root: css({
+    display: "flex",
+    height: "100%",
+    width: "280px",
+    minWidth: "280px",
+    borderRight: "1px solid rgb(223, 234, 240)",
+    flexDirection: "column",
+    overflowY: "auto",
+  }),
+  titleContainer: css({
+    display: "flex",
+    height: "56px",
+    alignItems: "center",
+    padding: "0 16px",
+    borderBottom: "1px solid rgb(223, 234, 240)",
+  }),
+  title: css({
+    margin: "0px !important",
+    fontSize: "16px",
+    lineHeight: "16px !important",
+    alignItems: "center",
+    display: "flex",
+  }),
+  boardsBy: css({
+    fontSize: "12px",
+    marginBottom: "6px",
+  }),
+  softkave: css({ fontSize: "16px" }),
+  titleLink: css({ color: "inherit !important" }),
+  orgsListContainer: css({
+    flex: 1,
+  }),
+};
+
 const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
   const { user, onSelect } = props;
-
   return (
-    <StyledContainer
-      s={{
-        height: "100%",
-        width: "280px",
-        minWidth: "280px",
-        borderRight: "1px solid rgb(223, 234, 240)",
-        flexDirection: "column",
-        overflowY: "auto",
-      }}
-    >
-      <StyledContainer
-        s={{
-          height: "56px",
-          alignItems: "center",
-          padding: "0 16px",
-          borderBottom: "1px solid rgb(223, 234, 240)",
-        }}
-      >
-        <Typography.Title
-          type="secondary"
-          level={4}
-          style={{
-            margin: 0,
-            fontSize: "16px",
-            lineHeight: "16px",
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <StyledLink to="/app">
-            <Typography.Text
-              type="secondary"
-              className={css({
-                fontSize: "12px",
-                marginBottom: "6px",
-              })}
-            >
+    <div className={classes.root}>
+      <div className={classes.titleContainer}>
+        <Typography.Title type="secondary" level={4} className={classes.title}>
+          <Link to="/app" className={classes.titleLink}>
+            <Typography.Text type="secondary" className={classes.boardsBy}>
               Boards by
             </Typography.Text>
             <br />
-            SOFTKAVE
-          </StyledLink>
+            <Typography.Text type="secondary" className={classes.softkave}>
+              SOFTKAVE
+            </Typography.Text>
+          </Link>
         </Typography.Title>
-      </StyledContainer>
-      <StyledContainer
-        s={{
-          flex: 1,
-        }}
-      >
+      </div>
+      <div className={classes.orgsListContainer}>
         <OrgsListContainer />
-      </StyledContainer>
+      </div>
       <AppHomeDesktopMenu user={user} onSelect={onSelect} />
-    </StyledContainer>
+    </div>
   );
 };
 
 export default AppHomeDesktop;
-
-const StyledLink = styled(Link)({ color: "inherit !important" });

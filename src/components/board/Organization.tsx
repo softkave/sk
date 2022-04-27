@@ -102,7 +102,7 @@ const classes = {
   selectOrgViewDesktop: css({
     padding: "16px",
     boxSizing: "border-box",
-    width: "320px",
+    // width: "320px",
   }),
   rootDesktop: css({
     display: "flex",

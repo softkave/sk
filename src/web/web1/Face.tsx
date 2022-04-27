@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import { css } from "@emotion/css";
 import { Typography } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -15,6 +15,35 @@ const desktopStyles: Record<string, React.CSSProperties> = {
   },
 };
 
+const linkClassName = css({
+  marginRight: "6px",
+  color: "white",
+  borderRadius: "4px",
+  padding: "2px 8px",
+  marginBottom: "4px",
+
+  "&:last-of-type": {
+    marginRight: 0,
+  },
+
+  "&:hover": {
+    color: "white",
+  },
+});
+
+const faceClassName = css({
+  height: "100%",
+  padding: "16px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+});
+
+const buttonsContainerClassName = css({
+  display: "flex",
+  flexWrap: "wrap",
+});
+
 const mobileStyles: Record<string, React.CSSProperties> = {
   p1: { fontSize: "24px", margin: "24px 0" },
   p2: { marginBottom: "24px", fontSize: "16px" },
@@ -26,7 +55,7 @@ const Face: React.FC<{}> = () => {
     const styles = mobile ? mobileStyles : desktopStyles;
 
     return (
-      <StyledFace style={styles.face}>
+      <div style={styles.face} className={faceClassName}>
         <h1
           style={{
             fontSize: "16px",
@@ -50,48 +79,30 @@ const Face: React.FC<{}> = () => {
           The best part is, Softkave is free for your first year! Then, it's a
           $2 per user per month.
         </Typography.Text>
-        <StyledButtonsContainer>
-          <StyledTagLikeButton
+        <div className={buttonsContainerClassName}>
+          <Link
             to="/signup"
             style={{ backgroundColor: "#36B37E" }}
+            className={linkClassName}
           >
             Signup
-          </StyledTagLikeButton>
-          <StyledTagLikeButton
+          </Link>
+          <Link
             to="/login"
             style={{ backgroundColor: "#6554C0" }}
+            className={linkClassName}
           >
             Login
-          </StyledTagLikeButton>
-          <StyledTagLikeButton
+          </Link>
+          <Link
             to="/forgot-password"
             style={{ backgroundColor: "#00B8D9" }}
+            className={linkClassName}
           >
             Forgot Password
-          </StyledTagLikeButton>
-          {/* <StyledTagLikeButtonWithNativeLink
-                        href="#pricing"
-                        style={{ backgroundColor: "#36B37E" }}
-                    >
-                        Pricing
-                    </StyledTagLikeButtonWithNativeLink> */}
-          {/* <StyledTagLikeButton
-                        to={webConstants.demoURL}
-                        style={{ backgroundColor: "#FF5630" }}
-                    >
-                        <Space>
-                            Try Demo
-                            <ArrowRightCircle
-                                style={{
-                                    width: "14px",
-                                    height: "14px",
-                                    verticalAlign: "middle",
-                                }}
-                            />
-                        </Space>
-                    </StyledTagLikeButton> */}
-        </StyledButtonsContainer>
-      </StyledFace>
+          </Link>
+        </div>
+      </div>
     );
   };
 
@@ -104,32 +115,3 @@ const Face: React.FC<{}> = () => {
 };
 
 export default Face;
-
-const StyledButtonsContainer = styled.div({
-  display: "flex",
-  flexWrap: "wrap",
-});
-
-const StyledTagLikeButton = styled(Link)({
-  marginRight: "6px",
-  color: "white",
-  borderRadius: "4px",
-  padding: "2px 8px",
-  marginBottom: "4px",
-
-  "&:last-of-type": {
-    marginRight: 0,
-  },
-
-  "&:hover": {
-    color: "white",
-  },
-});
-
-const StyledFace = styled.div({
-  height: "100%",
-  padding: "16px",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-});

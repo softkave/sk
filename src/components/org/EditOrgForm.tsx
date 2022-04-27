@@ -10,10 +10,8 @@ import { IFormikFormErrors } from "../forms/formik-utils";
 import {
   formContentWrapperStyle,
   formInputContentWrapperStyle,
-  StyledForm,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
-import StyledContainer from "../styled/Container";
 import InputWithControls from "../utilities/InputWithControls";
 import OrgExistsMessage from "./OrgExistsMessage";
 
@@ -188,7 +186,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
 
   const renderControls = () => {
     return (
-      <StyledContainer>
+      <div>
         <Button
           block
           type="primary"
@@ -198,7 +196,7 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
         >
           {getSubmitLabel()}
         </Button>
-      </StyledContainer>
+      </div>
     );
   };
 
@@ -207,10 +205,10 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
     const errors = formik.errors as any as EditOrgFormErrors;
 
     return (
-      <StyledForm onSubmit={handleSubmit}>
-        <StyledContainer s={formContentWrapperStyle}>
-          <StyledContainer s={formInputContentWrapperStyle}>
-            <StyledContainer s={{ paddingBottom: "16px" }}>
+      <form onSubmit={handleSubmit}>
+        <div style={formContentWrapperStyle}>
+          <div style={formInputContentWrapperStyle}>
+            <div style={{ paddingBottom: "16px" }}>
               <Button
                 style={{ cursor: "pointer" }}
                 onClick={onClose}
@@ -218,15 +216,15 @@ const EditOrgForm: React.FC<IEditOrgProps> = (props) => {
               >
                 <ArrowLeft />
               </Button>
-            </StyledContainer>
+            </div>
             {errors.error && <FormError error={errors.error} />}
             {renderNameInput()}
             {renderDesc()}
             {renderColorInput()}
-          </StyledContainer>
+          </div>
           {renderControls()}
-        </StyledContainer>
-      </StyledForm>
+        </div>
+      </form>
     );
   };
 

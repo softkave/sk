@@ -1,5 +1,4 @@
 import { css, cx } from "@emotion/css";
-import styled from "@emotion/styled";
 import React from "react";
 
 export interface IColumnProps {
@@ -19,6 +18,11 @@ const classes = {
     flex: 1,
     // maxWidth: "320px",
   }),
+  header: css(`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 16px;
+`),
 };
 
 const Column: React.FC<IColumnProps> = (props) => {
@@ -26,18 +30,10 @@ const Column: React.FC<IColumnProps> = (props) => {
 
   return (
     <div style={style} className={cx(classes.root, className)}>
-      {header && (
-        <StyledColumnHeaderContainer>{header}</StyledColumnHeaderContainer>
-      )}
+      {header && <div className={classes.header}>{header}</div>}
       {body}
     </div>
   );
 };
-
-const StyledColumnHeaderContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 16px;
-`;
 
 export default React.memo(Column);
