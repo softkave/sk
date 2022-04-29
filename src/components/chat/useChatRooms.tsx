@@ -20,7 +20,7 @@ import SessionSelectors from "../../redux/session/selectors";
 import { IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 
-export interface IChatRoomsRenderProps {
+export interface IUseChatRoomsHookResult {
   user: IUser;
   sortedRooms: IRoom[];
   recipientsMap: { [key: string]: ICollaborator };
@@ -31,13 +31,14 @@ export interface IChatRoomsRenderProps {
   onSelectRoom: (room: IRoom) => void;
 }
 
-export interface IChatRoomsContainerProps {
+export interface IUseChatRoomsHookProps {
   orgId: string;
-  render: (args: IChatRoomsRenderProps) => React.ReactElement;
 }
 
-const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
-  const { orgId, render } = props;
+const useChatRooms = (
+  props: IUseChatRoomsHookProps
+): IUseChatRoomsHookResult => {
+  const { orgId } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const chatRouteMatch = useRouteMatch<{ recipientId: string }>(
@@ -133,7 +134,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     [history, selectedRoomRecipientId]
   );
 
-  return render({
+  return {
     isAppHidden,
     sortedRooms,
     recipientsMap,
@@ -142,7 +143,7 @@ const ChatRoomsContainer: React.FC<IChatRoomsContainerProps> = (props) => {
     updateRoomReadCounter,
     onSelectRoom,
     user,
-  });
+  };
 };
 
-export default ChatRoomsContainer;
+export default useChatRooms;

@@ -123,7 +123,7 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
 
   const renderStatusButtons = () => {
     return (
-      <Space>
+      <Space style={{ padding: "0px 16px" }}>
         {isEditing && (
           <Button
             icon={<Check />}
@@ -166,13 +166,12 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
     <div
       style={{
         width: "100%",
-        padding: "16px",
         flexDirection: "column",
 
         ...(style || {}),
       }}
     >
-      <div style={{ alignItems: "flex-start" }}>
+      <div style={{ alignItems: "flex-start", padding: "16px" }}>
         <div
           style={{
             flexDirection: "column",

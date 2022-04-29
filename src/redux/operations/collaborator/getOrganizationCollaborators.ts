@@ -7,12 +7,10 @@ import OrganizationActions from "../../organizations/actions";
 import OrganizationSelectors from "../../organizations/selectors";
 import UserActions from "../../users/actions";
 import { toActionAddList } from "../../utils";
-import OperationType from "../OperationType";
-import { makeAsyncOp } from "../utils";
+import { makeAsyncOp02 } from "../utils";
 
-export const getOrganizationCollaboratorsOpAction = makeAsyncOp(
+export const getOrganizationCollaboratorsOpAction = makeAsyncOp02(
   "op/collaborators/getOrganizationCollaborators",
-  OperationType.GetOrganizationCollaborators,
   async (
     arg: IGetOrganizationCollaboratorsEndpointParams,
     thunkAPI,
@@ -47,10 +45,5 @@ export const getOrganizationCollaboratorsOpAction = makeAsyncOp(
         meta: { arrayUpdateStrategy: "replace" },
       })
     );
-  },
-  {
-    preFn: (arg) => ({
-      resourceId: arg.organizationId,
-    }),
   }
 );

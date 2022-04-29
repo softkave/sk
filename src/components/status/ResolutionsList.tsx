@@ -1,4 +1,4 @@
-import { Button, Typography } from "antd";
+import { Button, Divider, Typography } from "antd";
 import { FormikErrors } from "formik";
 import { noop } from "lodash";
 import React from "react";
@@ -10,7 +10,7 @@ import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
-import OrgsListHeader from "../org/OrgsListHeader";
+import ListHeader from "../utilities/ListHeader";
 import ResolutionFormItem from "./ResolutionFormItem";
 
 export interface IResolutionsListProps {
@@ -160,29 +160,25 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
     const initialValue = getInitialValue(resolution.customId);
 
     return (
-      <ResolutionFormItem
-        key={resolution.customId}
-        onChange={(data) => {
-          onChange(index, data);
-        }}
-        onCommitChanges={() => onCommitChanges(resolution, index)}
-        onDelete={() => onDelete(index)}
-        onDiscardChanges={() => onDiscardChanges(index, initialValue)}
-        onEdit={() => onEdit(resolution.customId)}
-        value={resolution}
-        disabled={isSubmitting}
-        errors={resolutionErrors}
-        handleBlur={(field) => handleBlur(index, field)}
-        isEditing={isEditing}
-        isNew={newResolutionsList.exists(resolution.customId)}
-        touched={touched}
-        style={{
-          borderBottom:
-            index < formik.values.resolutionsList.length - 1
-              ? "1px solid #f0f0f0"
-              : undefined,
-        }}
-      />
+      <React.Fragment key={resolution.customId}>
+        <ResolutionFormItem
+          onChange={(data) => {
+            onChange(index, data);
+          }}
+          onCommitChanges={() => onCommitChanges(resolution, index)}
+          onDelete={() => onDelete(index)}
+          onDiscardChanges={() => onDiscardChanges(index, initialValue)}
+          onEdit={() => onEdit(resolution.customId)}
+          value={resolution}
+          disabled={isSubmitting}
+          errors={resolutionErrors}
+          handleBlur={(field) => handleBlur(index, field)}
+          isEditing={isEditing}
+          isNew={newResolutionsList.exists(resolution.customId)}
+          touched={touched}
+        />
+        <Divider />
+      </React.Fragment>
     );
   };
 
@@ -213,7 +209,7 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         style={{
           flexDirection: "column",
           width: "100%",
-          padding: "16px",
+          padding: "32px 16px",
         }}
       >
         <Button loading={isSubmitting} type="primary" htmlType="submit">
@@ -237,9 +233,9 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
 
   const renderAddControls = () => {
     return (
-      <OrgsListHeader
-        noSearchBtn
-        onClickCreate={onAddNewResolution}
+      <ListHeader
+        hideSearchButton
+        onCreate={onAddNewResolution}
         onSearchTextChange={noop}
         title="Resolutions"
         style={{ padding: "16px", paddingTop: "8px" }}
@@ -262,7 +258,10 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
       >
         <div>
           {renderAddControls()}
-          <Typography.Paragraph type="secondary" style={{ padding: "0 16px" }}>
+          <Typography.Paragraph
+            type="secondary"
+            style={{ padding: "24px 16px 16px 16px" }}
+          >
             Resolutions describe the state of a completed task, like "won't do"
             or in the case of a tech product, "deployed" meaning the
             task/feature has been deployed.

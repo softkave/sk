@@ -73,9 +73,7 @@ const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
       )}
       onClick={onClick}
     >
-      <div>
-        <ItemAvatar size={avatarSize} color={board.color} />
-      </div>
+      <ItemAvatar size={avatarSize} color={board.color} />
       <div className={classes.content}>
         {nameNode}
         {/* {descriptionNode} */}

@@ -70,11 +70,13 @@ const classes = {
     textTransform: "capitalize",
   }),
   column: css({
-    minWidth: "280px",
+    width: "320px",
+    minWidth: "320px",
     marginLeft: "16px",
+    flex: "initial !important",
   }),
   lastColumn: css({
-    minWidth: `${280 + 16}px !important`,
+    width: `${320 + 16}px !important`,
     marginLeft: "16px",
     paddingRight: "16px",
   }),

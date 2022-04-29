@@ -1,5 +1,3 @@
-import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
-import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
 import { css, cx } from "@emotion/css";
 import { Button, Typography } from "antd";
 import React from "react";
@@ -11,12 +9,10 @@ import OrgHeaderOptionsMenu, {
   OrgHeaderSettingsMenuKey,
 } from "./OrgHeaderOptionsMenu";
 
-export interface IOrgBoardHeaderProps {
+export interface IOrganizationHeaderProps {
   organization: IAppOrganization;
   isMobile: boolean;
-  isAppMenuFolded: boolean;
   onClickEditBlock: () => void;
-  onToggleFoldAppMenu: () => void;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -33,24 +29,14 @@ const classes = {
     display: "flex",
     flex: 1,
     alignItems: "center",
-    borderBottom: "1px solid rgb(223, 234, 240)",
-    height: "56px",
+    borderBottom: "2px solid rgb(223, 234, 240)",
     maxWidth: "100%",
   }),
   menuContainer: css({ alignItems: "center" }),
 };
 
-const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
-  const {
-    organization,
-    isMobile,
-    style,
-    className,
-    onClickEditBlock,
-    isAppMenuFolded: isMenuFolded,
-    onToggleFoldAppMenu: onToggleFoldMenu,
-  } = props;
-
+const OrganizationHeader: React.FC<IOrganizationHeaderProps> = (props) => {
+  const { organization, isMobile, style, className, onClickEditBlock } = props;
   const history = useHistory();
   const onSelectSettingsMenuItem = React.useCallback(
     (key: OrgHeaderSettingsMenuKey) => {
@@ -86,17 +72,7 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
         </div>
       );
     } else {
-      return (
-        <div
-          className={cx(
-            classes.prefixBtnContainerDesktop,
-            classes.prefixBtnContainer
-          )}
-          onClick={onToggleFoldMenu}
-        >
-          {isMenuFolded ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </div>
-      );
+      return null;
     }
   };
 
@@ -125,4 +101,4 @@ const OrgBoardHeader: React.FC<IOrgBoardHeaderProps> = (props) => {
   );
 };
 
-export default React.memo(OrgBoardHeader);
+export default React.memo(OrganizationHeader);

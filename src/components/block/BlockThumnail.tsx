@@ -136,7 +136,6 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
       style={{
         ...style,
         display: "flex",
-        flex: 1,
         backgroundColor: isSelected ? "#e6f7ff" : undefined,
       }}
       className={className}

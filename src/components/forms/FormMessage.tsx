@@ -1,4 +1,4 @@
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import React from "react";
 import { IAppError } from "../../net/types";
 
@@ -14,7 +14,6 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
   const { children, message, type } = props;
   const messages = Array.isArray(message) ? message : message ? [message] : [];
   const isVisible = React.Children.count(children) > 0 || messages.length > 0;
-
   const renderMessage = (msg: string | Error) => {
     if (msg) {
       if (typeof msg === "string") {
@@ -34,7 +33,7 @@ const FormMessage: React.FC<IFormMessageProps> = (props) => {
   return (
     <div
       className={css({
-        color: getFontColor(props.type as FormMessageType),
+        color: getFontColor(type as FormMessageType),
         lineHeight: "24px",
         padding: "4px 0",
       })}
@@ -62,10 +61,8 @@ function getFontColor(type: FormMessageType) {
   switch (type) {
     case "error":
       return "red";
-
     case "message":
       return "green";
-
     default:
       return "black";
   }

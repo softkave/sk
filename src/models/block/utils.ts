@@ -21,7 +21,6 @@ export function getBlockValidChildrenTypes(type: BlockType): BlockType[] {
   };
 
   const types = validChildrenTypesMap[type] || [];
-
   return [...types];
 }
 

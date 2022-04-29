@@ -5,6 +5,7 @@ type SpaceOutSize = "small" | "middle" | "large" | number;
 export interface ISpaceOutContent {
   node: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
   key?: string | number;
 }
 
@@ -86,7 +87,9 @@ const SpaceOut: React.FC<ISpaceOutProps> = (props) => {
 
         return (
           <React.Fragment key={item.key || index}>
-            <div style={nodeStyle}>{item.node}</div>
+            <div style={nodeStyle} className={item.className}>
+              {item.node}
+            </div>
             {isNotLastItem && split ? split : null}
           </React.Fragment>
         );

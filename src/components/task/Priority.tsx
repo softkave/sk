@@ -1,5 +1,5 @@
 import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
-import { Space, Typography } from "antd";
+import { Space, Tag, Typography } from "antd";
 import React from "react";
 import { BlockPriority } from "../../models/block/block";
 
@@ -35,6 +35,21 @@ const Priority: React.FC<IPriorityProps> = (props) => {
       </Space>
     );
   }
+
+  return (
+    <Tag
+      style={{
+        backgroundColor: priorityToColorMap[props.level],
+        textTransform: "capitalize",
+        fontSize: "13px",
+        borderRadius: "11px",
+        color: "white",
+        border: "0px",
+      }}
+    >
+      {content}
+    </Tag>
+  );
 
   return (
     <Typography.Text

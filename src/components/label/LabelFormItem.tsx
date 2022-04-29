@@ -114,8 +114,23 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
         }}
       >
         <div>
-          <Tag color={value.color}>
-            <Typography.Text style={{ textTransform: "capitalize" }}>
+          <Tag
+            style={{
+              backgroundColor: value.color,
+              textTransform: "capitalize",
+              fontSize: "13px",
+              borderRadius: "11px",
+              color: "white",
+              // border: isDue ? "1px solid rgba(255, 77, 79, 0)" : undefined,
+            }}
+          >
+            <Typography.Text
+              style={{
+                textTransform: "capitalize",
+                fontSize: "13px",
+                color: "white",
+              }}
+            >
               {value.name}
             </Typography.Text>
           </Tag>
@@ -132,7 +147,7 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
 
   const renderLabelButtons = () => {
     return (
-      <Space>
+      <Space style={{ padding: "0px 16px" }}>
         {isEditing && (
           <Button
             icon={<Check />}
@@ -175,14 +190,15 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
     return (
       <div
         style={{
+          display: "flex",
           width: "100%",
-          padding: "16px",
           flexDirection: "column",
-
           ...(style || {}),
         }}
       >
-        <div style={{ alignItems: "flex-start" }}>
+        <div
+          style={{ display: "flex", alignItems: "flex-start", padding: "16px" }}
+        >
           <div
             style={{
               flexDirection: "column",

@@ -14,4 +14,18 @@ export const appClassNames = {
       height: "100%",
     },
   }),
+  pageListItem: css({
+    padding: "8px 16px",
+    cursor: "pointer",
+
+    "& .ant-tag": {
+      cursor: "pointer",
+    },
+  }),
+  pageListRoot: css({
+    display: "flex",
+    flex: 1,
+    width: "100%",
+    flexDirection: "column",
+  }),
 };

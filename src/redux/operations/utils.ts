@@ -1,6 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toAppErrorsArray } from "../../net/invokeEndpoint";
 import { getNewId } from "../../utils/utils";
+import KeyValueActions from "../key-value/actions";
+import KeyValueSelectors from "../key-value/selectors";
+import { ILoadingState } from "../key-value/types";
 import SessionSelectors from "../session/selectors";
 import { IAppAsyncThunkConfig, IStoreLikeObject } from "../types";
 import {
@@ -50,7 +53,7 @@ export const makeAsyncOp = <Arg, Result>(
     );
 
     if (isOperationStarted(operation)) {
-      return;
+      return operation;
     }
 
     thunkAPI.dispatch(
@@ -140,3 +143,80 @@ export const makeAsyncOpWithoutDispatch = <Arg, Result>(
     return operation;
   });
 };
+
+export function shouldLoadState(loadingState?: ILoadingState) {
+  return !loadingState?.initialized && !loadingState?.isLoading;
+}
+
+export interface IAsyncOp02Extras {
+  isDemoMode?: boolean;
+}
+
+export const makeAsyncOp02 = <Arg, Result>(
+  type: string,
+  fn: (
+    arg: Arg & { key: string },
+    thunkAPI: IStoreLikeObject,
+    extras: IAsyncOp02Extras
+  ) => Result | Promise<Result>
+) => {
+  return createAsyncThunk<
+    ILoadingState,
+    Arg & { key: string },
+    IAppAsyncThunkConfig
+  >(type, async (arg, thunkAPI) => {
+    const loadingState = KeyValueSelectors.getKey<ILoadingState | undefined>(
+      thunkAPI.getState(),
+      arg.key
+    );
+
+    if (loadingState && shouldLoadState(loadingState)) {
+      return loadingState;
+    }
+
+    thunkAPI.dispatch(
+      KeyValueActions.setLoadingState({
+        key: arg.key,
+        value: { isLoading: true },
+      })
+    );
+
+    try {
+      const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+      await fn(arg, thunkAPI, { isDemoMode });
+      thunkAPI.dispatch(
+        KeyValueActions.setLoadingState({
+          key: arg.key,
+          value: { initialized: true },
+        })
+      );
+    } catch (error) {
+      thunkAPI.dispatch(
+        KeyValueActions.setLoadingState({
+          key: arg.key,
+          value: { error: toAppErrorsArray(error) },
+        })
+      );
+    }
+
+    return KeyValueSelectors.getKey<ILoadingState>(
+      thunkAPI.getState(),
+      arg.key
+    );
+  });
+};
+
+export function mergeLoadingStates(
+  ...states: Array<ILoadingState | undefined>
+) {
+  return states.reduce((acc, state) => {
+    if (!state) {
+      return acc;
+    }
+
+    return {
+      ...acc,
+      ...state,
+    };
+  }, {}) as ILoadingState;
+}

@@ -8,7 +8,7 @@ import UserAvatar from "../collaborator/UserAvatar";
 import SpaceOut, { ISpaceOutContent } from "../utilities/SpaceOut";
 import UserOptionsMenu, { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
-export interface IAppHomeDesktopMenuProps {
+export interface IAppSidebarDesktopMenuProps {
   user: IUser;
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
@@ -20,7 +20,7 @@ const classes = {
     display: "flex",
     padding: "8px 16px",
     cursor: "pointer",
-    borderTop: "1px solid rgb(223, 234, 240)",
+    borderTop: "2px solid rgb(223, 234, 240)",
     flexDirection: "column",
     width: "100%",
   }),
@@ -45,7 +45,9 @@ const classes = {
   }),
 };
 
-const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
+const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
+  props
+) => {
   const { user, onSelect } = props;
   const [showMenu, setShowMenu] = React.useState(false);
   const spaceOutContent: ISpaceOutContent[] = React.useMemo(() => {
@@ -77,4 +79,4 @@ const AppHomeDesktopMenu: React.FC<IAppHomeDesktopMenuProps> = (props) => {
   );
 };
 
-export default AppHomeDesktopMenu;
+export default AppSidebarDesktopMenu;

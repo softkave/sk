@@ -1,6 +1,6 @@
 import { defaultTo } from "lodash";
 import randomColor from "randomcolor";
-import { IEditOrgFormValues } from "../../components/org/EditOrgForm";
+import { IOrganizationFormValues } from "../../components/organization/OrganizationForm";
 import { appLoggedInPaths } from "../app/routes";
 import { IAppOrganization, IOrganization } from "./types";
 
@@ -16,7 +16,7 @@ export const appOrganizationRoutes = {
 };
 
 export function newFormOrganization() {
-  const newOrganization: IEditOrgFormValues = {
+  const newOrganization: IOrganizationFormValues = {
     color: randomColor(),
     name: "",
     description: "",
@@ -26,7 +26,7 @@ export function newFormOrganization() {
 }
 
 export function formOrganizationFromExisting(org: IOrganization) {
-  const newBoard: IEditOrgFormValues = {
+  const newBoard: IOrganizationFormValues = {
     color: org.color,
     name: org.name,
     description: org.description,

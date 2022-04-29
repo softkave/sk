@@ -1,110 +1,109 @@
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Button, Input, Space, Typography } from "antd";
 import React from "react";
 import { Plus, Search, X as CloseIcon } from "react-feather";
-
-import InputSearchIcon from "./InputSearchIcon";
+import InputSearchIcon from "../utilities/InputSearchIcon";
 
 export interface IListHeaderProps {
-  onClickCreate: () => void;
+  onCreate: () => void;
   onSearchTextChange: (text: string) => void;
   title: string;
+  placeholder?: string;
   hideAddButton?: boolean;
-  hideSearch?: boolean;
-  searchPlaceholder?: string;
+  hideSearchButton?: boolean;
   style?: React.CSSProperties;
   className?: string;
+  disabled?: boolean;
 }
+
+const classes = {
+  root: css({ padding: "0 16px" }),
+  searchContainer: css({
+    justifyContent: "flex-end",
+    flex: 1,
+    "& .ant-space-item:first-of-type": { flex: 1 },
+  }),
+  controlsContainer: css({ flex: 1, display: "flex" }),
+  title: css({
+    textTransform: "uppercase",
+    display: "inline-flex",
+    flex: 1,
+    margin: "0 16px 0 0 !important",
+    alignItems: "center",
+  }),
+};
 
 const ListHeader: React.FC<IListHeaderProps> = (props) => {
   const {
     onSearchTextChange,
-    onClickCreate,
+    onCreate,
     style,
-    searchPlaceholder,
     hideAddButton,
-    hideSearch,
+    hideSearchButton,
+    className,
+    disabled,
     title,
+    placeholder,
   } = props;
 
   const [inSearchMode, setSearchMode] = React.useState(false);
-
   const toggleSearchMode = React.useCallback(
     () => setSearchMode(!inSearchMode),
     [inSearchMode]
   );
 
-  const closeSearchMode = React.useCallback(() => {
+  const endSearchMode = React.useCallback(() => {
     toggleSearchMode();
     onSearchTextChange("");
   }, [toggleSearchMode, onSearchTextChange]);
 
-  const renderSearchMode = () => {
-    return (
-      <div
-        className={css({
-          justifyContent: "flex-end",
-          flex: 1,
-          "& .ant-space-item:first-of-type": { flex: 1 },
-        })}
-      >
-        <Space style={{ width: "100%" }}>
-          <Input
-            allowClear
-            placeholder={searchPlaceholder || "Search"}
-            prefix={<InputSearchIcon />}
-            onChange={(evt) => onSearchTextChange(evt.target.value)}
-          />
-          <Button onClick={closeSearchMode} className="icon-btn">
-            <CloseIcon />
-          </Button>
-        </Space>
-      </div>
-    );
-  };
+  const searchInputNode = inSearchMode && (
+    <div className={classes.searchContainer}>
+      <Space style={{ width: "100%" }}>
+        <Input
+          allowClear
+          disabled={disabled}
+          placeholder={placeholder}
+          prefix={<InputSearchIcon />}
+          onChange={(evt) => onSearchTextChange(evt.target.value)}
+        />
+        <Button onClick={endSearchMode} className="icon-btn">
+          <CloseIcon />
+        </Button>
+      </Space>
+    </div>
+  );
 
-  const renderControls = () => {
-    return (
-      <div
-        style={{
-          justifyContent: "flex-end",
-          flex: 1,
-          alignItems: "center",
-        }}
-      >
-        <Typography.Text
-          style={{
-            display: "flex",
-            flex: 1,
-            textTransform: "uppercase",
-          }}
-        >
-          {title}
-        </Typography.Text>
-        <Space>
-          {!hideAddButton && (
-            <Button onClick={onClickCreate} className="icon-btn">
-              <Plus />
-            </Button>
-          )}
-          {!hideSearch && (
-            <Button onClick={toggleSearchMode} className="icon-btn">
-              <Search />
-            </Button>
-          )}
-        </Space>
-      </div>
-    );
-  };
+  const addButtonNode = !hideAddButton && (
+    <Button disabled={disabled} onClick={onCreate} className="icon-btn">
+      <Plus />
+    </Button>
+  );
+
+  const searchButtonNode = !hideSearchButton && (
+    <Button disabled={disabled} onClick={toggleSearchMode} className="icon-btn">
+      <Search />
+    </Button>
+  );
+
+  const controlNode = !inSearchMode && (
+    <div className={classes.controlsContainer}>
+      <Typography.Title type="secondary" className={classes.title} level={5}>
+        {title}
+      </Typography.Title>
+      <Space>
+        {addButtonNode}
+        {searchButtonNode}
+      </Space>
+    </div>
+  );
 
   return (
-    <div style={{ padding: "0 16px", ...style }}>
-      {!inSearchMode && renderControls()}
-      {inSearchMode && renderSearchMode()}
+    <div className={cx(className, classes.root)} style={style}>
+      {controlNode}
+      {searchInputNode}
     </div>
   );
 };
-
-ListHeader.defaultProps = { style: {} };
 
 export default React.memo(ListHeader);

@@ -8,7 +8,6 @@ import Pickr from "@simonwep/pickr";
 
 export interface IColorPickerProps {
   onChange: (value: string) => void;
-
   disabled?: boolean;
   value?: string;
 }
@@ -16,10 +15,19 @@ export interface IColorPickerProps {
 const ColorPicker: React.FC<IColorPickerProps> = (props) => {
   const { value, onChange, disabled } = props;
   const divRef = React.createRef<HTMLDivElement>();
-  const [pickr, setPickr] = React.useState<Pickr | null>(null);
+  const pickr = React.useRef<Pickr | null>(null);
+  const toggleDisabled = React.useCallback(() => {
+    if (pickr.current) {
+      if (disabled) {
+        pickr.current.disable();
+      } else {
+        pickr.current.enable();
+      }
+    }
+  }, [disabled]);
 
   React.useEffect(() => {
-    if (divRef.current && !pickr) {
+    if (divRef.current && !pickr.current) {
       const colorPicker = Pickr.create({
         el: divRef.current,
         theme: "nano",
@@ -62,38 +70,34 @@ const ColorPicker: React.FC<IColorPickerProps> = (props) => {
         },
       });
 
-      setPickr(colorPicker);
+      pickr.current = colorPicker;
+      toggleDisabled();
     }
-  }, [value, divRef, pickr]);
+  }, [value, divRef, toggleDisabled]);
 
   const internalOnChange = React.useCallback(() => {
-    if (pickr) {
-      const color = pickr.getColor()!.toHEXA().toString();
-      pickr.hide();
+    if (pickr.current) {
+      const color = pickr.current.getColor()!.toHEXA().toString();
+      pickr.current.hide();
 
       if (color !== value) {
         onChange(color);
       }
     }
-  }, [onChange, pickr, value]);
+  }, [onChange, value]);
 
   React.useEffect(() => {
-    if (pickr) {
-      if (disabled) {
-        pickr.disable();
-      } else {
-        pickr.enable();
-      }
-
-      pickr.on("save", internalOnChange);
+    if (pickr.current) {
+      toggleDisabled();
+      pickr.current.on("save", internalOnChange);
     }
 
     return () => {
-      if (pickr) {
-        pickr.off("save", internalOnChange);
+      if (pickr.current) {
+        pickr.current.off("save", internalOnChange);
       }
     };
-  }, [pickr, disabled, internalOnChange]);
+  }, [disabled, pickr, internalOnChange]);
 
   return <div ref={divRef}></div>;
 };

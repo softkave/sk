@@ -10,13 +10,11 @@ import RoomSelectors from "../../rooms/selectors";
 import { IRoomsMap } from "../../rooms/types";
 import SessionSelectors from "../../session/selectors";
 import UserSelectors from "../../users/selectors";
-import OperationType from "../OperationType";
-import { makeAsyncOp } from "../utils";
+import { makeAsyncOp02 } from "../utils";
 
-export const populateOrganizationRoomsOpAction = makeAsyncOp(
+export const populateOrganizationRoomsOpAction = makeAsyncOp02(
   "op/organizations/populateOrganizationRooms",
-  OperationType.PopulateOrganizationRooms,
-  async (arg: { organization: IAppOrganization }, thunkAPI, extras) => {
+  async (arg: { organization: IAppOrganization }, thunkAPI) => {
     const existingRooms = RoomSelectors.getOrgRooms(
       thunkAPI.getState(),
       arg.organization.customId
@@ -53,11 +51,6 @@ export const populateOrganizationRoomsOpAction = makeAsyncOp(
         value: unseenChatsCountMapByOrg,
       })
     );
-  },
-  {
-    preFn: (arg) => ({
-      resourceId: arg.organization.customId,
-    }),
   }
 );
 

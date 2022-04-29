@@ -64,7 +64,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
 
   const renderEditingStatus = () => {
     return (
-      <div style={{ flexDirection: "column", width: "100%" }}>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <Form.Item
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
@@ -147,7 +147,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
 
   const renderStatusButtons = () => {
     return (
-      <Space>
+      <Space style={{ padding: "0px 16px" }}>
         {isEditing && (
           <Button
             icon={<Check />}
@@ -204,48 +204,47 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
     );
   };
 
-  const renderStatus = () => {
-    return (
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        padding: "16px",
+        flexDirection: "column",
+        backgroundColor: snapshot.isDragging ? "#eee" : undefined,
+        cursor: snapshot.isDragging ? "grabbing" : undefined,
+        ...provided.draggableProps.style,
+        ...(style || {}),
+      }}
+      ref={provided.innerRef ? provided.innerRef : undefined}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+    >
       <div
-        style={{
-          width: "100%",
-          padding: "16px",
-          flexDirection: "column",
-          backgroundColor: snapshot.isDragging ? "#eee" : undefined,
-          cursor: snapshot.isDragging ? "grabbing" : undefined,
-          ...provided.draggableProps.style,
-          ...(style || {}),
-        }}
-        ref={provided.innerRef ? provided.innerRef : undefined}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
+        style={{ display: "flex", alignItems: "flex-start", padding: "16px" }}
       >
-        <div style={{ alignItems: "flex-start" }}>
-          <div
-            style={{
-              flexDirection: "column",
-              flex: 1,
-              marginRight: "8px",
-            }}
-          >
-            {isEditing ? renderEditingStatus() : renderRegularStatus()}
-          </div>
-          <div style={{ flexDirection: "column", height: "100%" }}>
-            <ColorPicker
-              value={value.color}
-              disabled={disabled ? true : !isEditing}
-              onChange={(val) => {
-                onChange({ color: val });
-              }}
-            />
-          </div>
+        <div
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            marginRight: "8px",
+          }}
+        >
+          {isEditing ? renderEditingStatus() : renderRegularStatus()}
         </div>
-        {renderStatusButtons()}
+        <div>
+          <ColorPicker
+            value={value.color}
+            disabled={disabled ? true : !isEditing}
+            onChange={(val) => {
+              onChange({ color: val });
+            }}
+          />
+        </div>
       </div>
-    );
-  };
-
-  return renderStatus();
+      {renderStatusButtons()}
+    </div>
+  );
 };
 
 export default React.memo(StatusFormItem);

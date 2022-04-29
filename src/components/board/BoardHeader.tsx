@@ -1,13 +1,11 @@
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
-import { css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Button, Space, Typography } from "antd";
 import React from "react";
 import { ArrowLeft, Plus, Search } from "react-feather";
 import { useHistory } from "react-router";
 import { IBoard } from "../../models/board/types";
-
-import { layoutOptions } from "../utilities/layout";
 import BoardHeaderOptionsMenu, {
   BoardCurrentView,
   BoardGroupBy,
@@ -28,13 +26,26 @@ export interface IBoardHeaderProps {
   onSelectCurrentView: (key: BoardCurrentView) => void;
   onSelectGroupBy: (key: BoardGroupBy) => void;
   style?: React.CSSProperties;
+  className?: string;
 }
+
+const classes = {
+  root: css({
+    display: "flex",
+    width: "100%",
+    alignItems: "center",
+    padding: "8px 16px",
+    borderBottom: "2px solid rgb(223, 234, 240)",
+    height: "56px",
+  }),
+};
 
 const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
   const {
     block,
     isMobile,
     style,
+    className,
     isSearchMode,
     onSelectMenuKey,
     onChangeSearchText,
@@ -44,7 +55,6 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
 
   const history = useHistory();
   const [showSearch, setShowSearch] = React.useState(isSearchMode);
-
   const closeSearch = React.useCallback(() => {
     setShowSearch(false);
     onChangeSearchText("");
@@ -154,16 +164,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
   }
 
   return (
-    <div
-      style={{
-        ...style,
-        width: "100%",
-        alignItems: "center",
-        padding: "16px",
-        height: layoutOptions.HEADER_HEIGHT,
-        borderBottom: "1px solid rgb(223, 234, 240)",
-      }}
-    >
+    <div style={style} className={cx(classes.root, className)}>
       {content}
     </div>
   );

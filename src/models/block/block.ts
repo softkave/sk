@@ -163,3 +163,18 @@ export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {
     return block.customId === id;
   });
 }
+
+export function getBlockTypeLabel(type: BlockType): string {
+  switch (type) {
+    case BlockType.Root:
+      return "Root";
+    case BlockType.Organization:
+      return "Organization";
+    case BlockType.Board:
+      return "Board";
+    case BlockType.Task:
+      return "Task";
+    default:
+      return "Unknown";
+  }
+}

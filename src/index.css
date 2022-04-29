@@ -73,3 +73,11 @@ body,
 .ant-tabs-nav {
   margin-bottom: 0px !important;
 }
+
+.ant-tabs-top > .ant-tabs-nav::before {
+  border-bottom: 2px solid rgb(223, 234, 240) !important;
+}
+
+.ant-divider {
+  border-width: 2px;
+}

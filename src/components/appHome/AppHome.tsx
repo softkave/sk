@@ -1,131 +1,52 @@
 import React from "react";
 import { useHistory } from "react-router";
-import { Redirect, Route, Switch } from "react-router-dom";
-import { IUser } from "../../models/user/user";
-import OrganizationContainer from "../board/OrganizationContainer";
+import { appLoggedInPaths } from "../../models/app/routes";
 import FeedbackFormModal from "../feedback/FeedbackFormModal";
-import Message from "../Message";
-import Notification from "../notification/Notification";
-import EditOrgFormInDrawer from "../org/EditOrgFormInDrawer";
-import OrgsListContainer from "../org/OrgsListContainer";
+import EditOrgFormInDrawer from "../organization/OrganizationFormDrawer";
 import RenderForDevice from "../RenderForDevice";
-import UserSettings from "../user/UserSettings";
 import AppHomeDesktop from "./AppHomeDesktop";
-import HeaderMobile from "./HeaderMobile";
+import AppHomeMobile from "./AppHomeMobile";
 import NotificationsPermissionContainer from "./NotificationsPermissionContainer";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeProps {
-  user: IUser;
   showAppMenu: boolean;
   showOrgForm: boolean;
-  rootBlocksLoaded: boolean;
-  toggleMenu: () => void;
   closeNewOrgForm: () => void;
   onLogout: () => void;
 }
 
 const AppHome: React.FC<IAppHomeProps> = (props) => {
-  const {
-    user,
-    showAppMenu,
-    showOrgForm,
-    rootBlocksLoaded,
-    closeNewOrgForm,
-    onLogout,
-  } = props;
-
+  const { showAppMenu, showOrgForm, closeNewOrgForm, onLogout } = props;
   const history = useHistory();
   const [showFeedbackForm, setShowFeedbackForm] = React.useState(false);
   const toggleFeedbackForm = React.useCallback(() => {
     setShowFeedbackForm(!showFeedbackForm);
   }, [showFeedbackForm]);
 
-  const renderNotification = () => <Notification />;
-  const renderSettings = () => <UserSettings />;
   const onSelect = (key: UserOptionsMenuKeys) => {
     switch (key) {
       case UserOptionsMenuKeys.Logout:
         onLogout();
         break;
-
       case UserOptionsMenuKeys.SendFeedback:
         toggleFeedbackForm();
         break;
-
       case UserOptionsMenuKeys.UserSettings:
-        history.push("/app/settings");
+        history.push(appLoggedInPaths.settings);
+        break;
+      case UserOptionsMenuKeys.Organizations:
+        history.push(appLoggedInPaths.organizations);
+        break;
+      case UserOptionsMenuKeys.Requests:
+        history.push(appLoggedInPaths.requests);
         break;
     }
   };
 
-  const mobile = () => (
-    <div style={{ flexDirection: "column", height: "100%" }}>
-      {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
-      <HeaderMobile user={user} onSelect={onSelect} />
-      <div style={{ flex: 1, overflow: "hidden" }}>
-        <Switch>
-          <Route path="/app/notifications/*" render={renderNotification} />
-          <Route exact path="/app/orgs" component={OrgsListContainer} />
-          <Route
-            path="/app/orgs/*"
-            render={() => {
-              return (
-                <OrgsListContainer
-                  hijackRender={() => {
-                    if (rootBlocksLoaded) {
-                      return <OrganizationContainer />;
-                    }
-
-                    return <React.Fragment />;
-                  }}
-                />
-              );
-            }}
-          />
-          <Route exact path="/app/settings" render={renderSettings} />
-          <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
-        </Switch>
-      </div>
-    </div>
-  );
-
-  const renderEmpty = (str: string = "Select an organization or request") => (
-    <Message message={str} />
-  );
-
+  const mobile = () => <AppHomeMobile onSelect={onSelect} />;
   const desktop = () => (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
-      {showAppMenu && <AppHomeDesktop user={user} onSelect={onSelect} />}
-      {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
-      <Switch>
-        <Route
-          exact
-          path="/app/notifications"
-          render={() => renderEmpty("Select a request or notification.")}
-        />
-        <Route path="/app/notifications/*" render={renderNotification} />
-        <Route
-          exact
-          path="/app/orgs"
-          render={() =>
-            renderEmpty("Select or create an organization to get started.")
-          }
-        />
-        <Route
-          path="/app/orgs/*"
-          render={() => {
-            if (rootBlocksLoaded) {
-              return <OrganizationContainer />;
-            }
-
-            return null;
-          }}
-        />
-        <Route exact path="/app/settings" render={renderSettings} />
-        <Route exact path="*" render={() => <Redirect to="/app/orgs" />} />
-      </Switch>
-    </div>
+    <AppHomeDesktop onSelect={onSelect} showAppMenu={showAppMenu} />
   );
 
   return (
@@ -134,6 +55,7 @@ const AppHome: React.FC<IAppHomeProps> = (props) => {
       {showFeedbackForm && (
         <FeedbackFormModal visible onCancel={toggleFeedbackForm} />
       )}
+      {showOrgForm && <EditOrgFormInDrawer visible onClose={closeNewOrgForm} />}
       <RenderForDevice renderForDesktop={desktop} renderForMobile={mobile} />
     </React.Fragment>
   );

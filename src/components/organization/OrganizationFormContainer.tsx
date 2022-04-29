@@ -15,18 +15,20 @@ import { AppDispatch } from "../../redux/types";
 import { flattenErrorList } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
-import EditOrgForm, { IEditOrgFormValues } from "./EditOrgForm";
+import OrganizationForm, { IOrganizationFormValues } from "./OrganizationForm";
 
-export interface IEditOrgFormContainerProps {
+export interface IOrganizationFormContainerProps {
   onClose: () => void;
   organization?: IAppOrganization;
 }
 
-const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
+const OrganizationFormContainer: React.FC<IOrganizationFormContainerProps> = (
+  props
+) => {
   const { onClose } = props;
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
-  const [formData, setFormData] = React.useState<IEditOrgFormValues>(() =>
+  const [formData, setFormData] = React.useState<IOrganizationFormValues>(() =>
     props.organization
       ? formOrganizationFromExisting(props.organization)
       : newFormOrganization()
@@ -37,7 +39,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
     IFormError<Record<string, any>> | undefined
   >();
 
-  const onSubmit = async (values: IEditOrgFormValues) => {
+  const onSubmit = async (values: IOrganizationFormValues) => {
     const data = { ...formData, ...values };
     setLoading(true);
     setFormData(data);
@@ -86,7 +88,7 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   };
 
   return (
-    <EditOrgForm
+    <OrganizationForm
       org={props.organization}
       value={formData as any}
       onClose={onClose}
@@ -97,4 +99,4 @@ const EditOrgFormContainer: React.FC<IEditOrgFormContainerProps> = (props) => {
   );
 };
 
-export default React.memo(EditOrgFormContainer);
+export default React.memo(OrganizationFormContainer);
