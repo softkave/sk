@@ -64,11 +64,11 @@ const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
           }}
         />
         <Route exact path={appLoggedInPaths.settings} render={renderSettings} />
-        <Route
+        {/* <Route
           exact
           path="*"
           render={() => <Redirect to={appLoggedInPaths.organizations} />}
-        />
+        /> */}
       </Switch>
     </div>
   );

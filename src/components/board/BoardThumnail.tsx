@@ -13,40 +13,37 @@ export interface IBoardThumbnailProps {
   onClick?: () => void;
 }
 
-const descriptionMarginWidth = 16;
 const classes = {
-  nameContainer: css({ alignItems: "center" }),
   descriptionContainer: css({
     marginTop: "4px",
   }),
-  root: css({ flex: 1, display: "flex" }),
+  root: css({
+    display: "grid",
+    gridTemplateColumns: "auto 1fr",
+    columnGap: 16,
+  }),
   content: css({
-    lineHeight: "16px",
-    flex: 1,
-    marginLeft: descriptionMarginWidth,
-    flexDirection: "column",
-    boxSizing: "border-box",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
+    overflow: "hidden",
   }),
 };
 
 const BoardThumbnail: React.FC<IBoardThumbnailProps> = (props) => {
   const { board, className, avatarSize, style, isSelected, onClick } = props;
   const nameNode = (
-    <div className={classes.nameContainer}>
-      <Typography.Text
-        strong
-        style={{
-          marginRight: "8px",
-          textTransform: "capitalize",
-          color: isSelected ? "#1890ff" : undefined,
-        }}
-        ellipsis
-      >
-        {board.name}
-      </Typography.Text>
-    </div>
+    <Typography.Text
+      strong
+      ellipsis
+      style={{
+        textTransform: "capitalize",
+        color: isSelected ? "#1890ff" : undefined,
+        maxWidth: "100%",
+      }}
+    >
+      {board.name}
+    </Typography.Text>
   );
 
   // const descriptionNode = (

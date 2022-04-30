@@ -66,7 +66,7 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
   };
 
   return (
-    <div style={{ flexDirection: "column", width: "100%" }}>
+    <div style={{ flexDirection: "column", width: "100%", display: "flex" }}>
       <ChatRoomHeader
         recipient={recipientsMap[room.recipientId]}
         onBack={onBack}

@@ -24,13 +24,15 @@ const classes = {
     },
   }),
   prefixBtnContainerMobile: css({ marginRight: "16px" }),
-  prefixBtnContainerDesktop: css({ marginRight: "16px", cursor: "pointer" }),
-  header: css({
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
+  root: css({
+    display: "grid",
+    gridTemplateColumns: "1fr auto",
+    columnGap: 16,
     borderBottom: "2px solid rgb(223, 234, 240)",
     maxWidth: "100%",
+  }),
+  rootMobile: css({
+    gridTemplateColumns: "auto 1fr auto",
   }),
   menuContainer: css({ alignItems: "center" }),
 };
@@ -77,14 +79,17 @@ const OrganizationHeader: React.FC<IOrganizationHeaderProps> = (props) => {
   };
 
   return (
-    <div className={cx(classes.header, className)} style={style}>
+    <div
+      className={cx(className, classes.root, {
+        [classes.rootMobile]: isMobile,
+      })}
+      style={style}
+    >
       {renderHeaderPrefixButton()}
       <Typography.Title
+        ellipsis={{ rows: 2 }}
         level={5}
         style={{
-          display: "flex",
-          flex: 1,
-          alignItems: "center",
           marginBottom: 0,
           textTransform: "capitalize",
         }}

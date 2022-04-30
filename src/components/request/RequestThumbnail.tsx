@@ -19,7 +19,7 @@ const RequestThumbnail: React.FC<IRequestThumbnailProps> = (props) => {
   return (
     <div
       style={{
-        flex: 1,
+        display: "flex",
         cursor: "pointer",
         backgroundColor: isSelected ? "#e6f7ff" : undefined,
         ...defaultTo(style, {}),

@@ -15,8 +15,9 @@ const classes = {
     height: "100%",
     width: "100%",
     flexDirection: "column",
+    padding: "8px 0px",
   }),
-  header: css({ paddingBottom: "8px", paddingTop: "8px" }),
+  header: css({ padding: "0px 16px 16px 16px !important" }),
 };
 
 const RequestListContainer: React.FC<IRequestListContainerProps> = (props) => {
@@ -52,11 +53,11 @@ const RequestListContainer: React.FC<IRequestListContainerProps> = (props) => {
         hideAddButton
         disabled={isLoading}
         onSearchTextChange={setSearchQuery}
-        className={classes.header}
         hideSearchButton={requests.length === 0}
         onCreate={noop}
         title="Collaboration Requests"
         placeholder="Search requests..."
+        className={classes.header}
       />
       {listNode}
     </div>

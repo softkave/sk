@@ -1,4 +1,5 @@
 import { CommentOutlined } from "@ant-design/icons";
+import { css, cx } from "@emotion/css";
 import { Badge, Tag, Typography } from "antd";
 import React from "react";
 import { BlockType, IBlock } from "../../models/block/block";
@@ -26,7 +27,22 @@ export interface IBlockThumbnailProps {
 }
 
 const defaultFields: BlockThumbnailShowField[] = ["name"];
-const blockDescriptionMarginWidth = 16;
+const classes = {
+  root: css({
+    display: "grid",
+    gridTemplateColumns: "auto 1fr",
+    columnGap: 16,
+  }),
+  main: css({
+    lineHeight: "16px",
+    flex: 1,
+    flexDirection: "column",
+    boxSizing: "border-box",
+    display: "flex",
+    justifyContent: "center",
+    overflow: "hidden",
+  }),
+};
 
 const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const {
@@ -54,22 +70,29 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
   const renderName = () => {
     if (fieldsToShow.name) {
       return (
-        <div style={{ alignItems: "center" }}>
+        <div
+          style={{
+            alignItems: "center",
+            display: "flex",
+            overflow: "hidden",
+            flex: 1,
+          }}
+        >
           <Typography.Text
+            ellipsis
             strong={makeNameBold}
             style={{
-              marginRight: "8px",
               textTransform: "capitalize",
+              maxWidth: "100%",
               color: isSelected ? "#1890ff" : undefined,
             }}
-            ellipsis
           >
             {block.name}
           </Typography.Text>
           {count ? (
             <Badge
               count={count}
-              style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+              style={{ backgroundColor: "rgba(0,0,0,0.3)", marginLeft: "8px" }}
             />
           ) : null}
         </div>
@@ -135,24 +158,13 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
     <div
       style={{
         ...style,
-        display: "flex",
         backgroundColor: isSelected ? "#e6f7ff" : undefined,
       }}
-      className={className}
+      className={cx(className, classes.root)}
       onClick={onClick}
     >
       <ItemAvatar size={avatarSize} color={color} />
-      <div
-        style={{
-          lineHeight: "16px",
-          flex: 1,
-          marginLeft: blockDescriptionMarginWidth,
-          flexDirection: "column",
-          boxSizing: "border-box",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+      <div className={classes.main}>
         {renderName()}
         {renderType()}
         {renderDesc()}

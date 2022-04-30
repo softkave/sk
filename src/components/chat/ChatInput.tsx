@@ -23,6 +23,7 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
       style={{
         borderTop: "1px solid rgb(223, 234, 240)",
         padding: "8px 5px",
+        display: "flex",
       }}
     >
       <div

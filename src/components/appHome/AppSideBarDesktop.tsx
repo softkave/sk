@@ -54,12 +54,12 @@ const routeItems: IAppRoute[] = [
     render: () => <OrganizationSidebarContainer isMobile={false} />,
   },
   {
-    path: appLoggedInPaths.requests,
-    render: () => <RequestListContainer />,
-  },
-  {
     path: appLoggedInPaths.organizations,
     render: () => <OrganizationListContainer />,
+  },
+  {
+    path: appLoggedInPaths.requests,
+    render: () => <RequestListContainer />,
   },
 ];
 

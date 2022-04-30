@@ -31,12 +31,20 @@ export interface IBoardHeaderProps {
 
 const classes = {
   root: css({
-    display: "flex",
+    display: "grid",
+    gridTemplateColumns: "auto 1fr auto",
+    columnGap: "16px",
     width: "100%",
-    alignItems: "center",
     padding: "8px 16px",
     borderBottom: "2px solid rgb(223, 234, 240)",
     height: "56px",
+    overflow: "hidden",
+    alignContent: "center",
+  }),
+  back: css({
+    cursor: "pointer",
+    display: "inline-flex",
+    alignItems: "center",
   }),
 };
 
@@ -79,7 +87,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
   const renderBackButton = () => {
     if (isMobile) {
       return (
-        <div style={{ marginRight: "16px" }}>
+        <div className={classes.back}>
           <Button
             style={{ cursor: "pointer" }}
             onClick={onBack}
@@ -91,10 +99,7 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
       );
     } else {
       return (
-        <div
-          className={css({ marginRight: "16px", cursor: "pointer" })}
-          onClick={onToggleFoldMenu}
-        >
+        <div className={classes.back} onClick={onToggleFoldMenu}>
           {isMenuFolded ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </div>
       );
@@ -138,18 +143,18 @@ const BoardHeader: React.FC<IBoardHeaderProps> = (props) => {
       <React.Fragment>
         {renderBackButton()}
         <Typography.Title
+          ellipsis
           level={5}
           style={{
-            display: "flex",
-            flex: 1,
-            alignItems: "center",
             marginBottom: 0,
             textTransform: "capitalize",
+            overflow: "hidden",
+            lineHeight: "30px",
           }}
         >
           {block.name}
         </Typography.Title>
-        <div style={{ alignItems: "center" }}>
+        <div>
           {desktopContent ? (
             <Space>
               {desktopContent}

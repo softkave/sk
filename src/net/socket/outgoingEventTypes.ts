@@ -18,7 +18,7 @@ export interface IOutgoingEventPacket<T = any> {
 }
 
 export interface IOutgoingSubscribePacket {
-  items: ClientSubscribedResources;
+  rooms: ClientSubscribedResources;
 }
 
 export interface IOutgoingFetchMissingBroadcastsPacket {

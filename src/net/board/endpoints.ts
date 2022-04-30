@@ -4,7 +4,11 @@ import {
   IUpdateBoardInput,
 } from "../../models/board/types";
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
-import { GetEndpointResult, IEndpointResultBase } from "../types";
+import {
+  GetEndpointResult,
+  GetEndpointResultError,
+  IEndpointResultBase,
+} from "../types";
 
 const baseURL = "/boards";
 
@@ -15,6 +19,9 @@ export type ICreateBoardEndpointParams = {
 export type ICreateBoardEndpointResult = GetEndpointResult<{
   board: IBoard;
 }>;
+
+export type ICreateBoardEndpointResultError =
+  GetEndpointResultError<ICreateBoardEndpointParams>;
 
 async function createBoard(props: ICreateBoardEndpointParams) {
   return invokeEndpointWithAuth<ICreateBoardEndpointResult>({
@@ -49,6 +56,9 @@ export interface IUpdateBoardEndpointParams {
 export type IUpdateBoardEndpointResult = GetEndpointResult<{
   board: IBoard;
 }>;
+
+export type IUpdateBoardEndpointResultError =
+  GetEndpointResultError<IUpdateBoardEndpointParams>;
 
 async function updateBoard(props: IUpdateBoardEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateBoardEndpointResult>({

@@ -6,6 +6,10 @@ import { useHistory } from "react-router";
 import { IBoard } from "../../models/board/types";
 import { formBoardFromExisting, newFormBoard } from "../../models/board/utils";
 import { IAppOrganization } from "../../models/organization/types";
+import {
+  ICreateBoardEndpointResultError,
+  IUpdateBoardEndpointResultError,
+} from "../../net/board/endpoints";
 import OperationActions from "../../redux/operations/actions";
 import { createBoardOpAction } from "../../redux/operations/board/createBoard";
 import { updateBoardOpAction } from "../../redux/operations/board/updateBoard";
@@ -75,11 +79,13 @@ const BoardFormContainer: React.FC<IBoardFormContainerProps> = (props) => {
         message.error("Error creating board.");
       }
 
-      const flattenedErrors = flattenErrorList(opData.error);
+      const flattenedErrors = flattenErrorList<
+        ICreateBoardEndpointResultError & IUpdateBoardEndpointResultError
+      >(opData.error);
       setErrors({
         // TODO: fix
         // @ts-ignore
-        errors: flattenedErrors,
+        errors: flattenedErrors?.board || flattenedErrors?.data,
         errorList: opData.error,
       });
     } else {

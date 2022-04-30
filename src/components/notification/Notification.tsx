@@ -7,6 +7,7 @@ import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
+import { appLoggedInPaths, appRequestsPaths } from "../../models/app/routes";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { messages } from "../../models/messages";
 import {
@@ -22,20 +23,16 @@ import FormError from "../forms/FormError";
 import useOperation, { getOpData } from "../hooks/useOperation";
 import Message from "../Message";
 
-import { INotificationsPathParams } from "./utils";
-
 export interface INotificationProps {}
 
 const Notification: React.FC<INotificationProps> = (props) => {
   const history = useHistory();
   const dispatch: AppDispatch = useDispatch();
-  const routeMatch = useRouteMatch<INotificationsPathParams>(
-    "/app/notifications/:notificationId"
+  const routeMatch = useRouteMatch<{ requestId: string }>(
+    appRequestsPaths.requestSelector
   );
   const currentNotificationId =
-    routeMatch && routeMatch.params
-      ? routeMatch.params.notificationId
-      : undefined;
+    routeMatch && routeMatch.params ? routeMatch.params.requestId : undefined;
 
   const notification = useSelector<
     IAppState,
@@ -48,18 +45,18 @@ const Notification: React.FC<INotificationProps> = (props) => {
 
   const opStatus = useOperation();
   const onBack = React.useCallback(() => {
-    history.push("/app/notifications");
+    history.push(appLoggedInPaths.requests);
   }, [history]);
 
   if (!currentNotificationId) {
-    history.push("/app/notifications");
+    history.push(appLoggedInPaths.requests);
     return null;
   }
 
   const isNotificationLoaded = !!notification;
 
   if (!isNotificationLoaded) {
-    return <Message message="Notification not found." />;
+    return <Message message="Collaboration request not found." />;
   }
 
   const onRespond = async (selectedResponse: CollaborationRequestResponse) => {
@@ -139,10 +136,10 @@ const Notification: React.FC<INotificationProps> = (props) => {
   return (
     <div
       className={css({
+        display: "flex",
         padding: "0 16px",
         height: "100%",
         width: "100%",
-        display: "flex",
         flexDirection: "column",
       })}
     >
@@ -176,6 +173,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
       </div>
       <div
         style={{
+          display: "flex",
           flex: 1,
           alignItems: "center",
           justifyContent: "center",

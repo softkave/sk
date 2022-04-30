@@ -23,6 +23,7 @@ const Chat: React.FC<IChatProps> = (props) => {
   return (
     <div
       style={{
+        display: "flex",
         flex: 1,
         // justifyContent: isUserSender ? "flex-end" : undefined,
         flexDirection: isUserSender ? "row-reverse" : undefined,
@@ -37,6 +38,7 @@ const Chat: React.FC<IChatProps> = (props) => {
       </div>
       <div
         style={{
+          display: "flex",
           flex: 1,
           maxWidth: "500px",
           flexDirection: "column",

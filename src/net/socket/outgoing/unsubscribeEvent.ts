@@ -43,7 +43,7 @@ export default async function unsubcribeEvent(
     return;
   }
 
-  const data: IOutgoingSubscribePacket = { items };
+  const data: IOutgoingSubscribePacket = { rooms: items };
   const promise = SocketAPI.promisifiedEmit(
     OutgoingSocketEvents.Unsubscribe,
     data

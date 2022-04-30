@@ -24,16 +24,11 @@ const requestStatusWeight: Record<CollaborationRequestStatusType, number> = {
 const RequestList: React.FC<IRequestListProps> = (props) => {
   const { requests, selectedId, onClickRequest } = props;
   const sortedRequests = React.useMemo(() => {
-    return requests
-      .sort((r1, r2) => {
-        const s1 = getRequestStatus(r1);
-        const s2 = getRequestStatus(r2);
-        return requestStatusWeight[s1] - requestStatusWeight[s2];
-      })
-      .filter((r1) => {
-        const s1 = getRequestStatus(r1);
-        return s1 === CollaborationRequestStatusType.Pending;
-      });
+    return requests.sort((r1, r2) => {
+      const s1 = getRequestStatus(r1);
+      const s2 = getRequestStatus(r2);
+      return requestStatusWeight[s1] - requestStatusWeight[s2];
+    });
   }, [requests]);
 
   if (requests.length === 0) {
@@ -42,12 +37,6 @@ const RequestList: React.FC<IRequestListProps> = (props) => {
 
   return (
     <div className={appClassNames.pageListRoot}>
-      <Typography.Text
-        type="secondary"
-        style={{ padding: "0 16px", textTransform: "uppercase" }}
-      >
-        Requests
-      </Typography.Text>
       {sortedRequests.map((request) => {
         return (
           <RequestThumbnail
