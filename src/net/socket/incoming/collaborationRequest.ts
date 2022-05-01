@@ -10,7 +10,10 @@ import { IIncomingResourceUpdatePacket } from "../incomingEventTypes";
 function handleCreateCollaborationRequest(
   packet: IIncomingResourceUpdatePacket<ICollaborationRequest>
 ) {
-  completeAddCollaborationRequests(store, [packet.resource]);
+  completeAddCollaborationRequests(
+    store,
+    Array.isArray(packet.resource) ? packet.resource : [packet.resource]
+  );
 }
 
 function handleUpdateCollaborationRequest(

@@ -1,5 +1,6 @@
 import assert from "assert";
 import { SystemResourceType } from "../../../models/app/types";
+import { IStoreLikeObject } from "../../../redux/types";
 import { IIncomingResourceUpdatePacket } from "../incomingEventTypes";
 import { getSocketRoomInfo } from "../roomNameHelpers";
 import { handleIncomingBoardEvent } from "./board";
@@ -13,10 +14,12 @@ import { handleIncomingTaskEvent } from "./task";
 import { handleIncomingUserEvent } from "./user";
 
 export function handleResourceUpdateEvent(
+  store: IStoreLikeObject,
   packet: IIncomingResourceUpdatePacket<any>
 ) {
   const room = getSocketRoomInfo(packet.roomName);
   assert(room, "roomName is not valid");
+  console.log({ packet, room });
   switch (packet.resourceType) {
     case SystemResourceType.User:
       return handleIncomingUserEvent(packet);

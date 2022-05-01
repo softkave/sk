@@ -21,8 +21,11 @@ export const appOrganizationPaths = {
     `${appLoggedInPaths.organizations}/${organizationId}/boards`,
   requests: (organizationId: string) =>
     `${appLoggedInPaths.organizations}/${organizationId}/requests`,
+
   chats: (organizationId: string) =>
     `${appLoggedInPaths.organizations}/${organizationId}/chat`,
+  chatRoom: (organizationId: string, roomId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}/chat/${roomId}`,
 };
 
 export function isUserViewingOrg(orgId: string) {

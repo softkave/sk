@@ -6,8 +6,9 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
-import { Menu, Space } from "antd";
+import { Badge, Menu, Space } from "antd";
 import React from "react";
+import { useUserUnseenRequestsCount } from "../request/useUserUnseenRequestsCount";
 
 export enum UserOptionsMenuKeys {
   Logout = "Logout",
@@ -51,7 +52,7 @@ const items: IUserOptionsMenuItem[] = [
 
 const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
   const { className, style, onSelect } = props;
-
+  const unseenRequestsCount = useUserUnseenRequestsCount();
   return (
     <div className={cx(className, classes.root)} style={style}>
       <Menu
@@ -60,14 +61,24 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
         }}
         style={{ minWidth: "120px" }}
       >
-        {items.map((item) => (
-          <Menu.Item key={item.text}>
+        {items.map((item) => {
+          const contentNode = (
             <Space align="center" size={SPACE_SIZE}>
               {item.icon}
               <span>{item.text}</span>
             </Space>
-          </Menu.Item>
-        ))}
+          );
+          return (
+            <Menu.Item key={item.text}>
+              {item.text === UserOptionsMenuKeys.Requests &&
+              unseenRequestsCount ? (
+                <Badge>{contentNode}</Badge>
+              ) : (
+                contentNode
+              )}
+            </Menu.Item>
+          );
+        })}
       </Menu>
     </div>
   );

@@ -1,4 +1,6 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
+import { appOrganizationPaths } from "../../models/app/routes";
 import ChatRoom from "./ChatRoom";
 import useChatRooms from "./useChatRooms";
 
@@ -19,6 +21,11 @@ const ChatRoomContainer: React.FC<IChatRoomContainerProps> = (props) => {
   } = useChatRooms({ orgId });
 
   const room = sortedRooms.find((rm) => rm.recipientId === recipientId)!;
+
+  if (!room) {
+    return <Redirect to={appOrganizationPaths.chats(orgId)} />;
+  }
+
   return (
     <ChatRoom
       isAppHidden={isAppHidden}

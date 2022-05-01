@@ -6,7 +6,7 @@ import assert from "assert";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useRouteMatch } from "react-router";
+import { Redirect, useHistory, useRouteMatch } from "react-router";
 import { appLoggedInPaths, appRequestsPaths } from "../../models/app/routes";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { messages } from "../../models/messages";
@@ -15,6 +15,7 @@ import {
   CollaborationRequestStatusType,
 } from "../../models/notification/notification";
 import CollaborationRequestSelectors from "../../redux/collaborationRequests/selectors";
+import { markRequestReadOpAction } from "../../redux/operations/collaborationRequest/markRequestRead";
 import { respondToRequestOpAction } from "../../redux/operations/collaborationRequest/respondToRequest";
 import { AppDispatch, IAppState } from "../../redux/types";
 import CollaborationRequestStatus from "../collaborator/CollaborationRequestStatus";
@@ -48,9 +49,14 @@ const Notification: React.FC<INotificationProps> = (props) => {
     history.push(appLoggedInPaths.requests);
   }, [history]);
 
+  React.useEffect(() => {
+    if (notification && !notification.readAt) {
+      dispatch(markRequestReadOpAction({ requestId: notification.customId }));
+    }
+  }, [notification]);
+
   if (!currentNotificationId) {
-    history.push(appLoggedInPaths.requests);
-    return null;
+    return <Redirect to={appLoggedInPaths.requests} />;
   }
 
   const isNotificationLoaded = !!notification;

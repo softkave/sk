@@ -1,10 +1,15 @@
-import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Typography } from "antd";
+import { Space, Tag, Typography } from "antd";
 import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import UserAvatar from "../collaborator/UserAvatar";
+import { useUserUnseenRequestsCount } from "../request/useUserUnseenRequestsCount";
 import SpaceOut, { ISpaceOutContent } from "../utilities/SpaceOut";
 import UserOptionsMenu, { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
@@ -50,6 +55,7 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
 ) => {
   const { user, onSelect } = props;
   const [showMenu, setShowMenu] = React.useState(false);
+  const unseenRequestsCount = useUserUnseenRequestsCount();
   const spaceOutContent: ISpaceOutContent[] = React.useMemo(() => {
     const content: ISpaceOutContent[] = [
       {
@@ -69,12 +75,40 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
     return content;
   }, [user, showMenu]);
 
+  if (unseenRequestsCount) {
+    spaceOutContent.splice(1, 0, {
+      node: (
+        <Tag
+          style={{
+            backgroundColor: "blue",
+            fontSize: "13px",
+            borderRadius: "11px",
+            color: "white",
+            border: "1px solid rgba(255, 77, 79, 0)",
+          }}
+        >
+          <Space>
+            <UserAddOutlined />
+            {unseenRequestsCount}
+          </Space>
+        </Tag>
+      ),
+    });
+  }
+
   return (
     <div className={classes.root} onClick={() => setShowMenu(!showMenu)}>
       {showMenu && (
         <UserOptionsMenu className={classes.menu} onSelect={onSelect} />
       )}
       <SpaceOut size="middle" content={spaceOutContent} />
+      {/* <div>
+        <UserAvatar clickable user={user} onClick={noop} />
+        <Typography.Text>{user.name}</Typography.Text>
+        <Typography.Text type="secondary">
+          {showMenu ? <CaretUpOutlined /> : <CaretDownOutlined />}
+        </Typography.Text>
+      </div> */}
     </div>
   );
 };
