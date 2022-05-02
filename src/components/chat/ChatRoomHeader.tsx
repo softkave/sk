@@ -10,7 +10,6 @@ export interface IChatRoomHeaderProps {
 
 const ChatRoomHeader: React.FC<IChatRoomHeaderProps> = (props) => {
   const { recipient, onBack } = props;
-
   return (
     <div
       style={{

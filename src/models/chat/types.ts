@@ -1,8 +1,10 @@
 import { IPersistedRoom } from "../../net/chat/chat";
 
-// TODO: should we make the createdAt and other timstamps numbers on the client-side
-// for increased performance?
 export interface IChat {
+  // Don't use customId because there's a chance it changes
+  // when a chat is sent. When sending messages, we initially
+  // set a temporary customId, save the chat to db and then
+  // replace it with the customId returned by the server.
   customId: string;
   orgId: string;
   message: string;
@@ -11,8 +13,8 @@ export interface IChat {
   createdAt: string;
   updatedAt?: string;
 
+  // Client-side only
   sending?: boolean;
-  queued?: boolean;
   errorMessage?: string;
 }
 

@@ -15,6 +15,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "ahooks": "^3.3.10",
     "antd": "^4.20.0",
     "assert": "^2.0.0",
     "core-js": "^3.15.2",

@@ -1,13 +1,11 @@
 import { css } from "@emotion/css";
 import { Badge, Typography } from "antd";
 import React from "react";
-import { IRoom } from "../../models/chat/types";
-import { ICollaborator } from "../../models/collaborator/types";
 import UserAvatar from "../collaborator/UserAvatar";
+import { IAppChatRoom } from "./types";
 
 export interface IRoomsListItemProps {
-  room: IRoom;
-  recipient: ICollaborator;
+  room: IAppChatRoom;
 }
 
 const classes = {
@@ -16,14 +14,18 @@ const classes = {
 };
 
 const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
-  const { room, recipient } = props;
+  const { room } = props;
   return (
     <div className={classes.root}>
-      <UserAvatar user={recipient} />
+      <UserAvatar user={room.recipient} />
       <div className={classes.nameContainer}>
-        <Typography.Text ellipsis>{recipient.name}</Typography.Text>
+        <Typography.Text ellipsis>{room.recipient.name}</Typography.Text>
       </div>
-      <Badge count={room.unseenChatsCount} style={{ boxShadow: "none" }} />
+      <Badge
+        count={room.unseenChatsCount}
+        color={"blue"}
+        style={{ boxShadow: "none" }}
+      />
     </div>
   );
 };

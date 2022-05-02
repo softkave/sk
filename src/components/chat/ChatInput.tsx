@@ -8,6 +8,18 @@ export interface IChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
+const classes = {
+  root: css({
+    borderTop: "1px solid rgb(223, 234, 240)",
+    padding: "8px 5px",
+    display: "flex",
+  }),
+  input: css({
+    display: "flex",
+    flex: 1,
+  }),
+};
+
 const ChatInput: React.FC<IChatInputProps> = (props) => {
   const { onSendMessage } = props;
   const [message, setMessage] = React.useState("");
@@ -19,19 +31,8 @@ const ChatInput: React.FC<IChatInputProps> = (props) => {
   };
 
   return (
-    <div
-      style={{
-        borderTop: "1px solid rgb(223, 234, 240)",
-        padding: "8px 5px",
-        display: "flex",
-      }}
-    >
-      <div
-        className={css({
-          display: "flex",
-          flex: 1,
-        })}
-      >
+    <div className={classes.root}>
+      <div className={classes.input}>
         <Input.TextArea
           // autoFocus
           bordered={false}

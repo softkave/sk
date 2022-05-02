@@ -46,20 +46,6 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
       </Typography.Text>
     </Tag>
   );
-
-  return (
-    <Typography.Text
-      type="secondary"
-      style={{
-        marginRight: "0px",
-        color: isDue ? "rgb(255, 77, 79)" : undefined,
-        verticalAlign: "middle",
-        fontSize: "13px",
-      }}
-    >
-      {contentText}
-    </Typography.Text>
-  );
 };
 
 export default React.memo(TaskThumbnailDueDate);

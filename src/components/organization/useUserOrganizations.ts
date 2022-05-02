@@ -18,7 +18,6 @@ import {
 } from "../../redux/key-value/types";
 import OrganizationSelectors from "../../redux/organizations/selectors";
 import { getUserOrganizationsOpAction } from "../../redux/operations/organization/getUserOrganizations";
-import { getUserRoomsAndChatsOpAction } from "../../redux/operations/chat/getUserRoomsAndChats";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { appOrganizationPaths } from "../../models/app/routes";
 
@@ -36,30 +35,6 @@ export function useUserOrganizations() {
     IUnseenChatsCountByOrg
   >((state) =>
     KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
-  );
-
-  const loadUserRoomsAndChats = React.useCallback(
-    async (loadRequestsProps: IOperationDerivedData) => {
-      const operation = loadRequestsProps.operation;
-      const shouldLoad = !operation;
-
-      if (shouldLoad) {
-        await dispatch(
-          getUserRoomsAndChatsOpAction({
-            opId: loadRequestsProps.opId,
-          })
-        );
-      }
-    },
-    [dispatch]
-  );
-
-  const loadRoomsAndChatsOp = useOperation(
-    { type: OperationType.GetUserRoomsAndChats },
-    loadUserRoomsAndChats,
-    {
-      deleteManagedOperationOnUnmount: false,
-    }
   );
 
   const loadOrganizations = React.useCallback(
@@ -88,12 +63,11 @@ export function useUserOrganizations() {
     loadOrganizations,
     {
       deleteManagedOperationOnUnmount: false,
-      waitFor: [loadRoomsAndChatsOp.operation],
       handleWaitForError: () => false,
     }
   );
 
-  const loadOpsState = mergeOps([loadOrganizationsOp, loadRoomsAndChatsOp]);
+  const loadOpsState = mergeOps([loadOrganizationsOp]);
   const errorMessage = loadOpsState.errors ? "Error loading data" : undefined;
   const isLoading = loadOpsState.loading;
   const organizations = useSelector<IAppState, IAppOrganization[]>((state) => {

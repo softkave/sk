@@ -535,6 +535,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           })}
         </Select>
         <a
+          href="#"
           role="button"
           onClick={() => {
             if (!isSubmitting) {

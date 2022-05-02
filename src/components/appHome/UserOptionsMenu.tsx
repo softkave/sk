@@ -72,7 +72,9 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
             <Menu.Item key={item.text}>
               {item.text === UserOptionsMenuKeys.Requests &&
               unseenRequestsCount ? (
-                <Badge>{contentNode}</Badge>
+                <Badge count={unseenRequestsCount} color="blue">
+                  {contentNode}
+                </Badge>
               ) : (
                 contentNode
               )}

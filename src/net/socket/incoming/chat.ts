@@ -25,9 +25,7 @@ function handleCreateChat(packet: IIncomingResourceUpdatePacket<IChat>) {
     RoomActions.addChat({
       chat,
       roomId: room.customId,
-      recipientId: room.recipientId,
       markAsUnseen: !isUserInRoom || isAppHidden,
-      orgId: room.orgId,
     })
   );
 

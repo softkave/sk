@@ -1,4 +1,3 @@
-import { Typography } from "antd";
 import React from "react";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { CollaborationRequestStatusType } from "../../models/notification/notification";

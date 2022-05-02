@@ -1,5 +1,5 @@
 import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
-import { Space, Tag, Typography } from "antd";
+import { Space, Tag } from "antd";
 import React from "react";
 import { BlockPriority } from "../../models/block/block";
 
@@ -18,12 +18,11 @@ export const priorityToTextMap = {
 
 interface IPriorityProps {
   level: TaskPriority;
-  className?: string;
   withSelectIcon?: boolean;
 }
 
 const Priority: React.FC<IPriorityProps> = (props) => {
-  const { level, className, withSelectIcon } = props;
+  const { level, withSelectIcon } = props;
   const label = priorityToTextMap[level];
   let content: React.ReactNode = label;
 
@@ -49,19 +48,6 @@ const Priority: React.FC<IPriorityProps> = (props) => {
     >
       {content}
     </Tag>
-  );
-
-  return (
-    <Typography.Text
-      style={{
-        color: priorityToColorMap[props.level],
-        textTransform: "capitalize",
-        fontSize: "13px",
-      }}
-      className={className}
-    >
-      {content}
-    </Typography.Text>
   );
 };
 

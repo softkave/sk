@@ -2,7 +2,6 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { ILoadingState, loadingStateKeys } from "../../redux/key-value/types";
 import { getOrganizationCollaboratorsOpAction } from "../../redux/operations/collaborator/getOrganizationCollaborators";
-import { populateOrganizationRoomsOpAction } from "../../redux/operations/organization/populateOrganizationRooms";
 import {
   mergeLoadingStates,
   shouldLoadState,
@@ -17,10 +16,7 @@ export function useLoadOrgData(): ILoadingState {
   const collaboratorsKey =
     organization &&
     loadingStateKeys.organizationCollaborators(organization.customId);
-  const roomsKey =
-    organization && loadingStateKeys.organizationRooms(organization.customId);
   const collaboratorsState = useLoadingState(collaboratorsKey);
-  const roomsState = useLoadingState(roomsKey);
   React.useEffect(() => {
     console.log({ organization, collaboratorsKey, collaboratorsState });
 
@@ -38,21 +34,5 @@ export function useLoadOrgData(): ILoadingState {
     }
   }, [organization, collaboratorsKey, collaboratorsState, dispatch]);
 
-  React.useEffect(() => {
-    if (
-      organization &&
-      roomsKey &&
-      collaboratorsState?.initialized &&
-      shouldLoadState(roomsState)
-    ) {
-      dispatch(
-        populateOrganizationRoomsOpAction({
-          organization,
-          key: roomsKey,
-        })
-      );
-    }
-  }, [organization, roomsKey, collaboratorsState, roomsState, dispatch]);
-
-  return mergeLoadingStates(collaboratorsState, roomsState);
+  return mergeLoadingStates(collaboratorsState);
 }

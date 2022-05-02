@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { omit } from "lodash";
 import { toAppErrorsArray } from "../../net/invokeEndpoint";
 import { getNewId } from "../../utils/utils";
 import KeyValueActions from "../key-value/actions";
@@ -152,10 +153,14 @@ export interface IAsyncOp02Extras {
   isDemoMode?: boolean;
 }
 
+export interface IMakeAsyncOp02Options {
+  key: string;
+}
+
 export const makeAsyncOp02 = <Arg, Result>(
   type: string,
   fn: (
-    arg: Arg & { key: string },
+    arg: Arg & IMakeAsyncOp02Options,
     thunkAPI: IStoreLikeObject,
     extras: IAsyncOp02Extras
   ) => Result | Promise<Result>
@@ -206,6 +211,32 @@ export const makeAsyncOp02 = <Arg, Result>(
   });
 };
 
+/**
+ * Similar to makeAsyncOp02, but with not save the loading state to the store.
+ */
+export const makeAsyncOp02NoPersist = <Arg, Result>(
+  type: string,
+  fn: (
+    arg: Arg,
+    thunkAPI: IStoreLikeObject,
+    extras: IAsyncOp02Extras
+  ) => Result | Promise<Result>
+) => {
+  return createAsyncThunk<ILoadingState, Arg, IAppAsyncThunkConfig>(
+    type,
+    async (arg, thunkAPI) => {
+      try {
+        const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+        await fn(arg, thunkAPI, { isDemoMode });
+      } catch (error) {
+        return { error: toAppErrorsArray(error) };
+      }
+
+      return { initialized: true };
+    }
+  );
+};
+
 export function mergeLoadingStates(
   ...states: Array<ILoadingState | undefined>
 ) {
@@ -219,4 +250,16 @@ export function mergeLoadingStates(
       ...state,
     };
   }, {}) as ILoadingState;
+}
+
+export function removeAsyncOp02Params<T>(
+  args: T & Partial<IMakeAsyncOp02Options>
+) {
+  return omit(args, "key");
+}
+
+export function removeAsyncOpParams<T>(
+  args: T & Partial<GetOperationActionArgs<{}>>
+) {
+  return omit(args, "opId", "operationType");
 }

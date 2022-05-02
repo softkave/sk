@@ -24,14 +24,31 @@ export enum KeyValueKeys {
 }
 
 export const loadingStateKeys = {
+  // Organization
   organization(orgId: string) {
-    return `${KeyValueKeys.LoadingKey}:${orgId}`;
+    return `${KeyValueKeys.LoadingKey}:organization:${orgId}`;
   },
+
+  // Collaborator
   organizationCollaborators(orgId: string) {
     return `${this.organization(orgId)}:collaborators`;
   },
+
+  // Room
   organizationRooms(orgId: string) {
     return `${this.organization(orgId)}:rooms`;
+  },
+  addRoom(orgId: string, recipientId: string) {
+    return `${this.organization(orgId)}:addRoom:${recipientId}`;
+  },
+  getRooms(orgId: string) {
+    return `${this.organization(orgId)}:rooms`;
+  },
+  getRoomChats(orgId: string, roomId: string) {
+    return `${this.organization(orgId)}:roomChats:${roomId}`;
+  },
+  getRoomsUnseenChatsCount(orgId: string) {
+    return `${this.organization(orgId)}:roomsUnseenChatsCount`;
   },
 };
 

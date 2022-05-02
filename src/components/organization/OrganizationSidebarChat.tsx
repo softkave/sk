@@ -5,6 +5,8 @@ import RoomsList from "../chat/RoomsList";
 import ListHeader from "../utilities/ListHeader";
 import { organizationSidebarClasses } from "./utils";
 import useChatRooms from "../chat/useChatRooms";
+import MessageList from "../MessageList";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 
 export interface IOrganizationSidebarChatProps {
   organization: IAppOrganization;
@@ -15,8 +17,28 @@ const OrganizationSidebarChat: React.FC<IOrganizationSidebarChatProps> = (
 ) => {
   const { organization } = props;
   const [searchQuery, setSearchQuery] = React.useState("");
-  const { sortedRooms, recipientsMap, selectedRoomRecipientId, onSelectRoom } =
-    useChatRooms({ orgId: organization.customId });
+  const {
+    sortedRooms,
+    chatRoomsLoadState: loadState,
+    selectedRoomRecipientId,
+    onSelectRoom,
+  } = useChatRooms({ orgId: organization.customId });
+  let contentNode: React.ReactNode = null;
+
+  if (loadState.error) {
+    contentNode = <MessageList messages={loadState.error} />;
+  } else if (loadState.isLoading || !loadState.initialized) {
+    contentNode = <LoadingEllipsis />;
+  } else {
+    contentNode = (
+      <RoomsList
+        searchQuery={searchQuery}
+        selectedRoomRecipientId={selectedRoomRecipientId}
+        sortedRooms={sortedRooms}
+        onSelectRoom={onSelectRoom}
+      />
+    );
+  }
 
   return (
     <div className={organizationSidebarClasses.list}>
@@ -28,13 +50,7 @@ const OrganizationSidebarChat: React.FC<IOrganizationSidebarChatProps> = (
         className={organizationSidebarClasses.header}
         title={"Chat"}
       />
-      <RoomsList
-        searchQuery={searchQuery}
-        selectedRoomRecipientId={selectedRoomRecipientId}
-        sortedRooms={sortedRooms}
-        recipientsMap={recipientsMap}
-        onSelectRoom={onSelectRoom}
-      />
+      {contentNode}
     </div>
   );
 };

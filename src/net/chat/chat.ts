@@ -16,6 +16,7 @@ export interface IPersistedRoom {
   members: IRoomMemberWithReadCounter[];
   updatedAt?: string;
   updatedBy?: string;
+  lastChatCreatedAt?: string;
 }
 
 export interface IGetUserRoomsAndChatsAPIResult extends IEndpointResultBase {
@@ -34,20 +35,87 @@ export interface IGetMessagesAPIParameters {
   roomIds: string[];
 }
 
-export interface ISendMessageAPIParameters {
+export interface ISendMessageEndpointParameters {
   orgId: string;
   message: string;
-  roomId?: string;
-  recipientId?: string;
+  roomId: string;
 }
 
-export interface ISendMessageAPIResult extends IEndpointResultBase {
+export interface ISendMessageEndpointResult extends IEndpointResultBase {
   chat: IChat;
 }
 
-async function sendMessage(props: ISendMessageAPIParameters) {
-  return SocketAPI.promisifiedEmit<ISendMessageAPIResult>(
+async function sendMessage(props: ISendMessageEndpointParameters) {
+  return SocketAPI.promisifiedEmit<ISendMessageEndpointResult>(
     OutgoingSocketEvents.SendMessage,
+    props
+  );
+}
+
+export interface IAddRoomEndpointParameters {
+  orgId: string;
+  recipientId: string;
+}
+
+export interface IAddRoomEndpointResult extends IEndpointResultBase {
+  room: IPersistedRoom;
+}
+
+async function addRoom(props: IAddRoomEndpointParameters) {
+  return SocketAPI.promisifiedEmit<IAddRoomEndpointResult>(
+    OutgoingSocketEvents.AddRoom,
+    props
+  );
+}
+
+export interface IGetRoomsEndpointParameters {
+  orgId: string;
+}
+
+export interface IGetRoomsEndpointResult extends IEndpointResultBase {
+  rooms: IPersistedRoom[];
+}
+
+async function getRooms(props: IGetRoomsEndpointParameters) {
+  return SocketAPI.promisifiedEmit<IGetRoomsEndpointResult>(
+    OutgoingSocketEvents.GetRoomChats,
+    props
+  );
+}
+
+export interface IGetRoomChatsEndpointParameters {
+  roomId: string;
+}
+
+export interface IGetRoomChatsEndpointResult extends IEndpointResultBase {
+  chats: IChat[];
+}
+
+async function getRoomChats(props: IGetRoomChatsEndpointParameters) {
+  return SocketAPI.promisifiedEmit<IGetRoomChatsEndpointResult>(
+    OutgoingSocketEvents.GetRoomChats,
+    props
+  );
+}
+
+export interface IGetRoomsUnseenChatsCountEndpointParameters {
+  orgId: string;
+  roomIds: string[];
+}
+
+export interface IGetRoomsUnseenChatsCountEndpointResult
+  extends IEndpointResultBase {
+  counts: Array<{
+    roomId: string;
+    count: number;
+  }>;
+}
+
+async function getRoomsUnseenChatsCount(
+  props: IGetRoomsUnseenChatsCountEndpointParameters
+) {
+  return SocketAPI.promisifiedEmit<IGetRoomsUnseenChatsCountEndpointResult>(
+    OutgoingSocketEvents.GetRoomsUnseenChatsCount,
     props
   );
 }
@@ -76,5 +144,9 @@ async function updateRoomReadCounter(
 export default class ChatAPI {
   public static getUserRoomsAndChats = getUserRoomsAndChats;
   public static sendMessage = sendMessage;
+  public static addRoom = addRoom;
+  public static getRooms = getRooms;
+  public static getRoomChats = getRoomChats;
+  public static getRoomsUnseenChatsCount = getRoomsUnseenChatsCount;
   public static updateRoomReadCounter = updateRoomReadCounter;
 }

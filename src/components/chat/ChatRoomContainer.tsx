@@ -1,8 +1,10 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import { appOrganizationPaths } from "../../models/app/routes";
+import MessageList from "../MessageList";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import ChatRoom from "./ChatRoom";
-import useChatRooms from "./useChatRooms";
+import { useChatRoom } from "./useChatRoom";
 
 export interface IChatRoomContainerProps {
   orgId: string;
@@ -13,16 +15,20 @@ const ChatRoomContainer: React.FC<IChatRoomContainerProps> = (props) => {
   const { orgId, recipientId } = props;
   const {
     isAppHidden,
-    sortedRooms,
-    recipientsMap,
+    loading,
+    error,
+    room,
+    recipient,
     onSendMessage,
     updateRoomReadCounter,
     user,
-  } = useChatRooms({ orgId });
+  } = useChatRoom(orgId, recipientId);
 
-  const room = sortedRooms.find((rm) => rm.recipientId === recipientId)!;
-
-  if (!room) {
+  if (error) {
+    return <MessageList messages={error} />;
+  } else if (loading) {
+    return <LoadingEllipsis />;
+  } else if (!room) {
     return <Redirect to={appOrganizationPaths.chats(orgId)} />;
   }
 
@@ -31,7 +37,7 @@ const ChatRoomContainer: React.FC<IChatRoomContainerProps> = (props) => {
       isAppHidden={isAppHidden}
       user={user}
       room={room}
-      recipientsMap={recipientsMap}
+      recipient={recipient}
       onSendMessage={onSendMessage}
       updateRoomReadCounter={updateRoomReadCounter}
     />

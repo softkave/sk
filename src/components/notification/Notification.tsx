@@ -53,7 +53,7 @@ const Notification: React.FC<INotificationProps> = (props) => {
     if (notification && !notification.readAt) {
       dispatch(markRequestReadOpAction({ requestId: notification.customId }));
     }
-  }, [notification]);
+  }, [notification, dispatch]);
 
   if (!currentNotificationId) {
     return <Redirect to={appLoggedInPaths.requests} />;
