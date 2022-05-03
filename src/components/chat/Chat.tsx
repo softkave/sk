@@ -13,6 +13,22 @@ export interface IChatProps {
   isUserSender?: boolean;
 }
 
+const classes = {
+  root: css({
+    display: "flex",
+    flex: 1,
+  }),
+  avatar: css({
+    width: 24,
+  }),
+  main: css({
+    display: "flex",
+    flex: 1,
+    maxWidth: "500px",
+    flexDirection: "column",
+  }),
+};
+
 const Chat: React.FC<IChatProps> = (props) => {
   const { chat, sender, hideAvatar, isUserSender } = props;
   const createdAt = moment(chat.createdAt);
@@ -22,24 +38,15 @@ const Chat: React.FC<IChatProps> = (props) => {
 
   return (
     <div
-      style={{
-        flex: 1,
-        // justifyContent: isUserSender ? "flex-end" : undefined,
-        flexDirection: isUserSender ? "row-reverse" : undefined,
-      }}
+      className={classes.root}
+      style={{ flexDirection: isUserSender ? "row-reverse" : undefined }}
     >
-      <div
-        style={{
-          width: 24,
-        }}
-      >
+      <div className={classes.avatar}>
         {!hideAvatar && <UserAvatar user={sender} />}
       </div>
       <div
+        className={classes.main}
         style={{
-          flex: 1,
-          maxWidth: "500px",
-          flexDirection: "column",
           marginLeft: isUserSender ? undefined : "16px",
           marginRight: isUserSender ? "16px" : undefined,
         }}
@@ -47,11 +54,7 @@ const Chat: React.FC<IChatProps> = (props) => {
         <Typography.Paragraph className={textClassName} style={{ margin: 0 }}>
           {chat.message}
         </Typography.Paragraph>
-        {chat.queued ? (
-          <Typography.Text type="secondary" className={textClassName}>
-            Queued for sending
-          </Typography.Text>
-        ) : chat.sending ? (
+        {chat.sending ? (
           <Typography.Text type="secondary" className={textClassName}>
             Sending...
           </Typography.Text>
@@ -61,7 +64,6 @@ const Chat: React.FC<IChatProps> = (props) => {
           </Typography.Text>
         ) : (
           <Typography.Text type="secondary" className={textClassName}>
-            {/* {createdAt.fromNow()}{" "} */}
             {createdAt.format("h:mm A, ddd MMM D YYYY")}
           </Typography.Text>
         )}

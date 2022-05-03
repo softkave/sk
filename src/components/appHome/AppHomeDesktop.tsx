@@ -1,14 +1,22 @@
 import { css } from "@emotion/css";
-import { Typography } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
-import { IUser } from "../../models/user/user";
-import OrgsListContainer from "../org/OrgsListContainer";
-import AppHomeDesktopMenu from "./AppHomeDesktopMenu";
+import { useSelector } from "react-redux";
+import { Redirect, Route, Switch } from "react-router-dom";
+import {
+  appLoggedInPaths,
+  appOrganizationPaths,
+  appRequestsPaths,
+} from "../../models/app/routes";
+import SessionSelectors from "../../redux/session/selectors";
+import Message from "../Message";
+import Notification from "../notification/Notification";
+import OrganizationRoutesContainer from "../organization/OrganizationRoutesContainer";
+import UserSettings from "../user/UserSettings";
+import AppSideBarDesktop from "./AppSideBarDesktop";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppHomeDesktopProps {
-  user: IUser;
+  showAppMenu: boolean;
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
 
@@ -16,58 +24,52 @@ const classes = {
   root: css({
     display: "flex",
     height: "100%",
-    width: "280px",
-    minWidth: "280px",
-    borderRight: "1px solid rgb(223, 234, 240)",
-    flexDirection: "column",
-    overflowY: "auto",
-  }),
-  titleContainer: css({
-    display: "flex",
-    height: "56px",
-    alignItems: "center",
-    padding: "0 16px",
-    borderBottom: "1px solid rgb(223, 234, 240)",
-  }),
-  title: css({
-    margin: "0px !important",
-    fontSize: "16px",
-    lineHeight: "16px !important",
-    alignItems: "center",
-    display: "flex",
-  }),
-  boardsBy: css({
-    fontSize: "12px",
-    marginBottom: "6px",
-  }),
-  softkave: css({ fontSize: "16px" }),
-  titleLink: css({ color: "inherit !important" }),
-  orgsListContainer: css({
-    flex: 1,
+    overflow: "hidden",
   }),
 };
 
 const AppHomeDesktop: React.FC<IAppHomeDesktopProps> = (props) => {
-  const { user, onSelect } = props;
+  const { showAppMenu, onSelect } = props;
+  const user = useSelector(SessionSelectors.assertGetUser);
+  const renderNotification = () => <Notification />;
+  const renderSettings = () => <UserSettings />;
+  const renderEmpty = (str: string = "Select an organization or request.") => (
+    <Message message={str} />
+  );
+
   return (
     <div className={classes.root}>
-      <div className={classes.titleContainer}>
-        <Typography.Title type="secondary" level={4} className={classes.title}>
-          <Link to="/app" className={classes.titleLink}>
-            <Typography.Text type="secondary" className={classes.boardsBy}>
-              Boards by
-            </Typography.Text>
-            <br />
-            <Typography.Text type="secondary" className={classes.softkave}>
-              SOFTKAVE
-            </Typography.Text>
-          </Link>
-        </Typography.Title>
-      </div>
-      <div className={classes.orgsListContainer}>
-        <OrgsListContainer />
-      </div>
-      <AppHomeDesktopMenu user={user} onSelect={onSelect} />
+      {showAppMenu && <AppSideBarDesktop user={user} onSelect={onSelect} />}
+      <Switch>
+        <Route
+          exact
+          path={appLoggedInPaths.requests}
+          render={() => renderEmpty("Select a request.")}
+        />
+        <Route
+          path={appRequestsPaths.requestSelector}
+          render={renderNotification}
+        />
+        <Route
+          exact
+          path={appLoggedInPaths.organizations}
+          render={() =>
+            renderEmpty("Select or create an organization to get started.")
+          }
+        />
+        <Route
+          path={appOrganizationPaths.organizationSelector}
+          render={() => {
+            return <OrganizationRoutesContainer />;
+          }}
+        />
+        <Route exact path={appLoggedInPaths.settings} render={renderSettings} />
+        <Route
+          exact
+          path="*"
+          render={() => <Redirect to={appLoggedInPaths.organizations} />}
+        />
+      </Switch>
     </div>
   );
 };

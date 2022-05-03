@@ -1,14 +1,16 @@
+import moment from "moment";
 import { IPersistedRoom } from "../../net/chat/chat";
 import { getNewTempId } from "../../utils/utils";
-import { IRoom } from "./types";
+import { IChat, IRoom } from "./types";
 
 export function getRoomFromPersistedRoom(
   persistedRoom: IPersistedRoom,
-  userId: string
+  userId: string,
+  extra: Partial<Omit<IRoom, keyof IPersistedRoom>> = {}
 ): IRoom {
   const room: IRoom = {
     ...persistedRoom,
-    unseenChatsStartIndex: null,
+    ...extra,
     unseenChatsCount: 0,
     chats: [],
     recipientId: persistedRoom.members.find(
@@ -30,4 +32,23 @@ export function getUserRoomMemberData(room: IRoom) {
 
 export function getRecipientRoomMemberData(room: IRoom) {
   return room.members.find((m) => m.userId !== room.recipientId);
+}
+
+export function prepareRoomChats(room: IRoom, chats: IChat[]) {
+  room = { ...room };
+  room.chats = chats;
+  room.chats.sort((chat1, chat2) => {
+    const chat1SentTimestamp = moment(chat1.createdAt).valueOf();
+    const chat2SentTimestamp = moment(chat2.createdAt).valueOf();
+
+    if (chat1SentTimestamp > chat2SentTimestamp) {
+      return 1;
+    } else if (chat1SentTimestamp < chat2SentTimestamp) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
+  return room;
 }

@@ -10,10 +10,10 @@ export interface IChatRoomHeaderProps {
 
 const ChatRoomHeader: React.FC<IChatRoomHeaderProps> = (props) => {
   const { recipient, onBack } = props;
-
   return (
     <div
       style={{
+        display: "flex",
         padding: "0 16px",
         borderBottom: "1px solid rgb(223, 234, 240)",
         height: "56px",

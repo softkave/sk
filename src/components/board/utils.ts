@@ -3,7 +3,7 @@ import { pluralize } from "../../utils/utils";
 import { BoardResourceType } from "./types";
 
 export const getBoardResourceTypeDisplayName = (
-  resourceType?: BoardResourceType | null
+  resourceType?: BoardResourceType
 ) => {
   switch (resourceType) {
     case "collaboration-requests":

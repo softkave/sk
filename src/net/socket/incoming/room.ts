@@ -1,8 +1,5 @@
 import { SystemActionType } from "../../../models/app/types";
-import {
-  getRoomFromPersistedRoom,
-  getTempRoomId,
-} from "../../../models/chat/utils";
+import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
 import KeyValueActions from "../../../redux/key-value/actions";
 import RoomActions from "../../../redux/rooms/actions";
 import RoomSelectors from "../../../redux/rooms/selectors";
@@ -16,44 +13,25 @@ function handleCreateRoom(
 ) {
   const persistedRoom = packet.resource;
   const user = SessionSelectors.assertGetUser(store.getState());
-  const recipientMemberData = persistedRoom.members.find(
-    (member) => member.userId !== user.customId
-  )!;
+  const existingRoom = RoomSelectors.getRoom(
+    store.getState(),
+    persistedRoom.customId
+  );
 
-  const recipientId = recipientMemberData.userId;
-  const tempRoomId = getTempRoomId(persistedRoom.orgId, recipientId);
-  const tempRoom = RoomSelectors.getRoom(store.getState(), tempRoomId);
-
-  if (tempRoom) {
-    // TODO: why are only updating the temp room and not replacing it?
+  if (existingRoom) {
     store.dispatch(
       RoomActions.updateRoom({
-        id: tempRoom.customId,
+        id: existingRoom.customId,
         data: persistedRoom,
         meta: { arrayUpdateStrategy: "replace" },
       })
     );
   } else {
-    const existingRoom = RoomSelectors.getRoom(
-      store.getState(),
-      persistedRoom.customId
+    store.dispatch(
+      RoomActions.addRoom(
+        getRoomFromPersistedRoom(persistedRoom, user.customId)
+      )
     );
-
-    if (existingRoom) {
-      store.dispatch(
-        RoomActions.updateRoom({
-          id: existingRoom.customId,
-          data: persistedRoom,
-          meta: { arrayUpdateStrategy: "replace" },
-        })
-      );
-    } else {
-      store.dispatch(
-        RoomActions.addRoom(
-          getRoomFromPersistedRoom(persistedRoom, user.customId)
-        )
-      );
-    }
   }
 
   store.dispatch(KeyValueActions.pushRooms([persistedRoom.name]));

@@ -46,7 +46,3 @@ export enum SystemActionType {
   ChangePassword = "change-password",
   ChangePasswordWithToken = "change-password-with-token",
 }
-
-export const AppConstants = {
-  appShortName: "boards",
-};

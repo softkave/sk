@@ -4,36 +4,33 @@ import { IRoom } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IUser } from "../../models/user/user";
 import {
-  ISendMessageAPIParameters,
+  ISendMessageEndpointParameters,
   IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";
 import { getDateString } from "../../utils/utils";
-
 import ChatInput from "./ChatInput";
 import ChatList from "./ChatList";
 import ChatRoomHeader from "./ChatRoomHeader";
 
 export interface IChatRoomProps {
   room: IRoom;
-  recipientsMap: { [key: string]: ICollaborator };
+  recipient: ICollaborator;
   user: IUser;
   isAppHidden: boolean;
   updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
-  onSendMessage: (args: Required<ISendMessageAPIParameters>) => void;
+  onSendMessage: (args: ISendMessageEndpointParameters) => void;
 }
 
 const ChatRoom: React.FC<IChatRoomProps> = (props) => {
   const {
     isAppHidden,
     room,
+    recipient,
     user,
-    recipientsMap,
     updateRoomReadCounter,
     onSendMessage,
   } = props;
-
   const history = useHistory();
-
   React.useEffect(() => {
     if (room.unseenChatsCount > 0 && !isAppHidden) {
       updateRoomReadCounter({
@@ -43,7 +40,6 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
       });
     }
   }, [
-    room.unseenChatsStartIndex,
     room.customId,
     room.orgId,
     room.chats.length,
@@ -52,31 +48,26 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
     updateRoomReadCounter,
   ]);
 
-  const sendMessage = (message: string) => {
-    onSendMessage({
-      message,
-      orgId: room.orgId,
-      recipientId: room.recipientId,
-      roomId: room.customId,
-    });
-  };
+  const sendMessage = React.useCallback(
+    (message: string) => {
+      onSendMessage({
+        message,
+        orgId: room.orgId,
+        roomId: room.customId,
+      });
+    },
+    [room.orgId, room.customId, onSendMessage]
+  );
 
   const onBack = () => {
     history.push(`/app/orgs/${room.orgId}/chat`);
   };
 
   return (
-    <div style={{ flexDirection: "column", width: "100%" }}>
-      <ChatRoomHeader
-        recipient={recipientsMap[room.recipientId]}
-        onBack={onBack}
-      />
+    <div style={{ flexDirection: "column", width: "100%", display: "flex" }}>
+      <ChatRoomHeader recipient={recipient} onBack={onBack} />
       <div style={{ flex: 1, overflow: "hidden" }}>
-        <ChatList
-          user={user}
-          chats={room.chats}
-          recipientsMap={recipientsMap}
-        />
+        <ChatList user={user} chats={room.chats} recipient={recipient} />
       </div>
       <ChatInput onSendMessage={sendMessage} />
     </div>

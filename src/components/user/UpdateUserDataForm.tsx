@@ -8,6 +8,7 @@ import ColorPicker from "../forms/ColorPicker";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClasses,
   formClassname,
   formSectionClassname,
 } from "../forms/FormStyledComponents";
@@ -125,9 +126,15 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
   );
 
   return (
-    <div className={formClassname}>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography.Title level={4}>Profile</Typography.Title>
+    <form
+      onSubmit={formik.handleSubmit}
+      className={formClassname}
+      style={{ height: "auto" }}
+    >
+      <div className={formClasses.formContent}>
+        <Form.Item>
+          <Typography.Title level={4}>Profile</Typography.Title>
+        </Form.Item>
         {globalError && (
           <Form.Item>
             <FormError error={globalError} />
@@ -141,8 +148,8 @@ const UpdateUserFormData: React.FC<IUpdateUserDataFormProps> = (props) => {
             {isSubmitting ? "Updating Profile" : "Update Profile"}
           </Button>
         </Form.Item>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

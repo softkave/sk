@@ -1,15 +1,12 @@
 import { css, cx } from "@emotion/css";
 import React from "react";
-import { IRoom } from "../../models/chat/types";
-import { ICollaborator } from "../../models/collaborator/types";
 import Message from "../Message";
-
 import RoomsListItem from "./RoomsListItem";
+import { IAppChatRoom } from "./types";
 
 export interface IRoomsListProps {
-  sortedRooms: IRoom[];
-  recipientsMap: { [key: string]: ICollaborator };
-  onSelectRoom: (room: IRoom) => void;
+  sortedRooms: IAppChatRoom[];
+  onSelectRoom: (room: IAppChatRoom) => void;
   searchQuery?: string;
   selectedRoomRecipientId?: string;
 }
@@ -34,50 +31,39 @@ const classes = {
 };
 
 const RoomsList: React.FC<IRoomsListProps> = (props) => {
-  const {
-    sortedRooms,
-    recipientsMap,
-    searchQuery,
-    selectedRoomRecipientId,
-    onSelectRoom,
-  } = props;
+  const { sortedRooms, searchQuery, selectedRoomRecipientId, onSelectRoom } =
+    props;
 
-  if (sortedRooms.length === 0) {
-    return <Message message="Empty." />;
-  }
-
-  const filterRooms = () => {
+  const filteredRooms = React.useMemo(() => {
     if (!searchQuery) {
       return sortedRooms;
     }
 
     const lowerCasedSearchQuery = searchQuery.toLowerCase();
     return sortedRooms.filter((room) => {
-      const recipient = recipientsMap[room.recipientId];
-      return recipient.name.toLowerCase().includes(lowerCasedSearchQuery);
+      return room.recipient.name.toLowerCase().includes(lowerCasedSearchQuery);
     });
-  };
+  }, [sortedRooms, searchQuery]);
 
-  const filteredRooms = filterRooms();
-
-  if (filteredRooms.length === 0) {
+  if (sortedRooms.length === 0) {
+    return <Message message="Empty." />;
+  } else if (filteredRooms.length === 0) {
     return <Message message="Chat not found." />;
   }
 
   return (
     <div>
       {filteredRooms.map((room, i) => {
-        const recipient = recipientsMap[room.recipientId];
         return (
           <div
-            key={room.customId}
+            key={room.recipient.customId}
             className={cx(classes.roomItem, {
               [classes.roomItemSelected]:
-                room.recipientId === selectedRoomRecipientId,
+                room.recipient.customId === selectedRoomRecipientId,
             })}
             onClick={() => onSelectRoom(room)}
           >
-            <RoomsListItem room={room} recipient={recipient} />
+            <RoomsListItem room={room} />
           </div>
         );
       })}

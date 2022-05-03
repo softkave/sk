@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import { FormikErrors } from "formik";
 import { noop } from "lodash";
 import randomColor from "randomcolor";
@@ -11,7 +11,7 @@ import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
-import OrgsListHeader from "../org/OrgsListHeader";
+import ListHeader from "../utilities/ListHeader";
 import LabelFormItem from "./LabelFormItem";
 
 export interface ILabelListProps {
@@ -151,29 +151,25 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     const initialValue = getInitialValue(label.customId);
 
     return (
-      <LabelFormItem
-        key={label.customId}
-        onChange={(data) => {
-          onChange(index, data);
-        }}
-        onCommitChanges={() => onCommitChanges(label, index)}
-        onDelete={() => onDelete(index)}
-        onDiscardChanges={() => onDiscardChanges(index, initialValue)}
-        onEdit={() => onEdit(label.customId)}
-        value={label}
-        disabled={isSubmitting}
-        errors={labelErrors}
-        handleBlur={(field, evt) => handleBlur(index, field)}
-        isEditing={isEditing}
-        isNew={newLabelList.exists(label.customId)}
-        touched={touched}
-        style={{
-          borderBottom:
-            index < formik.values.labelList.length - 1
-              ? "1px solid #f0f0f0"
-              : undefined,
-        }}
-      />
+      <React.Fragment key={label.customId}>
+        <LabelFormItem
+          onChange={(data) => {
+            onChange(index, data);
+          }}
+          onCommitChanges={() => onCommitChanges(label, index)}
+          onDelete={() => onDelete(index)}
+          onDiscardChanges={() => onDiscardChanges(index, initialValue)}
+          onEdit={() => onEdit(label.customId)}
+          value={label}
+          disabled={isSubmitting}
+          errors={labelErrors}
+          handleBlur={(field, evt) => handleBlur(index, field)}
+          isEditing={isEditing}
+          isNew={newLabelList.exists(label.customId)}
+          touched={touched}
+        />
+        <Divider />
+      </React.Fragment>
     );
   };
 
@@ -202,7 +198,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         style={{
           flexDirection: "column",
           width: "100%",
-          padding: "16px",
+          padding: "32px 16px",
         }}
       >
         <Button loading={isSubmitting} type="primary" htmlType="submit">
@@ -228,9 +224,9 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
 
   const renderAddControls = () => {
     return (
-      <OrgsListHeader
-        noSearchBtn
-        onClickCreate={onAddNewLabel}
+      <ListHeader
+        hideSearchButton
+        onCreate={onAddNewLabel}
         onSearchTextChange={noop}
         title="Labels"
         style={{ padding: "16px", paddingTop: "8px" }}

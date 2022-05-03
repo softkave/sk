@@ -3,18 +3,19 @@ import { IChat } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IUser } from "../../models/user/user";
 import { default as AppMessage } from "../Message";
-
 import Chat from "./Chat";
 
 export interface IChatListProps {
   chats: IChat[];
-  recipientsMap: { [key: string]: ICollaborator };
+  recipient: ICollaborator;
   user: IUser;
 }
 
+// TODO: implement skipping to the last unread message
+
 const ChatList: React.FC<IChatListProps> = (props) => {
-  const { chats, recipientsMap, user } = props;
-  const parentRef = React.useRef<HTMLDivElement>();
+  const { chats, recipient, user } = props;
+  const parentRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     if (parentRef.current && chats.length > 0) {
       if (!parentRef.current) {
@@ -35,10 +36,9 @@ const ChatList: React.FC<IChatListProps> = (props) => {
 
   let hideAvatarCheck: { [key: string]: boolean } = {};
   return (
-    // @ts-ignore
     <div ref={parentRef} style={{ width: "100%" }}>
       {chats.map((chat, i) => {
-        const sender = recipientsMap[chat.sender];
+        const sender = chat.sender === user.customId ? user : recipient;
         const chatRender = (
           <div
             key={i}

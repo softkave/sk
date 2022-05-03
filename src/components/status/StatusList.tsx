@@ -1,4 +1,4 @@
-import { Button, Typography } from "antd";
+import { Button, Divider, Typography } from "antd";
 import { noop } from "lodash";
 import randomColor from "randomcolor";
 import React from "react";
@@ -20,8 +20,7 @@ import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
-import OrgsListHeader from "../org/OrgsListHeader";
-
+import ListHeader from "../utilities/ListHeader";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -254,16 +253,18 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
     const nodes: React.ReactNode[] = Array(sortedStatuses.length);
     sortedStatuses.forEach((status, index) => {
       nodes[status.position] = (
-        <Draggable
-          key={status.customId}
-          draggableId={status.customId}
-          index={status.position}
-          isDragDisabled={isSubmitting}
-        >
-          {(provided, snapshot) =>
-            renderStatusItem(status, index, provided, snapshot)
-          }
-        </Draggable>
+        <React.Fragment key={status.customId}>
+          <Draggable
+            draggableId={status.customId}
+            index={status.position}
+            isDragDisabled={isSubmitting}
+          >
+            {(provided, snapshot) =>
+              renderStatusItem(status, index, provided, snapshot)
+            }
+          </Draggable>
+          <Divider />
+        </React.Fragment>
       );
     });
 
@@ -336,9 +337,9 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
 
   const renderAddControls = () => {
     return (
-      <OrgsListHeader
-        noSearchBtn
-        onClickCreate={() => onAddNewStatus()}
+      <ListHeader
+        hideSearchButton
+        onCreate={onAddNewStatus}
         onSearchTextChange={noop}
         title="Status"
         style={{ padding: "16px", paddingTop: "8px" }}

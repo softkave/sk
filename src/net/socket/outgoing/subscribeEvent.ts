@@ -14,7 +14,7 @@ import SocketAPI from "../socket";
 
 export default function subscribeEvent(items: ClientSubscribedResources) {
   if (items.length > 0) {
-    const data: IOutgoingSubscribePacket = { items };
+    const data: IOutgoingSubscribePacket = { rooms: items };
     const roomsToPush: string[] = [];
     SocketAPI.promisifiedEmit(OutgoingSocketEvents.Subscribe, data).then(() => {
       const rooms =

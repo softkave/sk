@@ -21,8 +21,8 @@ export interface IBoardContainerProps
 const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
   const { boardId } = props;
   const dispatch = useDispatch();
-  const board = useSelector<IAppState, IBoard>((state) =>
-    BoardSelectors.assertGetOne(state, boardId)
+  const board = useSelector<IAppState, IBoard | undefined>((state) =>
+    BoardSelectors.getOne(state, boardId)
   );
 
   const loadBoard = React.useCallback(

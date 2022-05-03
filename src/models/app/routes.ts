@@ -5,6 +5,27 @@ export const appRoutes = {
 export const appLoggedInPaths = {
   organizations: `${appRoutes.app}/orgs`,
   requests: `${appRoutes.app}/requests`,
+  settings: `${appRoutes.app}/settings`,
+};
+
+export const appRequestsPaths = {
+  requestSelector: `${appLoggedInPaths.requests}/:requestId`,
+  request: (requestId: string) => `${appLoggedInPaths.requests}/${requestId}`,
+};
+
+export const appOrganizationPaths = {
+  organizationSelector: `${appLoggedInPaths.organizations}/:organizationId`,
+  organization: (organizationId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}`,
+  boards: (organizationId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}/boards`,
+  requests: (organizationId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}/requests`,
+
+  chats: (organizationId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}/chat`,
+  chatRoom: (organizationId: string, roomId: string) =>
+    `${appLoggedInPaths.organizations}/${organizationId}/chat/${roomId}`,
 };
 
 export function isUserViewingOrg(orgId: string) {

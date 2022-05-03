@@ -45,9 +45,9 @@ export const pluralize = (str: string, count: number = 2) => {
 
 const defaultFormErrorFieldName = "error";
 
-export const flattenErrorList = (
+export const flattenErrorList = <T extends object = Record<string, any>>(
   errors: IAppError[]
-): { [key: string]: any } => {
+): Partial<T> => {
   if (!errors) {
     return {};
   }
@@ -60,15 +60,15 @@ export const flattenErrorList = (
     return {};
   }
 
-  const err = {};
+  const mappedError = {};
   const cachedFields = {};
 
   errors.forEach((error) => {
     const field = error.field || defaultFormErrorFieldName;
-    let errs = get(err, field);
+    let fieldErrorList = get(mappedError, field);
 
-    if (Array.isArray(errs)) {
-      errs.push(error.message);
+    if (Array.isArray(fieldErrorList)) {
+      fieldErrorList.push(error.message);
       return;
     }
 
@@ -85,12 +85,12 @@ export const flattenErrorList = (
     });
 
     if (!parentExists) {
-      errs = [error.message];
-      set(err, field, errs);
+      fieldErrorList = [error.message];
+      set(mappedError, field, fieldErrorList);
     }
   });
 
-  return err;
+  return mappedError as T;
 };
 
 export interface IMergeDataMeta {

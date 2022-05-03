@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Tag, Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { ITask } from "../../models/task/types";
@@ -11,11 +11,7 @@ export interface ITaskThumbnailDueDateProps {
 const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
   const { task, isInLastStatus } = props;
 
-  if (!task.dueAt) {
-    return null;
-  }
-
-  if (isInLastStatus) {
+  if (!task.dueAt || isInLastStatus) {
     return null;
   }
 
@@ -27,17 +23,28 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
     : `Due ${dueAt.fromNow()}`;
 
   return (
-    <Typography.Text
-      type="secondary"
+    <Tag
       style={{
-        marginRight: "0px",
-        color: isDue ? "rgb(255, 77, 79)" : undefined,
-        verticalAlign: "middle",
+        backgroundColor: isDue ? "rgb(255, 77, 79)" : "white",
+        textTransform: "capitalize",
         fontSize: "13px",
+        borderRadius: "11px",
+        color: isDue ? "white" : "black",
+        border: isDue ? "1px solid rgba(255, 77, 79, 0)" : undefined,
       }}
     >
-      {contentText}
-    </Typography.Text>
+      <Typography.Text
+        type="secondary"
+        style={{
+          marginRight: "0px",
+          verticalAlign: "middle",
+          fontSize: "13px",
+          color: isDue ? "white" : "black",
+        }}
+      >
+        {contentText}
+      </Typography.Text>
+    </Tag>
   );
 };
 

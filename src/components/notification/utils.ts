@@ -37,7 +37,3 @@ export function canRespondToNotification(notification: ICollaborationRequest) {
 
   return false;
 }
-
-export interface INotificationsPathParams {
-  notificationId?: string;
-}

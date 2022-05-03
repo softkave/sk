@@ -79,16 +79,16 @@ const getItemStyle = (isDragging, draggableStyle, extraStyle) => ({
 
 const classes = {
   root: css({
-    minWidth: "280px",
+    minWidth: "320px",
     width: "100%",
     borderRadius: "6px",
-    border: "1px solid #f0f0f0",
+    border: "2px solid #f0f0f0",
     padding: "8px",
     // boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
     userSelect: "none",
 
     "@media (min-width: 400px)": {
-      width: "280px",
+      width: "320px",
     },
   }),
   middledot: css({
@@ -182,12 +182,17 @@ const Task: React.FC<ITaskProps> = (props) => {
   const menu = (
     <Menu onClick={menuOnClick}>
       <Menu.Item key="edit" disabled={demo}>
-        <EditOutlined />
-        Edit Task
+        <Space>
+          <EditOutlined />
+          Edit Task
+        </Space>
       </Menu.Item>
+      <Menu.Divider />
       <Menu.Item key="delete" disabled={demo}>
-        <DeleteOutlined />
-        Delete Task
+        <Space>
+          <DeleteOutlined />
+          Delete Task
+        </Space>
       </Menu.Item>
     </Menu>
   );
@@ -237,7 +242,7 @@ const Task: React.FC<ITaskProps> = (props) => {
   const isInLastStatus = isTaskInLastStatus(task, statusList);
   const hasSubTasks = task.subTasks && task.subTasks.length > 0;
   const contentElem: React.ReactNode[] = [
-    <div key="header">
+    <div key="header" style={{ display: "flex" }}>
       <div style={{ flex: 1 }}>
         <Priority level={task.priority as BlockPriority} />
       </div>
@@ -245,6 +250,7 @@ const Task: React.FC<ITaskProps> = (props) => {
         onClick={(evt) => {
           evt.stopPropagation();
         }}
+        style={{ display: "flex" }}
       >
         {options}
       </div>
@@ -320,7 +326,7 @@ const Task: React.FC<ITaskProps> = (props) => {
           onClose={toggleShowSprintForm}
         />
       )}
-      <Space direction="vertical" style={{ width: "100%" }}>
+      <Space direction="vertical" style={{ width: "100%" }} size={8}>
         {contentElem}
       </Space>
     </React.Fragment>

@@ -1,29 +1,36 @@
 import { css } from "@emotion/css";
 import { Badge, Typography } from "antd";
 import React from "react";
-import { IRoom } from "../../models/chat/types";
-import { ICollaborator } from "../../models/collaborator/types";
 import UserAvatar from "../collaborator/UserAvatar";
+import { IAppChatRoom } from "./types";
 
 export interface IRoomsListItemProps {
-  room: IRoom;
-  recipient: ICollaborator;
+  room: IAppChatRoom;
 }
 
 const classes = {
-  root: css({ width: "100%", alignItems: "center", display: "flex" }),
-  nameContainer: css({ flex: 1, margin: "0 16px" }),
+  root: css({
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: "auto 1fr auto",
+    columnGap: "16px",
+  }),
 };
 
 const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
-  const { room, recipient } = props;
+  const { room } = props;
   return (
     <div className={classes.root}>
-      <UserAvatar user={recipient} />
-      <div className={classes.nameContainer}>
-        <Typography.Text ellipsis>{recipient.name}</Typography.Text>
+      <UserAvatar user={room.recipient} />
+      <Typography.Text ellipsis>{room.recipient.name}</Typography.Text>
+      <div>
+        {room.unseenChatsCount ? (
+          <Badge
+            count={room.unseenChatsCount}
+            style={{ backgroundColor: "#1890ff" }}
+          />
+        ) : null}
       </div>
-      <Badge count={room.unseenChatsCount} style={{ boxShadow: "none" }} />
     </div>
   );
 };

@@ -6,6 +6,11 @@ export enum OutgoingSocketEvents {
   Unsubscribe = "unsubscribe",
   FetchMissingBroadcasts = "fetchMissingBroadcasts",
   SendMessage = "sendMessage",
+  AddRoom = "addRoom",
+  GetRooms = "getRooms",
+  GetRoomChats = "getRoomChats",
+  GetRoomsUnseenChatsCount = "getRoomsUnseenChatsCount",
+  GetOrganizationUnseenChatsCount = "getOrganizationUnseenChatsCount",
   GetUserRoomsAndChats = "getUserRoomsAndChats",
   UpdateRoomReadCounter = "updateRoomReadCounter",
   UpdateSocketEntry = "updateSocketEntry",
@@ -18,7 +23,7 @@ export interface IOutgoingEventPacket<T = any> {
 }
 
 export interface IOutgoingSubscribePacket {
-  items: ClientSubscribedResources;
+  rooms: ClientSubscribedResources;
 }
 
 export interface IOutgoingFetchMissingBroadcastsPacket {

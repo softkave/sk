@@ -11,57 +11,55 @@ import NotificationSettings from "./NotificationSettings";
 
 export interface INotificationSettingsContainerProps {}
 
-const NotificationSettingsContainer: React.FC<INotificationSettingsContainerProps> =
-    (props) => {
-        const client = useSelector(SessionSelectors.assertGetClient);
-        const [requestingPermission, setRequestingPermission] =
-            React.useState(false);
+const NotificationSettingsContainer: React.FC<
+  INotificationSettingsContainerProps
+> = (props) => {
+  const client = useSelector(SessionSelectors.assertGetClient);
+  const [requestingPermission, setRequestingPermission] = React.useState(false);
+  const onRequestPermission = async () => {
+    if (!supportsNotification()) {
+      appNotification.warning({
+        message: messages.unsupportedFeatureTitle,
+        description: messages.unsupportedFeatureMessage,
+      });
+      return;
+    }
 
-        const onRequestPermission = async () => {
-            if (!supportsNotification()) {
-                appNotification.warning({
-                    message: messages.unsupportedFeatureTitle,
-                    description: messages.unsupportedFeatureMessage,
-                });
-                return;
-            }
+    try {
+      setRequestingPermission(true);
+      let permission = window.Notification.permission;
 
-            try {
-                setRequestingPermission(true);
+      if (permission !== "granted") {
+        permission = await window.Notification.requestPermission();
+      }
 
-                let permission = window.Notification.permission;
+      if (permission === "granted") {
+        const subscription = await registerPushNotification();
 
-                if (permission !== "granted") {
-                    permission = await window.Notification.requestPermission();
-                }
+        if (subscription) {
+          message.success("Push notification setup successfully");
+        }
+      }
+    } catch (error: any) {
+      devError(error);
 
-                if (permission === "granted") {
-                    const subscription = await registerPushNotification();
+      if (error?.name === UnsurportedBrowserError.name) {
+        message.error(error.message);
+      }
 
-                    if (subscription) {
-                        message.success("Push notification setup successfully");
-                    }
-                }
-            } catch (error) {
-                devError(error);
+      message.error("Error setting up push notifications");
+    }
 
-                if (error?.name === UnsurportedBrowserError.name) {
-                    message.error(error.message);
-                }
+    setRequestingPermission(false);
+  };
 
-                message.error("Error setting up push notifications");
-            }
-
-            setRequestingPermission(false);
-        };
-
-        return (
-            <NotificationSettings
-                client={client}
-                onRequestPermission={onRequestPermission}
-                disableRequestPermission={requestingPermission}
-            />
-        );
-    };
+  return (
+    <NotificationSettings
+      client={client}
+      onRequestPermission={onRequestPermission}
+      disableRequestPermission={requestingPermission}
+    />
+  );
+};
 
 export default NotificationSettingsContainer;

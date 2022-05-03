@@ -1,90 +1,34 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import ChatAPI, {
   IUpdateRoomReadCounterAPIParameters,
 } from "../../../net/chat/chat";
-import { getDateString, getNewId } from "../../../utils/utils";
-import KeyValueActions from "../../key-value/actions";
-import KeyValueSelectors from "../../key-value/selectors";
-import { KeyValueKeys } from "../../key-value/types";
+import { assertEndpointResult } from "../../../net/utils";
+import { getDateString } from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
 import SessionSelectors from "../../session/selectors";
-import { IAppAsyncThunkConfig, IStoreLikeObject } from "../../types";
-import {
-  dispatchOperationCompleted,
-  dispatchOperationError,
-  dispatchOperationStarted,
-  IOperation,
-  isOperationStarted,
-  wrapUpOpAction,
-} from "../operation";
-import OperationType from "../OperationType";
-import OperationSelectors from "../selectors";
-import { GetOperationActionArgs } from "../types";
-import { getRoomUserUnseenChatsCountAndStartIndex } from "./getUserRoomsAndChats";
+import { IStoreLikeObject } from "../../types";
+import { makeAsyncOp02NoPersist } from "../utils";
+import { updateUnseenChatsCountLocalOpAction } from "./updateUnseenChatsCountLocal";
 
-export const updateRoomReadCounterOpAction = createAsyncThunk<
-  IOperation | undefined,
-  GetOperationActionArgs<IUpdateRoomReadCounterAPIParameters>,
-  IAppAsyncThunkConfig
->("op/chat/updateRoomReadCounter", async (arg, thunkAPI) => {
-  const opId = arg.opId || getNewId();
-  const operation = OperationSelectors.getOperationWithId(
-    thunkAPI.getState(),
-    opId
-  );
-
-  if (isOperationStarted(operation)) {
-    return;
-  }
-
-  thunkAPI.dispatch(
-    dispatchOperationStarted(
-      opId,
-      OperationType.UpdateRoomReadCounter,
-      arg.roomId
-    )
-  );
-
-  try {
-    const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
+export const updateRoomReadCounterOpAction = makeAsyncOp02NoPersist(
+  "op/chat/updateRoomReadCounter",
+  async (arg: IUpdateRoomReadCounterAPIParameters, thunkAPI, extras) => {
     let readCounter = arg.readCounter || getDateString();
 
-    if (!isDemoMode) {
+    if (!extras.isDemoMode) {
       const result = await ChatAPI.updateRoomReadCounter({
         orgId: arg.orgId,
         readCounter: arg.readCounter,
         roomId: arg.roomId,
       });
 
-      if (result && result.errors) {
-        throw result.errors;
-      }
-
+      assertEndpointResult(result);
       readCounter = result.readCounter;
     }
 
     completeUpdateRoomReadCounter(thunkAPI, arg.roomId, readCounter);
-    thunkAPI.dispatch(
-      dispatchOperationCompleted(
-        opId,
-        OperationType.UpdateRoomReadCounter,
-        arg.roomId
-      )
-    );
-  } catch (error) {
-    thunkAPI.dispatch(
-      dispatchOperationError(
-        opId,
-        OperationType.UpdateRoomReadCounter,
-        error,
-        arg.roomId
-      )
-    );
   }
-
-  return wrapUpOpAction(thunkAPI, opId, arg);
-});
+);
 
 export function completeUpdateRoomReadCounter(
   thunkAPI: IStoreLikeObject,
@@ -93,36 +37,10 @@ export function completeUpdateRoomReadCounter(
 ) {
   const user = SessionSelectors.assertGetUser(thunkAPI.getState());
   const room = RoomSelectors.getRoom(thunkAPI.getState(), roomId);
-  const unseenChatsCountMapByOrg = KeyValueSelectors.getKey(
-    thunkAPI.getState(),
-    KeyValueKeys.UnseenChatsCountByOrg
-  );
-
-  const orgUnseenChatsCount = unseenChatsCountMapByOrg[room.orgId] || 0;
-  const { unseenChatsCount, unseenChatsStartIndex } =
-    getRoomUserUnseenChatsCountAndStartIndex(room);
-
-  if (orgUnseenChatsCount && room.unseenChatsCount) {
-    const remainingCount =
-      orgUnseenChatsCount - (room.unseenChatsCount - unseenChatsCount);
-
-    thunkAPI.dispatch(
-      KeyValueActions.setKey({
-        key: KeyValueKeys.UnseenChatsCountByOrg,
-        value: {
-          ...unseenChatsCountMapByOrg,
-          [room.orgId]: remainingCount,
-        },
-      })
-    );
-  }
-
   thunkAPI.dispatch(
     RoomActions.updateRoom({
       id: roomId,
       data: {
-        unseenChatsCount,
-        unseenChatsStartIndex,
         members: room.members.map((member) => {
           if (member.userId === user.customId) {
             return {
@@ -136,4 +54,5 @@ export function completeUpdateRoomReadCounter(
       },
     })
   );
+  thunkAPI.dispatch(updateUnseenChatsCountLocalOpAction({ roomId, count: 0 }));
 }

@@ -40,3 +40,13 @@ export const formInputContentWrapperStyle: React.CSSProperties = {
   width: "100%",
   flexDirection: "column",
 };
+
+export const formClasses = {
+  form: formClassname,
+  compactFormItem: css({
+    "& .ant-form-item-control-input": {
+      minHeight: "16px",
+    },
+  }),
+  formContent: css(formContentWrapperStyle as any),
+};
