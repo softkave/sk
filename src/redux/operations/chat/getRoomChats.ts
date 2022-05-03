@@ -14,9 +14,9 @@ export const getRoomChatsOpAction = makeAsyncOp02(
     if (!extras.isDemoMode) {
       const result = await ChatAPI.getRoomChats(removeAsyncOp02Params(arg));
       assertEndpointResult(result);
-      const room = RoomSelectors.getRoom(thunkAPI.getState(), arg.roomId);
+      let room = RoomSelectors.getRoom(thunkAPI.getState(), arg.roomId);
       assert(room, "Room not found");
-      prepareRoomChats(room, result.chats);
+      room = prepareRoomChats(room, result.chats);
       thunkAPI.dispatch(
         RoomActions.updateRoom({
           id: room.customId,

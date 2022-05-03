@@ -34,7 +34,6 @@ export const addRoomOpAction = makeAsyncOp02NoPersist(
           { userId: arg.recipientId, readCounter: getDateString() },
         ],
         recipientId: arg.recipientId,
-        unseenChatsStartIndex: null,
         unseenChatsCount: 0,
         chats: [],
       };
@@ -45,5 +44,6 @@ export const addRoomOpAction = makeAsyncOp02NoPersist(
     }
 
     thunkAPI.dispatch(RoomActions.addRoom(room));
+    return room.customId;
   }
 );

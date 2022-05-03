@@ -3,37 +3,50 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IRoom } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
-import { messages } from "../../models/messages";
 import {
+  IGetRoomChatsEndpointParameters,
   ISendMessageEndpointParameters,
   IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";
+import KeyValueSelectors from "../../redux/key-value/selectors";
+import { ILoadingState, loadingStateKeys } from "../../redux/key-value/types";
 import { addRoomOpAction } from "../../redux/operations/chat/addRoom";
+import { getRoomChatsOpAction } from "../../redux/operations/chat/getRoomChats";
 import { sendMessageOpAction } from "../../redux/operations/chat/sendMessage";
 import { updateRoomReadCounterOpAction } from "../../redux/operations/chat/updateRoomReadCounter";
 import RoomSelectors from "../../redux/rooms/selectors";
 import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
+import useOrganizationReady from "../organization/useOrganizationReady";
 import useChatRooms from "./useChatRooms";
 
 export function useChatRoom(orgId: string, recipientId: string) {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    isAppHidden,
-    sortedRooms,
-    chatRoomsLoadState,
-    selectedRoomRecipientId,
-    user,
-  } = useChatRooms({ orgId });
+  const { isAppHidden, sortedRooms, chatRoomsLoadState, user } = useChatRooms({
+    orgId,
+  });
+  const orgReadyState = useOrganizationReady();
   const appChatRoom = React.useMemo(() => {
     return sortedRooms.find((rm) => rm.recipient.customId === recipientId);
   }, [recipientId, sortedRooms]);
   const room = useSelector<IAppState, IRoom | undefined>((state) =>
-    RoomSelectors.getRoom(state, recipientId)
+    RoomSelectors.getRoomByRecipientId(state, recipientId)
   );
-  const recipient = useSelector<IAppState, ICollaborator>((state) => {
-    return UserSelectors.assertGetOne(state, recipientId);
-  });
+  const recipient = useSelector<IAppState, ICollaborator | undefined>(
+    (state) => {
+      return UserSelectors.getOne(state, recipientId);
+    }
+  );
+  const chatsReadyState = useSelector<IAppState, ILoadingState | undefined>(
+    (state) => {
+      return room
+        ? KeyValueSelectors.getKey(
+            state,
+            loadingStateKeys.getRoomChats(room.orgId, room.customId)
+          )
+        : undefined;
+    }
+  );
 
   const createRoom = React.useCallback(async () => {
     await dispatch(
@@ -55,37 +68,47 @@ export function useChatRoom(orgId: string, recipientId: string) {
     },
     [dispatch]
   );
+  const getRoomChatsFn = React.useCallback(() => {
+    if (room && !chatsReadyState) {
+      dispatch(
+        getRoomChatsOpAction({
+          roomId: room.customId,
+          key: loadingStateKeys.getRoomChats(room.orgId, room.customId),
+        })
+      );
+    }
+  }, [dispatch, room, chatsReadyState]);
 
   const createRoomResult = useRequest(createRoom, { manual: true });
 
+  // This is needful to prevent infite loop in the useEffect below.
+  // When we dispatch the addRoom action, createRoomResult changes
+  // but not the loading field, so causing an infinite loop.
+  const creatingRoomRef = React.useRef(false);
   React.useEffect(() => {
     if (
-      selectedRoomRecipientId &&
+      recipientId &&
       appChatRoom?.isTempRoom &&
-      !createRoomResult.loading &&
+      !creatingRoomRef.current &&
       !createRoomResult.error &&
       !room
     ) {
+      creatingRoomRef.current = true;
       createRoomResult.run();
     }
-  }, [createRoomResult, appChatRoom, room, selectedRoomRecipientId]);
+  }, [createRoomResult, appChatRoom, room, recipientId]);
+  React.useEffect(() => {
+    getRoomChatsFn();
+  }, [getRoomChatsFn]);
 
-  let error: Error | Error[] | null = null;
-  let loading: boolean = false;
-
-  if (chatRoomsLoadState.error || createRoomResult.error) {
-    error =
-      chatRoomsLoadState.error ||
-      createRoomResult.error ||
-      new Error(messages.anErrorOccurred);
-  } else if (
+  const error =
+    chatRoomsLoadState.error || createRoomResult.error || orgReadyState.error;
+  const loading =
     chatRoomsLoadState.isLoading ||
+    orgReadyState.isLoading ||
     !chatRoomsLoadState.initialized ||
     createRoomResult.loading ||
-    appChatRoom?.isTempRoom
-  ) {
-    loading = true;
-  }
+    appChatRoom?.isTempRoom;
 
   return {
     room,

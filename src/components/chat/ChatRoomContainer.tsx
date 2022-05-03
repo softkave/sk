@@ -28,7 +28,8 @@ const ChatRoomContainer: React.FC<IChatRoomContainerProps> = (props) => {
     return <MessageList messages={error} />;
   } else if (loading) {
     return <LoadingEllipsis />;
-  } else if (!room) {
+  } else if (!room || !recipient) {
+    console.log({ loading, error, room });
     return <Redirect to={appOrganizationPaths.chats(orgId)} />;
   }
 

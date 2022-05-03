@@ -12,13 +12,9 @@ import {
   IOrganization,
 } from "../../models/organization/types";
 import KeyValueActions from "../../redux/key-value/actions";
-import {
-  IUnseenChatsCountByOrg,
-  KeyValueKeys,
-} from "../../redux/key-value/types";
+import { KeyValueKeys } from "../../redux/key-value/types";
 import OrganizationSelectors from "../../redux/organizations/selectors";
 import { getUserOrganizationsOpAction } from "../../redux/operations/organization/getUserOrganizations";
-import KeyValueSelectors from "../../redux/key-value/selectors";
 import { appOrganizationPaths } from "../../models/app/routes";
 
 export function useUserOrganizations() {
@@ -30,13 +26,6 @@ export function useUserOrganizations() {
   );
 
   const selectedId = organizationRouteMatch?.params.organizationId;
-  const unseenChatsCountMapByOrg = useSelector<
-    IAppState,
-    IUnseenChatsCountByOrg
-  >((state) =>
-    KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
-  );
-
   const loadOrganizations = React.useCallback(
     async (loadOrgsProps: IOperationDerivedData) => {
       const operation = loadOrgsProps.operation;
@@ -111,7 +100,6 @@ export function useUserOrganizations() {
     selectedId,
     organizations,
     activeOrganizations,
-    unseenChatsCountMapByOrg,
     onSelectOrganization,
     setSearchQuery,
     onCreateOrganization,

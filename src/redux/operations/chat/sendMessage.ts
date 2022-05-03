@@ -4,7 +4,7 @@ import ChatAPI, {
   ISendMessageEndpointParameters,
 } from "../../../net/chat/chat";
 import { assertEndpointResult } from "../../../net/utils";
-import { getDateString, getNewTempId } from "../../../utils/utils";
+import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";
 import SessionSelectors from "../../session/selectors";
@@ -24,6 +24,7 @@ export const sendMessageOpAction = makeAsyncOp02NoPersist(
       roomId: arg.roomId,
       createdAt: getDateString(),
       sending: true,
+      localId: arg.localId || getNewId(),
     };
     thunkAPI.dispatch(
       RoomActions.addChat({
@@ -36,16 +37,22 @@ export const sendMessageOpAction = makeAsyncOp02NoPersist(
     assert(room.chats[index].customId === chat.customId);
 
     if (!extras.isDemoMode) {
+      arg.localId = chat.localId;
       const result = await ChatAPI.sendMessage(removeAsyncOpParams(arg));
-      assertEndpointResult(result);
-      chat = result.chat;
+
+      if (result.errors) {
+        chat.errorMessage = "Error sending message";
+      } else {
+        chat = { ...chat, ...result.chat };
+      }
     }
 
     chat.sending = false;
+    assert(chat.localId, "Chat localId not found");
     thunkAPI.dispatch(
       RoomActions.updateChat({
         roomId: arg.roomId,
-        chatIndex: index,
+        localId: chat.localId,
         data: chat,
       })
     );

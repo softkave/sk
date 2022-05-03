@@ -9,8 +9,12 @@ export interface IRoomsListItemProps {
 }
 
 const classes = {
-  root: css({ width: "100%", alignItems: "center", display: "flex" }),
-  nameContainer: css({ flex: 1, margin: "0 16px" }),
+  root: css({
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: "auto 1fr auto",
+    columnGap: "16px",
+  }),
 };
 
 const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
@@ -18,14 +22,15 @@ const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
   return (
     <div className={classes.root}>
       <UserAvatar user={room.recipient} />
-      <div className={classes.nameContainer}>
-        <Typography.Text ellipsis>{room.recipient.name}</Typography.Text>
+      <Typography.Text ellipsis>{room.recipient.name}</Typography.Text>
+      <div>
+        {room.unseenChatsCount ? (
+          <Badge
+            count={room.unseenChatsCount}
+            style={{ backgroundColor: "#1890ff" }}
+          />
+        ) : null}
       </div>
-      <Badge
-        count={room.unseenChatsCount}
-        color={"blue"}
-        style={{ boxShadow: "none" }}
-      />
     </div>
   );
 };

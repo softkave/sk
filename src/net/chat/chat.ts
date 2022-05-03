@@ -39,6 +39,7 @@ export interface ISendMessageEndpointParameters {
   orgId: string;
   message: string;
   roomId: string;
+  localId?: string;
 }
 
 export interface ISendMessageEndpointResult extends IEndpointResultBase {
@@ -78,7 +79,7 @@ export interface IGetRoomsEndpointResult extends IEndpointResultBase {
 
 async function getRooms(props: IGetRoomsEndpointParameters) {
   return SocketAPI.promisifiedEmit<IGetRoomsEndpointResult>(
-    OutgoingSocketEvents.GetRoomChats,
+    OutgoingSocketEvents.GetRooms,
     props
   );
 }
@@ -120,6 +121,24 @@ async function getRoomsUnseenChatsCount(
   );
 }
 
+export interface IGetOrganizationUnseenChatsCountEndpointParameters {
+  orgId: string;
+}
+
+export interface IGetOrganizationUnseenChatsCountEndpointResult
+  extends IEndpointResultBase {
+  count: number;
+}
+
+async function getOrganizationUnseenChatsCount(
+  props: IGetOrganizationUnseenChatsCountEndpointParameters
+) {
+  return SocketAPI.promisifiedEmit<IGetOrganizationUnseenChatsCountEndpointResult>(
+    OutgoingSocketEvents.GetOrganizationUnseenChatsCount,
+    props
+  );
+}
+
 export interface IUpdateRoomReadCounterAPIParameters {
   orgId: string;
   roomId: string;
@@ -147,6 +166,8 @@ export default class ChatAPI {
   public static addRoom = addRoom;
   public static getRooms = getRooms;
   public static getRoomChats = getRoomChats;
+  public static getOrganizationUnseenChatsCount =
+    getOrganizationUnseenChatsCount;
   public static getRoomsUnseenChatsCount = getRoomsUnseenChatsCount;
   public static updateRoomReadCounter = updateRoomReadCounter;
 }

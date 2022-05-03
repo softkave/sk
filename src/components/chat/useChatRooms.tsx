@@ -69,37 +69,42 @@ const useChatRooms = (
   }, [rooms]);
 
   const appChatRooms = React.useMemo(() => {
-    return collaborators
-      .map((collaborator) => {
-        const room = roomsMap[collaborator.customId];
-        let appChatRoom: IAppChatRoom;
+    const appChatRooms: IAppChatRoom[] = [];
+    collaborators.forEach((collaborator) => {
+      if (collaborator.customId === user.customId) {
+        return;
+      }
 
-        if (room) {
-          appChatRoom = {
-            isTempRoom: false,
-            orgId: room.orgId,
-            recipient: collaborator,
-            unseenChatsCount: room.unseenChatsCount,
-            lastChatCreatedAt: moment(room.lastChatCreatedAt).valueOf(),
-          };
-        } else {
-          appChatRoom = {
-            orgId,
-            recipient: collaborator,
-            unseenChatsCount: 0,
-            isTempRoom: true,
-          };
-        }
+      const room = roomsMap[collaborator.customId];
+      let appChatRoom: IAppChatRoom;
 
-        return appChatRoom;
-      })
-      .sort((room1, room2) => {
-        return (
-          defaultTo(room2.lastChatCreatedAt, 0) -
-          defaultTo(room1.lastChatCreatedAt, 0)
-        );
-      });
-  }, [orgId, roomsMap, collaborators]);
+      if (room) {
+        appChatRoom = {
+          isTempRoom: false,
+          orgId: room.orgId,
+          recipient: collaborator,
+          unseenChatsCount: room.unseenChatsCount,
+          lastChatCreatedAt: moment(room.lastChatCreatedAt).valueOf(),
+        };
+      } else {
+        appChatRoom = {
+          orgId,
+          recipient: collaborator,
+          unseenChatsCount: 0,
+          isTempRoom: true,
+        };
+      }
+
+      appChatRooms.push(appChatRoom);
+    });
+    appChatRooms.sort((room1, room2) => {
+      return (
+        defaultTo(room2.lastChatCreatedAt, 0) -
+        defaultTo(room1.lastChatCreatedAt, 0)
+      );
+    });
+    return appChatRooms;
+  }, [orgId, roomsMap, collaborators, user.customId]);
 
   const onSelectRoom = React.useCallback(
     (room: IAppChatRoom) => {

@@ -16,6 +16,7 @@ export interface IChat {
   // Client-side only
   sending?: boolean;
   errorMessage?: string;
+  localId?: string;
 }
 
 export interface IRoomMemberWithReadCounter {
@@ -24,7 +25,6 @@ export interface IRoomMemberWithReadCounter {
 }
 
 export interface IRoom extends IPersistedRoom {
-  unseenChatsStartIndex: number | null;
   unseenChatsCount: number;
   chats: IChat[];
   recipientId: string;

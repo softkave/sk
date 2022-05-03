@@ -39,6 +39,11 @@ const classes = {
       padding: "0px !important",
     },
   }),
+  withBadgeRoot: css({
+    display: "grid",
+    gridTemplateColumns: "1fr auto",
+    columnGap: 16,
+  }),
 };
 
 const SPACE_SIZE = 27;
@@ -72,9 +77,15 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
             <Menu.Item key={item.text}>
               {item.text === UserOptionsMenuKeys.Requests &&
               unseenRequestsCount ? (
-                <Badge count={unseenRequestsCount} color="blue">
+                <div className={classes.withBadgeRoot}>
                   {contentNode}
-                </Badge>
+                  <span>
+                    <Badge
+                      count={unseenRequestsCount}
+                      style={{ backgroundColor: "#1890ff" }}
+                    />
+                  </span>
+                </div>
               ) : (
                 contentNode
               )}

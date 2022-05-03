@@ -1,6 +1,7 @@
 import {
   CaretDownOutlined,
   CaretUpOutlined,
+  MessageOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
 import { css } from "@emotion/css";
@@ -9,8 +10,8 @@ import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import UserAvatar from "../collaborator/UserAvatar";
+import { useUserUnseenChatsCount } from "../organization/useUserUnseenChatsCount";
 import { useUserUnseenRequestsCount } from "../request/useUserUnseenRequestsCount";
-import SpaceOut, { ISpaceOutContent } from "../utilities/SpaceOut";
 import UserOptionsMenu, { UserOptionsMenuKeys } from "./UserOptionsMenu";
 
 export interface IAppSidebarDesktopMenuProps {
@@ -48,6 +49,18 @@ const classes = {
       width: "100%",
     },
   }),
+  tag: css({
+    backgroundColor: "blue",
+    fontSize: "13px",
+    borderRadius: "11px",
+    color: "white",
+    border: "1px solid rgba(255, 77, 79, 0)",
+  }),
+  menuTriggerRoot: css({
+    display: "grid",
+    gridTemplateColumns: "auto 1fr auto",
+    columnGap: "16px",
+  }),
 };
 
 const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
@@ -56,59 +69,41 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
   const { user, onSelect } = props;
   const [showMenu, setShowMenu] = React.useState(false);
   const unseenRequestsCount = useUserUnseenRequestsCount();
-  const spaceOutContent: ISpaceOutContent[] = React.useMemo(() => {
-    const content: ISpaceOutContent[] = [
-      {
-        node: <UserAvatar clickable user={user} onClick={noop} />,
-        style: { display: "inline-flex", alignItems: "center" },
-      },
-      { node: user.name, style: { flex: 1 } },
-      {
-        node: (
-          <Typography.Text type="secondary">
-            {showMenu ? <CaretUpOutlined /> : <CaretDownOutlined />}
-          </Typography.Text>
-        ),
-      },
-    ];
-
-    return content;
-  }, [user, showMenu]);
-
-  if (unseenRequestsCount) {
-    spaceOutContent.splice(1, 0, {
-      node: (
-        <Tag
-          style={{
-            backgroundColor: "blue",
-            fontSize: "13px",
-            borderRadius: "11px",
-            color: "white",
-            border: "1px solid rgba(255, 77, 79, 0)",
-          }}
-        >
-          <Space>
-            <UserAddOutlined />
-            {unseenRequestsCount}
-          </Space>
+  const unseenChatsCount = useUserUnseenChatsCount();
+  const unseenRequestsCountNode = (
+    <span>
+      {unseenRequestsCount ? (
+        <Tag icon={<UserAddOutlined />} color="blue">
+          {unseenRequestsCount}
         </Tag>
-      ),
-    });
-  }
-
+      ) : null}
+    </span>
+  );
+  const unseenChatsCountNode = (
+    <span>
+      {unseenChatsCount ? (
+        <Tag icon={<MessageOutlined />} color="blue">
+          {unseenChatsCount}
+        </Tag>
+      ) : null}
+    </span>
+  );
   return (
     <div className={classes.root} onClick={() => setShowMenu(!showMenu)}>
       {showMenu && (
         <UserOptionsMenu className={classes.menu} onSelect={onSelect} />
       )}
-      <SpaceOut size="middle" content={spaceOutContent} />
-      {/* <div>
+      <div className={classes.menuTriggerRoot}>
         <UserAvatar clickable user={user} onClick={noop} />
-        <Typography.Text>{user.name}</Typography.Text>
-        <Typography.Text type="secondary">
-          {showMenu ? <CaretUpOutlined /> : <CaretDownOutlined />}
-        </Typography.Text>
-      </div> */}
+        <Typography.Text ellipsis>{user.name}</Typography.Text>
+        <div>
+          {unseenChatsCountNode}
+          {unseenRequestsCountNode}
+          <Typography.Text type="secondary">
+            {showMenu ? <CaretUpOutlined /> : <CaretDownOutlined />}
+          </Typography.Text>
+        </div>
+      </div>
     </div>
   );
 };

@@ -7,11 +7,11 @@ import {
   shouldLoadState,
 } from "../../redux/operations/utils";
 import useLoadingState from "../hooks/useLoadingState";
-import useOrganizationFromPath from "../organization/useOrganizationFromPath";
+import useOrganizationReady from "../organization/useOrganizationReady";
 
 export function useLoadChatRooms(): ILoadingState {
   const dispatch = useDispatch();
-  const { organization } = useOrganizationFromPath();
+  const { organization } = useOrganizationReady();
   const getRoomsKey =
     organization && loadingStateKeys.getRooms(organization.customId);
   const getRoomsState = useLoadingState(getRoomsKey);

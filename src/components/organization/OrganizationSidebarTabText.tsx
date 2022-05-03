@@ -13,7 +13,12 @@ const OrganizationSidebarTabText: React.FC<IOrganizationSidebarTabTextProps> = (
   return (
     <Space>
       <span style={{ textTransform: "capitalize" }}>{text}</span>
-      {unseenChatsCount ? <Badge count={unseenChatsCount}></Badge> : null}
+      {unseenChatsCount ? (
+        <Badge
+          count={unseenChatsCount}
+          style={{ backgroundColor: "#1890ff" }}
+        ></Badge>
+      ) : null}
     </Space>
   );
 };

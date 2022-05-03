@@ -13,14 +13,6 @@ import OrganizationSidebarChat from "./OrganizationSidebarChat";
 import OrganizationSidebarRequests from "./OrganizationSidebarRequests";
 import OrganizationSidebarCollaborators from "./OrganizationSidebarCollaborators";
 import OrganizationFormDrawer from "./OrganizationFormDrawer";
-import useOrganizationFromPath from "./useOrganizationFromPath";
-import { useSelector } from "react-redux";
-import KeyValueSelectors from "../../redux/key-value/selectors";
-import {
-  IUnseenChatsCountByOrg,
-  KeyValueKeys,
-} from "../../redux/key-value/types";
-import { IAppState } from "../../redux/types";
 import {
   appLoggedInPaths,
   appOrganizationPaths,
@@ -30,6 +22,7 @@ import {
   systemResourceTypeToOrganizationResourceType,
 } from "./utils";
 import cast from "../../utils/cast";
+import useOrganizationReady from "./useOrganizationReady";
 
 export interface IOrganizationSidebarProps {
   isMobile: boolean;
@@ -93,15 +86,8 @@ const classes = {
 const OrganizationSidebar: React.FC<IOrganizationSidebarProps> = (props) => {
   const { isMobile, hideHeader } = props;
   const history = useHistory();
-  const { organization } = useOrganizationFromPath();
+  const { organization } = useOrganizationReady();
   const [organizationForm, setOrganizationForm] = React.useState(false);
-  const unseenChatsCountMapByOrg = useSelector<
-    IAppState,
-    IUnseenChatsCountByOrg
-  >((state) =>
-    KeyValueSelectors.getKey(state, KeyValueKeys.UnseenChatsCountByOrg)
-  );
-
   const closeOrganizationForm = React.useCallback(() => {
     // TODO: prompt the user if the user has unsaved changes
     setOrganizationForm(false);
@@ -135,7 +121,6 @@ const OrganizationSidebar: React.FC<IOrganizationSidebarProps> = (props) => {
     return <Redirect to={defaultPath} />;
   }
 
-  const unseenChatsCount = unseenChatsCountMapByOrg[organization.customId] || 0;
   const tabsNode = (
     <Tabs
       activeKey={organizationResourceTypeToSystemResourceType(
@@ -161,7 +146,7 @@ const OrganizationSidebar: React.FC<IOrganizationSidebarProps> = (props) => {
         tab={
           <OrganizationSidebarTabText
             text="Chat"
-            unseenChatsCount={unseenChatsCount}
+            unseenChatsCount={organization.unseenChatsCount}
           />
         }
         key={SystemResourceType.Chat}

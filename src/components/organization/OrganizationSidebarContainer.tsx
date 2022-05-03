@@ -15,7 +15,7 @@ const OrganizationSidebarContainer: React.FC<
   IOrganizationSidebarContainerProps
 > = (props) => {
   const { organizationId } = useOrganizationIdFromPath();
-  const { returnNode } = useOrganizationReady();
+  const { stateNode } = useOrganizationReady();
   React.useEffect(() => {
     if (organizationId) {
       subscribeEvent([
@@ -32,8 +32,8 @@ const OrganizationSidebarContainer: React.FC<
     };
   }, [organizationId]);
 
-  if (returnNode) {
-    return returnNode;
+  if (stateNode) {
+    return stateNode;
   }
 
   return <OrganizationSidebar {...props} />;

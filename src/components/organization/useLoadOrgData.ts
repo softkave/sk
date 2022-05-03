@@ -9,7 +9,6 @@ import {
 import useLoadingState from "../hooks/useLoadingState";
 import useOrganizationFromPath from "./useOrganizationFromPath";
 
-// For loading org data necessary for initialization, like users, requests, etc.
 export function useLoadOrgData(): ILoadingState {
   const dispatch = useDispatch();
   const { organization } = useOrganizationFromPath();

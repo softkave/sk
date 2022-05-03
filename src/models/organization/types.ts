@@ -14,6 +14,7 @@ export interface IOrganization {
 
 export interface IAppOrganization extends IOrganization {
   collaboratorIds: string[];
+  unseenChatsCount?: number;
 }
 
 export interface INewOrganizationInput {

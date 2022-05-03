@@ -28,7 +28,6 @@ const OrganizationListContainer: React.FC<IOrganizationListContainerProps> = (
     isLoading,
     organizations,
     selectedId,
-    unseenChatsCountMapByOrg,
     onCreateOrganization,
     onSelectOrganization,
     setSearchQuery,
@@ -46,7 +45,6 @@ const OrganizationListContainer: React.FC<IOrganizationListContainerProps> = (
         organizations={activeOrganizations}
         selectedId={selectedId}
         onClickOrganization={onSelectOrganization}
-        unseenChatsCountMapByOrg={unseenChatsCountMapByOrg}
       />
     );
   }

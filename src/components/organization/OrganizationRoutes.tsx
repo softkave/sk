@@ -10,12 +10,12 @@ import KeyValueActions from "../../redux/key-value/actions";
 import { KeyValueKeys } from "../../redux/key-value/types";
 import { AppDispatch } from "../../redux/types";
 import KeyValueSelectors from "../../redux/key-value/selectors";
-import useOrganizationFromPath from "./useOrganizationFromPath";
+import useOrganizationReady from "./useOrganizationReady";
 
 export interface IOrganizationRoutesProps {}
 
 const OrganizationRoutes: React.FC<IOrganizationRoutesProps> = (props) => {
-  const { organization } = useOrganizationFromPath();
+  const { organization } = useOrganizationReady();
   const dispatch = useDispatch<AppDispatch>();
   const { onDeleteBoard } = useDeleteBoard();
   const showOrgMenu = useSelector((state) =>

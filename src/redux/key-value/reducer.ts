@@ -7,7 +7,6 @@ import { IKeyValueState, KeyValueKeys } from "./types";
 const def = {
   [KeyValueKeys.ShowAppMenu]: true,
   [KeyValueKeys.ShowOrgMenu]: true,
-  [KeyValueKeys.UnseenChatsCountByOrg]: {},
 };
 
 const keyValueReducer = createReducer<IKeyValueState>(

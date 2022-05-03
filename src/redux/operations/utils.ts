@@ -222,17 +222,19 @@ export const makeAsyncOp02NoPersist = <Arg, Result>(
     extras: IAsyncOp02Extras
   ) => Result | Promise<Result>
 ) => {
-  return createAsyncThunk<ILoadingState, Arg, IAppAsyncThunkConfig>(
+  return createAsyncThunk<ILoadingState<Result>, Arg, IAppAsyncThunkConfig>(
     type,
     async (arg, thunkAPI) => {
+      let result: Result | undefined;
+
       try {
         const isDemoMode = SessionSelectors.isDemoMode(thunkAPI.getState());
-        await fn(arg, thunkAPI, { isDemoMode });
+        result = await fn(arg, thunkAPI, { isDemoMode });
       } catch (error) {
         return { error: toAppErrorsArray(error) };
       }
 
-      return { initialized: true };
+      return { initialized: true, value: result };
     }
   );
 };

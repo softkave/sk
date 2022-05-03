@@ -4,12 +4,11 @@ import { getRoomFromPersistedRoom } from "../../../models/chat/utils";
 import ChatAPI, { IGetRoomsEndpointParameters } from "../../../net/chat/chat";
 import subscribeEvent from "../../../net/socket/outgoing/subscribeEvent";
 import { assertEndpointResult } from "../../../net/utils";
-import { indexArray } from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import SessionSelectors from "../../session/selectors";
 import { makeAsyncOp02, removeAsyncOp02Params } from "../utils";
+import { getRoomsUnseenChatsCountOpAction } from "./getRoomsUnseenChatsCount";
 
-// TODO: get unseen chats count
 export const getRoomsOpAction = makeAsyncOp02(
   "op/chat/getRooms",
   async (arg: IGetRoomsEndpointParameters, thunkAPI, extras) => {
@@ -20,24 +19,18 @@ export const getRoomsOpAction = makeAsyncOp02(
       // Fetch chat rooms
       const roomsResult = await ChatAPI.getRooms(removeAsyncOp02Params(arg));
       assertEndpointResult(roomsResult);
-
-      // Fetch rooms unseen chats count
-      const countsResult = await ChatAPI.getRoomsUnseenChatsCount({
-        orgId: arg.orgId,
-        roomIds: roomsResult.rooms.map((r) => r.customId),
-      });
-      assertEndpointResult(countsResult);
-
-      // Merge rooms and counts
-      const countsMap = indexArray(countsResult.counts, { path: "roomId" });
       rooms = roomsResult.rooms.map((room) =>
-        getRoomFromPersistedRoom(room, user.customId, {
-          unseenChatsCount: countsMap[room.customId]?.count || 0,
-        })
+        getRoomFromPersistedRoom(room, user.customId)
       );
     }
 
     thunkAPI.dispatch(RoomActions.bulkAddRooms(rooms));
+    thunkAPI.dispatch(
+      getRoomsUnseenChatsCountOpAction({
+        orgId: arg.orgId,
+        roomIds: rooms.map((room) => room.customId),
+      })
+    );
     subscribeEvent(
       rooms.map((room) => ({
         customId: room.customId,

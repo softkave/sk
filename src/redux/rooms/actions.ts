@@ -30,7 +30,6 @@ export interface IUpdateRoomReadCounterActionArgs {
 export interface IAddChatActionArgs {
   chat: IChat;
   roomId: string;
-  markAsUnseen?: boolean;
 }
 
 const addChat = createAction<IAddChatActionArgs>("rooms/addChat");
@@ -38,9 +37,8 @@ const addChat = createAction<IAddChatActionArgs>("rooms/addChat");
 export interface IUpdateChatActionArgs
   extends Omit<IUpdateResourcePayload<IChat>, "id"> {
   roomId: string;
-
-  // Since we don't delete chat, chat index should be enough to identify chat
-  chatIndex: number;
+  localId: string;
+  fromDate?: string;
 }
 
 const updateChat = createAction<IUpdateChatActionArgs>("room/updateChat");

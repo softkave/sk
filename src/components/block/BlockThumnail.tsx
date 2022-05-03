@@ -136,14 +136,8 @@ const BlockThumbnail: React.FC<IBlockThumbnailProps> = (props) => {
     if (unseenChatsCount) {
       return (
         <div style={{ marginTop: "8px" }}>
-          <Tag
-            icon={<CommentOutlined />}
-            color="red"
-            style={{ color: "#323b49" }}
-          >
-            <Typography.Text style={{ color: "#323b49" }}>
-              {unseenChatsCount}
-            </Typography.Text>
+          <Tag icon={<CommentOutlined />} color="blue">
+            {unseenChatsCount}
           </Tag>
         </div>
       );

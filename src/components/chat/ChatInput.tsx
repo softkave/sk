@@ -10,8 +10,8 @@ export interface IChatInputProps {
 
 const classes = {
   root: css({
-    borderTop: "1px solid rgb(223, 234, 240)",
-    padding: "8px 5px",
+    borderTop: "2px solid rgb(223, 234, 240)",
+    padding: "4px 5px",
     display: "flex",
   }),
   input: css({

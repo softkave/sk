@@ -36,10 +36,12 @@ export function formOrganizationFromExisting(org: IOrganization) {
 }
 
 export function toAppOrganization(
-  organization: IOrganization & { collaboratorIds?: string[] }
+  organization: IOrganization,
+  extras: Partial<Omit<IAppOrganization, keyof IOrganization>> = {}
 ): IAppOrganization {
   return {
     ...organization,
-    collaboratorIds: defaultTo(organization.collaboratorIds, []),
+    ...extras,
+    collaboratorIds: defaultTo(extras.collaboratorIds, []),
   };
 }

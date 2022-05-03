@@ -15,7 +15,6 @@ export enum KeyValueKeys {
   SocketDisconnectedAt = "socketDisconnectedAt",
   SocketConnected = "socketConnected",
   FetchingMissingBroadcasts = "fetchingMissingBroadcasts",
-  UnseenChatsCountByOrg = "unseenChatsCountByOrg",
   QueuedChats = "queuedChats",
   LoginAgain = "loginAgain",
   SubscribeToPushNotifications = "SubscribeToPushNotifications",
@@ -78,10 +77,11 @@ export interface IQueuedChatsByRoomId {
   [key: string]: Array<IChat & { chatIndex: number }>;
 }
 
-export interface ILoadingState {
+export interface ILoadingState<T = any> {
   isLoading?: boolean;
   error?: IAppError[];
   initialized?: boolean;
+  value?: T;
 }
 
 export interface IKeyValue {

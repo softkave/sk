@@ -7,10 +7,10 @@ export interface IOrganizationRoutesContainerProps {}
 const OrganizationRoutesContainer: React.FC<
   IOrganizationRoutesContainerProps
 > = (props) => {
-  const { returnNode } = useOrganizationReady();
+  const { stateNode } = useOrganizationReady();
 
-  if (returnNode) {
-    return returnNode;
+  if (stateNode) {
+    return stateNode;
   }
 
   return <OrganizationRoutes />;

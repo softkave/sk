@@ -18,7 +18,7 @@ export interface IChatRoomProps {
   user: IUser;
   isAppHidden: boolean;
   updateRoomReadCounter: (args: IUpdateRoomReadCounterAPIParameters) => void;
-  onSendMessage: (args: Required<ISendMessageEndpointParameters>) => void;
+  onSendMessage: (args: ISendMessageEndpointParameters) => void;
 }
 
 const ChatRoom: React.FC<IChatRoomProps> = (props) => {
@@ -40,7 +40,6 @@ const ChatRoom: React.FC<IChatRoomProps> = (props) => {
       });
     }
   }, [
-    room.unseenChatsStartIndex,
     room.customId,
     room.orgId,
     room.chats.length,
