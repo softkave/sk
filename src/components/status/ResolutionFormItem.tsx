@@ -171,7 +171,13 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
         ...(style || {}),
       }}
     >
-      <div style={{ alignItems: "flex-start", padding: "16px" }}>
+      <div
+        style={{
+          alignItems: "flex-start",
+          padding: "8px 16px",
+          paddingTop: "0px",
+        }}
+      >
         <div
           style={{
             flexDirection: "column",

@@ -3,6 +3,7 @@ import React from "react";
 import PageError from "../Message";
 import ListHeader from "../utilities/ListHeader";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
+import Scrollbar from "../utilities/Scrollbar";
 import OrganizationList from "./OrganizationList";
 import { useUserOrganizations } from "./useUserOrganizations";
 
@@ -41,11 +42,13 @@ const OrganizationListContainer: React.FC<IOrganizationListContainerProps> = (
     listNode = <PageError message={errorMessage}></PageError>;
   } else {
     listNode = (
-      <OrganizationList
-        organizations={activeOrganizations}
-        selectedId={selectedId}
-        onClickOrganization={onSelectOrganization}
-      />
+      <Scrollbar>
+        <OrganizationList
+          organizations={activeOrganizations}
+          selectedId={selectedId}
+          onClickOrganization={onSelectOrganization}
+        />
+      </Scrollbar>
     );
   }
 

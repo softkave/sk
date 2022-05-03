@@ -4,7 +4,7 @@ import { IClient } from "../../models/user/user";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
-  formClassname,
+  formClasses,
   formSectionClassname,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";
@@ -22,7 +22,6 @@ export interface IUpdateClientFormProps {
 
 const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
   const { client, onSubmit, isSubmitting, errors: externalErrors } = props;
-
   const { formik } = useFormHelpers({
     errors: externalErrors,
     formikProps: {
@@ -38,7 +37,6 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
   });
 
   const globalError = getFormError(formik.errors);
-
   const muteChatNotificationsNode = (
     <Form.Item
       help={
@@ -60,8 +58,12 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
   );
 
   return (
-    <div className={formClassname}>
-      <form onSubmit={formik.handleSubmit}>
+    <form
+      onSubmit={formik.handleSubmit}
+      className={formClasses.form}
+      style={{ height: "auto", width: "auto" }}
+    >
+      <div className={formClasses.formContent}>
         {globalError && (
           <Form.Item>
             <FormError error={globalError} />
@@ -73,8 +75,8 @@ const UpdateClientForm: React.FC<IUpdateClientFormProps> = (props) => {
             {isSubmitting ? "Updating Settings" : "Update Settings"}
           </Button>
         </Form.Item>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

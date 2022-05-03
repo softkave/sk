@@ -22,6 +22,7 @@ const OrganizationList: React.FC<IOrganizationListProps> = (props) => {
       {organizations.map((organization) => {
         return (
           <BlockThumbnail
+            makeNameBold
             key={organization.customId}
             isSelected={selectedId === organization.customId}
             block={organization}

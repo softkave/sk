@@ -25,7 +25,6 @@ const CollaboratorThumbnail: React.FC<ICollaboratorThumbnailProps> = (
   props
 ) => {
   const { collaborator, style, onClick, className } = props;
-
   return (
     <div
       style={style}
@@ -34,7 +33,9 @@ const CollaboratorThumbnail: React.FC<ICollaboratorThumbnailProps> = (
     >
       <UserAvatar user={collaborator} />
       <div className={classes.content}>
-        <Typography.Text ellipsis>{collaborator.name}</Typography.Text>
+        <Typography.Text strong ellipsis>
+          {collaborator.name}
+        </Typography.Text>
         <Typography.Text ellipsis type="secondary">
           {collaborator.email}
         </Typography.Text>

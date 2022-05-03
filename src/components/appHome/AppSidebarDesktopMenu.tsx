@@ -24,15 +24,12 @@ const kAntMenuSelector = "& .ant-menu";
 const classes = {
   root: css({
     display: "flex",
-    padding: "8px 16px",
     cursor: "pointer",
     borderTop: "2px solid rgb(223, 234, 240)",
     flexDirection: "column",
     width: "100%",
   }),
   menu: css({
-    marginBottom: "8px",
-
     [kAntMenuItemSelector]: {
       lineHeight: "24px",
       height: "auto",
@@ -60,6 +57,7 @@ const classes = {
     display: "grid",
     gridTemplateColumns: "auto 1fr auto",
     columnGap: "16px",
+    padding: "8px 16px",
   }),
 };
 
@@ -95,7 +93,9 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
       )}
       <div className={classes.menuTriggerRoot}>
         <UserAvatar clickable user={user} onClick={noop} />
-        <Typography.Text ellipsis>{user.name}</Typography.Text>
+        <Typography.Text strong ellipsis>
+          {user.name}
+        </Typography.Text>
         <div>
           {unseenChatsCountNode}
           {unseenRequestsCountNode}

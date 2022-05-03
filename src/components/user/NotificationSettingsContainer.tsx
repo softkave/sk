@@ -31,9 +31,7 @@ const NotificationSettingsContainer: React.FC<
 
       if (permission !== "granted") {
         permission = await window.Notification.requestPermission();
-      }
-
-      if (permission === "granted") {
+      } else if (permission === "granted") {
         const subscription = await registerPushNotification();
 
         if (subscription) {

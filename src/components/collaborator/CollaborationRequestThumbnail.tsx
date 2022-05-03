@@ -43,7 +43,9 @@ const CollaborationRequestThumbnail: React.FC<
         css({ backgroundColor: isSelected ? "#e6f7ff" : undefined })
       )}
     >
-      <Typography.Text ellipsis>{request.to.email}</Typography.Text>
+      <Typography.Text strong ellipsis>
+        {request.to.email}
+      </Typography.Text>
       <div className={classes.statusContainer}>
         <CollaborationRequestStatus request={request} />
       </div>

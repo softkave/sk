@@ -78,7 +78,7 @@ const classes = {
   lastColumn: css({
     width: `${320 + 16}px !important`,
     marginLeft: "16px",
-    paddingRight: "16px",
+    marginRight: "16px",
   }),
   root: css({ overflowX: "auto", marginTop: "22px", display: "flex" }),
   taskList: css({ height: "100%" }),

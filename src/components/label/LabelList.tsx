@@ -12,6 +12,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import ListHeader from "../utilities/ListHeader";
+import Scrollbar from "../utilities/Scrollbar";
 import LabelFormItem from "./LabelFormItem";
 
 export interface ILabelListProps {
@@ -187,7 +188,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
           overflowY: "auto",
         }}
       >
-        <div>{labels}</div>
+        {labels}
       </div>
     );
   };
@@ -198,10 +199,10 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         style={{
           flexDirection: "column",
           width: "100%",
-          padding: "32px 16px",
+          padding: "0px 16px 24px 16px",
         }}
       >
-        <Button loading={isSubmitting} type="primary" htmlType="submit">
+        <Button block loading={isSubmitting} type="primary" htmlType="submit">
           Save Changes
         </Button>
       </div>
@@ -229,7 +230,7 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
         onCreate={onAddNewLabel}
         onSearchTextChange={noop}
         title="Labels"
-        style={{ padding: "16px", paddingTop: "8px" }}
+        style={{ padding: "16px", paddingTop: "8px", paddingRight: "14px" }}
         disabled={
           isSubmitting ||
           formik.values.labelList.length >= blockConstants.maxAvailableLabels
@@ -241,12 +242,19 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
   const renderMain = () => {
     return (
       <form
-        style={{ width: "100%", height: "100%", flexDirection: "column" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "grid",
+          gridTemplateRows: "auto 1fr",
+        }}
         onSubmit={formik.handleSubmit}
       >
         {renderAddControls()}
-        {renderList()}
-        {renderSubmitControls()}
+        <Scrollbar>
+          {renderList()}
+          {renderSubmitControls()}
+        </Scrollbar>
       </form>
     );
   };

@@ -1,4 +1,8 @@
-import { EditOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
@@ -178,7 +182,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
         {canMoveUp && (
           <Button
             disabled={disabled}
-            icon={<ChevronUp />}
+            icon={<CaretUpOutlined />}
             onClick={() => onChangePosition(true)}
             htmlType="button"
             className="icon-btn"
@@ -187,7 +191,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
         {canMoveDown && (
           <Button
             disabled={disabled}
-            icon={<ChevronDown />}
+            icon={<CaretDownOutlined />}
             onClick={() => onChangePosition(false)}
             htmlType="button"
             className="icon-btn"
@@ -209,7 +213,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
       style={{
         display: "flex",
         width: "100%",
-        padding: "16px",
+        padding: "0px 16px",
         flexDirection: "column",
         backgroundColor: snapshot.isDragging ? "#eee" : undefined,
         cursor: snapshot.isDragging ? "grabbing" : undefined,
@@ -221,7 +225,12 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
       {...provided.dragHandleProps}
     >
       <div
-        style={{ display: "flex", alignItems: "flex-start", padding: "16px" }}
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          padding: "8px 16px",
+          paddingTop: "0px",
+        }}
       >
         <div
           style={{

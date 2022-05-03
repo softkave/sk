@@ -3,6 +3,7 @@ import { IChat } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IUser } from "../../models/user/user";
 import { default as AppMessage } from "../Message";
+import Scrollbar, { ScrollbarMethods } from "../utilities/Scrollbar";
 import Chat from "./Chat";
 
 export interface IChatListProps {
@@ -15,16 +16,12 @@ export interface IChatListProps {
 
 const ChatList: React.FC<IChatListProps> = (props) => {
   const { chats, recipient, user } = props;
-  const parentRef = React.useRef<HTMLDivElement>(null);
+  const parentRef = React.useRef<ScrollbarMethods | null>(null);
   React.useEffect(() => {
     if (parentRef.current && chats.length > 0) {
       if (!parentRef.current) {
         return;
       }
-
-      parentRef.current.scrollTop = (
-        parentRef.current as HTMLDivElement
-      ).scrollHeight;
     }
   }, [chats.length]);
 
@@ -36,7 +33,11 @@ const ChatList: React.FC<IChatListProps> = (props) => {
 
   let hideAvatarCheck: { [key: string]: boolean } = {};
   return (
-    <div ref={parentRef} style={{ width: "100%" }}>
+    <Scrollbar
+      ref={(ref) => {
+        parentRef.current = ref;
+      }}
+    >
       {chats.map((chat, i) => {
         const sender = chat.sender === user.customId ? user : recipient;
         const chatRender = (
@@ -59,7 +60,7 @@ const ChatList: React.FC<IChatListProps> = (props) => {
         hideAvatarCheck = { [chat.sender]: true };
         return chatRender;
       })}
-    </div>
+    </Scrollbar>
   );
 };
 

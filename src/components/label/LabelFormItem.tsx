@@ -197,7 +197,12 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
         }}
       >
         <div
-          style={{ display: "flex", alignItems: "flex-start", padding: "16px" }}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            padding: "8px 16px",
+            paddingTop: "0px",
+          }}
         >
           <div
             style={{

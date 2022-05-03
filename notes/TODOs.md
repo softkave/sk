@@ -1,3 +1,5 @@
 - [ ] chat push notification count
 - [ ] email templates
 - [ ] some loading states are called several times
+- [ ] mobile view
+- [ ] disabled features

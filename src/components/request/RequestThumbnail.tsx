@@ -31,7 +31,10 @@ const RequestThumbnail: React.FC<IRequestThumbnailProps> = (props) => {
         <ItemAvatar>{getNameInitials(request.from.blockName)}</ItemAvatar>
       </div>
       <Space direction="vertical" style={{ marginLeft: "16px" }} size={4}>
-        <Typography.Text style={{ color: isSelected ? "#1890ff" : undefined }}>
+        <Typography.Text
+          strong
+          style={{ color: isSelected ? "#1890ff" : undefined }}
+        >
           {request.from?.blockName}
         </Typography.Text>
         <Space size={0}>

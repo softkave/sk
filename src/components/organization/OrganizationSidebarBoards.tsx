@@ -7,6 +7,7 @@ import ListHeader from "../utilities/ListHeader";
 import { organizationSidebarClasses } from "./utils";
 import BoardFormInDrawer from "../board/BoardFormInDrawer";
 import { appBoardRoutes } from "../../models/board/utils";
+import Scrollbar from "../utilities/Scrollbar";
 
 export interface IOrganizationSidebarBoardsProps {
   organization: IAppOrganization;
@@ -57,13 +58,13 @@ const OrganizationSidebarBoards: React.FC<IOrganizationSidebarBoardsProps> = (
         className={organizationSidebarClasses.header}
         title={"Boards"}
       />
-      <div>
+      <Scrollbar>
         <BoardListContainer
           organizationId={organization.customId}
           searchQuery={searchQuery}
           onClick={onClickBoard}
         />
-      </div>
+      </Scrollbar>
     </div>
   );
 };

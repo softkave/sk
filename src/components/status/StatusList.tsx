@@ -16,11 +16,13 @@ import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import { getNewId } from "../../utils/utils";
 import { IFormikFormErrors } from "../forms/formik-utils";
+import { formClasses } from "../forms/FormStyledComponents";
 import { getFormikTouched, validateWithYupSchema } from "../forms/utils";
 import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import ListHeader from "../utilities/ListHeader";
+import Scrollbar from "../utilities/Scrollbar";
 import StatusFormItem from "./StatusFormItem";
 
 export interface IStatusListProps {
@@ -305,10 +307,11 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         style={{
           flexDirection: "column",
           width: "100%",
-          padding: "16px",
+          padding: "24px 16px 24px 16px",
         }}
       >
         <Button
+          block
           loading={isSubmitting}
           type="primary"
           onClick={() => {
@@ -342,7 +345,7 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         onCreate={onAddNewStatus}
         onSearchTextChange={noop}
         title="Status"
-        style={{ padding: "16px", paddingTop: "8px" }}
+        style={{ padding: "16px", paddingTop: "8px", paddingRight: "14px" }}
         disabled={
           isSubmitting ||
           formik.values.statusList.length >= blockConstants.maxAvailableLabels
@@ -352,25 +355,32 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
   };
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} className={formClasses.form}>
       <div
         style={{
           height: "100%",
           width: "100%",
-          flexDirection: "column",
-          overflow: "auto",
+          display: "grid",
+          gridTemplateRows: "auto 1fr",
+          gridTemplateColumns: "1fr",
+          overflow: "hidden",
         }}
       >
         {renderAddControls()}
-        {renderList()}
-        <Typography.Paragraph type="secondary" style={{ padding: "24px 16px" }}>
-          You can add resolutions in the{" "}
-          <Typography.Text strong>Resolutions</Typography.Text> tab. Resolutions
-          describe the state of a completed task, like{" "}
-          <Typography.Text strong>"won't do"</Typography.Text>, and{" "}
-          <Typography.Text strong>"done"</Typography.Text>.
-        </Typography.Paragraph>
-        {renderSubmitControls()}
+        <Scrollbar>
+          {renderList()}
+          <Typography.Paragraph
+            type="secondary"
+            style={{ padding: "0px 16px" }}
+          >
+            You can add resolutions in the{" "}
+            <Typography.Text strong>Resolutions</Typography.Text> tab.
+            Resolutions describe the state of a completed task, like{" "}
+            <Typography.Text strong>"won't do"</Typography.Text>, and{" "}
+            <Typography.Text strong>"done"</Typography.Text>.
+          </Typography.Paragraph>
+          {renderSubmitControls()}
+        </Scrollbar>
       </div>
     </form>
   );

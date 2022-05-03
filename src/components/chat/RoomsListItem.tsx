@@ -22,7 +22,9 @@ const RoomsListItem: React.FC<IRoomsListItemProps> = (props) => {
   return (
     <div className={classes.root}>
       <UserAvatar user={room.recipient} />
-      <Typography.Text ellipsis>{room.recipient.name}</Typography.Text>
+      <Typography.Text strong ellipsis>
+        {room.recipient.name}
+      </Typography.Text>
       <div>
         {room.unseenChatsCount ? (
           <Badge

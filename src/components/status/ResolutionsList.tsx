@@ -11,6 +11,7 @@ import useArray from "../hooks/useArray";
 import useFormHelpers from "../hooks/useFormHelpers";
 import { labelValidationSchemas } from "../label/validation";
 import ListHeader from "../utilities/ListHeader";
+import Scrollbar from "../utilities/Scrollbar";
 import ResolutionFormItem from "./ResolutionFormItem";
 
 export interface IResolutionsListProps {
@@ -209,10 +210,10 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         style={{
           flexDirection: "column",
           width: "100%",
-          padding: "32px 16px",
+          padding: "0px 16px 24px 16px",
         }}
       >
-        <Button loading={isSubmitting} type="primary" htmlType="submit">
+        <Button block loading={isSubmitting} type="primary" htmlType="submit">
           Save Changes
         </Button>
       </div>
@@ -251,24 +252,26 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
   const renderMain = () => {
     return (
       <form
-        style={{ width: "100%", height: "100%", flexDirection: "column" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "grid",
+          gridTemplateRows: "auto 1fr",
+        }}
         onSubmit={(e) => {
           formik.handleSubmit(e);
         }}
       >
-        <div>
-          {renderAddControls()}
-          <Typography.Paragraph
-            type="secondary"
-            style={{ padding: "24px 16px 16px 16px" }}
-          >
+        {renderAddControls()}
+        <Scrollbar>
+          <Typography.Paragraph type="secondary" style={{ padding: "16px" }}>
             Resolutions describe the state of a completed task, like "won't do"
             or in the case of a tech product, "deployed" meaning the
             task/feature has been deployed.
           </Typography.Paragraph>
           {renderList()}
           {renderSubmitControls()}
-        </div>
+        </Scrollbar>
       </form>
     );
   };

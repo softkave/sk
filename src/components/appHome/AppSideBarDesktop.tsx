@@ -21,13 +21,12 @@ export interface IAppSideBarDesktopProps {
 
 const classes = {
   root: css({
-    display: "flex",
+    display: "grid",
     height: "100%",
     width: "320px",
     minWidth: "320px",
     borderRight: "2px solid rgb(223, 234, 240)",
-    flexDirection: "column",
-    // overflowY: "auto",
+    gridTemplateRows: "auto 1fr auto",
   }),
   title: css({
     margin: "0px !important",
@@ -45,7 +44,7 @@ const classes = {
   }),
   softkave: css({ fontSize: "16px" }),
   titleLink: css({ color: "inherit !important" }),
-  contentNode: css({ flex: 1 }),
+  contentNode: css({ overflow: "hidden" }),
 };
 
 const routeItems: IAppRoute[] = [
