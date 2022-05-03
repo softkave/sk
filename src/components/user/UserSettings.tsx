@@ -14,53 +14,54 @@ const kAntTabsNavSelector = "& .ant-tabs-nav";
 const kAntTabsTabPane = "& .ant-tabs-tabpane";
 
 const UserSettings: React.FC<IUserSettingsProps> = (props) => {
-    return (
-        <div
-            className={css({
-                flex: 1,
+  return (
+    <div
+      className={css({
+        flex: 1,
 
-                [kAntTabsSelector]: {
-                    height: "100%",
-                },
+        [kAntTabsSelector]: {
+          height: "100%",
+        },
 
-                [kAntTabsContentSelector]: {
-                    height: "100%",
-                },
+        [kAntTabsContentSelector]: {
+          height: "100%",
+        },
 
-                [kAntTabsNavSelector]: {
-                    marginBottom: "0px",
-                },
+        [kAntTabsNavSelector]: {
+          marginBottom: "0px",
+          height: "56px",
+        },
 
-                [kAntTabsTabPane]: {
-                    overflow: "auto",
-                },
-            })}
-        >
-            <Tabs
-                defaultActiveKey="profile"
-                tabBarExtraContent={{
-                    left: (
-                        <span
-                            className={css({
-                                marginLeft: "16px",
-                                display: "inline-block",
-                            })}
-                        ></span>
-                    ),
-                }}
-                moreIcon={<RightOutlined />}
-            >
-                <Tabs.TabPane tab="Profile" key="profile">
-                    <UpdateUserDataFormContainer />
-                    <Divider />
-                    <ChangePasswordFormContainer />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab="Notifications" key="notifications">
-                    <NotificationSettingsContainer />
-                </Tabs.TabPane>
-            </Tabs>
-        </div>
-    );
+        [kAntTabsTabPane]: {
+          overflow: "auto",
+        },
+      })}
+    >
+      <Tabs
+        defaultActiveKey="profile"
+        tabBarExtraContent={{
+          left: (
+            <span
+              className={css({
+                marginLeft: "16px",
+                display: "inline-block",
+              })}
+            ></span>
+          ),
+        }}
+        moreIcon={<RightOutlined />}
+      >
+        <Tabs.TabPane tab="Profile" key="profile">
+          <UpdateUserDataFormContainer />
+          <Divider />
+          <ChangePasswordFormContainer />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Notifications" key="notifications">
+          <NotificationSettingsContainer />
+        </Tabs.TabPane>
+      </Tabs>
+    </div>
+  );
 };
 
 export default UserSettings;

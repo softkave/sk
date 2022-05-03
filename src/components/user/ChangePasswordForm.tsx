@@ -7,6 +7,7 @@ import { userConstants } from "../../models/user/constants";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClasses,
   formClassname,
   formSectionClassname,
 } from "../forms/FormStyledComponents";
@@ -36,7 +37,6 @@ export interface IChangePasswordFormProps {
 
 const ChangePasswordForm: React.FC<IChangePasswordFormProps> = (props) => {
   const { onSubmit, isSubmitting, errors: externalErrors } = props;
-
   const { formik } = useFormHelpers({
     errors: externalErrors,
     formikProps: {
@@ -52,7 +52,6 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = (props) => {
   });
 
   const globalError = getFormError(formik.errors);
-
   const passwordNode = (
     <React.Fragment>
       <Form.Item
@@ -133,9 +132,15 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = (props) => {
   );
 
   return (
-    <div className={formClassname}>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography.Title level={4}>Password</Typography.Title>
+    <form
+      onSubmit={formik.handleSubmit}
+      className={formClasses.form}
+      style={{ height: "auto" }}
+    >
+      <div className={formClasses.formContent}>
+        <Form.Item>
+          <Typography.Title level={4}>Password</Typography.Title>
+        </Form.Item>
         {globalError && (
           <Form.Item>
             <FormError error={globalError} />
@@ -151,8 +156,8 @@ const ChangePasswordForm: React.FC<IChangePasswordFormProps> = (props) => {
             {isSubmitting ? "Changing Password" : "Change Password"}
           </Button>
         </Form.Item>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };
 

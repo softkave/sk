@@ -1,4 +1,3 @@
 - [ ] chat push notification count
-- [ ] collaboration request count chip
 - [ ] email templates
--
+- [ ] some loading states are called several times

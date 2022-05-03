@@ -1,4 +1,4 @@
-import { Space, Typography } from "antd";
+import { Space, Tag, Typography } from "antd";
 import { defaultTo } from "lodash";
 import React from "react";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
@@ -34,7 +34,10 @@ const RequestThumbnail: React.FC<IRequestThumbnailProps> = (props) => {
         <Typography.Text style={{ color: isSelected ? "#1890ff" : undefined }}>
           {request.from?.blockName}
         </Typography.Text>
-        <CollaborationRequestStatus request={request} />
+        <Space size={0}>
+          <CollaborationRequestStatus request={request} />
+          {!request.readAt && <Tag>Unseen</Tag>}
+        </Space>
       </Space>
     </div>
   );

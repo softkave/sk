@@ -28,11 +28,11 @@ import CollaboratorThumbnail from "../collaborator/CollaboratorThumbnail";
 import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
+  formClasses,
   formClassname,
   formContentWrapperStyle,
   formInputContentWrapperStyle,
 } from "../forms/FormStyledComponents";
-import { formStyles } from "../forms/styles";
 import useFormHelpers from "../hooks/useFormHelpers";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import InputWithControls from "../utilities/InputWithControls";
@@ -247,7 +247,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         labelAlign="left"
-        className={formStyles.compactFormItem}
+        className={formClasses.compactFormItem}
       >
         <EditPriority
           onChange={(val: string) => {
@@ -350,7 +350,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
         labelAlign="left"
-        className={formStyles.compactFormItem}
+        className={formClasses.compactFormItem}
       >
         <TaskStatus
           noResolutionModal
