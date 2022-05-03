@@ -8,7 +8,6 @@ import FormError from "../forms/FormError";
 import { getFormError, IFormikFormErrors } from "../forms/formik-utils";
 import {
   formClasses,
-  formClassname,
   formSectionClassname,
 } from "../forms/FormStyledComponents";
 import useFormHelpers from "../hooks/useFormHelpers";

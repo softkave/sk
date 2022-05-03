@@ -3,7 +3,6 @@ import { IChat } from "../../../models/chat/types";
 import ChatAPI, {
   ISendMessageEndpointParameters,
 } from "../../../net/chat/chat";
-import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
 import RoomActions from "../../rooms/actions";
 import RoomSelectors from "../../rooms/selectors";

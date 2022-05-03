@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { IRoom } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import {
-  IGetRoomChatsEndpointParameters,
   ISendMessageEndpointParameters,
   IUpdateRoomReadCounterAPIParameters,
 } from "../../net/chat/chat";

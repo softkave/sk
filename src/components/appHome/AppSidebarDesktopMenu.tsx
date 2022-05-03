@@ -5,7 +5,7 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Space, Tag, Typography } from "antd";
+import { Tag, Typography } from "antd";
 import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
