@@ -279,8 +279,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           } else {
             formik.setFieldValue("taskSprint", {
               sprintId: val,
-              assignedAt: getDateString(),
-              assignedBy: user.customId,
             } as ITaskSprint);
           }
           formikChangedFieldsHelpers.addField("taskSprint");
