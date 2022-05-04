@@ -158,7 +158,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
   );
 
   return (
-    <div style={{ flex: 1 }}>
+    <div style={{ display: "flex", flex: 1 }}>
       {resolutionModalState.showModal && (
         <SelectResolutionModal
           task={task}
@@ -170,7 +170,7 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
           onSelectAddNewResolution={onSelectAddNewResolution}
         />
       )}
-      <div style={{ flex: 1, marginRight: "6px" }}>
+      <div style={{ display: "flex", flex: 1, marginRight: "6px" }}>
         <Dropdown
           disabled={disabled}
           overlay={statusListMenu}

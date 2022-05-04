@@ -28,9 +28,7 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
   } = props;
 
   const selectedResolution = resolutionId ? resolutionsMap[resolutionId] : null;
-
   const getSelectedKeys = () => (resolutionId ? [resolutionId] : []);
-
   const resolutionsListMenu = (
     <Menu
       onClick={(evt) => {
