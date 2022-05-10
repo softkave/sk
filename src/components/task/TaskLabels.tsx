@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Tag, Typography } from "antd";
+import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
 import {
@@ -25,17 +25,13 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
 
   const [visible, setVisible] = React.useState(false);
   const labels = props.labels || [];
-
-  const onAdd = (id: string) => {
+  const onToggle = (id: string) => {
     const i = labels.findIndex((label) => label.customId === id);
 
     if (i === -1) {
-      onChange([
-        ...labels,
-        {
-          customId: id,
-        },
-      ]);
+      onChange([...labels, { customId: id }]);
+    } else {
+      onChange(labels.filter((label, x) => x !== i));
     }
   };
 
@@ -81,7 +77,7 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
       return null;
     });
 
-    return <div>{renderedLabels}</div>;
+    return renderedLabels.length ? <div>{renderedLabels}</div> : null;
   };
 
   const renderAddNewLabel = () => {
@@ -107,12 +103,12 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
             return;
           }
 
-          onAdd(evt.key as string);
+          onToggle(evt.key as string);
         }}
         selectedKeys={labels.map((label) => label.customId)}
       >
-        <Menu.Item key={ADD_NEW_LABEL_KEY}>
-          <PlusOutlined /> Label
+        <Menu.Item key={ADD_NEW_LABEL_KEY} icon={<PlusOutlined />}>
+          Label
         </Menu.Item>
         <Menu.Divider />
         {renderedLabelMenuItems}
@@ -139,10 +135,10 @@ const TaskLabels: React.FC<ITaskLabelsProps> = (props) => {
   };
 
   return (
-    <div style={{ alignItems: "center" }}>
+    <Space direction="vertical" size={"small"} style={{ width: "100%" }}>
       {renderSelectedLabels()}
       {!disabled && renderAddNewLabel()}
-    </div>
+    </Space>
   );
 };
 

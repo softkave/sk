@@ -44,8 +44,8 @@ const SelectTaskSprint: React.FC<ISelectTaskSprintProps> = (props) => {
       style={{ maxHeight: "300px", overflowY: "auto" }} // TODO: custom scroll, and for others like it
       selectedKeys={value ? [value] : undefined}
     >
-      <Menu.Item key={ADD_NEW_SPRINT_KEY}>
-        <PlusOutlined /> {SPRINT}
+      <Menu.Item key={ADD_NEW_SPRINT_KEY} icon={<PlusOutlined />}>
+        {SPRINT}
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key={BACKLOG}>{BACKLOG}</Menu.Item>

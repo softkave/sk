@@ -82,8 +82,7 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
     if (isCurrentSprint) {
       items.push(
-        <Menu.Item key={SprintMenuOptions.END}>
-          <ClockCircleOutlined />
+        <Menu.Item key={SprintMenuOptions.END} icon={<ClockCircleOutlined />}>
           End Sprint
         </Menu.Item>
       );
@@ -91,27 +90,29 @@ const Sprints: React.FC<ISprintsProps> = (props) => {
 
     if (!board.currentSprintId && sprint.customId === sprints[0]?.customId) {
       items.push(
-        <Menu.Item key={SprintMenuOptions.START}>
-          <ClockCircleOutlined />
+        <Menu.Item key={SprintMenuOptions.START} icon={<ClockCircleOutlined />}>
           Start Sprint
         </Menu.Item>
       );
     }
 
-    if (items.length > 0) {
-      items.push(<Menu.Divider key="divider" />);
-    }
+    // if (items.length > 0) {
+    //   items.push(<Menu.Divider key="divider" />);
+    // }
 
     items.push(
-      <Menu.Item key={SprintMenuOptions.EDIT} disabled={isSprintCompleted}>
-        <EditOutlined />
+      <Menu.Item
+        key={SprintMenuOptions.EDIT}
+        disabled={isSprintCompleted}
+        icon={<EditOutlined />}
+      >
         Edit Sprint
       </Menu.Item>,
       <Menu.Item
         key={SprintMenuOptions.DELETE}
         disabled={isCurrentSprint || isSprintCompleted}
+        icon={<DeleteOutlined />}
       >
-        <DeleteOutlined />
         Delete Sprint
       </Menu.Item>
     );

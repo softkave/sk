@@ -14,7 +14,6 @@ import { IBlockAssignedLabel, ITaskAssignee } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
 import { getDateString } from "../../utils/utils";
 import Message from "../Message";
-
 import { ITaskFormValues } from "../task/TaskForm";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
@@ -97,7 +96,6 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
   } = props;
 
   const [dragInfo, setDragInfo] = React.useState<IDragStateInfo | null>(null);
-
   const renderColumnHeader = (group: IBoardGroupedTasks) => {
     const defaultContent = (
       <Space>
@@ -257,7 +255,6 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
       }
 
       const group = groupedTasks.find((item) => groupIdentifierMap[item.id]);
-
       setDragInfo({
         draggableId: before.draggableId,
         groupId: group?.id || emptyGroupId,

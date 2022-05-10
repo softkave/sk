@@ -47,8 +47,8 @@ const TaskResolution: React.FC<ITaskResolutionProps> = (props) => {
       }}
       selectedKeys={getSelectedKeys()}
     >
-      <Menu.Item key={ADD_NEW_RESOLUTION_KEY}>
-        <PlusOutlined /> Resolution
+      <Menu.Item key={ADD_NEW_RESOLUTION_KEY} icon={<PlusOutlined />}>
+        Resolution
       </Menu.Item>
       <Menu.Divider />
       {resolutionsList.map((resolution) => {

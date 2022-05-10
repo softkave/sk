@@ -1,4 +1,0 @@
-- [ ] chat push notification count
-- [ ] some loading states are called several times
-- [ ] mobile view
-- [ ] disabled features

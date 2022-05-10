@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ISprint } from "../../../models/sprint/types";
 import SprintAPI, { IAddSprintAPIParams } from "../../../net/sprint/sprint";
+import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, getNewId, getNewTempId } from "../../../utils/utils";
 import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
@@ -48,11 +49,7 @@ export const addSprintOpAction = createAsyncThunk<
 
     if (!isDemoMode) {
       const result = await SprintAPI.addSprint(arg);
-
-      if (result && result.errors) {
-        throw result.errors;
-      }
-
+      assertEndpointResult(result);
       sprint = result.sprint;
     } else {
       const user = SessionSelectors.assertGetUser(thunkAPI.getState());

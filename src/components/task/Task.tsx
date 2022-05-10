@@ -34,7 +34,6 @@ import BoardStatusResolutionAndLabelsForm, {
 } from "../board/BoardStatusResolutionAndLabelsForm";
 import { getOpData } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
-
 import Priority from "./Priority";
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskSubTasksContainer from "./TaskSubTasksContainer";
@@ -181,18 +180,12 @@ const Task: React.FC<ITaskProps> = (props) => {
 
   const menu = (
     <Menu onClick={menuOnClick}>
-      <Menu.Item key="edit" disabled={demo}>
-        <Space>
-          <EditOutlined />
-          Edit Task
-        </Space>
+      <Menu.Item key="edit" disabled={demo} icon={<EditOutlined />}>
+        Edit Task
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="delete" disabled={demo}>
-        <Space>
-          <DeleteOutlined />
-          Delete Task
-        </Space>
+      <Menu.Item key="delete" disabled={demo} icon={<DeleteOutlined />}>
+        Delete Task
       </Menu.Item>
     </Menu>
   );

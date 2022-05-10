@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Menu, Space } from "antd";
+import { Menu } from "antd";
 import React from "react";
 import { MoreHorizontal } from "react-feather";
 import { getBlockTypeLabel } from "../../models/block/block";
@@ -51,11 +51,9 @@ const OrgHeaderOptionsMenu: React.FC<IOrgHeaderOptionsMenuProps> = (props) => {
           <Menu.Item
             style={{ textTransform: "capitalize" }}
             key={OrgHeaderSettingsMenuKey.EDIT}
+            icon={<EditOutlined />}
           >
-            <Space align="center" size={12}>
-              <EditOutlined />
-              <span>Edit {getBlockTypeLabel(block.type)}</span>
-            </Space>
+            <span>Edit {getBlockTypeLabel(block.type)}</span>
           </Menu.Item>
         </Menu>
       );

@@ -19,8 +19,6 @@ export interface IAppSidebarDesktopMenuProps {
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
 
-const kAntMenuItemSelector = "& .ant-menu-item";
-const kAntMenuSelector = "& .ant-menu";
 const classes = {
   root: css({
     display: "flex",
@@ -30,9 +28,8 @@ const classes = {
     width: "100%",
   }),
   menu: css({
-    [kAntMenuItemSelector]: {
+    "& .ant-menu-item": {
       lineHeight: "24px",
-      height: "auto",
       padding: "8px 0px",
       margin: 0,
       marginBottom: "0px !important",
@@ -42,7 +39,7 @@ const classes = {
       paddingTop: 0,
     },
 
-    [kAntMenuSelector]: {
+    "& .ant-menu": {
       width: "100%",
     },
   }),

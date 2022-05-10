@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { IBoard } from "../../../models/board/types";
 import SprintAPI from "../../../net/sprint/sprint";
+import { assertEndpointResult } from "../../../net/utils";
 import { getNewId } from "../../../utils/utils";
 import BoardActions from "../../boards/actions";
 import BoardSelectors from "../../boards/selectors";
@@ -48,10 +49,7 @@ export const deleteSprintOpAction = createAsyncThunk<
 
     if (!isDemoMode) {
       const result = await SprintAPI.deleteSprint(arg.sprintId);
-
-      if (result && result.errors) {
-        throw result.errors;
-      }
+      assertEndpointResult(result);
     }
 
     completeDeleteSprint(thunkAPI, arg.sprintId);

@@ -114,8 +114,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
       }}
       selectedKeys={getSelectedKeys()}
     >
-      <Menu.Item key={ADD_NEW_STATUS_KEY}>
-        <PlusOutlined /> Status
+      <Menu.Item key={ADD_NEW_STATUS_KEY} icon={<PlusOutlined />}>
+        Status
       </Menu.Item>
       <Menu.Divider key="divider-01" />
       {statusList.map((status) => {

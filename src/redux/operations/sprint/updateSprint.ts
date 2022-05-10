@@ -23,6 +23,7 @@ import {
 import OperationType from "../OperationType";
 import OperationSelectors from "../selectors";
 import { GetOperationActionArgs } from "../types";
+import { removeAsyncOpParams } from "../utils";
 
 export const updateSprintOpAction = createAsyncThunk<
   IOperation | undefined,
@@ -51,10 +52,7 @@ export const updateSprintOpAction = createAsyncThunk<
     if (!isDemoMode) {
       const result = await SprintAPI.updateSprint({
         sprintId: arg.sprintId,
-        data: {
-          name: arg.data.name,
-          duration: arg.data.duration,
-        },
+        data: removeAsyncOpParams(arg.data),
       });
 
       assertEndpointResult(result);
