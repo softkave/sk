@@ -286,8 +286,14 @@ const Board: React.FC<IBoardProps> = (props) => {
     }
 
     return (
-      <div style={{ flexDirection: "column", width: "100%", flex: 1 }}>
-        <div style={{ margin: "16px 16px 0px 16px" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gridTemplateRows: "auto 1fr",
+        }}
+      >
+        <div style={{ margin: "16px" }}>
           <CurrentSprintHeader board={board} />
         </div>
         {content}

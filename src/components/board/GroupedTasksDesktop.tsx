@@ -1,4 +1,4 @@
-import { css, cx } from "@emotion/css";
+import { css } from "@emotion/css";
 import { Badge, Space, Typography } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
@@ -71,15 +71,15 @@ const classes = {
   column: css({
     width: "320px",
     minWidth: "320px",
-    marginLeft: "16px",
     flex: "initial !important",
   }),
-  lastColumn: css({
-    width: `${320 + 16}px !important`,
-    marginLeft: "16px",
-    marginRight: "16px",
+  root: css({
+    overflowX: "auto",
+    marginTop: "8px",
+    display: "grid",
+    gridGap: "16px",
+    padding: "0px 16px",
   }),
-  root: css({ overflowX: "auto", marginTop: "22px", display: "flex" }),
   taskList: css({ height: "100%" }),
 };
 
@@ -196,9 +196,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
             }
           </Droppable>
         }
-        className={cx(classes.column, {
-          [classes.lastColumn]: i === groupedTasks.length - 1,
-        })}
+        className={classes.column}
       />
     );
   };
@@ -328,7 +326,14 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
 
   return (
     <DragDropContext onBeforeCapture={onBeforeCapture} onDragEnd={onDragEnd}>
-      <div className={classes.root}>{renderGroups()}</div>
+      <div
+        className={classes.root}
+        style={{
+          gridTemplateColumns: groupedTasks.map(() => "1fr").join(" "),
+        }}
+      >
+        {renderGroups()}
+      </div>
     </DragDropContext>
   );
 };
