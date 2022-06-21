@@ -1,3 +1,4 @@
+import * as yup from "yup";
 import {
   IChat,
   IRoom,
@@ -6,6 +7,7 @@ import {
 import { OutgoingSocketEvents } from "../socket/outgoingEventTypes";
 import SocketAPI from "../socket/socket";
 import { IEndpointResultBase } from "../types";
+import { endpointYupOptions } from "../utils";
 
 export interface IPersistedRoom {
   customId: string;
@@ -46,10 +48,17 @@ export interface ISendMessageEndpointResult extends IEndpointResultBase {
   chat: IChat;
 }
 
+const sendMessageYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+  message: yup.string().required(),
+  roomId: yup.string().required(),
+  localId: yup.string(),
+});
+
 async function sendMessage(props: ISendMessageEndpointParameters) {
   return SocketAPI.promisifiedEmit<ISendMessageEndpointResult>(
     OutgoingSocketEvents.SendMessage,
-    props
+    sendMessageYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 
@@ -62,10 +71,15 @@ export interface IAddRoomEndpointResult extends IEndpointResultBase {
   room: IPersistedRoom;
 }
 
+const addRoomYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+  recipientId: yup.string().required(),
+});
+
 async function addRoom(props: IAddRoomEndpointParameters) {
   return SocketAPI.promisifiedEmit<IAddRoomEndpointResult>(
     OutgoingSocketEvents.AddRoom,
-    props
+    addRoomYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 
@@ -77,10 +91,14 @@ export interface IGetRoomsEndpointResult extends IEndpointResultBase {
   rooms: IPersistedRoom[];
 }
 
+const getRoomsYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+});
+
 async function getRooms(props: IGetRoomsEndpointParameters) {
   return SocketAPI.promisifiedEmit<IGetRoomsEndpointResult>(
     OutgoingSocketEvents.GetRooms,
-    props
+    getRoomsYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 
@@ -92,10 +110,14 @@ export interface IGetRoomChatsEndpointResult extends IEndpointResultBase {
   chats: IChat[];
 }
 
+const getRoomChatsYupSchema = yup.object().shape({
+  roomId: yup.string().required(),
+});
+
 async function getRoomChats(props: IGetRoomChatsEndpointParameters) {
   return SocketAPI.promisifiedEmit<IGetRoomChatsEndpointResult>(
     OutgoingSocketEvents.GetRoomChats,
-    props
+    getRoomChatsYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 
@@ -112,12 +134,17 @@ export interface IGetRoomsUnseenChatsCountEndpointResult
   }>;
 }
 
+const getRoomsUnseenChatsCountYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+  roomIds: yup.array().of(yup.string()).required(),
+});
+
 async function getRoomsUnseenChatsCount(
   props: IGetRoomsUnseenChatsCountEndpointParameters
 ) {
   return SocketAPI.promisifiedEmit<IGetRoomsUnseenChatsCountEndpointResult>(
     OutgoingSocketEvents.GetRoomsUnseenChatsCount,
-    props
+    getRoomsUnseenChatsCountYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 
@@ -130,12 +157,19 @@ export interface IGetOrganizationUnseenChatsCountEndpointResult
   count: number;
 }
 
+const getOrganizationUnseenChatsCountYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+});
+
 async function getOrganizationUnseenChatsCount(
   props: IGetOrganizationUnseenChatsCountEndpointParameters
 ) {
   return SocketAPI.promisifiedEmit<IGetOrganizationUnseenChatsCountEndpointResult>(
     OutgoingSocketEvents.GetOrganizationUnseenChatsCount,
-    props
+    getOrganizationUnseenChatsCountYupSchema.validateSync(
+      props,
+      endpointYupOptions
+    )
   );
 }
 
@@ -151,12 +185,18 @@ export interface IUpdateRoomReadCounterEndpointResult
   room: IRoom;
 }
 
+const updateRoomReadCounterYupSchema = yup.object().shape({
+  orgId: yup.string().required(),
+  roomId: yup.string().required(),
+  readCounter: yup.string().required(),
+});
+
 async function updateRoomReadCounter(
   props: IUpdateRoomReadCounterAPIParameters
 ) {
   return SocketAPI.promisifiedEmit<IUpdateRoomReadCounterEndpointResult>(
     OutgoingSocketEvents.UpdateRoomReadCounter,
-    props
+    updateRoomReadCounterYupSchema.validateSync(props, endpointYupOptions)
   );
 }
 

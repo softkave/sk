@@ -1,5 +1,4 @@
 import { css } from "@emotion/css";
-import React from "react";
 import { Route, Switch } from "react-router-dom";
 import LoginContainer from "../components/login/LoginContainer";
 import ChangePasswordWithTokenContainer from "../components/password/ChangePasswordWithTokenContainer";

@@ -1,39 +1,46 @@
-import queryWithAuth, { isUserSignedIn } from "../auth";
-import query from "../query";
+import * as yup from "yup";
+import { invokeEndpoint, invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResultError, IEndpointResultBase } from "../types";
-import { sendFeedbackMutation } from "./schema";
+import { endpointYupOptions, isUserSignedIn } from "../utils";
+
+const basePath = "/system";
+const sendFeedbackPath = `${basePath}/sendFeedback`;
 
 export interface ISendFeedbackEndpointParams {
-    feedback: string;
-    description?: string;
-    notifyEmail?: string;
+  feedback: string;
+  description?: string;
+  notifyEmail?: string;
 }
 
 export type ISendFeedbackEndpointResult = IEndpointResultBase;
-export type ISendFeedbackEndpointErrors = GetEndpointResultError<
-    ISendFeedbackEndpointParams
->;
+export type ISendFeedbackEndpointErrors =
+  GetEndpointResultError<ISendFeedbackEndpointParams>;
+
+const sendFeedbackYupSchema = yup.object().shape({
+  feedback: yup.string().required(),
+  description: yup.string(),
+  notifyEmail: yup.string(),
+});
 
 async function sendFeedback(
-    props: ISendFeedbackEndpointParams
+  props: ISendFeedbackEndpointParams
 ): Promise<ISendFeedbackEndpointResult> {
-    if (isUserSignedIn()) {
-        return queryWithAuth(
-            null,
-            sendFeedbackMutation,
-            props,
-            "data.system.sendFeedback"
-        );
-    } else {
-        return query(
-            null,
-            sendFeedbackMutation,
-            props,
-            "data.system.sendFeedback"
-        );
-    }
+  const data = sendFeedbackYupSchema.validateSync(props, endpointYupOptions);
+  if (isUserSignedIn()) {
+    return invokeEndpointWithAuth<ISendFeedbackEndpointResult>({
+      data,
+      path: sendFeedbackPath,
+      apiType: "REST",
+    });
+  } else {
+    return invokeEndpoint<ISendFeedbackEndpointResult>({
+      data,
+      path: sendFeedbackPath,
+      apiType: "REST",
+    });
+  }
 }
 
 export default class SystemAPI {
-    public static sendFeedback = sendFeedback;
+  public static sendFeedback = sendFeedback;
 }

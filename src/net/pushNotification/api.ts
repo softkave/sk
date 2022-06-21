@@ -1,75 +1,85 @@
-import query from "../query";
+import * as yup from "yup";
+import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResultError, IEndpointResultBase } from "../types";
-import {
-    getPushSubscriptionKeysQuery,
-    pushSubscriptionExistsQuery,
-    subscribePushSubscriptionMutation,
-    unsubscribePushSubscriptionMutation,
-} from "./schema";
+import { endpointYupOptions } from "../utils";
+
+const basePath = "/pushNotification";
+const getPushNotificationKeysPath = `${basePath}/getPushNotificationKeys`;
+const subscribePushNotificationPath = `${basePath}/subscribePushNotification`;
+const unsubscribePushNotificationPath = `${basePath}/unsubscribePushNotification`;
+const pushSubscriptionExistsPath = `${basePath}/pushSubscriptionExists`;
 
 export interface IGetPushNotificationKeysResult extends IEndpointResultBase {
-    vapidPublicKey?: string;
+  vapidPublicKey?: string;
 }
 
 async function getPushNotificationKeys(): Promise<IGetPushNotificationKeysResult> {
-    return query(
-        null,
-        getPushSubscriptionKeysQuery,
-        {},
-        "data.pushSubscription.getPushSubscriptionKeys"
-    );
+  return invokeEndpointWithAuth<IGetPushNotificationKeysResult>({
+    path: getPushNotificationKeysPath,
+    apiType: "REST",
+  });
 }
 
 export interface IPushSubscriptionExistsResult extends IEndpointResultBase {
-    exists?: boolean;
+  exists?: boolean;
 }
 
+const subscribePushNotificationYupSchema = yup.object().shape({
+  endpoint: yup.string().required(),
+  keys: yup.object().shape({
+    p256dh: yup.string().required(),
+    auth: yup.string().required(),
+  }),
+});
+
 async function pushSubscriptionExists(
-    props: ISubscribePushNotificationEndpointParams
+  props: ISubscribePushNotificationEndpointParams
 ): Promise<IPushSubscriptionExistsResult> {
-    return query(
-        null,
-        pushSubscriptionExistsQuery,
-        props,
-        "data.pushSubscription.pushSubscriptionExists"
-    );
+  return invokeEndpointWithAuth<IPushSubscriptionExistsResult>({
+    path: pushSubscriptionExistsPath,
+    apiType: "REST",
+    data: subscribePushNotificationYupSchema.validateSync(
+      props,
+      endpointYupOptions
+    ),
+  });
 }
 
 export interface ISubscribePushNotificationEndpointParams {
-    endpoint: string;
-    keys: {
-        p256dh: string;
-        auth: string;
-    };
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
 }
 
 export type ISubscribePushNotificationEndpointResult = IEndpointResultBase;
 export type ISubscribePushNotificationEndpointErrors =
-    GetEndpointResultError<ISubscribePushNotificationEndpointParams>;
+  GetEndpointResultError<ISubscribePushNotificationEndpointParams>;
 
 async function subscribePushNotification(
-    props: ISubscribePushNotificationEndpointParams
+  props: ISubscribePushNotificationEndpointParams
 ): Promise<ISubscribePushNotificationEndpointResult> {
-    return query(
-        null,
-        subscribePushSubscriptionMutation,
-        props,
-        "data.pushSubscription.subscribePushSubscription"
-    );
+  return invokeEndpointWithAuth<ISubscribePushNotificationEndpointResult>({
+    path: subscribePushNotificationPath,
+    apiType: "REST",
+    data: subscribePushNotificationYupSchema.validateSync(
+      props,
+      endpointYupOptions
+    ),
+  });
 }
 
 async function unsubscribePushNotification(): Promise<IEndpointResultBase> {
-    return query(
-        null,
-        unsubscribePushSubscriptionMutation,
-        {},
-        "data.pushSubscription.unsubscribePushSubscription"
-    );
+  return invokeEndpointWithAuth<IEndpointResultBase>({
+    path: unsubscribePushNotificationPath,
+    apiType: "REST",
+  });
 }
 
 export default class PushNotificationAPI {
-    public static getPushNotificationKeys = getPushNotificationKeys;
-    public static subscribePushNotification = subscribePushNotification;
-    public static unsubscribePushNotification = unsubscribePushNotification;
-    public static pushSubscriptionExists = pushSubscriptionExists;
+  public static getPushNotificationKeys = getPushNotificationKeys;
+  public static subscribePushNotification = subscribePushNotification;
+  public static unsubscribePushNotification = unsubscribePushNotification;
+  public static pushSubscriptionExists = pushSubscriptionExists;
 }

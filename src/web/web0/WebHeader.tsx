@@ -14,8 +14,9 @@ const classes = {
   menu: css({
     flexDirection: "column",
     width: "100%",
-    padding: "16px 0",
-    paddingTop: "8px",
+    display: "flex", 
+    alignItems: "flex-end",
+    padding: "16px"
   }),
   oneRoot: css({ flex: 1, display: "flex" }),
   oneRootInner: css({
