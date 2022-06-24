@@ -5,12 +5,14 @@ import {
   KeyValueKeys,
 } from "../../../redux/key-value/types";
 import store from "../../../redux/store";
+import { endpointYupOptions } from "../../utils";
 import {
   IOutgoingSubscribePacket,
   OutgoingSocketEvents,
 } from "../outgoingEventTypes";
 import { getSocketRoomInfo, getSocketRoomName } from "../roomNameHelpers";
 import SocketAPI from "../socket";
+import { roomItemsYupSchema } from "./subscribeEvent";
 
 export default async function unsubcribeEvent(
   items?: ClientSubscribedResources
@@ -38,6 +40,11 @@ export default async function unsubcribeEvent(
       return !!rooms[roomId];
     });
   }
+
+  items = roomItemsYupSchema.validateSync(
+    items,
+    endpointYupOptions
+  ) as ClientSubscribedResources;
 
   if (items.length === 0) {
     return;

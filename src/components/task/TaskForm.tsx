@@ -18,7 +18,7 @@ import { ICollaborator } from "../../models/collaborator/types";
 import { ISprint } from "../../models/sprint/types";
 import { INewTaskInput, ISubTaskInput, ITask } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
-import { getDateString, indexArray } from "../../utils/utils";
+import { indexArray } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import BoardStatusResolutionAndLabelsForm, {

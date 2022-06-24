@@ -1,3 +1,4 @@
+import * as yup from "yup";
 import {
   INewOrganizationInput,
   IOrganization,
@@ -5,6 +6,7 @@ import {
 } from "../../models/organization/types";
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResult } from "../types";
+import { endpointYupOptions } from "../utils";
 
 const baseURL = "/organizations";
 
@@ -16,10 +18,21 @@ export type ICreateOrganizationEndpointResult = GetEndpointResult<{
   organization: IOrganization;
 }>;
 
+const createOrganizationYupSchema = yup.object().shape({
+  organization: yup
+    .object()
+    .shape({
+      name: yup.string().required(),
+      description: yup.string(),
+      color: yup.string().required(),
+    })
+    .required(),
+});
+
 async function createOrganization(props: ICreateOrganizationEndpointParams) {
   return invokeEndpointWithAuth<ICreateOrganizationEndpointResult>({
     path: `${baseURL}/createOrganization`,
-    data: props,
+    data: createOrganizationYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }
@@ -43,10 +56,14 @@ export type IOrganizationExistsEndpointResult = GetEndpointResult<{
   exists: boolean;
 }>;
 
+const organizationExistsYupSchema = yup.object().shape({
+  name: yup.string().required(),
+});
+
 async function organizationExists(props: IOrganizationExistsEndpointParams) {
   return await invokeEndpointWithAuth<IOrganizationExistsEndpointResult>({
     path: `${baseURL}/organizationExists`,
-    data: props,
+    data: organizationExistsYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }
@@ -60,10 +77,22 @@ export type IUpdateOrganizationEndpointResult = GetEndpointResult<{
   organization: IOrganization;
 }>;
 
+const updateOrganizationYupSchema = yup.object().shape({
+  organizationId: yup.string().required(),
+  data: yup
+    .object()
+    .shape({
+      name: yup.string(),
+      description: yup.string(),
+      color: yup.string(),
+    })
+    .required(),
+});
+
 async function updateOrganization(props: IUpdateOrganizationEndpointParams) {
   return await invokeEndpointWithAuth<IUpdateOrganizationEndpointResult>({
     path: `${baseURL}/updateOrganization`,
-    data: props,
+    data: updateOrganizationYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }

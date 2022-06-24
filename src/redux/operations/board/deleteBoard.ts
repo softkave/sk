@@ -3,7 +3,9 @@ import BoardAPI, {
 } from "../../../net/board/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import BoardActions from "../../boards/actions";
+import SprintActions from "../../sprints/actions";
 import SprintSelectors from "../../sprints/selectors";
+import TaskActions from "../../tasks/actions";
 import { getBoardTasks } from "../../tasks/selectors";
 import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
@@ -30,12 +32,14 @@ export const deleteBoardOpAction = makeAsyncOp(
 
 function deleteBoardTasks(thunkAPI: IStoreLikeObject, boardId: string) {
   const tasks = getBoardTasks(thunkAPI.getState(), boardId);
-  thunkAPI.dispatch(tasks.map((item) => item.customId));
+  thunkAPI.dispatch(TaskActions.bulkDelete(tasks.map((item) => item.customId)));
 }
 
 function deleteBoardSprints(thunkAPI: IStoreLikeObject, boardId: string) {
   const sprints = SprintSelectors.getBoardSprints(thunkAPI.getState(), boardId);
-  thunkAPI.dispatch(sprints.map((item) => item.customId));
+  thunkAPI.dispatch(
+    SprintActions.bulkDeleteSprints(sprints.map((item) => item.customId))
+  );
 }
 
 export function completeDeleteBoard(

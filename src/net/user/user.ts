@@ -8,7 +8,7 @@ import {
 } from "../types";
 import { endpointYupOptions } from "../utils";
 
-const userBasePath = "/sprints";
+const userBasePath = "/user";
 const clientsBasePath = "/clients";
 const signupPath = `${userBasePath}/signup`;
 const loginPath = `${userBasePath}/login`;
@@ -58,7 +58,7 @@ export interface ILoginAPIProps {
 }
 
 const loginYupSchema = yup.object().shape({
-  name: yup.string().required(),
+  email: yup.string().required(),
   password: yup.string().required(),
 });
 

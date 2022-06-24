@@ -1,16 +1,17 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { appRequestsPaths } from "../../models/app/routes";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { getUserRequestsFromStore } from "../../redux/collaborationRequests/selectors";
 import { getUserRequestsOpAction } from "../../redux/operations/collaborationRequest/getUserRequests";
 import OperationType from "../../redux/operations/OperationType";
 import { IAppState } from "../../redux/types";
+import { useAppDispatch } from "../hooks/redux";
 import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
-import { appRequestsPaths } from "../../models/app/routes";
 
 export function useUserRequests() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const loadRequests = React.useCallback(
     async (loadRequestsProps: IOperationDerivedData) => {
       const operation = loadRequestsProps.operation;

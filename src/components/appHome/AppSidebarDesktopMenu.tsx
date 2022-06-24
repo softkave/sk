@@ -74,6 +74,7 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
       ) : null}
     </span>
   );
+
   const unseenChatsCountNode = (
     <span>
       {unseenChatsCount ? (
@@ -83,6 +84,7 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
       ) : null}
     </span>
   );
+
   return (
     <div className={classes.root} onClick={() => setShowMenu(!showMenu)}>
       {showMenu && (

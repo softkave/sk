@@ -3,7 +3,11 @@ import { defaultTo } from "lodash";
 import isString from "lodash/isString";
 import SessionSelectors from "../redux/session/selectors";
 import store from "../redux/store";
-import UserSessionStorageFns from "../storage/userSession";
+import {
+  default as UserSessionStorageFns,
+  default as UserSessionStorageFuncs,
+  sessionVariables,
+} from "../storage/userSession";
 import { getGraphQLServerAddr, getRESTServerAddr } from "./addr";
 import { processServerRecommendedActions } from "./serverRecommendedActions";
 import { IAppError, IEndpointResultBase } from "./types";
@@ -48,10 +52,15 @@ export async function invokeEndpoint<T extends IEndpointResultBase>(
   const { data, path, basePath, apiType } = props;
 
   try {
+    const clientId = UserSessionStorageFuncs.getItem(sessionVariables.clientId);
     const headers = {
       "Content-Type": "application/json",
       ...(props.headers || {}),
     };
+
+    if (clientId) {
+      headers["x-client-id"] = clientId;
+    }
 
     const fullPath =
       defaultTo(

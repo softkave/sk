@@ -11,14 +11,17 @@ export interface IMessageListProps {
 }
 
 const classes = {
-  root: css({
+  fill: css({
     display: "flex",
     flexDirection: "column",
-    justifyContent: "flex-start",
-    maxWidth: "400px",
-    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
     padding: "0 16px",
     height: "100%",
+  }),
+  content: css({
+    maxWidth: "400px",
   }),
 };
 
@@ -44,7 +47,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
 
   // TODO: implement a better key for the items
   const content = (
-    <div style={{}}>
+    <div className={classes.content}>
       {errorList.map((error, index) => (
         <React.Fragment key={error.name ? `${error.name}-${index}` : index}>
           <Message message={error} listIndex={index} />
@@ -55,7 +58,7 @@ const MessageList: React.FC<IMessageListProps> = (props) => {
   );
 
   if (fill) {
-    return <div className={classes.root}>{content}</div>;
+    return <div className={classes.fill}>{content}</div>;
   }
 
   return content;

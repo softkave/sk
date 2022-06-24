@@ -7,13 +7,7 @@ import { Button, Form, Input, Space, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-import {
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Trash2,
-  X as CloseIcon,
-} from "react-feather";
+import { Check, Trash2, X as CloseIcon } from "react-feather";
 import { IBlockStatusInput } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
 import ColorPicker from "../forms/ColorPicker";

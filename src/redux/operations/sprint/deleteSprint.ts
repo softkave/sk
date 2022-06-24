@@ -76,6 +76,10 @@ export function completeDeleteSprint(
 ) {
   const boardUpdates: Partial<IBoard> = {};
   const sprint = SprintSelectors.getSprint(thunkAPI.getState(), sprintId);
+  if (!sprint) {
+    return;
+  }
+
   const board = BoardSelectors.assertGetOne(
     thunkAPI.getState(),
     sprint.boardId

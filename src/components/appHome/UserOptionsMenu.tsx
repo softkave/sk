@@ -42,7 +42,7 @@ const classes = {
       margin: "0px !important",
     },
   }),
-  menuItem: css({
+  menuItemContent: css({
     display: "grid",
     gridTemplateColumns: "auto 1fr auto",
     columnGap: 16,
@@ -71,7 +71,6 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
   );
   const selectedKey = React.useMemo(() => {
     if (routeMatch) {
-      console.log(routeMatch);
       switch (routeMatch.url) {
         case appLoggedInPaths.organizations:
           return UserOptionsMenuKeys.Organizations;
@@ -83,6 +82,35 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
     }
     return UserOptionsMenuKeys.Organizations;
   }, [routeMatch]);
+
+  const menuItemNodes: React.ReactNode[] = [];
+  items.map((item) => {
+    const contentNode = (
+      <div className={classes.menuItemContent}>
+        <span className={classes.menuItemIcon}>{item.icon}</span>
+        <span>{item.text}</span>
+        <span>
+          {item.text === UserOptionsMenuKeys.Requests && unseenRequestsCount ? (
+            <Badge
+              count={unseenRequestsCount}
+              style={{ backgroundColor: "#1890ff" }}
+            />
+          ) : null}
+        </span>
+      </div>
+    );
+
+    menuItemNodes.push(
+      <Menu.Item
+        key={item.text}
+        style={{ height: "34px", display: "flex", alignItems: "center" }}
+      >
+        {contentNode}
+      </Menu.Item>,
+      <Menu.Divider key={`${item.text}-divider`} />
+    );
+  });
+
   return (
     <div className={cx(className, classes.root)} style={style}>
       <Menu
@@ -92,29 +120,7 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
         style={{ minWidth: "120px" }}
         selectedKeys={[selectedKey]}
       >
-        {items.map((item) => {
-          const contentNode = (
-            <div className={classes.menuItem}>
-              <span className={classes.menuItemIcon}>{item.icon}</span>
-              <span>{item.text}</span>
-              <span>
-                {item.text === UserOptionsMenuKeys.Requests &&
-                unseenRequestsCount ? (
-                  <Badge
-                    count={unseenRequestsCount}
-                    style={{ backgroundColor: "#1890ff" }}
-                  />
-                ) : null}
-              </span>
-            </div>
-          );
-          return (
-            <React.Fragment key={item.text}>
-              <Menu.Item key={item.text}>{contentNode}</Menu.Item>
-              <Menu.Divider key={`${item.text}-divider`} />
-            </React.Fragment>
-          );
-        })}
+        {menuItemNodes}
       </Menu>
     </div>
   );

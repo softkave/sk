@@ -1,3 +1,5 @@
+import assert from "assert";
+import * as yup from "yup";
 import KeyValueActions from "../../../redux/key-value/actions";
 import KeyValueSelectors from "../../../redux/key-value/selectors";
 import {
@@ -5,6 +7,7 @@ import {
   KeyValueKeys,
 } from "../../../redux/key-value/types";
 import store from "../../../redux/store";
+import { endpointYupOptions } from "../../utils";
 import {
   IOutgoingSubscribePacket,
   OutgoingSocketEvents,
@@ -12,7 +15,21 @@ import {
 import { getSocketRoomName } from "../roomNameHelpers";
 import SocketAPI from "../socket";
 
+export const roomItemsYupSchema = yup.array().of(
+  yup.object().shape({
+    customId: yup.string(),
+    type: yup.string(),
+    subRoom: yup.string(),
+  })
+);
+
 export default function subscribeEvent(items: ClientSubscribedResources) {
+  items = roomItemsYupSchema.validateSync(
+    items,
+    endpointYupOptions
+  ) as ClientSubscribedResources;
+
+  assert(items);
   if (items.length > 0) {
     const data: IOutgoingSubscribePacket = { rooms: items };
     const roomsToPush: string[] = [];

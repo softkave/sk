@@ -1,11 +1,13 @@
+import * as yup from "yup";
 import {
-  INewCollaboratorInput,
   ICollaborationRequest,
+  INewCollaboratorInput,
 } from "../../models/collaborationRequest/types";
 import { CollaborationRequestResponse } from "../../models/notification/notification";
 import { IOrganization } from "../../models/organization/types";
 import { invokeEndpointWithAuth } from "../invokeEndpoint";
 import { GetEndpointResult } from "../types";
+import { endpointYupOptions } from "../utils";
 
 const baseURL = "/collaborationRequests";
 
@@ -18,10 +20,18 @@ export type IAddCollaboratorsEndpointResult = GetEndpointResult<{
   requests: ICollaborationRequest[];
 }>;
 
+const addCollaboratorsYupSchema = yup.object().shape({
+  organizationId: yup.string().required(),
+  collaborators: yup
+    .array()
+    .of(yup.object().shape({ email: yup.string().required() }))
+    .required(),
+});
+
 async function addCollaborators(props: IAddCollaboratorsEndpointParams) {
   return invokeEndpointWithAuth<IAddCollaboratorsEndpointResult>({
     path: `${baseURL}/addCollaborators`,
-    data: props,
+    data: addCollaboratorsYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }
@@ -34,12 +44,19 @@ export type IGetOrganizationRequestsEndpointResult = GetEndpointResult<{
   requests: ICollaborationRequest[];
 }>;
 
+const getOrganizationRequestsYupSchema = yup.object().shape({
+  organizationId: yup.string().required(),
+});
+
 async function getOrganizationRequests(
   props: IGetOrganizationRequestsEndpointParams
 ) {
   return invokeEndpointWithAuth<IGetOrganizationRequestsEndpointResult>({
     path: `${baseURL}/getOrganizationRequests`,
-    data: props,
+    data: getOrganizationRequestsYupSchema.validateSync(
+      props,
+      endpointYupOptions
+    ),
     apiType: "REST",
   });
 }
@@ -63,10 +80,14 @@ export type IMarkRequestReadEndpointResult = GetEndpointResult<{
   request: ICollaborationRequest;
 }>;
 
+const markRequestReadYupSchema = yup.object().shape({
+  requestId: yup.string().required(),
+});
+
 async function markRequestRead(props: IMarkRequestReadEndpointParams) {
   return invokeEndpointWithAuth<IMarkRequestReadEndpointResult>({
     path: `${baseURL}/markRequestRead`,
-    data: props,
+    data: markRequestReadYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }
@@ -82,10 +103,15 @@ export type IRespondToRequestEndpointResult = GetEndpointResult<{
   request: ICollaborationRequest;
 }>;
 
+const respondToRequestYupSchema = yup.object().shape({
+  requestId: yup.string().required(),
+  response: yup.string().required(),
+});
+
 async function respondToRequest(props: IRespondToRequestEndpointParams) {
   return invokeEndpointWithAuth<IRespondToRequestEndpointResult>({
     path: `${baseURL}/respondToRequest`,
-    data: props,
+    data: respondToRequestYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }
@@ -99,10 +125,15 @@ export type IRevokeRequestEndpointResult = GetEndpointResult<{
   request: ICollaborationRequest;
 }>;
 
+const revokeRequestYupSchema = yup.object().shape({
+  requestId: yup.string().required(),
+  organizationId: yup.string().required(),
+});
+
 async function revokeRequest(props: IRevokeRequestEndpointParams) {
   return invokeEndpointWithAuth<IRevokeRequestEndpointResult>({
     path: `${baseURL}/revokeRequest`,
-    data: props,
+    data: revokeRequestYupSchema.validateSync(props, endpointYupOptions),
     apiType: "REST",
   });
 }

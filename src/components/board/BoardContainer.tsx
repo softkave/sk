@@ -1,17 +1,18 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import OperationType from "../../redux/operations/OperationType";
-import { getBoardOpAction } from "../../redux/operations/board/getBoard";
-import { IAppState } from "../../redux/types";
-import MessageList from "../MessageList";
-import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
-import LoadingEllipsis from "../utilities/LoadingEllipsis";
+import { useSelector } from "react-redux";
 import { IBoard } from "../../models/board/types";
+import { messages } from "../../models/messages";
 import BoardSelectors from "../../redux/boards/selectors";
+import { getBoardOpAction } from "../../redux/operations/board/getBoard";
+import OperationType from "../../redux/operations/OperationType";
+import { IAppState } from "../../redux/types";
+import { useAppDispatch } from "../hooks/redux";
+import useOperation, { IOperationDerivedData } from "../hooks/useOperation";
+import MessageList from "../MessageList";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardInternalDataContainer, {
   IBoardInternalDataContainerProps,
 } from "./BoardInternalDataContainer";
-import { messages } from "../../models/messages";
 
 export interface IBoardContainerProps
   extends Omit<IBoardInternalDataContainerProps, "board" | "organizationId"> {
@@ -20,7 +21,7 @@ export interface IBoardContainerProps
 
 const BoardContainer: React.FC<IBoardContainerProps> = (props) => {
   const { boardId } = props;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const board = useSelector<IAppState, IBoard | undefined>((state) =>
     BoardSelectors.getOne(state, boardId)
   );

@@ -1,13 +1,14 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import KeyValueActions from "../../redux/key-value/actions";
 import KeyValueSelectors from "../../redux/key-value/selectors";
 import { KeyValueKeys } from "../../redux/key-value/types";
 import { logoutUserOpAction } from "../../redux/operations/session/logoutUser";
+import { useAppDispatch } from "../hooks/redux";
 import AppHome from "./AppHome";
 
 const AppHomeContainer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const showAppMenu = useSelector((state) =>
     KeyValueSelectors.getKey(state as any, KeyValueKeys.ShowAppMenu)
   ) as boolean;

@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from "redux";
 import boardsReducer from "./boards/reducer";
 import collaborationRequestsReducer from "./collaborationRequests/reducer";
 import commentsReducer from "./comments/reducer";
@@ -12,7 +11,7 @@ import sprintsReducer from "./sprints/reducer";
 import tasksReducer from "./tasks/reducer";
 import usersReducer from "./users/reducer";
 
-const reducer = combineReducers({
+const reducer = {
   users: usersReducer,
   session: sessionReducer,
   operations: operationsReducer,
@@ -24,10 +23,12 @@ const reducer = combineReducers({
   boards: boardsReducer,
   tasks: tasksReducer,
   collaborationRequests: collaborationRequestsReducer,
-});
+};
 
 const store = configureStore({
   reducer,
 });
 
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 export default store;

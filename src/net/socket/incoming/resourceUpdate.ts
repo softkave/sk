@@ -19,7 +19,6 @@ export function handleResourceUpdateEvent(
 ) {
   const room = getSocketRoomInfo(packet.roomName);
   assert(room, "roomName is not valid");
-  console.log({ packet, room });
   switch (packet.resourceType) {
     case SystemResourceType.User:
       return handleIncomingUserEvent(packet);

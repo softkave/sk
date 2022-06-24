@@ -36,7 +36,6 @@ const useOrganizationReady = () => {
   if (error) {
     stateNode = <MessageList fill messages={error} />;
   } else if (isLoading) {
-    console.log({ state: loadState, organizationsState, rootBlocksLoaded });
     stateNode = <LoadingEllipsis />;
   }
 

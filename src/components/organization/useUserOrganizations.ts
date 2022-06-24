@@ -1,24 +1,25 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import OperationType from "../../redux/operations/OperationType";
-import { IAppState } from "../../redux/types";
-import useOperation, {
-  IOperationDerivedData,
-  mergeOps,
-} from "../hooks/useOperation";
+import { appOrganizationPaths } from "../../models/app/routes";
 import {
   IAppOrganization,
   IOrganization,
 } from "../../models/organization/types";
 import KeyValueActions from "../../redux/key-value/actions";
 import { KeyValueKeys } from "../../redux/key-value/types";
-import OrganizationSelectors from "../../redux/organizations/selectors";
+import OperationType from "../../redux/operations/OperationType";
 import { getUserOrganizationsOpAction } from "../../redux/operations/organization/getUserOrganizations";
-import { appOrganizationPaths } from "../../models/app/routes";
+import OrganizationSelectors from "../../redux/organizations/selectors";
+import { IAppState } from "../../redux/types";
+import { useAppDispatch } from "../hooks/redux";
+import useOperation, {
+  IOperationDerivedData,
+  mergeOps,
+} from "../hooks/useOperation";
 
 export function useUserOrganizations() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const [searchQuery, setSearchQuery] = React.useState("");
   const organizationRouteMatch = useRouteMatch<{ organizationId: string }>(
