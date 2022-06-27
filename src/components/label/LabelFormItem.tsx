@@ -1,6 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Tag, Typography } from "antd";
-import { Form } from "antd";
+import { Button, Form, Input, Space, Tag, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { Check, Trash2, X as CloseIcon } from "react-feather";
@@ -113,28 +112,14 @@ const LabelFormItem: React.FC<ILabelFormItemProps> = (props) => {
           marginBottom: "8px",
         }}
       >
-        <div>
-          <Tag
-            style={{
-              backgroundColor: value.color,
-              textTransform: "capitalize",
-              fontSize: "13px",
-              borderRadius: "11px",
-              color: "white",
-              // border: isDue ? "1px solid rgba(255, 77, 79, 0)" : undefined,
-            }}
-          >
-            <Typography.Text
-              style={{
-                textTransform: "capitalize",
-                fontSize: "13px",
-                color: "white",
-              }}
-            >
-              {value.name}
-            </Typography.Text>
-          </Tag>
-        </div>
+        <Tag
+          style={{
+            color: value.color,
+            textTransform: "capitalize",
+          }}
+        >
+          {value.name}
+        </Tag>
         <Typography.Paragraph
           type="secondary"
           style={{ margin: 0, marginTop: "8px" }}

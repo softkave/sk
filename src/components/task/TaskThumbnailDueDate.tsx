@@ -1,7 +1,8 @@
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import moment from "moment";
 import React from "react";
 import { ITask } from "../../models/task/types";
+import SkTag from "../utilities/SkTag";
 
 export interface ITaskThumbnailDueDateProps {
   task: ITask;
@@ -23,28 +24,21 @@ const TaskThumbnailDueDate: React.FC<ITaskThumbnailDueDateProps> = (props) => {
     : `Due ${dueAt.fromNow()}`;
 
   return (
-    <Tag
-      style={{
-        backgroundColor: isDue ? "rgb(255, 77, 79)" : "white",
-        textTransform: "capitalize",
-        fontSize: "13px",
-        borderRadius: "11px",
-        color: isDue ? "white" : "black",
-        border: isDue ? "1px solid rgba(255, 77, 79, 0)" : undefined,
-      }}
+    <SkTag
+      color={isDue ? "rgb(255, 77, 79)" : undefined}
+      doNotLightenColor={!isDue}
     >
       <Typography.Text
         type="secondary"
         style={{
           marginRight: "0px",
           verticalAlign: "middle",
-          fontSize: "13px",
-          color: isDue ? "white" : "black",
+          color: isDue ? "inherit" : undefined,
         }}
       >
         {contentText}
       </Typography.Text>
-    </Tag>
+    </SkTag>
   );
 };
 

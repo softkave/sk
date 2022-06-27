@@ -219,12 +219,12 @@ const StatusList: React.FC<IStatusListProps> = (props) => {
         isEditing={isEditing}
         isNew={newStatusList.exists(status.customId)}
         touched={touched}
-        style={{
-          borderBottom:
-            index < formik.values.statusList.length - 1
-              ? "1px solid #f0f0f0"
-              : undefined,
-        }}
+        // style={{
+        //   borderBottom:
+        //     index < formik.values.statusList.length - 1
+        //       ? "1px solid #f0f0f0"
+        //       : undefined,
+        // }}
       />
     );
   };

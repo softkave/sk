@@ -3,7 +3,7 @@ import {
   CaretUpOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Button, Form, Input, Space, Typography } from "antd";
+import { Button, Form, Input, Space, Tag, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
@@ -119,7 +119,7 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
           marginBottom: "8px",
         }}
       >
-        <div
+        {/* <div
           style={{
             color: "rgba(0,0,0,0.85)",
           }}
@@ -132,7 +132,15 @@ const StatusFormItem: React.FC<IStatusFormItemProps> = (props) => {
           >
             {value.name}
           </Typography.Text>
-        </div>
+        </div> */}
+        <Tag
+          style={{
+            color: value.color,
+            textTransform: "capitalize",
+          }}
+        >
+          {value.name}
+        </Tag>
         <Typography.Paragraph
           type="secondary"
           style={{ margin: 0, marginTop: "8px" }}

@@ -7,10 +7,11 @@ import {
 } from "@ant-design/icons";
 import { css, cx } from "@emotion/css";
 import { Badge, Menu } from "antd";
+import { defaultTo } from "lodash";
 import React from "react";
 import { useRouteMatch } from "react-router";
 import { appLoggedInPaths, appRoutes } from "../../models/app/routes";
-import { useUserUnseenRequestsCount } from "../request/useUserUnseenRequestsCount";
+import { AntDMenuItemType } from "../utilities/types";
 
 export enum UserOptionsMenuKeys {
   Logout = "Logout",
@@ -20,16 +21,24 @@ export enum UserOptionsMenuKeys {
   Requests = "Requests",
 }
 
+export enum UserOptionsMenuCountLabels {
+  UnseenRequestsCount = "UnseenRequestsCount",
+  UnseenChatsCount = "UnseenChatsCount",
+}
+
 export interface IUserOptionsMenuProps {
   style?: React.CSSProperties;
   className?: string;
+  counts?: Partial<Record<UserOptionsMenuCountLabels, number>>;
   onSelect: (key: UserOptionsMenuKeys) => void;
 }
 
-interface IUserOptionsMenuItem {
-  text: UserOptionsMenuKeys;
-  icon: React.ReactNode;
-}
+type IUserOptionsMenuItem = Partial<AntDMenuItemType> & {
+  icon?: React.ReactNode;
+  countKey?: UserOptionsMenuCountLabels;
+  label?: UserOptionsMenuKeys;
+  key: string;
+};
 
 const classes = {
   root: css({
@@ -41,34 +50,89 @@ const classes = {
       padding: "0px 16px !important",
       margin: "0px !important",
     },
+
+    "& .ant-menu-item-divider": {
+      margin: "0px !important",
+    },
   }),
   menuItemContent: css({
     display: "grid",
-    gridTemplateColumns: "auto 1fr auto",
+    gridTemplateColumns: "1fr auto",
     columnGap: 16,
   }),
-  menuItemIcon: css({
-    width: "24px",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
+  menuItem: css({
+    "& .ant-menu-title-content": {
+      flex: 1,
+      marginLeft: "16px !important",
+    },
+
+    "& .ant-menu-item-icon": {
+      width: "24px",
+    },
   }),
 };
 
+const menuStyle: React.CSSProperties = {
+  display: "flex",
+  height: "34px",
+  lineHeight: "34px",
+  alignItems: "center",
+};
+
+let dividerCount = 1;
+const nextDividerId = () => `divider-${dividerCount++}`;
 const items: IUserOptionsMenuItem[] = [
-  { icon: <AppstoreOutlined />, text: UserOptionsMenuKeys.Organizations },
-  { icon: <UserAddOutlined />, text: UserOptionsMenuKeys.Requests },
-  { icon: <SettingOutlined />, text: UserOptionsMenuKeys.UserSettings },
-  { icon: <MessageOutlined />, text: UserOptionsMenuKeys.SendFeedback },
-  { icon: <LogoutOutlined />, text: UserOptionsMenuKeys.Logout },
+  {
+    icon: <AppstoreOutlined />,
+    label: UserOptionsMenuKeys.Organizations,
+    key: UserOptionsMenuKeys.Organizations,
+    style: menuStyle,
+    className: classes.menuItem,
+  },
+  { type: "divider", key: nextDividerId() },
+  {
+    icon: <UserAddOutlined />,
+    label: UserOptionsMenuKeys.Requests,
+    countKey: UserOptionsMenuCountLabels.UnseenRequestsCount,
+    key: UserOptionsMenuKeys.Requests,
+    style: menuStyle,
+    className: classes.menuItem,
+  },
+  { type: "divider", key: nextDividerId() },
+  {
+    icon: <SettingOutlined />,
+    label: UserOptionsMenuKeys.UserSettings,
+    key: UserOptionsMenuKeys.UserSettings,
+    style: menuStyle,
+    className: classes.menuItem,
+  },
+  { type: "divider", key: nextDividerId() },
+  {
+    icon: <MessageOutlined />,
+    label: UserOptionsMenuKeys.SendFeedback,
+    key: UserOptionsMenuKeys.SendFeedback,
+    style: menuStyle,
+    className: classes.menuItem,
+  },
+  { type: "divider", key: nextDividerId() },
+  {
+    danger: true,
+    icon: <LogoutOutlined />,
+    label: UserOptionsMenuKeys.Logout,
+    key: UserOptionsMenuKeys.Logout,
+    style: menuStyle,
+    className: classes.menuItem,
+  },
+  { type: "divider", key: nextDividerId() },
 ];
 
 const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
-  const { className, style, onSelect } = props;
-  const unseenRequestsCount = useUserUnseenRequestsCount();
+  const { className, style, counts, onSelect } = props;
+  const menuCounts = defaultTo(counts, {});
   const routeMatch = useRouteMatch<{ route: string }>(
     `${appRoutes.app}/:route`
   );
+
   const selectedKey = React.useMemo(() => {
     if (routeMatch) {
       switch (routeMatch.url) {
@@ -83,33 +147,26 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
     return UserOptionsMenuKeys.Organizations;
   }, [routeMatch]);
 
-  const menuItemNodes: React.ReactNode[] = [];
-  items.map((item) => {
-    const contentNode = (
-      <div className={classes.menuItemContent}>
-        <span className={classes.menuItemIcon}>{item.icon}</span>
-        <span>{item.text}</span>
-        <span>
-          {item.text === UserOptionsMenuKeys.Requests && unseenRequestsCount ? (
-            <Badge
-              count={unseenRequestsCount}
-              style={{ backgroundColor: "#1890ff" }}
-            />
-          ) : null}
-        </span>
-      </div>
-    );
+  const menuItems = React.useMemo(() => {
+    return items.map((item) => {
+      const count = item.countKey && menuCounts[item.countKey];
+      const contentNode = (
+        <div className={classes.menuItemContent}>
+          <span>{item.label}</span>
+          <span>
+            {count ? (
+              <Badge count={count} style={{ backgroundColor: "#1890ff" }} />
+            ) : null}
+          </span>
+        </div>
+      );
 
-    menuItemNodes.push(
-      <Menu.Item
-        key={item.text}
-        style={{ height: "34px", display: "flex", alignItems: "center" }}
-      >
-        {contentNode}
-      </Menu.Item>,
-      <Menu.Divider key={`${item.text}-divider`} />
-    );
-  });
+      return {
+        ...item,
+        label: contentNode,
+      };
+    });
+  }, [counts, menuCounts]);
 
   return (
     <div className={cx(className, classes.root)} style={style}>
@@ -119,9 +176,8 @@ const UserOptionsMenu: React.FC<IUserOptionsMenuProps> = (props) => {
         }}
         style={{ minWidth: "120px" }}
         selectedKeys={[selectedKey]}
-      >
-        {menuItemNodes}
-      </Menu>
+        items={menuItems}
+      />
     </div>
   );
 };

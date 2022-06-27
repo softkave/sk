@@ -136,7 +136,7 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
         style={{
           width: "100%",
           lineHeight: "40px",
-          fontWeight: 600,
+          fontWeight: 500,
           alignItems: "center",
         }}
       >

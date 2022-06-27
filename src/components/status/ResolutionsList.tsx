@@ -266,8 +266,8 @@ const ResolutionsList: React.FC<IResolutionsListProps> = (props) => {
         <Scrollbar>
           <Typography.Paragraph type="secondary" style={{ padding: "16px" }}>
             Resolutions describe the state of a completed task, like "won't do"
-            or in the case of a tech product, "deployed" meaning the
-            task/feature has been deployed.
+            or in the case of a tech product, "deployed" meaning the task or
+            feature has been deployed.
           </Typography.Paragraph>
           {renderList()}
           {renderSubmitControls()}

@@ -41,7 +41,7 @@ import { TaskPriority } from "./Priority";
 import SelectTaskSprint from "./SelectTaskSprint";
 import SubTaskFormList from "./SubTaskFormList";
 import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
-import TaskLabels from "./TaskLabels";
+import TaskLabelListForm from "./TaskLabelListForm";
 import TaskStatus from "./TaskStatus";
 
 export type ITaskFormValues = INewTaskInput;
@@ -118,16 +118,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         : blockValidationSchemas.updateTask,
     },
   });
-
-  const status = formik.values.status;
-  React.useEffect(() => {
-    if (!status && statusList.length > 0) {
-      formik.setValues({
-        ...formik.values,
-        status: statusList[0].customId,
-      });
-    }
-  }, [statusList, status, formik, user.customId]);
 
   const onChangeParent = (parentId: string) => {
     if (parentId === formik.values.parent) {
@@ -382,7 +372,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   // TODO: extract these fields into separate components with React.memo for speed
   const renderLabels = (formikProps: TaskFormFormikProps) => {
     const { values } = formikProps;
-
     return (
       <Form.Item
         label="Labels"
@@ -390,7 +379,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         wrapperCol={{ span: 24 }}
         labelAlign="left"
       >
-        <TaskLabels
+        <TaskLabelListForm
           labelList={labelList}
           labelsMap={labelsMap}
           onChange={onChangeTaskLabels}
@@ -532,9 +521,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             );
           })}
         </Select>
-        <a
-          href="#"
-          role="button"
+        <Button
+          type="link"
           onClick={() => {
             if (!isSubmitting) {
               setFieldValue(
@@ -550,6 +538,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             lineHeight: "32px",
             cursor: isSubmitting ? "not-allowed" : undefined,
             color: isSubmitting ? "#f0f0f0" : undefined,
+            padding: "0px !important",
           })}
         >
           {!isSubmitting && <RightCircleTwoTone style={{ fontSize: "16px" }} />}
@@ -562,7 +551,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
           >
             Assign To Me
           </Typography.Text>
-        </a>
+        </Button>
         <div style={{ marginBottom: 16 }}>{renderAssignees(formikProps)}</div>
       </Form.Item>
     );

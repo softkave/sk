@@ -218,7 +218,6 @@ const LabelList: React.FC<ILabelListProps> = (props) => {
     };
 
     formikHelpers.addToArrayField("labelList", label, {}, {});
-
     editingLabelList.add(label.customId);
     newLabelList.add(label.customId);
   }, [editingLabelList, newLabelList, formikHelpers]);

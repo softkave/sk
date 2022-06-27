@@ -1,9 +1,11 @@
 import { CaretDownOutlined, PlusOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Space } from "antd";
+import { Dropdown, Menu, Space, Typography } from "antd";
 import React from "react";
 import { Minus } from "react-feather";
 import { IBlockStatus, IBoardTaskResolution } from "../../models/block/block";
 import { ITask } from "../../models/task/types";
+import SkTag from "../utilities/SkTag";
+import { AntDMenuItemType } from "../utilities/types";
 import SelectResolutionModal from "./SelectResolutionModal";
 import TaskResolution from "./TaskResolution";
 
@@ -17,7 +19,6 @@ export interface ITaskStatusProps {
   onChangeResolution: (value: string) => void;
   onSelectAddNewStatus: () => void;
   onSelectAddNewResolution: () => void;
-
   disabled?: boolean;
   className?: string;
   noResolutionModal?: boolean;
@@ -29,6 +30,8 @@ interface IResolutionModalState {
 }
 
 const ADD_NEW_STATUS_KEY = "add-new-status";
+const DIVIDER_MENU_KEY = "divider-key";
+const NO_STATUS_MENU_KEY = "no-status-key";
 
 // TODO: should we show a loading screen or no when the status is changed?
 
@@ -100,6 +103,36 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
     </span>
   );
 
+  const items: AntDMenuItemType[] = statusList.map((status) => {
+    return {
+      key: status.customId,
+      label: <SkTag>{status.name}</SkTag>,
+    };
+  });
+
+  if (items.length === 0) {
+    items.push({
+      label: (
+        <Typography.Text type="secondary">
+          Click the plus button to create a status
+        </Typography.Text>
+      ),
+      key: NO_STATUS_MENU_KEY,
+    });
+  }
+
+  items.unshift(
+    {
+      icon: <PlusOutlined />,
+      label: "Create Status",
+      key: ADD_NEW_STATUS_KEY,
+    },
+    {
+      type: "divider",
+      key: DIVIDER_MENU_KEY,
+    }
+  );
+
   const statusListMenu = (
     <Menu
       onClick={(evt) => {
@@ -113,17 +146,8 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
         }
       }}
       selectedKeys={getSelectedKeys()}
-    >
-      <Menu.Item key={ADD_NEW_STATUS_KEY} icon={<PlusOutlined />}>
-        Status
-      </Menu.Item>
-      <Menu.Divider key="divider-01" />
-      {statusList.map((status) => {
-        return (
-          <Menu.Item key={status.customId}>{statusWithColor(status)}</Menu.Item>
-        );
-      })}
-    </Menu>
+      items={items}
+    ></Menu>
   );
 
   const selectedStatusElem = (
@@ -135,7 +159,11 @@ const TaskStatus: React.FC<ITaskStatusProps> = (props) => {
       }}
     >
       <Space align="center">
-        {selectedStatus ? statusWithColor(selectedStatus) : "Status"}
+        {selectedStatus ? (
+          statusWithColor(selectedStatus)
+        ) : (
+          <Typography.Text type="secondary">Select status</Typography.Text>
+        )}
         <CaretDownOutlined
           style={{
             fontSize: "10px",

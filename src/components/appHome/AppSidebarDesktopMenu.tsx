@@ -5,14 +5,18 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import { css } from "@emotion/css";
-import { Tag, Typography } from "antd";
+import { Typography } from "antd";
 import { noop } from "lodash";
 import React from "react";
 import { IUser } from "../../models/user/user";
 import UserAvatar from "../collaborator/UserAvatar";
 import { useUserUnseenChatsCount } from "../organization/useUserUnseenChatsCount";
 import { useUserUnseenRequestsCount } from "../request/useUserUnseenRequestsCount";
-import UserOptionsMenu, { UserOptionsMenuKeys } from "./UserOptionsMenu";
+import SkTag from "../utilities/SkTag";
+import UserOptionsMenu, {
+  UserOptionsMenuCountLabels,
+  UserOptionsMenuKeys,
+} from "./UserOptionsMenu";
 
 export interface IAppSidebarDesktopMenuProps {
   user: IUser;
@@ -43,7 +47,7 @@ const classes = {
       width: "100%",
     },
   }),
-  tag: css({
+  SkTag: css({
     backgroundColor: "blue",
     fontSize: "13px",
     borderRadius: "11px",
@@ -65,12 +69,21 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
   const [showMenu, setShowMenu] = React.useState(false);
   const unseenRequestsCount = useUserUnseenRequestsCount();
   const unseenChatsCount = useUserUnseenChatsCount();
+  // const unseenRequestsCount = 5;
+  // const unseenChatsCount = 7;
+  const menuCounts = React.useMemo(() => {
+    return {
+      [UserOptionsMenuCountLabels.UnseenRequestsCount]: unseenRequestsCount,
+      [UserOptionsMenuCountLabels.UnseenChatsCount]: unseenChatsCount,
+    };
+  }, [unseenChatsCount, unseenRequestsCount]);
+
   const unseenRequestsCountNode = (
     <span>
       {unseenRequestsCount ? (
-        <Tag icon={<UserAddOutlined />} color="blue">
+        <SkTag centerContent icon={<UserAddOutlined />} color="#096dd9">
           {unseenRequestsCount}
-        </Tag>
+        </SkTag>
       ) : null}
     </span>
   );
@@ -78,9 +91,9 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
   const unseenChatsCountNode = (
     <span>
       {unseenChatsCount ? (
-        <Tag icon={<MessageOutlined />} color="blue">
+        <SkTag centerContent icon={<MessageOutlined />} color="#096dd9">
           {unseenChatsCount}
-        </Tag>
+        </SkTag>
       ) : null}
     </span>
   );
@@ -88,7 +101,11 @@ const AppSidebarDesktopMenu: React.FC<IAppSidebarDesktopMenuProps> = (
   return (
     <div className={classes.root} onClick={() => setShowMenu(!showMenu)}>
       {showMenu && (
-        <UserOptionsMenu className={classes.menu} onSelect={onSelect} />
+        <UserOptionsMenu
+          className={classes.menu}
+          onSelect={onSelect}
+          counts={menuCounts}
+        />
       )}
       <div className={classes.menuTriggerRoot}>
         <UserAvatar clickable user={user} onClick={noop} />

@@ -1,7 +1,8 @@
 import CaretDownOutlined from "@ant-design/icons/CaretDownOutlined";
-import { Space, Tag } from "antd";
+import { Space } from "antd";
 import React from "react";
 import { BlockPriority } from "../../models/block/block";
+import SkTag from "../utilities/SkTag";
 
 export type TaskPriority = BlockPriority;
 export const priorityToColorMap = {
@@ -35,20 +36,7 @@ const Priority: React.FC<IPriorityProps> = (props) => {
     );
   }
 
-  return (
-    <Tag
-      style={{
-        backgroundColor: priorityToColorMap[props.level],
-        textTransform: "capitalize",
-        fontSize: "13px",
-        borderRadius: "11px",
-        color: "white",
-        border: "0px",
-      }}
-    >
-      {content}
-    </Tag>
-  );
+  return <SkTag color={priorityToColorMap[props.level]}>{content}</SkTag>;
 };
 
 export default Priority;

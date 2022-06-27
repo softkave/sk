@@ -1,11 +1,12 @@
 import { FormikConfig, FormikProps, useFormik } from "formik";
+import { debounce } from "lodash";
 import defaultTo from "lodash/defaultTo";
 import get from "lodash/get";
 import isEqual from "lodash/isEqual";
-import set from "lodash/set";
 import isNumber from "lodash/isNumber";
+import set from "lodash/set";
 import React from "react";
-import useObject from "./useObject";
+import useObject, { IUseObjectHookResult } from "./useObject";
 
 export interface IUseFormHelpersFormikProps<T> {
   formikProps: FormikConfig<T>;
@@ -50,24 +51,16 @@ type GetChangedFieldsObjectType<T extends object> = {
   [key in keyof T]: boolean;
 };
 
-const useFormHelpers = <T extends object>(
-  props: IUseFormHelpersFormikProps<T>
-): IUseFormHelpersResult<T> => {
-  const formik = useFormik(props.formikProps);
-  const changedFields = useObject<GetChangedFieldsObjectType<T>>();
-
-  React.useEffect(() => {
-    if (props.errors) {
-      formik.setErrors(props.errors);
-    }
-  }, [props.errors, formik]);
-
-  React.useEffect(() => {
-    const changesReverted: Array<keyof T> = [];
-
+const reworkReverted = debounce(
+  (
+    changedFields: IUseObjectHookResult<any>,
+    initialValues: any,
+    values: any
+  ) => {
+    const changesReverted: any[] = [];
     changedFields.forEach((v, key) => {
-      const initialValue = get(formik.initialValues, key);
-      const value = get(formik.values, key);
+      const initialValue = get(initialValues, key);
+      const value = get(values, key);
 
       /**
        * TODO: using isEqual could potentially be slow for fields like
@@ -82,7 +75,28 @@ const useFormHelpers = <T extends object>(
     if (changesReverted.length > 0) {
       changesReverted.forEach((key) => changedFields.remove(key));
     }
-  }, [changedFields, formik]);
+  },
+  1000 /* one second */
+);
+
+const useFormHelpers = <T extends object>(
+  props: IUseFormHelpersFormikProps<T>
+): IUseFormHelpersResult<T> => {
+  const formik = useFormik(props.formikProps);
+  const changedFields = useObject<GetChangedFieldsObjectType<T>>();
+  const setErrors = formik.setErrors;
+  const initialValues = formik.initialValues;
+  const values = formik.values;
+
+  React.useEffect(() => {
+    if (props.errors) {
+      setErrors(props.errors);
+    }
+  }, [props.errors, setErrors]);
+
+  React.useEffect(() => {
+    reworkReverted(changedFields, initialValues, values);
+  }, [changedFields, initialValues, values]);
 
   const getArrayFieldItems = React.useCallback(
     (field: keyof T | string) => {

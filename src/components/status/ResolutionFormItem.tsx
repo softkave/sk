@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Space, Typography } from "antd";
+import { Button, Form, Input, Space, Tag, Typography } from "antd";
 import { FormikErrors, FormikTouched } from "formik";
 import React from "react";
 import { Check, Trash2, X as CloseIcon } from "react-feather";
@@ -111,6 +111,13 @@ const ResolutionFormItem: React.FC<IResolutionFormItemProps> = (props) => {
         >
           {value.name}
         </Typography.Text>
+        <Tag
+          style={{
+            textTransform: "capitalize",
+          }}
+        >
+          {value.name}
+        </Tag>
         <Typography.Paragraph
           type="secondary"
           style={{ margin: 0, marginTop: "8px" }}

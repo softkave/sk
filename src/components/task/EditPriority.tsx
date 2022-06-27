@@ -20,11 +20,9 @@ export default class EditPriority extends React.Component<IEditPriorityProps> {
         <Menu.Item key={BlockPriority.High}>
           <Priority level={BlockPriority.High} />
         </Menu.Item>
-        {/* <Menu.Divider /> */}
         <Menu.Item key={BlockPriority.Medium}>
           <Priority level={BlockPriority.Medium} />
         </Menu.Item>
-        {/* <Menu.Divider /> */}
         <Menu.Item key={BlockPriority.Low}>
           <Priority level={BlockPriority.Low} />
         </Menu.Item>

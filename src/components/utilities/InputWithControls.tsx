@@ -9,7 +9,7 @@ import Editable, { EditableRenderFn } from "./Editable";
 
 export interface IInputWithControlsProps {
   onChange: (val: string) => void;
-  revertChanges: () => void;
+  revertChanges?: () => void;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -116,16 +116,18 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 disabled={disabled}
                 className="icon-btn"
               />
-              <Button
-                onClick={() => {
-                  revertChanges();
-                  setEditing(false);
-                }}
-                icon={<CloseIcon />}
-                disabled={disabled}
-                htmlType="button"
-                className="icon-btn"
-              />
+              {revertChanges && (
+                <Button
+                  onClick={() => {
+                    revertChanges();
+                    setEditing(false);
+                  }}
+                  icon={<CloseIcon />}
+                  disabled={disabled}
+                  htmlType="button"
+                  className="icon-btn"
+                />
+              )}
             </Space>
           )}
         </Space>

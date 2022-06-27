@@ -240,9 +240,9 @@ const Task: React.FC<ITaskProps> = (props) => {
         <Priority level={task.priority as BlockPriority} />
       </div>
       <div
-        onClick={(evt) => {
-          evt.stopPropagation();
-        }}
+        // onClick={(evt) => {
+        //   evt.stopPropagation();
+        // }}
         style={{ display: "flex" }}
       >
         {options}

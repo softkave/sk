@@ -1,4 +1,4 @@
-import { cx, css } from "@emotion/css";
+import { css, cx } from "@emotion/css";
 import { Typography } from "antd";
 import React from "react";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
