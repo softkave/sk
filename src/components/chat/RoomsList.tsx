@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
 import React from "react";
-import Message from "../Message";
+import Message from "../PageError";
 import RoomsListItem from "./RoomsListItem";
 import { IAppChatRoom } from "./types";
 

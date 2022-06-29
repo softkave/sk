@@ -22,7 +22,7 @@ import CollaborationRequestStatus from "../collaborator/CollaborationRequestStat
 import { getRequestStatus } from "../collaborator/utils";
 import FormError from "../forms/FormError";
 import useOperation, { getOpData } from "../hooks/useOperation";
-import Message from "../Message";
+import Message from "../PageError";
 
 export interface INotificationProps {}
 

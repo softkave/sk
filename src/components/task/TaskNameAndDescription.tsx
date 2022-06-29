@@ -4,14 +4,23 @@ import { ITask } from "../../models/task/types";
 
 export interface ITaskNameAndDescriptionProps {
   task: ITask;
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement> | undefined;
 }
 
 const TaskNameAndDescription: React.FC<ITaskNameAndDescriptionProps> = (
   props
 ) => {
-  const { task } = props;
+  const { task, className, style, onClick } = props;
   return (
-    <Space direction="vertical" size={8}>
+    <Space
+      direction="vertical"
+      size={8}
+      className={className}
+      style={style}
+      onClick={onClick}
+    >
       <Typography.Paragraph style={{ marginBottom: "0" }}>
         {task.name}
       </Typography.Paragraph>

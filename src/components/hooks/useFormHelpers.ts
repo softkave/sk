@@ -245,11 +245,8 @@ const useFormHelpers = <T extends object>(
     (field?: keyof T | string) => {
       if (field) {
         const fieldInitialValue = get(formik.initialValues, field);
-
-        if (fieldInitialValue) {
-          formik.setFieldValue(field as string, fieldInitialValue);
-          removeField(field as any);
-        }
+        formik.setFieldValue(field as string, fieldInitialValue);
+        removeField(field as any);
       } else {
         formik.setValues(formik.initialValues, true);
       }

@@ -2,24 +2,24 @@ import { Button, Divider } from "antd";
 import { FormikTouched } from "formik";
 import React from "react";
 import { Plus } from "react-feather";
+import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { ISubTaskInput } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
-import { getNewId } from "../../utils/utils";
+import { getDateString, getNewId } from "../../utils/utils";
 import useArray from "../hooks/useArray";
 
 import SubTaskForm, { ISubTaskErrors } from "./SubTaskForm";
 
 export interface ISubTaskFormListProps {
-  subTasks: ISubTaskInput[];
+  subTasks: ISubTask[];
   user: IUser;
-  onChange: (value: ISubTaskInput[]) => void;
-  onAddSubTask: (value: ISubTaskInput) => void;
+  onChange: (value: ISubTask[]) => void;
+  onAddSubTask: (value: ISubTask) => void;
   onDeleteSubTask: (index: number) => void;
   onDiscardSubTaskChanges: (index: number) => void;
   disabled?: boolean;
   errors?: ISubTaskErrors[];
-  touched?: FormikTouched<ISubTaskInput[]>;
+  touched?: FormikTouched<ISubTask[]>;
 }
 
 const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
@@ -40,9 +40,11 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
   const errors = subTaskErrors || [];
 
   const internalOnAdd = () => {
-    const subTask: ISubTaskInput = {
+    const subTask: ISubTask = {
       customId: getNewId(),
       description: "",
+      createdAt: getDateString(),
+      createdBy: user.customId,
     };
 
     onAddSubTask(subTask);
@@ -50,11 +52,8 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
     newSubTasksIdList.add(subTask.customId);
   };
 
-  const internalOnEditSubTask = (
-    index: number,
-    data: Partial<ISubTaskInput>
-  ) => {
-    const subTask: ISubTaskInput = {
+  const internalOnEditSubTask = (index: number, data: Partial<ISubTask>) => {
+    const subTask: ISubTask = {
       ...subTasks[index],
       ...data,
     };
@@ -90,9 +89,9 @@ const SubTaskFormList: React.FC<ISubTaskFormListProps> = (props) => {
   };
 
   const renderSubTask = (
-    subTask: ISubTaskInput,
+    subTask: ISubTask,
     error: ISubTaskErrors = {},
-    subTaskTouched: FormikTouched<ISubTaskInput> = {},
+    subTaskTouched: FormikTouched<ISubTask> = {},
     index: number
   ) => {
     return (

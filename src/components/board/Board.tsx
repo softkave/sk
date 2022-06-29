@@ -8,11 +8,12 @@ import { Route, Switch } from "react-router-dom";
 import { IBoard } from "../../models/board/types";
 import { appBoardRoutes } from "../../models/board/utils";
 import { ISprint } from "../../models/sprint/types";
-import { ITask } from "../../models/task/types";
+import PageError from "../PageError";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import SprintOptionsFormInDrawer from "../sprint/SprintOptionsFormInDrawer";
 
 import TaskFormInDrawer from "../task/TaskFormInDrawer";
+import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import BoardFormInDrawer from "./BoardFormInDrawer";
 import BoardHeader from "./BoardHeader";
 import {
@@ -27,6 +28,7 @@ import CurrentSprintHeader from "./CurrentSprintHeader";
 import GroupedTasks from "./GroupedTasks";
 import SprintsContainer from "./SprintsContainer";
 import TasksContainer, { ITasksContainerRenderFnProps } from "./TasksContainer";
+import useShowTaskForm from "./useShowTaskForm";
 
 export interface IBoardProps {
   board: IBoard;
@@ -72,10 +74,11 @@ const Board: React.FC<IBoardProps> = (props) => {
       : BoardCurrentView.ALL_TASKS;
   });
 
+  const showTaskForm = useShowTaskForm(board);
+  const openTaskForm = showTaskForm.openTaskForm;
   const [showSearch, setShowSearch] = React.useState(false);
   const [searchText, setSearchText] = React.useState("");
   const [boardForm, setBoardForm] = React.useState(false);
-  const [taskForm, setTaskForm] = React.useState<ITask | boolean>();
   const [sprintOptionsForm, setSprintOptionsForm] = React.useState(false);
   const [sprintForm, setSprintForm] = React.useState<ISprint | boolean>();
 
@@ -101,10 +104,6 @@ const Board: React.FC<IBoardProps> = (props) => {
 
   const closeBoardForm = React.useCallback(() => {
     setBoardForm(false);
-  }, []);
-
-  const closeTaskForm = React.useCallback(() => {
-    setTaskForm(undefined);
   }, []);
 
   const onSelectMenuKey = React.useCallback(
@@ -133,7 +132,7 @@ const Board: React.FC<IBoardProps> = (props) => {
           break;
 
         case BoardHeaderSettingsMenuKey.ADD_TASK:
-          setTaskForm(true);
+          openTaskForm();
           break;
 
         case BoardHeaderSettingsMenuKey.SEARCH_TASKS:
@@ -153,7 +152,7 @@ const Board: React.FC<IBoardProps> = (props) => {
           break;
       }
     },
-    [board, onClickDeleteBoard, onCloseSprint]
+    [board, onClickDeleteBoard, onCloseSprint, openTaskForm]
   );
 
   const onSelectView = React.useCallback(
@@ -174,17 +173,21 @@ const Board: React.FC<IBoardProps> = (props) => {
   );
 
   const renderTaskForm = () => {
-    if (!taskForm) {
+    if (!showTaskForm.showTaskForm) {
       return null;
+    } else if (showTaskForm.taskData.loading) {
+      return <LoadingEllipsis />;
+    } else if (showTaskForm.taskData.error) {
+      return <PageError message={showTaskForm.taskData.error.message} />;
     }
 
     return (
       <TaskFormInDrawer
         visible
         orgId={board.rootBlockId}
-        task={isBoolean(taskForm) ? undefined : taskForm}
+        task={showTaskForm.taskData.data}
         board={board}
-        onClose={closeTaskForm}
+        onClose={showTaskForm.closeTaskForm}
       />
     );
   };
@@ -253,10 +256,10 @@ const Board: React.FC<IBoardProps> = (props) => {
         {...args}
         board={board}
         groupType={groupBy}
-        onClickUpdateTask={setTaskForm}
+        onClickUpdateTask={openTaskForm}
       />
     ),
-    [board, groupBy]
+    [board, groupBy, openTaskForm]
   );
 
   const renderSprintsContainer = React.useCallback(
@@ -265,10 +268,10 @@ const Board: React.FC<IBoardProps> = (props) => {
         {...args}
         board={board}
         onUpdateSprint={setSprintForm}
-        onClickUpdateTask={setTaskForm}
+        onClickUpdateTask={openTaskForm}
       />
     ),
-    [board]
+    [board, openTaskForm]
   );
 
   const renderTasksPathView = React.useCallback(() => {

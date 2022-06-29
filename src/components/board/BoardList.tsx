@@ -4,7 +4,7 @@ import React from "react";
 import { useRouteMatch } from "react-router";
 import { IBoard } from "../../models/board/types";
 import { appOrganizationRoutes } from "../../models/organization/utils";
-import Message from "../Message";
+import Message from "../PageError";
 import BoardThumnail from "./BoardThumnail";
 
 export interface IBoardListProps {

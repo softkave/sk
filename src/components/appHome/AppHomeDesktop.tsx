@@ -8,9 +8,9 @@ import {
   appRequestsPaths,
 } from "../../models/app/routes";
 import SessionSelectors from "../../redux/session/selectors";
-import Message from "../Message";
 import Notification from "../notification/Notification";
 import OrganizationRoutesContainer from "../organization/OrganizationRoutesContainer";
+import Message from "../PageError";
 import UserSettings from "../user/UserSettings";
 import AppSideBarDesktop from "./AppSideBarDesktop";
 import { UserOptionsMenuKeys } from "./UserOptionsMenu";

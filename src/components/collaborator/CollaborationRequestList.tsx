@@ -3,7 +3,7 @@ import React from "react";
 import { useRouteMatch } from "react-router";
 import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { appOrganizationRoutes } from "../../models/organization/utils";
-import Message from "../Message";
+import Message from "../PageError";
 import List from "../styled/List";
 import CollaborationRequestThumbnail from "./CollaborationRequestThumbnail";
 

@@ -7,11 +7,13 @@ import { ISprint } from "../../models/sprint/types";
 import { ITask } from "../../models/task/types";
 import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
+import { getDateString } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import SelectTaskSprint, { BACKLOG } from "./SelectTaskSprint";
 
 export interface ISelectTaskSprintContainerProps {
   task: ITask;
+  userId: string;
   sprints: ISprint[];
   sprintsMap: { [key: string]: ISprint };
   disabled?: boolean;
@@ -22,12 +24,12 @@ export interface ISelectTaskSprintContainerProps {
 const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
   props
 ) => {
-  const { task, demo } = props;
+  const { task, demo, userId } = props;
   const [isLoading, setIsLoading] = React.useState(false);
   const dispatch: AppDispatch = useDispatch();
 
   const onChangeSprint = React.useCallback(
-    async (val: string) => {
+    async (sprintId: string) => {
       if (demo) {
         return false;
       }
@@ -37,7 +39,14 @@ const SelectTaskSprintContainer: React.FC<ISelectTaskSprintContainerProps> = (
         updateTaskOpAction({
           taskId: task.customId,
           data: {
-            taskSprint: val === BACKLOG ? null : { sprintId: val },
+            taskSprint:
+              sprintId === BACKLOG
+                ? null
+                : {
+                    sprintId: sprintId,
+                    assignedAt: getDateString(),
+                    assignedBy: userId,
+                  },
           },
           deleteOpOnComplete: true,
         })

@@ -1,15 +1,12 @@
 import { Space } from "antd";
 import React from "react";
-import {
-  IBlockAssignedLabelInput,
-  IBlockLabel,
-} from "../../models/block/block";
+import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
 import TaskLabel from "./TaskLabel";
 
 export interface ITaskLabelListProps {
   labelsMap: { [key: string]: IBlockLabel };
   disabled?: boolean;
-  labels?: IBlockAssignedLabelInput[];
+  labels?: IBlockAssignedLabel[];
   canRemove?: boolean;
   onRemove?: (id: string) => void;
 }
@@ -35,7 +32,7 @@ const TaskLabelList: React.FC<ITaskLabelListProps> = (props) => {
   });
 
   return (
-    <Space wrap size={[4, 4]}>
+    <Space wrap size={[0, 4]}>
       {labelNodes}
     </Space>
   );

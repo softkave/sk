@@ -9,9 +9,11 @@ import { messages } from "../../models/messages";
 import { IAppOrganization } from "../../models/organization/types";
 import { ISprint } from "../../models/sprint/types";
 import { getCurrentAndUpcomingSprints } from "../../models/sprint/utils";
-import { ITask } from "../../models/task/types";
+import { ITask, ITaskFormValues } from "../../models/task/types";
 import { newTaskForm } from "../../models/task/utils";
 import BoardSelectors from "../../redux/boards/selectors";
+import { createTaskOpAction } from "../../redux/operations/task/createTask";
+import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import OrganizationSelectors from "../../redux/organizations/selectors";
 import SessionSelectors from "../../redux/session/selectors";
 import SprintSelectors from "../../redux/sprints/selectors";
@@ -20,9 +22,7 @@ import UserSelectors from "../../redux/users/selectors";
 import { flattenErrorList, indexArray } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
 import { IFormError } from "../utilities/types";
-import TaskForm, { ITaskFormValues } from "./TaskForm";
-import { createTaskOpAction } from "../../redux/operations/task/createTask";
-import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
+import TaskForm from "./TaskForm";
 
 export interface ITaskFormContainerProps {
   orgId: string;
@@ -38,18 +38,10 @@ function taskToTaskForm(task: ITask): ITaskFormValues {
     dueAt: task.dueAt,
     parent: task.parent,
     rootBlockId: task.rootBlockId,
-    assignees: task.assignees.map((item) => ({
-      userId: item.userId,
-    })),
+    assignees: task.assignees,
     priority: task.priority,
-    subTasks: task.subTasks.map((item) => ({
-      customId: item.customId,
-      description: item.description,
-      completedBy: item.completedBy,
-    })),
-    labels: task.labels.map((item) => ({
-      customId: item.customId,
-    })),
+    subTasks: task.subTasks,
+    labels: task.labels,
     status: task.status,
     taskResolution: task.taskResolution,
     taskSprint: task.taskSprint,

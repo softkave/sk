@@ -4,7 +4,7 @@ import { Button, Input, Space, Typography } from "antd";
 import { TextAreaProps } from "antd/lib/input";
 import { ParagraphProps } from "antd/lib/typography/Paragraph";
 import React from "react";
-import { Check, X as CloseIcon } from "react-feather";
+import { Check } from "react-feather";
 import Editable, { EditableRenderFn } from "./Editable";
 
 export interface IInputWithControlsProps {
@@ -116,7 +116,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                 disabled={disabled}
                 className="icon-btn"
               />
-              {revertChanges && (
+              {/* {revertChanges && (
                 <Button
                   onClick={() => {
                     revertChanges();
@@ -127,7 +127,7 @@ const InputWithControls: React.FC<IInputWithControlsProps> = (props) => {
                   htmlType="button"
                   className="icon-btn"
                 />
-              )}
+              )} */}
             </Space>
           )}
         </Space>

@@ -11,10 +11,9 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import { IBlockAssignedLabel, ITaskAssignee } from "../../models/block/block";
-import { ITask } from "../../models/task/types";
+import { ITask, ITaskFormValues } from "../../models/task/types";
 import { getDateString } from "../../utils/utils";
-import Message from "../Message";
-import { ITaskFormValues } from "../task/TaskForm";
+import Message from "../PageError";
 import TaskList from "../task/TaskList";
 import Scrollbar from "../utilities/Scrollbar";
 import Column from "./Column";
@@ -304,6 +303,8 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
         case "sprint": {
           update.taskSprint = {
             sprintId: destinationId,
+            assignedAt: getDateString(),
+            assignedBy: user.customId,
           };
 
           break;
@@ -329,7 +330,7 @@ const GroupedTasksDesktop: React.FC<IGroupedTasksDesktopProps> = (props) => {
       <div
         className={classes.root}
         style={{
-          gridTemplateColumns: groupedTasks.map(() => "1fr").join(" "),
+          gridTemplateColumns: groupedTasks.map(() => "320px").join(" "),
         }}
       >
         {renderGroups()}

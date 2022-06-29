@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import React from "react";
-import PageError from "../Message";
+import PageError from "../PageError";
 import ListHeader from "../utilities/ListHeader";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import Scrollbar from "../utilities/Scrollbar";

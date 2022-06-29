@@ -3,7 +3,7 @@ import { Divider } from "antd";
 import isString from "lodash/isString";
 import React from "react";
 import { IAppError } from "../net/types";
-import Message from "./Message";
+import Message from "./PageError";
 
 export interface IMessageListProps {
   messages: string | IAppError | Array<string | IAppError>;

@@ -2,23 +2,25 @@ import { RightCircleTwoTone } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { Button, DatePicker, Form, List, Select, Typography } from "antd";
 import { FormikProps } from "formik";
+import { first } from "lodash";
 import moment from "moment";
 import React from "react";
 import { ArrowLeft } from "react-feather";
 import {
-  IAssigneeInput,
-  IBlockAssignedLabelInput,
+  IBlockAssignedLabel,
   IBlockLabel,
   IBlockStatus,
   IBoardTaskResolution,
-  ITaskSprint,
+  ISubTask,
+  ITaskAssignee,
 } from "../../models/block/block";
 import { IBoard } from "../../models/board/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { ISprint } from "../../models/sprint/types";
-import { INewTaskInput, ISubTaskInput, ITask } from "../../models/task/types";
+import { ITask, ITaskFormValues } from "../../models/task/types";
+import { assignSprint, assignStatus } from "../../models/task/utils";
 import { IUser } from "../../models/user/user";
-import { indexArray } from "../../utils/utils";
+import { getDateString, indexArray } from "../../utils/utils";
 import BlockParentSelection from "../block/BlockParentSelection";
 import blockValidationSchemas from "../block/validation";
 import BoardStatusResolutionAndLabelsForm, {
@@ -44,7 +46,6 @@ import TaskCollaboratorThumbnail from "./TaskCollaboratorThumbnail";
 import TaskLabelListForm from "./TaskLabelListForm";
 import TaskStatus from "./TaskStatus";
 
-export type ITaskFormValues = INewTaskInput;
 type TaskFormFormikProps = FormikProps<ITaskFormValues>;
 export type TaskFormErrors = IFormikFormErrors<ITaskFormValues>;
 
@@ -89,6 +90,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     resolutionsMap,
     onClose,
     onSubmit,
+    onChangeParent: pushParentChangeToContainer,
     errors: externalErrors,
   } = props;
 
@@ -119,37 +121,56 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     },
   });
 
-  const onChangeParent = (parentId: string) => {
-    if (parentId === formik.values.parent) {
-      return;
+  const { setValues, setFieldValue, handleSubmit, values, touched, errors } =
+    formik;
+  const status = values.status;
+  const status0 = first(statusList);
+  React.useEffect(() => {
+    if (!status && status0) {
+      setValues(assignStatus(values, status0.customId, user.customId, task));
     }
+  }, [status0, status, values, user.customId, task, setValues]);
 
-    if (parentId === task?.parent) {
-      formik.setValues({
-        ...formik.values,
-        parent: parentId,
-        labels: task.labels,
-        status: task.status,
-      });
+  const onChangeParent = React.useCallback(
+    (parentId: string) => {
+      if (parentId === values.parent) {
+        return;
+      }
 
-      return;
-    } else {
-      formik.setValues({
-        ...formik.values,
-        parent: parentId,
-        labels: [],
-        status: null,
-        taskSprint: null,
-        taskResolution: null,
-      });
-    }
+      if (parentId === task?.parent) {
+        setValues({
+          ...values,
+          parent: parentId,
+          labels: task.labels,
+          status: task.status,
+        });
 
-    formikChangedFieldsHelpers.pushFields(["parent", "labels", "status"]);
-  };
+        return;
+      } else {
+        setValues({
+          ...values,
+          parent: parentId,
+          labels: [],
+          status: null,
+          taskSprint: null,
+          taskResolution: null,
+        });
+      }
+
+      pushParentChangeToContainer(parentId);
+      formikChangedFieldsHelpers.pushFields(["parent", "labels", "status"]);
+    },
+    [
+      task,
+      values,
+      setValues,
+      formikChangedFieldsHelpers,
+      pushParentChangeToContainer,
+    ]
+  );
 
   const renderParentInput = (formikProps: TaskFormFormikProps) => {
     const { touched, errors, values } = formikProps;
-
     return (
       <Form.Item
         label="Board"
@@ -160,7 +181,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         <BlockParentSelection
           value={values.parent}
           possibleParents={possibleBoardParents}
-          onChange={(val) => onChangeParent(val)}
+          onChange={onChangeParent}
           disabled={isSubmitting}
           placeholder="Select board"
         />
@@ -198,9 +219,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
-  const renderDescriptionInput = (formikProps: TaskFormFormikProps) => {
-    const { touched, values, errors } = formikProps;
-
+  const renderDescriptionInput = () => {
     return (
       <Form.Item
         label="Description"
@@ -230,7 +249,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const renderPriority = (formikProps: TaskFormFormikProps) => {
     const { setFieldValue, values } = formikProps;
-
     return (
       <Form.Item
         label="Priority"
@@ -251,6 +269,14 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
+  const onChangeSprint = React.useCallback(
+    (sprintId: string) => {
+      setValues(assignSprint(values, sprintId, user.customId, task));
+      formikChangedFieldsHelpers.pushFields(["taskSprint"]);
+    },
+    [values, setValues, user, task, formikChangedFieldsHelpers]
+  );
+
   const renderSprintInput = () => {
     if (!board.sprintOptions) {
       return null;
@@ -263,16 +289,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         task={formik.values as ITask}
         disabled={isSubmitting}
         onAddNewSprint={toggleShowSprintForm}
-        onChangeSprint={(val) => {
-          if (val === BACKLOG) {
-            formik.setFieldValue("taskSprint", null);
-          } else {
-            formik.setFieldValue("taskSprint", {
-              sprintId: val,
-            } as ITaskSprint);
-          }
-          formikChangedFieldsHelpers.addField("taskSprint");
-        }}
+        onChangeSprint={onChangeSprint}
       />
     );
 
@@ -289,36 +306,24 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const onChangeStatus = React.useCallback(
-    async (val: string) => {
-      if (val === task?.status) {
-        formik.setValues({
-          ...formik.values,
-          status: task.status,
-        });
-      } else {
-        formik.setValues({
-          ...formik.values,
-          status: val,
-        });
-      }
-
+    async (statusId: string) => {
+      setValues(assignStatus(values, statusId, user.customId, task));
       formikChangedFieldsHelpers.pushFields(["status"]);
-
       return true;
     },
-    [formik, formikChangedFieldsHelpers, task]
+    [user.customId, values, setValues, formikChangedFieldsHelpers, task]
   );
 
   const onChangeResolution = React.useCallback(
-    (val: string) => {
-      formik.setValues({
-        ...formik.values,
-        taskResolution: val,
+    (resolutionId: string) => {
+      setValues({
+        ...values,
+        taskResolution: resolutionId,
       });
 
       formikChangedFieldsHelpers.pushFields(["taskResolution"]);
     },
-    [formik, formikChangedFieldsHelpers]
+    [values, setValues, formikChangedFieldsHelpers]
   );
 
   const onSelectAddNewStatus = React.useCallback(() => {
@@ -331,7 +336,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const renderStatus = (formikProps: TaskFormFormikProps) => {
     const { values } = formikProps;
-
     return (
       <Form.Item
         label="Status"
@@ -358,11 +362,11 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const onChangeTaskLabels = React.useCallback(
-    (val: IBlockAssignedLabelInput[]) => {
-      formik.setFieldValue("labels", val);
+    (inputLabels: IBlockAssignedLabel[]) => {
+      setFieldValue("labels", inputLabels);
       formikChangedFieldsHelpers.addField("labels");
     },
-    [formik, formikChangedFieldsHelpers]
+    [setFieldValue, formikChangedFieldsHelpers]
   );
 
   const onSelectAddNewLabel = React.useCallback(() => {
@@ -380,6 +384,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
         labelAlign="left"
       >
         <TaskLabelListForm
+          userId={user.customId}
           labelList={labelList}
           labelsMap={labelsMap}
           onChange={onChangeTaskLabels}
@@ -421,8 +426,8 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const unassignCollaborator = (
-    collaboratorData: IAssigneeInput,
-    assignees: IAssigneeInput[] = []
+    collaboratorData: ITaskAssignee,
+    assignees: ITaskAssignee[] = []
   ) => {
     const index = assignees.findIndex((next) => {
       return next.userId === collaboratorData.userId;
@@ -439,22 +444,27 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 
   const assignCollaborator = (
     collaborator: ICollaborator,
-    assignees: IAssigneeInput[] = []
-  ): IAssigneeInput[] => {
+    assignees: ITaskAssignee[] = []
+  ): ITaskAssignee[] => {
     const collaboratorExists = !!assignees.find((next) => {
       return collaborator.customId === next.userId;
     });
 
     if (!collaboratorExists) {
-      return [...assignees, { userId: collaborator.customId }];
+      return [
+        ...assignees,
+        {
+          userId: collaborator.customId,
+          assignedAt: getDateString(),
+          assignedBy: user.customId,
+        },
+      ];
     }
 
     return assignees;
   };
 
-  const renderAssignees = (formikProps: TaskFormFormikProps) => {
-    const { values, setFieldValue } = formikProps;
-
+  const renderAssignees = () => {
     if (!Array.isArray(values.assignees)) {
       return null;
     }
@@ -488,8 +498,6 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
   };
 
   const renderAssignedToInput = (formikProps: TaskFormFormikProps) => {
-    const { setFieldValue, values } = formikProps;
-
     return (
       <Form.Item
         label="Assigned To"
@@ -552,13 +560,13 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             Assign To Me
           </Typography.Text>
         </Button>
-        <div style={{ marginBottom: 16 }}>{renderAssignees(formikProps)}</div>
+        <div style={{ marginBottom: 16 }}>{renderAssignees()}</div>
       </Form.Item>
     );
   };
 
   const onChangeSubTasks = (
-    subTasks: ISubTaskInput[],
+    subTasks: ISubTask[],
     formikProps: TaskFormFormikProps
   ) => {
     const { values, setValues } = formikProps;
@@ -644,9 +652,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
     );
   };
 
-  const { handleSubmit, errors } = formik;
   const globalError = getFormError(errors);
-
   return (
     <form onSubmit={handleSubmit} className={formClassname}>
       {subFormType && (
@@ -681,7 +687,7 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
             </Form.Item>
           )}
           {renderNameInput()}
-          {renderDescriptionInput(formik)}
+          {renderDescriptionInput()}
           {renderParentInput(formik)}
           {renderPriority(formik)}
           {renderSprintInput()}
@@ -698,5 +704,3 @@ const TaskForm: React.FC<ITaskFormProps> = (props) => {
 };
 
 export default React.memo(TaskForm);
-
-const BACKLOG = "Backlog";

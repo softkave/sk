@@ -5,15 +5,15 @@ import { Button, Checkbox, Form, Input, Space } from "antd";
 import { FormikErrors } from "formik";
 import React from "react";
 import { Check, Trash2, X as CloseIcon } from "react-feather";
+import { ISubTask } from "../../models/block/block";
 import { blockConstants } from "../../models/block/constants";
-import { ISubTaskInput } from "../../models/task/types";
 import FormError from "../forms/FormError";
 
-export type ISubTaskErrors = FormikErrors<ISubTaskInput>;
+export type ISubTaskErrors = FormikErrors<ISubTask>;
 
 export interface ISubTaskFormProps {
-  subTask: ISubTaskInput;
-  onChange: (subTask: ISubTaskInput) => void;
+  subTask: ISubTask;
+  onChange: (subTask: ISubTask) => void;
   onDelete: () => void;
   onToggle: () => void;
   onEdit: () => void;
@@ -42,7 +42,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
 
   const renderInputs = () => {
     return (
-      <div style={{ flexDirection: "column", width: "100%" }}>
+      <div style={{ flexDirection: "column", width: "100%", display: "flex" }}>
         <Form.Item
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
@@ -118,7 +118,7 @@ const SubTaskForm: React.FC<ISubTaskFormProps> = (props) => {
 
   const renderLabel = () => {
     return (
-      <div>
+      <div style={{ display: "flex" }}>
         <Checkbox
           checked={!!subTask.completedBy}
           onChange={onToggle}

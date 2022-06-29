@@ -27,6 +27,10 @@ export interface ITaskSprintInput {
   sprintId: string;
 }
 
+export interface ITaskAssigneeInput {
+  userId: string;
+}
+
 export interface ITask {
   customId: string;
   createdBy: string;
@@ -51,6 +55,23 @@ export interface ITask {
 
   // From app
   taskCommentOp?: IOperation;
+}
+
+export interface ITaskFormValues {
+  name: string;
+  description?: string;
+  dueAt?: string;
+  parent: string;
+  rootBlockId: string;
+  assignees: ITaskAssignee[];
+  priority: BlockPriority;
+  subTasks: ISubTask[];
+  labels: IBlockAssignedLabel[];
+  status?: string | null;
+  statusAssignedBy?: string;
+  statusAssignedAt?: string;
+  taskResolution?: string | null;
+  taskSprint?: ITaskSprint | null;
 }
 
 export interface INewTaskInput {

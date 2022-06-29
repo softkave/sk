@@ -1,22 +1,21 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Space, Tag, Typography } from "antd";
+import { Button, Dropdown, Menu, Space, Typography } from "antd";
 import React from "react";
 import { Plus } from "react-feather";
-import {
-  IBlockAssignedLabelInput,
-  IBlockLabel,
-} from "../../models/block/block";
+import { IBlockAssignedLabel, IBlockLabel } from "../../models/block/block";
+import { getDateString } from "../../utils/utils";
 import { AntDMenuItemType } from "../utilities/types";
 import TaskLabel from "./TaskLabel";
 import TaskLabelList from "./TaskLabelList";
 
 export interface ITaskLabelsProps {
+  userId: string;
   labelList: IBlockLabel[];
   labelsMap: { [key: string]: IBlockLabel };
-  onChange: (ids: IBlockAssignedLabelInput[]) => void;
+  onChange: (ids: IBlockAssignedLabel[]) => void;
   onSelectAddNewLabel: () => void;
   disabled?: boolean;
-  labels?: IBlockAssignedLabelInput[];
+  labels?: IBlockAssignedLabel[];
 }
 
 const ADD_NEW_LABEL_KEY = "add-new-label";
@@ -24,8 +23,14 @@ const DIVIDER_MENU_KEY = "divider-key";
 const NO_LABELS_MENU_KEY = "no-labels-key";
 
 const TaskLabelListForm: React.FC<ITaskLabelsProps> = (props) => {
-  const { onChange, onSelectAddNewLabel, disabled, labelList, labelsMap } =
-    props;
+  const {
+    onChange,
+    onSelectAddNewLabel,
+    disabled,
+    labelList,
+    labelsMap,
+    userId,
+  } = props;
 
   const [visible, setVisible] = React.useState(false);
   const labels = React.useMemo(() => props.labels || [], [props.labels]);
@@ -34,12 +39,15 @@ const TaskLabelListForm: React.FC<ITaskLabelsProps> = (props) => {
       const i = labels.findIndex((label) => label.customId === id);
 
       if (i === -1) {
-        onChange([...labels, { customId: id }]);
+        onChange([
+          ...labels,
+          { customId: id, assignedAt: getDateString(), assignedBy: userId },
+        ]);
       } else {
         onChange(labels.filter((label, x) => x !== i));
       }
     },
-    [labels, onChange]
+    [labels, userId, onChange]
   );
 
   const onRemove = React.useCallback(
@@ -50,32 +58,6 @@ const TaskLabelListForm: React.FC<ITaskLabelsProps> = (props) => {
       onChange(newLabels);
     },
     [labels, onChange]
-  );
-
-  const renderLabelTag = React.useCallback(
-    (label: IBlockLabel, canRemove) => {
-      return (
-        <Tag
-          closable={disabled ? false : canRemove}
-          key={label.customId}
-          onClose={() => {
-            if (!disabled) {
-              onRemove(label.customId);
-            }
-          }}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            marginBottom: "2px",
-            color: label.color,
-            textTransform: "capitalize",
-          }}
-        >
-          {label.name}
-        </Tag>
-      );
-    },
-    [disabled, onRemove]
   );
 
   const renderFormPart = React.useCallback(() => {
@@ -138,15 +120,7 @@ const TaskLabelListForm: React.FC<ITaskLabelsProps> = (props) => {
         </Button>
       </Dropdown>
     );
-  }, [
-    disabled,
-    labelList,
-    labels,
-    visible,
-    onSelectAddNewLabel,
-    onToggle,
-    renderLabelTag,
-  ]);
+  }, [disabled, labelList, labels, visible, onSelectAddNewLabel, onToggle]);
 
   return (
     <Space direction="vertical" size={"small"} style={{ width: "100%" }}>

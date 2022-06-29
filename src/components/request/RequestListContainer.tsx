@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { noop } from "lodash";
 import React from "react";
-import PageError from "../Message";
+import PageError from "../PageError";
 import ListHeader from "../utilities/ListHeader";
 import LoadingEllipsis from "../utilities/LoadingEllipsis";
 import RequestList from "./RequestList";

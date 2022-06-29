@@ -35,35 +35,30 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
           "&:hover": {
             "& *": { color: "rgb(66,133,244) !important" },
           },
+          display: "flex",
+          alignItems: "center",
         })}
       >
-        <Space>
-          <Typography.Text ellipsis type="secondary">
-            Show subtasks ( {completedSubTasksCount} of {count} completed )
-          </Typography.Text>
-          <div>
-            <ChevronDown
-              style={{
-                width: "18px",
-                height: "18px",
-                color: "rgba(0, 0, 0, 0.65)",
-              }}
-            />
-          </div>
-        </Space>
+        <Typography.Text
+          ellipsis
+          type="secondary"
+          style={{ marginRight: "8px" }}
+        >
+          Show subtasks ( {completedSubTasksCount} of {count} completed )
+        </Typography.Text>
+        <ChevronDown
+          style={{
+            width: "18px",
+            height: "18px",
+            color: "rgba(0, 0, 0, 0.65)",
+          }}
+        />
       </div>
     );
   }
 
   return (
-    <Space
-      direction="vertical"
-      // className={css({
-      //     "& *": {
-      //         fontSize: "13px !important",
-      //     },
-      // })}
-    >
+    <Space direction="vertical">
       <div
         onClick={() => setShowSubTasks(false)}
         className={css({
@@ -71,20 +66,20 @@ const TaskThumbnailSubTasks: React.FC<ITaskThumbnailSubTasksProps> = (
           "&:hover": {
             "& *": { color: "rgb(66,133,244) !important" },
           },
+          display: "flex",
+          alignItems: "center",
         })}
       >
-        <Space>
-          <Typography.Text type="secondary">Hide subtasks</Typography.Text>
-          <div>
-            <ChevronUp
-              style={{
-                width: "18px",
-                height: "18px",
-                color: "rgba(0, 0, 0, 0.65)",
-              }}
-            />
-          </div>
-        </Space>
+        <Typography.Text type="secondary" style={{ marginRight: "8px" }}>
+          Hide subtasks
+        </Typography.Text>
+        <ChevronUp
+          style={{
+            width: "18px",
+            height: "18px",
+            color: "rgba(0, 0, 0, 0.65)",
+          }}
+        />
       </div>
       {subTasks.map((subTask, i) => (
         <TaskSubTask

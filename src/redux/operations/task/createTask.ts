@@ -1,25 +1,33 @@
 import assert from "assert";
+import { defaultTo } from "lodash";
 import { BlockType } from "../../../models/block/block";
 import { messages } from "../../../models/messages";
-import { ITask } from "../../../models/task/types";
+import { ITask, ITaskFormValues } from "../../../models/task/types";
+import { getNewTaskInput } from "../../../models/task/utils";
 import TaskAPI, {
   ICreateTaskEndpointParams,
 } from "../../../net/task/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, getNewId } from "../../../utils/utils";
-import TaskActions from "../../tasks/actions";
 import SessionSelectors from "../../session/selectors";
+import TaskActions from "../../tasks/actions";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
-import { defaultTo } from "lodash";
-import { IStoreLikeObject } from "../../types";
 
 export const createTaskOpAction = makeAsyncOp(
   "op/tasks/createTask",
   OperationType.CreateTask,
-  async (arg: ICreateTaskEndpointParams, thunkAPI, extras) => {
+  async (
+    arg: Omit<ICreateTaskEndpointParams, "task"> & {
+      task: Partial<ITaskFormValues>;
+    },
+    thunkAPI,
+    extras
+  ) => {
     let task: ITask | null = null;
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
+    const createTaskInput = getNewTaskInput(arg.task);
 
     if (extras.isDemoMode) {
       task = {
@@ -27,33 +35,33 @@ export const createTaskOpAction = makeAsyncOp(
         createdBy: user.customId,
         createdAt: getDateString(),
         type: BlockType.Task,
-        rootBlockId: arg.task.parent,
-        name: arg.task.name,
-        description: arg.task.description,
-        parent: arg.task.parent,
-        dueAt: arg.task.dueAt,
-        status: arg.task.status,
-        taskResolution: arg.task.taskResolution,
-        priority: arg.task.priority,
-        taskSprint: arg.task.taskSprint && {
-          ...arg.task.taskSprint,
+        rootBlockId: createTaskInput.parent,
+        name: createTaskInput.name,
+        description: createTaskInput.description,
+        parent: createTaskInput.parent,
+        dueAt: createTaskInput.dueAt,
+        status: createTaskInput.status,
+        taskResolution: createTaskInput.taskResolution,
+        priority: createTaskInput.priority,
+        taskSprint: createTaskInput.taskSprint && {
+          ...createTaskInput.taskSprint,
           assignedAt: getDateString(),
           assignedBy: user.customId,
         },
 
-        assignees: defaultTo(arg.task.assignees, []).map((item) => ({
+        assignees: defaultTo(createTaskInput.assignees, []).map((item) => ({
           ...item,
           assignedAt: getDateString(),
           assignedBy: user.customId,
         })),
 
-        subTasks: defaultTo(arg.task.subTasks, []).map((item) => ({
+        subTasks: defaultTo(createTaskInput.subTasks, []).map((item) => ({
           ...item,
           createdAt: getDateString(),
           createdBy: user.customId,
         })),
 
-        labels: defaultTo(arg.task.labels, []).map((item) => ({
+        labels: defaultTo(createTaskInput.labels, []).map((item) => ({
           ...item,
           assignedAt: getDateString(),
           assignedBy: user.customId,
@@ -61,7 +69,7 @@ export const createTaskOpAction = makeAsyncOp(
       };
     } else {
       const result = await TaskAPI.createTask({
-        task: arg.task,
+        task: createTaskInput,
       });
 
       assertEndpointResult(result);

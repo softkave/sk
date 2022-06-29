@@ -180,16 +180,13 @@ export function indexArray<T, R = T>(
   const indexer = opts.indexer || defaultIndexer;
   const path = opts.path;
   const reducer = opts.reducer || defaultReducer;
-
   const result = arr.reduce((accumulator, current, index) => {
     const key = indexer(current, path, arr, index);
-
     if (!key) {
       return accumulator;
     }
 
     accumulator[key] = reducer(current, arr, index);
-
     return accumulator;
   }, {});
 
@@ -206,7 +203,6 @@ export function filterObjectList<T extends object = object>(
   }
 
   const lowerCasedSearchQuery = searchQuery.toLowerCase();
-
   return list.filter((block) => {
     const fieldValue = block[field];
 
@@ -240,7 +236,6 @@ type MultipleIndexerObjectPaths<T extends object, IndexLabel = string> = Array<{
 
 function scalarItemIndexer(data: any): MultipleIndexerFnResult {
   const dataStr = JSON.stringify(data);
-
   return [
     {
       key: dataStr,
@@ -302,7 +297,6 @@ class IndexesHelper<R, IndexLabel extends string> {
   public getItem(key: ArrayItemIndex, label?: IndexLabel): R | undefined {
     if (label) {
       const index = this.indexes[label];
-
       if (!index) {
         return;
       }
@@ -313,7 +307,6 @@ class IndexesHelper<R, IndexLabel extends string> {
     // tslint:disable-next-line: forin
     for (const indexLabel in this.indexLabels) {
       const index = this.indexes[indexLabel];
-
       if (index[key]) {
         return index[key];
       }
@@ -328,16 +321,13 @@ export function multipleIndexes<T, R = T, IndexLabel extends string = string>(
   const indexer = opts.indexer || chooseDefaultIndexer(arr);
   const paths = opts.paths || [];
   const reducer = opts.reducer || defaultReducer;
-
   const indexes = arr.reduce((accumulator, current, num) => {
     const keys = indexer(current as any, paths as any, arr, num);
-
     if (!keys || keys.length === 0) {
       return accumulator;
     }
 
     const reducedItem = reducer(current, arr, num);
-
     keys.forEach((key) => {
       const index = accumulator[key.label] || {};
       index[key.key] = reducedItem;
@@ -420,7 +410,6 @@ export function stripEmpty<T extends object>(o1: T) {
 export function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
 
@@ -437,7 +426,6 @@ export function loopWithMaxCycles<T>(
   fn: (item: T, index: number) => boolean | undefined
 ) {
   let cycles = 0;
-
   for (let i = 0; i < items.length; i++) {
     let item = items[i];
     const increment = fn(item, i);

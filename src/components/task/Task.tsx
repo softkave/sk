@@ -1,15 +1,7 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { css } from "@emotion/css";
 import { unwrapResult } from "@reduxjs/toolkit";
-import {
-  Button,
-  Dropdown,
-  Menu,
-  message,
-  Modal,
-  Space,
-  Typography,
-} from "antd";
+import { Button, Dropdown, Menu, message, Modal, Space, Tag } from "antd";
 import moment from "moment";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
@@ -35,6 +27,7 @@ import BoardStatusResolutionAndLabelsForm, {
 import { getOpData } from "../hooks/useOperation";
 import SprintFormInDrawer from "../sprint/SprintFormInDrawer";
 import Priority from "./Priority";
+import TaskLabelList from "./TaskLabelList";
 import TaskNameAndDescription from "./TaskNameAndDescription";
 import TaskSubTasksContainer from "./TaskSubTasksContainer";
 import TaskThumbnailAssignees from "./TaskThumbnailAssignees";
@@ -83,7 +76,6 @@ const classes = {
     borderRadius: "6px",
     border: "2px solid #f0f0f0",
     padding: "8px",
-    // boxShadow: "0 1px 1px -1px #F4F5F7, 0 1px 1px 0 #F4F5F7",
     userSelect: "none",
 
     "@media (min-width: 400px)": {
@@ -94,7 +86,7 @@ const classes = {
     padding: "0px 8px",
     fontSize: "16px",
   }),
-  dueDateWrapper: css({
+  assigneesWrapper: css({
     lineHeight: 0,
   }),
 };
@@ -107,6 +99,7 @@ const Task: React.FC<ITaskProps> = (props) => {
     board,
     demo,
     statusList,
+    labelsMap,
     collaborators,
     user,
     style,
@@ -232,23 +225,15 @@ const Task: React.FC<ITaskProps> = (props) => {
   };
 
   const hasAssignees = task.assignees && task.assignees.length > 0;
-  const isInLastStatus = isTaskInLastStatus(task, statusList);
   const hasSubTasks = task.subTasks && task.subTasks.length > 0;
   const contentElem: React.ReactNode[] = [
     <div key="header" style={{ display: "flex" }}>
       <div style={{ flex: 1 }}>
         <Priority level={task.priority as BlockPriority} />
       </div>
-      <div
-        // onClick={(evt) => {
-        //   evt.stopPropagation();
-        // }}
-        style={{ display: "flex" }}
-      >
-        {options}
-      </div>
+      <div style={{ display: "flex" }}>{options}</div>
     </div>,
-    <div
+    <TaskNameAndDescription
       key="name-and-desc"
       onClick={onClick}
       style={{
@@ -256,28 +241,24 @@ const Task: React.FC<ITaskProps> = (props) => {
         flexDirection: "column",
         width: "100%",
       }}
-    >
-      <TaskNameAndDescription task={task} />
-    </div>,
+      task={task}
+    />,
   ];
 
   const hasStatus = statusList.length > 0 && task.statusAssignedAt;
+  const isInLastStatus = isTaskInLastStatus(task, statusList);
   const hasDueDate = task.dueAt && !isInLastStatus;
 
   if (hasStatus || hasDueDate) {
     contentElem.push(
-      // separated by middledot
       <Space
         wrap
-        size={[4, 0]}
+        size={[0, 4]}
         key="dueAt"
-        split={<span className={classes.middledot}>&#xB7;</span>}
-        style={{ lineHeight: "18px", marginBottom: "6px" }}
+        // style={{ lineHeight: "18px", marginBottom: "6px" }}
       >
         {hasStatus && (
-          <Typography.Text type="secondary" style={{ fontSize: "13px" }}>
-            In status since {moment(task.statusAssignedAt).fromNow()}
-          </Typography.Text>
+          <Tag>In status since {moment(task.statusAssignedAt).fromNow()}</Tag>
         )}
         {hasDueDate ? (
           <TaskThumbnailDueDate isInLastStatus={isInLastStatus} task={task} />
@@ -286,12 +267,18 @@ const Task: React.FC<ITaskProps> = (props) => {
     );
   }
 
-  if (hasAssignees || task.dueAt) {
+  if (task.labels.length > 0) {
     contentElem.push(
-      <div key="assignees-and-dueAt" className={classes.dueDateWrapper}>
-        {hasAssignees && (
-          <TaskThumbnailAssignees task={task} users={collaborators} />
-        )}
+      <div key="labels" className={classes.assigneesWrapper}>
+        <TaskLabelList labelsMap={labelsMap} labels={task.labels} />
+      </div>
+    );
+  }
+
+  if (hasAssignees) {
+    contentElem.push(
+      <div key="assignees" className={classes.assigneesWrapper}>
+        <TaskThumbnailAssignees task={task} users={collaborators} />
       </div>
     );
   }
@@ -319,7 +306,7 @@ const Task: React.FC<ITaskProps> = (props) => {
           onClose={toggleShowSprintForm}
         />
       )}
-      <Space direction="vertical" style={{ width: "100%" }} size={8}>
+      <Space direction="vertical" style={{ width: "100%" }} size={10}>
         {contentElem}
       </Space>
     </React.Fragment>

@@ -12,7 +12,7 @@ import { IBoard } from "../../models/board/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IAppOrganization } from "../../models/organization/types";
 import { ISprint } from "../../models/sprint/types";
-import { ITask } from "../../models/task/types";
+import { ITask, ITaskFormValues } from "../../models/task/types";
 import { IUser } from "../../models/user/user";
 import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import OrganizationSelectors from "../../redux/organizations/selectors";
@@ -22,7 +22,6 @@ import { AppDispatch, IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
 import { indexArray } from "../../utils/utils";
 import { getOpData } from "../hooks/useOperation";
-import { ITaskFormValues } from "../task/TaskForm";
 
 export interface ITasksContainerRenderFnProps {
   board: IBoard;

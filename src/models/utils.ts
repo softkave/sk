@@ -4,24 +4,23 @@ import { IBlock } from "./block/block";
 import { INotification } from "./notification/notification";
 import { ICollaborator } from "./user/user";
 
-export function getComplexFieldInput<T1 extends object, T0 extends T1>(
-  arr: T0[],
-  data: T1[],
-  indexPath: T1 extends object ? keyof T1 : never,
-  reducer: (data: T1 | T0) => T1 | T0,
-  check: (d0: T0, d1: T1) => boolean,
-  extract: (d: T0 | T1) => T1
+export function getComplexFieldInput<T extends object>(
+  arr: T[],
+  data: T[],
+  indexPath: T extends object ? keyof T : never,
+  reducer: (data: T | T) => T | T,
+  check: (d0: T, d1: T) => boolean,
+  extract: (d: T | T) => T
 ) {
-  const add: T1[] = [];
+  const add: T[] = [];
   const remove: string[] = [];
-  const update: T1[] = [];
+  const update: T[] = [];
   const existingItemsMap = indexArray(arr || [], {
     reducer,
     path: indexPath,
   });
 
   const dataMap = indexArray(data || [], { reducer, path: indexPath });
-
   (data || []).forEach((item) => {
     const key = item[indexPath] as any;
     const existingItem = existingItemsMap[key];
@@ -29,7 +28,7 @@ export function getComplexFieldInput<T1 extends object, T0 extends T1>(
     if (!existingItem) {
       add.push(extract(item));
     } else {
-      if (check(existingItem as T0, item)) {
+      if (check(existingItem as T, item)) {
         update.push(extract(item));
       }
     }

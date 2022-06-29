@@ -2,7 +2,7 @@ import React from "react";
 import { IAppOrganization } from "../../models/organization/types";
 import BlockThumbnail from "../block/BlockThumnail";
 import { appClassNames } from "../classNames";
-import Message from "../Message";
+import Message from "../PageError";
 
 export interface IOrganizationListProps {
   organizations: IAppOrganization[];

@@ -3,7 +3,7 @@ import { ICollaborationRequest } from "../../models/collaborationRequest/types";
 import { CollaborationRequestStatusType } from "../../models/notification/notification";
 import { appClassNames } from "../classNames";
 import { getRequestStatus } from "../collaborator/utils";
-import Message from "../Message";
+import Message from "../PageError";
 import RequestThumbnail from "./RequestThumbnail";
 
 export interface IRequestListProps {

@@ -5,7 +5,7 @@ import { ICollaborator } from "../../models/collaborator/types";
 import { IAppOrganization } from "../../models/organization/types";
 import { IAppState } from "../../redux/types";
 import UserSelectors from "../../redux/users/selectors";
-import Message from "../Message";
+import Message from "../PageError";
 import List from "../styled/List";
 import CollaboratorThumbnail from "./CollaboratorThumbnail";
 

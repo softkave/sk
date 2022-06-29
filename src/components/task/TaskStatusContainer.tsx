@@ -4,11 +4,10 @@ import { message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { IBlockStatus, IBoardTaskResolution } from "../../models/block/block";
-import { ITask } from "../../models/task/types";
+import { ITask, ITaskFormValues } from "../../models/task/types";
 import { updateTaskOpAction } from "../../redux/operations/task/updateTask";
 import { AppDispatch } from "../../redux/types";
 import { getOpData } from "../hooks/useOperation";
-import { ITaskFormValues } from "./TaskForm";
 import TaskStatus from "./TaskStatus";
 
 export interface ITaskStatusContainerProps {

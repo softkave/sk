@@ -18,30 +18,34 @@ export type ICreateTaskEndpointResult = GetEndpointResult<{
   task: ITask;
 }>;
 
-const withRequired = (schema: yup.AnySchema<any>, isRequired = true) => {
-  return isRequired ? schema.required() : schema;
-};
+const assigneeYupSchema = yup.object().shape({
+  userId: yup.string().required(),
+  // assignedAt: yup.string().required(),
+  // assignedBy: yup.string().required(),
+});
 
-const assigneeYupSchema = (isNew: boolean) =>
-  yup.object().shape({
-    userId: withRequired(yup.string(), isNew),
-  });
+const subTaskYupSchema = yup.object().shape({
+  description: yup.string().required(),
+  customId: yup.string().required(),
+  completedBy: yup.string(),
+  // createdAt: yup.string().required(),
+  // createdBy: yup.string().required(),
+  // completedAt: yup.string(),
+  // updatedAt: yup.string(),
+  // updatedBy: yup.string(),
+});
 
-const subTaskYupSchema = (isNew: boolean) =>
-  yup.object().shape({
-    description: withRequired(yup.string(), isNew),
-    completedBy: yup.string().nullable(),
-  });
+const taskAssignedLabelYupSchema = yup.object().shape({
+  customId: yup.string().required(),
+  // assignedAt: yup.string().required(),
+  // assignedBy: yup.string().required(),
+});
 
-const taskAssignedLabelYupSchema = (isNew: boolean) =>
-  yup.object().shape({
-    customId: withRequired(yup.string(), isNew),
-  });
-
-const taskSprintYupSchema = (isNew: boolean) =>
-  yup.object().shape({
-    sprintId: withRequired(yup.string(), isNew),
-  });
+const taskSprintYupSchema = yup.object().shape({
+  sprintId: yup.string().required(),
+  // assignedAt: yup.string().required(),
+  // assignedBy: yup.string().required(),
+});
 
 const createTaskYupSchema = yup.object().shape({
   task: yup.object().shape({
@@ -50,13 +54,15 @@ const createTaskYupSchema = yup.object().shape({
     parent: yup.string().required(),
     dueAt: yup.string(),
     rootBlockId: yup.string().required(),
-    assignees: yup.array().of(assigneeYupSchema(true)).required(),
+    assignees: yup.array().of(assigneeYupSchema).required(),
     priority: yup.string(),
-    subTasks: yup.array().of(subTaskYupSchema(true)).required(),
-    labels: yup.array().of(taskAssignedLabelYupSchema(true)).required(),
-    status: yup.string().nullable(),
-    taskResolution: yup.string().nullable(),
-    taskSprint: taskSprintYupSchema(true).nullable().default(null),
+    subTasks: yup.array().of(subTaskYupSchema).required(),
+    labels: yup.array().of(taskAssignedLabelYupSchema).required(),
+    status: yup.string(),
+    // statusAssignedBy: yup.string(),
+    // statusAssignedAt: yup.string(),
+    taskResolution: yup.string(),
+    taskSprint: taskSprintYupSchema.nullable().default(null),
   }),
 });
 
@@ -81,16 +87,18 @@ const updateTaskYupSchema = yup.object().shape({
   taskId: yup.string().required(),
   data: yup.object().shape({
     name: yup.string(),
-    description: yup.string(),
+    description: yup.string().nullable(),
     parent: yup.string(),
-    dueAt: yup.string(),
-    assignees: getComplexTypeSchema(assigneeYupSchema(false)),
+    dueAt: yup.string().nullable(),
+    assignees: getComplexTypeSchema(assigneeYupSchema),
     priority: yup.string(),
-    subTasks: getComplexTypeSchema(subTaskYupSchema(false)),
-    labels: getComplexTypeSchema(taskAssignedLabelYupSchema(false)),
+    subTasks: getComplexTypeSchema(subTaskYupSchema),
+    labels: getComplexTypeSchema(taskAssignedLabelYupSchema),
     status: yup.string().nullable(),
+    // statusAssignedBy: yup.string().nullable(),
+    // statusAssignedAt: yup.string().nullable(),
     taskResolution: yup.string().nullable(),
-    taskSprint: taskSprintYupSchema(false).nullable().default(null),
+    taskSprint: taskSprintYupSchema.nullable().default(null),
   }),
 });
 
@@ -160,10 +168,31 @@ async function getBoardTasks(props: IGetBoardTasksEndpointParams) {
   });
 }
 
+export interface IGetTaskEndpointParams {
+  taskId: string;
+}
+
+export type IGetTaskEndpointResult = GetEndpointResult<{
+  task: ITask;
+}>;
+
+const getTaskYupSchema = yup.object().shape({
+  taskId: yup.string().required(),
+});
+
+async function getTask(props: IGetTaskEndpointParams) {
+  return await invokeEndpointWithAuth<IGetTaskEndpointResult>({
+    path: `${baseURL}/getTask`,
+    data: getTaskYupSchema.validateSync(props, endpointYupOptions),
+    apiType: "REST",
+  });
+}
+
 export default class TaskAPI {
   public static createTask = createTask;
   public static deleteTask = deleteTask;
   public static getBoardTasks = getBoardTasks;
   public static transferTask = transferTask;
   public static updateTask = updateTask;
+  public static getTask = getTask;
 }

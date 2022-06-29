@@ -123,10 +123,6 @@ export interface IBlock extends IPersistedBlock {
   taskCommentOp?: IOperation;
 }
 
-export interface IAssigneeInput {
-  userId: string;
-}
-
 export interface ISubTaskInput {
   customId: string;
   description: string;
@@ -152,10 +148,6 @@ export interface IBoardStatusResolutionInput {
   customId: string;
   name: string;
   description?: string;
-}
-
-export interface IBlockAssignedLabelInput {
-  customId: string;
 }
 
 export function findBlock(blocks: IBlock[], id: string): IBlock | undefined {

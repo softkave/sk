@@ -5,7 +5,7 @@ import React from "react";
 import { IAppError } from "../net/types";
 import EmptyMessage, { IEmptyMessageProps } from "./EmptyMessage";
 
-export interface IMessageProps extends IEmptyMessageProps {
+export interface IPageErrorProps extends IEmptyMessageProps {
   message: Error | Pick<IAppError, "message"> | string;
   listIndex?: number; // For error list, to show empty icon ony once
 }
@@ -18,7 +18,7 @@ const classes = {
   }),
 };
 
-const PageError: React.FC<IMessageProps> = (props) => {
+const PageError: React.FC<IPageErrorProps> = (props) => {
   const { message, children, listIndex } = props;
   let messageContentNode: React.ReactNode = children || "An error occurred.";
 

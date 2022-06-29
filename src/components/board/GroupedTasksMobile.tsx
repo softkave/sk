@@ -1,13 +1,13 @@
-import { Badge, Space, Tabs, Typography } from "antd";
 import { RightOutlined } from "@ant-design/icons";
+import { Badge, Space, Tabs, Typography } from "antd";
 import React from "react";
-import Message from "../Message";
+import Message from "../PageError";
 
+import { css } from "@emotion/css";
+import { ITask } from "../../models/task/types";
 import TaskList from "../task/TaskList";
 import { ITasksContainerRenderFnProps } from "./TasksContainer";
 import { IBoardGroupedTasks } from "./types";
-import { ITask } from "../../models/task/types";
-import { css } from "@emotion/css";
 
 export interface IGroupedTasksMobileProps extends ITasksContainerRenderFnProps {
   groupedTasks: IBoardGroupedTasks[];

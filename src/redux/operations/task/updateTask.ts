@@ -1,21 +1,23 @@
 import assert from "assert";
 import { defaultTo, last, merge } from "lodash";
 import { messages } from "../../../models/messages";
+import { ITask, ITaskFormValues } from "../../../models/task/types";
+import {
+  assignCollaborators,
+  getUpdateTaskInput,
+} from "../../../models/task/utils";
 import TaskAPI, {
   IUpdateTaskEndpointParams,
 } from "../../../net/task/endpoints";
 import { assertEndpointResult } from "../../../net/utils";
 import { getDateString, processComplexTypeInput } from "../../../utils/utils";
+import BoardSelectors from "../../boards/selectors";
+import SessionSelectors from "../../session/selectors";
 import TaskActions from "../../tasks/actions";
 import TaskSelectors from "../../tasks/selectors";
-import SessionSelectors from "../../session/selectors";
+import { IStoreLikeObject } from "../../types";
 import OperationType from "../OperationType";
 import { makeAsyncOp } from "../utils";
-import { IStoreLikeObject } from "../../types";
-import { ITask } from "../../../models/task/types";
-import { ITaskFormValues } from "../../../components/task/TaskForm";
-import { getUpdateTaskInput } from "../../../models/task/utils";
-import BoardSelectors from "../../boards/selectors";
 
 export const updateTaskOpAction = makeAsyncOp(
   "op/tasks/updateTask",
@@ -29,7 +31,7 @@ export const updateTaskOpAction = makeAsyncOp(
   ) => {
     const user = SessionSelectors.assertGetUser(thunkAPI.getState());
     let task = TaskSelectors.assertGetOne(thunkAPI.getState(), arg.taskId);
-    assignUserToTaskOnUpdateStatus(thunkAPI, task, arg.data);
+    assignUserToTaskIfStatusChanged(thunkAPI, task, arg.data);
     const updateTaskInput = getUpdateTaskInput(task, arg.data);
 
     if (extras.isDemoMode) {
@@ -134,17 +136,20 @@ export const updateTaskOpAction = makeAsyncOp(
   }
 );
 
-function assignUserToTaskOnUpdateStatus(
+function assignUserToTaskIfStatusChanged(
   store: IStoreLikeObject,
   task: ITask,
   data: Partial<ITaskFormValues>
 ) {
   if (data.status && data.status !== task.status) {
     const assignees = data.assignees || task.assignees || [];
-
     if (assignees.length === 0) {
       const user = SessionSelectors.assertGetUser(store.getState());
-      data.assignees = [{ userId: user.customId }];
+      data.assignees = assignCollaborators(
+        data,
+        [user],
+        user.customId
+      ).assignees;
     }
   }
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { IChat } from "../../models/chat/types";
 import { ICollaborator } from "../../models/collaborator/types";
 import { IUser } from "../../models/user/user";
-import { default as AppMessage } from "../Message";
+import { default as AppMessage } from "../PageError";
 import Scrollbar, { ScrollbarMethods } from "../utilities/Scrollbar";
 import Chat from "./Chat";
 

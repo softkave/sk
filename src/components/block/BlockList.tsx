@@ -5,7 +5,7 @@ import BlockThumbnail, {
   BlockThumbnailShowField,
   IBlockThumbnailProps,
 } from "../block/BlockThumnail";
-import Message from "../Message";
+import Message from "../PageError";
 
 import List from "../styled/List";
 
