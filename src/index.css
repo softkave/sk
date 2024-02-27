@@ -1,0 +1,130 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Work Sans", "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  /* font-weight: 500; */
+}
+
+.ant-drawer-body {
+  flex: 1;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.ant-drawer-wrapper-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.ant-btn .anticon {
+  font-size: 16px;
+}
+
+.ant-form-item-label {
+  padding: 0 !important;
+  font-weight: bold;
+  font-weight: 500;
+}
+
+.icon-btn.ant-btn,
+.ant-notification-notice-close {
+  line-height: 16px;
+  background-color: #d9d9d9;
+  /* border: 1px solid #bfbfbf; */
+  border: 1px solid #c9c9c9;
+  /* border: 1px solid rgb(223, 234, 240); */
+  height: 24px;
+  width: 24px;
+  padding: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #595959 !important;
+}
+
+.icon-btn.ant-btn:hover,
+.ant-notification-notice-close:hover {
+  background-color: #ddd;
+}
+
+.ant-notification-close-x {
+  display: inline-flex !important;
+}
+
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.icon-btn.ant-btn[disabled] svg {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.ant-tabs .anticon-ellipsis {
+  font-size: 20px;
+}
+
+.ant-message-custom-content {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.ant-dropdown-menu {
+  min-width: 180px;
+}
+
+.anticon {
+  vertical-align: middle !important;
+  /* color: #595959 !important; */
+}
+
+.ant-dropdown-menu-item-divider {
+  margin: 0px !important;
+}
+
+.ant-tabs-nav {
+  margin-bottom: 0px !important;
+}
+
+.ant-tabs-top > .ant-tabs-nav::before {
+  border-bottom: 2px solid rgb(223, 234, 240) !important;
+}
+
+.ant-tag {
+  text-transform: capitalize;
+}
+
+.ant-avatar {
+  border: 1px solid #d9d9d9;
+}
+
+.ant-notification-notice {
+  padding: 12px;
+}
+
+.ant-notification-notice-close {
+  top: 12px !important;
+  inset-inline-end: 12px !important;
+}
+
+.ant-notification-notice-message {
+  font-weight: 500;
+}
+
+.ant-btn {
+  border-radius: 4px !important;
+}
+
+.ant-divider {
+  border-color: rgb(223, 234, 240);
+}
